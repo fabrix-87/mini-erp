@@ -1,0 +1,48 @@
+model Role {
+  id              Int           @id @default(autoincrement())
+  
+  // Codice univoco (per lookup nel codice)
+  code            String        @unique @db.VarChar(50) // ADMIN, WAREHOUSE, SALES
+  
+  name            String        @db.VarChar(100)
+  description     String?       @db.Text
+  
+  isDefault       Boolean       @default(false) // Ruolo assegnato di default ai nuovi utenti
+  
+  // Relazioni
+  users           User[]        @relation("UserRoles")
+  permissions     RolePermission[]
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Permission {
+  id              Int           @id @default(autoincrement())
+  
+  // Nome del permesso (es. product:read, invoice:create)
+  code            String        @unique @db.VarChar(100)
+  
+  resource        String        @db.VarChar(50) // Es. product, document, company
+  action          String        @db.VarChar(50) // Es. read, create, update, delete, approve, export
+
+  description     String?       @db.Text
+  
+  // Relazioni
+  roles           RolePermission[]
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model RolePermission {
+  roleId          Int
+  role            Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  
+  permissionId    Int
+  permission      Permission    @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  
+  // Chiave primaria composta
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}

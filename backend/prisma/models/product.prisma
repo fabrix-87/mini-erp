@@ -1,0 +1,237 @@
+// ============================================================================
+// PRODOTTI
+// ============================================================================
+
+// Enum per il tipo di Prodotto
+enum ProductType {
+    STANDARD
+    PACK
+    VIRTUAL
+}
+
+// Enum per la Condizione del Prodotto
+enum ProductCondition {
+    NEW
+    USED
+    REFURBISHED
+}
+
+model Product {
+    id   Int         @id @default(autoincrement())
+    // Uso di Enum per 'type'
+    type ProductType @default(STANDARD) // simple, pack, virtual
+
+    reference String @unique @db.VarChar(64) // Riferimento interno
+
+    // Stati
+    active            Boolean @default(true)
+    availableForOrder Boolean @default(true)
+    showPrice         Boolean @default(true)
+    onlineOnly        Boolean @default(false)
+    onSale            Boolean @default(false)
+
+    // Prezzi di listino "Base" (opzionale: utile per mostrare "A partire da...")
+    // Il prezzo transazionale reale sarà sulla Variante.
+    price          Decimal @default(0) @db.Decimal(20, 6)
+    wholesalePrice Decimal @default(0) @db.Decimal(20, 6)
+    ecotax         Decimal @default(0) @db.Decimal(20, 6)
+
+    // tassazione
+    defaultTaxRuleId Int
+    defaultTaxRule   TaxRule @relation("ProductTaxRule", fields: [defaultTaxRuleId], references: [id])
+
+    // Visibilità - Potrebbe essere un Enum o tabella esterna
+    visibility    String           @default("both") @db.VarChar(20) // both, catalog, search, none
+    // Uso di Enum per 'condition'
+    condition     ProductCondition @default(NEW) // new, used, refurbished
+    showCondition Boolean          @default(false)
+
+    // Relazione con il Brand del prodotto
+    manufacturerId Int?
+    manufacturer   Manufacturer? @relation(fields: [manufacturerId], references: [id])
+
+    // Relazione con il fornitore (Company type Supplier)
+    supplierId Int?
+    supplier   Supplier? @relation(fields: [supplierId], references: [id])
+
+    // Logistica "Generale" (Opzionale, defaults)
+    additionalShippingCost Decimal @default(0) @db.Decimal(20, 6)
+    carrierReferenceIds    Json?
+    deliveryTimeNoteType   Int     @default(0)
+
+    // Redirect e SEO
+    redirectType   String @default("404") @db.VarChar(10)
+    redirectTarget Int    @default(0)
+
+    // Media
+    coverThumbnailUrl String? @db.VarChar(500)
+
+    translations  ProductTranslation[]
+    variants      ProductVariant[]
+    images        ProductImage[]
+    categories    ProductCategory[] // Relazione many-to-many
+    documentLines DocumentLine[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([reference])
+    @@index([active])
+    @@index([supplierId])
+}
+
+model ProductTranslation {
+    id        Int     @id @default(autoincrement())
+    productId Int
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    languageId Int
+    language   Language @relation(fields: [languageId], references: [id])
+
+    name             String  @db.VarChar(255)
+    description      String? @db.Text
+    shortDescription String? @db.VarChar(500)
+    tags             String? @db.VarChar(500)
+
+    // SEO
+    metaTitle       String? @db.VarChar(255)
+    metaDescription String? @db.Text
+    metaKeywords    String? @db.VarChar(500)
+    linkRewrite     String? @db.VarChar(255)
+
+    // Etichette disponibilità
+    availableNowLabel   String @default("In stock") @db.VarChar(100)
+    availableLaterLabel String @default("Available soon") @db.VarChar(100)
+
+    deliveryTimeInStockNote    String? @db.VarChar(255)
+    deliveryTimeOutOfStockNote String? @db.VarChar(255)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([productId, languageId])
+    @@index([productId])
+    @@index([languageId])
+}
+
+model ProductVariant {
+    id        Int     @id @default(autoincrement())
+    productId Int
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    // Identificatori Univoci della Variante
+    variantCode String  @unique @db.VarChar(64)
+    sku         String? @db.VarChar(64)
+
+    // Codici a barre (Spostati qui dal Product)
+    ean13 String? @db.VarChar(13)
+    upc   String? @db.VarChar(12)
+    isbn  String? @db.VarChar(32)
+    mpn   String? @db.VarChar(40)
+
+    // Stock e Magazzino (Spostati qui dal Product)
+    quantity             Int     @default(0) // Stock totale calcolato dai movimenti
+    minimalQuantity      Int     @default(1)
+    lowStockThreshold    Int     @default(0)
+    lowStockAlertEnabled Boolean @default(false)
+    location             String? @db.VarChar(50) // Posizione a scaffale specifica per questa variante
+
+    packStockType  Int       @default(0)
+    outOfStockType Int       @default(0)
+    availableDate  DateTime?
+
+    // Prezzi specifici della variante (Sovrascrivono il padre)
+    price          Decimal? @db.Decimal(20, 6)
+    wholesalePrice Decimal? @db.Decimal(20, 6)
+    unitPriceRatio Decimal  @default(0) @db.Decimal(20, 6)
+
+    // Dimensioni Fisiche (Spostati qui dal Product)
+    weight Decimal? @default(0) @db.Decimal(20, 6)
+    width  Decimal? @default(0) @db.Decimal(20, 6)
+    height Decimal? @default(0) @db.Decimal(20, 6)
+    depth  Decimal? @default(0) @db.Decimal(20, 6)
+
+    // Codice Nomenclatura Combinata (NC8) per la variante specifica
+  commodityCode   String?
+  commodity       IntrastatCommodityCode? @relation(fields: [commodityCode], references: [code])
+
+    // Media specifico (es. foto della maglietta rossa)
+    coverImageUrl String? @db.VarChar(500)
+
+    // Configurazione
+    position          Int     @default(0)
+    isDefault         Boolean @default(false) // Se true, è la variante che si mostra nel catalogo
+    active            Boolean @default(true)
+    availableForOrder Boolean @default(true)
+
+    metadata Json?
+
+    // RELAZIONI
+    attributes     ProductVariantAttribute[]
+    stockMovement  StockMovement[]
+    virtualStock   VirtualStock[]
+    documentLines  DocumentLine[]
+    priceListItems PriceListItem[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([productId])
+    @@index([variantCode])
+    @@index([isDefault])
+}
+
+model ProductImage {
+    id        Int     @id @default(autoincrement())
+    productId Int
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    imageUrl  String  @db.VarChar(500)
+    // Potrebbe essere un Enum
+    imageType String  @default("extra") @db.VarChar(20) // main, extra, variant, print, neutral
+    position  Int     @default(0)
+    isCover   Boolean @default(false)
+
+    altText Json?
+
+    width    Int?
+    height   Int?
+    fileSize Int?
+    mimeType String? @db.VarChar(50)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([productId])
+    @@index([imageType])
+    @@index([position])
+}
+
+// Tabella di collegamento Many-to-Many
+model ProductCategory {
+    productId Int
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    categoryId Int
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+    position Int @default(0)
+
+    // Chiave primaria composta e Unique esplicito (Prisma lo deduce, ma è più chiaro)
+    @@id([productId, categoryId])
+    @@index([categoryId])
+}
+
+model Manufacturer {
+    id   Int    @id @default(autoincrement())
+    name String
+
+    active Boolean @default(true)
+
+    customFields Json?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    products Product[]
+}

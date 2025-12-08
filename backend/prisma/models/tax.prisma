@@ -1,0 +1,65 @@
+model TaxRate {
+    id Int @id @default(autoincrement())
+
+    // Esempio: 4.00, 10.00, 22.00
+    rate Decimal @unique @db.Decimal(5, 2)
+    name String  @unique @db.VarChar(50) // Esempio: "IVA 22%", "IVA Ridotta 10%"
+
+    active Boolean @default(true)
+
+    rules TaxRule[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([rate])
+}
+
+model TaxRule {
+    id Int @id @default(autoincrement())
+
+    // Codice fiscale (Esempio: N2, N3.1, N7)
+    code String @unique @db.VarChar(20)
+
+    // Descrizione legale/commerciale
+    name        String  @db.VarChar(255) // Esempio: "Esportazione Extra UE Art. 8/2", "IVA Esente"
+    description String? @db.Text
+
+    // Tipo di operazione (utile per la fatturazione elettronica, es. "Non Imponibile")
+    operationType String @db.VarChar(50)
+
+    // Relazione alla percentuale IVA
+    taxRateId Int
+    taxRate   TaxRate @relation(fields: [taxRateId], references: [id])
+
+    active Boolean @default(true)
+
+    // Relazioni ai modelli di prodotto e documento
+    products            Product[]            @relation("ProductTaxRule")
+    documentLines       DocumentLine[]       @relation("DocumentLineTaxRule")
+    customers           Customer[]            @relation("CustomerTaxRule")
+    taxRuleTranslations TaxRuleTranslation[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([code])
+    @@index([operationType])
+    @@index([taxRateId])
+}
+
+model TaxRuleTranslation {
+    id        Int     @id @default(autoincrement())
+    taxRuleId Int
+    taxRule   TaxRule @relation(fields: [taxRuleId], references: [id], onDelete: Cascade)
+
+    languageId Int
+    language   Language @relation(fields: [languageId], references: [id])
+
+    name String @db.VarChar(255) // Descrizione legale tradotta
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([taxRuleId, languageId])
+}

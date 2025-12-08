@@ -1,0 +1,77 @@
+model User {
+  id       Int     @id @default(autoincrement())
+  username String  @unique @db.VarChar(50) // Limita la lunghezza per coerenza
+  email    String  @unique @db.VarChar(255) // Standard per le email
+  password String  @db.VarChar(255) // Assicurati di usare un hash forte
+  active   Boolean @default(true)
+
+  roles Role[] @relation("UserRoles")
+
+  // Preferenze lingua
+  preferredLanguageId Int?
+  preferredLanguage   Language? @relation("UserPreferredLanguage", fields: [preferredLanguageId], references: [id])
+
+  // Relazioni
+  createdDocuments      Document[]            @relation("CreatedBy")
+  assignedDocuments     Document[]            @relation("AssignedTo")
+  createdOpportunities  Opportunity[]         @relation("CreatedBy")
+  assignedOpportunities Opportunity[]         @relation("AssignedTo")
+  assignedCompanies     Company[]             @relation("AssignedUser")
+  activitiesAssigned    Activity[]            @relation("ActivityAssigned")
+  activitiesCreated     Activity[]            @relation("ActivityCreated")
+  activityParticipants  ActivityParticipant[]
+  companyNotes          CompanyNote[]
+
+  details UserDetails?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Gli indici sugli ID delle Foreign Key vengono aggiunti automaticamente, ma puoi specificare
+  // indici aggiuntivi per performance di ricerca comune.
+  @@index([email])
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+model UserDetails {
+  id Int @id @default(autoincrement())
+
+  // Relazione 1-to-1 con User
+  userId Int  @unique // @unique è fondamentale per la relazione 1-to-1
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  firstName String @db.VarChar(100)
+  lastName  String @db.VarChar(100)
+
+  profilePicture String? @db.VarChar(500) // URL della foto
+
+  // Contatti e Indirizzo
+  phone   String? @db.VarChar(20)
+  address String? @db.VarChar(255)
+  city    String? @db.VarChar(100)
+  state   String? @db.VarChar(100)
+  zipCode String? @db.VarChar(20)
+  country String? @default("IT") @db.Char(2) // ISO code a 2 lettere (IT, US, DE)
+
+  // Dati personali
+  dateOfBirth DateTime? @db.Date
+
+  gender Gender @default(PREFER_NOT_TO_SAY)
+
+  bio String? @db.Text
+
+  lastLogin DateTime? // Può essere aggiornato ad ogni login
+  active    Boolean   @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([firstName])
+  @@index([lastName])
+}

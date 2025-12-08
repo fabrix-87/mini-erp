@@ -1,0 +1,186 @@
+// ============================================================================
+// ACTIVITIES (CRM)
+// ============================================================================
+
+enum ActivityType {
+  CALL          // Chiamata telefonica
+  EMAIL         // Email
+  MEETING       // Riunione/Appuntamento
+  TASK          // Task/Todo
+  NOTE          // Nota/Memo
+  WHATSAPP      // Messaggio WhatsApp
+  SMS           // SMS
+  VIDEO_CALL    // Videochiamata
+  SITE_VISIT    // Visita in loco
+  OTHER         // Altro
+}
+
+enum ActivityStatus {
+  SCHEDULED     // Programmata (futura)
+  IN_PROGRESS   // In corso
+  COMPLETED     // Completata
+  CANCELLED     // Cancellata
+  RESCHEDULED   // Riprogrammata
+  NO_SHOW       // Non presentato
+}
+
+enum ActivityPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ActivityOutcome {
+  SUCCESSFUL        // Successo
+  NO_ANSWER         // Nessuna risposta
+  LEFT_MESSAGE      // Lasciato messaggio
+  FOLLOW_UP_NEEDED  // Necessario follow-up
+  NOT_INTERESTED    // Non interessato
+  WRONG_CONTACT     // Contatto sbagliato
+  CALLBACK_LATER    // Richiamare più tardi
+  POSTPONED         // Posticipato
+  OTHER
+}
+
+model Activity {
+  id              Int              @id @default(autoincrement())
+  
+  // Tipo e stato
+  type            ActivityType
+  status          ActivityStatus   @default(SCHEDULED)
+  priority        ActivityPriority @default(MEDIUM)
+  outcome         ActivityOutcome?
+  
+  // Informazioni base
+  subject         String           @db.VarChar(255)
+  description     String?          @db.Text
+  location        String?          @db.VarChar(255) // Luogo fisico o link meeting
+  
+  // Date e durata
+  scheduledStart  DateTime
+  scheduledEnd    DateTime?
+  actualStart     DateTime?
+  actualEnd       DateTime?
+  duration        Int?             // Durata in minuti
+  
+  // Promemoria
+  reminderMinutes Int?             // Minuti prima per reminder (es. 15, 30, 60)
+  reminderSent    Boolean          @default(false)
+  
+  // Relazioni principali
+  companyId       Int?
+  company         Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  customerId      Int?
+  customer        Customer?        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  contactId       Int?
+  contact         Contact?         @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  
+  opportunityId   Int?
+  opportunity     Opportunity?     @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
+  
+  // Utente responsabile
+  assignedUserId  Int
+  assignedUser    User             @relation("ActivityAssigned", fields: [assignedUserId], references: [id])
+  
+  // Utente che ha creato l'attività
+  createdByUserId Int
+  createdBy       User             @relation("ActivityCreated", fields: [createdByUserId], references: [id])
+  
+  // Partecipanti (per meeting)
+  participants    ActivityParticipant[]
+  
+  // Allegati/Link
+  attachments     Json?            // Array di URL o riferimenti a file
+  
+  // Note interne
+  internalNotes   String?          @db.Text
+  
+  // Risultato/Output
+  result          String?          @db.Text
+  
+  // Follow-up
+  requiresFollowUp Boolean         @default(false)
+  followUpDate     DateTime?
+  followUpActivity Activity?       @relation("ActivityFollowUp", fields: [followUpActivityId], references: [id], onDelete: SetNull)
+  followUpActivityId Int?
+  followedUpBy     Activity[]      @relation("ActivityFollowUp")
+  
+  // Custom fields
+  customFields    Json?
+  
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  
+  @@index([type])
+  @@index([status])
+  @@index([priority])
+  @@index([companyId])
+  @@index([customerId])
+  @@index([opportunityId])
+  @@index([assignedUserId])
+  @@index([scheduledStart])
+  @@index([scheduledEnd])
+}
+
+model ActivityParticipant {
+  id              Int      @id @default(autoincrement())
+  
+  activityId      Int
+  activity        Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  
+  // Può essere un utente interno o un contatto esterno
+  userId          Int?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  contactId       Int?
+  contact         Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  
+  // Email se non è né user né contact
+  externalEmail   String?  @db.VarChar(255)
+  externalName    String?  @db.VarChar(255)
+  
+  // Stato partecipazione
+  status          String   @default("invited") @db.VarChar(20) // invited, accepted, declined, tentative, attended, no_show
+  
+  // Ruolo nel meeting
+  role            String   @default("participant") @db.VarChar(20) // organizer, required, optional
+  
+  responseDate    DateTime?
+  notes           String?  @db.Text
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([activityId])
+  @@index([userId])
+  @@index([contactId])
+}
+
+// Template di attività ricorrenti o comuni
+model ActivityTemplate {
+  id              Int              @id @default(autoincrement())
+  
+  name            String           @db.VarChar(255)
+  description     String?          @db.Text
+  
+  type            ActivityType
+  priority        ActivityPriority @default(MEDIUM)
+  
+  defaultDuration Int?             // Durata predefinita in minuti
+  defaultSubject  String           @db.VarChar(255)
+  defaultDescription String?       @db.Text
+  
+  // Checklist o passi da seguire
+  checklist       Json?
+  
+  active          Boolean          @default(true)
+  
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  
+  @@index([type])
+  @@index([active])
+}

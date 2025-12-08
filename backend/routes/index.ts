@@ -1,0 +1,37 @@
+import { Router } from "express";
+
+import activitiesRouter from "./activity";
+import addressesRouter from "./address";
+import contactsRouter from "./contact";
+import customersRouter from "./customer";
+import dashboardsRouter from "./dashboard";
+import documentsRouter from "./document";
+import opportunitiesRouter from "./opportunity";
+import paymentsRouter from "./payment";
+import pricelistsRouter from "./pricelist";
+import productsRouter from "./product";
+import rolesRouter from "./role";
+import suppliersRouter from "./supplier";
+import taxesRouter from "./tax";
+import usersRouter from "./user";
+import companiesRouter from './company';
+
+const apiRouter = Router();
+
+apiRouter.use("/activities", activitiesRouter);
+apiRouter.use("/addresses", addressesRouter);
+apiRouter.use("/companies", companiesRouter);
+apiRouter.use("/contacts", contactsRouter);
+apiRouter.use("/customers", customersRouter);
+apiRouter.use("/dashboard", dashboardsRouter);
+apiRouter.use("/documents", documentsRouter);
+apiRouter.use("/opportunities", opportunitiesRouter);
+apiRouter.use("/payments", paymentsRouter);
+apiRouter.use("/pricelists", pricelistsRouter);
+apiRouter.use("/products", productsRouter);
+apiRouter.use("/roles", rolesRouter);
+apiRouter.use("/suppliers", suppliersRouter);
+apiRouter.use("/taxes", taxesRouter);
+apiRouter.use("/users", usersRouter);
+
+export default apiRouter;

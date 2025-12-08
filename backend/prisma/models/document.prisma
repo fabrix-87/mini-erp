@@ -1,0 +1,258 @@
+// ============================================================================
+// DOCUMENTI (ORDINI, FATTURE, PREVENTIVI)
+// ============================================================================
+
+// tipo di documento
+enum DocumentType {
+    // Principali
+    QUOTE // Preventivo
+    PROFORMA // Proforma
+    ORDER // Ordine Cliente (Sales Order)
+    DELIVERY_NOTE // Documento di Trasporto (DDT)
+    INVOICE // Fattura
+    CREDIT_NOTE // Nota di Credito
+    DEBIT_NOTE // Nota di Debito (raro, ma possibile)
+    SUPPLIER_ORDER // Ordine a Fornitore
+    ARCHIVED // Documento archiviato o non classificato
+}
+
+enum DocumentStatus {
+    // Stati di lavorazione
+    DRAFT // Bozza (non ancora numerato)
+    PENDING_APPROVAL // In attesa di approvazione interna
+
+    // Stati di invio/accettazione
+    SENT // Inviato (a Cliente)
+    ACCEPTED // Accettato (dal Cliente)
+    REJECTED // Rifiutato (dal Cliente)
+
+    // Stati logistici/fiscali
+    PREPARING // In preparazione (picking)
+    IN_TRANSIT // In transito (per DDT)
+    DELIVERED // Consegnato (per DDT)
+
+    // Stati finanziari
+    UNPAID // Non pagato (In attesa)
+    PARTIALLY_PAID // Pagato parzialmente
+    PAID // Pagato (Chiuso)
+    OVERDUE // Scaduto
+
+    // Stati finali
+    VOIDED // Annullato/Non valido
+    CLOSED // Chiuso (Generico, per chiudere il ciclo)
+}
+
+model Document {
+    id Int @id @default(autoincrement())
+
+    // Classificazione
+    documentType DocumentType
+    status       DocumentStatus @default(DRAFT)
+
+    // Numerazione
+    documentNumber String? @unique
+    documentYear   Int
+
+    // Soggetti
+    companyId     Int
+    company       Company      @relation(fields: [companyId], references: [id])
+
+    // RUOLO COMMERCIALE (Se è un documento di Vendita)
+    customerId      Int?
+    customer        Customer?     @relation("CustomerDocuments", fields: [customerId], references: [id])
+    // RUOLO COMMERCIALE (Se è un documento di Acquisto)
+    supplierId      Int?
+    supplier        Supplier?     @relation("SupplierDocuments", fields: [supplierId], references: [id])
+
+    contactId     Int?
+    contact       Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
+    opportunityId Int?
+    opportunity   Opportunity? @relation(fields: [opportunityId], references: [id])
+
+    // Magazzino di riferimento (Cruciale per DDT e Ordini)
+    // Per vendita: Magazzino di partenza. Per acquisto: Magazzino di arrivo.
+    warehouseId Int?
+    warehouse   Warehouse? @relation(fields: [warehouseId], references: [id])
+
+    // Date
+    documentDate DateTime  @default(now())
+    dueDate      DateTime? // Scadenza della prima rata o media
+    deliveryDate DateTime?
+    validUntil   DateTime?
+    sentDate     DateTime?
+
+    // Relazioni documento
+    relatedQuoteId       Int?
+    relatedOrderId       Int?
+    relatedInvoiceId     Int?
+    relatedOpportunityId Int?
+
+    // Dati cliente (snapshot)
+    customerName      String
+    customerVatNumber String?
+    customerTaxCode   String?
+    customerPec       String?
+    customerSdiCode   String?
+
+    customerAddress    String?
+    customerCity       String?
+    customerPostalCode String?
+    customerProvince   String?
+
+    // SNAPSHOT Country Cliente
+    customerCountryCode String  @default("IT") @db.Char(2) // Sostituisce customerCountry
+    customerCountry     Country @relation("DocumentCountry", fields: [customerCountryCode], references: [code])
+
+    customerEmail String?
+    customerPhone String?
+
+    // Indirizzo spedizione
+    shippingName       String?
+    shippingAddress    String?
+    shippingCity       String?
+    shippingPostalCode String?
+    shippingProvince   String?
+
+    // SNAPSHOT Country Spedizione
+    shippingCountryCode String?  @db.Char(2) // Sostituisce shippingCountry
+    shippingCountry     Country? @relation("DocumentShippingCountry", fields: [shippingCountryCode], references: [code])
+
+    // Importi
+    currency          String  @default("EUR")
+    subtotal          Decimal @default(0) @db.Decimal(15, 2)
+    discountPercent   Decimal @default(0) @db.Decimal(5, 2)
+    discountAmount    Decimal @default(0) @db.Decimal(15, 2)
+    shippingCost      Decimal @default(0) @db.Decimal(15, 2)
+    shippingTaxAmount Decimal @default(0) @db.Decimal(15, 2)
+    taxableAmount     Decimal @default(0) @db.Decimal(15, 2)
+    taxAmount         Decimal @default(0) @db.Decimal(15, 2)
+    totalAmount       Decimal @default(0) @db.Decimal(15, 2)
+    paidAmount        Decimal @default(0) @db.Decimal(15, 2)
+
+    // Pagamento
+    // FK al set di regole usate per calcolare la scadenza
+    paymentMethodId  Int?
+    paymentMethodRel PaymentMethod? @relation("DocumentPaymentMethod", fields: [paymentMethodId], references: [id], onDelete: SetNull)
+
+    // Campi Snapshot (Mantengono i valori effettivi al momento della creazione)
+    paymentMethod String  @default("bank_transfer") @db.VarChar(50) // Nome/Code snapshot
+    paymentTerms  String? @db.VarChar(100) // Termine di pagamento descrittivo snapshot (es. 30gg Fine Mese)
+    bankName      String? @db.VarChar(100)
+    bankIban      String?
+    bankSwift     String?
+
+    // Note
+    notes              String? @db.Text
+    internalNotes      String? @db.Text
+    termsAndConditions String? @db.Text
+
+    // Metadata
+    createdByUserId Int
+    createdBy       User  @relation("CreatedBy", fields: [createdByUserId], references: [id])
+    assignedUserId  Int?
+    assignedUser    User? @relation("AssignedTo", fields: [assignedUserId], references: [id], onDelete: SetNull)
+
+    customFields Json?
+
+    // Relazioni
+    lines        DocumentLine[]
+    installments DocumentPaymentInstallment[] // rate pagamento
+    // Relazione alla transazione Intrastat
+    intrastatTransactions IntrastatTransaction[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([documentType])
+    @@index([status])
+    @@index([companyId])
+    @@index([customerId])
+    @@index([supplierId])
+    @@index([documentYear])
+    @@index([customerCountryCode])
+    @@index([shippingCountryCode])
+}
+
+model DocumentLine {
+    id         Int      @id @default(autoincrement())
+    documentId Int
+    document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+    // COLLEGAMENTO CORE: Variante Prodotto
+    // Opzionale perché la riga potrebbe essere un servizio "libero" o una nota
+    productVariantId Int?
+    productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: SetNull)
+
+    // Opzionale: Link al prodotto padre per raggruppamenti statistici facili
+    productId Int?
+    product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+    lineNumber Int
+    lineType   String @default("product") @db.VarChar(20)
+
+    code String?
+
+    // Campo 1: Descrizione nella lingua del compilatore/sistema (Originale)
+    nameSystem        String  @db.VarChar(255) // Nome dell'articolo nella lingua di base
+    descriptionSystem String? @db.Text
+
+    // Campo 2: Descrizione nella lingua del cliente (Tradotta)
+    nameCustomer        String? @db.VarChar(255) // Nome dell'articolo nella lingua del cliente
+    descriptionCustomer String? @db.Text
+
+    quantity Decimal @default(1) @db.Decimal(15, 6)
+    unit     String  @default("pz")
+
+    unitPrice Decimal @default(0) @db.Decimal(20, 6)
+    unitCost  Decimal @default(0) @db.Decimal(20, 6)
+
+    discountPercent Decimal @default(0) @db.Decimal(5, 2)
+    discountAmount  Decimal @default(0) @db.Decimal(15, 2)
+
+    lineTotal Decimal @default(0) @db.Decimal(15, 2)
+
+    taxRuleId Int?
+    taxRule   TaxRule? @relation("DocumentLineTaxRule", fields: [taxRuleId], references: [id], onDelete: SetNull)
+
+    // I campi snapshot di tasso/codice possono essere mantenuti per coerenza storica
+    taxPercent Decimal @default(22) @db.Decimal(5, 2)
+    taxAmount  Decimal @default(0) @db.Decimal(15, 2)
+    taxCode    String? @db.VarChar(10)
+
+    lineTotalWithTax Decimal @default(0) @db.Decimal(15, 2)
+
+    notes        String? @db.Text
+    customFields Json?
+
+    // Relazione alla transazione Intrastat
+    intrastatTransaction IntrastatTransaction?
+
+    @@index([documentId])
+    @@index([productId])
+}
+
+model DocumentPaymentInstallment {
+    id         Int      @id @default(autoincrement())
+    documentId Int
+    document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+    // Dati della rata
+    installmentNumber Int     @default(1)
+    percentage        Decimal @db.Decimal(5, 2) // 30.00, 40.00, etc.
+    amount            Decimal @db.Decimal(15, 2) // Importo effettivo in valuta
+
+    // Date e Status (Snapshot)
+    dueDate    DateTime // La data di scadenza CALCOLATA
+    paidDate   DateTime? // Data di pagamento effettivo
+    paidAmount Decimal   @default(0) @db.Decimal(15, 2)
+    status     String    @default("pending") @db.VarChar(20) // pending, paid, overdue
+
+    notes String? @db.Text
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([documentId])
+    @@index([dueDate])
+    @@index([status])
+}

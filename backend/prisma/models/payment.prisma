@@ -1,0 +1,69 @@
+// ============================================================================
+// PAGAMENTI
+// ============================================================================
+model PaymentMethod {
+    id   Int    @id @default(autoincrement())
+    code String @unique @db.VarChar(50) // Esempio: "SPLIT_30_30_40"
+
+    // Campi descrittivi
+    active   Boolean @default(true)
+    position Int     @default(0)
+
+    // Relazioni
+    translations PaymentMethodTranslation[] @relation(name: "PaymentMethodTranslations")
+    customers    Customer[]                  @relation(name: "CompanyPaymentMethod")
+    documents    Document[]                 @relation(name: "DocumentPaymentMethod")
+
+    // NUOVA RELAZIONE: Contiene tutti i dettagli di scadenza (le singole rate)
+    details PaymentTermDetail[]
+
+    createdAt                 DateTime                   @default(now())
+    updatedAt                 DateTime                   @updatedAt
+
+    @@index([active])
+}
+
+model PaymentTermDetail {
+    id              Int           @id @default(autoincrement())
+    paymentMethodId Int
+    paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Cascade)
+
+    // Percentuale
+    percentage Decimal @default(0) @db.Decimal(5, 2) // Esempio: 30.00, 40.00
+
+    // Regole di scadenza per questa rata
+    termType String @default("days_from_invoice") @db.VarChar(50) // Esempio: 'anticipated', 'days_from_invoice', 'end_of_month'
+
+    dueDays          Int     @default(0) // Giorni dalla data documento (es. 30, 60, 90)
+    isEndOfMonth     Boolean @default(false) // Se true, la scadenza è a fine mese + dueDays
+    isFixedDate      Boolean @default(false) // Scadenza giorno del mese prestabilito
+    fixedDay         Int?
+    fixedMonthOffset Int     @default(0)
+
+    position Int @default(0) // Ordine in cui processare le rate
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([paymentMethodId])
+    @@index([position])
+}
+
+model PaymentMethodTranslation {
+    id              Int           @id @default(autoincrement())
+    paymentMethodId Int
+    paymentMethod   PaymentMethod @relation("PaymentMethodTranslations", fields: [paymentMethodId], references: [id], onDelete: Cascade)
+
+    languageId Int
+    language   Language @relation(fields: [languageId], references: [id])
+
+    name        String  @db.VarChar(100) // Bonifico Bancario, Bank Transfer
+    description String? @db.Text
+
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime      @updatedAt
+
+    // Traduzione unica per modalità di pagamento e lingua.
+    @@unique([paymentMethodId, languageId])
+    @@index([languageId])
+}

@@ -1,0 +1,319 @@
+// ============================================================================
+// ANAGRAFICA CLIENTI
+// ============================================================================
+
+// Enum per il tipo di azienda
+enum CustomerType {
+    LEAD
+    PROSPECT
+    CUSTOMER
+    PARTNER
+    OTHER
+}
+
+// Enum per lo stato di Credit Check
+enum CreditCheckStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    IN_PROGRESS
+}
+
+enum CustomerSize {
+    MICRO
+    SMALL
+    MEDIUM
+    LARGE
+    ENTERPRISE
+}
+
+enum CustomerPriority {
+    LOW
+    MEDIUM
+    HIGH
+}
+
+enum CustomerSegment {
+    VIP
+    GOLD
+    SILVER
+    BRONZE
+    STANDARD
+}
+
+enum LeadStatus {
+    NEW
+    CONTACTED
+    QUALIFIED
+    PROPOSAL
+    NEGOTIATION
+    CLOSED_WON
+    CLOSED_LOST
+}
+
+enum CompanyTypeEntity {
+    JURIDICAL // Persona Giuridica (Azienda)
+    NATURAL // Persona Fisica (Privato/Ditta individuale)
+    FOREIGN // Entità Estera
+}
+
+// Enum per stato azienda
+enum CompanyStatus {
+    ACTIVE
+    INACTIVE
+    SUSPENDED
+    ARCHIVED
+}
+
+// Tabella Company (base comune)
+model Company {
+    id Int @id @default(autoincrement())
+
+    // Dati Base
+    code        String  @unique @db.VarChar(20)
+    companyName String  @db.VarChar(255)
+    tradeName   String? @db.VarChar(255)
+    legalForm   String? @db.VarChar(100)
+
+    status CompanyStatus @default(ACTIVE)
+
+    // Tipo Persona (per differenziare l'uso di CF o P.IVA)
+    entityType CompanyTypeEntity @default(JURIDICAL)
+
+    // Dati Fiscali ITALIANI (SdI)
+    vatNumber String? @db.VarChar(20) // Partita IVA
+    taxCode   String? @db.VarChar(20) // Codice Fiscale
+
+    // Codice Destinatario (o SDI/PEC)
+    sdiCode String? @db.VarChar(7) // Codice SDI (7 caratteri, '0000000' per i privati/esteri)
+    pec     String? @db.VarChar(255) // Indirizzo PEC
+
+    // Dati Fiscali ESTERI (necessari se Country non è IT)
+    eoriNumber String? @db.VarChar(20) // EORI (per transazioni extra UE)
+    vatId      String? @db.VarChar(20) // VAT ID per UE (es. FR123456789)
+
+    // Nazione Fiscale
+    countryCode String  @default("IT") @db.Char(2)
+    country     Country @relation("CompanyCountry", fields: [countryCode], references: [code])
+
+    // Indirizzo Legale (Relazione 1-a-1)
+    legalAddressId Int?            @unique
+    legalAddress   CompanyAddress? @relation("LegalAddress", fields: [legalAddressId], references: [id])
+
+    // Contatti Generali
+    mainEmail String? @db.VarChar(255)
+    mainPhone String? @db.VarChar(50)
+
+    // Campi per tracking
+    createdAt      DateTime  @default(now())
+    updatedAt      DateTime  @updatedAt
+    firstOrderDate DateTime?
+    totalOrders    Int       @default(0)
+    totalRevenue   Decimal   @default(0) @db.Decimal(15, 2)
+
+    // Relazioni
+    user           User?      @relation("AssignedUser", fields: [assignedUserId], references: [id])
+    assignedUserId Int?
+    activities     Activity[]
+
+    // Indirizzi
+    addresses CompanyAddress[] @relation("OtherAddresses")
+    contacts  Contact[]
+    customers Customer[]
+    suppliers Supplier[]
+
+    // Documenti
+    documents Document[]
+
+    // Note
+    notes CompanyNote[]
+
+    // Custom Fields
+    customFields Json?
+
+    // Opening Hours
+    openingHours Json?
+
+    // Index
+    @@index([vatNumber])
+    @@index([taxCode])
+}
+
+// Tabella Customer
+model Customer {
+    id Int @id @default(autoincrement())
+
+    // Collegamento 1-a-1 alla Company
+    companyId Int     @unique
+    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+    // Dati specifici Cliente/CRM
+    priority     CustomerPriority  @default(LOW)
+    segment      CustomerSegment   @default(STANDARD)
+    leadStatus   LeadStatus        @default(NEW)
+    size         CustomerSize      @default(SMALL)
+    type         CustomerType      @default(LEAD)
+    creditStatus CreditCheckStatus @default(PENDING)
+
+    // Dati Commerciali
+    defaultPriceListId Int?
+    defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id])
+
+    customerTaxRuleId Int? // Regola fiscale predefinita (es. Esportazione Extra UE)
+    customerTaxRule   TaxRule? @relation("CustomerTaxRule", fields: [customerTaxRuleId], references: [id])
+
+    paymentMethodId Int?
+    paymentMethod   PaymentMethod? @relation("CompanyPaymentMethod", fields: [paymentMethodId], references: [id])
+
+    creditLimit Decimal? @db.Decimal(15, 2) // Limite di credito CONCESSO al Cliente
+
+    // Tracking/Reportistica
+    firstSaleDate DateTime?
+    lastSaleDate  DateTime?
+    totalSales    Int       @default(0)
+    totalRevenue  Decimal   @default(0) @db.Decimal(15, 2)
+
+    // Relazioni a documenti di Vendita
+    documentsOut  Document[]    @relation("CustomerDocuments")
+    opportunities Opportunity[]
+    activities    Activity[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([leadStatus])
+}
+
+// Tabella Supplier
+model Supplier {
+    id Int @id @default(autoincrement())
+
+    // Collegamento 1-a-1 alla Company
+    companyId Int     @unique
+    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+    // Dati specifici Fornitore
+    paymentTerms String?  @db.VarChar(100) // Es. 30 giorni data fattura fine mese
+    creditLimit  Decimal? @db.Decimal(15, 2) // Limite di credito CONCESSO dal Fornitore
+    bankAccount  String?  @db.VarChar(100) // IBAN per bonifici in USCITA
+
+    // Costi e Logistica
+    leadTimeDays  Int?     @default(0) // Tempo standard di consegna
+    transportCost Decimal? @db.Decimal(10, 2)
+
+    // Tracking/Reportistica
+    firstOrderDate DateTime?
+    lastOrderDate  DateTime?
+    totalOrders    Int       @default(0)
+    totalSpent     Decimal   @default(0) @db.Decimal(15, 2)
+    rating         Int?      @default(5) // 1-5 stelle
+
+    // Relazioni a documenti di Acquisto
+    documentsIn Document[] @relation("SupplierDocuments")
+    products    Product[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+// Enum per tipo indirizzo
+enum AddressType {
+    LEGAL
+    BILLING
+    SHIPPING
+    OFFICE
+    WAREHOUSE
+    OTHER
+}
+
+model CompanyAddress {
+    id Int @id @default(autoincrement())
+
+    companyId Int
+    company   Company @relation("OtherAddresses", fields: [companyId], references: [id], onDelete: Cascade)
+
+    addressType AddressType @default(LEGAL) // LEGAL, BILLING, SHIPPING, WAREHOUSE
+
+    // Campi base dell'indirizzo
+    address String @db.VarChar(255)
+    city    String @db.VarChar(100)
+
+    // Provincia (Obbligatorio per IT SdI)
+    provinceCode String? @db.Char(2) // Codice Provincia (es. MI, RM)
+
+    zipCode String @db.VarChar(20)
+
+    countryCode String  @default("IT") @db.Char(2)
+    country     Country @relation("AddressCountry", fields: [countryCode], references: [code])
+
+    // Decimal corretto per coordinate geografiche
+    latitude  Decimal? @db.Decimal(10, 8) // Decimal(totale_cifre, decimali)
+    longitude Decimal? @db.Decimal(11, 8)
+
+    // Contatto specifico per questo indirizzo (es. telefono del magazzino)
+    phone String? @db.VarChar(50)
+
+    isPrimary Boolean @default(false)
+
+    companyForLegal Company? @relation("LegalAddress")
+
+    openingHours Json?
+    notes        String? @db.Text
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Unique per assicurare che ci sia al massimo un indirizzo primario per tipo
+    @@unique([companyId, addressType, isPrimary])
+    @@index([companyId])
+    @@index([addressType])
+    @@index([provinceCode])
+}
+
+model Contact {
+    id        Int     @id @default(autoincrement())
+    companyId Int
+    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+    firstName   String  @db.VarChar(100)
+    lastName    String  @db.VarChar(100)
+    email       String  @db.VarChar(255)
+    phone       String? @db.VarChar(50)
+    mobilePhone String? @db.VarChar(50)
+
+    position   String? @db.VarChar(100)
+    department String? @db.VarChar(100)
+
+    isPrimaryContact Boolean @default(false)
+    active           Boolean @default(true)
+
+    notes String? @db.Text
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    documents            Document[]
+    activities           Activity[]
+    activityParticipants ActivityParticipant[]
+
+    // Corretto: un contatto unico per email all'interno di un'azienda.
+    @@unique([companyId, email])
+    // Unico contatto primario in azienda
+    @@unique([companyId, isPrimaryContact])
+    @@index([companyId])
+    @@index([email])
+    @@index([isPrimaryContact]) // Utile per trovare velocemente il contatto principale
+}
+
+// Tabella Note
+model CompanyNote {
+    id        Int      @id @default(autoincrement())
+    companyId Int
+    company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    title     String   @db.VarChar(255)
+    content   String   @db.Text
+    authorId  Int
+    author    User     @relation(fields: [authorId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,15 @@
+model Country {
+  code   String  @id     // IT, DE, FR…
+  name   String
+  isEU   Boolean @default(false)
+
+  // Relazioni inverse
+  companyAddresses CompanyAddress[] @relation("AddressCountry")
+  companies Company[] @relation("CompanyCountry")
+  
+  documentCountry Document[] @relation("DocumentCountry")
+  documentShippingCountry Document[] @relation("DocumentShippingCountry")
+  
+  // Opzionale, ma utile:
+  languages       Language[]
+}

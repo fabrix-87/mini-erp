@@ -1,0 +1,44 @@
+model Category {
+    id       Int        @id @default(autoincrement())
+    parentId Int?
+    // Relazione auto-referenziante per la gerarchia
+    parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+    children Category[] @relation("CategoryHierarchy")
+
+    active   Boolean @default(true)
+    position Int     @default(0)
+    level    Int     @default(0)
+
+    translations CategoryTranslation[]
+    // Relazione many-to-many esplicita con Product (ProductCategory)
+    products     ProductCategory[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([parentId])
+    @@index([active])
+    @@index([level])
+}
+
+model CategoryTranslation {
+    id         Int      @id @default(autoincrement())
+    categoryId Int
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+    languageId Int
+    language   Language @relation(fields: [languageId], references: [id])
+
+    name            String  @db.VarChar(255)
+    description     String? @db.Text 
+    linkRewrite     String? @db.VarChar(255)
+    metaTitle       String? @db.VarChar(255)
+    metaDescription String? @db.Text 
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // traduzione unica per categoria e lingua.
+    @@unique([categoryId, languageId])
+    @@index([languageId])
+}

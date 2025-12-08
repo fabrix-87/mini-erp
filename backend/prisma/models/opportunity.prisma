@@ -1,0 +1,84 @@
+// ============================================================================
+// ENUMS OPPORTUNITY
+// ============================================================================
+
+enum OpportunityStatus {
+  OPEN // L'opportunità è attiva e in lavorazione
+  WON // Vendita conclusa con successo
+  LOST // Vendita persa
+  PENDING // In attesa di una decisione esterna (es. accettazione cliente)
+  CLOSED // Chiusa (generico, usata se WON/LOST non è ancora chiaro)
+}
+
+enum SalesStage {
+  LEAD_QUALIFICATION // Qualificazione del potenziale cliente
+  PROSPECTING // Ricerca e primo contatto
+  NEEDS_ANALYSIS // Analisi dei bisogni
+  PROPOSAL_SENT // Proposta inviata
+  NEGOTIATION // Trattativa
+  COMMITMENT // Impegno/Firma (Pre-Won)
+}
+
+// ============================================================================
+// OPPORTUNITA
+// ============================================================================
+model Opportunity {
+  id          Int     @id @default(autoincrement())
+  title       String  @db.VarChar(255)
+  description String? @db.Text
+
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // STATO E STAGE (MIGLIORATI CON ENUM)
+  status OpportunityStatus @default(OPEN)
+  stage  SalesStage        @default(LEAD_QUALIFICATION) // Lo stadio specifico della vendita
+
+  // METRICHE FINANZIARIE
+  estimatedValue Decimal? @db.Decimal(15, 2)
+  // Campo calcolato: ValoreAtteso = estimatedValue * (probability / 100)
+  weightedValue  Decimal  @default(0) @db.Decimal(15, 2)
+  probability    Int      @default(0) // 0-100. Deve essere mappato allo Stage.
+
+  // TEMPISTICHE CHIAVE
+  expectedCloseDate DateTime?
+  closedDate        DateTime?
+
+  // MOTIVAZIONI E RAGIONI
+  // Aggiunto un campo per specificare la ragione della perdita/vittoria
+  closedReasonId Int?
+
+  closedNotes String? @db.Text // Note sulla chiusura (utile per l'analisi)
+
+  // DATI UTENTE
+  createdByUserId Int
+  createdBy       User  @relation("CreatedBy", fields: [createdByUserId], references: [id])
+  assignedUserId  Int?
+  assignedUser    User? @relation("AssignedTo", fields: [assignedUserId], references: [id], onDelete: SetNull)
+
+  // DATA DI CAMBIO STAGE
+  lastStageChange DateTime @default(now()) // Utile per monitorare la stagnazione
+
+  // RELAZIONI
+  notes        String? @db.Text
+  customFields Json?
+
+  documents  Document[]
+  // Relazioni Activities
+  activities Activity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([status])
+  @@index([stage]) // Indice critico per i report di pipeline
+  @@index([assignedUserId])
+  @@index([expectedCloseDate])
+}
+
+model ClosedReason {
+  id          Int     @id @default(autoincrement())
+  code        String? @db.VarChar(50) // Es. 'PREZZO', 'CONCORRENZA', 'BISOGNO_NON_CONFERMATO'
+  description String?
+}

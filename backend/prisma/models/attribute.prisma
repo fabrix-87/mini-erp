@@ -1,0 +1,109 @@
+enum AttributeDisplayType {
+  SELECT
+  RADIO
+  COLOR
+  IMAGE
+}
+
+model AttributeGroup {
+  id              Int       @id @default(autoincrement())
+  
+  // Codice interno (slug) - es. "color", "size"
+  code            String    @unique @db.VarChar(50)
+  
+  // Tipo di visualizzazione
+  displayType     AttributeDisplayType @default(SELECT)
+  
+  position        Int       @default(0)
+  isPublic        Boolean   @default(true)
+
+  // Relazioni
+  translations    AttributeGroupTranslation[]
+  attributes      Attribute[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([position])
+}
+
+model AttributeGroupTranslation {
+  id                Int             @id @default(autoincrement())
+  
+  attributeGroupId  Int
+  attributeGroup    AttributeGroup  @relation(fields: [attributeGroupId], references: [id], onDelete: Cascade)
+  
+  // Relazione con la tabella Language esistente
+  languageId        Int
+  language          Language        @relation(fields: [languageId], references: [id])
+  
+  name              String          @db.VarChar(128) // es: "Colore", "Color"
+  publicName        String?         @db.VarChar(128) // Nome frontend se diverso
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  // Unica traduzione per gruppo e lingua
+  @@unique([attributeGroupId, languageId])
+  @@index([languageId])
+}
+
+model Attribute {
+  id                Int       @id @default(autoincrement())
+  
+  attributeGroupId  Int
+  attributeGroup    AttributeGroup @relation(fields: [attributeGroupId], references: [id], onDelete: Cascade)
+  
+  // Codice valore (slug) - es. "red", "xl"
+  code              String    @db.VarChar(50)
+  
+  // Metadati specifici
+  colorHex          String?   @db.VarChar(7)   // es: #FF0000
+  colorPms          String?   @db.VarChar(20)  // es: PMS 485C
+  imageUrl          String?   @db.VarChar(500) // URL icona/texture
+  
+  position          Int       @default(0)
+
+  // Relazioni
+  translations      AttributeTranslation[]
+  
+  // Relazione Many-to-Many esplicita con le varianti
+  variants          ProductVariantAttribute[]
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Unicità del codice all'interno del gruppo
+  @@unique([attributeGroupId, code])
+  @@index([attributeGroupId])
+}
+
+model AttributeTranslation {
+  id              Int       @id @default(autoincrement())
+  
+  attributeId     Int
+  attribute       Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  
+  languageId      Int
+  language        Language  @relation(fields: [languageId], references: [id])
+  
+  name            String    @db.VarChar(128) // es: "Rosso", "Red"
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([attributeId, languageId])
+  @@index([languageId])
+}
+
+model ProductVariantAttribute {
+  productVariantId  Int
+  productVariant    ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  
+  attributeId       Int
+  attribute         Attribute      @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  // Chiave primaria composta: una variante non può avere lo stesso attributo due volte
+  @@id([productVariantId, attributeId])
+  @@index([attributeId])
+}

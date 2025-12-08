@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # --- 1. Database: PostgreSQL ---
+  postgres:
+    image: postgres:15-alpine
+    container_name: erp_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - erp_network
+
+  # --- 2. Cache & Queue: Redis ---
+  redis:
+    image: redis:alpine
+    container_name: erp_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - erp_network
+
+  # --- 3. Storage: MinIO (S3 Compatible) ---
+  minio:
+    image: minio/minio
+    container_name: erp_minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - erp_network
+
+  # --- 4. Backend: Bun con hot reload ---
+  backend:
+    build: ./backend
+    container_name: erp_backend
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}?schema=public"
+      REDIS_HOST: redis
+      MINIO_ENDPOINT: minio
+      MINIO_ACCESS_KEY: ${MINIO_USER}
+      MINIO_SECRET_KEY: ${MINIO_PASSWORD}
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    networks:
+      - erp_network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: bun run dev  # Usa bun run dev
+
+  # --- 5. Frontend: Next.js con Bun ---
+  frontend:
+    build: ./frontend
+    container_name: erp_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: "http://localhost:4000"
+    depends_on:
+      - backend
+    networks:
+      - erp_network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+networks:
+  erp_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:

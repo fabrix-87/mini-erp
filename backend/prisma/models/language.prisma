@@ -1,0 +1,21 @@
+model Language {
+  id            Int    @id @default(autoincrement())
+  name          String @unique @db.VarChar(50) // Italiano, English, etc.
+  iso_code      String @unique @db.Char(2) // it, en, ...
+  language_code String @unique @db.Char(5) // it_IT, en_US, ...
+
+  // Relazioni
+  usersPreferred       User[]                @relation("UserPreferredLanguage")
+  productTranslations  ProductTranslation[]
+  categoryTranslations CategoryTranslation[]
+  paymentMethodTranslations PaymentMethodTranslation[]
+  taxRuleTranslations TaxRuleTranslation[]
+  attributeTranslations AttributeTranslation[]
+  attributeGroupTranslations AttributeGroupTranslation[]
+  countries Country[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([iso_code])
+}
