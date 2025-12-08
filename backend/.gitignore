@@ -1,7 +1,33 @@
-node_modules
-# Keep environment variables out of version control
+# Node
+node_modules/
+bun.lockb
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+build/
+.tmp/
+
+# Env
 .env
+.env.*.local
 
-/generated/prisma
+# Logs
+logs/
+*.log
+*.log.*
+logs/exceptions.log
+logs/rejections.log
 
-/generated/prisma
+# Prisma
+generated/
+.prisma/
+
+# Docker
+docker-data/
+
+# OS
+.DS_Store
+Thumbs.db
