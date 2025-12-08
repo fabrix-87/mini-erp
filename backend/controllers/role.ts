@@ -988,6 +988,13 @@ export const syncPermissions = asyncHandler(async (req: AuthRequest, res: Respon
     { code: 'activity:delete', resource: 'activity', action: 'delete', description: 'Eliminazione attività' },
     { code: 'activity:manage', resource: 'activity', action: 'manage', description: 'Gestione completa attività' },
 
+    // Activity permissions
+    { code: 'address:read', resource: 'address', action: 'read', description: 'Lettura indirizzi' },
+    { code: 'address:create', resource: 'address', action: 'create', description: 'Creazione indirizzi' },
+    { code: 'address:update', resource: 'address', action: 'update', description: 'Modifica indirizzi' },
+    { code: 'address:delete', resource: 'address', action: 'delete', description: 'Eliminazione indirizzi' },
+    { code: 'address:manage', resource: 'address', action: 'manage', description: 'Gestione completa indirizzi' },
+
     // User permissions
     { code: 'user:read', resource: 'user', action: 'read', description: 'Lettura utenti' },
     { code: 'user:create', resource: 'user', action: 'create', description: 'Creazione utenti' },

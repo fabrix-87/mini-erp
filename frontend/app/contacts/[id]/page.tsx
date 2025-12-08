@@ -85,7 +85,7 @@ export default function ContactDetailPage() {
       setContact(response.data);
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Errore nel caricamento");
-      router.push("/dashboard/contacts");
+      router.push("/contacts");
     } finally {
       setLoading(false);
     }
@@ -109,7 +109,7 @@ export default function ContactDetailPage() {
     try {
       await deleteContact(parseInt(id));
       toast.success("Contatto disattivato con successo");
-      router.push("/dashboard/contacts");
+      router.push("/contacts");
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "Errore durante la disattivazione"
@@ -200,7 +200,7 @@ export default function ContactDetailPage() {
           )}
           <Button
             variant="outline"
-            onClick={() => router.push(`/dashboard/contacts/${id}/edit`)}
+            onClick={() => router.push(`/contacts/${id}/edit`)}
           >
             <Edit className="mr-2 h-4 w-4" />
             Modifica
@@ -587,7 +587,7 @@ export default function ContactDetailPage() {
                       <div
                         key={c.id}
                         className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
-                        onClick={() => router.push(`/dashboard/contacts/${c.id}`)}
+                        onClick={() => router.push(`/contacts/${c.id}`)}
                       >
                         <div className="flex items-center gap-3">
                           <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -740,7 +740,7 @@ export default function ContactDetailPage() {
 
               <Button
                 variant="outline"
-                onClick={() => router.push(`/dashboard/contacts/${id}/edit#privacy`)}
+                onClick={() => router.push(`/contacts/${id}/edit#privacy`)}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Modifica Consensi

@@ -35,3 +35,12 @@ export {
 export { 
   getWarehouseStatistics 
 } from './dashboard/warehouse';
+
+// Supplier
+
+export {
+  getSupplierStatistics,
+  getSupplierAdvancedStatistics,
+  getSupplierOrderTrends,
+  compareSuppliers  
+} from './dashboard/supplier'

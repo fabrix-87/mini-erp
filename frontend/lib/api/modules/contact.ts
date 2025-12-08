@@ -9,18 +9,16 @@ export const getContact = async (
   return response.data;
 };
 
-export interface getContactParams {
+export interface getContactParams extends PaginationQueryType {
   search?: string;
   companyId?: number;
-  pagination?: PaginationQueryType;
+  contactType?: string;
 }
 
 export const getContacts = async (
   params: getContactParams = {
-    pagination: {
-      page: 1,
-      limit: 20,
-    },
+    page: 1,
+    limit: 20,
   }
 ): Promise<ApiResponse<Contact[]>> => {
   const response = await api.get(`/contacts/`, { params });

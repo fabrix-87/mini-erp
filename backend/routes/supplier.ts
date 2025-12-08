@@ -80,6 +80,19 @@ router.post(
 );
 
 /**
+ * @route   PUT /api/suppliers/:id/company
+ * @desc    Aggiorna dati anagrafici company del supplier
+ * @access  Private (supplier:update)
+*/
+router.put(
+  '/:id/company',
+  authenticateToken,
+  authorize(['supplier:update', 'supplier:manage']),
+  validateUpdateSupplierCompany,
+  updateSupplierCompany
+);
+
+/**
  * @route   PUT /api/suppliers/:id
  * @desc    Aggiorna dati supplier
  * @access  Private (supplier:update)
@@ -90,19 +103,6 @@ router.put(
   authorize(['supplier:update', 'supplier:manage']),
   validateUpdateSupplier,
   updateSupplier
-);
-
-/**
- * @route   PUT /api/suppliers/:id/company
- * @desc    Aggiorna dati anagrafici company del supplier
- * @access  Private (supplier:update)
- */
-router.put(
-  '/:id/company',
-  authenticateToken,
-  authorize(['supplier:update', 'supplier:manage']),
-  validateUpdateSupplierCompany,
-  updateSupplierCompany
 );
 
 /**

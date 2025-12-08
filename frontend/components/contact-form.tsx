@@ -36,20 +36,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { CreateContactData } from "@/types/contact";
-import { getCompany, searchCompanies } from "@/lib/api/modules/company";
+import { getCustomerById, getCustomers } from "@/lib/api/modules/customer";
 import {
   createContact,
   getContact,
   updateContact,
 } from "@/lib/api/modules/contact";
 import { cleanStringOrUndefined } from "@/lib/api/helpers";
-
-interface Company {
-  id: number;
-  code: string;
-  companyName: string;
-  tradeName: string;
-}
+import { Customer } from "@/types/customer";
 
 export default function ContactFormPage() {
   const router = useRouter();
@@ -62,7 +56,7 @@ export default function ContactFormPage() {
   const [loading, setLoading] = useState(isEditMode);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("personal");
-  const [companies, setCompanies] = useState<Company[]>([]);
+  const [companies, setCompanies] = useState<Customer[]>([]);
   const [searchingCompany, setSearchingCompany] = useState(false);
 
   useEffect(() => {
@@ -73,13 +67,13 @@ export default function ContactFormPage() {
 
   const fetchCompany = async (companyId: number) => {
     try {
-      const existingCompany = await getCompany(companyId);
+      const existingCompany = await getCustomerById(companyId);
       if (existingCompany.status === "success") {
         setCompanies([existingCompany.data]);
       }
     } catch (error) {
       toast.error("Errore durante il recupero dell'azienda");
-      router.push("/dashboard/contacts/new");
+      router.push("/contacts/new");
     }
   };
 
@@ -130,7 +124,7 @@ export default function ContactFormPage() {
       const response = await getContact(parseInt(contactId));
       const contact = response.data;
 
-      const companyRes = await getCompany(contact.companyId)
+      const companyRes = await getCustomerById(contact.companyId)
       setCompanies([companyRes.data])
 
       setFormData({
@@ -169,7 +163,7 @@ export default function ContactFormPage() {
       });
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Errore nel caricamento");
-      router.push("/dashboard/contacts");
+      router.push("/contacts");
     } finally {
       setLoading(false);
     }
@@ -180,7 +174,7 @@ export default function ContactFormPage() {
 
     setSearchingCompany(true);
     try {
-      const response = await searchCompanies(query, 10);
+      const response = await getCustomers({search: query, limit: 10});
       setCompanies(response.data);
     } catch (error) {
       console.error("Error searching companies:", error);
@@ -208,11 +202,11 @@ export default function ContactFormPage() {
       if (isEditMode) {
         await updateContact(parseInt(contactId), payload);
         toast.success("Contatto aggiornato con successo");
-        router.push(`/dashboard/contacts/${contactId}`);
+        router.push(`/contacts/${contactId}`);
       } else {
         const response = await createContact(payload);
         toast.success("Contatto creato con successo");
-        router.push(`/dashboard/contacts/${response.data.id}`);
+        router.push(`/contacts/${response.data.id}`);
       }
     } catch (error: any) {
       toast.error(
@@ -418,7 +412,7 @@ export default function ContactFormPage() {
                         key={company.id}
                         value={company.id.toString()}
                       >
-                        {company.companyName} ({company.code})
+                        {company.company?.companyName} ({company.company?.code})
                       </SelectItem>
                     ))}
                   </SelectContent>

@@ -148,23 +148,3 @@ export const calculateSupplierStats = (supplier: any) => ({
   rating: supplier.rating || 0,
 });
 
-/**
- * Formatta risposta paginata
- */
-export const formatPaginatedResponse = <T>(
-  data: T[],
-  total: number,
-  page: number,
-  limit: number
-) => ({
-  success: true,
-  data,
-  pagination: {
-    page,
-    limit,
-    total,
-    totalPages: Math.ceil(total / limit),
-    hasNext: page * limit < total,
-    hasPrev: page > 1,
-  },
-});

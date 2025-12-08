@@ -41,19 +41,6 @@ router.get(
 );
 
 /**
- * @route   GET /api/customers/:id
- * @desc    Ottieni dettagli customer con statistiche
- * @access  Private (customer:read)
- */
-router.get(
-  '/:id',
-  authenticateToken,
-  authorize(['customer:read', 'customer:manage']),
-  validateCustomerId,
-  getCustomerById
-);
-
-/**
  * @route   GET /api/customers/:id/stats
  * @desc    Ottieni statistiche avanzate customer
  * @access  Private (customer:read)
@@ -80,6 +67,20 @@ router.post(
 );
 
 /**
+ * @route   PUT /api/customers/:id/company
+ * @desc    Aggiorna dati anagrafici company del customer
+ * @access  Private (customer:update)
+*/
+router.put(
+  '/:id/company',
+  authenticateToken,
+  authorize(['customer:update', 'customer:manage']),
+  validateCustomerId,
+  validateUpdateCustomerCompany,
+  updateCustomerCompany
+);
+
+/**
  * @route   PUT /api/customers/:id
  * @desc    Aggiorna dati CRM customer
  * @access  Private (customer:update)
@@ -88,21 +89,9 @@ router.put(
   '/:id',
   authenticateToken,
   authorize(['customer:update', 'customer:manage']),
+  validateCustomerId,
   validateUpdateCustomer,
   updateCustomer
-);
-
-/**
- * @route   PUT /api/customers/:id/company
- * @desc    Aggiorna dati anagrafici company del customer
- * @access  Private (customer:update)
- */
-router.put(
-  '/:id/company',
-  authenticateToken,
-  authorize(['customer:update', 'customer:manage']),
-  validateUpdateCustomerCompany,
-  updateCustomerCompany
 );
 
 /**
@@ -114,6 +103,7 @@ router.patch(
   '/:id/lead-status',
   authenticateToken,
   authorize(['customer:update', 'customer:manage']),
+  validateCustomerId,
   validateUpdateLeadStatus,
   updateLeadStatus
 );
@@ -130,6 +120,20 @@ router.delete(
   validateCustomerId,
   deleteCustomer
 );
+
+/**
+ * @route   GET /api/customers/:id
+ * @desc    Ottieni dettagli customer con statistiche
+ * @access  Private (customer:read)
+ */
+router.get(
+  '/:id',
+  authenticateToken,
+  authorize(['customer:read', 'customer:manage']),
+  validateCustomerId,
+  getCustomerById
+);
+
 
 // ============================================================================
 // EXPORT

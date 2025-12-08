@@ -46,6 +46,7 @@ export const DateRangeQuerySchema = z
       .transform((val) => (val ? new Date(val) : undefined)),
 
     period: PeriodSchema.optional().default("last30days"),
+    groupBy: GroupBySchema.optional().default('day'),
   })
   .strict();
 
@@ -185,6 +186,56 @@ export const WarehouseQuerySchema = z.object({
 });
 
 // ============================================================================
+// SUPPLIER SPECIFIC SCHEMAS
+// ============================================================================
+
+/**
+ * Schema per statistiche avanzate fornitori
+ */
+export const SupplierAdvancedQuerySchema = z.object({
+  minRating: z.string().optional()
+    .transform(val => val ? parseInt(val, 10) : undefined)
+    .refine(val => !val || (val >= 1 && val <= 5), {
+      message: 'Rating deve essere tra 1 e 5',
+    }),
+  dateFrom: z.string().datetime().optional()
+    .transform(val => val ? new Date(val) : undefined),
+  dateTo: z.string().datetime().optional()
+    .transform(val => val ? new Date(val) : undefined),
+  countryCode: z.string().length(2).optional(),
+});
+
+/**
+ * Schema per trend ordini fornitori
+ */
+export const SupplierTrendsQuerySchema = z.object({
+  period: PeriodSchema.optional().default('last30days'),
+  groupBy: GroupBySchema.optional().default('day'),
+  startDate: z.iso.datetime().optional()
+    .transform(val => val ? new Date(val) : undefined),
+  endDate: z.iso.datetime().optional()
+    .transform(val => val ? new Date(val) : undefined),
+  supplierId: z.string().optional()
+    .transform(val => val ? parseInt(val, 10) : undefined),
+});
+
+/**
+ * Schema per confronto fornitori
+ */
+export const CompareSupplierQuerySchema = z.object({
+  supplierIds: z.string()
+    .min(1, 'Almeno un fornitore deve essere selezionato')
+    .refine(val => {
+      const ids = val.split(',');
+      return ids.length >= 1 && ids.length <= 10;
+    }, {
+      message: 'Puoi confrontare da 1 a 10 fornitori',
+    })
+    .transform(val => val.split(',').map(id => parseInt(id.trim(), 10))),
+});
+
+
+// ============================================================================
 // VALIDATION MIDDLEWARE EXPORTS
 // ============================================================================
 
@@ -228,6 +279,11 @@ export const validateDashboardWarehouse = validateQuery(
   "Warehouse statistics"
 );
 
+export const validateDashboardQuery = validateQuery(
+  DateRangeQuerySchema,
+  "Datarange query statistics"
+)
+
 // ============================================================================
 // TYPE EXPORTS
 // ============================================================================
@@ -243,3 +299,8 @@ export type CustomerQuery = z.infer<typeof CustomerQuerySchema>["query"];
 export type DocumentQuery = z.infer<typeof DocumentQuerySchema>["query"];
 export type FinancialQuery = z.infer<typeof FinancialQuerySchema>["query"];
 export type WarehouseQuery = z.infer<typeof WarehouseQuerySchema>["query"];
+export type SupplierAdvancedQuery = z.infer<typeof SupplierAdvancedQuerySchema>;
+export type SupplierTrendsQuery = z.infer<typeof SupplierTrendsQuerySchema>;
+export type CompareSupplierQuery = z.infer<typeof CompareSupplierQuerySchema>;
+export type Period = z.infer<typeof PeriodSchema>;
+export type GroupBy = z.infer<typeof GroupBySchema>;

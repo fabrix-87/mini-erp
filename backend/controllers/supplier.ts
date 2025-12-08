@@ -8,9 +8,9 @@ import {
 
 import {
   calculateSupplierStats,
-  formatPaginatedResponse,
   validateFiscalData,
 } from "../utils/company";
+import { formatPaginatedResponse } from "../utils/response";
 
 import { prisma } from "../config/prisma-client";
 

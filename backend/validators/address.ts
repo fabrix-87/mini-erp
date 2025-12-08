@@ -163,3 +163,4 @@ export const validateSetPrimaryAddress = (req: Request, res: Response, next: Nex
 export type CreateAddressInput = z.infer<typeof CreateAddressSchema>;
 export type UpdateAddressInput = z.infer<typeof UpdateAddressSchema>;
 export type AddressType = z.infer<typeof AddressTypeSchema>;
+export type AddressQueryInput = z.infer<typeof AddressQuerySchema>;

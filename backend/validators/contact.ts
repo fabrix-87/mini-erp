@@ -34,7 +34,6 @@ export const CreateContactSchema = z
       .trim(),
 
     email: z
-      .string()
       .email("Email non valida")
       .max(255, "Email non può superare 255 caratteri"),
 
@@ -123,20 +122,17 @@ export const ContactQuerySchema = z.object({
 
   position: z.string().optional(),
 
-  pagination: z
-    .string()
-    .optional()
-    .transform((val) => (val ? JSON.parse(val) : undefined))
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(20),
+  sortBy: z.enum(["firstName", "lastName", "companyId", "email"]).optional(),
+  sortOrder: z
+    .string() // Inizia con uno schema di stringa
+    .toLowerCase() // Trasforma la stringa in minuscolo
     .pipe(
-      z
-        .object({
-          page: z.number(),
-          limit: z.number(),
-          sortBy: z.enum(["firstname", "lastname", "companyId", "email"]),
-          sortOrder: z.enum(["asc", "desc"]),
-        })
-        .optional()
-    ),
+      // Passa il risultato trasformato al prossimo schema
+      z.enum(["asc", "desc"]) // Enum con valori in minuscolo
+    )
+    .default('asc'),
 });
 
 /**
@@ -202,6 +198,7 @@ export const validateToggleContactActive = (
 
 export type CreateContactInput = z.infer<typeof CreateContactSchema>;
 export type UpdateContactInput = z.infer<typeof UpdateContactSchema>;
+export type ContactQueryInput = z.infer<typeof ContactQuerySchema>;
 export type ToggleContactActiveInput = z.infer<
   typeof ToggleContactActiveSchema
 >;

@@ -6,11 +6,9 @@ import {
   generateCompanyCode,
 } from "../helpers/company";
 import { prisma } from "../config/prisma-client";
-import {
-  calculateCustomerStats,
-  formatPaginatedResponse,
-  validateFiscalData,
-} from "../utils/company";
+import { calculateCustomerStats, validateFiscalData } from "../utils/company";
+import { CustomerQueryInput } from "../validators/customer";
+import { formatPaginatedResponse } from "../utils/response";
 
 // ============================================================================
 // CUSTOMER CONTROLLERS
@@ -33,7 +31,7 @@ export const getAllCustomers = async (
       sortBy = "id",
       sortOrder = "desc",
       ...filters
-    } = req.query;
+    } = req.validatedQuery as CustomerQueryInput;
 
     const where = buildCustomerWhereClause(filters as any);
     const { skip, take } = buildPagination(Number(page), Number(limit));

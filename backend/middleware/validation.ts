@@ -76,14 +76,14 @@ export const validate = (
         if (requestSchema.query) {
           const querySchema = applySchemaOptions(requestSchema.query, config);
           const validatedQuery = await querySchema.parseAsync(req.query);
-          Object.assign(req.query, validatedQuery as any); // Type assertion necessaria per ParsedQs
+          (req as any).validatedQuery = validatedQuery;
         }
 
         // Valida params se presente
         if (requestSchema.params) {
           const paramsSchema = applySchemaOptions(requestSchema.params, config);
           const validatedParams = await paramsSchema.parseAsync(req.params);
-          Object.assign(req.params, validatedParams as any); // Type assertion necessaria per ParamsDictionary
+          (req as any).validatedParams = validatedParams;
         }
       } else {
         // Schema singolo - valida le parti specificate in source
@@ -105,9 +105,9 @@ export const validate = (
           if (source === "body") {
             req.body = validated;
           } else if (source === "query") {
-            Object.assign(req.query, validated);
+            (req as any).validatedQuery = validated;
           } else if (source === "params") {
-            Object.assign(req.params, validated);
+            (req as any).validatedParams = validated;
           }
         } else {
           // Altrimenti valida l'oggetto combinato

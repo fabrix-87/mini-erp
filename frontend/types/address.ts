@@ -1,5 +1,5 @@
 // Tipi ENUM
-export type AddressType = 'billing' | 'shipping' | 'legal' | 'operational' | 'warehouse' | 'other';
+export type AddressType = 'LEGAL' | 'BILLING' | 'SHIPPING' | 'OFFICE' | 'WAREHOUSE' | 'OTHER';
 
 export interface Address {
   id: number;
@@ -7,16 +7,15 @@ export interface Address {
   
   // Classificazione
   addressType: AddressType;
-  alias?: string | null;
+  //alias?: string | null;
   
   // Dati Indirizzo
-  addressLine1: string;
-  addressLine2?: string | null;
+  address: string;
   city: string;
-  postalCode: string;
-  province?: string | null;
-  region?: string | null;
-  country: string; // Nome completo o codice lungo
+  zipCode: string;
+  provinceCode?: string;
+  //region?: string ;
+  //country: string; // Nome completo o codice lungo
   countryCode?: string | null; // Codice ISO 3166-1 alpha-2
 
   // Coordinate geografiche
@@ -24,20 +23,20 @@ export interface Address {
   longitude?: number | null;
   
   // Flags
-  isDefault: boolean;
-  active: boolean;
-  isVerified: boolean;
+  isPrimary: boolean;
+  //active: boolean;
+  //isVerified: boolean;
   
   // Info Contatto Specifiche
-  contactName?: string | null;
-  contactPhone?: string | null;
-  contactEmail?: string | null;
+  phone?: string;
+  //contactPhone?: string | null;
+  //contactEmail?: string | null;
 
   // Logistica
-  deliveryNotes?: string | null;
+  //deliveryNotes?: string | null;
   openingHours?: Record<string, any> | null; // JSON
-  shippingZone?: string | null;
-  additionalShippingCost?: number;
+  //shippingZone?: string | null;
+  //additionalShippingCost?: number;
   
   // Note e Metadata
   notes?: string | null;

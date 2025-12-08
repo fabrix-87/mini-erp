@@ -91,7 +91,6 @@ export const BaseCompanySchema = z
       }),
 
     pec: z
-      .string()
       .email("Indirizzo PEC non valido")
       .max(255, "PEC non può superare 255 caratteri")
       .optional()

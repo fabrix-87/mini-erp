@@ -35,7 +35,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Contact } from "@/types/contact";
-import { getContacts } from "@/lib/api/modules/contact";
+import { getContactParams, getContacts } from "@/lib/api/modules/contact";
 
 const contactTypeColors: Record<string, string> = {
   primary: "bg-blue-500/10 text-blue-700",
@@ -71,7 +71,7 @@ export default function ContactsPage() {
   const fetchContacts = async () => {
     setLoading(true);
     try {
-      const params: any = {
+      const params: getContactParams = {
         page,
         limit: 20,
         sortBy: "lastName",
@@ -85,7 +85,6 @@ export default function ContactsPage() {
       setContacts(response.data);
       setTotalPages(response.pagination?.totalPages || 1);
       setTotalContacts(response.pagination?.totalItems || 0);
-      console.log(contacts);
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "Errore nel caricamento dei contatti"

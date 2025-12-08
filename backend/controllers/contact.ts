@@ -1,90 +1,88 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma-client";
-import { ApiResponse } from "../types/api-response"
-import logger from "../config/logger";
+import { ApiResponse } from "../types/api-response";
+import { ContactQueryInput } from "../validators/contact";
+import { formatPaginatedResponse } from "../utils/response";
 
-export const getAllContacts = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllContacts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { companyId, active, isPrimaryContact, search, pagination } = req.query;
+    const {
+      companyId,
+      active,
+      isPrimaryContact,
+      search,
+      page,
+      limit,
+      sortBy = "lastName",
+      sortOrder = "asc",
+    } = req.validatedQuery as ContactQueryInput;
     const where: any = {};
-    
-    if (companyId) where.companyId = parseInt(companyId as string);
-    if (active !== undefined) where.active = active === 'true';
-    if (isPrimaryContact !== undefined) where.isPrimaryContact = isPrimaryContact === 'true';
+
+    if (companyId) where.companyId = companyId;
+    if (active !== undefined) where.active = active === true;
+    if (isPrimaryContact !== undefined)
+      where.isPrimaryContact = isPrimaryContact === true;
     if (search) {
       where.OR = [
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
+        { firstName: { contains: search, mode: "insensitive" } },
+        { lastName: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
       ];
     }
 
-    // Parsing dei parametri di paginazione
-    const paginationParams = pagination ? JSON.parse(pagination as string) : null;
-    
     // Configurazione paginazione
-    const page = paginationParams?.page || 1;
-    const limit = paginationParams?.limit || 50;
     const skip = (page - 1) * limit;
 
     // Configurazione ordinamento dinamico
-    let orderBy: any = [{ isPrimaryContact: 'desc' }, { lastName: 'asc' }];
-    
-    if (paginationParams?.sortBy && paginationParams?.sortOrder) {
-      const sortFieldMap: Record<string, string> = {
-        firstname: 'firstName',
-        lastname: 'lastName',
-        companyId: 'companyId',
-        email: 'email'
-      };
-      
-      const sortField = sortFieldMap[paginationParams.sortBy];
-      orderBy = [{ [sortField]: paginationParams.sortOrder }];
+    let orderBy: any = [{ isPrimaryContact: "desc" }, { lastName: "asc" }];
+
+    if (sortBy && sortOrder) {
+      orderBy = [{ [sortBy]: sortOrder.toLowerCase() }];
     }
 
     // Query con paginazione
     const [contacts, totalCount] = await Promise.all([
       prisma.contact.findMany({
         where,
-        include: { company: { select: { id: true, code: true, companyName: true } } },
+        include: {
+          company: { select: { id: true, code: true, companyName: true } },
+        },
         orderBy,
         skip,
-        take: limit,
+        take: limit as number,
       }),
-      prisma.contact.count({ where })
+      prisma.contact.count({ where }),
     ]);
 
-    const totalPages = Math.ceil(totalCount / limit);
-
-    const response: ApiResponse = {
-      status: "success",
-      data: contacts,
-      results: contacts.length,
-      pagination: {
-        currentPage: page,
-        totalPages: totalPages,
-        totalItems: totalCount,
-        itemsPerPage: limit,
-        hasNextPage: page < totalPages,
-        hasPrevPage: page > 1
-      }
-    };
-
-    res.json(response);
+    res.json(
+      formatPaginatedResponse(
+        contacts,
+        totalCount,
+        page,
+        limit,
+      )
+    );
   } catch (error) {
     next(error);
   }
 };
 
-
-export const getContactById = async (req: Request, res: Response, next: NextFunction) => {
+export const getContactById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const contact = await prisma.contact.findUnique({
       where: { id: parseInt(req.params.id) },
       include: { company: true },
     });
     if (!contact) {
-      res.status(404).json({ success: false, message: 'Contatto non trovato' });
+      res.status(404).json({ success: false, message: "Contatto non trovato" });
       return;
     }
     res.json({ success: true, data: contact });
@@ -93,13 +91,19 @@ export const getContactById = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-export const createContact = async (req: Request, res: Response, next: NextFunction) => {
+export const createContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const data = req.body;
-    
-    const company = await prisma.company.findUnique({ where: { id: data.companyId } });
+
+    const company = await prisma.company.findUnique({
+      where: { id: data.companyId },
+    });
     if (!company) {
-      res.status(404).json({ success: false, message: 'Company non trovata' });
+      res.status(404).json({ success: false, message: "Company non trovata" });
       return;
     }
 
@@ -107,7 +111,10 @@ export const createContact = async (req: Request, res: Response, next: NextFunct
       where: { companyId: data.companyId, email: data.email },
     });
     if (existingEmail) {
-      res.status(400).json({ success: false, message: 'Email già esistente per questa company' });
+      res.status(400).json({
+        success: false,
+        message: "Email già esistente per questa company",
+      });
       return;
     }
 
@@ -119,20 +126,28 @@ export const createContact = async (req: Request, res: Response, next: NextFunct
     }
 
     const contact = await prisma.contact.create({ data });
-    res.status(201).json({ success: true, message: 'Contatto creato', data: contact });
+    res
+      .status(201)
+      .json({ success: true, message: "Contatto creato", data: contact });
   } catch (error) {
     next(error);
   }
 };
 
-export const updateContact = async (req: Request, res: Response, next: NextFunction) => {
+export const updateContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const data = req.body;
 
-    const existing = await prisma.contact.findUnique({ where: { id: parseInt(id) } });
+    const existing = await prisma.contact.findUnique({
+      where: { id: parseInt(id) },
+    });
     if (!existing) {
-      res.status(404).json({ success: false, message: 'Contatto non trovato' });
+      res.status(404).json({ success: false, message: "Contatto non trovato" });
       return;
     }
 
@@ -143,14 +158,21 @@ export const updateContact = async (req: Request, res: Response, next: NextFunct
       });
     }
 
-    const contact = await prisma.contact.update({ where: { id: parseInt(id) }, data });
-    res.json({ success: true, message: 'Contatto aggiornato', data: contact });
+    const contact = await prisma.contact.update({
+      where: { id: parseInt(id) },
+      data,
+    });
+    res.json({ success: true, message: "Contatto aggiornato", data: contact });
   } catch (error) {
     next(error);
   }
 };
 
-export const toggleContactActive = async (req: Request, res: Response, next: NextFunction) => {
+export const toggleContactActive = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const { active } = req.body;
@@ -158,19 +180,29 @@ export const toggleContactActive = async (req: Request, res: Response, next: Nex
       where: { id: parseInt(id) },
       data: { active },
     });
-    res.json({ success: true, message: `Contatto ${active ? 'attivato' : 'disattivato'}`, data: contact });
+    res.json({
+      success: true,
+      message: `Contatto ${active ? "attivato" : "disattivato"}`,
+      data: contact,
+    });
   } catch (error) {
     next(error);
   }
 };
 
-export const setPrimaryContact = async (req: Request, res: Response, next: NextFunction) => {
+export const setPrimaryContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
-    const contact = await prisma.contact.findUnique({ where: { id: parseInt(id) } });
-    
+    const contact = await prisma.contact.findUnique({
+      where: { id: parseInt(id) },
+    });
+
     if (!contact) {
-      res.status(404).json({ success: false, message: 'Contatto non trovato' });
+      res.status(404).json({ success: false, message: "Contatto non trovato" });
       return;
     }
 
@@ -184,13 +216,21 @@ export const setPrimaryContact = async (req: Request, res: Response, next: NextF
       data: { isPrimaryContact: true },
     });
 
-    res.json({ success: true, message: 'Contatto primario impostato', data: updated });
+    res.json({
+      success: true,
+      message: "Contatto primario impostato",
+      data: updated,
+    });
   } catch (error) {
     next(error);
   }
 };
 
-export const deleteContact = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const contact = await prisma.contact.findUnique({
@@ -199,7 +239,7 @@ export const deleteContact = async (req: Request, res: Response, next: NextFunct
     });
 
     if (!contact) {
-      res.status(404).json({ success: false, message: 'Contatto non trovato' });
+      res.status(404).json({ success: false, message: "Contatto non trovato" });
       return;
     }
 
@@ -212,7 +252,7 @@ export const deleteContact = async (req: Request, res: Response, next: NextFunct
     }
 
     await prisma.contact.delete({ where: { id: parseInt(id) } });
-    res.json({ success: true, message: 'Contatto eliminato' });
+    res.json({ success: true, message: "Contatto eliminato" });
   } catch (error) {
     next(error);
   }

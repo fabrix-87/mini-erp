@@ -7,11 +7,12 @@ import {
   getAddressInclude,  
   clearPrimaryAddresses,
 } from '../helpers/company';
+import { AddressQueryInput } from "../validators/address";
 
 
 export const getAllAddresses = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const where = buildAddressWhereClause(req.query as any);
+    const where = buildAddressWhereClause(req.validatedQuery as AddressQueryInput);
     const addresses = await prisma.companyAddress.findMany({
       where,
       include: getAddressInclude(),

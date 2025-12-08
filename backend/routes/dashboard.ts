@@ -11,6 +11,7 @@ import {
   validateDashboardDocument,
   validateDashboardFinancial,
   validateDashboardWarehouse,
+  validateDashboardQuery,
 } from '../validators/dashboard';
 import {
   getDashboardOverview,
@@ -21,6 +22,7 @@ import {
   getDocumentStatistics,
   getFinancialStatistics,
   getWarehouseStatistics,
+  getSupplierStatistics,
 } from '../controllers/dashboard';
 
 const router = express.Router();
@@ -131,6 +133,19 @@ router.get(
   authorize(['dashboard:read', 'dashboard:manage', 'warehouse:read']),
   validateDashboardWarehouse,
   getWarehouseStatistics
+);
+
+/**
+ * @route   GET /api/dashboard/warehouse
+ * @desc    Statistiche magazzino e movimenti
+ * @access  Private (dashboard:read, warehouse:read)
+ */
+router.get(
+  '/supplier',
+  authenticateToken,
+  authorize(['dashboard:read', 'dashboard:manage', 'supplier:read']),
+  validateDashboardQuery,
+  getSupplierStatistics
 );
 
 // ============================================================================
