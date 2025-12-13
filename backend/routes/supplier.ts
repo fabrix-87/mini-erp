@@ -41,19 +41,6 @@ router.get(
 );
 
 /**
- * @route   GET /api/suppliers/:id
- * @desc    Ottieni dettagli supplier con statistiche
- * @access  Private (supplier:read)
- */
-router.get(
-  '/:id',
-  authenticateToken,
-  authorize(['supplier:read', 'supplier:manage']),
-  validateSupplierId,
-  getSupplierById
-);
-
-/**
  * @route   GET /api/suppliers/:id/stats
  * @desc    Ottieni statistiche avanzate supplier
  * @access  Private (supplier:read)
@@ -88,6 +75,7 @@ router.put(
   '/:id/company',
   authenticateToken,
   authorize(['supplier:update', 'supplier:manage']),
+  validateSupplierId,
   validateUpdateSupplierCompany,
   updateSupplierCompany
 );
@@ -101,6 +89,7 @@ router.put(
   '/:id',
   authenticateToken,
   authorize(['supplier:update', 'supplier:manage']),
+  validateSupplierId,
   validateUpdateSupplier,
   updateSupplier
 );
@@ -114,6 +103,7 @@ router.patch(
   '/:id/rating',
   authenticateToken,
   authorize(['supplier:update', 'supplier:manage']),
+  validateSupplierId,
   validateUpdateSupplierRating,
   updateSupplierRating
 );
@@ -131,6 +121,18 @@ router.delete(
   deleteSupplier
 );
 
+/**
+ * @route   GET /api/suppliers/:id
+ * @desc    Ottieni dettagli supplier con statistiche
+ * @access  Private (supplier:read)
+ */
+router.get(
+  '/:id',
+  authenticateToken,
+  authorize(['supplier:read', 'supplier:manage']),
+  validateSupplierId,
+  getSupplierById
+);
 // ============================================================================
 // EXPORT
 // ============================================================================

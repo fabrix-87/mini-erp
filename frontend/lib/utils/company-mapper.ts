@@ -30,6 +30,8 @@ export function mapApiToForm(
     mainEmail: company?.mainEmail || "",
     mainPhone: company?.mainPhone || "",
     customFields: company?.customFields,
+    legalAddressId: company?.legalAddressId,
+    creditLimit: company?.creditLimit || 0,
   };
 
   // Mappa l'indirizzo legale se presente
@@ -54,7 +56,7 @@ export function mapApiToForm(
       size: customer.size || "SMALL",
       type: customer.type || "LEAD",
       creditStatus: customer.creditStatus || "PENDING",
-      creditLimit: customer.creditLimit,
+      creditLimit: customer.creditLimit || 0,
       totalSales: customer.totalSales || 0,
       totalRevenue: customer.totalRevenue || "0",
     };
@@ -65,7 +67,7 @@ export function mapApiToForm(
       paymentTerms: supplier.paymentTerms || "",
       leadTimeDays: supplier.leadTimeDays || 0,
       rating: supplier.rating || 5,
-      creditLimit: supplier.creditLimit,
+      creditLimit: supplier.creditLimit || 0,
       totalOrders: supplier.totalOrders || 0,
       totalSpent: supplier.totalSpent || "0",
     };

@@ -23,7 +23,10 @@ import { Supplier, SupplierQueryParams } from "@/types/supplier";
 import { CompanyType } from "@/types/company";
 import { createAddress, updateAddress } from "@/lib/api/modules/address";
 import { Address } from "@/types/address";
-import { updateCustomerCompany, updateSupplierCompany } from "@/lib/api/modules/company";
+import {
+  updateCustomerCompany,
+  updateSupplierCompany,
+} from "@/lib/api/modules/company";
 
 // ============================================================================
 // CUSTOMER HOOKS
@@ -83,10 +86,14 @@ export function useCreateCustomer() {
 
       // Se c'è un indirizzo legale, crealo associato al nuovo cliente
       if (legalAddress && customerResponse.data?.id) {
-        await createAddress(customerResponse.data.id, {
+        const newAddress = await createAddress(customerResponse.data.companyId, { // Nell'indirizzo metto l'id della company
           ...legalAddress,
           addressType: "LEGAL",
           isPrimary: true,
+        });
+        // Setta l'indirizzo legale appena creato nella company del fornitore
+        await updateSupplierCompany(customerResponse.data.id, {
+          legalAddressId: newAddress.data.id,
         });
       }
 
@@ -128,17 +135,23 @@ export function useUpdateCustomer(id: number) {
         customerResponse = await updateCustomer(id, customerData);
       }
 
+      const companyId = companyData?.id || customerResponse?.data?.companyId;
+
       // 3. Gestisci l'indirizzo legale
-      if (legalAddress) {
+      if (legalAddress && companyId) {
         if (legalAddressId) {
           // Aggiorna l'indirizzo esistente
           await updateAddress(legalAddressId, legalAddress);
         } else {
           // Crea un nuovo indirizzo
-          await createAddress(id, {
+          const newAddress = await createAddress(companyId, {  // Nell'indirizzo metto l'id della company
             ...legalAddress,
             addressType: "LEGAL",
-            isPrimary: true,
+            isPrimary: true
+          });
+          // Setta l'indirizzo legale appena creato nella company del fornitore
+          await updateSupplierCompany(id, {
+            legalAddressId: newAddress.data.id,
           });
         }
       }
@@ -181,7 +194,7 @@ export function useDeleteCustomer() {
 /**
  * Hook per recuperare la lista dei fornitori
  */
-export function useSuppliers(params: SupplierQueryParams = {}) {
+export function useSuppliers(params: SupplierQueryParams = { page: 1 }) {
   return useQuery({
     queryKey: ["suppliers", params],
     queryFn: () => getSuppliers(params),
@@ -227,10 +240,14 @@ export function useCreateSupplier() {
 
       // Se c'è un indirizzo legale, crealo associato al nuovo fornitore
       if (legalAddress && supplierResponse.data?.id) {
-        await createAddress(supplierResponse.data.id, {
+        const newAddress = await createAddress(supplierResponse.data.companyId, {
           ...legalAddress,
           addressType: "LEGAL",
-          isPrimary: true,
+          isPrimary: true
+        });
+        // Setta l'indirizzo legale appena creato nella company del fornitore
+        await updateSupplierCompany(supplierResponse.data.id, {
+          legalAddressId: newAddress.data.id,
         });
       }
 
@@ -272,17 +289,23 @@ export function useUpdateSupplier(id: number) {
         supplierResponse = await updateSupplier(id, supplierData);
       }
 
+      const companyId = companyData?.id || supplierResponse?.data?.companyId;
+
       // 3. Gestisci l'indirizzo legale
-      if (legalAddress) {
+      if (legalAddress && companyId) {
         if (legalAddressId) {
           // Aggiorna l'indirizzo esistente
           await updateAddress(legalAddressId, legalAddress);
         } else {
           // Crea un nuovo indirizzo
-          await createAddress(id, {
+          const newAddress = await createAddress(companyId, {
             ...legalAddress,
             addressType: "LEGAL",
             isPrimary: true,
+          });
+          // Setta l'indirizzo legale appena creato nella company del fornitore
+          await updateSupplierCompany(id, {
+            legalAddressId: newAddress.data.id,
           });
         }
       }

@@ -27,8 +27,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Progress } from "@/components/ui/progress"
 import { toast } from "sonner"
 import { LeadStats } from '@/types/lead'
-import { getCompanies, getLeadStats } from '@/lib/api/modules/company'
-import { Company } from '@/types/company'
+import { getCustomer } from '@/lib/api/modules/customer'
+import { Customer } from '@/types/customer'
 
 const leadStatusColors: Record<string, string> = {
   new: 'bg-blue-500/10 text-blue-700 dark:text-blue-400',
@@ -52,7 +52,7 @@ const leadStatusLabels: Record<string, string> = {
 
 export default function LeadsPage() {
   const router = useRouter()
-  const [leads, setLeads] = useState<Company[]>([])
+  const [leads, setLeads] = useState<Customer[]>([])
   const [stats, setStats] = useState<LeadStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')

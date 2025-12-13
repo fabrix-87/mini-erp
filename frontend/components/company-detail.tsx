@@ -59,7 +59,7 @@ export default function CompanyDetailPage() {
 
   const handleEdit = () => {
     const path = companyType === "CUSTOMER" ? "customers" : "suppliers";
-    router.push(`/dashboard/${path}/${entityId}/edit`);
+    router.push(`/${path}/${entityId}/edit`);
   };
 
   const handleDelete = async () => {
@@ -70,7 +70,7 @@ export default function CompanyDetailPage() {
         await deleteSupplierMutation.mutateAsync(entityId);
       }
       const path = companyType === "CUSTOMER" ? "customers" : "suppliers";
-      router.push(`/dashboard/${path}`);
+      router.push(`/${path}`);
     } catch (error: any) {
       // Error già gestito nel mutation
     }
@@ -127,7 +127,7 @@ export default function CompanyDetailPage() {
             size="icon"
             onClick={() => {
               const path = companyType === "CUSTOMER" ? "customers" : "suppliers";
-              router.push(`/dashboard/${path}`);
+              router.push(`/${path}`);
             }}
           >
             <ArrowLeft className="h-4 w-4" />

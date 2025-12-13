@@ -263,8 +263,6 @@ model CompanyAddress {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    // Unique per assicurare che ci sia al massimo un indirizzo primario per tipo
-    @@unique([companyId, addressType, isPrimary])
     @@index([companyId])
     @@index([addressType])
     @@index([provinceCode])

@@ -4,6 +4,7 @@ import {
   validateAddressId,
   validateAddressQuery,
   validateCreateAddress,
+  validateSetPrimaryAddress,
   validateUpdateAddress,
 } from "../validators/address";
 import {
@@ -42,6 +43,7 @@ router.put(
   "/:id",
   authenticateToken,
   authorize(["address:update", "address:manage"]),
+  validateAddressId,
   validateUpdateAddress,
   updateAddress
 );
@@ -57,6 +59,7 @@ router.delete(
   authenticateToken,
   authorize(["address:delete", "address:manage"]),
   validateAddressId,
+  validateSetPrimaryAddress,
   deleteAddress
 );
 

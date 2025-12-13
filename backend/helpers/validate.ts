@@ -2,7 +2,7 @@ import { z, ZodError, ZodType } from "zod";
 import { ValidationError } from "../utils/app-error"; 
 import logger from "../config/logger"; 
 import { ValidateOptions } from '../types/validate'
-
+import { Decimal } from "@prisma/client/runtime/client";
 
 // ============================================================================
 // HELPER FUNCTIONS
@@ -52,3 +52,67 @@ export const applySchemaOptions = (
   return processedSchema;
 };
 
+/**
+ * Schema per Decimal(10, 2) - Strategy Value
+ */
+export const StrategyValueSchema = z
+  .union([
+    z
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/, "Formato non valido (max 2 decimali)"),
+    z.number(),
+  ])
+  .transform((val) => new Decimal(val))
+  .refine((val) => val.greaterThanOrEqualTo(0), {
+    message: "Il valore deve essere >= 0",
+  });
+
+/**
+ * Schema per Decimal(19, 4) - Prezzi
+ */
+export const PriceSchema = z
+  .union([
+    z
+      .string()
+      .regex(/^\d+(\.\d{1,4})?$/, "Formato prezzo non valido (max 4 decimali)"),
+    z.number(),
+  ])
+  .transform((val) => new Decimal(val))
+  .refine((val) => val.greaterThan(0), {
+    message: "Il prezzo deve essere > 0",
+  });
+
+/**
+ * Schema per Decimal(19, 4) - Prezzi
+ */
+export const CreditLimitSchema = z
+  .union([
+    z
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/, "Formato prezzo non valido (max 2 decimali)"),
+    z.number(),
+  ])
+  .transform((val) => new Decimal(val))
+  .refine((val) => val.greaterThanOrEqualTo(0), {
+    message: "Il limite deve essere >= 0",
+  });
+
+/**
+ * Schema per Decimal(5, 2) - Percentuale sconto
+ */
+export const DiscountPercentSchema = z
+  .union([
+    z
+      .string()
+      .regex(
+        /^\d+(\.\d{1,2})?$/,
+        "Formato percentuale non valido (max 2 decimali)"
+      ),
+    z.number(),
+  ])
+  .transform((val) => new Decimal(val))
+  .refine((val) => val.greaterThanOrEqualTo(0) && val.lessThanOrEqualTo(100), {
+    message: "La percentuale deve essere tra 0 e 100",
+  })
+  .optional()
+  .nullable();

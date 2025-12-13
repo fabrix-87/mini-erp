@@ -131,7 +131,7 @@ export function ClassificationTab({ formData, onChange, companyType }: Classific
                 <div className="p-3 border rounded-lg">
                   <div className="text-muted-foreground">Spesa Totale</div>
                   <div className="text-2xl font-bold">
-                    €{(formData.totalSpent || 0).toFixed(2)}
+                    €{parseFloat(formData.totalSpent || "0").toFixed(2)}
                   </div>
                 </div>
                 <div className="p-3 border rounded-lg">

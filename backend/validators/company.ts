@@ -62,6 +62,13 @@ export const BaseCompanySchema = z
     status: CompanyStatusSchema.default("ACTIVE"),
     entityType: CompanyTypeEntitySchema.default("JURIDICAL"),
 
+    legalAddressId: z
+      .number()
+      .int("Legal address ID deve essere un intero")
+      .positive("Legal address ID deve essere positivo")
+      .optional()
+      .nullable(),
+
     // ===== Dati Fiscali ITALIANI =====
     vatNumber: z
       .string()
@@ -83,18 +90,27 @@ export const BaseCompanySchema = z
 
     sdiCode: z
       .string()
-      .length(7, "Codice SDI deve essere esattamente 7 caratteri")
-      .optional()
-      .nullable()
-      .refine((val) => !val || sdiCodeRegex.test(val), {
+      .refine((val) => val === "" || val.length === 7, {
+        message: "Codice SDI deve essere esattamente 7 caratteri",
+      })
+      .refine((val) => val === "" || sdiCodeRegex.test(val), {
         message: "Codice SDI non valido (7 caratteri alfanumerici)",
-      }),
+      })
+      .transform((val) => (val === "" ? null : val))
+      .nullable()
+      .optional(),
 
     pec: z
-      .email("Indirizzo PEC non valido")
-      .max(255, "PEC non può superare 255 caratteri")
-      .optional()
-      .nullable(),
+      .string()
+      .transform((val) => (val.trim() === "" ? null : val.trim()))
+      .refine((val) => val === null || z.email().safeParse(val).success, {
+        message: "Indirizzo PEC non valido",
+      })
+      .refine((val) => val === null || val.length <= 255, {
+        message: "PEC non può superare 255 caratteri",
+      })
+      .nullable()
+      .optional(),
 
     // ===== Dati Fiscali ESTERI =====
     eoriNumber: z

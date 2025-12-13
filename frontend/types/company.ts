@@ -77,7 +77,7 @@ export interface CompanyFormData {
   size?: CustomerSize;
   type?: CompanyType;
   creditStatus?: CreditCheckStatus;
-  creditLimit?: number;
+  creditLimit: number;
   
   // Supplier specific
   paymentTerms?: string;

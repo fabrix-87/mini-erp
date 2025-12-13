@@ -10,6 +10,10 @@ export const getCustomers = async (
 ): Promise<ApiResponse<Customer[]>> => {
     const defaultParams = { limit: 20, page: 1 };
 
+    if(params.leadStatus === "all") params.leadStatus = undefined;
+    if(params.type === "all") params.type = undefined;
+    if(params.segment === "all") params.segment = undefined;
+
     // I parametri forniti dall'utente (contenuti in 'params') SOVRASCRIVERANNO i default.
     const finalParams = {
         ...defaultParams,

@@ -82,6 +82,8 @@ export default function CompanyFormPage() {
       leadTimeDays: 0,
       rating: 5,
     }),
+
+    creditLimit: 0,
   });
 
   // Fetch existing data usando gli hook specifici
@@ -121,11 +123,8 @@ export default function CompanyFormPage() {
     if (companyType === "CUSTOMER") {
       if (isEditMode) {
         // UPDATE: separa i dati
-        const companyData = extractCompanyData(formData);
+        const {legalAddressId, ...companyData} = extractCompanyData(formData);
         const customerData = extractCustomerData(formData);
-
-        // Estrai legalAddressId dalla risposta del server
-        const legalAddressId = companyData?.legalAddressId;
 
         updateCustomerMutation.mutate(
           {
@@ -156,11 +155,8 @@ export default function CompanyFormPage() {
     } else {
       if (isEditMode) {
         // UPDATE: separa i dati
-        const companyData = extractCompanyData(formData);
+        const {legalAddressId, ...companyData} = extractCompanyData(formData);
         const supplierData = extractSupplierData(formData);
-
-        // Estrai legalAddressId dalla risposta del server
-        const legalAddressId = companyData?.legalAddressId;
 
         updateSupplierMutation.mutate(
           {

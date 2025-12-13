@@ -19,7 +19,14 @@ export function CompanyActivitiesTab({ companyId }: CompanyActivitiesTabProps) {
 
   const { data, isLoading } = useQuery({
     queryKey: ["activities", { companyId }],
-    queryFn: () => getActivities({ companyId, page: 1, limit: 50 }),
+    queryFn: () =>
+      getActivities({
+        companyId,
+        page: 1,
+        limit: 20,
+        sortBy: "scheduledDate",
+        sortOrder: "asc",
+      }),
   });
 
   const activities = data?.data || [];
@@ -78,9 +85,7 @@ export function CompanyActivitiesTab({ companyId }: CompanyActivitiesTabProps) {
         <CardTitle>Attività ({activities.length})</CardTitle>
         <Button
           size="sm"
-          onClick={() =>
-            router.push(`/dashboard/activities/new?companyId=${companyId}`)
-          }
+          onClick={() => router.push(`/activities/new?companyId=${companyId}`)}
         >
           <Plus className="mr-2 h-4 w-4" />
           Nuova Attività
@@ -96,7 +101,7 @@ export function CompanyActivitiesTab({ companyId }: CompanyActivitiesTabProps) {
             <Button
               variant="outline"
               onClick={() =>
-                router.push(`/dashboard/activities/new?companyId=${companyId}`)
+                router.push(`/activities/new?companyId=${companyId}`)
               }
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -109,8 +114,10 @@ export function CompanyActivitiesTab({ companyId }: CompanyActivitiesTabProps) {
               <Card key={activity.id} className="relative">
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
-                    <div className="text-2xl">{getActivityIcon(activity.type)}</div>
-                    
+                    <div className="text-2xl">
+                      {getActivityIcon(activity.type)}
+                    </div>
+
                     <div className="flex-1 space-y-2">
                       <div className="flex items-start justify-between">
                         <div>
@@ -146,7 +153,7 @@ export function CompanyActivitiesTab({ companyId }: CompanyActivitiesTabProps) {
                             {formatDateTime(activity.activityDate)}
                           </div>
                         )}
-                        
+
                         {activity.duration && (
                           <div className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />

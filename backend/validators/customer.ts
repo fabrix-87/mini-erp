@@ -14,6 +14,7 @@ import {
   CompanyQueryBaseSchema,
   CompanyIdSchema,
 } from "./company";
+import { CreditLimitSchema } from "../helpers/validate";
 
 // ============================================================================
 // CUSTOMER-SPECIFIC ENUMS
@@ -110,11 +111,7 @@ export const CreateCustomerSchema = z
       .optional()
       .nullable(),
 
-    creditLimit: z
-      .number()
-      .nonnegative("Credit limit deve essere positivo o zero")
-      .optional()
-      .nullable(),
+    creditLimit: CreditLimitSchema.optional().nullable(),
   })
   .strict();
 
@@ -137,7 +134,7 @@ export const UpdateCustomerSchema = z
 
     paymentMethodId: z.number().int().positive().optional().nullable(),
 
-    creditLimit: z.number().nonnegative().optional().nullable(),
+    creditLimit: CreditLimitSchema.optional().nullable(),
   })
   .strict();
 

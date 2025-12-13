@@ -72,10 +72,10 @@ export interface CustomerQueryParams {
   assignedUserId?: number;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
-  type?: CompanyType;
+  type?: CompanyType | "all";
   priority?: CustomerPriority;
-  segment?: CustomerSegment;
-  leadStatus?: LeadStatus;
+  segment?: CustomerSegment | "all";
+  leadStatus?: LeadStatus | "all";
   creditStatus?: CreditCheckStatus;
   size?: CustomerSize;
   priceListId?: number;

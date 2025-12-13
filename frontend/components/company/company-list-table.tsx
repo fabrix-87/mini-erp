@@ -20,10 +20,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Eye, Edit, Trash2, MoreVertical, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Eye,
+  Edit,
+  Trash2,
+  MoreVertical,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Customer } from "@/types/customer";
 import { Supplier } from "@/types/supplier";
 import { CompanyType } from "@/types/company";
+import { id } from "date-fns/locale";
 
 interface CompanyListTableProps {
   data: (Customer | Supplier)[];
@@ -63,6 +72,11 @@ export function CompanyListTable({
     const path = type === "CUSTOMER" ? "customers" : "suppliers";
     router.push(`/${path}/${id}/edit`);
   };
+
+  const handleDelete = (id: number) => {
+    console.log("delete");
+    return;
+  }
 
   if (data.length === 0) {
     return (
@@ -115,7 +129,7 @@ export function CompanyListTable({
                   </>
                 )}
                 <TableHead>Stato</TableHead>
-                <TableHead className="text-right">Azioni</TableHead>
+                <TableHead className="text-right w-[150px]">Azioni</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -125,7 +139,6 @@ export function CompanyListTable({
                   <TableRow
                     key={item.id}
                     className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => handleView(item.id)}
                   >
                     <TableCell>
                       <div>
@@ -210,28 +223,64 @@ export function CompanyListTable({
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                          <Button variant="ghost" size="sm">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleView(item.id)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Visualizza
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleEdit(item.id)}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Modifica
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Elimina
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      {/* DROPDOWN MENU (MOBILE: VISIBILE SOLO SU SCHERMI < md) */}
+                      <div className="md:hidden">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger
+                            asChild
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Button variant="ghost" size="sm">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => handleView(item.id)}
+                            >
+                              <Eye className="mr-2 h-4 w-4" />
+                              Visualizza
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleEdit(item.id)}
+                            >
+                              <Edit className="mr-2 h-4 w-4" />
+                              Modifica
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-destructive">
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Elimina
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+
+                      {/* PULSANTI DIRETTI (DESKTOP: VISIBILE SOLO SU SCHERMI >= md) */}
+                      <div className="hidden space-x-2 md:inline-flex">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleView(item.id)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleEdit(item.id)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        {/* Puoi decidere se mostrare il tasto Elimina direttamente o lasciarlo nascosto */}
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );

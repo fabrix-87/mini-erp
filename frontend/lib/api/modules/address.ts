@@ -31,7 +31,6 @@ export const updateAddress = async (
   companyId: number,
   data: Partial<Address>
 ): Promise<ApiResponse<Address>> => {
-  data.companyId = companyId;
   const response = await api.put(`/addresses/${companyId}`, data);
   return response.data;
 };

@@ -1,4 +1,4 @@
-import { Company } from "./company";
+import { BaseCompany } from "./company";
 import { Contact } from "./contact";
 
 /**
@@ -24,6 +24,7 @@ export interface getActivitiesParams {
   search?: string;
   dateFrom?: string;
   dateTo?: string;
+  companyId?: number;
 }
 
 
@@ -96,7 +97,7 @@ export interface Activity {
   updatedAt: string;
 
   // Inclusione delle Relazioni (come ritornate dagli endpoint)
-  Company?: Company;
+  Company?: BaseCompany;
   Contact?: Contact;
   followUpActivity?: Activity; // Auto-referenziante per l'attività di follow-up
 }

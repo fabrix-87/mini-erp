@@ -72,7 +72,7 @@ export function CompanyAddressesTab({ companyId }: CompanyAddressesTabProps) {
         <Button
           size="sm"
           onClick={() =>
-            router.push(`/dashboard/addresses/new?companyId=${companyId}`)
+            router.push(`/addresses/new?companyId=${companyId}`)
           }
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -89,7 +89,7 @@ export function CompanyAddressesTab({ companyId }: CompanyAddressesTabProps) {
             <Button
               variant="outline"
               onClick={() =>
-                router.push(`/dashboard/addresses/new?companyId=${companyId}`)
+                router.push(`/addresses/new?companyId=${companyId}`)
               }
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -117,7 +117,7 @@ export function CompanyAddressesTab({ companyId }: CompanyAddressesTabProps) {
                       variant="ghost"
                       size="sm"
                       onClick={() =>
-                        router.push(`/dashboard/addresses/${address.id}/edit`)
+                        router.push(`/addresses/${address.id}/edit`)
                       }
                     >
                       <Edit className="h-4 w-4" />

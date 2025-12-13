@@ -109,7 +109,7 @@ export function CompanyDocumentsTab({
           size="sm"
           onClick={() =>
             router.push(
-              `/dashboard/documents/new?${
+              `/documents/new?${
                 companyType === "CUSTOMER" ? "customerId" : "supplierId"
               }=${companyId}`
             )
@@ -130,7 +130,7 @@ export function CompanyDocumentsTab({
               variant="outline"
               onClick={() =>
                 router.push(
-                  `/dashboard/documents/new?${
+                  `/documents/new?${
                     companyType === "CUSTOMER" ? "customerId" : "supplierId"
                   }=${companyId}`
                 )
@@ -186,7 +186,7 @@ export function CompanyDocumentsTab({
                         variant="ghost"
                         size="sm"
                         onClick={() =>
-                          router.push(`/dashboard/documents/${doc.id}`)
+                          router.push(`/documents/${doc.id}`)
                         }
                       >
                         <Eye className="h-4 w-4" />

@@ -137,24 +137,15 @@ export const SetPrimaryAddressSchema = z.object({
 // VALIDATION MIDDLEWARE EXPORTS
 // ============================================================================
 
-export const validateCreateAddress = (req: Request, res: Response, next: NextFunction) => 
-  validateBody(CreateAddressSchema, 'Address creation')(req, res, next);
+export const validateCreateAddress = validateBody(CreateAddressSchema, 'Address creation');
 
-export const validateUpdateAddress = (req: Request, res: Response, next: NextFunction) =>
-  validate({ body: UpdateAddressSchema, params: AddressIdSchema }, 'Address update')(req, res, next);
+export const validateUpdateAddress = validateBody(UpdateAddressSchema, 'Address update');
 
-export const validateAddressId = (req: Request, res: Response, next: NextFunction) =>
-  validateParams(AddressIdSchema, 'Address ID')(req, res, next);
+export const validateAddressId = validateParams(AddressIdSchema, 'Address ID');
 
-export const validateAddressQuery = (req: Request, res: Response, next: NextFunction) =>
-  validateQuery(AddressQuerySchema, 'Address query')(req, res, next);
+export const validateAddressQuery = validateQuery(AddressQuerySchema, 'Address query');
 
-export const validateSetPrimaryAddress = (req: Request, res: Response, next: NextFunction) => {
-  return validate({
-    body: SetPrimaryAddressSchema,
-    params: AddressIdSchema
-  }, 'Set primary address')(req, res, next);
-};
+export const validateSetPrimaryAddress = validateBody(SetPrimaryAddressSchema, 'Set primary address');
 
 // ============================================================================
 // TYPE EXPORTS

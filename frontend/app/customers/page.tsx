@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Search, Filter, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import { CustomerQueryParams } from "@/types/customer";
 import { CompanyListTable } from "@/components/company/company-list-table";
 import { CompanyListSkeleton } from "@/components/company/company-list-skeleton";
 import { CompanyListStats } from "@/components/company/company-list-stats";
+import { debounce } from "@/lib/utils";
 
 export default function CustomersPage() {
   const router = useRouter();
@@ -26,15 +27,34 @@ export default function CustomersPage() {
     limit: 20,
     sortBy: "updatedAt",
     sortOrder: "desc",
+    search: "",
   });
+
+  // stato locale per l'input di ricerca
+  const [searchInputValue, setSearchInputValue] = useState(params.search || "");
+
+  // FUNZIONE BASE CHE AGGIORNA I PARAMETRI REALI (Quella da debouncare)
+  const updateSearchParams = (search: string) => {
+    // Solo qui aggiorniamo lo stato che triggera il fetch
+    setParams((prevParams) => ({ ...prevParams, search, page: 1 }));
+    console.log(`Ricerca params aggiornati a: ${search}`);
+  };
+
+  // FUNZIONE DEBOUNCED:
+  // Creata una sola volta (grazie a useCallback) e ritarda l'esecuzione di updateSearchParams
+  const debouncedSetSearchParams = useCallback(
+    debounce(updateSearchParams, 400), // Ritardo di 400ms (regolabile)
+    []
+  );
 
   const { data, isLoading } = useCustomers(params);
 
   const customers = data?.data || [];
   const totalPages = data?.pagination?.totalPages || 1;
 
-  const handleSearch = (search: string) => {
-    setParams({ ...params, search, page: 1 });
+  const handleSearchChange = (search: string) => {
+    setSearchInputValue(search); // Aggiorna subito l'input visivo
+    debouncedSetSearchParams(search); // Aggiorna i parametri con debounce
   };
 
   const handleFilterChange = (key: keyof CustomerQueryParams, value: any) => {
@@ -68,7 +88,7 @@ export default function CustomersPage() {
             <Download className="mr-2 h-4 w-4" />
             Esporta
           </Button>
-          <Button onClick={() => router.push("/dashboard/customers/new")}>
+          <Button onClick={() => router.push("/customers/new")}>
             <Plus className="mr-2 h-4 w-4" />
             Nuovo Cliente
           </Button>
@@ -85,8 +105,8 @@ export default function CustomersPage() {
           <Input
             placeholder="Cerca per nome, email, P.IVA..."
             className="pl-10"
-            value={params.search || ""}
-            onChange={(e) => handleSearch(e.target.value)}
+            value={searchInputValue}
+            onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
 
@@ -153,7 +173,7 @@ export default function CustomersPage() {
         data={customers}
         type="CUSTOMER"
         onSort={handleSort}
-        currentPage={params.page}
+        currentPage={params.page || 1}
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
