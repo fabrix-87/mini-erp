@@ -215,7 +215,7 @@ export default function CompanyFormPage() {
               {isEditMode
                 ? `Modifica ${
                     companyType === "CUSTOMER" ? "Cliente" : "Fornitore"
-                  }`
+                  } - ${formData.companyName}`
                 : `Nuovo ${
                     companyType === "CUSTOMER" ? "Cliente" : "Fornitore"
                   }`}

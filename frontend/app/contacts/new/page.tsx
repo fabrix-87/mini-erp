@@ -1,5 +1,5 @@
-import ContactFormPage from "@/components/contact-form";
+import ContactForm from "@/components/contact/contact-form";
 
-export default function newContactPage() {
-    return <ContactFormPage/>
+export default function ContactNewPage() {
+  return <ContactForm isNew={true} />;
 }

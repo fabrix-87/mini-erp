@@ -1,8 +1,6 @@
 import express from 'express';
 import { authenticateToken, authorize } from '../middleware/auth';
-import { validate } from '../middleware/validation';
-import {
-  ContactIdSchema,
+import {  
   validateContactQuery,
   validateContactId,
   validateCreateContact,
@@ -101,7 +99,7 @@ router.put(
   '/:id',
   authenticateToken,
   authorize(['contact:update', 'contact:manage']),
-  validate(ContactIdSchema, 'Contact ID', { source: ['params'] }),
+  validateContactId,
   validateUpdateContact,
   updateContact
 );
@@ -115,7 +113,6 @@ router.patch(
   '/:id/toggle-active',
   authenticateToken,
   authorize(['contact:update', 'contact:manage']),
-  validate(ContactIdSchema, 'Contact ID', { source: ['params'] }),
   validateContactId,
   toggleContactActive
 );

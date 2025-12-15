@@ -1,6 +1,5 @@
 import { z } from "zod";
 import {
-  validate,
   validateBody,
   validateParams,
   validateQuery,
@@ -76,7 +75,7 @@ export const CreateContactSchema = z
 /**
  * Schema per l'aggiornamento di un Contact
  */
-export const UpdateContactSchema = CreateContactSchema.omit({ companyId: true })
+export const UpdateContactSchema = CreateContactSchema
   .partial()
   .strict();
 
@@ -132,7 +131,7 @@ export const ContactQuerySchema = z.object({
       // Passa il risultato trasformato al prossimo schema
       z.enum(["asc", "desc"]) // Enum con valori in minuscolo
     )
-    .default('asc'),
+    .default("asc"),
 });
 
 /**
@@ -148,49 +147,27 @@ export const ToggleContactActiveSchema = z
 // VALIDATION MIDDLEWARE EXPORTS
 // ============================================================================
 
-export const validateCreateContact = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  return validateBody(CreateContactSchema, "Contact creation")(req, res, next);
-};
+export const validateCreateContact = validateBody(
+  CreateContactSchema,
+  "Contact creation"
+);
 
-export const validateUpdateContact = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) =>
-  validate(
-    { body: UpdateContactSchema, params: ContactIdSchema },
-    "Contact update"
-  )(req, res, next);
+export const validateUpdateContact = validateBody(
+  UpdateContactSchema,
+  "Contact update"
+);
 
-export const validateContactId = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => validateParams(ContactIdSchema, "Contact ID")(req, res, next);
+export const validateContactId = validateParams(ContactIdSchema, "Contact ID");
 
-export const validateContactQuery = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => validateQuery(ContactQuerySchema, "Contact query")(req, res, next);
+export const validateContactQuery = validateQuery(
+  ContactQuerySchema,
+  "Contact query"
+);
 
-export const validateToggleContactActive = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  return validate(
-    {
-      body: ToggleContactActiveSchema,
-      params: ContactIdSchema,
-    },
-    "Toggle contact active"
-  )(req, res, next);
-};
+export const validateToggleContactActive = validateBody(
+  ToggleContactActiveSchema,
+  "Toggle contact active"
+);
 
 // ============================================================================
 // TYPE EXPORTS

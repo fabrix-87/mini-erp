@@ -41,7 +41,6 @@
 
   --color-border: oklch(92% 0 0); /* Bordi molto sottili */
   --color-input: oklch(92% 0 0);
-  --color-ring: oklch(58% 0.2 260);
 
   --tw-border-color: var(--color-border);
 
@@ -93,7 +92,6 @@
 
   --color-border: oklch(28% 0.02 270);
   --color-input: oklch(28% 0.02 270);
-  --color-ring: oklch(75% 0.15 260);
 
   /* Sidebar Dark */
   --color-sidebar-background: oklch(15% 0.01 270);
@@ -141,7 +139,6 @@
 
     --color-border: oklch(28% 0.02 270);
     --color-input: oklch(28% 0.02 270);
-    --color-ring: oklch(75% 0.15 260);
 
     /* Sidebar Dark */
     --color-sidebar-background: oklch(15% 0.01 270);

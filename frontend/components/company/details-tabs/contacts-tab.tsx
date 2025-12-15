@@ -15,8 +15,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Mail, Phone, Star, Edit } from "lucide-react";
-import { getContacts } from "@/lib/api/modules/contact";
+import { Plus, Mail, Phone, Star, Edit, Eye } from "lucide-react";
+import contactService from "@/services/contact-services";
+import { Contact } from "@/types/contact";
 
 interface CompanyContactsTabProps {
   companyId: number;
@@ -27,7 +28,7 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
 
   const { data, isLoading } = useQuery({
     queryKey: ["contacts", { companyId }],
-    queryFn: () => getContacts({ companyId, page: 1, limit: 100 }),
+    queryFn: () => contactService.getAll({ companyId, page: 1, limit: 100 }),
   });
 
   const contacts = data?.data || [];
@@ -87,13 +88,12 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
                   <TableHead>Nome</TableHead>
                   <TableHead>Ruolo</TableHead>
                   <TableHead>Contatti</TableHead>
-                  <TableHead>Tipo</TableHead>
                   <TableHead>Stato</TableHead>
                   <TableHead className="text-right">Azioni</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {contacts.map((contact: any) => (
+                {contacts.map((contact: Contact) => (
                   <TableRow key={contact.id}>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -101,7 +101,7 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
                           <p className="font-medium">
                             {contact.firstName} {contact.lastName}
                           </p>
-                          {contact.isPrimary && (
+                          {contact.isPrimaryContact && (
                             <Badge variant="secondary" className="mt-1">
                               <Star className="mr-1 h-3 w-3" />
                               Principale
@@ -112,7 +112,7 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="text-sm">{contact.jobTitle || "N/A"}</p>
+                        <p className="text-sm">{contact.position || "N/A"}</p>
                         {contact.department && (
                           <p className="text-xs text-muted-foreground">
                             {contact.department}
@@ -126,20 +126,17 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
                           <div className="flex items-center gap-1 text-sm">
                             <Mail className="h-3 w-3 text-muted-foreground" />
                             <span className="truncate max-w-[200px]">
-                              {contact.email}
+                              <a href={`mailto:${contact.email}`}>{contact.email}</a>
                             </span>
                           </div>
                         )}
                         {contact.phone && (
                           <div className="flex items-center gap-1 text-sm">
                             <Phone className="h-3 w-3 text-muted-foreground" />
-                            <span>{contact.phone}</span>
+                            <a href={`tel:${contact.phone}`}>{contact.phone}</a>
                           </div>
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{contact.contactType}</Badge>
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -154,6 +151,15 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
                         size="sm"
                         onClick={() =>
                           router.push(`/contacts/${contact.id}`)
+                        }
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          router.push(`/contacts/${contact.id}/edit`)
                         }
                       >
                         <Edit className="h-4 w-4" />

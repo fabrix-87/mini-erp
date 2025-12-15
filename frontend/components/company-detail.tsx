@@ -130,13 +130,13 @@ export default function CompanyDetailPage() {
               router.push(`/${path}`);
             }}
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4" /> 
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">{companyData?.companyName}</h1>
+            <h1 className="text-3xl font-bold">{companyData?.company?.companyName}</h1>
             <p className="text-muted-foreground">
-              {companyData?.tradeName && `${companyData.tradeName} • `}
-              {companyData?.code}
+              {companyData?.company?.tradeName && `${companyData.company.tradeName} • `}
+              {companyData?.company?.code}
             </p>
           </div>
         </div>
