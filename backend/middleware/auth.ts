@@ -1,3 +1,4 @@
+// middleware/auth.ts
 import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { UnauthorizedError, ForbiddenError } from '../utils/app-error';

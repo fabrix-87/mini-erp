@@ -35,6 +35,13 @@ import {
   deleteUser,
 } from '../controllers/user';
 
+import {
+  loginRateLimiter,
+  registerRateLimiter,
+  refreshTokenRateLimiter,
+  passwordResetRateLimiter,
+} from '../middleware/redis-rate-limit';
+
 const router = express.Router();
 
 // ============================================================================
@@ -46,35 +53,35 @@ const router = express.Router();
  * @desc    Registra nuovo utente (pubblico)
  * @access  Public
  */
-router.post('/register', validateRegisterUser, register);
+router.post('/register', registerRateLimiter, validateRegisterUser, register);
 
 /**
  * @route   POST /api/users/login
  * @desc    Login utente
  * @access  Public
  */
-router.post('/login', validateLogin, login);
+router.post('/login', loginRateLimiter, validateLogin, login);
 
 /**
  * @route   POST /api/users/logout
  * @desc    Logout utente (invalidazione token)
  * @access  Public
  */
-router.post('/logout', logout);
+router.post('/logout', authenticateToken, logout);
 
 /**
  * @route   POST /api/users/refresh-token
  * @desc    Refresh access token usando refresh token
  * @access  Public
  */
-router.post('/refresh-token', validateRefreshToken, refreshToken);
+router.post('/refresh-token', refreshTokenRateLimiter, validateRefreshToken, refreshToken);
 
 /**
  * @route   POST /api/users/forgot-password
  * @desc    Richiesta reset password (invia email)
  * @access  Public
  */
-router.post('/forgot-password', validateForgotPassword, forgotPassword);
+router.post('/forgot-password', passwordResetRateLimiter, validateForgotPassword, forgotPassword);
 
 /**
  * @route   POST /api/users/reset-password

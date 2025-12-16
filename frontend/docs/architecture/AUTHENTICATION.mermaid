@@ -1,0 +1,81 @@
+sequenceDiagram
+    participant User as User/Browser
+    participant Middleware as Next.js Middleware
+    participant ServerComp as Server Component
+    participant RouteHandler as Route Handler
+    participant Express as Express Backend
+    participant Redis as Redis Cache
+    participant PG as PostgreSQL
+
+    Note over User,PG: 1. LOGIN FLOW
+    User->>RouteHandler: POST /api/auth/login
+    RouteHandler->>Express: POST /auth/login + fingerprint
+    Express->>PG: Validate credentials + rate limiting
+    PG-->>Express: User found
+    Express->>Express: Generate JWT (jti, aud, iss, fingerprint)
+    Express->>Redis: Store session + refresh token (atomic)
+    Express-->>RouteHandler: Access + Refresh tokens
+    RouteHandler->>RouteHandler: Set httpOnly cookies
+    RouteHandler-->>User: Redirect to /dashboard
+
+    Note over User,PG: 2. PROTECTED PAGE SSR
+    User->>Middleware: Navigate to /dashboard
+    Middleware->>Middleware: Read accessToken from cookie
+    Middleware->>Middleware: LOCAL: Verify JWT signature with jose
+    Middleware->>Middleware: LOCAL: Check exp, iss, aud, claims
+    alt Token valid & NOT expiring soon
+        Middleware->>Middleware: Add x-user-id header
+        Middleware->>ServerComp: Forward request
+    else Token expires in <5min
+        Note over Middleware,Express: ONLY NOW call backend
+        Middleware->>Express: POST /auth/refresh
+        Express->>Redis: Validate refresh token whitelist
+        Express->>Redis: Rotate refresh token (atomic)
+        Express-->>Middleware: New tokens
+        Middleware->>Middleware: Update cookies in response
+        Middleware->>ServerComp: Forward with new tokens
+    else Token expired or invalid signature
+        Note over Middleware,Express: Try refresh
+        Middleware->>Express: POST /auth/refresh
+        alt Refresh successful
+            Express->>Redis: Validate + rotate
+            Express-->>Middleware: New tokens
+            Middleware->>ServerComp: Forward request
+        else Refresh failed
+            Middleware-->>User: Redirect to /login
+        end
+    end
+    
+    ServerComp->>ServerComp: cookies() - read accessToken
+    ServerComp->>ServerComp: LOCAL: Verify JWT with jose
+    ServerComp->>Express: Fetch data with token
+    Express->>Express: Final validation (jti, fingerprint)
+    Express->>Redis: Check blacklist + session
+    Express-->>ServerComp: Protected data
+    ServerComp-->>User: Render page
+
+    Note over User,PG: 3. CLIENT API CALL (Token Expired)
+    User->>ServerComp: Trigger action
+    ServerComp->>Express: API request with cookie
+    Express->>Express: Verify token + jti + fingerprint
+    Express->>Redis: Check session
+    Express-->>ServerComp: 401 Unauthorized
+    ServerComp->>RouteHandler: POST /api/auth/refresh
+    RouteHandler->>Express: Refresh with cookie
+    Express->>Redis: Rotate token atomically
+    Express-->>RouteHandler: New tokens
+    RouteHandler->>RouteHandler: Update cookies
+    RouteHandler-->>ServerComp: Success
+    ServerComp->>Express: Retry original request
+    Express-->>ServerComp: Success
+
+    Note over User,PG: 4. LOGOUT
+    User->>RouteHandler: POST /api/auth/logout
+    RouteHandler->>Express: POST /auth/logout
+    Express->>Redis: MULTI transaction
+    Express->>Redis: Remove session + whitelist
+    Express->>Redis: Add jti to blacklist (TTL)
+    Express->>Redis: EXEC
+    Express-->>RouteHandler: Success
+    RouteHandler->>RouteHandler: Clear cookies
+    RouteHandler-->>User: Redirect to /login

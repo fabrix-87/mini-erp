@@ -1,4 +1,5 @@
 /**
+ * // middleware/async-handler.ts
  * Wrapper per gestire automaticamente gli errori async
  * Elimina il bisogno di try-catch in ogni controller
  */

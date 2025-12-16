@@ -41,16 +41,35 @@ const startServer = async () => {
     });
 
     // 5. Gestisci graceful shutdown 
-    const shutdown = (signal: string) => {
+    const shutdown = async (signal: string) => {
         logger.info(`${signal} received: closing server...`);
         
-        // Aggiungi qui la chiusura di altre risorse (es. DB) se necessario
-        // await sequelize.close(); 
+        // Chiudi Redis
+        try {
+            const { disconnectRedis } = await import('./config/redis');
+            await disconnectRedis();
+        } catch (error: any) {
+            logger.error(`Error closing Redis: ${error.message}`);
+        }
+
+        // Chiudi Prisma
+        try {
+            await require('./config/prisma-client').prisma.$disconnect();
+            logger.info('✅ Database connection closed');
+        } catch (error: any) {
+            logger.error(`Error closing database: ${error.message}`);
+        }
         
         server.close(() => {
             logger.info("Server closed");
             process.exit(0);
         });
+
+        // Force close dopo 10 secondi
+        setTimeout(() => {
+            logger.error('Forced shutdown after timeout');
+            process.exit(1);
+        }, 10000);
     };
 
     process.on("SIGTERM", () => shutdown("SIGTERM"));

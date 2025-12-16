@@ -7,8 +7,8 @@ import logger from "./config/logger";
 import errorHandler, { notFoundHandler } from "./middleware/error-handler";
 import { prisma } from "./config/prisma-client";
 import { prismaVersion } from "./generated/prisma/internal/prismaNamespace";
-import apiRouter from './routes/index'
-import validateEnv from './config/validate-env';
+import apiRouter from "./routes/index";
+import validateEnv from "./config/validate-env";
 validateEnv();
 
 // Inizializza l'app Express
@@ -19,19 +19,26 @@ const app: Application = express();
  * @returns {Promise<Express.Application>} L'istanza dell'app Express configurata.
  */
 export const initApp = async (): Promise<Application> => {
-  // 1. Inizializzazione Database
+  // 1. Inizializzazione Database PostgreSQL
   try {
-    // Verifica la connessione a Prisma con PostgreSQL
     await prisma.$connect();
     logger.info("✅ PostgreSQL connected and Prisma client initialized.");
   } catch (err: any) {
-    // Errore critico: se il DB primario non è disponibile, l'app non può avviarsi.
     logger.error(`❌ CRITICAL: PostgreSQL connection failed: ${err.message}`);
-    // Termina il processo per prevenire l'avvio di un'app non funzionante.
     process.exit(1);
   }
 
-  // 2. Middleware di Sicurezza e Parsing
+  // 2. Inizializzazione Redis
+  try {
+    const { connectRedis } = await import("./config/redis");
+    await connectRedis();
+    logger.info("✅ Redis connected successfully.");
+  } catch (err: any) {
+    logger.error(`❌ CRITICAL: Redis connection failed: ${err.message}`);
+    process.exit(1);
+  }
+
+  // 3. Middleware di Sicurezza e Parsing
   app.use(helmet());
   app.use(
     cors({
@@ -46,34 +53,46 @@ export const initApp = async (): Promise<Application> => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true })); // Utile per form submission
 
-  // 3. Health Check Endpoint
+  // 4. Health Check Endpoint
   app.get("/health", async (req, res) => {
-    try {
-      // Verifica la connessione al database usando Prisma
-      await prisma.$queryRaw`SELECT 1`;
+    const health: any = {
+      status: "ok",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      services: {
+        database: "unknown",
+        redis: "unknown",
+      },
+      prismaVersion: prismaVersion,
+    };
 
-      res.status(200).json({
-        status: "ok",
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-        database: "connected",
-        prismaVersion: prismaVersion,
-      });
+    // Check PostgreSQL
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      health.services.database = "connected";
     } catch (error: any) {
-      res.status(500).json({
-        status: "error",
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-        database: "disconnected",
-        error: error.message,
-      });
+      health.services.database = "disconnected";
+      health.status = "degraded";
     }
+
+    // Check Redis
+    try {
+      const { redisClient } = await import("./config/redis");
+      await redisClient.ping();
+      health.services.redis = "connected";
+    } catch (error: any) {
+      health.services.redis = "disconnected";
+      health.status = "degraded";
+    }
+
+    const statusCode = health.status === "ok" ? 200 : 503;
+    res.status(statusCode).json(health);
   });
 
-  // 4. Carico tutti gli endpoint 
+  // 5. Carico tutti gli endpoint
   app.use("/api", apiRouter);
 
-  // 5. Gestione Errori Finali
+  // 6. Gestione Errori Finali
   // 404 - Rotte non trovate
   app.use(notFoundHandler);
 

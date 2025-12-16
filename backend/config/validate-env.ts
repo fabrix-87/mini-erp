@@ -6,6 +6,7 @@ const validateEnv = () => {
     'DATABASE_URL',
     'JWT_SECRET',
     'JWT_REFRESH_SECRET',
+    'JWT_ISSUER',
     'FRONTEND_URI'
   ];
 

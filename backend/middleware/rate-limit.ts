@@ -1,5 +1,6 @@
+// middleware/rate-limit.ts
 import rateLimit from 'express-rate-limit';
-import logger from '../config/logger'; // Default import, come nella tua setup
+import logger from '../config/logger';
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minuti
