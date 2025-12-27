@@ -13,13 +13,25 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { AuthRequest, UserPayload } from "../types/user";
 import {
+  AuthenticatedValidatedRequest,
+  ValidatedRequest,
+} from "../types/validate";
+import {
   clearTokenCookies,
   formatUserRoles,
   generateResetToken,
   generateTokenPair,
   getUserSelection,
   setTokenCookies,
+  extractFingerprint,
+  saveSession,
+  destroySession,
+  isRefreshTokenValid,
+  rotateRefreshToken,
+  invalidateUserPermissionsCache,
+  destroyAllUserSessions,
 } from "../helpers/user";
+import authConfig from "../config/auth";
 
 // ============================================================================
 // PUBLIC ROUTES - Authentication
@@ -31,8 +43,8 @@ import {
  * @access  Public
  */
 export const register = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const { username, email, password, details } = req.body;
+  async (req: ValidatedRequest, res: Response) => {
+    const { username, email, password, details } = req.validatedBody!;
 
     // Verifica esistenza username/email
     const existingUser = await prisma.user.findFirst({
@@ -98,79 +110,133 @@ export const register = asyncHandler(
 );
 
 /**
- * @desc    Login utente
+ * @desc    Login utente con Redis session + fingerprinting
  * @route   POST /api/users/login
  * @access  Public
  */
-export const login = asyncHandler(async (req: AuthRequest, res: Response) => {
-  const { email, password } = req.body;
+export const login = asyncHandler(
+  async (req: ValidatedRequest, res: Response) => {
+    const { email, password } = req.validatedBody!;
 
-  // Trova utente con ruoli e dettagli
-  const user = await prisma.user.findUnique({
-    where: { email },
-    include: {
-      details: true,
-      roles: { select: { id: true, code: true, name: true } },
-    },
-  });
-
-  if (!user) {
-    throw new UnauthorizedError("Credenziali non valide");
-  }
-
-  // Verifica se l'utente è attivo
-  if (!user.active) {
-    throw new UnauthorizedError("Account disabilitato");
-  }
-
-  // Verifica password
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    throw new UnauthorizedError("Credenziali non valide");
-  }
-
-  // Aggiorna lastLogin
-  if (user.details) {
-    await prisma.userDetails.update({
-      where: { userId: user.id },
-      data: { lastLogin: new Date() },
+    // Trova utente con ruoli e dettagli
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        details: true,
+        roles: {
+          select: {
+            id: true,
+            code: true,
+            name: true,
+            permissions: {
+              select: {
+                permission: {
+                  select: {
+                    id: true,
+                    code: true,
+                    description: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
-  }
 
-  // Genera token
-  const userPayload: UserPayload = {
-    userId: user.id,
-    email: user.email,
-    username: user.username,
-    roles: formatUserRoles(user.roles),
-  };
+    if (!user) {
+      throw new UnauthorizedError("Credenziali non valide");
+    }
 
-  const tokens = generateTokenPair(userPayload);
+    // Verifica se l'utente è attivo
+    if (!user.active) {
+      throw new UnauthorizedError("Account disabilitato");
+    }
 
-  // Imposta cookie HttpOnly sicuri (NO token nel body per sicurezza)
-  setTokenCookies(res, tokens);
+    // Verifica password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedError("Credenziali non valide");
+    }
 
-  res.json({
-    status: "success",
-    message: "Login effettuato con successo",
-    data: {
-      user: {
-        id: user.id,
+    // Aggiorna lastLogin
+    if (user.details) {
+      await prisma.userDetails.update({
+        where: { userId: user.id },
+        data: { lastLogin: new Date() },
+      });
+    }
+
+    // 1. Genera fingerprint dal browser o da Next.js header
+    const fingerprint = extractFingerprint(req);
+
+    // 2. Genera token con jti
+    const userPayload: UserPayload = {
+      userId: user.id,
+      email: user.email,
+      username: user.username,
+      roles: formatUserRoles(user.roles),
+    };
+
+    const tokens = generateTokenPair(userPayload, fingerprint);
+
+    // 3. Salva sessione + refresh token in Redis (atomico)
+    await saveSession(
+      user.id,
+      {
+        userId: user.id,
         username: user.username,
         email: user.email,
         roles: formatUserRoles(user.roles),
-        details: user.details,
+        fingerprint,
+        loginAt: new Date(),
+        lastActivity: new Date(),
       },
-    },
-  });
-});
+      tokens.refreshTokenId!
+    );
+
+    // 4. Imposta cookie HttpOnly sicuri
+    setTokenCookies(res, tokens);
+
+    res.json({
+      status: "success",
+      message: "Login effettuato con successo",
+      data: {
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          roles: formatUserRoles(user.roles),
+          details: user.details,
+        },
+        // Opzionale: ritorna exp per frontend
+        expiresIn: authConfig.jwt.expiresInMs,
+      },
+    });
+  }
+);
 
 /**
- * @desc    Logout utente
+ * @desc    Logout utente con Redis transaction
  * @route   POST /api/users/logout
- * @access  Public
+ * @access  Private (require authenticateToken)
  */
 export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const userId = req.user!.userId;
+  const jti = (req.user as any).jti;
+
+  if (!jti) {
+    throw new BadRequestError("JTI mancante nel token");
+  }
+
+  // Calcola TTL per blacklist (tempo rimanente alla scadenza del token)
+  const exp = (req.user as any).exp;
+  const now = Math.floor(Date.now() / 1000);
+  const ttl = Math.max(exp - now, 60); // Minimo 60s
+
+  // Distruggi sessione Redis (atomico: MULTI/EXEC)
+  await destroySession(userId, jti, ttl);
+
   // Rimuovi cookie
   clearTokenCookies(res);
 
@@ -181,13 +247,13 @@ export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
 });
 
 /**
- * @desc    Refresh access token
+ * @desc    Refresh access token con token rotation
  * @route   POST /api/users/refresh-token
- * @access  Public
+ * @access  Public (cookie-based)
  */
 export const refreshToken = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    // Leggi refresh token dal cookie
+  async (req: ValidatedRequest, res: Response) => {
+    // Il token viene letto dal cookie, non dal body
     const token = req.cookies.refreshToken;
 
     if (!token) {
@@ -195,16 +261,48 @@ export const refreshToken = asyncHandler(
     }
 
     try {
-      // Verifica refresh token
-      const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as {
-        userId: number;
-      };
+      // 1. Verifica refresh token
+      const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as any;
 
-      // Trova utente
+      // Valida claims
+      if (
+        decoded.iss !== authConfig.jwt.issuer ||
+        decoded.aud !== authConfig.jwt.audience
+      ) {
+        throw new UnauthorizedError("Claims non validi");
+      }
+
+      // 2. Verifica che sia nella whitelist Redis
+      const isValid = await isRefreshTokenValid(decoded.userId, decoded.jti);
+
+      if (!isValid) {
+        throw new UnauthorizedError(
+          "Refresh token non valido o già utilizzato"
+        );
+      }
+
+      // 3. Trova utente
       const user = await prisma.user.findUnique({
         where: { id: decoded.userId },
         include: {
-          roles: { select: { id: true, code: true, name: true } },
+          roles: {
+            select: {
+              id: true,
+              code: true,
+              name: true,
+              permissions: {
+                select: {
+                  permission: {
+                    select: {
+                      id: true,
+                      code: true,
+                      description: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       });
 
@@ -212,7 +310,10 @@ export const refreshToken = asyncHandler(
         throw new UnauthorizedError("Utente non valido");
       }
 
-      // Genera nuova coppia di token
+      // 4. Genera fingerprint
+      const fingerprint = extractFingerprint(req);
+
+      // 5. Genera NUOVA coppia di token
       const userPayload: UserPayload = {
         userId: user.id,
         email: user.email,
@@ -220,15 +321,45 @@ export const refreshToken = asyncHandler(
         roles: formatUserRoles(user.roles),
       };
 
-      const tokens = generateTokenPair(userPayload);
-      setTokenCookies(res, tokens);
+      const newTokens = generateTokenPair(userPayload, fingerprint);
+
+      // 6. RUOTA refresh token in Redis (atomico)
+      await rotateRefreshToken(
+        user.id,
+        decoded.jti, // vecchio
+        newTokens.refreshTokenId! // nuovo
+      );
+
+      // 7. Aggiorna sessione
+      await saveSession(
+        user.id,
+        {
+          userId: user.id,
+          username: user.username,
+          email: user.email,
+          roles: formatUserRoles(user.roles),
+          fingerprint,
+          loginAt: new Date(),
+          lastActivity: new Date(),
+        },
+        newTokens.refreshTokenId!
+      );
+
+      // 8. Imposta nuovi cookie
+      setTokenCookies(res, newTokens);
 
       res.json({
         status: "success",
         message: "Token aggiornato con successo",
+        data: {
+          expiresIn: authConfig.jwt.expiresInMs,
+        },
       });
     } catch (error) {
-      throw new UnauthorizedError("Token non valido o scaduto");
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new UnauthorizedError("Refresh token scaduto");
+      }
+      throw new UnauthorizedError("Token non valido");
     }
   }
 );
@@ -239,8 +370,8 @@ export const refreshToken = asyncHandler(
  * @access  Public
  */
 export const forgotPassword = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const { email } = req.body;
+  async (req: ValidatedRequest, res: Response) => {
+    const { email } = req.validatedBody!;
 
     const user = await prisma.user.findUnique({
       where: { email },
@@ -283,8 +414,8 @@ export const forgotPassword = asyncHandler(
  * @access  Public
  */
 export const resetPassword = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const { token, newPassword } = req.body;
+  async (req: ValidatedRequest, res: Response) => {
+    const { token, newPassword } = req.validatedBody!;
 
     // Hash del token ricevuto
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
@@ -327,7 +458,7 @@ export const resetPassword = asyncHandler(
  * @access  Public
  */
 export const verifyEmail = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
+  async (req: ValidatedRequest, res: Response) => {
     const { token } = req.params;
 
     // TODO: Implementa logica di verifica email
@@ -355,6 +486,10 @@ export const verifyEmail = asyncHandler(
 export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
   const userId = req.user!.userId;
 
+  if (!userId) {
+    throw new NotFoundError("ID utente non trovato");
+  }
+
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: getUserSelection(),
@@ -379,9 +514,15 @@ export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
  * @access  Private
  */
 export const updateProfile = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const { username, email, preferredLanguageId, details } = req.body;
-    const userId = req.user!.userId;
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    // Usa validatedBody (dati già validati)
+    const { username, email, preferredLanguageId, details } =
+      req.validatedBody!;
+
+    // Prendi userId dall'utente autenticato o dai params (admin)
+    const userId = req.validatedParams?.id
+      ? parseInt(req.validatedParams.id, 10)
+      : req.user!.userId;
 
     // Prepara dati da aggiornare per User
     const userDataToUpdate: any = {};
@@ -411,10 +552,12 @@ export const updateProfile = asyncHandler(
     }
 
     // Aggiorna User
-    await prisma.user.update({
-      where: { id: userId },
-      data: userDataToUpdate,
-    });
+    if (Object.keys(userDataToUpdate).length > 0) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: userDataToUpdate,
+      });
+    }
 
     // Aggiorna Details se forniti
     if (details && Object.keys(details).length > 0) {
@@ -451,9 +594,13 @@ export const updateProfile = asyncHandler(
  * @access  Private
  */
 export const updateDetails = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const updateData = req.body;
-    const userId = req.user!.userId;
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const updateData = req.validatedBody!;
+
+    // Prendi userId dall'utente autenticato o dai params (admin)
+    const userId = req.validatedParams?.id
+      ? parseInt(req.validatedParams.id, 10)
+      : req.user!.userId;
 
     // Upsert dettagli
     await prisma.userDetails.upsert({
@@ -488,8 +635,8 @@ export const updateDetails = asyncHandler(
  * @access  Private
  */
 export const changePassword = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const { currentPassword, newPassword } = req.body;
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { currentPassword, newPassword } = req.validatedBody!;
     const userId = req.user!.userId;
 
     // Trova utente
@@ -519,9 +666,17 @@ export const changePassword = asyncHandler(
       data: { password: hashedPassword },
     });
 
+    // Invalida tutte le sessioni per forzare nuovo login
+    // (security best practice: dopo cambio password, l'utente deve rifare login)
+    await destroyAllUserSessions(userId);
+
+    // Rimuovi cookie della sessione corrente
+    clearTokenCookies(res);
+
     res.json({
       status: "success",
-      message: "Password modificata con successo",
+      message:
+        "Password modificata con successo. Effettua nuovamente il login.",
     });
   }
 );
@@ -536,7 +691,8 @@ export const changePassword = asyncHandler(
  * @access  Private/Admin
  */
 export const getAllUsers = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    // Query params già validati
     const {
       page = 1,
       limit = 10,
@@ -545,7 +701,7 @@ export const getAllUsers = asyncHandler(
       roleId,
       sortBy = "createdAt",
       sortOrder = "desc",
-    } = req.query;
+    } = req.validatedQuery || {};
 
     const skip = (Number(page) - 1) * Number(limit);
     const take = Number(limit);
@@ -561,7 +717,7 @@ export const getAllUsers = asyncHandler(
     }
 
     if (active !== undefined) {
-      where.active = active === "true";
+      where.active = active;
     }
 
     if (roleId) {
@@ -608,8 +764,8 @@ export const getAllUsers = asyncHandler(
  * @access  Private/Admin
  */
 export const getUserById = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const { id } = req.params;
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { id } = req.validatedParams!;
 
     const user = await prisma.user.findUnique({
       where: { id: Number(id) },
@@ -636,9 +792,9 @@ export const getUserById = asyncHandler(
  * @access  Private/Admin
  */
 export const createUser = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
     const { username, email, password, roleIds, details, preferredLanguageId } =
-      req.body;
+      req.validatedBody!;
 
     // Verifica esistenza username/email
     const existingUser = await prisma.user.findFirst({
@@ -693,9 +849,9 @@ export const createUser = asyncHandler(
  * @access  Private/Admin
  */
 export const updateRole = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const { id } = req.params;
-    const { roleIds } = req.body;
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { id } = req.validatedParams!;
+    const { roleIds } = req.validatedBody!;
 
     const userId = Number(id);
 
@@ -724,6 +880,9 @@ export const updateRole = asyncHandler(
       select: getUserSelection(),
     });
 
+    // Invalida cache permessi dopo modifica ruoli
+    await invalidateUserPermissionsCache(userId);
+
     res.json({
       status: "success",
       message: "Ruoli aggiornati con successo",
@@ -741,9 +900,9 @@ export const updateRole = asyncHandler(
  * @access  Private/Admin
  */
 export const toggleUserActive = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const { id } = req.params;
-    const { active } = req.body;
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { id } = req.validatedParams!;
+    const { active } = req.validatedBody!;
 
     const userId = Number(id);
 
@@ -786,8 +945,8 @@ export const toggleUserActive = asyncHandler(
  * @access  Private/Admin
  */
 export const deleteUser = asyncHandler(
-  async (req: AuthRequest, res: Response) => {
-    const { id } = req.params;
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { id } = req.validatedParams!;
 
     const userId = Number(id);
 

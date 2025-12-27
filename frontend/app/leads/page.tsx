@@ -27,7 +27,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Progress } from "@/components/ui/progress"
 import { toast } from "sonner"
 import { LeadStats } from '@/types/lead'
-import { getCustomer } from '@/lib/api/modules/customer'
+import { getCustomer } from '@/lib/client/modules/customer'
 import { Customer } from '@/types/customer'
 
 const leadStatusColors: Record<string, string> = {

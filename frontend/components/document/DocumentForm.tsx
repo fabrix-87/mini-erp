@@ -35,7 +35,7 @@ import {
 } from "@/types/document";
 import { Company, companyFilters } from "@/types/company";
 import { Contact } from "@/types/contact";
-import { getCompanies } from "@/lib/api/modules/company";
+import { getCompanies } from "@/lib/client/modules/company";
 import { getContactParams, getContacts, searchContacts } from "@/lib/api/modules/contact";
 
 interface DocumentFormProps {

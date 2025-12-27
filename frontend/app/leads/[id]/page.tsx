@@ -25,7 +25,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 import { Company } from '@/types/company'
-import { convertLeadToCustomer, getCompany } from '@/lib/api/modules/company'
+import { convertLeadToCustomer, getCompany } from '@/lib/client/modules/company'
 
 const leadStatusLabels: Record<string, string> = {
   new: 'Nuovo',

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, MapPin, Phone, Star, Edit } from "lucide-react";
-import { getAddresses } from "@/lib/api/modules/address";
+import { getAddresses } from "@/lib/client/modules/address";
 import { Address } from "@/types/address";
 
 interface CompanyAddressesTabProps {

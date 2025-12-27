@@ -45,7 +45,7 @@ export const initApp = async (): Promise<Application> => {
       origin: process.env.FRONTEND_URI,
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
+      allowedHeaders: ["Content-Type", "Authorization", "x-device-fingerprint"],
     })
   );
   app.use(cookieParser());

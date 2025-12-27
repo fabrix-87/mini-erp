@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidateTag, revalidatePath } from 'next/cache';
-import contactService from '@/services/contact-services';
+import contactService from '@/services/contact';
 import type { CreateContactInput, UpdateContactInput } from '@/types/contact';
 
 /**

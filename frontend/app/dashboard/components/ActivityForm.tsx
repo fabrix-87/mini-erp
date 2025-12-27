@@ -44,8 +44,8 @@ import {
   createActivityPayload,
   getActivity,
   updateActivity,
-} from "@/lib/api/modules/activity";
-import { getCompany, searchCompanies } from "@/lib/api/modules/company";
+} from "@/lib/client/modules/activity";
+import { getCompany, searchCompanies } from "@/lib/client/modules/company";
 import { getContactsByCompanyId } from "@/lib/api/modules/contact";
 
 const activityTypeLabels: Record<string, string> = {

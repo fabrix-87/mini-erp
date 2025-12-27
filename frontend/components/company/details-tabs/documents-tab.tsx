@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Plus, FileText, Eye, Calendar } from "lucide-react";
 import { CompanyType } from "@/types/company";
-import { getDocuments } from "@/lib/api/modules/document";
+import { getDocuments } from "@/lib/client/modules/document";
 
 interface CompanyDocumentsTabProps {
   companyId: number;

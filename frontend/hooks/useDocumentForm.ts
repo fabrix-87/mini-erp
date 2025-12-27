@@ -8,7 +8,7 @@ import {
 } from "@/types/document";
 import { Company } from "@/types/company";
 import { Contact } from "@/types/contact";
-import { createDocument, updateDocument } from "@/lib/api/modules/document";
+import { createDocument, updateDocument } from "@/lib/client/modules/document";
 // import { createDocument, updateDocument } from "@/services/documentService"; // I tuoi service reali
 
 interface UseDocumentFormProps {

@@ -34,6 +34,10 @@ async function seedRBAC() {
       { code: 'permission:delete', resource: 'permission', action: 'delete', description: 'Eliminazione permessi' },
       { code: 'permission:manage', resource: 'permission', action: 'manage', description: 'Gestione completa permessi' },
 
+      // Dashboard permissions
+      { code: 'dashboard:read', resource: 'dashboard', action: 'read', description: 'Lettura Dashboard' },
+      { code: 'dashboard:manage', resource: 'dashboard', action: 'manage', description: 'Gestione completa Dashboard' },
+
       // Product permissions
       { code: 'product:read', resource: 'product', action: 'read', description: 'Lettura prodotti' },
       { code: 'product:create', resource: 'product', action: 'create', description: 'Creazione prodotti' },
@@ -54,6 +58,27 @@ async function seedRBAC() {
       { code: 'company:update', resource: 'company', action: 'update', description: 'Modifica aziende' },
       { code: 'company:delete', resource: 'company', action: 'delete', description: 'Eliminazione aziende' },
       { code: 'company:manage', resource: 'company', action: 'manage', description: 'Gestione completa aziende' },
+
+      // Customer permissions
+      { code: 'customer:read', resource: 'customer', action: 'read', description: 'Lettura Clienti' },
+      { code: 'customer:create', resource: 'customer', action: 'create', description: 'Creazione Clienti' },
+      { code: 'customer:update', resource: 'customer', action: 'update', description: 'Modifica Clienti' },
+      { code: 'customer:delete', resource: 'customer', action: 'delete', description: 'Eliminazione Clienti' },
+      { code: 'customer:manage', resource: 'customer', action: 'manage', description: 'Gestione completa Clienti' },
+
+      // Contact permissions
+      { code: 'contact:read', resource: 'contact', action: 'read', description: 'Lettura Contatti' },
+      { code: 'contact:create', resource: 'contact', action: 'create', description: 'Creazione Contatti' },
+      { code: 'contact:update', resource: 'contact', action: 'update', description: 'Modifica Contatti' },
+      { code: 'contact:delete', resource: 'contact', action: 'delete', description: 'Eliminazione Contatti' },
+      { code: 'contact:manage', resource: 'contact', action: 'manage', description: 'Gestione completa Contatti' },
+
+      // Supplier permissions
+      { code: 'supplier:read', resource: 'supplier', action: 'read', description: 'Lettura Fornitori' },
+      { code: 'supplier:create', resource: 'supplier', action: 'create', description: 'Creazione Fornitori' },
+      { code: 'supplier:update', resource: 'supplier', action: 'update', description: 'Modifica Fornitori' },
+      { code: 'supplier:delete', resource: 'supplier', action: 'delete', description: 'Eliminazione Fornitori' },
+      { code: 'supplier:manage', resource: 'supplier', action: 'manage', description: 'Gestione completa Fornitori' },
 
       // Warehouse permissions
       { code: 'warehouse:read', resource: 'warehouse', action: 'read', description: 'Lettura magazzino' },

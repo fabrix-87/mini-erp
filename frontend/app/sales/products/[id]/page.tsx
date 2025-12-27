@@ -1,6 +1,6 @@
 "use client";
 
-import { getProductById } from "@/lib/api/modules/product";
+import { getProductById } from "@/lib/client/modules/product";
 import { Product, ProductVariant } from "@/types/product";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";

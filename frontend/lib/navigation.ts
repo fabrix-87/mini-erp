@@ -1,6 +1,5 @@
 // lib/navigation.ts
 import { useMemo } from "react";
-import { useAuth } from "@/providers/AuthProvider";
 import {
   Home,
   PhoneCall,
@@ -35,6 +34,8 @@ import {
   ShieldCheck,
   UserCog,
 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { Item } from "@radix-ui/react-dropdown-menu";
 
 export interface NavigationItem {
   name: string;
@@ -204,14 +205,14 @@ export const navigationConfig: NavigationSection[] = [
         name: "Utenti",
         href: "/settings/users",
         icon: UserCog,
-        roles: ["admin"],
+        roles: ["ADMIN"],
         description: "Gestione utenti",
       },
       {
         name: "Ruoli",
         href: "/settings/roles",
         icon: ShieldCheck,
-        roles: ["admin"],
+        roles: ["ADMIN"],
         description: "Ruoli e permessi",
       },
       {
@@ -234,7 +235,9 @@ export function useFilteredNavigation() {
         ...section,
         items: section.items.filter(
           (item) =>
-            !item.roles || (user?.roles && item.roles.includes(user.roles))
+            !item.roles || (user?.roles && item.roles.some(
+              role => user.roles?.some(userRole => userRole.code === role)
+            ))
         ),
       }))
       .filter((section) => section.items.length > 0);

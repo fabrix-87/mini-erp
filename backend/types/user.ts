@@ -46,9 +46,9 @@ export interface SessionData {
     code: string;
     name: string;
   }>;
-  fingerprint: string;
-  loginAt: string;
-  lastActivity: string;
+  fingerprint?: string;
+  loginAt: Date;
+  lastActivity: Date;
   metadata?: {
     ip?: string;
     userAgent?: string;

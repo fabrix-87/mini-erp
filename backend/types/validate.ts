@@ -3,6 +3,8 @@
 // ============================================================================
 
 import { ZodType } from "zod";
+import { Request } from "express";
+import { AuthRequest } from "./user";
 
 /**
  * Opzioni di configurazione per la validazione
@@ -34,4 +36,19 @@ export interface RequestValidationSchema {
   body?: ZodType;
   query?: ZodType;
   params?: ZodType;
+}
+
+
+// Tipo base per richieste validate
+export interface ValidatedRequest extends Request {
+  validatedBody?: any;
+  validatedQuery?: any;
+  validatedParams?: any;
+}
+
+// Tipo combinato: richiesta autenticata + validata
+export interface AuthenticatedValidatedRequest extends AuthRequest {
+  validatedBody?: any;
+  validatedQuery?: any;
+  validatedParams?: any;
 }

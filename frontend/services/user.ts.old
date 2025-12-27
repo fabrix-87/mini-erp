@@ -1,0 +1,150 @@
+// services/user.ts
+import api from '../lib/client/api';
+import type {
+  User,
+  UpdateProfileData,
+  UpdateDetailsData,
+  PaginatedResponse,
+  ApiResponse,
+} from '@/types/api';
+
+// ============================================================================
+// Current User Functions
+// ============================================================================
+
+/**
+ * Get current user data
+ */
+export async function getUser(): Promise<User> {
+  const response = await api.get<ApiResponse<User>>('/users/me');
+  return response.data.data;
+}
+
+/**
+ * Update current user profile
+ */
+export async function updateProfile(
+  data: UpdateProfileData
+): Promise<User> {
+  const response = await api.put<ApiResponse<User>>('/users/me/profile', data);
+  return response.data.data;
+}
+
+/**
+ * Update current user details
+ */
+export async function updateDetails(
+  data: UpdateDetailsData
+): Promise<User> {
+  const response = await api.put<ApiResponse<User>>('/users/me/details', data);
+  return response.data.data;
+}
+
+/**
+ * Change current user password
+ */
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string
+): Promise<void> {
+  await api.put('/users/me/change-password', {
+    currentPassword,
+    newPassword,
+  });
+}
+
+// ============================================================================
+// Admin User Management Functions
+// ============================================================================
+
+/**
+ * Get all users (admin)
+ */
+export async function getAllUsers(params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  active?: boolean;
+  roleId?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}): Promise<PaginatedResponse<User>> {
+  const response = await api.get<PaginatedResponse<User>>('/users', {
+    params,
+  });
+  return response.data;
+}
+
+/**
+ * Get user by ID (admin)
+ */
+export async function getUserById(id: number): Promise<User> {
+  const response = await api.get<ApiResponse<User>>(`/users/${id}`);
+  return response.data.data;
+}
+
+/**
+ * Create new user (admin)
+ */
+export async function createUser(data: any): Promise<User> {
+  const response = await api.post<ApiResponse<User>>('/users', data);
+  return response.data.data;
+}
+
+/**
+ * Update user profile (admin)
+ */
+export async function updateUserProfile(
+  id: number,
+  data: UpdateProfileData
+): Promise<User> {
+  const response = await api.put<ApiResponse<User>>(
+    `/users/${id}/profile`,
+    data
+  );
+  return response.data.data;
+}
+
+/**
+ * Update user details (admin)
+ */
+export async function updateUserDetails(
+  id: number,
+  data: UpdateDetailsData
+): Promise<User> {
+  const response = await api.put<ApiResponse<User>>(
+    `/users/${id}/details`,
+    data
+  );
+  return response.data.data;
+}
+
+/**
+ * Update user roles (admin)
+ */
+export async function updateUserRoles(
+  id: number,
+  roleIds: number[]
+): Promise<User> {
+  const response = await api.put<ApiResponse<User>>(`/users/${id}/roles`, {
+    roleIds,
+  });
+  return response.data.data;
+}
+
+/**
+ * Toggle user active status (admin)
+ */
+export async function toggleUserActive(
+  id: number,
+  active: boolean
+): Promise<void> {
+  await api.patch(`/users/${id}/toggle-active`, { active });
+}
+
+/**
+ * Delete user (admin)
+ */
+export async function deleteUser(id: number): Promise<void> {
+  await api.delete(`/users/${id}`);
+}

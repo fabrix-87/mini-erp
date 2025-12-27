@@ -1,5 +1,5 @@
 // seed.ts
-import { prisma } from "../config/PrismaClient";
+import { prisma } from '../config/prisma-client'
 import bcrypt from 'bcryptjs';
 
 // Assunzione: L'ID per le lingue è sequenziale e parte da 1.
@@ -97,7 +97,7 @@ async function main() {
     await prisma.taxRate.upsert({
       where: { rate: rate.rate }, // Usa 'rate' come chiave univoca
       update: {},
-      create: rate,
+      create: rate
     });
   }
 

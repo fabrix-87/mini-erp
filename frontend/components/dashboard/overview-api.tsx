@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { OverviewTab } from "@/components/dashboard/overview-tab";
-import { getDashboardOverview } from "@/lib/api/modules/dashboard";
+import { getDashboardOverview } from "@/lib/client/modules/dashboard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";

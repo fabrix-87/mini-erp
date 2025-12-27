@@ -1,4 +1,18 @@
 // types/api.ts
+// ============ JWT Types ============
+export interface JWTPayload {
+  userId: number;
+  email: string;
+  username: string;
+  roles: Array<{ id: number; code: string; name: string }>;
+  fingerprint?: string;
+  jti: string;
+  iat: number;
+  exp: number;
+  iss: string;
+  aud: string;
+}
+
 // ============ API Query Types ============
 export interface PaginationQueryType {
   page: number;
@@ -51,11 +65,18 @@ export interface UserDetails {
   active: boolean;
 }
 
+interface UserRole {
+  id: number;
+  code: string;
+  name: string;
+}
+
 export interface User {
   id: number;
+  active: boolean;
   username: string;
   email: string;
-  roles?: string[];
+  roles?: UserRole[];
   createdAt: string;
   updatedAt: string;
   UserDetail?: UserDetails;

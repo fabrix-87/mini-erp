@@ -52,7 +52,7 @@ import {
   deleteActivity,
   getActivity,
   setComplete,
-} from "@/lib/api/modules/activity";
+} from "@/lib/client/modules/activity";
 
 const activityTypeLabels: Record<string, string> = {
   call: "Chiamata",

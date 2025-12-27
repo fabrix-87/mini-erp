@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import contactService from '@/services/contact-services';
+import contactService from '@/services/contact';
 import { contactKeys } from './contact-keys';
 import type {
   ContactQueryParams,

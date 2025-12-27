@@ -3,7 +3,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuth } from "../providers/AuthProvider";
 import { useFilteredNavigation, isActiveLink } from "@/lib/navigation";
 import { Button } from "./ui/button";
 import {
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Settings, LogOut } from "lucide-react"; // ChevronRight rimosso, Gmail non lo usa
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -141,7 +141,7 @@ export function Sidebar({ sidebarOpen, onSidebarClose }: SidebarProps) {
                           {user.username}
                         </div>
                         <div className="text-xs text-sidebar-foreground/60 truncate">
-                          {user.role}
+                          {user.roles ? user.roles[0].name : ''}
                         </div>
                       </div>
                     </div>

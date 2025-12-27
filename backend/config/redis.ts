@@ -58,7 +58,10 @@ export const disconnectRedis = async (): Promise<void> => {
   }
 };
 
-// Helper functions per session management
+// ============================================================================
+// REDIS KEY PATTERNS - Namespace organization
+// ============================================================================
+
 export const sessionKeys = {
   // Session data: user info + metadata
   session: (userId: number) => `session:${userId}`,
@@ -69,8 +72,25 @@ export const sessionKeys = {
   // JWT blacklist: jti -> expiration
   blacklist: (jti: string) => `blacklist:${jti}`,
   
+  // User permissions cache: userId -> permissions[]
+  permissions: (userId: number) => `permissions:${userId}`,
+  
   // Rate limiting
   rateLimit: (identifier: string) => `rate:${identifier}`,
+  
+  // Failed login attempts (per IP o email)
+  loginAttempts: (identifier: string) => `login:attempts:${identifier}`,
 };
+
+// ============================================================================
+// REDIS TTL CONSTANTS
+// ============================================================================
+
+export const RedisTTL = {
+  SESSION: 7 * 24 * 60 * 60, // 7 giorni (stesso del refresh token)
+  PERMISSIONS: 15 * 60, // 15 minuti (cache permessi)
+  RATE_LIMIT: 15 * 60, // 15 minuti
+  LOGIN_ATTEMPTS: 30 * 60, // 30 minuti
+} as const;
 
 export { redisClient };

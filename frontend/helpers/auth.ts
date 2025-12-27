@@ -1,44 +1,108 @@
-import { UserAuth } from "@/types/api";
-import { jwtVerify } from "jose";
-import { NextResponse } from "next/server";
+import { JWTPayload } from "@/lib/jwt";
+import { NextRequest, NextResponse } from "next/server";
 
-// ⭐ Helper per verificare il JWT (riutilizzabile)
-export async function verifyToken(token: string): Promise<UserAuth | null> {
-  try {
-    const jwtSecret = process.env.JWT_SECRET;
-    
-    if (!jwtSecret) {
-      console.error("❌ JWT_SECRET non configurato");
-      return null;
-    }
+const LOGIN_ROUTE = '/login';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-    if (jwtSecret.length < 32) {
-      console.error("❌ JWT_SECRET troppo corto (minimo 32 caratteri)");
-      return null;
-    }
+/**
+ * Legge accessToken dal cookie della richiesta
+ */
+export function getAccessToken(request: NextRequest): string | null {
+  return request.cookies.get('accessToken')?.value || null;
+}
 
-    const secret = new TextEncoder().encode(jwtSecret);
-    const { payload } = await jwtVerify(token, secret);
-    
-    return payload as unknown as UserAuth;
-  } catch (error) {
-    console.error("❌ JWT verification failed:", error);
+/**
+ * Legge refreshToken dal cookie della richiesta
+ */
+export function getRefreshToken(request: NextRequest): string | null {
+  return request.cookies.get('refreshToken')?.value || null;
+}
+
+/**
+ * Controlla se l'utente ha ruolo admin
+ */
+export function isAdmin(payload: JWTPayload): boolean {
+  return payload.roles.some(
+    (role) => role.code === 'ADMIN' || role.code === 'SUPER_ADMIN'
+  );
+}
+
+/**
+ * Aggiunge headers utente alla richiesta
+ */
+export function addUserHeaders(
+  response: NextResponse,
+  payload: JWTPayload
+): NextResponse {
+  response.headers.set('x-user-id', payload.userId.toString());
+  response.headers.set('x-user-email', payload.email);
+  response.headers.set('x-user-username', payload.username);
+  response.headers.set('x-user-roles', JSON.stringify(payload.roles));
+  return response;
+}
+
+/**
+ * Crea redirect response con cleanup cookies
+ */
+export function redirectToLogin(request: NextRequest): NextResponse {
+  const response = NextResponse.redirect(new URL(LOGIN_ROUTE, request.url));
+  response.cookies.delete('accessToken');
+  response.cookies.delete('refreshToken');
+  return response;
+}
+
+/**
+ * Chiama backend per refresh token
+ */
+export async function refreshTokens(
+  request: NextRequest
+): Promise<{ accessToken: string; refreshToken: string } | null> {
+  const refreshToken = getRefreshToken(request);
+
+  if (!refreshToken) {
+    console.log('⚠️ No refresh token available');
     return null;
   }
-}
 
-// ⭐ Helper per controllare se l'utente è admin
-export function isAdmin(user: UserAuth): boolean {
-  return user.roles?.some(
-    (role) => role.code === "admin" || role.code === "ADMIN"
-  ) ?? false;
-}
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/users/refresh-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: `refreshToken=${refreshToken}`,
+      },
+      credentials: 'include',
+    });
 
-// ⭐ Helper per aggiungere header utente
-export function addUserHeaders(response: NextResponse, user: UserAuth): NextResponse {
-  response.headers.set("x-user-id", user.userId.toString());
-  response.headers.set("x-user-email", user.email);
-  response.headers.set("x-user-username", user.username);
-  response.headers.set("x-user-roles", JSON.stringify(user.roles));
-  return response;
+    if (!response.ok) {
+      console.log('❌ Refresh token failed:', response.status);
+      return null;
+    }
+
+    // Estrai nuovi token dai Set-Cookie headers
+    const setCookieHeaders = response.headers.getSetCookie();
+    
+    let newAccessToken = '';
+    let newRefreshToken = '';
+
+    setCookieHeaders.forEach((cookie) => {
+      if (cookie.startsWith('accessToken=')) {
+        newAccessToken = cookie.split(';')[0].split('=')[1];
+      }
+      if (cookie.startsWith('refreshToken=')) {
+        newRefreshToken = cookie.split(';')[0].split('=')[1];
+      }
+    });
+
+    if (!newAccessToken || !newRefreshToken) {
+      console.error('❌ Failed to extract tokens from Set-Cookie headers');
+      return null;
+    }
+
+    console.log('✅ Tokens refreshed successfully');
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  } catch (error) {
+    console.error('❌ Refresh request failed:', error);
+    return null;
+  }
 }

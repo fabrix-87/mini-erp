@@ -2,7 +2,7 @@ import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 import { HydrationBoundary } from '@/providers/hydration-boundary';
 import ContactDetailsPage from '@/components/contact/contact-details';
-import contactService from '@/services/contact-services';
+import contactService from '@/services/contact';
 import { contactKeys } from '@/hooks/contact-keys';
 import { z } from 'zod';
 

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Calendar, User, Clock } from "lucide-react";
-import { getActivities } from "@/lib/api/modules/activity";
+import { getActivities } from "@/lib/client/modules/activity";
 
 interface CompanyActivitiesTabProps {
   companyId: number;

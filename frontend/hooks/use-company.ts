@@ -9,7 +9,7 @@ import {
   updateCustomer,
   deleteCustomer,
   getDashboardStats as getCustomerStats,
-} from "@/lib/api/modules/customer";
+} from "@/lib/client/modules/customer";
 import {
   getSuppliers,
   getSupplierById,
@@ -17,16 +17,16 @@ import {
   updateSupplier,
   deleteSupplier,
   getDashboardStats as getSupplierStats,
-} from "@/lib/api/modules/supplier";
+} from "@/lib/client/modules/supplier";
 import { Customer, CustomerQueryParams } from "@/types/customer";
 import { Supplier, SupplierQueryParams } from "@/types/supplier";
 import { CompanyType } from "@/types/company";
-import { createAddress, updateAddress } from "@/lib/api/modules/address";
+import { createAddress, updateAddress } from "@/lib/client/modules/address";
 import { Address } from "@/types/address";
 import {
   updateCustomerCompany,
   updateSupplierCompany,
-} from "@/lib/api/modules/company";
+} from "@/lib/client/modules/company";
 
 // ============================================================================
 // CUSTOMER HOOKS

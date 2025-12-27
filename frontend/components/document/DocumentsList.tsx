@@ -32,7 +32,7 @@ import {
 import { StatusBadge, DocTypeBadge } from "@/components/document/Badges";
 import { FilterPanel } from "@/components/document/FilterPanel";
 import { Document, DocumentListFilters, DocumentType } from "@/types/document";
-import { deleteDocument, getDocuments } from "@/lib/api/modules/document";
+import { deleteDocument, getDocuments } from "@/lib/client/modules/document";
 
 interface DocumentsListProps {
   documentType?: DocumentType;

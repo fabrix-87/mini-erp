@@ -42,8 +42,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
 import { Activity, ActivityDashboardStats, getActivitiesParams } from "@/types/activitiy";
-import { getActivities, getActivitiesStats } from "@/lib/api/modules/activity";
-import { useAuth } from "@/providers/AuthProvider";
+import { getActivities, getActivitiesStats } from "@/lib/client/modules/activity";
+import { useAuth } from "@/providers/auth-provider";
 
 const activityTypeIcons: Record<string, any> = {
   call: Phone,

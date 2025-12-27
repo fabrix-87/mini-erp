@@ -69,7 +69,8 @@ export const validate = (
         // Valida body se presente
         if (requestSchema.body) {
           const bodySchema = applySchemaOptions(requestSchema.body, config);
-          Object.assign(req.body, await bodySchema.parseAsync(req.body));
+          const validateBody = await bodySchema.parseAsync(req.body);
+          (req as any).validatedBody = validateBody;
         }
 
         // Valida query se presente
@@ -103,7 +104,7 @@ export const validate = (
 
           // Assegna con type assertion appropriata per ogni tipo
           if (source === "body") {
-            req.body = validated;
+            (req as any).validatedBody = validated;
           } else if (source === "query") {
             (req as any).validatedQuery = validated;
           } else if (source === "params") {
