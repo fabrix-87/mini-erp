@@ -1,68 +1,127 @@
 // lib/jwt.ts
-import { JWTPayload } from "@/types/api";
+import { JWTPayload, User } from "@/types/api";
 import * as jose from "jose";
 
 // ============================================================================
 // JWT Configuration
 // ============================================================================
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "your-secret-key"
-);
-
-const JWT_ISSUER = process.env.JWT_ISSUER || "your-app-backend";
-const JWT_AUDIENCE = process.env.JWT_AUDIENCE || "your-app-frontend";
-
-// ============================================================================
-// JWT Verification (Local - No Backend Call)
-// ============================================================================
-
 /**
- * Verifica JWT localmente senza chiamare il backend
- * Validazioni:
- * - Signature
- * - Expiration
- * - Issuer
- * - Audience
- * - Claims structure
+ * Decodifica JWT senza verificare la firma (solo per leggere i dati)
+ * ⚠️ Non validare, usare solo per debug o analisi non critiche
  */
-export async function verifyJWT(token: string): Promise<JWTPayload | null> {
+export function decodeJWT(token: string): JWTPayload | null {
   try {
-    const { payload } = await jose.jwtVerify(token, JWT_SECRET, {
-      issuer: JWT_ISSUER,
-      audience: JWT_AUDIENCE,
-    });
-
-    // Valida struttura payload
+    const decoded = jose.decodeJwt(token);
+    
     if (
-      !payload.userId ||
-      !payload.email ||
-      !payload.username ||
-      !payload.jti
+      !decoded.userId ||
+      !decoded.email ||
+      !decoded.username ||
+      !decoded.jti
     ) {
       console.error("❌ JWT: Missing required claims");
       return null;
     }
 
-    return payload as unknown as JWTPayload;
+    return decoded as unknown as JWTPayload;
   } catch (error) {
-    if (error instanceof jose.errors.JWTExpired) {
-      console.log("⏰ JWT expired");
-    } else if (error instanceof jose.errors.JWTClaimValidationFailed) {
-      console.error("❌ JWT claim validation failed:", error.message);
-    } else {
-      console.error("❌ JWT verification failed:", error);
-    }
+    console.error("❌ Failed to decode JWT:", error);
     return null;
   }
 }
 
 // ============================================================================
-// Token Expiry Utilities
+// User Data from Cookie (Primary Method)
+// ============================================================================
+
+/**
+ * Ottiene i dati utente dal cookie 'user'
+ * ✅ Metodo principale per l'AuthProvider
+ */
+export function getUserFromUserCookie(): User | null {
+  const userCookie = getCookie('user');
+  if (!userCookie) return null;
+
+  try {
+    // ✅ Decodifica URL encoding prima di parsare JSON
+    const decodedCookie = decodeURIComponent(userCookie);
+    return JSON.parse(decodedCookie) as User;
+  } catch (error) {
+    console.error('Failed to parse user cookie:', error);
+    console.error('Cookie value:', userCookie);
+    return null;
+  }
+}
+
+/**
+ * Verifica se l'utente è autenticato controllando il cookie 'user'
+ * ✅ Metodo veloce per l'AuthProvider
+ */
+export function isAuthenticated(): boolean {
+  return getUserFromUserCookie() !== null;
+}
+
+// ============================================================================
+// Role-Based Access Control (RBAC)
+// ============================================================================
+
+/**
+ * Ottiene i dati utente corrente per controlli RBAC
+ */
+export function getCurrentUser(): User | null {
+  return getUserFromUserCookie();
+}
+
+/**
+ * Controlla se l'utente ha un ruolo specifico
+ */
+export function hasRole(roleCode: string): boolean {
+  const user = getCurrentUser();
+  if (!user || !user.roles) return false;
+  
+  return user.roles.some(role => role.code === roleCode);
+}
+
+/**
+ * Controlla se l'utente ha almeno uno dei ruoli specificati
+ */
+export function hasAnyRole(roleCodes: string[]): boolean {
+  const user = getCurrentUser();
+  if (!user || !user.roles) return false;
+  
+  return user.roles.some(role => roleCodes.includes(role.code));
+}
+
+/**
+ * Controlla se l'utente ha tutti i ruoli specificati
+ */
+export function hasAllRoles(roleCodes: string[]): boolean {
+  const user = getCurrentUser();
+  if (!user || !user.roles) return false;
+  
+  return roleCodes.every(code => 
+    user.roles!.some(role => role.code === code)
+  );
+}
+
+/**
+ * Ottiene i codici dei ruoli dell'utente corrente
+ */
+export function getUserRoleCodes(): string[] {
+  const user = getCurrentUser();
+  if (!user || !user.roles) return [];
+  
+  return user.roles.map(role => role.code);
+}
+
+// ============================================================================
+// Token Expiry Utilities (per uso avanzato)
 // ============================================================================
 
 /**
  * Controlla se il token scade tra meno di N millisecondi
+ * ⚠️ Richiede il payload JWT - usare solo per refresh token logic
  */
 export function isTokenExpiringSoon(
   payload: JWTPayload,

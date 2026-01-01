@@ -168,7 +168,7 @@ export const login = asyncHandler(
     }
 
     // 1. Genera fingerprint dal browser o da Next.js header
-    const fingerprint = extractFingerprint(req);
+    const fingerprint = extractFingerprint(req);  
 
     // 2. Genera token con jti
     const userPayload: UserPayload = {
@@ -211,6 +211,8 @@ export const login = asyncHandler(
         },
         // Opzionale: ritorna exp per frontend
         expiresIn: authConfig.jwt.expiresInMs,
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
       },
     });
   }
@@ -315,6 +317,7 @@ export const refreshToken = asyncHandler(
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
       include: {
+        details: true,
         roles: {
           select: {
             id: true,
@@ -382,7 +385,16 @@ export const refreshToken = asyncHandler(
       status: "success",
       message: "Token aggiornato con successo",
       data: {
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          roles: formatUserRoles(user.roles),
+          details: user.details,
+        },
         expiresIn: authConfig.jwt.expiresInMs,
+        accessToken: newTokens.accessToken,
+        refreshToken: newTokens.refreshToken,
       },
     });
   }

@@ -3,28 +3,64 @@ import { cookies } from 'next/headers';
 import { serverApi } from '@/lib/server/api';
 import { AuthResponse } from '@/types/api'; 
 
-export async function performTokenRefresh() {
+/**
+ * Esegue refresh dei token chiamando il backend
+ * ✅ Usa il body JSON per ricevere i nuovi token
+ */
+export async function performTokenRefresh(): Promise<AuthResponse | null> {
   const cookieStore = await cookies();
   const currentRefreshToken = cookieStore.get('refreshToken')?.value;
   
-  if (!currentRefreshToken) return null;
+  if (!currentRefreshToken) {
+    console.log('⚠️ No refresh token available');
+    return null;
+  }
 
   try {
-    const { data, headers } = await serverApi.post<AuthResponse>(
-      '/users/refresh-token', 
-      {}, 
-      { returnHeaders: true } // Vogliamo anche i cookie nuovi
-    );
-
-    if (data.accessToken && data.refreshToken) {
-        cookieStore.set('accessToken', data.accessToken, { httpOnly: true, secure: true, path: '/' });
-        cookieStore.set('refreshToken', data.refreshToken, { httpOnly: true, secure: true, path: '/' });
-        return data;
-    }
+    console.log('🔄 Refreshing tokens...');
     
-    return null;
+    // ✅ Backend restituisce token nel body (come per login)
+    const data = await serverApi.post<AuthResponse>('/users/refresh-token', {});
+
+    if (!data.accessToken || !data.refreshToken) {
+      console.error('❌ Tokens missing in refresh response');
+      return null;
+    }
+
+    // ✅ Aggiorna i cookie
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    cookieStore.set('accessToken', data.accessToken, { 
+      httpOnly: true, 
+      secure: isProduction, 
+      path: '/',
+      sameSite: 'lax',
+      maxAge: 60 * 15 // 15 minuti
+    });
+    
+    cookieStore.set('refreshToken', data.refreshToken, { 
+      httpOnly: true, 
+      secure: isProduction, 
+      path: '/',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7 // 7 giorni
+    });
+
+    // ✅ Aggiorna anche il cookie 'user' se presente
+    if (data.user) {
+      cookieStore.set('user', JSON.stringify(data.user), {
+        httpOnly: false,
+        secure: isProduction,
+        path: '/',
+        sameSite: 'lax',
+        maxAge: 60 * 15
+      });
+    }
+
+    console.log('✅ Tokens refreshed successfully');
+    return data;
   } catch (error) {
-    console.error("❌ Refresh failed:", error);
+    console.error('❌ Token refresh failed:', error);
     return null;
   }
 }

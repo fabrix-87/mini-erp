@@ -4,10 +4,9 @@
 import api from "../lib/client/api";
 import {
   addFingerprintHeader,
-  resetFingerprint,
 } from "@/lib/client/fingerprint";
+import { refreshTokenAction } from "@/actions/token";
 import type {
-  LoginCredentials,
   RegisterData,
   ApiResponse,
   User,
@@ -18,33 +17,9 @@ import type {
 // ============================================================================
 
 /**
- * Login utente
- * Aggiunge fingerprint automaticamente e chiama Next.js route
- */
-export async function login(credentials: LoginCredentials): Promise<User> {
-  const headers = await addFingerprintHeader({"Content-Type": "application/json"})
-  // Chiama Next.js API route che gestisce fingerprint
-  const response = await fetch("/api/auth/login", {
-    method: "POST",
-    headers,
-    body: JSON.stringify(credentials),
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Login failed");
-  }
-
-  const data: ApiResponse<{ user: User }> = await response.json();
-  return data.data.user;
-}
-
-/**
  * Register nuovo utente
  */
 export async function register(userData: RegisterData): Promise<User> {
-  // Aggiungi fingerprint per registrazione
   const headers = await addFingerprintHeader({
     "Content-Type": "application/json",
   });
@@ -61,40 +36,27 @@ export async function register(userData: RegisterData): Promise<User> {
 }
 
 /**
- * Logout utente
- * Usa Next.js route per cleanup cookies e chiamata backend
- */
-export async function logout(): Promise<void> {
-  const headers = await addFingerprintHeader();
-
-  await fetch("/api/auth/logout", {
-    method: "POST",
-    headers,
-    credentials: "include",
-  });
-
-  resetFingerprint();
-}
-
-/**
- * Refresh token manuale
- * (Normalmente gestito automaticamente dall'interceptor)
+ * Refresh token
+ * ✅ Usa Server Action invece di API Route
  */
 export async function refreshToken(): Promise<boolean> {
-  const headers = await addFingerprintHeader();
-  console.debug('⚠️ addFingerprintHeader chiamato su refreshToken. In teoria da client');
-  const response = await fetch("/api/auth/refresh", {
-    method: "POST",
-    headers,
-    credentials: "include",
-  });
+  try {
+    console.log('🔄 Refreshing tokens via Server Action...');
+    
+    // ✅ Chiama Server Action
+    const result = await refreshTokenAction();
 
-  if (!response.ok) {
-    console.error("❌ Token refresh failed:", response);
-    throw new Error("Token refresh failed");
+    if (!result.success) {
+      console.error("❌ Token refresh failed");
+      return false;
+    }
+
+    console.log("✅ Token refreshed successfully");
+    return true;
+  } catch (error) {
+    console.error("❌ Token refresh request failed:", error);
+    return false;
   }
-  console.log("✅ Token refreshed successfully");
-  return true;
 }
 
 /**

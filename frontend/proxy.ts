@@ -1,16 +1,10 @@
 // proxy.ts
 import { NextRequest, NextResponse } from "next/server";
-import {
-  verifyJWT,
-  isTokenExpiringSoon,
-  isTokenExpired,
-} from './lib/jwt';
+import { decodeJWT, isTokenExpired } from './lib/jwt';
 import { 
-  addUserHeaders, 
   getAccessToken, 
   isAdmin, 
-  redirectToLogin, 
-  refreshTokens 
+  redirectToLogin 
 } from "./helpers/auth";
 
 // ============================================================================
@@ -20,71 +14,6 @@ import {
 const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password'];
 const ADMIN_ROUTES = ['/users', '/roles', '/settings'];
 const DEFAULT_AUTH_ROUTE = '/dashboard';
-
-// Threshold per refresh proattivo (5 minuti)
-const REFRESH_THRESHOLD_MS = 5 * 60 * 1000;
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Imposta i cookie dei nuovi token
- */
-function setTokenCookies(
-  response: NextResponse,
-  accessToken: string,
-  refreshToken: string
-) {
-  const isProduction = process.env.NODE_ENV === 'production';
-  
-  response.cookies.set('accessToken', accessToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: 'strict',
-    maxAge: 15 * 60, // 15 minuti
-    path: '/',
-  });
-
-  response.cookies.set('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60, // 7 giorni
-    path: '/',
-  });
-}
-
-/**
- * Gestisce il refresh dei token e ritorna una response aggiornata
- */
-async function handleTokenRefresh(
-  request: NextRequest,
-  reason: 'expired' | 'expiring-soon'
-): Promise<NextResponse | null> {
-  console.log(`🔄 Token ${reason === 'expired' ? 'expired' : 'expiring soon'}, refreshing...`);
-  
-  const newTokens = await refreshTokens(request);
-  
-  if (!newTokens) {
-    console.log('❌ Refresh failed');
-    return null;
-  }
-
-  // Verifica nuovo token
-  const newPayload = await verifyJWT(newTokens.accessToken);
-  
-  if (!newPayload) {
-    console.log('❌ New token invalid');
-    return null;
-  }
-
-  const response = NextResponse.next();
-  setTokenCookies(response, newTokens.accessToken, newTokens.refreshToken);
-  
-  console.log('✅ Tokens refreshed successfully');
-  return addUserHeaders(response, newPayload);
-}
 
 // ============================================================================
 // Main Middleware Logic
@@ -112,7 +41,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // ========================================
-  // 3. Get and verify access token
+  // 3. Check authentication
   // ========================================
   const accessToken = getAccessToken(request);
 
@@ -121,38 +50,22 @@ export async function proxy(request: NextRequest) {
     return redirectToLogin(request);
   }
 
-  // Verifica JWT localmente (NO backend call)
-  let payload = await verifyJWT(accessToken);
+  // ✅ Solo decode (no verify)
+  const payload = decodeJWT(accessToken);
 
-  // ========================================
-  // 4. Handle expired token
-  // ========================================
-  if (!payload || isTokenExpired(payload)) {
-    const response = await handleTokenRefresh(request, 'expired');
-    
-    if (!response) {
-      return redirectToLogin(request);
-    }
-    
-    return response;
+  if (!payload) {
+    console.log('⚠️ Invalid token format');
+    return redirectToLogin(request);
+  }
+
+  // ✅ Se scaduto, lascia passare - l'interceptor gestirà il refresh
+  if (isTokenExpired(payload)) {
+    console.log('⚠️ Token expired, will be refreshed by API interceptor');
+    // Non bloccare - lascia che l'app carichi e l'interceptor gestisca
   }
 
   // ========================================
-  // 5. Proactive token refresh (if expiring soon)
-  // ========================================
-  if (isTokenExpiringSoon(payload, REFRESH_THRESHOLD_MS)) {
-    const response = await handleTokenRefresh(request, 'expiring-soon');
-    
-    // Se il refresh proattivo fallisce, continua con il token corrente
-    if (response) {
-      return response;
-    }
-    
-    console.log('⚠️ Proactive refresh failed, continuing with current token');
-  }
-
-  // ========================================
-  // 6. Check admin routes permissions
+  // 4. Check admin routes permissions
   // ========================================
   if (ADMIN_ROUTES.some((route) => pathname.startsWith(route))) {
     if (!isAdmin(payload)) {
@@ -162,10 +75,9 @@ export async function proxy(request: NextRequest) {
   }
 
   // ========================================
-  // 7. Allow access with user headers
+  // 5. Allow access
   // ========================================
-  const response = NextResponse.next();
-  return addUserHeaders(response, payload);
+  return NextResponse.next();
 }
 
 // ============================================================================

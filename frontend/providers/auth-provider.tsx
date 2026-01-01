@@ -10,10 +10,9 @@ import {
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Spinner } from "../components/ui/spinner";
-import { toast } from "sonner";
 import { User } from "../types/api";
-import api from "@/lib/client/api";
 import { logoutAction } from "@/actions/auth";
+import { getUserFromUserCookie, isAuthenticated } from "@/lib/jwt";
 
 // ============================================================================
 // Types
@@ -22,7 +21,7 @@ import { logoutAction } from "@/actions/auth";
 interface AuthContextType {
   user: User | null;
   logout: () => Promise<void>;
-  refreshUser: () => Promise<void>;
+  refreshUser: () => void;
   isLoading: boolean;
   isAuthenticated: boolean;
 }
@@ -46,48 +45,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   // ========================================
-  // Fetch User Data
-  // ========================================
-  const fetchUser = useCallback(async () => {
-    try {
-      const response = await api.get("/users/me");
-
-      if (response.data.status === "success") {
-        setUser(response.data.data);
-        return response.data.data;
-      }
-
-      throw new Error("Invalid response format");
-    } catch (error) {
-      console.error("Failed to fetch user:", error);
-      setUser(null);
-      throw error;
-    }
-  }, []);
-
-  // ========================================
   // Refresh User
   // ========================================
-  const refreshUser = useCallback(async () => {
-    try {
-      await fetchUser();
-    } catch (error) {
-      console.error("Failed to refresh user:", error);
-    }
-  }, [fetchUser]);
+  const refreshUser = useCallback(() => {
+    const userData = getUserFromUserCookie();
+    setUser(userData);
+  }, []);
 
   // ========================================
   // Logout
   // ========================================
   const logout = useCallback(async () => {
-    logoutAction();
-  }, [router]);
+    try {
+      await logoutAction();
+      setUser(null);
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  }, []);
 
   // ========================================
   // Initial Auth Check
   // ========================================
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = () => {
       const publicRoutes = ["/login", "/register", "/forgot-password"];
 
       if (publicRoutes.includes(pathname)) {
@@ -99,12 +80,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
 
       try {
-        await fetchUser();
+        const authenticated = isAuthenticated();
+        
+        if (authenticated) {
+          const userData = getUserFromUserCookie();
+          setUser(userData);
+        } else {
+          throw new Error('Not authenticated');
+        }
       } catch (error) {
         console.error("Auth check failed:", error);
         setUser(null);
 
-        // Redirect to login only if not already on a public route
         if (!publicRoutes.includes(pathname)) {
           router.push("/login");
         }
@@ -114,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     checkAuth();
-  }, [pathname, fetchUser, router]);
+  }, [pathname, router]);
 
   // ========================================
   // Loading State

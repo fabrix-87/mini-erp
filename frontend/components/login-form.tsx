@@ -1,24 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, Loader2, AlertCircle, Lock } from "lucide-react";
+import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/use-auth";
-import { login } from "@/services/auth";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
+import { loginAction } from "@/actions/auth";
 import { toast } from "sonner";
 import { useFingerprint } from "@/hooks/use-fingerprint";
 
 // Schema di validazione
 const loginSchema = z.object({
-  email: z.email("Inserisci un'email valida"),
+  email: z.string().email("Inserisci un'email valida"),
   password: z
     .string()
     .min(1, "La password è obbligatoria")
@@ -27,48 +27,65 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+// ============================================================================
+// Submit Button Component
+// ============================================================================
+function SubmitButton({ isValid }: { isValid: boolean }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      type="submit"
+      className="w-full h-11 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg shadow-blue-500/30 transition-all"
+      disabled={pending || !isValid}
+    >
+      {pending ? (
+        <>
+          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+          Accesso in corso...
+        </>
+      ) : (
+        "Accedi"
+      )}
+    </Button>
+  );
+}
+
+// ============================================================================
+// Login Form Component
+// ============================================================================
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
-  const { refreshUser } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+
+  // useActionState per gestire lo stato
+  const [state, formAction, isPending] = useActionState(loginAction, undefined);
   const { fingerprint, isLoading: fpLoading } = useFingerprint();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
+    setError,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     mode: "onBlur",
   });
 
-  const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
-
-    try {
-      // Login con fingerprint automatico
-      await login(data);
-
-      // Aggiorna user context
-      await refreshUser();
-
-      toast.success("Login effettuato con successo", {
-        description: "Benvenuto!",
-      });
-
-      // Redirect to dashboard
-      router.push("/dashboard");
-    } catch (error: any) {
-      setError(error.message || "Credenziali non valide");
+  // ========================================
+  // Gestione errori dalla Server Action
+  // ========================================
+  useEffect(() => {
+    if (state?.error) {
       toast.error("Login fallito", {
-        description: error.message || "Credenziali non valide",
+        description: state.error,
       });
-    } finally {
-      setIsLoading(false);
+
+      setError("root", {
+        type: "manual",
+        message: state.error,
+      });
     }
-  };
+  }, [state, setError]);
 
   if (fpLoading) {
     return (
@@ -79,12 +96,14 @@ export function LoginForm() {
   }
 
   return (
-    <div onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form action={formAction} className="space-y-6">
       {/* Error Alert */}
-      {error && (
+      {(state?.error || errors.root) && (
         <Alert variant="destructive" className="border-red-200 bg-red-50">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="text-red-800">{error}</AlertDescription>
+          <AlertDescription className="text-red-800">
+            {state?.error || errors.root?.message}
+          </AlertDescription>
         </Alert>
       )}
 
@@ -124,7 +143,7 @@ export function LoginForm() {
             className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
             onClick={(e) => {
               e.preventDefault();
-              console.log("Password dimenticata");
+              toast.info("Funzionalità in arrivo");
             }}
           >
             Password dimenticata?
@@ -166,21 +185,7 @@ export function LoginForm() {
       </div>
 
       {/* Submit Button */}
-      <Button
-        type="submit"
-        onClick={handleSubmit(onSubmit)}
-        className="w-full h-11 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg shadow-blue-500/30 transition-all"
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Accesso in corso...
-          </>
-        ) : (
-          "Accedi"
-        )}
-      </Button>
-    </div>
+      <SubmitButton isValid={isValid} />
+    </form>
   );
 }

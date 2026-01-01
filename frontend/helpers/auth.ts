@@ -48,65 +48,7 @@ export function redirectToLogin(request: NextRequest): NextResponse {
   const response = NextResponse.redirect(new URL(LOGIN_ROUTE, request.url));
   response.cookies.delete('accessToken');
   response.cookies.delete('refreshToken');
+  response.cookies.delete('user');
   return response;
 }
 
-/**
- * Chiama la route Next.js per refresh token
- */
-export async function refreshTokens(
-  request: NextRequest
-): Promise<{ accessToken: string; refreshToken: string } | null> {
-  const refreshToken = getRefreshToken(request);
-
-  if (!refreshToken) {
-    console.log('⚠️ No refresh token available');
-    return null;
-  }
-
-  try {
-    // Chiama la route Next.js invece del backend direttamente
-    const response = await fetch(
-      new URL('/api/auth/refresh', request.url),
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Inoltra tutti i cookie dalla richiesta originale
-          'Cookie': request.headers.get('Cookie') || '',
-        },
-      }
-    );
-
-    if (!response.ok) {
-      console.log('❌ Refresh token failed:', response.status);
-      return null;
-    }
-
-    // Estrai nuovi token dai Set-Cookie headers
-    const setCookieHeaders = response.headers.getSetCookie();
-    
-    let newAccessToken = '';
-    let newRefreshToken = '';
-
-    setCookieHeaders.forEach((cookie) => {
-      if (cookie.startsWith('accessToken=')) {
-        newAccessToken = cookie.split(';')[0].split('=')[1];
-      }
-      if (cookie.startsWith('refreshToken=')) {
-        newRefreshToken = cookie.split(';')[0].split('=')[1];
-      }
-    });
-
-    if (!newAccessToken || !newRefreshToken) {
-      console.error('❌ Failed to extract tokens from Set-Cookie headers');
-      return null;
-    }
-
-    console.log('✅ Tokens refreshed successfully');
-    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
-  } catch (error) {
-    console.error('❌ Refresh request failed:', error);
-    return null;
-  }
-}
