@@ -1,7 +1,5 @@
-// ============================================================================
-// CONTACT SERVICES
-// services/contact.ts
-// ============================================================================
+// services/client/contact.ts
+'use client'
 
 import api from '@/lib/client/api';
 import type { ApiResponse, PaginationInfo } from '@/types/api';
@@ -30,9 +28,6 @@ interface ContactDeleteApiResponse extends ApiResponse<null> {}
 // QUERY BUILDER
 // ============================================================================
 
-/**
- * Costruisce query string dai parametri
- */
 const buildQueryString = (params: ContactQueryParams): string => {
   const query = new URLSearchParams();
 
@@ -51,12 +46,13 @@ const buildQueryString = (params: ContactQueryParams): string => {
 };
 
 // ============================================================================
-// CONTACT SERVICES
+// CLIENT CONTACT SERVICES (Browser only - React Query)
 // ============================================================================
 
-export const contactService = {
+export const clientContactService = {
   /**
    * Ottieni tutti i contatti con filtri e paginazione
+   * ⚠️ Solo per uso client-side (React Query)
    */
   async getAll(params: ContactQueryParams = {}): Promise<ContactListApiResponse> {
     const queryString = buildQueryString(params);
@@ -217,4 +213,4 @@ export const contactService = {
   },
 };
 
-export default contactService;
+export default clientContactService;

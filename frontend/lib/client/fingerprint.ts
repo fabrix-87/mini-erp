@@ -67,7 +67,6 @@ function getStoredFingerprint(): string | null {
       // Sincronizza con sessionStorage
       sessionStorage.setItem(FINGERPRINT_STORAGE_KEY, value);
       sessionStorage.setItem(FINGERPRINT_TIMESTAMP_KEY, Date.now().toString());
-      console.log('✅ Fingerprint loaded from cookie:', value.substring(0, 10) + '...');
       return value;
     }
 
@@ -78,14 +77,12 @@ function getStoredFingerprint(): string | null {
     if (stored && timestamp) {
       const age = Date.now() - parseInt(timestamp, 10);
       if (age <= FINGERPRINT_TTL) {
-        // ✅ IMPORTANTE: Se c'è in sessionStorage ma non in cookie, ri-crea il cookie
-        console.log('⚠️ Fingerprint found in sessionStorage but not in cookie, recreating...');
+        // IMPORTANTE: Se c'è in sessionStorage ma non in cookie, ri-crea il cookie
         storeFingerprint(stored);
         return stored;
       }
     }
 
-    console.log('⚠️ No stored fingerprint found');
     return null;
   } catch (error) {
     console.warn('Failed to read fingerprint from storage:', error);
@@ -108,21 +105,18 @@ function storeFingerprint(fingerprint: string): void {
     const expiryDate = new Date();
     expiryDate.setTime(expiryDate.getTime() + FINGERPRINT_TTL);
     
-    // ✅ FIX: Rimuovi Secure in development, usa Lax invece di Strict
     const isProduction = process.env.NODE_ENV === 'production';
     const cookieString = [
       `${FINGERPRINT_COOKIE_NAME}=${fingerprint}`,
       `expires=${expiryDate.toUTCString()}`,
       'path=/',
-      `SameSite=Lax`, // ✅ Cambiato da Strict a Lax
-      isProduction ? 'Secure' : '', // ✅ Secure solo in production
+      `SameSite=Lax`,
+      isProduction ? 'Secure' : '', // Secure solo in production
     ]
       .filter(Boolean)
       .join('; ');
     
     document.cookie = cookieString;
-    
-    console.log('✅ Fingerprint stored:', fingerprint.substring(0, 10) + '...');
   } catch (error) {
     console.warn('Failed to store fingerprint:', error);
   }
@@ -133,7 +127,7 @@ function storeFingerprint(fingerprint: string): void {
  * Meno accurato ma comunque utile per tracking base
  */
 function generateFallbackFingerprint(): string {
-  // ✅ GUARD: Se sul server, ritorna placeholder
+  // GUARD: Se sul server, ritorna placeholder
   if (typeof window === 'undefined') {
     return 'fallback-server-placeholder';
   }
@@ -256,12 +250,7 @@ export function isFingerprintReady(): boolean {
 export function preloadFingerprint(): void {
   if (typeof window === 'undefined') return;
   
-  console.log('🔐 Preloading fingerprint...');
-  
   getBrowserFingerprint()
-    .then(fp => {
-      console.log('✅ Fingerprint preloaded:', fp.substring(0, 10) + '...');
-    })
     .catch(err => {
       console.warn('❌ Fingerprint preload failed:', err);
     });

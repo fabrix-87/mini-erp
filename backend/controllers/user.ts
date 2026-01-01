@@ -258,6 +258,8 @@ export const refreshToken = asyncHandler(
     // Il token viene letto dal cookie, non dal body
     const token = req.cookies.refreshToken;
 
+    console.debug(token)
+
     if (!token) {
       throw new UnauthorizedError("Refresh token mancante");
     }

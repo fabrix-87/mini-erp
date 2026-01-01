@@ -20,6 +20,13 @@ async function seedRBAC() {
       { code: 'user:delete', resource: 'user', action: 'delete', description: 'Eliminazione utenti' },
       { code: 'user:manage', resource: 'user', action: 'manage', description: 'Gestione completa utenti' },
 
+      // Activity permissions
+      { code: 'activity:read', resource: 'activity', action: 'read', description: 'Lettura attività' },
+      { code: 'activity:create', resource: 'activity', action: 'create', description: 'Creazione attività' },
+      { code: 'activity:update', resource: 'activity', action: 'update', description: 'Modifica attività' },
+      { code: 'activity:delete', resource: 'activity', action: 'delete', description: 'Eliminazione attività' },
+      { code: 'activity:manage', resource: 'activity', action: 'manage', description: 'Gestione completa attività' },
+
       // Role permissions
       { code: 'role:read', resource: 'role', action: 'read', description: 'Lettura ruoli' },
       { code: 'role:create', resource: 'role', action: 'create', description: 'Creazione ruoli' },

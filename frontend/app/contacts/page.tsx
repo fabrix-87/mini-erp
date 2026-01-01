@@ -1,7 +1,7 @@
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import { HydrationBoundary } from '@/providers/hydration-boundary';
 import ContactListPage from '@/components/contact/contact-list';
-import contactService from '@/services/contact';
+import { getAllContacts } from '@/services/server/contact';
 import { contactKeys } from '@/hooks/contact-keys';
 import { ContactQueryParams, ContactSortField, SortOrder } from '@/types/contact';
 
@@ -30,7 +30,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
   // Prefetch usando contact-services
   await queryClient.prefetchQuery({
     queryKey: contactKeys.list(params),
-    queryFn: () => contactService.getAll(params),
+    queryFn: () => getAllContacts(params),
   });
 
   return (

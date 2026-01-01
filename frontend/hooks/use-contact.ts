@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import contactService from '@/services/contact';
+import contactService from '@/services/client/contact';
 import { contactKeys } from './contact-keys';
 import type {
   ContactQueryParams,
@@ -23,6 +23,24 @@ export { contactKeys };
 // ============================================================================
 // HOOK: useContacts (Lista con filtri e paginazione)
 // ============================================================================
+
+export function useContactsList(params: ContactQueryParams) {
+  const { data: response, isLoading, error, refetch } = useQuery({
+    queryKey: contactKeys.list(params),
+    queryFn: () => contactService.getAll(params),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  return {
+    contacts: response?.data || [],
+    pagination: response?.pagination || null,
+    loading: isLoading,
+    error: error?.message || null,
+    refetch: async () => {
+      await refetch();
+    },
+  };
+}
 
 export function useContacts(initialParams?: ContactQueryParams): UseContactsReturn {
   const [params, setParams] = useState<ContactQueryParams>(

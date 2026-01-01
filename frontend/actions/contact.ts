@@ -1,8 +1,17 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import contactService from '@/services/contact';
-import type { CreateContactInput, UpdateContactInput } from '@/types/contact';
+import {
+  createContact,
+  updateContact,
+  deleteContact,
+  toggleContactActive,
+  setContactAsPrimary,
+  bulkActivateContacts,
+  bulkDeactivateContacts,
+  bulkDeleteContacts,
+} from '@/services/server/contact';
+import type { ContactQueryParams, CreateContactInput, UpdateContactInput } from '@/types/contact';
 
 /**
  * Revalida cache contatti dopo mutazioni
@@ -24,7 +33,7 @@ export async function revalidateContact(id: number) {
  */
 export async function createContactAction(data: CreateContactInput) {
   try {
-    const response = await contactService.create(data);
+    const response = await createContact(data);
     revalidatePath('/contacts');
     return { success: true, data: response.data };
   } catch (error: any) {
@@ -37,7 +46,7 @@ export async function createContactAction(data: CreateContactInput) {
  */
 export async function updateContactAction(id: number, data: UpdateContactInput) {
   try {
-    const response = await contactService.update(id, data);
+    const response = await updateContact(id, data);
     revalidatePath(`/contacts/${id}`);
     revalidatePath('/contacts');
     return { success: true, data: response.data };
@@ -51,7 +60,7 @@ export async function updateContactAction(id: number, data: UpdateContactInput) 
  */
 export async function deleteContactAction(id: number) {
   try {
-    await contactService.delete(id);
+    await deleteContact(id);
     revalidatePath('/contacts');
     return { success: true };
   } catch (error: any) {
@@ -64,7 +73,7 @@ export async function deleteContactAction(id: number) {
  */
 export async function toggleContactActiveAction(id: number, active: boolean) {
   try {
-    const response = await contactService.toggleActive(id, active);
+    const response = await toggleContactActive(id, active);
     revalidatePath('/contacts');
     revalidatePath(`/contacts/${id}`);
     return { success: true, data: response.data };
@@ -78,7 +87,7 @@ export async function toggleContactActiveAction(id: number, active: boolean) {
  */
 export async function setContactPrimaryAction(id: number) {
   try {
-    const response = await contactService.setPrimary(id);
+    const response = await setContactAsPrimary(id);
     revalidatePath('/contacts');
     revalidatePath(`/contacts/${id}`);
     return { success: true, data: response.data };
@@ -92,7 +101,7 @@ export async function setContactPrimaryAction(id: number) {
  */
 export async function bulkActivateContactsAction(contactIds: number[]) {
   try {
-    const response = await contactService.bulkActivate(contactIds);
+    const response = await bulkActivateContacts(contactIds);
     revalidatePath('/contacts');
     return { success: true, message: response.message };
   } catch (error: any) {
@@ -102,7 +111,7 @@ export async function bulkActivateContactsAction(contactIds: number[]) {
 
 export async function bulkDeactivateContactsAction(contactIds: number[]) {
   try {
-    const response = await contactService.bulkDeactivate(contactIds);
+    const response = await bulkDeactivateContacts(contactIds);
     revalidatePath('/contacts');
     return { success: true, message: response.message };
   } catch (error: any) {
@@ -112,10 +121,28 @@ export async function bulkDeactivateContactsAction(contactIds: number[]) {
 
 export async function bulkDeleteContactsAction(contactIds: number[]) {
   try {
-    const response = await contactService.bulkDelete(contactIds);
+    const response = await bulkDeleteContacts(contactIds);
     revalidatePath('/contacts');
     return { success: true, message: response.message };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
+}
+
+
+function buildQueryString(params: ContactQueryParams): string {
+  const query = new URLSearchParams();
+  
+  if (params.page) query.append('page', params.page.toString());
+  if (params.limit) query.append('limit', params.limit.toString());
+  if (params.search) query.append('search', params.search);
+  if (params.companyId) query.append('companyId', params.companyId.toString());
+  if (params.active !== undefined) query.append('active', params.active.toString());
+  if (params.isPrimaryContact !== undefined) query.append('isPrimaryContact', params.isPrimaryContact.toString());
+  if (params.sortBy) query.append('sortBy', params.sortBy);
+  if (params.sortOrder) query.append('sortOrder', params.sortOrder);
+  if (params.department) query.append('department', params.department);
+  if (params.position) query.append('position', params.position);
+  
+  return query.toString();
 }

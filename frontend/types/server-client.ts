@@ -18,6 +18,7 @@ export interface ServerRequestOptions extends RequestInit {
 
   responseType?: string;
   data?: any;
+  unwrapData?: boolean; 
 }
 
 /**

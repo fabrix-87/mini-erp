@@ -1,14 +1,15 @@
+// components/contact/contact-list.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  useContacts,
+  useContactsList, 
   useContactMutations,
   useContactExport,
   useContactBulkOperations,
 } from "@/hooks/use-contact";
-import type { ContactSortField } from "@/types/contact";
+import type { ContactSortField, SortOrder, ContactQueryParams } from "@/types/contact";
 import ContactToolbar from "./contact-list/toolbar";
 import ContactFilters from "./contact-list/filters";
 import ContactBulkActions from "./contact-list/bulk-actions";
@@ -19,64 +20,76 @@ export default function ContactListPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const {
-    contacts,
-    loading,
-    pagination,
-    filters,
-    setFilters,
-    sort,
-    setSort,
-    refetch,
-  } = useContacts({
-    page: Number(searchParams.get("page")) || 1,
-    limit: Number(searchParams.get("limit")) || 20,
-    search: searchParams.get("search") || undefined,
-    sortBy: (searchParams.get("sortBy") as ContactSortField) || "firstName",
-    sortOrder: (searchParams.get("sortOrder") as "asc" | "desc") || "asc",
-  });
+  // Memoizza params per evitare re-render
+  const params = useMemo((): ContactQueryParams => {
+    return {
+      page: Number(searchParams.get("page")) || 1,
+      limit: Number(searchParams.get("limit")) || 20,
+      search: searchParams.get("search") || undefined,
+      sortBy: (searchParams.get("sortBy") as ContactSortField) || "firstName",
+      sortOrder: (searchParams.get("sortOrder") as SortOrder) || "asc",
+      companyId: searchParams.get("companyId") ? Number(searchParams.get("companyId")) : undefined,
+      active: searchParams.get("active") ? searchParams.get("active") === "true" : undefined,
+      isPrimaryContact: searchParams.get("isPrimaryContact") ? searchParams.get("isPrimaryContact") === "true" : undefined,
+      department: searchParams.get("department") || undefined,
+      position: searchParams.get("position") || undefined,
+    };
+  }, [searchParams]);
 
+  // Hook semplice per la lista (si sincronizza con SSR)
+  const { contacts, loading, pagination, refetch } = useContactsList(params);
+
+  // Hook per mutazioni
   const { deleteContact, toggleActive, setPrimary } = useContactMutations();
   const { exportCSV, exportExcel, isExporting } = useContactExport();
-  const { bulkDelete, bulkActivate, bulkDeactivate, isProcessing } =
-    useContactBulkOperations();
+  const { bulkDelete, bulkActivate, bulkDeactivate, isProcessing } = useContactBulkOperations();
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [showFilters, setShowFilters] = useState(false);
 
-  const updateURL = (newFilters: Record<string, any>) => {
-    const params = new URLSearchParams();
-    Object.entries(newFilters).forEach(([key, value]) => {
+  // Gestisci sort e filters localmente (derivati da params)
+  const sort = {
+    field: params.sortBy || "firstName",
+    order: params.sortOrder || "asc",
+  };
+
+  const filters = {
+    search: params.search,
+    companyId: params.companyId,
+    active: params.active,
+    isPrimaryContact: params.isPrimaryContact,
+    department: params.department,
+    position: params.position,
+  };
+
+  const updateURL = (newParams: Partial<ContactQueryParams>) => {
+    const urlParams = new URLSearchParams();
+    const merged = { ...params, ...newParams };
+    
+    Object.entries(merged).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
-        params.set(key, String(value));
+        urlParams.set(key, String(value));
       }
     });
-    router.push(`?${params.toString()}`, { scroll: false });
+    
+    router.push(`/contacts?${urlParams.toString()}`, { scroll: false });
   };
 
   const handleSearch = (searchTerm: string) => {
-    const newFilters = { ...filters, search: searchTerm, page: 1 };
-    setFilters(newFilters);
-    updateURL(newFilters);
+    updateURL({ search: searchTerm, page: 1 });
   };
 
   const handleSort = (field: ContactSortField) => {
-    const newOrder =
-      sort.field === field && sort.order === "asc" ? "desc" : "asc";
-    setSort(field, newOrder);
-    updateURL({ ...filters, sortBy: field, sortOrder: newOrder });
+    const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
+    updateURL({ sortBy: field, sortOrder: newOrder });
   };
 
   const handlePageChange = (newPage: number) => {
-    const newFilters = { ...filters, page: newPage };
-    setFilters(newFilters);
-    updateURL(newFilters);
+    updateURL({ page: newPage });
   };
 
   const handleFilterChange = (newFilters: Record<string, any>) => {
-    const updatedFilters = { ...filters, ...newFilters, page: 1 };
-    setFilters(updatedFilters);
-    updateURL(updatedFilters);
+    updateURL({ ...newFilters, page: 1 });
   };
 
   return (
@@ -89,6 +102,7 @@ export default function ContactListPage() {
           </p>
         </div>
       </div>
+
       <ContactToolbar
         onSearch={handleSearch}
         onToggleFilters={() => setShowFilters(!showFilters)}
@@ -96,7 +110,7 @@ export default function ContactListPage() {
         onExport={exportExcel}
         isExporting={isExporting}
         showFilters={showFilters}
-        initialSearch={searchParams.get("search") || ""}
+        initialSearch={params.search || ""}
       />
 
       {showFilters && (

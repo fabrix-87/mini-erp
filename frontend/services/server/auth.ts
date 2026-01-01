@@ -2,6 +2,7 @@
 import { cookies } from 'next/headers';
 import { serverApi } from '@/lib/server/api';
 import { AuthResponse } from '@/types/api'; 
+import { setCookies } from '@/lib/server/cookies';
 
 /**
  * Esegue refresh dei token chiamando il backend
@@ -16,10 +17,8 @@ export async function performTokenRefresh(): Promise<AuthResponse | null> {
     return null;
   }
 
-  try {
-    console.log('🔄 Refreshing tokens...');
-    
-    // ✅ Backend restituisce token nel body (come per login)
+  try {    
+    // Backend restituisce token nel body (come per login)
     const data = await serverApi.post<AuthResponse>('/users/refresh-token', {});
 
     if (!data.accessToken || !data.refreshToken) {
@@ -27,37 +26,9 @@ export async function performTokenRefresh(): Promise<AuthResponse | null> {
       return null;
     }
 
-    // ✅ Aggiorna i cookie
-    const isProduction = process.env.NODE_ENV === 'production';
-    
-    cookieStore.set('accessToken', data.accessToken, { 
-      httpOnly: true, 
-      secure: isProduction, 
-      path: '/',
-      sameSite: 'lax',
-      maxAge: 60 * 15 // 15 minuti
-    });
-    
-    cookieStore.set('refreshToken', data.refreshToken, { 
-      httpOnly: true, 
-      secure: isProduction, 
-      path: '/',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 7 giorni
-    });
+    // Aggiorna i cookie
+    setCookies(data.accessToken, data.refreshToken, data.user)
 
-    // ✅ Aggiorna anche il cookie 'user' se presente
-    if (data.user) {
-      cookieStore.set('user', JSON.stringify(data.user), {
-        httpOnly: false,
-        secure: isProduction,
-        path: '/',
-        sameSite: 'lax',
-        maxAge: 60 * 15
-      });
-    }
-
-    console.log('✅ Tokens refreshed successfully');
     return data;
   } catch (error) {
     console.error('❌ Token refresh failed:', error);

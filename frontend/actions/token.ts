@@ -9,9 +9,7 @@ import { performTokenRefresh } from '@/services/server/auth';
  * Chiamata dal client quando riceve 401
  */
 export async function refreshTokenAction(): Promise<{ success: boolean }> {
-  try {
-    console.log('🔄 Refresh token action called');
-    
+  try { 
     const result = await performTokenRefresh();
 
     if (!result) {
@@ -19,7 +17,6 @@ export async function refreshTokenAction(): Promise<{ success: boolean }> {
       return { success: false };
     }
 
-    console.log('✅ Token refreshed successfully');
     return { success: true };
   } catch (error) {
     console.error('❌ Refresh token action error:', error);

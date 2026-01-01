@@ -274,13 +274,6 @@ export const LoginSchema = z.object({
 });
 
 /**
- * Schema per il refresh token
- */
-export const RefreshTokenSchema = z.object({
-  refreshToken: z.string().min(1, "Refresh token obbligatorio"),
-});
-
-/**
  * Schema per la richiesta di reset password
  */
 export const ForgotPasswordSchema = z.object({
@@ -367,14 +360,6 @@ export const validateRegisterUser = validateBody(
 export const validateLogin = validateBody(LoginSchema, "User login");
 
 /**
- * Middleware per il refresh token
- */
-export const validateRefreshToken = validateBody(
-  RefreshTokenSchema,
-  "Token refresh"
-);
-
-/**
  * Middleware per la richiesta di reset password
  */
 export const validateForgotPassword = validateBody(
@@ -455,7 +440,6 @@ export type UpdateUserDetailsInput = z.infer<typeof UpdateUserDetailsSchema>;
 export type ChangePasswordInput = z.infer<typeof ChangePasswordSchema>;
 export type UpdateUserRolesInput = z.infer<typeof UpdateUserRolesSchema>;
 export type LoginInput = z.infer<typeof LoginSchema>;
-export type RefreshTokenInput = z.infer<typeof RefreshTokenSchema>;
 export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
 export type UserQueryInput = z.infer<typeof UserQuerySchema>;

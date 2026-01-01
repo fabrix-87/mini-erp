@@ -6,14 +6,14 @@ import {
   isAdmin, 
   redirectToLogin 
 } from "./helpers/auth";
+import { isPublicRoute, isAdminRoute } from './lib/constants/routes'; 
 
 // ============================================================================
 // Configuration
 // ============================================================================
 
-const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password'];
-const ADMIN_ROUTES = ['/users', '/roles', '/settings'];
 const DEFAULT_AUTH_ROUTE = '/dashboard';
+const DEFAULT_PUBLIC_ROUTE = '/login';
 
 // ============================================================================
 // Main Middleware Logic
@@ -34,40 +34,57 @@ export async function proxy(request: NextRequest) {
   }
 
   // ========================================
-  // 2. Allow public routes
+  // 2. Get and validate token
   // ========================================
-  if (PUBLIC_ROUTES.includes(pathname)) {
+  const accessToken = getAccessToken(request);
+  const payload = accessToken ? decodeJWT(accessToken) : null;
+  const isAuthenticated = payload && !isTokenExpired(payload);
+
+  // ========================================
+  // 3. Root route handling
+  // ========================================
+  if (pathname === '/') {
+    if (isAuthenticated) {
+      console.log('🔀 Root redirect: Authenticated → /dashboard');
+      return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, request.url));
+    } else {
+      console.log('🔀 Root redirect: Not authenticated → /login');
+      return NextResponse.redirect(new URL(DEFAULT_PUBLIC_ROUTE, request.url));
+    }
+  }
+
+  // ========================================
+  // 4. Public routes handling
+  // ========================================
+  if (isPublicRoute(pathname)) {
+    if (isAuthenticated) {
+      console.log('🔀 Already authenticated, redirecting to /dashboard');
+      return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, request.url));
+    }
     return NextResponse.next();
   }
 
   // ========================================
-  // 3. Check authentication
+  // 5. Protected routes - Check authentication
   // ========================================
-  const accessToken = getAccessToken(request);
-
   if (!accessToken) {
     console.log('⚠️ No access token found');
     return redirectToLogin(request);
   }
-
-  // ✅ Solo decode (no verify)
-  const payload = decodeJWT(accessToken);
 
   if (!payload) {
     console.log('⚠️ Invalid token format');
     return redirectToLogin(request);
   }
 
-  // ✅ Se scaduto, lascia passare - l'interceptor gestirà il refresh
   if (isTokenExpired(payload)) {
     console.log('⚠️ Token expired, will be refreshed by API interceptor');
-    // Non bloccare - lascia che l'app carichi e l'interceptor gestisca
   }
 
   // ========================================
-  // 4. Check admin routes permissions
+  // 6. Admin routes - Check permissions
   // ========================================
-  if (ADMIN_ROUTES.some((route) => pathname.startsWith(route))) {
+  if (isAdminRoute(pathname)) {
     if (!isAdmin(payload)) {
       console.log('⛔ Admin access denied');
       return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, request.url));
@@ -75,7 +92,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // ========================================
-  // 5. Allow access
+  // 7. Allow access
   // ========================================
   return NextResponse.next();
 }

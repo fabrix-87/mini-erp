@@ -1,4 +1,8 @@
+// lib/server/cookies.ts
+
+import { User } from "@/types/api";
 import { cookies } from "next/headers";
+import { ACCESS_TOKEN_LIFETIME_SECONDS, REFRESH_TOKEN_LIFETIME_SECONDS } from "../constants/auth";
 
 /**
  * Legge i cookies dal server
@@ -6,17 +10,67 @@ import { cookies } from "next/headers";
 export async function getCookiesString(): Promise<string> {
   try {
     const cookieStore = await cookies();
-    const accessToken = cookieStore.get('accessToken')?.value;
-    const refreshToken = cookieStore.get('refreshToken')?.value;
+    const accessToken = cookieStore.get("accessToken")?.value;
+    const refreshToken = cookieStore.get("refreshToken")?.value;
 
     const cookieParts: string[] = [];
     if (accessToken) cookieParts.push(`accessToken=${accessToken}`);
     if (refreshToken) cookieParts.push(`refreshToken=${refreshToken}`);
 
-    return cookieParts.join('; ');
+    return cookieParts.join("; ");
   } catch (error) {
-    console.error('Failed to read cookies:', error);
-    return '';
+    console.error("Failed to read cookies:", error);
+    return "";
   }
 }
 
+/**
+ * Setta i cookies
+ */
+/**
+ * Imposta i cookie di autenticazione (access token, refresh token, user, timestamp)
+ */
+export async function setCookies(
+  accessToken: string,
+  refreshToken: string,
+  user: User
+): Promise<void> {
+  const isProduction = process.env.NODE_ENV === "production";
+  const cookieStore = await cookies();
+
+  // Access Token (httpOnly)
+  cookieStore.set("accessToken", accessToken, {
+    httpOnly: true,
+    secure: isProduction,
+    path: "/",
+    sameSite: "lax",
+    maxAge: ACCESS_TOKEN_LIFETIME_SECONDS, // In secondi
+  });
+
+  // Refresh Token (httpOnly)
+  cookieStore.set("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: isProduction,
+    path: "/",
+    sameSite: "lax",
+    maxAge: REFRESH_TOKEN_LIFETIME_SECONDS, // In secondi
+  });
+
+  // User Data (readable da JS)
+  cookieStore.set("user", JSON.stringify(user), {
+    httpOnly: false, // DEVE essere false
+    secure: isProduction,
+    path: "/",
+    sameSite: "lax",
+    maxAge: ACCESS_TOKEN_LIFETIME_SECONDS, // Stessa durata del token
+  });
+
+  // Token Timestamp (readable da JS per proactive refresh)
+  cookieStore.set("tokenTimestamp", String(Date.now()), {
+    httpOnly: false, // DEVE essere false
+    secure: isProduction,
+    path: "/",
+    sameSite: "lax",
+    maxAge: ACCESS_TOKEN_LIFETIME_SECONDS, // Stessa durata del token
+  });
+}

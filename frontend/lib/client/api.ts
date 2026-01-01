@@ -87,6 +87,13 @@ api.interceptors.response.use(
     // Handle 401 Unauthorized - Auto Refresh
     // ========================================
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.group('🔍 401 Debug');
+      console.log('URL:', originalRequest.url);
+      console.log('Method:', originalRequest.method);
+      console.log('Headers:', originalRequest.headers);
+      console.log('Cookies:', document.cookie);
+      console.groupEnd();
+
       // Evita login/logout pages
       if (typeof window !== "undefined") {
         const isAuthPage =
@@ -100,10 +107,12 @@ api.interceptors.response.use(
 
       // Se già in refresh, accoda la richiesta
       if (isRefreshing) {
+        console.log('⏳ Already refreshing, queuing request...');
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then(() => {
+            console.log('🔄 Retrying queued request');
             return api(originalRequest);
           })
           .catch((err) => {
@@ -119,15 +128,19 @@ api.interceptors.response.use(
         const refreshSuccess = await refreshToken();
 
         if (!refreshSuccess) {
+          console.error('❌ Refresh returned false');
           throw new Error("Refresh failed");
         }
 
+        console.log('✅ Refresh successful, processing queue...');
         // Processa coda di richieste fallite
         processQueue();
 
+        console.log('🔄 Retrying original request...');
         // Retry richiesta originale
         return api(originalRequest);
       } catch (refreshError) {
+        console.error('❌ Refresh error:', refreshError);
         processQueue(refreshError);
 
         // Redirect to login

@@ -71,6 +71,7 @@ class ServerApiClient {
       includeCookies = true,
       revalidate,
       tags,
+      unwrapData = true,
       ...fetchOptions
     } = options;
 
@@ -88,7 +89,7 @@ class ServerApiClient {
       },
     });
 
-    return handleResponse<T>(response);
+    return handleResponse<T>(response, unwrapData);
   }
 }
 
@@ -151,7 +152,7 @@ export function buildUrl(
 /**
  * Gestisce la risposta dell'API
  */
-export async function handleResponse<T>(response: Response): Promise<T> {
+export async function handleResponse<T>(response: Response, unwrapData: boolean = true): Promise<T> {
   const contentType = response.headers.get("content-type");
   const isJson = contentType?.includes("application/json");
 
@@ -180,8 +181,12 @@ export async function handleResponse<T>(response: Response): Promise<T> {
   if (isJson) {
     const json: ApiResponse<T> = await response.json();
     
-    // ✅ Ritorna solo il payload 'data'
-    return json.data;
+    // Scegli se unwrappare o no
+    if (unwrapData) {
+      return json.data; // Comportamento attuale
+    } else {
+      return json as T; // Restituisci tutto
+    }
   }
 
   // Plain text fallback

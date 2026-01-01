@@ -4,7 +4,6 @@ import {
   validateCreateUser,
   validateRegisterUser,
   validateLogin,
-  validateRefreshToken,
   validateForgotPassword,
   validateResetPassword,
   validateUpdateUserProfile,
@@ -74,7 +73,7 @@ router.post('/logout', authenticateToken, logout);
  * @desc    Refresh access token usando refresh token
  * @access  Public
  */
-router.post('/refresh-token', refreshTokenRateLimiter, validateRefreshToken, refreshToken);
+router.post('/refresh-token', refreshTokenRateLimiter, refreshToken);
 
 /**
  * @route   POST /api/users/forgot-password
