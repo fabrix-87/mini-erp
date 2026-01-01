@@ -1,81 +1,196 @@
-sequenceDiagram
-    participant User as User/Browser
-    participant Middleware as Next.js Middleware
-    participant ServerComp as Server Component
-    participant RouteHandler as Route Handler
-    participant Express as Express Backend
-    participant Redis as Redis Cache
-    participant PG as PostgreSQL
-
-    Note over User,PG: 1. LOGIN FLOW
-    User->>RouteHandler: POST /api/auth/login
-    RouteHandler->>Express: POST /auth/login + fingerprint
-    Express->>PG: Validate credentials + rate limiting
-    PG-->>Express: User found
-    Express->>Express: Generate JWT (jti, aud, iss, fingerprint)
-    Express->>Redis: Store session + refresh token (atomic)
-    Express-->>RouteHandler: Access + Refresh tokens
-    RouteHandler->>RouteHandler: Set httpOnly cookies
-    RouteHandler-->>User: Redirect to /dashboard
-
-    Note over User,PG: 2. PROTECTED PAGE SSR
-    User->>Middleware: Navigate to /dashboard
-    Middleware->>Middleware: Read accessToken from cookie
-    Middleware->>Middleware: LOCAL: Verify JWT signature with jose
-    Middleware->>Middleware: LOCAL: Check exp, iss, aud, claims
-    alt Token valid & NOT expiring soon
-        Middleware->>Middleware: Add x-user-id header
-        Middleware->>ServerComp: Forward request
-    else Token expires in <5min
-        Note over Middleware,Express: ONLY NOW call backend
-        Middleware->>Express: POST /auth/refresh
-        Express->>Redis: Validate refresh token whitelist
-        Express->>Redis: Rotate refresh token (atomic)
-        Express-->>Middleware: New tokens
-        Middleware->>Middleware: Update cookies in response
-        Middleware->>ServerComp: Forward with new tokens
-    else Token expired or invalid signature
-        Note over Middleware,Express: Try refresh
-        Middleware->>Express: POST /auth/refresh
-        alt Refresh successful
-            Express->>Redis: Validate + rotate
-            Express-->>Middleware: New tokens
-            Middleware->>ServerComp: Forward request
-        else Refresh failed
-            Middleware-->>User: Redirect to /login
+graph TB
+    subgraph "CLIENT - Browser"
+        U[👤 User]
+        
+        subgraph "React Components"
+            LP[Login Page]
+            DP[Dashboard Page]
+            CP[Contact Page]
+        end
+        
+        subgraph "Auth Provider"
+            AP[AuthProvider State]
+            TRT[Token Refresh Timer<br/>Check ogni 60s]
+            TS[tokenTimestamp reader]
+        end
+        
+        subgraph "API Layer"
+            AC[API Client<br/>Axios]
+            INT[401 Interceptor]
+            FP[Fingerprint Generator]
         end
     end
     
-    ServerComp->>ServerComp: cookies() - read accessToken
-    ServerComp->>ServerComp: LOCAL: Verify JWT with jose
-    ServerComp->>Express: Fetch data with token
-    Express->>Express: Final validation (jti, fingerprint)
-    Express->>Redis: Check blacklist + session
-    Express-->>ServerComp: Protected data
-    ServerComp-->>User: Render page
+    subgraph "MIDDLEWARE - Edge Runtime"
+        MW[proxy.ts Middleware]
+        
+        subgraph "Route Guards"
+            RG1[Root / Handler]
+            RG2[Public Routes Guard]
+            RG3[Protected Routes Guard]
+            RG4[Admin Routes Guard]
+        end
+    end
+    
+    subgraph "SERVER - Next.js App"
+        subgraph "Server Actions"
+            LA[loginAction]
+            LGA[logoutAction]
+        end
+        
+        subgraph "Server API Client"
+            SA[serverApi fetch]
+            SC[setCookies helper]
+            GC[getCookiesString]
+        end
+        
+        subgraph "Server Services"
+            PTR[performTokenRefresh]
+            FPSSR[getFingerprintForSSR]
+        end
+    end
+    
+    subgraph "BACKEND - Express API"
+        subgraph "Auth Endpoints"
+            EL[POST /api/users/login]
+            ER[POST /api/users/refresh-token]
+            ELO[POST /api/users/logout]
+        end
+        
+        subgraph "Auth Services"
+            JWT[JWT Service<br/>generateTokenPair<br/>verifyToken]
+            FPB[Fingerprint Service<br/>extractFingerprint<br/>validateMatch]
+        end
+        
+        subgraph "Session Management"
+            SM[Session Manager<br/>saveSession<br/>rotateRefreshToken<br/>destroySession]
+        end
+    end
+    
+    subgraph "STORAGE"
+        PG[(PostgreSQL<br/>Users, Roles,<br/>Permissions)]
+        RD[(Redis<br/>Sessions,<br/>Refresh Tokens)]
+    end
+    
+    subgraph "COOKIES - 4 Types"
+        C1[🍪 accessToken<br/>httpOnly: true<br/>15 min]
+        C2[🍪 refreshToken<br/>httpOnly: true<br/>7 days]
+        C3[🍪 user<br/>httpOnly: false<br/>15 min]
+        C4[🍪 tokenTimestamp<br/>httpOnly: false<br/>15 min]
+    end
 
-    Note over User,PG: 3. CLIENT API CALL (Token Expired)
-    User->>ServerComp: Trigger action
-    ServerComp->>Express: API request with cookie
-    Express->>Express: Verify token + jti + fingerprint
-    Express->>Redis: Check session
-    Express-->>ServerComp: 401 Unauthorized
-    ServerComp->>RouteHandler: POST /api/auth/refresh
-    RouteHandler->>Express: Refresh with cookie
-    Express->>Redis: Rotate token atomically
-    Express-->>RouteHandler: New tokens
-    RouteHandler->>RouteHandler: Update cookies
-    RouteHandler-->>ServerComp: Success
-    ServerComp->>Express: Retry original request
-    Express-->>ServerComp: Success
+    %% LOGIN FLOW
+    U -->|1. Submit credentials| LP
+    LP -->|2. Generate fingerprint| FP
+    LP -->|3. POST /login| LA
+    LA -->|4. serverApi.post| SA
+    SA -->|5. Forward with cookies| EL
+    EL -->|6. Validate credentials| PG
+    EL -->|7. Generate JWT pair| JWT
+    JWT -->|8. Include fingerprint| FPB
+    EL -->|9. Save refresh token| SM
+    SM -->|10. Store in Redis| RD
+    EL -->|11. Return tokens + user| SA
+    SA -->|12. Set 4 cookies| SC
+    SC -.->|Set| C1
+    SC -.->|Set| C2
+    SC -.->|Set| C3
+    SC -.->|Set| C4
+    LA -->|13. Success| LP
+    LP -->|14. Save user state| AP
+    AP -->|15. Start timer| TRT
+    LP -->|16. Navigate /dashboard| MW
+    MW -->|17. Validate token| RG3
+    RG3 -->|18. Allow| DP
 
-    Note over User,PG: 4. LOGOUT
-    User->>RouteHandler: POST /api/auth/logout
-    RouteHandler->>Express: POST /auth/logout
-    Express->>Redis: MULTI transaction
-    Express->>Redis: Remove session + whitelist
-    Express->>Redis: Add jti to blacklist (TTL)
-    Express->>Redis: EXEC
-    Express-->>RouteHandler: Success
-    RouteHandler->>RouteHandler: Clear cookies
-    RouteHandler-->>User: Redirect to /login
+    %% PROACTIVE REFRESH FLOW
+    TRT -->|Every 60s| TS
+    TS -.->|Read| C4
+    TS -->|If expiry < 2min| PTR
+    PTR -->|POST /refresh-token| SA
+    SA -.->|Forward| C2
+    SA -->|With fingerprint| FPSSR
+    SA -->|Request| ER
+    ER -.->|Read cookie| C2
+    ER -->|Verify fingerprint| FPB
+    FPB -->|Match OK| JWT
+    ER -->|Check whitelist| SM
+    SM -.->|Validate| RD
+    ER -->|Generate new pair| JWT
+    ER -->|Rotate token ATOMIC| SM
+    SM -->|Update Redis| RD
+    ER -->|Return new tokens| SA
+    SA -->|Update all 4 cookies| SC
+    SC -.->|Update| C1
+    SC -.->|Update| C2
+    SC -.->|Update| C3
+    SC -.->|Update| C4
+    PTR -->|Refresh user state| AP
+
+    %% API REQUEST FLOW
+    CP -->|fetch data| AC
+    AC -.->|Include| C1
+    AC -->|GET /api/contacts| BACKEND[Backend API]
+    BACKEND -->|Token expired 401| AC
+    AC -->|Trigger| INT
+    INT -->|Auto refresh| PTR
+    PTR -->|Success| INT
+    INT -->|Retry with new token| AC
+    AC -->|200 + data| CP
+
+    %% MIDDLEWARE FLOW
+    U -->|Navigate /| MW
+    MW -->|Check path| RG1
+    RG1 -.->|Read| C1
+    RG1 -->|Has token?| RG1
+    RG1 -->|Yes: /dashboard<br/>No: /login| U
+    
+    U -->|Navigate /login| MW
+    MW -->|Public route| RG2
+    RG2 -.->|Read| C1
+    RG2 -->|Already logged?<br/>Redirect /dashboard| DP
+    
+    U -->|Navigate /contacts| MW
+    MW -->|Protected route| RG3
+    RG3 -.->|Validate| C1
+    RG3 -->|No token?<br/>Redirect /login| LP
+    
+    U -->|Navigate /users| MW
+    MW -->|Admin route| RG4
+    RG4 -.->|Check roles| C1
+    RG4 -->|Not admin?<br/>Redirect /dashboard| DP
+
+    %% LOGOUT FLOW
+    U -->|Click logout| DP
+    DP -->|logoutAction| LGA
+    LGA -->|POST /logout| SA
+    SA -.->|Forward| C2
+    SA -->|Request| ELO
+    ELO -->|Decode token| JWT
+    ELO -->|Delete session| SM
+    SM -->|DEL from Redis| RD
+    ELO -->|Clear cookies| SC
+    SC -.->|Delete| C1
+    SC -.->|Delete| C2
+    SC -.->|Delete| C3
+    SC -.->|Delete| C4
+    LGA -->|Clear state| AP
+    AP -->|Stop timer| TRT
+    LGA -->|Redirect| LP
+
+    %% STYLING
+    classDef userClass fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef frontendClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef middlewareClass fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef serverClass fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    classDef backendClass fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef storageClass fill:#efebe9,stroke:#3e2723,stroke-width:3px
+    classDef cookieClass fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    
+    class U userClass
+    class LP,DP,CP,AP,TRT,TS,AC,INT,FP frontendClass
+    class MW,RG1,RG2,RG3,RG4 middlewareClass
+    class LA,LGA,SA,SC,GC,PTR,FPSSR serverClass
+    class EL,ER,ELO,JWT,FPB,SM,BACKEND backendClass
+    class PG,RD storageClass
+    class C1,C2,C3,C4 cookieClass
