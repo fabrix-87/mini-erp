@@ -1,6 +1,5 @@
 # 📄 AUTH_FLOW.md
 
-```markdown
 # 🔐 Sistema di Autenticazione - Documentazione Completa
 
 > **Mini ERP/CRM** - Auth Flow con JWT, Token Rotation, Proactive Refresh e Device Fingerprinting
@@ -260,6 +259,8 @@ graph TB
     class PG,RD storageClass
     class C1,C2,C3,C4 cookieClass
 ```
+
+---
 
 ### 📋 Legenda Colori
 
