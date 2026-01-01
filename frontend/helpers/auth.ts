@@ -1,8 +1,8 @@
-import { JWTPayload } from "@/lib/jwt";
+// helpers/auth.ts
+import { JWTPayload } from "@/types/api";
 import { NextRequest, NextResponse } from "next/server";
 
 const LOGIN_ROUTE = '/login';
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 /**
  * Legge accessToken dal cookie della richiesta
@@ -52,7 +52,7 @@ export function redirectToLogin(request: NextRequest): NextResponse {
 }
 
 /**
- * Chiama backend per refresh token
+ * Chiama la route Next.js per refresh token
  */
 export async function refreshTokens(
   request: NextRequest
@@ -65,14 +65,18 @@ export async function refreshTokens(
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/users/refresh-token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Cookie: `refreshToken=${refreshToken}`,
-      },
-      credentials: 'include',
-    });
+    // Chiama la route Next.js invece del backend direttamente
+    const response = await fetch(
+      new URL('/api/auth/refresh', request.url),
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Inoltra tutti i cookie dalla richiesta originale
+          'Cookie': request.headers.get('Cookie') || '',
+        },
+      }
+    );
 
     if (!response.ok) {
       console.log('❌ Refresh token failed:', response.status);

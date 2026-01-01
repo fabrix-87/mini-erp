@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Save, Loader2, ChevronsUpDown, Check } from "lucide-react";
 import {
   useContact,
@@ -21,7 +21,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Spinner } from "../ui/spinner";
 import CompanyCard from "./contact-form/company-card";
 
 interface ContactFormProps {
@@ -31,7 +30,9 @@ interface ContactFormProps {
 export default function ContactForm({ isNew }: ContactFormProps) {
   const router = useRouter();
   const params = useParams();
+  const queryParams = useSearchParams()
   const contactId = params?.id ? parseInt(params.id as string) : null;
+  const companyId = queryParams.get('companyId') || "";
 
   // Hooks
   const { contact, loading: loadingContact } = useContact(contactId || 0);
@@ -40,7 +41,7 @@ export default function ContactForm({ isNew }: ContactFormProps) {
   const { validateEmailUnique, isValidating } = useContactValidation();
 
   const [formData, setFormData] = useState({
-    companyId: "",
+    companyId: companyId,
     firstName: "",
     lastName: "",
     email: "",

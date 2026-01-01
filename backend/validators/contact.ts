@@ -143,6 +143,20 @@ export const ToggleContactActiveSchema = z
   })
   .strict();
 
+/**
+ * Schema per check mail
+ */
+export const CheckEmailSchema = z.object({
+  email: z.email(),
+  companyId: z.string().transform((val) => {
+    const num = parseInt(val);
+    if (isNaN(num) || num <= 0) {
+      throw new Error("ID company non valido");
+    }
+    return num;
+  }),
+})
+
 // ============================================================================
 // VALIDATION MIDDLEWARE EXPORTS
 // ============================================================================
@@ -164,6 +178,8 @@ export const validateContactQuery = validateQuery(
   "Contact query"
 );
 
+export const validateCheckEmail = validateQuery(CheckEmailSchema, "Contact check mail")
+
 export const validateToggleContactActive = validateBody(
   ToggleContactActiveSchema,
   "Toggle contact active"
@@ -176,6 +192,7 @@ export const validateToggleContactActive = validateBody(
 export type CreateContactInput = z.infer<typeof CreateContactSchema>;
 export type UpdateContactInput = z.infer<typeof UpdateContactSchema>;
 export type ContactQueryInput = z.infer<typeof ContactQuerySchema>;
+export type CheckMailInput = z.infer<typeof CheckEmailSchema>;
 export type ToggleContactActiveInput = z.infer<
   typeof ToggleContactActiveSchema
 >;

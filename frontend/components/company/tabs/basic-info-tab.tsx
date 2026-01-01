@@ -3,9 +3,22 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { CompanyFormData, CompanyType } from "@/types/company";
+import { CountryCombobox } from "@/components/ui/country-combobox";
 
 interface BasicInfoTabProps {
   formData: CompanyFormData;
@@ -14,7 +27,12 @@ interface BasicInfoTabProps {
   companyType: CompanyType;
 }
 
-export function BasicInfoTab({ formData, onChange, onNestedChange, companyType }: BasicInfoTabProps) {
+export function BasicInfoTab({
+  formData,
+  onChange,
+  onNestedChange,
+  companyType,
+}: BasicInfoTabProps) {
   return (
     <>
       {/* General Info */}
@@ -136,7 +154,9 @@ export function BasicInfoTab({ formData, onChange, onNestedChange, companyType }
             <Input
               id="address"
               value={formData.legalAddress?.address || ""}
-              onChange={(e) => onNestedChange("legalAddress", "address", e.target.value)}
+              onChange={(e) =>
+                onNestedChange("legalAddress", "address", e.target.value)
+              }
               placeholder="Via Roma 123"
             />
           </div>
@@ -147,17 +167,21 @@ export function BasicInfoTab({ formData, onChange, onNestedChange, companyType }
               <Input
                 id="zipCode"
                 value={formData.legalAddress?.zipCode || ""}
-                onChange={(e) => onNestedChange("legalAddress", "zipCode", e.target.value)}
+                onChange={(e) =>
+                  onNestedChange("legalAddress", "zipCode", e.target.value)
+                }
                 placeholder="20121"
               />
             </div>
 
-            <div className="space-y-2 md:col-span-2">
+            <div className="space-y-2">
               <Label htmlFor="city">Città</Label>
               <Input
                 id="city"
                 value={formData.legalAddress?.city || ""}
-                onChange={(e) => onNestedChange("legalAddress", "city", e.target.value)}
+                onChange={(e) =>
+                  onNestedChange("legalAddress", "city", e.target.value)
+                }
                 placeholder="Milano"
               />
             </div>
@@ -167,9 +191,21 @@ export function BasicInfoTab({ formData, onChange, onNestedChange, companyType }
               <Input
                 id="provinceCode"
                 value={formData.legalAddress?.provinceCode || ""}
-                onChange={(e) => onNestedChange("legalAddress", "provinceCode", e.target.value)}
+                onChange={(e) =>
+                  onNestedChange("legalAddress", "provinceCode", e.target.value)
+                }
                 placeholder="MI"
                 maxLength={2}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="countryCode">Stato *</Label>
+              <CountryCombobox
+                value={formData.legalAddress?.countryCode || ""}
+                onValueChange={(value) =>
+                  onNestedChange("legalAddress", "countryCode", value)
+                }
               />
             </div>
           </div>

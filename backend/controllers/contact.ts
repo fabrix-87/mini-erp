@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma-client";
-import { ApiResponse } from "../types/api-response";
-import { ContactQueryInput } from "../validators/contact";
+import { CheckMailInput, ContactQueryInput } from "../validators/contact";
 import { formatPaginatedResponse } from "../utils/response";
+import asyncHandler from "../middleware/async-handler";
+import { AuthenticatedValidatedRequest } from "../types/validate";
+import { Prisma } from "../generated/prisma/client";
 
 export const getAllContacts = async (
   req: Request,
@@ -58,14 +60,7 @@ export const getAllContacts = async (
       prisma.contact.count({ where }),
     ]);
 
-    res.json(
-      formatPaginatedResponse(
-        contacts,
-        totalCount,
-        page,
-        limit,
-      )
-    );
+    res.json(formatPaginatedResponse(contacts, totalCount, page, limit));
   } catch (error) {
     next(error);
   }
@@ -257,3 +252,27 @@ export const deleteContact = async (
     next(error);
   }
 };
+
+export const checkEmail = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { companyId, email } = req.validatedQuery as CheckMailInput
+
+    const existingEmail = await prisma.contact.findFirst({
+      where: { companyId, email },
+    });
+    if (existingEmail) {
+      res.status(400).json({
+        status: 'failed',
+        data: { unique: false},
+        message: "Email già esistente per questa company",
+      });      
+    }else{
+      res.json({
+        status: 'success',
+        data: { unique: true},
+        message: "Email non presente",
+      });  
+    }
+    return;
+  }
+);

@@ -38,6 +38,10 @@ async function seedRBAC() {
       { code: 'dashboard:read', resource: 'dashboard', action: 'read', description: 'Lettura Dashboard' },
       { code: 'dashboard:manage', resource: 'dashboard', action: 'manage', description: 'Gestione completa Dashboard' },
 
+      // Country permissions
+      { code: 'country:read', resource: 'country', action: 'read', description: 'Lettura Stati' },
+      { code: 'country:manage', resource: 'country', action: 'manage', description: 'Gestione completa Stati' },
+
       // Product permissions
       { code: 'product:read', resource: 'product', action: 'read', description: 'Lettura prodotti' },
       { code: 'product:create', resource: 'product', action: 'create', description: 'Creazione prodotti' },
@@ -72,6 +76,13 @@ async function seedRBAC() {
       { code: 'contact:update', resource: 'contact', action: 'update', description: 'Modifica Contatti' },
       { code: 'contact:delete', resource: 'contact', action: 'delete', description: 'Eliminazione Contatti' },
       { code: 'contact:manage', resource: 'contact', action: 'manage', description: 'Gestione completa Contatti' },
+
+      // Address permissions
+      { code: 'address:read', resource: 'address', action: 'read', description: 'Lettura Indirizzi' },
+      { code: 'address:create', resource: 'address', action: 'create', description: 'Creazione Indirizzi' },
+      { code: 'address:update', resource: 'address', action: 'update', description: 'Modifica Indirizzi' },
+      { code: 'address:delete', resource: 'address', action: 'delete', description: 'Eliminazione Indirizzi' },
+      { code: 'address:manage', resource: 'address', action: 'manage', description: 'Gestione completa Indirizzi' },
 
       // Supplier permissions
       { code: 'supplier:read', resource: 'supplier', action: 'read', description: 'Lettura Fornitori' },

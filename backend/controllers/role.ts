@@ -1,5 +1,4 @@
 import { Response } from 'express';
-import { AuthRequest } from '../types/user';
 import asyncHandler from '../middleware/async-handler';
 import {
   NotFoundError,
@@ -8,6 +7,7 @@ import {
 } from '../utils/app-error';
 import { prisma } from '../config/prisma-client';
 import { Prisma } from '../generated/prisma/client';
+import { AuthenticatedValidatedRequest } from '../types/validate';
 
 
 // ============================================================================
@@ -99,8 +99,8 @@ const formatPermissionRoles = (permission: any) => {
  * @route   GET /api/roles
  * @access  Private/Admin
  */
-export const getAllRoles = asyncHandler(async (req: AuthRequest, res: Response) => {
-  const { search, isDefault, sortBy = 'name', sortOrder = 'asc' } = req.query;
+export const getAllRoles = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
+  const { search, isDefault, sortBy = 'name', sortOrder = 'asc' } = req.validatedQuery;
 
   // Costruisci filtri dinamici
   const where: Prisma.RoleWhereInput = {};
@@ -137,7 +137,7 @@ export const getAllRoles = asyncHandler(async (req: AuthRequest, res: Response) 
  * @route   GET /api/roles/:id
  * @access  Private/Admin
  */
-export const getRoleById = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getRoleById = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { id } = req.params;
 
   const role = await prisma.role.findUnique({
@@ -160,7 +160,7 @@ export const getRoleById = asyncHandler(async (req: AuthRequest, res: Response) 
  * @route   GET /api/roles/code/:code
  * @access  Private/Admin
  */
-export const getRoleByCode = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getRoleByCode = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { code } = req.params;
 
   const role = await prisma.role.findUnique({
@@ -183,7 +183,7 @@ export const getRoleByCode = asyncHandler(async (req: AuthRequest, res: Response
  * @route   POST /api/roles
  * @access  Private/Admin
  */
-export const createRole = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const createRole = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { permissionIds, ...roleData } = req.body;
 
   // Verifica unicità code
@@ -230,7 +230,7 @@ export const createRole = asyncHandler(async (req: AuthRequest, res: Response) =
  * @route   PUT /api/roles/:id
  * @access  Private/Admin
  */
-export const updateRole = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const updateRole = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { id } = req.params;
   const updateData = req.body;
 
@@ -281,7 +281,7 @@ export const updateRole = asyncHandler(async (req: AuthRequest, res: Response) =
  * @route   DELETE /api/roles/:id
  * @access  Private/Admin
  */
-export const deleteRole = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const deleteRole = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { id } = req.params;
 
   const role = await prisma.role.findUnique({
@@ -329,7 +329,7 @@ export const deleteRole = asyncHandler(async (req: AuthRequest, res: Response) =
  * @route   GET /api/roles/:id/permissions
  * @access  Private/Admin
  */
-export const getRolePermissions = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getRolePermissions = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { id } = req.params;
 
   const role = await prisma.role.findUnique({
@@ -371,7 +371,7 @@ export const getRolePermissions = asyncHandler(async (req: AuthRequest, res: Res
  * @route   POST /api/roles/:id/permissions
  * @access  Private/Admin
  */
-export const assignPermissionsToRole = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const assignPermissionsToRole = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { id } = req.params;
   const { permissionIds } = req.body;
 
@@ -420,7 +420,7 @@ export const assignPermissionsToRole = asyncHandler(async (req: AuthRequest, res
  * @route   DELETE /api/roles/:id/permissions
  * @access  Private/Admin
  */
-export const removePermissionsFromRole = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const removePermissionsFromRole = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { id } = req.params;
   const { permissionIds } = req.body;
 
@@ -459,7 +459,7 @@ export const removePermissionsFromRole = asyncHandler(async (req: AuthRequest, r
  * @route   GET /api/roles/:id/users
  * @access  Private/Admin
  */
-export const getRoleUsers = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getRoleUsers = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { id } = req.params;
 
   const role = await prisma.role.findUnique({
@@ -503,7 +503,7 @@ export const getRoleUsers = asyncHandler(async (req: AuthRequest, res: Response)
  * @route   GET /api/roles/permissions
  * @access  Private/Admin
  */
-export const getAllPermissions = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getAllPermissions = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { search, resource, action, sortBy = 'resource', sortOrder = 'asc' } = req.query;
 
   // Costruisci filtri dinamici
@@ -546,7 +546,7 @@ export const getAllPermissions = asyncHandler(async (req: AuthRequest, res: Resp
  * @route   GET /api/roles/permissions/:id
  * @access  Private/Admin
  */
-export const getPermissionById = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getPermissionById = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { id } = req.params;
 
   const permission = await prisma.permission.findUnique({
@@ -569,7 +569,7 @@ export const getPermissionById = asyncHandler(async (req: AuthRequest, res: Resp
  * @route   POST /api/roles/permissions
  * @access  Private/Admin
  */
-export const createPermission = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const createPermission = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const permissionData = req.body;
 
   // Verifica unicità code
@@ -599,7 +599,7 @@ export const createPermission = asyncHandler(async (req: AuthRequest, res: Respo
  * @route   PUT /api/roles/permissions/:id
  * @access  Private/Admin
  */
-export const updatePermission = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const updatePermission = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { id } = req.params;
   const updateData = req.body;
 
@@ -642,7 +642,7 @@ export const updatePermission = asyncHandler(async (req: AuthRequest, res: Respo
  * @route   DELETE /api/roles/permissions/:id
  * @access  Private/Admin
  */
-export const deletePermission = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const deletePermission = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { id } = req.params;
 
   const permission = await prisma.permission.findUnique({
@@ -681,7 +681,7 @@ export const deletePermission = asyncHandler(async (req: AuthRequest, res: Respo
  * @route   GET /api/roles/permissions/:id/roles
  * @access  Private/Admin
  */
-export const getPermissionRoles = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getPermissionRoles = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { id } = req.params;
 
   const permission = await prisma.permission.findUnique({
@@ -725,7 +725,7 @@ export const getPermissionRoles = asyncHandler(async (req: AuthRequest, res: Res
  * @route   POST /api/roles/users/assign
  * @access  Private/Admin
  */
-export const assignRolesToUser = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const assignRolesToUser = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { userId, roleIds } = req.body;
 
   // Verifica esistenza utente
@@ -785,7 +785,7 @@ export const assignRolesToUser = asyncHandler(async (req: AuthRequest, res: Resp
  * @route   POST /api/roles/users/remove
  * @access  Private/Admin
  */
-export const removeRolesFromUser = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const removeRolesFromUser = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { userId, roleIds } = req.body;
 
   // Verifica esistenza utente
@@ -845,7 +845,7 @@ export const removeRolesFromUser = asyncHandler(async (req: AuthRequest, res: Re
  * @route   GET /api/roles/users/:userId/roles
  * @access  Private/Admin
  */
-export const getUserRoles = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getUserRoles = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { userId } = req.params;
 
   const user = await prisma.user.findUnique({
@@ -881,7 +881,7 @@ export const getUserRoles = asyncHandler(async (req: AuthRequest, res: Response)
  * @route   GET /api/roles/users/:userId/permissions
  * @access  Private/Admin
  */
-export const getUserPermissions = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getUserPermissions = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { userId } = req.params;
 
   const user = await prisma.user.findUnique({
@@ -932,7 +932,7 @@ export const getUserPermissions = asyncHandler(async (req: AuthRequest, res: Res
  * @route   POST /api/roles/users/check-permission
  * @access  Private/Admin
  */
-export const checkUserPermission = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const checkUserPermission = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   const { userId, permissionCode } = req.body;
 
   const user = await prisma.user.findUnique({
@@ -978,7 +978,7 @@ export const checkUserPermission = asyncHandler(async (req: AuthRequest, res: Re
  * @route   POST /api/roles/sync-permissions
  * @access  Private/Admin
  */
-export const syncPermissions = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const syncPermissions = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
   // Lista di permessi predefiniti da sincronizzare
   const defaultPermissions = [
     // Activity permissions

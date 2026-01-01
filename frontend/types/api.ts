@@ -21,6 +21,18 @@ export interface PaginationQueryType {
   sortOrder?: string;
 }
 
+// ============ Auth Specific Types ============
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+}
+
+// La risposta del backend per login/refresh solitamente è wrappata in ApiResponse
+// Quindi ApiResponse<AuthResponse> conterrà questo oggetto in .data
+export interface AuthResponse extends AuthTokens {
+  user: User; 
+}
+
 // ============ API Response Types ============
 export interface ApiResponse<T = any> {
   status: "success" | "fail" | "error";
@@ -46,6 +58,16 @@ export interface ValidationError {
 }
 
 // ============ User Types ============
+export interface User {
+  id: number;
+  active: boolean;
+  username: string;
+  email: string;
+  roles?: UserRole[];
+  createdAt: string;
+  updatedAt: string;
+  UserDetail?: UserDetails;
+}
 export interface UserDetails {
   id: number;
   userId: number;
@@ -71,23 +93,14 @@ interface UserRole {
   name: string;
 }
 
-export interface User {
-  id: number;
-  active: boolean;
-  username: string;
-  email: string;
-  roles?: UserRole[];
-  createdAt: string;
-  updatedAt: string;
-  UserDetail?: UserDetails;
-}
-
+/*
 export interface UserAuth {
   userId: number;
   email: string;
   username: string;
   roles: Array<{ id: number; code: string; name: string }>;
 }
+  */
 
 export interface LoginCredentials {
   email: string;

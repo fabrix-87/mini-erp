@@ -4,6 +4,11 @@ import { addFingerprintHeader } from './fingerprint';
 
 const API_BASE_URL = process.env.API_URL || 'http://localhost:5000';
 
+interface ProxyOptions {
+  additionalHeaders?: Record<string, string>;
+  skipBodyParsing?: boolean;
+}
+
 /**
  * Helper per fare proxy di richieste verso backend da Route Handlers
  * Preserva Set-Cookie headers e aggiunge automaticamente fingerprint
@@ -11,39 +16,51 @@ const API_BASE_URL = process.env.API_URL || 'http://localhost:5000';
 export async function proxyToBackend(
   endpoint: string,
   request: NextRequest,
-  options?: {
-    additionalHeaders?: Record<string, string>;
-  }
+  options?: ProxyOptions
 ): Promise<NextResponse> {
-  const body = await request.json();
-  
-  // Aggiungi automaticamente fingerprint + altri headers
-  const headers = await addFingerprintHeader(request, {
-    'Content-Type': 'application/json',
-    'Cookie': request.headers.get('cookie') || '',
-    ...options?.additionalHeaders,
-  });
+  try {
+    // Parsing body solo se la richiesta ha un body
+    let body: string | undefined;
+    
+    if (!options?.skipBodyParsing && request.body) {
+      const data = await request.json();
+      body = JSON.stringify(data);
+    }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: request.method,
-    headers,
-    body: JSON.stringify(body),
-    credentials: 'include',
-  });
+    // Aggiungi automaticamente fingerprint + altri headers
+    const headers = addFingerprintHeader(request, {
+      'Content-Type': 'application/json',
+      'Cookie': request.headers.get('cookie') || '',
+      ...options?.additionalHeaders,
+    });
 
-  const data = await response.json();
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: request.method,
+      headers,
+      body,
+      credentials: 'include',
+    });
 
-  if (!response.ok) {
-    return NextResponse.json(data, { status: response.status });
+    const data = await response.json();
+
+    // Crea response con lo stesso status del backend
+    const nextResponse = NextResponse.json(data, { status: response.status });
+
+    // Propaga Set-Cookie headers
+    const setCookieHeaders = response.headers.getSetCookie();
+    setCookieHeaders.forEach((cookie) => {
+      nextResponse.headers.append('Set-Cookie', cookie);
+    });
+
+    return nextResponse;
+  } catch (error) {
+    console.error('❌ Proxy error:', error);
+    return NextResponse.json(
+      { 
+        status: 'error', 
+        message: 'Internal server error' 
+      },
+      { status: 500 }
+    );
   }
-
-  const nextResponse = NextResponse.json(data, { status: 200 });
-
-  // Propaga Set-Cookie headers
-  const setCookieHeaders = response.headers.getSetCookie();
-  setCookieHeaders.forEach((cookie) => {
-    nextResponse.headers.append('Set-Cookie', cookie);
-  });
-
-  return nextResponse;
 }

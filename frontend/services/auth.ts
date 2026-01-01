@@ -1,4 +1,6 @@
 // services/auth.ts
+'use client'
+
 import api from "../lib/client/api";
 import {
   addFingerprintHeader,
@@ -80,6 +82,7 @@ export async function logout(): Promise<void> {
  */
 export async function refreshToken(): Promise<boolean> {
   const headers = await addFingerprintHeader();
+  console.debug('⚠️ addFingerprintHeader chiamato su refreshToken. In teoria da client');
   const response = await fetch("/api/auth/refresh", {
     method: "POST",
     headers,

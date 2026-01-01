@@ -9,7 +9,7 @@ import {
   updateCustomer,
   deleteCustomer,
   getDashboardStats as getCustomerStats,
-} from "@/lib/client/modules/customer";
+} from "@/services/customer";
 import {
   getSuppliers,
   getSupplierById,

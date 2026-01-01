@@ -154,10 +154,10 @@ export const contactService = {
         companyId: companyId.toString(),
         ...(contactId && { contactId: contactId.toString() }),
       });
-      const { data } = await api.get<ApiResponse<{ unique: boolean }>>(
+      const resp = await api.get<ApiResponse<{ unique: boolean }>>(
         `/contacts/check-email?${params}`
       );
-      return data.data.unique;
+      return resp.data.data.unique;
     } catch (error) {
       return false;
     }

@@ -260,107 +260,131 @@ export const refreshToken = asyncHandler(
       throw new UnauthorizedError("Refresh token mancante");
     }
 
+    let decoded: any;
+    // 1. Verifica refresh token
     try {
-      // 1. Verifica refresh token
-      const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET!) as any;
+      decoded = jwt.verify(token, authConfig.jwt.refreshSecret) as any;
+    } catch (error) {
+      throw new UnauthorizedError("Refresh token non valido o scaduto");
+    }
 
-      // Valida claims
-      if (
-        decoded.iss !== authConfig.jwt.issuer ||
-        decoded.aud !== authConfig.jwt.audience
-      ) {
-        throw new UnauthorizedError("Claims non validi");
-      }
+    // Verifica fingerprint
+    const tokenFingerprint = decoded.fingerprint;
+    // Estrai fingerprint dalla richiesta corrente
+    const currentFingerprint = extractFingerprint(req);
+    // Valida fingerprint match
+    if (
+      tokenFingerprint &&
+      currentFingerprint &&
+      tokenFingerprint !== currentFingerprint
+    ) {
+      console.warn(`🚨 Fingerprint mismatch detected:`, {
+        userId: decoded.userId,
+        tokenFingerprint,
+        currentFingerprint,
+      });
 
-      // 2. Verifica che sia nella whitelist Redis
-      const isValid = await isRefreshTokenValid(decoded.userId, decoded.jti);
+      // Invalida sessione per sicurezza
+      // Distruggi sessione Redis (atomico: MULTI/EXEC)
+      await destroySession(decoded.userId, decoded.jti, decoded.ttl);
 
-      if (!isValid) {
-        throw new UnauthorizedError(
-          "Refresh token non valido o già utilizzato"
-        );
-      }
+      // Rimuovi cookie
+      clearTokenCookies(res);
 
-      // 3. Trova utente
-      const user = await prisma.user.findUnique({
-        where: { id: decoded.userId },
-        include: {
-          roles: {
-            select: {
-              id: true,
-              code: true,
-              name: true,
-              permissions: {
-                select: {
-                  permission: {
-                    select: {
-                      id: true,
-                      code: true,
-                      description: true,
-                    },
+      throw new UnauthorizedError(
+        "Fingerprint mismatch - dispositivo non riconosciuto. Effettua nuovamente il login."
+      );
+    }
+
+    // Valida claims
+    if (
+      decoded.iss !== authConfig.jwt.issuer ||
+      decoded.aud !== authConfig.jwt.audience
+    ) {
+      throw new UnauthorizedError("Claims non validi");
+    }
+
+    // 2. Verifica che sia nella whitelist Redis
+    const isValid = await isRefreshTokenValid(decoded.userId, decoded.jti);
+
+    if (!isValid) {
+      throw new UnauthorizedError("Refresh token non valido o già utilizzato");
+    }
+
+    // 3. Trova utente
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      include: {
+        roles: {
+          select: {
+            id: true,
+            code: true,
+            name: true,
+            permissions: {
+              select: {
+                permission: {
+                  select: {
+                    id: true,
+                    code: true,
+                    description: true,
                   },
                 },
               },
             },
           },
         },
-      });
+      },
+    });
 
-      if (!user || !user.active) {
-        throw new UnauthorizedError("Utente non valido");
-      }
-
-      // 4. Genera fingerprint
-      const fingerprint = extractFingerprint(req);
-
-      // 5. Genera NUOVA coppia di token
-      const userPayload: UserPayload = {
-        userId: user.id,
-        email: user.email,
-        username: user.username,
-        roles: formatUserRoles(user.roles),
-      };
-
-      const newTokens = generateTokenPair(userPayload, fingerprint);
-
-      // 6. RUOTA refresh token in Redis (atomico)
-      await rotateRefreshToken(
-        user.id,
-        decoded.jti, // vecchio
-        newTokens.refreshTokenId! // nuovo
-      );
-
-      // 7. Aggiorna sessione
-      await saveSession(
-        user.id,
-        {
-          userId: user.id,
-          username: user.username,
-          email: user.email,
-          roles: formatUserRoles(user.roles),
-          fingerprint,
-          loginAt: new Date(),
-          lastActivity: new Date(),
-        },
-        newTokens.refreshTokenId!
-      );
-
-      // 8. Imposta nuovi cookie
-      setTokenCookies(res, newTokens);
-
-      res.json({
-        status: "success",
-        message: "Token aggiornato con successo",
-        data: {
-          expiresIn: authConfig.jwt.expiresInMs,
-        },
-      });
-    } catch (error) {
-      if (error instanceof jwt.TokenExpiredError) {
-        throw new UnauthorizedError("Refresh token scaduto");
-      }
-      throw new UnauthorizedError("Token non valido");
+    if (!user || !user.active) {
+      throw new UnauthorizedError("Utente non valido");
     }
+
+    // 5. Genera NUOVA coppia di token
+    const userPayload: UserPayload = {
+      userId: user.id,
+      email: user.email,
+      username: user.username,
+      roles: formatUserRoles(user.roles),
+    };
+
+    const newTokens = generateTokenPair(
+      userPayload,
+      tokenFingerprint || currentFingerprint
+    );
+
+    // 6. RUOTA refresh token in Redis (atomico)
+    await rotateRefreshToken(
+      user.id,
+      decoded.jti, // vecchio
+      newTokens.refreshTokenId! // nuovo
+    );
+
+    // 7. Aggiorna sessione
+    await saveSession(
+      user.id,
+      {
+        userId: user.id,
+        username: user.username,
+        email: user.email,
+        roles: formatUserRoles(user.roles),
+        fingerprint: tokenFingerprint || currentFingerprint,
+        loginAt: new Date(),
+        lastActivity: new Date(),
+      },
+      newTokens.refreshTokenId!
+    );
+
+    // 8. Imposta nuovi cookie
+    setTokenCookies(res, newTokens);
+
+    res.json({
+      status: "success",
+      message: "Token aggiornato con successo",
+      data: {
+        expiresIn: authConfig.jwt.expiresInMs,
+      },
+    });
   }
 );
 

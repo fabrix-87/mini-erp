@@ -1,8 +1,9 @@
 // lib/server/fingerprint.ts
 
 import { NextRequest } from 'next/server';
-import { headers as nextHeaders } from 'next/headers';
+import { headers as nextHeaders, cookies as nextCookies } from 'next/headers';
 import crypto from 'crypto';
+import { FINGERPRINT_COOKIE_NAME } from '../client/fingerprint';
 
 // ============================================================================
 // Core Fingerprint Logic (Riutilizzabile)
@@ -43,21 +44,27 @@ function generateFingerprintFromHeaders(headers: {
 // ============================================================================
 
 /**
- * Estrae fingerprint dagli headers della request (Route Handlers)
- * Se non presente, genera uno basato su headers (fallback)
+ * Estrae fingerprint dalla request (Route Handlers / Middleware)
+ * Priority: 1) Cookie, 2) Header, 3) Generato server-side
  * 
  * @param {NextRequest} request - Next.js request object
  * @returns {string} Device fingerprint
  */
 export function getFingerprintFromRequest(request: NextRequest): string {
-  // Priority 1: Header dal client (più accurato)
-  const clientFingerprint = request.headers.get('x-device-fingerprint');
-  if (clientFingerprint) {
-    return clientFingerprint;
+  // Priority 1: Cookie (più affidabile, impostato dal client)
+  const cookieFingerprint = request.cookies.get(FINGERPRINT_COOKIE_NAME)?.value;
+  if (cookieFingerprint) {
+    return cookieFingerprint;
   }
 
-  // Priority 2: Genera server-side come fallback
-  console.warn('⚠️ No client fingerprint found, generating server-side fallback');
+  // Priority 2: Header dal client
+  const headerFingerprint = request.headers.get('x-device-fingerprint');
+  if (headerFingerprint) {
+    return headerFingerprint;
+  }
+
+  // Priority 3: Genera server-side come fallback
+  console.warn('⚠️ No client fingerprint found (cookie/header), generating server-side fallback');
   
   return generateFingerprintFromHeaders({
     userAgent: request.headers.get('user-agent'),
@@ -76,21 +83,29 @@ export function getFingerprintFromRequest(request: NextRequest): string {
 
 /**
  * Estrae fingerprint per Server Components (SSR)
- * Usa headers() da next/headers invece di NextRequest
+ * Priority: 1) Cookie, 2) Header, 3) Generato server-side
  * 
  * @returns {Promise<string>} Device fingerprint
  */
 export async function getFingerprintForSSR(): Promise<string> {
   try {
+    const cookieStore = await nextCookies();
     const headersList = await nextHeaders();
     
-    // Priority 1: Check se c'è già fingerprint dal client
-    const existingFingerprint = headersList.get('x-device-fingerprint');
-    if (existingFingerprint) {
-      return existingFingerprint;
+    // Priority 1: Cookie
+    const cookieFingerprint = cookieStore.get(FINGERPRINT_COOKIE_NAME)?.value;
+    if (cookieFingerprint) {
+      return cookieFingerprint;
     }
 
-    // Priority 2: Genera fingerprint server-side
+    // Priority 2: Header
+    const headerFingerprint = headersList.get('x-device-fingerprint');
+    if (headerFingerprint) {
+      return headerFingerprint;
+    }
+
+    // Priority 3: Genera server-side
+    console.warn('⚠️ No SSR fingerprint found (cookie/header), generating fallback');
     return generateFingerprintFromHeaders({
       userAgent: headersList.get('user-agent'),
       acceptLanguage: headersList.get('accept-language'),

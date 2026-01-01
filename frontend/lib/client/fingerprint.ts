@@ -6,47 +6,42 @@ let fingerprintPromise: Promise<string> | null = null;
 
 const FINGERPRINT_STORAGE_KEY = 'device-fingerprint';
 const FINGERPRINT_TIMESTAMP_KEY = 'device-fingerprint-timestamp';
+const FINGERPRINT_COOKIE_NAME = 'device-fp'; // Nome cookie
 const FINGERPRINT_TTL = 7 * 24 * 60 * 60 * 1000; // 7 giorni
 
 /**
  * Genera un fingerprint univoco del browser usando FingerprintJS
- * Include caching per performance e persistence in sessionStorage
  * 
  * @returns {Promise<string>} Fingerprint univoco del dispositivo
  */
 export async function getBrowserFingerprint(): Promise<string> {
-  // ✅ GUARD: Se eseguito sul server, ritorna placeholder
   if (typeof window === 'undefined') {
     console.warn('⚠️ getBrowserFingerprint called on server-side, returning placeholder');
     return 'server-side-placeholder';
   }
 
-  console.debug('##########################');
-
-  // 1. Check cache in-memory (più veloce)
   if (fingerprintPromise) {
     return fingerprintPromise;
   }
 
   fingerprintPromise = (async () => {
     try {
-      // 2. Check sessionStorage (persiste durante la sessione browser)
+      // 1. Check cache (sessionStorage + cookie)
       const stored = getStoredFingerprint();
       if (stored) {
         return stored;
       }
 
-      // 3. Genera nuovo fingerprint con FingerprintJS (più accurato)
+      // 2. Genera nuovo fingerprint con FingerprintJS
       const fp = await FingerprintJS.load();
       const result = await fp.get();
       const fingerprint = result.visitorId;
 
-      // 4. Salva in sessionStorage per riuso
+      // 3. Salva in storage + cookie
       storeFingerprint(fingerprint);
       return fingerprint;
     } catch (error) {
       console.error("❌ Failed to generate fingerprint with FingerprintJS:", error);
-      // Fallback: genera fingerprint semplice (meno accurato ma funzionale)
       const fallbackFingerprint = generateFallbackFingerprint();
       storeFingerprint(fallbackFingerprint);
       return fallbackFingerprint;
@@ -57,27 +52,35 @@ export async function getBrowserFingerprint(): Promise<string> {
 }
 
 /**
- * Recupera fingerprint da sessionStorage se valido
+ * Recupera fingerprint da sessionStorage o cookie
  */
 function getStoredFingerprint(): string | null {
   if (typeof window === 'undefined') return null;
 
   try {
+    // Priority 1: SessionStorage (più veloce)
     const stored = sessionStorage.getItem(FINGERPRINT_STORAGE_KEY);
     const timestamp = sessionStorage.getItem(FINGERPRINT_TIMESTAMP_KEY);
 
-    if (!stored || !timestamp) return null;
-
-    // Verifica se è ancora valido (entro TTL)
-    const age = Date.now() - parseInt(timestamp, 10);
-    if (age > FINGERPRINT_TTL) {
-      // Expired, rimuovi
-      sessionStorage.removeItem(FINGERPRINT_STORAGE_KEY);
-      sessionStorage.removeItem(FINGERPRINT_TIMESTAMP_KEY);
-      return null;
+    if (stored && timestamp) {
+      const age = Date.now() - parseInt(timestamp, 10);
+      if (age <= FINGERPRINT_TTL) {
+        return stored;
+      }
     }
 
-    return stored;
+    // Priority 2: Cookie fallback
+    const cookies = document.cookie.split(';');
+    const fpCookie = cookies.find(c => c.trim().startsWith(`${FINGERPRINT_COOKIE_NAME}=`));
+    
+    if (fpCookie) {
+      const value = fpCookie.split('=')[1].trim();
+      // Re-salva in sessionStorage per performance
+      storeFingerprint(value);
+      return value;
+    }
+
+    return null;
   } catch (error) {
     console.warn('Failed to read fingerprint from storage:', error);
     return null;
@@ -85,14 +88,21 @@ function getStoredFingerprint(): string | null {
 }
 
 /**
- * Salva fingerprint in sessionStorage
+ * Salva fingerprint sia in sessionStorage che in cookie
  */
 function storeFingerprint(fingerprint: string): void {
   if (typeof window === 'undefined') return;
 
   try {
+    // SessionStorage
     sessionStorage.setItem(FINGERPRINT_STORAGE_KEY, fingerprint);
     sessionStorage.setItem(FINGERPRINT_TIMESTAMP_KEY, Date.now().toString());
+
+    // Cookie (accessibile anche server-side)
+    const expiryDate = new Date();
+    expiryDate.setTime(expiryDate.getTime() + FINGERPRINT_TTL);
+    
+    document.cookie = `${FINGERPRINT_COOKIE_NAME}=${fingerprint}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Strict; Secure`;
   } catch (error) {
     console.warn('Failed to store fingerprint:', error);
   }
@@ -162,10 +172,14 @@ function hashString(str: string): string {
  */
 export function resetFingerprint(): void {
   fingerprintPromise = null;
+  
   if (typeof window !== 'undefined') {
     try {
       sessionStorage.removeItem(FINGERPRINT_STORAGE_KEY);
       sessionStorage.removeItem(FINGERPRINT_TIMESTAMP_KEY);
+      
+      // Rimuovi cookie
+      document.cookie = `${FINGERPRINT_COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict; Secure`;
     } catch (error) {
       console.warn('Failed to reset fingerprint:', error);
     }
@@ -215,3 +229,5 @@ export function preloadFingerprint(): void {
     console.warn('Fingerprint preload failed:', err);
   });
 }
+
+export { FINGERPRINT_COOKIE_NAME }; // Export per uso server-side

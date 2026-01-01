@@ -1,6 +1,6 @@
 import { ApiResponse } from "@/types/api";
 import { Customer, CustomerQueryParams, CustomerStats } from "@/types/customer";
-import api from "../api";
+import api from "@/lib/client/api";
 
 /**
  * Recupera la lista dei clienti con filtri e paginazione

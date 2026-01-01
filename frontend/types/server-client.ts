@@ -3,6 +3,8 @@ export interface ServerRequestOptions extends RequestInit {
   includeCookies?: boolean;
   revalidate?: number | false;
   tags?: string[];
+  responseType?: string;
+  data?: any;
 }
 
 export class ServerApiError extends Error {

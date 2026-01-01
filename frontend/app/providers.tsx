@@ -29,7 +29,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Preload fingerprint all'avvio per performance
-    console.debug('########### PRELOAD ###############');
+    console.log('########### PRELOAD ###############');
     preloadFingerprint();
   }, []);
 

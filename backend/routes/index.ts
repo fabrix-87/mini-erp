@@ -14,7 +14,8 @@ import rolesRouter from "./role";
 import suppliersRouter from "./supplier";
 import taxesRouter from "./tax";
 import usersRouter from "./user";
-import companiesRouter from './company';
+import companiesRouter from "./company";
+import countryRouter from "./country";
 
 const apiRouter = Router();
 
@@ -33,5 +34,6 @@ apiRouter.use("/roles", rolesRouter);
 apiRouter.use("/suppliers", suppliersRouter);
 apiRouter.use("/taxes", taxesRouter);
 apiRouter.use("/users", usersRouter);
+apiRouter.use("/countries", countryRouter);
 
 export default apiRouter;

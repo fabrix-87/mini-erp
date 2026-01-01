@@ -9,7 +9,7 @@ import {
   ActivityType,
   getActivitiesParams,
 } from "@/types/activitiy";
-import { formatDateTime } from "../helpers";
+import { formatDateTime } from "@/utils/format";
 
 /**
  * Ricava le statistiche per la dashboard delle attività

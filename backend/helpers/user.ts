@@ -122,6 +122,7 @@ export const generateTokenPair = (user: UserPayload, fingerprint: string): Token
   const refreshToken = jwt.sign(
     {
       userId: user.userId,
+      fingerprint,
       jti: refreshTokenId,
       type: 'refresh',
       iat: now,
@@ -463,7 +464,7 @@ export const setTokenCookies = (res: Response, tokens: TokenPair) => {
     secure: authConfig.isProduction,
     sameSite: authConfig.isProduction ? 'strict' : 'lax',
     maxAge: authConfig.jwt.refreshExpiresInMs,
-    path: '/api/users/refresh-token',
+    path: '/',
   });
 };
 
@@ -484,7 +485,7 @@ export const clearTokenCookies = (res: Response) => {
     secure: authConfig.isProduction,
     sameSite: 'strict',
     maxAge: 0,
-    path: '/api/users/refresh-token',
+    path: '/',
   });
 };
 

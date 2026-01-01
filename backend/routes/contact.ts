@@ -5,6 +5,7 @@ import {
   validateContactId,
   validateCreateContact,
   validateUpdateContact,
+  validateCheckEmail,
 } from '../validators/contact';
 import {
   getAllContacts,
@@ -14,6 +15,7 @@ import {
   toggleContactActive,
   setPrimaryContact,
   deleteContact,
+  checkEmail,
 } from '../controllers/contact';
 
 const router = express.Router();
@@ -35,6 +37,20 @@ router.get(
   validateContactQuery,
   getAllContacts
 );
+
+/**
+ * @route   GET /api/contacts/check-email
+ * @desc    Verifica se una mail è già registrata
+ * @access  Private (contact:read)
+ * @query   contactId, email
+ */
+router.get(
+  '/check-email',
+  authenticateToken,
+  authorize(['contact:read', 'contact:manage']),
+  validateCheckEmail,
+  checkEmail
+)
 
 /**
  * @route   GET /api/contacts/company/:companyId

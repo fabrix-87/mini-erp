@@ -13,6 +13,7 @@ import { Spinner } from "../components/ui/spinner";
 import { toast } from "sonner";
 import { User } from "../types/api";
 import api from "@/lib/client/api";
+import { logoutAction } from "@/actions/auth";
 
 // ============================================================================
 // Types
@@ -30,7 +31,9 @@ interface AuthContextType {
 // Context
 // ============================================================================
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
 // ============================================================================
 // Provider
@@ -47,14 +50,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ========================================
   const fetchUser = useCallback(async () => {
     try {
-      const response = await api.get('/users/me');
-      
-      if (response.data.status === 'success') {
+      const response = await api.get("/users/me");
+
+      if (response.data.status === "success") {
         setUser(response.data.data);
         return response.data.data;
       }
-      
-      throw new Error('Invalid response format');
+
+      throw new Error("Invalid response format");
     } catch (error) {
       console.error("Failed to fetch user:", error);
       setUser(null);
@@ -77,25 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Logout
   // ========================================
   const logout = useCallback(async () => {
-    setIsLoading(true);
-
-    try {
-      // Chiama logout route (Next.js API)
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      setUser(null);
-      toast.success("Logout eseguito con successo");
-      router.push("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-      setUser(null);
-      router.push("/login");
-    } finally {
-      setIsLoading(false);
-    }
+    logoutAction();
   }, [router]);
 
   // ========================================
@@ -104,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       const publicRoutes = ["/login", "/register", "/forgot-password"];
-      
+
       if (publicRoutes.includes(pathname)) {
         setIsLoading(false);
         setUser(null);
@@ -112,16 +97,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       setIsLoading(true);
-      
+
       try {
         await fetchUser();
       } catch (error) {
         console.error("Auth check failed:", error);
         setUser(null);
-        
+
         // Redirect to login only if not already on a public route
         if (!publicRoutes.includes(pathname)) {
-          router.push('/login');
+          router.push("/login");
         }
       } finally {
         setIsLoading(false);
@@ -153,9 +138,5 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated: !!user,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

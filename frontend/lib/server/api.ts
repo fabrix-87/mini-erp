@@ -2,7 +2,10 @@
 
 import { ServerApiError, ServerRequestOptions } from "@/types/server-client";
 import { getCookiesString } from "./cookies";
-import { ApiError, ApiResponse } from "@/types/api";
+import { 
+  ApiResponse, 
+  ApiError as ApiErrorType 
+} from "@/types/api";
 import { getFingerprintForSSR } from "./fingerprint";
 
 // ============================================================================
@@ -10,6 +13,11 @@ import { getFingerprintForSSR } from "./fingerprint";
 // ============================================================================
 
 export const API_BASE_URL = process.env.API_URL || "http://localhost:5000";
+
+// Estendiamo le opzioni
+export interface ExtendedServerRequestOptions extends ServerRequestOptions {
+  returnHeaders?: boolean;
+}
 
 // ============================================================================
 // Main Server API Client
@@ -22,166 +30,88 @@ class ServerApiClient {
     this.baseUrl = baseUrl;
   }
 
-  /**
-   * GET request
-   */
-  async get<T>(
+  // Esempio di Overload per GET:
+  // 1. Se returnHeaders è true -> Ritorna { data: T, headers }
+  // 2. Default -> Ritorna T
+  // ===========================================================================
+  // GET Request (con Overload)
+  // ===========================================================================
+  async get<T>(endpoint: string, options: ExtendedServerRequestOptions & { returnHeaders: true }): Promise<{ data: T; headers: Headers }>;
+  async get<T>(endpoint: string, options?: ExtendedServerRequestOptions): Promise<T>;
+  async get<T>(endpoint: string, options: ExtendedServerRequestOptions = {}): Promise<T | { data: T; headers: Headers }> {
+    return this.request<T>("GET", endpoint, undefined, options);
+  }
+
+  // ===========================================================================
+  // POST Request (con Overload)
+  // ===========================================================================
+  async post<T>(endpoint: string, data: any, options: ExtendedServerRequestOptions & { returnHeaders: true }): Promise<{ data: T; headers: Headers }>;
+  async post<T>(endpoint: string, data?: any, options?: ExtendedServerRequestOptions): Promise<T>;
+  async post<T>(endpoint: string, data?: any, options: ExtendedServerRequestOptions = {}): Promise<T | { data: T; headers: Headers }> {
+    return this.request<T>("POST", endpoint, data, options);
+  }
+
+  // ===========================================================================
+  // PUT Request (con Overload)
+  // ===========================================================================
+  async put<T>(endpoint: string, data: any, options: ExtendedServerRequestOptions & { returnHeaders: true }): Promise<{ data: T; headers: Headers }>;
+  async put<T>(endpoint: string, data?: any, options?: ExtendedServerRequestOptions): Promise<T>;
+  async put<T>(endpoint: string, data?: any, options: ExtendedServerRequestOptions = {}): Promise<T | { data: T; headers: Headers }> {
+    return this.request<T>("PUT", endpoint, data, options);
+  }
+
+  // ===========================================================================
+  // PATCH Request (con Overload)
+  // ===========================================================================
+  async patch<T>(endpoint: string, data: any, options: ExtendedServerRequestOptions & { returnHeaders: true }): Promise<{ data: T; headers: Headers }>;
+  async patch<T>(endpoint: string, data?: any, options?: ExtendedServerRequestOptions): Promise<T>;
+  async patch<T>(endpoint: string, data?: any, options: ExtendedServerRequestOptions = {}): Promise<T | { data: T; headers: Headers }> {
+    return this.request<T>("PATCH", endpoint, data, options);
+  }
+
+  // ===========================================================================
+  // DELETE Request (con Overload)
+  // ===========================================================================
+  async delete<T>(endpoint: string, options: ExtendedServerRequestOptions & { returnHeaders: true }): Promise<{ data: T; headers: Headers }>;
+  async delete<T>(endpoint: string, options?: ExtendedServerRequestOptions): Promise<T>;
+  async delete<T>(endpoint: string, options: ExtendedServerRequestOptions = {}): Promise<T | { data: T; headers: Headers }> {
+    return this.request<T>("DELETE", endpoint, undefined, options);
+  }
+
+  // ===========================================================================
+  // Unified Request Handler
+  // ===========================================================================
+  private async request<T>(
+    method: string,
     endpoint: string,
-    options: ServerRequestOptions = {}
-  ): Promise<T> {
+    data: any,
+    options: ExtendedServerRequestOptions
+  ): Promise<T | { data: T; headers: Headers }> {
     const {
       params,
       includeCookies = true,
       revalidate,
       tags,
+      returnHeaders,
       ...fetchOptions
     } = options;
 
-    const url = buildUrl(endpoint, params);
-    const headers = await buildHeaders(fetchOptions.headers, includeCookies)
+    const url = buildUrl(this.baseUrl, endpoint, params);
+    const headers = await buildHeaders(fetchOptions.headers, includeCookies);
 
     const response = await fetch(url, {
       ...fetchOptions,
-      method: "GET",
+      method,
       headers,
+      body: data ? JSON.stringify(data) : undefined,
       next: {
         revalidate: revalidate !== undefined ? revalidate : 0,
         tags: tags || [],
       },
     });
 
-    return handleResponse<T>(response);
-  }
-
-  /**
-   * POST request
-   */
-  async post<T>(
-    endpoint: string,
-    data?: any,
-    options: ServerRequestOptions = {}
-  ): Promise<T> {
-    const {
-      params,
-      includeCookies = true,
-      revalidate,
-      tags,
-      ...fetchOptions
-    } = options;
-
-    const url = buildUrl(endpoint, params);
-    const headers = await buildHeaders(fetchOptions.headers, includeCookies)
-
-    const response = await fetch(url, {
-      ...fetchOptions,
-      method: "POST",
-      headers,
-      body: data ? JSON.stringify(data) : undefined,
-      next: {
-        revalidate: revalidate !== undefined ? revalidate : false,
-        tags: tags || [],
-      },
-    });
-
-    return handleResponse<T>(response);
-  }
-
-  /**
-   * PUT request
-   */
-  async put<T>(
-    endpoint: string,
-    data?: any,
-    options: ServerRequestOptions = {}
-  ): Promise<T> {
-    const {
-      params,
-      includeCookies = true,
-      revalidate,
-      tags,
-      ...fetchOptions
-    } = options;
-
-    const url = buildUrl(endpoint, params);
-    const headers = await buildHeaders(fetchOptions.headers, includeCookies)
-
-    const response = await fetch(url, {
-      ...fetchOptions,
-      method: "PUT",
-      headers,
-      body: data ? JSON.stringify(data) : undefined,
-      next: {
-        revalidate: revalidate !== undefined ? revalidate : false,
-        tags: tags || [],
-      },
-    });
-
-    return handleResponse<T>(response);
-  }
-
-  /**
-   * PATCH request
-   */
-  async patch<T>(
-    endpoint: string,
-    data?: any,
-    options: ServerRequestOptions = {}
-  ): Promise<T> {
-    const {
-      params,
-      includeCookies = true,
-      revalidate,
-      tags,
-      ...fetchOptions
-    } = options;
-
-    const url = buildUrl(endpoint, params);
-    const headers = await buildHeaders(fetchOptions.headers, includeCookies)
-
-    const response = await fetch(url, {
-      ...fetchOptions,
-      method: "PATCH",
-      headers,
-      body: data ? JSON.stringify(data) : undefined,
-      next: {
-        revalidate: revalidate !== undefined ? revalidate : false,
-        tags: tags || [],
-      },
-    });
-
-    return handleResponse<T>(response);
-  }
-
-  /**
-   * DELETE request
-   */
-  async delete<T>(
-    endpoint: string,
-    options: ServerRequestOptions = {}
-  ): Promise<T> {
-    const {
-      params,
-      includeCookies = true,
-      revalidate,
-      tags,
-      ...fetchOptions
-    } = options;
-
-    const url = buildUrl(endpoint, params);
-    const headers = await buildHeaders(fetchOptions.headers, includeCookies)
-
-    const response = await fetch(url, {
-      ...fetchOptions,
-      method: "DELETE",
-      headers: headers,
-      next: {
-        revalidate: revalidate !== undefined ? revalidate : false,
-        tags: tags || [],
-      },
-    });
-
-    return handleResponse<T>(response);
-  }
+    return handleResponse<T>(response, returnHeaders);
+  }  
 }
 
 const buildHeaders = async (
@@ -216,16 +146,12 @@ export const serverApi = new ServerApiClient();
  * Costruisce URL con query params
  */
 export function buildUrl(
+  baseUrl: string,
   endpoint: string,
   params?: Record<string, any>
 ): string {
-  // Rimuovi / iniziale dall'endpoint se presente
   const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
-
-  // Assicurati che la base finisca con /
-  const base = API_BASE_URL.endsWith("/") ? API_BASE_URL : `${API_BASE_URL}/`;
-
-  // Crea l'URL completo
+  const base = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
   const url = new URL(cleanEndpoint, base);
 
   if (params) {
@@ -235,38 +161,51 @@ export function buildUrl(
       }
     });
   }
-
   return url.toString();
 }
 
 /**
  * Gestisce la risposta dell'API
  */
-export async function handleResponse<T>(response: Response): Promise<T> {
+export async function handleResponse<T>(
+  response: Response,
+  returnHeaders = false
+): Promise<T | { data: T; headers: Headers }> {
   const contentType = response.headers.get("content-type");
   const isJson = contentType?.includes("application/json");
 
   if (!response.ok) {
     if (isJson) {
-      const error: ApiError = await response.json();
+      // Usiamo il tipo ApiErrorType definito nel tuo file types
+      const errorBody: ApiErrorType = await response.json();
       throw new ServerApiError(
-        error.message || "API request failed",
+        errorBody.message || "API request failed",
         response.status,
-        error
+        errorBody
       );
     }
-
     throw new ServerApiError(
       `HTTP ${response.status}: ${response.statusText}`,
       response.status
     );
   }
 
+  let data: T;
+
   if (isJson) {
-    const data: ApiResponse<T> = await response.json();
-    return data.data;
+    // QUI LA DIFFERENZA:
+    // Sappiamo che il backend restituisce ApiResponse<T>
+    const json: ApiResponse<T> = await response.json();
+    
+    // Restituiamo solo il payload 'data' pulito
+    data = json.data; 
+  } else {
+    data = (await response.text()) as unknown as T;
   }
 
-  // Non-JSON response
-  return (await response.text()) as unknown as T;
+  if (returnHeaders) {
+    return { data, headers: response.headers };
+  }
+
+  return data;
 }
