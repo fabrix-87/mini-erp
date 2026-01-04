@@ -1,6 +1,24 @@
 import { ApiResponse } from "@/types/api";
 import { Customer, CustomerQueryParams, CustomerStats } from "@/types/customer";
 import api from "@/lib/client/api";
+import { BaseCompany, CompanyQueryParams } from "@/types/company";
+
+/**
+ * Recupera la lista dei clienti con filtri e paginazione
+ */
+export const getCompanies = async (
+  params: CompanyQueryParams
+): Promise<ApiResponse<BaseCompany[]>> => {
+    const defaultParams = { limit: 20, page: 1 };
+
+    // I parametri forniti dall'utente (contenuti in 'params') SOVRASCRIVERANNO i default.
+    const finalParams = {
+        ...defaultParams,
+        ...params
+    };
+    const response = await api.get('/companies', {params: finalParams});
+    return response.data;
+};
 
 /**
  * Recupera la lista dei clienti con filtri e paginazione

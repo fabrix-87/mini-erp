@@ -1,6 +1,7 @@
 // src/controllers/company.ts
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma-client";
+import { formatPaginatedResponse } from "../utils/response";
 
 /**
  * GET /companies
@@ -51,15 +52,7 @@ export const listCompanies = async (req: Request, res: Response) => {
       }),
     ]);
 
-    return res.json({
-      pagination: {
-        page,
-        perPage,
-        total,
-        totalPages: Math.ceil(total / perPage),
-      },
-      data,
-    });
+    return res.json(formatPaginatedResponse(data, total, page, perPage))
   } catch (error) {
     console.error("listCompanies error:", error);
     return res.status(500).json({ message: "Internal server error" });

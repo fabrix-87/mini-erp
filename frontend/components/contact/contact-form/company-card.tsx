@@ -19,7 +19,7 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
-import { useCustomers } from "@/hooks/use-company";
+import { useCompanies } from "@/hooks/use-company";
 
 interface CompanyCardProps {
   companyId: string;
@@ -36,7 +36,7 @@ export default function CompanyCard({
   const [searchCustomer, setSearchCustomer] = useState("");
   const [openCustomer, setOpenCustomer] = useState(false);
 
-  const { data, isLoading: loadingCompanies } = useCustomers({
+  const { data, isLoading: loadingCompanies } = useCompanies({
     search: searchCustomer,
     page: 1,
     limit: 10,
@@ -53,7 +53,7 @@ export default function CompanyCard({
   }, [searchCustomerInput]);
 
   const selectedCompany = companies.find(
-    (c) => c.companyId === parseInt(companyId)
+    (c) => c.id === parseInt(companyId)
   );
 
   return (
@@ -73,7 +73,7 @@ export default function CompanyCard({
                 aria-expanded={openCustomer}
                 className="w-full justify-between"
               >
-                {selectedCompany?.company?.companyName || "Seleziona azienda..."}
+                {selectedCompany?.companyName || "Seleziona azienda..."}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
@@ -92,22 +92,22 @@ export default function CompanyCard({
                 <CommandGroup className="max-h-64 overflow-auto">
                   {companies.map((company) => (
                     <CommandItem
-                      key={company.companyId}
-                      value={company.companyId.toString()}
+                      key={company.id}
+                      value={company.id.toString()}
                       onSelect={() => {
-                        onCompanyChange(company.companyId.toString());
+                        onCompanyChange(company.id.toString());
                         setOpenCustomer(false);
                       }}
                     >
                       <Check
                         className={cn(
                           "mr-2 h-4 w-4",
-                          companyId === company.companyId.toString()
+                          companyId === company.id.toString()
                             ? "opacity-100"
                             : "opacity-0"
                         )}
                       />
-                      {company.company?.companyName} ({company.company?.code})
+                      {company.companyName} ({company.code})
                     </CommandItem>
                   ))}
                 </CommandGroup>

@@ -62,11 +62,9 @@ export default function DashboardPage() {
         </TabsList>
 
         {/* Tab Contents */}
-        <Tabs defaultValue="overview">
-          <TabsContent value="overview">
-            <DashboardOverviewWithAPI dateRange={dateRange} />
-          </TabsContent>
-        </Tabs>
+        <TabsContent value="overview">
+          <DashboardOverviewWithAPI dateRange={dateRange} />
+        </TabsContent>
         <TabsContent value="sales" className="mt-6">
           <SalesTab dateRange={dateRange} />
         </TabsContent>

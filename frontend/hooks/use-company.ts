@@ -9,6 +9,7 @@ import {
   updateCustomer,
   deleteCustomer,
   getDashboardStats as getCustomerStats,
+  getCompanies,
 } from "@/services/customer";
 import {
   getSuppliers,
@@ -20,13 +21,32 @@ import {
 } from "@/lib/client/modules/supplier";
 import { Customer, CustomerQueryParams } from "@/types/customer";
 import { Supplier, SupplierQueryParams } from "@/types/supplier";
-import { CompanyType } from "@/types/company";
+import { CompanyQueryParams, CompanyType } from "@/types/company";
 import { createAddress, updateAddress } from "@/lib/client/modules/address";
 import { Address } from "@/types/address";
 import {
   updateCustomerCompany,
   updateSupplierCompany,
 } from "@/lib/client/modules/company";
+
+// ============================================================================
+// COMPANY HOOKS
+// ============================================================================
+
+/**
+ * Hook per recuperare la lista dei clienti
+ */
+export function useCompanies(
+  params: CompanyQueryParams = {
+    page: 1,
+    limit: 20,
+  }
+) {
+  return useQuery({
+    queryKey: ["companies", params],
+    queryFn: () => getCompanies(params),
+  });
+}
 
 // ============================================================================
 // CUSTOMER HOOKS

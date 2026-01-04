@@ -30,14 +30,13 @@ interface ContactFormProps {
 export default function ContactForm({ isNew }: ContactFormProps) {
   const router = useRouter();
   const params = useParams();
-  const queryParams = useSearchParams()
+  const queryParams = useSearchParams();
   const contactId = params?.id ? parseInt(params.id as string) : null;
-  const companyId = queryParams.get('companyId') || "";
+  const companyId = queryParams.get("companyId") || "";
 
   // Hooks
   const { contact, loading: loadingContact } = useContact(contactId || 0);
-  const { createContact, updateContact, isCreating, isUpdating } =
-    useContactMutations();
+  const { createContact, updateContact, isCreating, isUpdating } = useContactMutations();
   const { validateEmailUnique, isValidating } = useContactValidation();
 
   const [formData, setFormData] = useState({

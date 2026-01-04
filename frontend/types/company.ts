@@ -93,3 +93,13 @@ export interface CompanyFormData {
   // Metadata
   customFields?: any;
 }
+
+// Query params
+export interface CompanyQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  countryCode?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}
