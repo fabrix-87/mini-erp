@@ -1,8 +1,8 @@
 // app/activities/page.tsx
 import { Suspense } from "react";
-import { ActivityStatsGrid } from "@/components/activity/activity-stats-grid";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ActivityListClient } from "./activity-list-client";
+import { ActivityStatsGridClient } from "./activity-stats-grid-client";
 
 export default async function ActivitiesPage() {
   return (
@@ -18,7 +18,7 @@ export default async function ActivitiesPage() {
 
       {/* Stats Grid */}
       <Suspense fallback={<StatsGridSkeleton />}>
-        <ActivityStatsGridWrapper />
+        <ActivityStatsGridClient />
       </Suspense>
 
       {/* Lista Attività con Filtri */}
@@ -27,12 +27,6 @@ export default async function ActivitiesPage() {
       </Suspense>
     </div>
   );
-}
-
-// Wrapper per fetch stats lato server
-async function ActivityStatsGridWrapper() {
-  // Se vuoi fetch server-side, altrimenti usa direttamente il client component
-  return <ActivityStatsGrid />;
 }
 
 function StatsGridSkeleton() {

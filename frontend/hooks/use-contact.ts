@@ -144,8 +144,7 @@ export function useContactsByCompany(companyId: number, active?: boolean) {
   const { data: response, isLoading, error, refetch } = useQuery({
     queryKey: contactKeys.byCompany(companyId),
     queryFn: () => contactService.getByCompany(companyId, active),
-    enabled: !!companyId,
-    staleTime: 5 * 60 * 1000,
+    enabled: !!companyId && companyId > 0, // Disabilita se companyId è 0 o undefined
   });
 
   return {

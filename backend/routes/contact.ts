@@ -6,6 +6,7 @@ import {
   validateCreateContact,
   validateUpdateContact,
   validateCheckEmail,
+  validateCompanyId,
 } from '../validators/contact';
 import {
   getAllContacts,
@@ -16,6 +17,8 @@ import {
   setPrimaryContact,
   deleteContact,
   checkEmail,
+  getPrimaryContactByCompany,
+  getContactsByCompany,
 } from '../controllers/contact';
 
 const router = express.Router();
@@ -58,12 +61,11 @@ router.get(
  * @access  Private (contact:read)
  * @query   active
  */
-/*
 router.get(
   '/company/:companyId',
   authenticateToken,
   authorize(['contact:read', 'contact:manage']),
-  validate(CompanyIdSchema, 'Company ID', { source: ['params'] }),
+  validateCompanyId,
   getContactsByCompany
 );
 
@@ -71,15 +73,15 @@ router.get(
  * @route   GET /api/contacts/company/:companyId/primary
  * @desc    Ottieni il contatto primario di una company
  * @access  Private (contact:read)
- 
+ */
 router.get(
   '/company/:companyId/primary',
   authenticateToken,
   authorize(['contact:read', 'contact:manage']),
-  validate(CompanyIdSchema, 'Company ID', { source: ['params'] }),
+  validateCompanyId,
   getPrimaryContactByCompany
 );
-*/
+
 /**
  * @route   GET /api/contacts/:id
  * @desc    Ottieni dettagli di un contatto specifico

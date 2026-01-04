@@ -23,13 +23,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
 import { useState } from "react";
 import { useCustomer, useDeleteCustomer } from "@/hooks/use-company";
 import { useSupplier, useDeleteSupplier } from "@/hooks/use-company";
 import { CompanyType } from "@/types/company";
 import { CompanyDetailHeader } from "@/components/company/company-detail-header";
 import { CompanyDetailTabs } from "@/components/company/company-detail-tabs";
+import { useBreadcrumbTitle } from "@/hooks/use-breadcrumb-title";
 
 export default function CompanyDetailPage() {
   const router = useRouter();
@@ -52,6 +52,8 @@ export default function CompanyDetailPage() {
   const { data, isLoading, error } = companyType === "CUSTOMER" 
     ? customerQuery 
     : supplierQuery;
+
+  useBreadcrumbTitle(`${data?.data.company?.companyName} (${data?.data.company?.code})`);
 
   // Delete mutations
   const deleteCustomerMutation = useDeleteCustomer();

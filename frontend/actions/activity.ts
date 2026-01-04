@@ -42,6 +42,7 @@ export async function createActivity(
     console.error("Error creating activity:", error);
     
     if (error instanceof ServerApiError) {
+      console.error(error.details)
       return {
         success: false,
         error: error.message,

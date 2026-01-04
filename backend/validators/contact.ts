@@ -75,9 +75,7 @@ export const CreateContactSchema = z
 /**
  * Schema per l'aggiornamento di un Contact
  */
-export const UpdateContactSchema = CreateContactSchema
-  .partial()
-  .strict();
+export const UpdateContactSchema = CreateContactSchema.partial().strict();
 
 /**
  * Schema per ID Contact
@@ -90,6 +88,15 @@ export const ContactIdSchema = z.object({
     }
     return num;
   }),
+});
+
+/**
+ * Schema per ID Company
+ */
+const CompanyIdSchema = z.object({
+  companyId: z.string()
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive('Company ID non valido')),
 });
 
 /**
@@ -155,7 +162,7 @@ export const CheckEmailSchema = z.object({
     }
     return num;
   }),
-})
+});
 
 // ============================================================================
 // VALIDATION MIDDLEWARE EXPORTS
@@ -172,13 +179,17 @@ export const validateUpdateContact = validateBody(
 );
 
 export const validateContactId = validateParams(ContactIdSchema, "Contact ID");
+export const validateCompanyId = validateParams(CompanyIdSchema, "Company ID");
 
 export const validateContactQuery = validateQuery(
   ContactQuerySchema,
   "Contact query"
 );
 
-export const validateCheckEmail = validateQuery(CheckEmailSchema, "Contact check mail")
+export const validateCheckEmail = validateQuery(
+  CheckEmailSchema,
+  "Contact check mail"
+);
 
 export const validateToggleContactActive = validateBody(
   ToggleContactActiveSchema,

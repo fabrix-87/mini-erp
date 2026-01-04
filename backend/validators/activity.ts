@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { validateQuery } from "../middleware/validation";
+import { validateBody, validateQuery } from "../middleware/validation";
 
 // ============================================================================
 // ENUMS
@@ -88,17 +88,17 @@ export const CreateActivitySchema = z
     // Date e durata
     scheduledStart: z.string().datetime("Data inizio non valida"),
     scheduledEnd: z
-      .string()
+      .iso
       .datetime("Data fine non valida")
       .optional()
       .nullable(),
     actualStart: z
-      .string()
+      .iso
       .datetime("Data inizio effettiva non valida")
       .optional()
       .nullable(),
     actualEnd: z
-      .string()
+      .iso
       .datetime("Data fine effettiva non valida")
       .optional()
       .nullable(),
@@ -124,7 +124,7 @@ export const CreateActivitySchema = z
 
     // Follow-up
     requiresFollowUp: z.boolean().default(false),
-    followUpDate: z.string().datetime().optional().nullable(),
+    followUpDate: z.iso.datetime().optional().nullable(),
     followUpActivityId: z.number().int().positive().optional().nullable(),
 
     // Allegati e note
@@ -217,8 +217,8 @@ export const ActivityQuerySchema = z
       .transform((val) => (val ? parseInt(val, 10) : undefined)),
 
     // Filtri data
-    startDate: z.string().datetime("Data inizio non valida").optional(),
-    endDate: z.string().datetime("Data fine non valida").optional(),
+    startDate: z.iso.datetime("Data inizio non valida").optional(),
+    endDate: z.iso.datetime("Data fine non valida").optional(),
 
     // Filtri speciali
     overdue: z
@@ -436,7 +436,12 @@ export const BulkActivityActionSchema = z
 
 export const validateActivityStatsQuery = validateQuery(
   ActivityStatsSchema,
-  "Company search"
+  "Activity stats"
+);
+
+export const validateCreateActivity = validateBody(
+  CreateActivitySchema,
+  "Activity creation"
 );
 
 // ============================================================================

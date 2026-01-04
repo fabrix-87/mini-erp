@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface SearchParams {
   customerId?: string;
   contactId?: string;
+  date?: string;
 }
 
 export default async function NewActivityPage({
@@ -20,6 +21,7 @@ export default async function NewActivityPage({
       <ActivityForm
         preselectedCustomerId={params.customerId}
         preselectedContactId={params.contactId}
+        preselectedDate={params.date}
       />
     </Suspense>
   );

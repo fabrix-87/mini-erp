@@ -7,7 +7,7 @@ import { ArrowLeft, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Activity, ActivityFormData } from "@/types/activitiy";
+import { Activity } from "@/types/activitiy";
 import { createActivity, updateActivity } from "@/actions/activity";
 import { ActivityFormBasicInfo } from "./form/activity-form-basic-info";
 import { ActivityFormScheduling } from "./form/activity-form-scheduling";
@@ -16,11 +16,13 @@ import { ActivityFormSettings } from "./form/activity-form-settings";
 import { ActivityFormHeader } from "./form/activity-form-header";
 import { ActivityStatusBadge } from "./activity-status-badge";
 import { useActivityForm } from "@/hooks/use-activity-form";
+import { useAuth } from "@/hooks/use-auth";
 
 interface ActivityFormProps {
   activity?: Activity;
   preselectedCustomerId?: string;
   preselectedContactId?: string;
+  preselectedDate?: string;
   isEditMode?: boolean;
 }
 
@@ -28,11 +30,13 @@ export function ActivityForm({
   activity,
   preselectedCustomerId,
   preselectedContactId,
+  preselectedDate,
   isEditMode = false,
 }: ActivityFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("basic");
+  const { user } = useAuth()
 
   const {
     formData,
@@ -45,6 +49,7 @@ export function ActivityForm({
     activity,
     preselectedCustomerId,
     preselectedContactId,
+    preselectedDate,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,6 +79,7 @@ export function ActivityForm({
           internalNotes: formData.internalNotes || undefined,
           requiresFollowUp: formData.requiresFollowUp,
           followUpDate: formData.followUpDate || undefined,
+          assignedUserId: user?.id || 0
         } as Partial<Activity>;
 
         let result;

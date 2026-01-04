@@ -106,11 +106,11 @@ const buildHeaders = async (
 ): Promise<Headers> => {
   const headers = new Headers(initHeaders);
 
-  // ✅ Fingerprint
+  // Fingerprint
   const fingerprint = await getFingerprintForSSR();
   headers.set("X-Device-Fingerprint", fingerprint);
 
-  // ✅ Cookie (per auth)
+  // Cookie (per auth)
   if (includeCookies) {
     const cookiesString = await getCookiesString();
     if (cookiesString) {
@@ -118,7 +118,7 @@ const buildHeaders = async (
     }
   }
 
-  // ✅ Content-Type
+  // Content-Type
   if (!headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }

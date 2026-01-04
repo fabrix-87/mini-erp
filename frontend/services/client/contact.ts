@@ -14,9 +14,7 @@ import type {
 // RESPONSE TYPES
 // ============================================================================
 
-interface ContactListApiResponse extends ApiResponse<Contact[]> {
-  pagination?: PaginationInfo;
-}
+interface ContactListApiResponse extends ApiResponse<Contact[]> {}
 
 interface ContactSingleApiResponse extends ApiResponse<Contact> {}
 

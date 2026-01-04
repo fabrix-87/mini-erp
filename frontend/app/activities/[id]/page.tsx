@@ -13,7 +13,7 @@ export default async function ActivityDetailPage({
   const { id } = await params;
   
   try {
-    const activity = await fetchActivityByIdServer(parseInt(id));
+    const activity = await fetchActivityByIdServer(parseInt(id));    
 
     return (
       <Suspense fallback={<ActivityDetailSkeleton />}>

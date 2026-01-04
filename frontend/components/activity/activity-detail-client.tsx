@@ -44,6 +44,7 @@ import {
 import { toast } from "sonner";
 import { Activity } from "@/types/activitiy";
 import { deleteActivity } from "@/actions/activity";
+import { useBreadcrumbTitle } from "@/hooks/use-breadcrumb-title";
 
 const activityTypeIcons: Record<string, any> = {
   CALL: Phone,
@@ -81,6 +82,9 @@ interface ActivityDetailClientProps {
 }
 
 export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
+
+  useBreadcrumbTitle(activity.subject);
+
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
 

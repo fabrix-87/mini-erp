@@ -13,12 +13,14 @@ interface UseActivityFormProps {
   activity?: Activity;
   preselectedCustomerId?: string;
   preselectedContactId?: string;
+  preselectedDate?: string;
 }
 
 export function useActivityForm({
   activity,
   preselectedCustomerId,
   preselectedContactId,
+  preselectedDate,
 }: UseActivityFormProps) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<
@@ -29,12 +31,12 @@ export function useActivityForm({
   );
 
   // Carica il customer selezionato
-  const { data: customerData } = useCustomer(selectedCustomerId);
+  const { data: customerData } = useCustomer(selectedCustomerId, !!selectedCustomerId);
 
   // Carica i contatti della company del customer selezionato
-  const companyId = customerData?.data?.companyId;
+  const companyId = customerData?.data?.companyId ?? 0;
   
-  const { contacts: contactsData } = companyId ? useContactsByCompany(companyId) : { contacts: [] as Contact[]};
+  const { contacts: companyContacts } = useContactsByCompany(companyId);
 
 
   const [formData, setFormData] = useState<ActivityFormData>(() => {
@@ -66,6 +68,8 @@ export function useActivityForm({
       };
     }
 
+    const newDate = preselectedDate ? new Date(preselectedDate) : new Date()
+
     return {
       customerId: preselectedCustomerId || "",
       contactId: preselectedContactId || "",
@@ -74,7 +78,7 @@ export function useActivityForm({
       description: "",
       status: "SCHEDULED",
       priority: "MEDIUM",
-      scheduledStart: new Date().toISOString().slice(0, 16),
+      scheduledStart: newDate.toISOString().slice(0, 16),
       scheduledEnd: "",
       duration: "30",
       reminderMinutes: "",
@@ -125,7 +129,7 @@ export function useActivityForm({
   return {
     formData,
     customers,
-    contacts: contactsData,
+    contacts: companyContacts || [],
     handleChange,
     handleCustomerChange,
     searchCustomers: searchCustomersHandler,

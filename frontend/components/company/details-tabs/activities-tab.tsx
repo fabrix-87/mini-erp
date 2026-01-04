@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Calendar, User, Clock } from "lucide-react";
-import { getActivities } from "@/lib/client/modules/activity";
+import { getActivities } from "@/services/client/activity";
 
 interface CompanyActivitiesTabProps {
   companyId: number;
@@ -24,7 +24,7 @@ export function CompanyActivitiesTab({ companyId }: CompanyActivitiesTabProps) {
         companyId,
         page: 1,
         limit: 20,
-        sortBy: "scheduledDate",
+        sortBy: "scheduledStart",
         sortOrder: "asc",
       }),
   });

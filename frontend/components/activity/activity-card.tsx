@@ -150,7 +150,7 @@ export function ActivityCard({ activity, onClick }: ActivityCardProps) {
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <Users className="h-3.5 w-3.5" />
             <span className="truncate max-w-[200px]">
-              {activity.Company?.companyName}
+              {activity.Customer?.company.companyName}
             </span>
           </div>
 

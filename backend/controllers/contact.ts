@@ -276,3 +276,97 @@ export const checkEmail = asyncHandler(
     return;
   }
 );
+
+
+export const getContactsByCompany = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { companyId } = req.validatedParams;
+
+    // Verifica che la company esista
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
+    });
+
+    if (!company) {
+      res.status(404).json({
+        status: 'failed',
+        message: 'Company non trovata',
+      });
+      return;
+    }
+
+    // Trova il contatto primario
+    const Contacts = await prisma.contact.findMany({
+      where: {
+        companyId,
+        active: true, // Opzionale: solo contatti attivi
+      },
+      include: {
+        company: {
+          select: {
+            id: true,
+            code: true,
+            companyName: true,
+          },
+        },
+      },
+    });
+
+    res.json({
+      status: 'success',
+      data: Contacts,
+      message: 'Contatti recuperati con successo',
+    });
+  }
+);
+
+export const getPrimaryContactByCompany = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { companyId } = req.validatedParams;
+
+    // Verifica che la company esista
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
+    });
+
+    if (!company) {
+      res.status(404).json({
+        status: 'failed',
+        message: 'Company non trovata',
+      });
+      return;
+    }
+
+    // Trova il contatto primario
+    const primaryContact = await prisma.contact.findFirst({
+      where: {
+        companyId,
+        isPrimaryContact: true,
+        active: true, // Opzionale: solo contatti attivi
+      },
+      include: {
+        company: {
+          select: {
+            id: true,
+            code: true,
+            companyName: true,
+          },
+        },
+      },
+    });
+
+    if (!primaryContact) {
+      res.status(404).json({
+        status: 'failed',
+        message: 'Nessun contatto primario trovato per questa company',
+      });
+      return;
+    }
+
+    res.json({
+      status: 'success',
+      data: primaryContact,
+      message: 'Contatto primario recuperato con successo',
+    });
+  }
+);

@@ -124,7 +124,7 @@ export function ActivityFormScheduling({
                 <SelectValue placeholder="Nessun promemoria" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Nessuno</SelectItem>
+                <SelectItem value="0">Nessuno</SelectItem>
                 <SelectItem value="15">15 minuti prima</SelectItem>
                 <SelectItem value="30">30 minuti prima</SelectItem>
                 <SelectItem value="60">1 ora prima</SelectItem>

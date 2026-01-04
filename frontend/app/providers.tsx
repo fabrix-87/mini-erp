@@ -8,6 +8,7 @@ import { AuthProvider } from "@/providers/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
 import { preloadFingerprint } from "@/lib/client/fingerprint";
+import { BreadcrumbProvider } from "@/providers/breadcrumb-provider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -28,8 +29,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    // Preload fingerprint all'avvio per performance
-    // console.log('########### PRELOAD ###############');
     preloadFingerprint();
   }, []);
 
@@ -41,13 +40,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
         enableSystem
         storageKey="theme"
       >
-        <AuthProvider>
-          {children}
-          <Toaster />
-          {process.env.NODE_ENV === "development" && (
-            <ReactQueryDevtools initialIsOpen={false} />
-          )}
-        </AuthProvider>
+        <BreadcrumbProvider>
+          <AuthProvider>
+            {children}
+            <Toaster />
+            {process.env.NODE_ENV === "development" && (
+              <ReactQueryDevtools initialIsOpen={false} />
+            )}
+          </AuthProvider>
+        </BreadcrumbProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

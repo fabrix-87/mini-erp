@@ -35,15 +35,15 @@ import {
   UserCog,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { Item } from "@radix-ui/react-dropdown-menu";
 
 export interface NavigationItem {
   name: string;
   href: string;
-  icon: any;
+  icon?: any;
   roles?: string[];
   badge?: string | number;
   description?: string;
+  items?: NavigationItem[];
 }
 
 export interface NavigationSection {
@@ -68,6 +68,20 @@ export const navigationConfig: NavigationSection[] = [
         href: "/activities",
         icon: Calendar,
         description: "Calendario e task",
+        items: [
+          {
+            name: "Lista",
+            href: "/activities",
+          },
+          {
+            name: "Calendario",
+            href: "/activities/calendar",
+          },
+          {
+            name: "Nuova Attività",
+            href: "/activities/new",
+          },
+        ],
       },
       {
         name: "Report",
@@ -225,6 +239,35 @@ export const navigationConfig: NavigationSection[] = [
   },
 ];
 
+// Funzione ricorsiva per filtrare items in base ai ruoli
+function filterItemsByRoles(
+  items: NavigationItem[],
+  userRoles?: { code: string }[]
+): NavigationItem[] {
+  return items
+    .filter((item) => {
+      // Controlla se l'utente ha i ruoli necessari
+      const hasAccess =
+        !item.roles ||
+        (userRoles &&
+          item.roles.some((role) =>
+            userRoles.some((userRole) => userRole.code === role)
+          ));
+
+      return hasAccess;
+    })
+    .map((item) => {
+      // Se l'item ha sotto-items, filtrali ricorsivamente
+      if (item.items && item.items.length > 0) {
+        return {
+          ...item,
+          items: filterItemsByRoles(item.items, userRoles),
+        };
+      }
+      return item;
+    });
+}
+
 // Hook personalizzato per gestire la navigazione filtrata
 export function useFilteredNavigation() {
   const { user } = useAuth();
@@ -233,12 +276,7 @@ export function useFilteredNavigation() {
     return navigationConfig
       .map((section) => ({
         ...section,
-        items: section.items.filter(
-          (item) =>
-            !item.roles || (user?.roles && item.roles.some(
-              role => user.roles?.some(userRole => userRole.code === role)
-            ))
-        ),
+        items: filterItemsByRoles(section.items, user?.roles),
       }))
       .filter((section) => section.items.length > 0);
   }, [user?.roles]);
@@ -248,18 +286,40 @@ export function useFilteredNavigation() {
 
 // Utility per determinare se un link è attivo
 export function isActiveLink(currentPath: string, href: string): boolean {
-  if (href === "/dashboard") {
-    return currentPath === href;
+  // Exact match
+  if (currentPath === href) {
+    return true;
   }
-  return currentPath === href || currentPath.startsWith(href + "/");
+  
+  // Dashboard deve essere exact match
+  if (href === "/dashboard") {
+    return false;
+  }
+
+  // Per i sub-items, non fare match parziale se il parent è un path più generico
+  // Es: /activities non deve matchare /activities/calendar
+  // Ma /activities/calendar deve matchare esattamente
+  return false;
 }
 
 // Utility per determinare se una sezione è attiva
-export function isActiveSection(currentPath: string, sectionPath: string): boolean {
+export function isActiveSection(
+  currentPath: string,
+  sectionPath: string
+): boolean {
   if (sectionPath === "/dashboard") {
     return currentPath === sectionPath;
   }
   return currentPath.startsWith(sectionPath);
+}
+
+// Utility per verificare se un item ha sotto-items attivi
+export function hasActiveSubItem(
+  currentPath: string,
+  items?: NavigationItem[]
+): boolean {
+  if (!items || items.length === 0) return false;
+  return items.some((subItem) => currentPath === subItem.href);
 }
 
 // Icone per l'header

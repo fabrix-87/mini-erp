@@ -20,9 +20,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Combobox, ComboboxOption } from "@/components/ui/combobox";
 import { ActivityFormData } from "@/types/activitiy";
 import { Customer } from "@/types/customer";
 import { Contact } from "@/types/contact";
+import { useMemo } from "react";
 
 const activityTypeLabels: Record<string, string> = {
   CALL: "Chiamata",
@@ -71,6 +73,36 @@ export function ActivityFormBasicInfo({
   const selectedCustomer = customers.find(
     (c) => c.id.toString() === formData.customerId
   );
+
+  // Converti customers in formato ComboboxOption
+  const customerOptions: ComboboxOption[] = useMemo(
+    () =>
+      Array.isArray(customers)
+        ? customers.map((customer) => ({
+            value: customer.id.toString(),
+            label: customer.company.companyName,
+            description: `(${customer.company.code}) • ${customer.segment}${
+              customer.company.vatNumber
+                ? ` • P.IVA: ${customer.company.vatNumber}`
+                : ""
+            }`,
+          }))
+        : [],
+    [customers]
+  );
+
+  // Converti contacts in formato ComboboxOption
+  const contactOptions: ComboboxOption[] = useMemo(() => {
+    const validContacts = Array.isArray(contacts) ? contacts : [];
+    return [
+      { value: "", label: "Nessuno (generale)", description: undefined },
+      ...validContacts.map((contact) => ({
+        value: contact.id.toString(),
+        label: `${contact.firstName} ${contact.lastName}`,
+        description: contact.position || contact.email,
+      })),
+    ];
+  }, [contacts]);
 
   return (
     <Card>
@@ -140,33 +172,17 @@ export function ActivityFormBasicInfo({
           />
         </div>
 
-        {/* Customer Selection con info CRM */}
+        {/* Customer Selection con Combobox */}
         <div className="space-y-2">
           <Label htmlFor="customerId">Cliente *</Label>
-          <Select value={formData.customerId} onValueChange={onCustomerChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleziona cliente..." />
-            </SelectTrigger>
-            <SelectContent>
-              {customers.map((customer) => (
-                <SelectItem key={customer.id} value={customer.id.toString()}>
-                  <div className="flex items-center gap-2">
-                    <span>{customer.company?.companyName}</span>
-                    <Badge
-                      variant="outline"
-                      className={leadStatusColors[customer.leadStatus]}
-                    >
-                      {customer.leadStatus}
-                    </Badge>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Input
-            placeholder="Cerca cliente..."
-            onChange={(e) => onSearchCustomers(e.target.value)}
-            className="mt-2"
+          <Combobox
+            options={customerOptions}
+            value={formData.customerId}
+            onValueChange={onCustomerChange}
+            onSearchChange={onSearchCustomers}
+            placeholder="Seleziona cliente..."
+            searchPlaceholder="Cerca per nome, P.IVA..."
+            emptyText="Nessun cliente trovato"
           />
 
           {/* Info Cliente Selezionato */}
@@ -174,16 +190,22 @@ export function ActivityFormBasicInfo({
             <div className="mt-2 p-3 bg-muted/50 rounded-lg space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">
-                  {selectedCustomer.company?.companyName}
+                  {selectedCustomer.company.companyName}
                 </span>
                 <Badge className={leadStatusColors[selectedCustomer.leadStatus]}>
                   {selectedCustomer.leadStatus}
                 </Badge>
               </div>
               <div className="text-xs text-muted-foreground space-y-0.5">
-                <div>Codice: {selectedCustomer.company?.code}</div>
-                {selectedCustomer.company?.vatNumber && (
+                <div>Codice: {selectedCustomer.company.code}</div>
+                {selectedCustomer.company.vatNumber && (
                   <div>P.IVA: {selectedCustomer.company.vatNumber}</div>
+                )}
+                {selectedCustomer.company.mainEmail && (
+                  <div>Email: {selectedCustomer.company.mainEmail}</div>
+                )}
+                {selectedCustomer.company.mainPhone && (
+                  <div>Tel: {selectedCustomer.company.mainPhone}</div>
                 )}
                 <div className="flex gap-2 mt-1">
                   <Badge variant="secondary" className="text-xs">
@@ -198,34 +220,18 @@ export function ActivityFormBasicInfo({
           )}
         </div>
 
-        {/* Contact Selection */}
+        {/* Contact Selection con Combobox */}
         <div className="space-y-2">
           <Label htmlFor="contactId">Contatto</Label>
-          <Select
+          <Combobox
+            options={contactOptions}
             value={formData.contactId}
             onValueChange={(value) => onChange("contactId", value)}
+            placeholder="Seleziona contatto..."
+            searchPlaceholder="Cerca contatto..."
+            emptyText="Nessun contatto disponibile"
             disabled={!formData.customerId}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Seleziona contatto..." />
-            </SelectTrigger>
-            <SelectContent>
-              {contacts.map((contact) => (
-                <SelectItem key={contact.id} value={contact.id.toString()}>
-                  <div className="flex flex-col">
-                    <span>
-                      {contact.firstName} {contact.lastName}
-                    </span>
-                    {contact.position && (
-                      <span className="text-xs text-muted-foreground">
-                        {contact.position}
-                      </span>
-                    )}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          />
         </div>
 
         {showLocationField && (

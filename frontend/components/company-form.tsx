@@ -22,6 +22,7 @@ import {
   useUpdateCustomer,
   useUpdateSupplier,
 } from "@/hooks/use-company";
+import { useBreadcrumbTitle } from "@/hooks/use-breadcrumb-title";
 
 export default function CompanyFormPage() {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function CompanyFormPage() {
     : "SUPPLIER";
 
   const isEditMode = !!params?.id;
-  const entityId = params?.id ? parseInt(params.id as string) : undefined;
+  const entityId = params?.id ? parseInt(params.id as string) : undefined;  
 
   const [formData, setFormData] = useState<CompanyFormData>({
     // Company base
@@ -106,7 +107,7 @@ export default function CompanyFormPage() {
         companyType === "CUSTOMER" ? customerData?.data : supplierData?.data;
       if (data) {
         const mappedData = mapApiToForm(data, companyType);
-        setFormData(mappedData);
+        setFormData(mappedData);        
       }
     }
   }, [customerData, supplierData, isEditMode, isLoading, companyType]);

@@ -17,6 +17,7 @@ import {
   CreateActivityFromTemplateSchema,
   BulkActivityActionSchema,
   validateActivityStatsQuery,
+  validateCreateActivity,
 } from '../validators/activity';
 import {
   getAllActivities,
@@ -103,7 +104,7 @@ router.post(
   '/',
   authenticateToken,
   authorize(['activity:create', 'activity:manage']),
-  validateBody(CreateActivitySchema, 'Activity creation'),
+  validateCreateActivity,
   createActivity
 );
 

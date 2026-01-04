@@ -22,7 +22,7 @@ export interface Customer extends BaseCompany {
   totalSales: number;
   totalRevenue: string;
 
-  company?: BaseCompany;
+  company: BaseCompany;
 }
 
 // Stats interfaces

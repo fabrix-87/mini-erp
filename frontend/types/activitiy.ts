@@ -27,17 +27,18 @@ export interface ActivityStats {
 }
 
 export interface getActivitiesParams {
-  page: number;
-  limit: number;
+  page?: number;
+  limit?: number;
   sortBy?: string;
   sortOrder?: string;
   activityType?: string;
   status?: string;
   priority?: string;
   search?: string;
-  dateFrom?: string;
-  dateTo?: string;
+  startDate?: string;
+  endDate?: string;
   customerId?: number;
+  companyId?: number;
 }
 
 export type ActivityType = 

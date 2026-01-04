@@ -284,14 +284,10 @@ export const getActivityById = async (
  * @route   POST /api/activities
  * @access  Private (activity:create)
  */
-export const createActivity = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const data = req.body;
-    const userId = (req as any).user.id;
+export const createActivity = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const data = req.validatedBody;
+    const userId = req.user!.userId;
 
     // Validazioni relazioni
     if (data.companyId) {
@@ -346,14 +342,14 @@ export const createActivity = async (
       }
     }
 
-    // Verifica utente assegnato
-    const assignedUser = await prisma.user.findUnique({
-      where: { id: data.assignedUserId },
+    // Verifica utente creatore
+    const createdBy = await prisma.user.findUnique({
+      where: { id: userId },
     });
-    if (!assignedUser) {
+    if (!createdBy) {
       res.status(404).json({
         success: false,
-        message: "Utente assegnato non trovato",
+        message: "Utente creazione non trovato",
       });
       return;
     }
@@ -383,10 +379,7 @@ export const createActivity = async (
       message: "Activity creata con successo",
       data: activity,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
 /**
  * @desc    Aggiorna Activity
