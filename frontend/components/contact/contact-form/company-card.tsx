@@ -1,24 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronsUpDown, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Popover } from "@radix-ui/react-popover";
-import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Combobox, ComboboxOption } from "@/components/ui/combobox";
 import { useCompanies } from "@/hooks/use-company";
 
 interface CompanyCardProps {
@@ -32,12 +16,11 @@ export default function CompanyCard({
   onCompanyChange,
   error,
 }: CompanyCardProps) {
-  const [searchCustomerInput, setSearchCustomerInput] = useState("");
-  const [searchCustomer, setSearchCustomer] = useState("");
-  const [openCustomer, setOpenCustomer] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const { data, isLoading: loadingCompanies } = useCompanies({
-    search: searchCustomer,
+  const { data, isLoading } = useCompanies({
+    search: debouncedSearch,
     page: 1,
     limit: 10,
   });
@@ -46,15 +29,18 @@ export default function CompanyCard({
   // Debounce effect
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setSearchCustomer(searchCustomerInput);
+      setDebouncedSearch(searchInput);
     }, 400);
 
     return () => clearTimeout(timeoutId);
-  }, [searchCustomerInput]);
+  }, [searchInput]);
 
-  const selectedCompany = companies.find(
-    (c) => c.id === parseInt(companyId)
-  );
+  // Trasforma le companies in ComboboxOption
+  const options: ComboboxOption[] = companies.map((company) => ({
+    value: company.id.toString(),
+    label: company.companyName,
+    description: company.code,
+  }));
 
   return (
     <Card>
@@ -65,55 +51,16 @@ export default function CompanyCard({
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          <Popover open={openCustomer} onOpenChange={setOpenCustomer}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={openCustomer}
-                className="w-full justify-between"
-              >
-                {selectedCompany?.companyName || "Seleziona azienda..."}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="p-0 w-200">
-              <Command shouldFilter={false}>
-                <CommandInput
-                  placeholder="Cerca azienda..."
-                  value={searchCustomerInput}
-                  onValueChange={setSearchCustomerInput}
-                />
-                <CommandEmpty>
-                  {loadingCompanies
-                    ? "Caricamento..."
-                    : "Nessuna azienda trovata"}
-                </CommandEmpty>
-                <CommandGroup className="max-h-64 overflow-auto">
-                  {companies.map((company) => (
-                    <CommandItem
-                      key={company.id}
-                      value={company.id.toString()}
-                      onSelect={() => {
-                        onCompanyChange(company.id.toString());
-                        setOpenCustomer(false);
-                      }}
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          companyId === company.id.toString()
-                            ? "opacity-100"
-                            : "opacity-0"
-                        )}
-                      />
-                      {company.companyName} ({company.code})
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
+          <Combobox
+            options={options}
+            value={companyId}
+            onValueChange={onCompanyChange}
+            onSearchChange={setSearchInput}
+            placeholder="Seleziona azienda..."
+            searchPlaceholder="Cerca azienda..."
+            emptyText="Nessuna azienda trovata"
+            isLoading={isLoading}
+          />
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
       </CardContent>
