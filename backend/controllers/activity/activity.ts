@@ -1,6 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import { Prisma } from '../../generated/prisma/client';
-import { prisma } from '../../config/prisma-client';
+import { Request, Response, NextFunction } from "express";
+import { Prisma } from "../../generated/prisma/client";
+import { prisma } from "../../config/prisma-client";
+import asyncHandler from "../../middleware/async-handler";
+import { AuthenticatedValidatedRequest } from "../../types/validate";
+import { ActivityStatsInput } from "../../validators/activity";
 
 // ============================================================================
 // ACTIVITY CONTROLLER
@@ -34,8 +37,8 @@ export const getAllActivities = async (
       overdue,
       requiresFollowUp,
       myActivities,
-      sortBy = 'scheduledStart',
-      sortOrder = 'asc',
+      sortBy = "scheduledStart",
+      sortOrder = "asc",
     } = req.query;
 
     const skip = (Number(page) - 1) * Number(limit);
@@ -44,8 +47,8 @@ export const getAllActivities = async (
     // Filtro ricerca
     if (search) {
       where.OR = [
-        { subject: { contains: search as string, mode: 'insensitive' } },
-        { description: { contains: search as string, mode: 'insensitive' } },
+        { subject: { contains: search as string, mode: "insensitive" } },
+        { description: { contains: search as string, mode: "insensitive" } },
       ];
     }
 
@@ -59,7 +62,7 @@ export const getAllActivities = async (
     if (companyId) where.companyId = Number(companyId);
     if (customerId) where.customerId = Number(customerId);
     if (opportunityId) where.opportunityId = Number(opportunityId);
-    
+
     // Filtro utente assegnato o "le mie attività"
     if (myActivities) {
       where.assignedUserId = (req as any).user.id;
@@ -78,7 +81,7 @@ export const getAllActivities = async (
     if (overdue) {
       where.AND = [
         { scheduledStart: { lt: new Date() } },
-        { status: { in: ['SCHEDULED', 'IN_PROGRESS'] } },
+        { status: { in: ["SCHEDULED", "IN_PROGRESS"] } },
       ];
     }
 
@@ -262,7 +265,7 @@ export const getActivityById = async (
     if (!activity) {
       res.status(404).json({
         success: false,
-        message: 'Activity non trovata',
+        message: "Activity non trovata",
       });
       return;
     }
@@ -298,7 +301,7 @@ export const createActivity = async (
       if (!company) {
         res.status(404).json({
           success: false,
-          message: 'Company non trovata',
+          message: "Company non trovata",
         });
         return;
       }
@@ -311,7 +314,7 @@ export const createActivity = async (
       if (!customer) {
         res.status(404).json({
           success: false,
-          message: 'Customer non trovato',
+          message: "Customer non trovato",
         });
         return;
       }
@@ -324,7 +327,7 @@ export const createActivity = async (
       if (!opportunity) {
         res.status(404).json({
           success: false,
-          message: 'Opportunity non trovata',
+          message: "Opportunity non trovata",
         });
         return;
       }
@@ -337,7 +340,7 @@ export const createActivity = async (
       if (!contact) {
         res.status(404).json({
           success: false,
-          message: 'Contact non trovato',
+          message: "Contact non trovato",
         });
         return;
       }
@@ -350,7 +353,7 @@ export const createActivity = async (
     if (!assignedUser) {
       res.status(404).json({
         success: false,
-        message: 'Utente assegnato non trovato',
+        message: "Utente assegnato non trovato",
       });
       return;
     }
@@ -377,7 +380,7 @@ export const createActivity = async (
 
     res.status(201).json({
       success: true,
-      message: 'Activity creata con successo',
+      message: "Activity creata con successo",
       data: activity,
     });
   } catch (error) {
@@ -406,7 +409,7 @@ export const updateActivity = async (
     if (!existingActivity) {
       res.status(404).json({
         success: false,
-        message: 'Activity non trovata',
+        message: "Activity non trovata",
       });
       return;
     }
@@ -432,7 +435,7 @@ export const updateActivity = async (
 
     res.status(200).json({
       success: true,
-      message: 'Activity aggiornata con successo',
+      message: "Activity aggiornata con successo",
       data: activity,
     });
   } catch (error) {
@@ -461,7 +464,7 @@ export const updateActivityStatus = async (
     if (!activity) {
       res.status(404).json({
         success: false,
-        message: 'Activity non trovata',
+        message: "Activity non trovata",
       });
       return;
     }
@@ -469,16 +472,17 @@ export const updateActivityStatus = async (
     const updateData: any = { status };
     if (outcome !== undefined) updateData.outcome = outcome;
     if (result !== undefined) updateData.result = result;
-    if (actualStart !== undefined) updateData.actualStart = new Date(actualStart);
+    if (actualStart !== undefined)
+      updateData.actualStart = new Date(actualStart);
     if (actualEnd !== undefined) updateData.actualEnd = new Date(actualEnd);
 
     // Se status diventa IN_PROGRESS e non c'è actualStart, impostalo ora
-    if (status === 'IN_PROGRESS' && !activity.actualStart && !actualStart) {
+    if (status === "IN_PROGRESS" && !activity.actualStart && !actualStart) {
       updateData.actualStart = new Date();
     }
 
     // Se status diventa COMPLETED e non c'è actualEnd, impostalo ora
-    if (status === 'COMPLETED' && !activity.actualEnd && !actualEnd) {
+    if (status === "COMPLETED" && !activity.actualEnd && !actualEnd) {
       updateData.actualEnd = new Date();
     }
 
@@ -499,7 +503,7 @@ export const updateActivityStatus = async (
 
     res.status(200).json({
       success: true,
-      message: 'Status aggiornato con successo',
+      message: "Status aggiornato con successo",
       data: updatedActivity,
     });
   } catch (error) {
@@ -519,7 +523,8 @@ export const completeActivity = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { outcome, result, requiresFollowUp, followUpDate, internalNotes } = req.body;
+    const { outcome, result, requiresFollowUp, followUpDate, internalNotes } =
+      req.body;
 
     const activity = await prisma.activity.findUnique({
       where: { id: parseInt(id) },
@@ -528,13 +533,13 @@ export const completeActivity = async (
     if (!activity) {
       res.status(404).json({
         success: false,
-        message: 'Activity non trovata',
+        message: "Activity non trovata",
       });
       return;
     }
 
     const updateData: any = {
-      status: 'COMPLETED',
+      status: "COMPLETED",
       outcome,
       result,
       requiresFollowUp,
@@ -564,7 +569,7 @@ export const completeActivity = async (
 
     res.status(200).json({
       success: true,
-      message: 'Activity completata con successo',
+      message: "Activity completata con successo",
       data: updatedActivity,
     });
   } catch (error) {
@@ -592,7 +597,7 @@ export const deleteActivity = async (
     if (!activity) {
       res.status(404).json({
         success: false,
-        message: 'Activity non trovata',
+        message: "Activity non trovata",
       });
       return;
     }
@@ -603,7 +608,7 @@ export const deleteActivity = async (
 
     res.status(200).json({
       success: true,
-      message: 'Activity eliminata con successo',
+      message: "Activity eliminata con successo",
     });
   } catch (error) {
     next(error);
@@ -615,13 +620,9 @@ export const deleteActivity = async (
  * @route   GET /api/activities/stats
  * @access  Private (activity:read)
  */
-export const getActivityStats = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { startDate, endDate, userId } = req.query;
+export const getActivityStats = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { startDate, endDate, userId } = req.validatedQuery as ActivityStatsInput;
     const currentUserId = (req as any).user.id;
 
     const where: Prisma.ActivityWhereInput = {};
@@ -638,28 +639,28 @@ export const getActivityStats = async (
 
     // Statistiche per tipo
     const byType = await prisma.activity.groupBy({
-      by: ['type'],
+      by: ["type"],
       where,
       _count: true,
     });
 
     // Statistiche per status
     const byStatus = await prisma.activity.groupBy({
-      by: ['status'],
+      by: ["status"],
       where,
       _count: true,
     });
 
     // Statistiche per priorità
     const byPriority = await prisma.activity.groupBy({
-      by: ['priority'],
+      by: ["priority"],
       where,
       _count: true,
     });
 
     // Statistiche per outcome
     const byOutcome = await prisma.activity.groupBy({
-      by: ['outcome'],
+      by: ["outcome"],
       where: {
         ...where,
         outcome: { not: null },
@@ -672,7 +673,7 @@ export const getActivityStats = async (
       where: {
         assignedUserId: where.assignedUserId,
         scheduledStart: { lt: new Date() },
-        status: { in: ['SCHEDULED', 'IN_PROGRESS'] },
+        status: { in: ["SCHEDULED", "IN_PROGRESS"] },
       },
     });
 
@@ -697,7 +698,7 @@ export const getActivityStats = async (
       where: {
         assignedUserId: where.assignedUserId,
         requiresFollowUp: true,
-        status: 'COMPLETED',
+        status: "COMPLETED",
       },
     });
 
@@ -713,7 +714,5 @@ export const getActivityStats = async (
         followUp: followUpCount,
       },
     });
-  } catch (error) {
-    next(error);
   }
-};
+);

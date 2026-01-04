@@ -2,7 +2,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { toast } from "sonner";
 import { addFingerprintHeader } from "./fingerprint";
-import { refreshToken } from "@/services/auth";
+import { refreshToken } from "@/services/client/auth";
 
 // ============================================================================
 // Configuration

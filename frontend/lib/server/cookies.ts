@@ -25,6 +25,30 @@ export async function getCookiesString(): Promise<string> {
 }
 
 /**
+ * Get user from cookies server-side
+ */
+export async function getUserFromCookiesSSR(): Promise<User | null> {
+  try {
+    const cookieStore = await cookies();
+    const userCookie = cookieStore.get("user")?.value;
+    
+    if (!userCookie) {
+      console.log("❌ No user cookie found");
+      return null;
+    }
+    
+    // Decodifica URL encoding prima di parsare JSON
+    const decodedCookie = decodeURIComponent(userCookie);
+    const user = JSON.parse(decodedCookie) as User;
+    
+    return user;
+  } catch (error) {
+    console.error("❌ Failed to parse user cookie:", error);
+    return null;
+  }
+}
+
+/**
  * Setta i cookies
  */
 /**

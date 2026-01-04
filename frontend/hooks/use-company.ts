@@ -10,7 +10,7 @@ import {
   deleteCustomer,
   getDashboardStats as getCustomerStats,
   getCompanies,
-} from "@/services/customer";
+} from "@/services/client/company";
 import {
   getSuppliers,
   getSupplierById,

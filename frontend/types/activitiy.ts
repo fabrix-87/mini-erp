@@ -1,9 +1,6 @@
-import { BaseCompany } from "./company";
+// types/activity.ts
 import { Contact } from "./contact";
 
-/**
- * Statistiche per la dashboard delle attività
- */
 export interface ActivityDashboardStats {
   planned: number;
   completed: number;
@@ -13,114 +10,163 @@ export interface ActivityDashboardStats {
   completionRate: number;
 }
 
+export interface ActivityStatsParams {
+  startDate?: string;
+  endDate?: string;
+  userId?: number;
+}
+
+export interface ActivityStats {
+  byType: Array<{ type: string; _count: number }>;
+  byStatus: Array<{ status: string; _count: number }>;
+  byPriority: Array<{ priority: string; _count: number }>;
+  byOutcome: Array<{ outcome: string; _count: number }>;
+  overdue: number;
+  today: number;
+  followUp: number;
+}
+
 export interface getActivitiesParams {
   page: number;
   limit: number;
-  sortBy: string;
-  sortOrder: string;
+  sortBy?: string;
+  sortOrder?: string;
   activityType?: string;
   status?: string;
   priority?: string;
   search?: string;
   dateFrom?: string;
   dateTo?: string;
-  companyId?: number;
+  customerId?: number;
 }
 
+export type ActivityType = 
+  | "CALL"
+  | "EMAIL"
+  | "MEETING"
+  | "TASK"
+  | "NOTE"
+  | "WHATSAPP"
+  | "SMS"
+  | "VIDEO_CALL"
+  | "SITE_VISIT"
+  | "OTHER";
 
-/**
- * Tipi possibili per il Tipo di Attività
- */
-export type ActivityType = "call" | "meeting" | "email" | "task" | "other";
-
-/**
- * Tipi possibili per lo Status
- */
 export type ActivityStatus =
-  | "planned"
-  | "in_progress"
-  | "completed"
-  | "cancelled";
+  | "SCHEDULED"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "RESCHEDULED"
+  | "NO_SHOW";
 
-/**
- * Tipi possibili per la Priority
- */
-export type ActivityPriority = "low" | "medium" | "high";
+export type ActivityPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 
-/**
- * Tipo principale per l'entità Attività (Activity)
- */
-export interface Activity {
-  // Campi Identificativi e Relazioni
+export type ActivityOutcome =
+  | "SUCCESSFUL"
+  | "NO_ANSWER"
+  | "LEFT_MESSAGE"
+  | "FOLLOW_UP_NEEDED"
+  | "NOT_INTERESTED"
+  | "WRONG_CONTACT"
+  | "CALLBACK_LATER"
+  | "POSTPONED"
+  | "OTHER";
+
+// Customer come restituito dal backend con i dati della Company
+export interface ActivityCustomer {
   id: number;
-  companyId: number;
-  contactId?: number; // Opzionale
+  leadStatus: string;
+  segment: string;
+  priority: string;
+  type: string;
+  company: {
+    id: number;
+    code: string;
+    companyName: string;
+    tradeName?: string;
+    vatNumber?: string;
+    taxCode?: string;
+    mainEmail?: string;
+    mainPhone?: string;
+  };
+}
+
+export interface Activity {
+  id: number;
+  
+  // Customer come campo principale
+  customerId: number;
+  Customer?: ActivityCustomer;
+  
+  // Gestito dal backend automaticamente
+  companyId?: number;
+  
+  contactId?: number;
+  Contact?: Contact;
+  
+  opportunityId?: number;
+  
   assignedUserId: number;
   createdByUserId: number;
 
   // Campi Principali
-  activityType: ActivityType;
-  direction?: "inbound" | "outbound"; // Se definito nel DB
+  type: ActivityType;
   subject: string;
   description?: string;
+  location?: string;
 
   // Stato e Priorità
   status: ActivityStatus;
   priority: ActivityPriority;
+  outcome?: ActivityOutcome;
 
   // Date e Durata
-  scheduledDate: string; // Utilizza string per le date serializzate JSON
-  durationMinutes?: number;
-  completedDate?: string;
-  reminderDate?: string;
+  scheduledStart: string;
+  scheduledEnd?: string;
+  actualStart?: string;
+  actualEnd?: string;
+  duration?: number;
 
-  // Risultato e Follow-up
-  location?: string;
-  outcome?: string;
-  outcomeNotes?: string;
+  // Promemoria
+  reminderMinutes?: number;
+  reminderSent: boolean;
+
+  // Follow-up
   requiresFollowUp: boolean;
   followUpDate?: string;
   followUpActivityId?: number;
 
-  // Campi Correlati
-  relatedOpportunityId?: number;
-  relatedQuoteId?: number;
-  relatedOrderId?: number;
+  // Risultato
+  result?: string;
+  internalNotes?: string;
 
-  // Metadata e Privacy
-  participants?: any[]; // 
-  attachments?: any[]; // 
-  tags?: string[];
-  isPrivate: boolean;
+  // Allegati e Custom Fields
+  attachments?: any;
+  customFields?: any;
 
+  // Metadata
   createdAt: string;
   updatedAt: string;
-
-  // Inclusione delle Relazioni (come ritornate dagli endpoint)
-  Company?: BaseCompany;
-  Contact?: Contact;
-  followUpActivity?: Activity; // Auto-referenziante per l'attività di follow-up
 }
 
 export interface ActivityFormData {
-  companyId: string
-  contactId: string
-  activityType: string
-  direction: string
-  subject: string
-  description: string
-  status: string
-  priority: string
-  scheduledDate: string
-  scheduledTime: string
-  completedDate: string
-  durationMinutes: string
-  reminderDate: string
-  reminderTime: string
-  location: string
-  outcome: string
-  outcomeNotes: string
-  requiresFollowUp: boolean
-  followUpDate: string
-  isPrivate: boolean
+  customerId: string; // Customer ID invece di Company
+  contactId: string;
+  type: ActivityType;
+  subject: string;
+  description: string;
+  status: ActivityStatus;
+  priority: ActivityPriority;
+  scheduledStart: string;
+  scheduledEnd?: string;
+  duration?: string;
+  reminderMinutes?: string;
+  location: string;
+  outcome?: ActivityOutcome | string;
+  result?: string;
+  internalNotes?: string;
+  requiresFollowUp: boolean;
+  followUpDate?: string;
+  customFields?: any;
 }

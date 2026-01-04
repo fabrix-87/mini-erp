@@ -16,6 +16,7 @@ import {
   ActivityTemplateIdSchema,
   CreateActivityFromTemplateSchema,
   BulkActivityActionSchema,
+  validateActivityStatsQuery,
 } from '../validators/activity';
 import {
   getAllActivities,
@@ -58,6 +59,7 @@ router.get(
   '/stats',
   authenticateToken,
   authorize(['activity:read', 'activity:manage']),
+  validateActivityStatsQuery,
   getActivityStats
 );
 

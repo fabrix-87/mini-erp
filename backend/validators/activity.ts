@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { validateQuery } from "../middleware/validation";
 
 // ============================================================================
 // ENUMS
@@ -372,8 +373,8 @@ export const ActivityTemplateIdSchema = z.object({
 export const CreateActivityFromTemplateSchema = z
   .object({
     templateId: z.number().int().positive("ID template obbligatorio"),
-    scheduledStart: z.string().datetime("Data inizio obbligatoria"),
-    scheduledEnd: z.string().datetime().optional().nullable(),
+    scheduledStart: z.iso.datetime("Data inizio obbligatoria"),
+    scheduledEnd: z.iso.datetime().optional().nullable(),
 
     // Override opzionali
     subject: z.string().max(255).optional().nullable(),
@@ -395,6 +396,18 @@ export const CreateActivityFromTemplateSchema = z
       path: ["companyId"],
     }
   );
+
+/**
+ * Schema per le statistiche utente
+ */
+export const ActivityStatsSchema = z.object({
+  startDate: z.iso.datetime().optional().nullable(),
+  endDate: z.iso.datetime().optional().nullable(),
+  userId: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val) : undefined)),
+});
 
 // ============================================================================
 // BULK OPERATIONS
@@ -418,12 +431,22 @@ export const BulkActivityActionSchema = z
   .strict();
 
 // ============================================================================
+// MIDDLEWARE
+// ============================================================================
+
+export const validateActivityStatsQuery = validateQuery(
+  ActivityStatsSchema,
+  "Company search"
+);
+
+// ============================================================================
 // TYPE EXPORTS
 // ============================================================================
 
 export type CreateActivityInput = z.infer<typeof CreateActivitySchema>;
 export type UpdateActivityInput = z.infer<typeof UpdateActivitySchema>;
 export type ActivityQueryInput = z.infer<typeof ActivityQuerySchema>;
+export type ActivityStatsInput = z.infer<typeof ActivityStatsSchema>;
 export type UpdateActivityStatusInput = z.infer<
   typeof UpdateActivityStatusSchema
 >;

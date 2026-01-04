@@ -1,62 +1,36 @@
 // services/server/activity.ts - Server-side service functions (SSR)
-import { Activity, ActivityDashboardStats, getActivitiesParams } from "@/types/activitiy";
-import { cookies } from "next/headers";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
-
-interface ApiResponse<T> {
-  data: T;
-  pagination?: {
-    page: number;
-    limit: number;
-    totalPages: number;
-    totalItems: number;
-  };
-}
-
-/**
- * Get auth token from cookies
- */
-async function getAuthToken(): Promise<string | undefined> {
-  const cookieStore = await cookies();
-  return cookieStore.get("auth_token")?.value;
-}
+import { serverApi } from "@/lib/server/api";
+import { 
+  Activity, 
+  ActivityDashboardStats, 
+  getActivitiesParams 
+} from "@/types/activitiy";
+import { ApiResponse } from "@/types/api";
+import { getUserFromCookiesSSR } from "@/lib/server/cookies";
 
 /**
  * Server-side function to fetch activities (for SSR)
- * This runs on the server and can access cookies directly
+ * This runs on the server and uses serverApi with automatic cookie handling
  */
 export async function fetchActivitiesServer(
   params: getActivitiesParams
 ): Promise<ApiResponse<Activity[]>> {
-  const token = await getAuthToken();
-  
-  const queryParams = new URLSearchParams();
-  
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") {
-      queryParams.append(key, String(value));
-    }
-  });
-
-  const response = await fetch(`${API_BASE_URL}/activities?${queryParams}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-    // Use 'no-store' to ensure fresh data or configure revalidation as needed
-    cache: "no-store",
-    // Alternative: next: { revalidate: 60 } for ISR
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({
-      message: "Failed to fetch activities"
-    }));
-    throw new Error(error.message || "Failed to fetch activities");
+  try {
+    // unwrapData: false per ottenere l'intera risposta con pagination
+    const response = await serverApi.get<ApiResponse<Activity[]>>(
+      "/activities",
+      {
+        params,
+        unwrapData: false, // Otteniamo { status, data, pagination }
+        revalidate: 0, // No cache per dati sempre freschi
+        // Alternative per cache: revalidate: 60 per ISR
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching activities:", error);
+    throw error;
   }
-
-  return response.json();
 }
 
 /**
@@ -65,25 +39,20 @@ export async function fetchActivitiesServer(
 export async function fetchActivityStatsServer(
   userId: number
 ): Promise<ApiResponse<ActivityDashboardStats>> {
-  const token = await getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/activities/stats?userId=${userId}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-    cache: "no-store",
-    // Alternative: next: { revalidate: 300 } for 5-minute cache
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({
-      message: "Failed to fetch activity stats"
-    }));
-    throw new Error(error.message || "Failed to fetch activity stats");
+  try {
+    const response = await serverApi.get<ApiResponse<ActivityDashboardStats>>(
+      "/activities/stats",
+      {
+        params: { userId },
+        unwrapData: false,
+        revalidate: 300, // Cache per 5 minuti
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching activity stats:", error);
+    throw error;
   }
-
-  return response.json();
 }
 
 /**
@@ -91,36 +60,38 @@ export async function fetchActivityStatsServer(
  */
 export async function fetchActivityByIdServer(
   id: number
-): Promise<ApiResponse<Activity>> {
-  const token = await getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/activities/${id}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({
-      message: "Failed to fetch activity"
-    }));
-    throw new Error(error.message || "Failed to fetch activity");
+): Promise<Activity> {
+  try {
+    // unwrapData: true (default) per ottenere direttamente i dati
+    const activity = await serverApi.get<Activity>(`/activities/${id}`, {
+      revalidate: 0,
+    });
+    return activity;
+  } catch (error) {
+    console.error("Error fetching activity:", error);
+    throw error;
   }
-
-  return response.json();
 }
 
 /**
  * Server-side function to fetch initial data for the activities page
  * Combines multiple data fetches for initial page load
+ * Gets userId from cookies automatically
  */
-export async function fetchActivitiesPageData(params: getActivitiesParams, userId: number) {
+export async function fetchActivitiesPageData(
+  params: getActivitiesParams
+) {
   try {
+    // Get user from cookies server-side
+    const user = await getUserFromCookiesSSR();
+    
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
     const [activitiesResponse, statsResponse] = await Promise.all([
       fetchActivitiesServer(params),
-      fetchActivityStatsServer(userId),
+      fetchActivityStatsServer(user.id),
     ]);
 
     return {
@@ -129,13 +100,13 @@ export async function fetchActivitiesPageData(params: getActivitiesParams, userI
       stats: statsResponse.data,
       error: null,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching activities page data:", error);
     return {
-      activities: [],
+      activities: [] as Activity[],
       pagination: undefined,
       stats: null,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error.message || "Unknown error",
     };
   }
 }

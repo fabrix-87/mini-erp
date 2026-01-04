@@ -2,63 +2,53 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
-import { Activity } from "@/types/activitiy";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
-
-/**
- * Get auth token from cookies
- */
-async function getAuthToken(): Promise<string | undefined> {
-  const cookieStore = await cookies();
-  return cookieStore.get("auth_token")?.value;
-}
+import { serverApi } from "@/lib/server/api";
+import { Activity, ActivityFormData } from "@/types/activitiy";
+import { ApiResponse } from "@/types/api";
+import { ServerApiError } from "@/types/server-client";
 
 interface ActionResponse<T = void> {
   success: boolean;
   data?: T;
   error?: string;
+  errors?: Array<{
+    field?: string;
+    message: string;
+  }>;
 }
 
 /**
  * Server Action to create a new activity
  */
 export async function createActivity(
-  activityData: Partial<Activity>
+  activityData: Partial<Activity> | ActivityFormData
 ): Promise<ActionResponse<Activity>> {
   try {
-    const token = await getAuthToken();
+    const response = await serverApi.post<ApiResponse<Activity>>(
+      "/activities",
+      activityData,
+      { unwrapData: false }
+    );
 
-    const response = await fetch(`${API_BASE_URL}/activities`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
-      },
-      body: JSON.stringify(activityData),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      return {
-        success: false,
-        error: error.message || "Failed to create activity",
-      };
-    }
-
-    const result = await response.json();
-    
     // Revalidate the activities page to show the new activity
     revalidatePath("/activities");
     revalidatePath("/dashboard/activities");
 
     return {
       success: true,
-      data: result.data,
+      data: response.data,
     };
   } catch (error) {
     console.error("Error creating activity:", error);
+    
+    if (error instanceof ServerApiError) {
+      return {
+        success: false,
+        error: error.message,
+        errors: error.details,
+      };
+    }
+    
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -71,30 +61,15 @@ export async function createActivity(
  */
 export async function updateActivity(
   id: number,
-  activityData: Partial<Activity>
+  activityData: Partial<Activity> | Partial<ActivityFormData>
 ): Promise<ActionResponse<Activity>> {
   try {
-    const token = await getAuthToken();
+    const response = await serverApi.put<ApiResponse<Activity>>(
+      `/activities/${id}`,
+      activityData,
+      { unwrapData: false }
+    );
 
-    const response = await fetch(`${API_BASE_URL}/activities/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
-      },
-      body: JSON.stringify(activityData),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      return {
-        success: false,
-        error: error.message || "Failed to update activity",
-      };
-    }
-
-    const result = await response.json();
-    
     // Revalidate relevant paths
     revalidatePath("/activities");
     revalidatePath("/dashboard/activities");
@@ -103,10 +78,19 @@ export async function updateActivity(
 
     return {
       success: true,
-      data: result.data,
+      data: response.data,
     };
   } catch (error) {
     console.error("Error updating activity:", error);
+    
+    if (error instanceof ServerApiError) {
+      return {
+        success: false,
+        error: error.message,
+        errors: error.details,
+      };
+    }
+    
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -121,23 +105,7 @@ export async function deleteActivity(
   id: number
 ): Promise<ActionResponse> {
   try {
-    const token = await getAuthToken();
-
-    const response = await fetch(`${API_BASE_URL}/activities/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
-      },
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      return {
-        success: false,
-        error: error.message || "Failed to delete activity",
-      };
-    }
+    await serverApi.delete(`/activities/${id}`);
 
     // Revalidate the activities page
     revalidatePath("/activities");
@@ -148,6 +116,15 @@ export async function deleteActivity(
     };
   } catch (error) {
     console.error("Error deleting activity:", error);
+    
+    if (error instanceof ServerApiError) {
+      return {
+        success: false,
+        error: error.message,
+        errors: error.details,
+      };
+    }
+    
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -160,30 +137,15 @@ export async function deleteActivity(
  */
 export async function updateActivityStatus(
   id: number,
-  status: "planned" | "in_progress" | "completed" | "cancelled"
+  status: Activity["status"]
 ): Promise<ActionResponse<Activity>> {
   try {
-    const token = await getAuthToken();
+    const response = await serverApi.patch<ApiResponse<Activity>>(
+      `/activities/${id}/status`,
+      { status },
+      { unwrapData: false }
+    );
 
-    const response = await fetch(`${API_BASE_URL}/activities/${id}/status`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
-      },
-      body: JSON.stringify({ status }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      return {
-        success: false,
-        error: error.message || "Failed to update activity status",
-      };
-    }
-
-    const result = await response.json();
-    
     // Revalidate relevant paths
     revalidatePath("/activities");
     revalidatePath("/dashboard/activities");
@@ -192,10 +154,19 @@ export async function updateActivityStatus(
 
     return {
       success: true,
-      data: result.data,
+      data: response.data,
     };
   } catch (error) {
     console.error("Error updating activity status:", error);
+    
+    if (error instanceof ServerApiError) {
+      return {
+        success: false,
+        error: error.message,
+        errors: error.details,
+      };
+    }
+    
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -211,24 +182,10 @@ export async function bulkUpdateActivities(
   updateData: Partial<Activity>
 ): Promise<ActionResponse> {
   try {
-    const token = await getAuthToken();
-
-    const response = await fetch(`${API_BASE_URL}/activities/bulk-update`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
-      },
-      body: JSON.stringify({ ids, updateData }),
+    await serverApi.patch("/activities/bulk-update", {
+      ids,
+      updateData,
     });
-
-    if (!response.ok) {
-      const error = await response.json();
-      return {
-        success: false,
-        error: error.message || "Failed to bulk update activities",
-      };
-    }
 
     // Revalidate the activities page
     revalidatePath("/activities");
@@ -239,6 +196,63 @@ export async function bulkUpdateActivities(
     };
   } catch (error) {
     console.error("Error bulk updating activities:", error);
+    
+    if (error instanceof ServerApiError) {
+      return {
+        success: false,
+        error: error.message,
+        errors: error.details,
+      };
+    }
+    
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+/**
+ * Server Action to update activity completion
+ */
+export async function completeActivity(
+  id: number,
+  outcome?: string,
+  outcomeNotes?: string
+): Promise<ActionResponse<Activity>> {
+  try {
+    const response = await serverApi.patch<ApiResponse<Activity>>(
+      `/activities/${id}`,
+      {
+        status: "completed" as Activity["status"],
+        completedDate: new Date().toISOString(),
+        outcome,
+        outcomeNotes,
+      },
+      { unwrapData: false }
+    );
+
+    // Revalidate relevant paths
+    revalidatePath("/activities");
+    revalidatePath("/dashboard/activities");
+    revalidatePath(`/activities/${id}`);
+    revalidatePath(`/dashboard/activities/${id}`);
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.error("Error completing activity:", error);
+    
+    if (error instanceof ServerApiError) {
+      return {
+        success: false,
+        error: error.message,
+        errors: error.details,
+      };
+    }
+    
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

@@ -1,4 +1,4 @@
-import { getCountries } from "@/services/country";
+import { getCountries } from "@/services/client/country";
 import { CountryQueryParams } from "@/types/country";
 import { useQuery } from "@tanstack/react-query";
 

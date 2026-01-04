@@ -1,7 +1,7 @@
 // services/auth.ts
 'use client'
 
-import api from "../lib/client/api";
+import api from "../../lib/client/api";
 import {
   addFingerprintHeader,
 } from "@/lib/client/fingerprint";

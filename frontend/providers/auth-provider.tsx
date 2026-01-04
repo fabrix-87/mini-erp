@@ -14,7 +14,7 @@ import { Spinner } from "../components/ui/spinner";
 import { User } from "../types/api";
 import { logoutAction } from "@/actions/auth";
 import { getUserFromUserCookie, isAuthenticated } from "@/lib/jwt";
-import { refreshToken } from "@/services/auth";
+import { refreshToken } from "@/services/client/auth";
 import {
   ACCESS_TOKEN_LIFETIME_MS,
   REFRESH_BEFORE_EXPIRY_MS,

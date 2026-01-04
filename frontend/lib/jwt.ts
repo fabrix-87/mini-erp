@@ -41,6 +41,9 @@ export function decodeJWT(token: string): JWTPayload | null {
  */
 export function getUserFromUserCookie(): User | null {
   const userCookie = getCookie('user');
+  console.debug('############################')
+  console.debug(userCookie)
+  console.debug('############################')
   if (!userCookie) return null;
 
   try {
