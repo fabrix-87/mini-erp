@@ -76,7 +76,7 @@ class ServerApiClient {
     } = options;
 
     const url = buildUrl(this.baseUrl, endpoint, params);
-    const headers = await buildHeaders(fetchOptions.headers, includeCookies);
+    const headers = await buildHeaders(fetchOptions.headers, includeCookies); 
 
     const response = await fetch(url, {
       ...fetchOptions,

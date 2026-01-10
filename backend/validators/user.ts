@@ -317,7 +317,7 @@ export const UserQuerySchema = z.object({
   limit: z
     .string()
     .transform((val) => parseInt(val, 10))
-    .pipe(z.number().int().positive().max(100))
+    .pipe(z.number().int().positive().max(1000))
     .default(10),
   search: z.string().optional(),
   active: z

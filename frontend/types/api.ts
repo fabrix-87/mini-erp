@@ -30,7 +30,7 @@ export interface AuthTokens {
 // La risposta del backend per login/refresh solitamente è wrappata in ApiResponse
 // Quindi ApiResponse<AuthResponse> conterrà questo oggetto in .data
 export interface AuthResponse extends AuthTokens {
-  user: User; 
+  user: User;
 }
 
 // ============ API Response Types ============
@@ -66,7 +66,7 @@ export interface User {
   roles?: UserRole[];
   createdAt: string;
   updatedAt: string;
-  UserDetail?: UserDetails;
+  details?: UserDetails;
 }
 export interface UserDetails {
   id: number;
@@ -81,11 +81,13 @@ export interface UserDetails {
   zipCode?: string;
   country?: string;
   dateOfBirth?: string;
-  gender?: "male" | "female" | "other" | "prefer_not_to_say";
+  gender?: GenderType;
   bio?: string;
   lastLogin?: string;
   active: boolean;
 }
+
+export type GenderType = "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY";
 
 interface UserRole {
   id: number;
@@ -131,7 +133,7 @@ export interface UpdateDetailsData {
   zipCode?: string;
   country?: string;
   dateOfBirth?: string;
-  gender?: "male" | "female" | "other" | "prefer_not_to_say";
+  gender?: GenderType
   bio?: string;
 }
 

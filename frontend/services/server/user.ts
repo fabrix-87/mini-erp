@@ -95,6 +95,7 @@ export async function getAllUsers(params?: {
     params: queryParams,
     revalidate,
     tags: [USER_TAGS.list],
+    unwrapData: false
   });
 }
 

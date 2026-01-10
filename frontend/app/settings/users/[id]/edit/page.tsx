@@ -1,0 +1,119 @@
+// app/settings/users/[id]/edit/page.tsx
+import { Suspense } from "react";
+import { notFound, redirect } from "next/navigation";
+import { requireAdmin, requirePermission } from "@/lib/server/auth";
+import { getUserById } from "@/services/server/user";
+import { ServerApiError } from "@/types/server-client";
+import { UserForm } from "@/components/users/user-form";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+async function EditUserContent({ userId }: { userId: number }) {
+  try {
+    const user = await getUserById(userId, { revalidate: 0 });
+    return <UserForm user={user} mode="edit" />;
+  } catch (error) {
+    if (error instanceof ServerApiError && error.statusCode === 404) {
+      notFound();
+    }
+    throw error;
+  }
+}
+
+function EditUserSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-32 w-full" />
+      </div>
+    </div>
+  );
+}
+
+export default async function EditUserPage({ params }: PageProps) {
+  // Authorization Check
+  try {
+    await requirePermission("user:update");
+  } catch (error) {
+    if (error instanceof ServerApiError && error.statusCode === 401) {
+      redirect("/login");
+    }
+    if (error instanceof ServerApiError && error.statusCode === 403) {
+      redirect("/dashboard");
+    }
+    throw error;
+  }
+
+  const { id } = await params;
+
+  const userId = parseInt(id, 10);
+
+  if (isNaN(userId)) {
+    notFound();
+  }
+
+  return (
+    <div className="container mx-auto p-6">
+      <div className="space-y-6">
+        {/* Back Navigation */}
+        <Link
+          href={`/settings/users/${userId}`}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Torna ai dettagli utente
+        </Link>
+
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Modifica Utente</h1>
+          <p className="text-muted-foreground mt-2">
+            Aggiorna le informazioni dell'utente
+          </p>
+        </div>
+
+        {/* Form */}
+        <Suspense fallback={<EditUserSkeleton />}>
+          <EditUserContent userId={userId} />
+        </Suspense>
+      </div>
+    </div>
+  );
+}
+
+// Metadata
+export async function generateMetadata({ params }: PageProps) {
+  try {
+    await requirePermission("user:update");
+
+    const { id } = await params;
+
+    const userId = parseInt(id, 10);
+
+    if (isNaN(userId)) {
+      return {
+        title: "Utente Non Trovato | Mini ERP",
+      };
+    }
+
+    const user = await getUserById(userId);
+
+    return {
+      title: `Modifica ${user.username} | Mini ERP`,
+      description: `Modifica le informazioni dell'utente ${user.username}`,
+    };
+  } catch {
+    return {
+      title: "Modifica Utente | Mini ERP",
+    };
+  }
+}

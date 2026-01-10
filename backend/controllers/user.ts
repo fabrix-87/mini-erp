@@ -32,6 +32,7 @@ import {
   destroyAllUserSessions,
 } from "../helpers/user";
 import authConfig from "../config/auth";
+import { formatPaginatedResponse } from "../utils/response";
 
 // ============================================================================
 // PUBLIC ROUTES - Authentication
@@ -782,6 +783,13 @@ export const getAllUsers = asyncHandler(
       roles: formatUserRoles(user.roles),
     }));
 
+    res.json(formatPaginatedResponse(
+      usersFormatted,
+      total,
+      page,
+      limit
+    ))
+    /*
     res.json({
       status: "success",
       results: usersFormatted.length,
@@ -793,6 +801,7 @@ export const getAllUsers = asyncHandler(
       },
       data: usersFormatted,
     });
+    */
   }
 );
 

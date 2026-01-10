@@ -11,8 +11,8 @@ export const ROUTES = {
     PROFILE: '/profile',
   },
   ADMIN: {
-    USERS: '/users',
-    ROLES: '/roles',
+    USERS: '/settings/users',
+    ROLES: '/settings/roles',
     SETTINGS: '/settings',
   },
 } as const;

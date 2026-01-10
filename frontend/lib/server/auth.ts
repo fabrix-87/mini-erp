@@ -49,7 +49,7 @@ export async function checkUserPermission(
 
     // Check if user has permission through roles
     return user.roles?.some((role: any) =>
-      role.permissions?.some((p: any) => p.code === permissionCode)
+      role.permissions?.some((p: any) => p === permissionCode)
     ) ?? false;
   } catch (error) {
     console.error('Permission check failed:', error);
