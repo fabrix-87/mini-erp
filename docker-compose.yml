@@ -45,7 +45,7 @@ services:
 
   # --- 4. Backend: Bun con hot reload ---
   backend:
-    build: ./backend
+    build: ./packages/backend
     container_name: erp_backend
     ports:
       - "4000:4000"
@@ -62,13 +62,14 @@ services:
     networks:
       - erp_network
     volumes:
-      - ./backend:/app
+      - ./packages/backend:/app
+      - ./packages/shared:/shared
       - /app/node_modules
     command: bun run dev  # Usa bun run dev
 
   # --- 5. Frontend: Next.js con Bun ---
   frontend:
-    build: ./frontend
+    build: ./packages/frontend
     container_name: erp_frontend
     ports:
       - "3000:3000"
@@ -79,7 +80,8 @@ services:
     networks:
       - erp_network
     volumes:
-      - ./frontend:/app
+      - ./packages/frontend:/app
+      - ./packages/shared:/shared
       - /app/node_modules
 
 networks:

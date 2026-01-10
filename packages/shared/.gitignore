@@ -1,0 +1,21 @@
+# packages/shared/.gitignore
+
+# Build outputs
+dist/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env*.local
+
+# Logs
+*.log
+
+# Testing
+coverage/
+
+# Misc
+.DS_Store

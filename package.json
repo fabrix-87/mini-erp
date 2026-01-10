@@ -1,0 +1,29 @@
+{
+  "name": "mini-erp",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail --restart-tries 3 -n \"📦SHARED,⚙️ BACKEND,🌐FRONTEND\" -c \"blue.bold,green.bold,yellow.bold\" \"bun run dev:shared\" \"bun run dev:backend\" \"bun run dev:frontend\"",
+    "dev:shared": "cd packages/shared && bun run dev",
+    "dev:backend": "cd packages/backend && bun run dev",
+    "dev:frontend": "cd packages/frontend && bun run dev",  
+    "build": "bun run build:shared && bun run build:backend && bun run build:frontend",
+    "build:shared": "bun --filter @mini-erp/shared build",
+    "build:backend": "bun --filter @mini-erp/backend build",
+    "build:frontend": "bun --filter @mini-erp/frontend build",
+    "lint": "bun run --filter '*' lint",
+    "test": "bun test",
+    "clean": "rm -rf packages/*/dist packages/*/.next packages/*/node_modules",
+    "check": "bun run check:shared && bun run check:backend && bun run check:frontend",
+    "check:shared": "cd packages/shared && bun run type-check",
+    "check:backend": "cd packages/backend && bun x tsc --noEmit",
+    "check:frontend": "cd packages/frontend && bun x tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "concurrently": "^8.2.2"
+  }
+}

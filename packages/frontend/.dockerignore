@@ -1,0 +1,23 @@
+# packages/frontend/.dockerignore
+
+node_modules/
+.next/
+out/
+*.log
+.env
+.env*.local
+.git/
+.gitignore
+.vscode/
+.idea/
+*.md
+coverage/
+.storybook/
+storybook-static/
+cypress/
+e2e/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+.DS_Store
