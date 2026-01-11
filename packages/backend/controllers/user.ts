@@ -34,6 +34,7 @@ import {
 import authConfig from "../config/auth";
 import { formatPaginatedResponse } from "../utils/response";
 import { UserIdInput } from '@mini-erp/shared/types';
+import { redisClient } from "@/config/redis";
 
 // ============================================================================
 // PUBLIC ROUTES - Authentication
@@ -519,7 +520,7 @@ export const verifyEmail = asyncHandler(
 // ============================================================================
 
 /**
- * @desc    Ottieni info utente corrente
+ * @desc    Ottieni info utente corrente (con cache Redis)
  * @route   GET /api/users/me
  * @access  Private
  */
@@ -530,6 +531,23 @@ export const getMe = asyncHandler(async (req: AuthenticatedValidatedRequest, res
     throw new NotFoundError("ID utente non trovato");
   }
 
+  // Chiave cache per l'utente
+  const cacheKey = `user:profile:${userId}`;
+
+  // Tenta di recuperare dalla cache
+  const cached = await redisClient.get(cacheKey);
+  
+  if (cached) {
+    const userData = JSON.parse(cached);
+    res.json({
+      status: "success",
+      data: userData,
+      cached: true, // Optional: per debug
+    });
+    return;
+  }
+
+  // Se non in cache, recupera dal database
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: getUserSelection(),
@@ -539,12 +557,17 @@ export const getMe = asyncHandler(async (req: AuthenticatedValidatedRequest, res
     throw new NotFoundError("Utente non trovato");
   }
 
+  const userData = {
+    ...user,
+    roles: formatUserRoles(user.roles),
+  };
+
+  // Salva in cache (TTL: 1 ora = 3600 secondi)
+  await redisClient.setEx(cacheKey, 3600, JSON.stringify(userData));
+
   res.json({
     status: "success",
-    data: {
-      ...user,
-      roles: formatUserRoles(user.roles),
-    },
+    data: userData,
   });
 });
 
@@ -560,9 +583,7 @@ export const updateProfile = asyncHandler(
       req.validatedBody!;
 
     // Prendi userId dall'utente autenticato o dai params (admin)
-    const userId = req.validatedParams?.id
-      ? parseInt(req.validatedParams.id, 10)
-      : req.user!.userId;
+    const {id: userId} = req.validatedParams as UserIdInput
 
     // Prepara dati da aggiornare per User
     const userDataToUpdate: any = {};
@@ -599,6 +620,10 @@ export const updateProfile = asyncHandler(
       });
     }
 
+    // INVALIDA CACHE dopo l'aggiornamento
+    const cacheKey = `user:profile:${userId}`;
+    await redisClient.del(cacheKey);
+
     // Aggiorna Details se forniti
     if (details && Object.keys(details).length > 0) {
       await prisma.userDetails.upsert({
@@ -617,13 +642,18 @@ export const updateProfile = asyncHandler(
       select: getUserSelection(),
     });
 
+    const userData = {
+      ...updatedUser,
+      roles: formatUserRoles(updatedUser!.roles),
+    };
+
+    // Ri-popola la cache con i nuovi dati
+    await redisClient.setEx(cacheKey, 3600, JSON.stringify(userData));
+
     res.json({
       status: "success",
       message: "Profilo aggiornato con successo",
-      data: {
-        ...updatedUser,
-        roles: formatUserRoles(updatedUser!.roles),
-      },
+      data: userData,
     });
   }
 );
@@ -650,19 +680,28 @@ export const updateDetails = asyncHandler(
       },
     });
 
+    // INVALIDA CACHE dopo l'aggiornamento
+    const cacheKey = `user:profile:${userId}`;
+    await redisClient.del(cacheKey);
+
     // Ricarica dati completi
     const updatedUser = await prisma.user.findUnique({
       where: { id: userId },
       select: getUserSelection(),
     });
 
+    const userData = {
+      ...updatedUser,
+      roles: formatUserRoles(updatedUser!.roles),
+    };
+
+    // Ri-popola la cache con i nuovi dati
+    await redisClient.setEx(cacheKey, 3600, JSON.stringify(userData));
+
     res.json({
       status: "success",
       message: "Dettagli aggiornati con successo",
-      data: {
-        ...updatedUser,
-        roles: formatUserRoles(updatedUser!.roles),
-      },
+      data: userData,
     });
   }
 );
