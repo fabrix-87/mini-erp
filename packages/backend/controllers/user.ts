@@ -33,7 +33,7 @@ import {
 } from "../helpers/user";
 import authConfig from "../config/auth";
 import { formatPaginatedResponse } from "../utils/response";
-import { UserIdInput } from '@mini-erp/shared/types';
+import { LoginInput, UserIdInput, UserQueryInput } from '@mini-erp/shared/types';
 import { redisClient } from "@/config/redis";
 
 // ============================================================================
@@ -119,7 +119,7 @@ export const register = asyncHandler(
  */
 export const login = asyncHandler(
   async (req: ValidatedRequest, res: Response) => {
-    const { email, password } = req.validatedBody!;
+    const { email, password } = req.validatedBody as LoginInput;
 
     // Trova utente con ruoli e dettagli
     const user = await prisma.user.findUnique({
@@ -579,8 +579,7 @@ export const getMe = asyncHandler(async (req: AuthenticatedValidatedRequest, res
 export const updateProfile = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     // Usa validatedBody (dati già validati)
-    const { username, email, preferredLanguageId, details } =
-      req.validatedBody!;
+    const { username, email, preferredLanguageId, details } = req.validatedBody!
 
     // Prendi userId dall'utente autenticato o dai params (admin)
     const {id: userId} = req.validatedParams as UserIdInput
@@ -778,7 +777,7 @@ export const getAllUsers = asyncHandler(
       roleId,
       sortBy = "createdAt",
       sortOrder = "desc",
-    } = req.validatedQuery || {};
+    } = req.validatedQuery as UserQueryInput;
 
     const skip = (Number(page) - 1) * Number(limit);
     const take = Number(limit);
@@ -827,19 +826,6 @@ export const getAllUsers = asyncHandler(
       page,
       limit
     ))
-    /*
-    res.json({
-      status: "success",
-      results: usersFormatted.length,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total,
-        pages: Math.ceil(total / Number(limit)),
-      },
-      data: usersFormatted,
-    });
-    */
   }
 );
 
@@ -850,10 +836,10 @@ export const getAllUsers = asyncHandler(
  */
 export const getUserById = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams!;
+    const { id } = req.validatedParams as UserIdInput
 
     const user = await prisma.user.findUnique({
-      where: { id: Number(id) },
+      where: { id },
       select: getUserSelection(),
     });
 
@@ -935,10 +921,8 @@ export const createUser = asyncHandler(
  */
 export const updateRole = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams!;
+    const { id: userId } = req.validatedParams as UserIdInput
     const { roleIds } = req.validatedBody!;
-
-    const userId = Number(id);
 
     // Verifica esistenza utente
     const user = await prisma.user.findUnique({
@@ -986,10 +970,8 @@ export const updateRole = asyncHandler(
  */
 export const toggleUserActive = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams!;
+    const { id: userId } = req.validatedParams as UserIdInput
     const { active } = req.validatedBody!;
-
-    const userId = Number(id);
 
     // Verifica esistenza utente
     const user = await prisma.user.findUnique({
@@ -1031,9 +1013,7 @@ export const toggleUserActive = asyncHandler(
  */
 export const deleteUser = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams!;
-
-    const userId = Number(id);
+    const { id: userId } = req.validatedParams as UserIdInput
 
     // Verifica esistenza utente
     const user = await prisma.user.findUnique({
