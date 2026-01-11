@@ -74,7 +74,7 @@ export function UsersPagination({
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Mostra:</span>
             <Select value={limit.toString()} onValueChange={changeLimit} disabled={isPending}>
-              <SelectTrigger className="h-8 w-[70px]">
+              <SelectTrigger className="h-8 w-17.5">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

@@ -7,10 +7,10 @@ import {
 } from "@/lib/client/fingerprint";
 import { refreshTokenAction } from "@/actions/token";
 import type {
-  RegisterData,
   ApiResponse,
-  User,
 } from "@/types/api";
+
+import { User, RegisterUserInput } from '@/types/user'
 
 // ============================================================================
 // Auth API Functions
@@ -19,7 +19,7 @@ import type {
 /**
  * Register nuovo utente
  */
-export async function register(userData: RegisterData): Promise<User> {
+export async function register(userData: RegisterUserInput): Promise<User> {
   const headers = await addFingerprintHeader({
     "Content-Type": "application/json",
   });

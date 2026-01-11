@@ -1,5 +1,5 @@
 // frontend/components/users/user-detail-header.tsx
-import { User } from '@/types/api';
+import { User } from '@/types/user'
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -33,7 +33,7 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
           {/* Avatar */}
           <Avatar className="h-20 w-20">
             <AvatarImage 
-              src={user.details?.profilePicture} 
+              src={user.details?.profilePicture || ''} 
               alt={user.username} 
             />
             <AvatarFallback className="text-2xl font-bold">

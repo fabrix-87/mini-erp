@@ -1,5 +1,8 @@
 // packages/shared/src/validators/user.ts
 import { z } from "zod";
+import { UserRoleSchema } from "./role";
+import { UserIdSchema } from "./base";
+import { dateStringSchema } from "../utils";
 
 // ============================================================================
 // ENUMS
@@ -47,7 +50,7 @@ export const PhoneSchema = z
 /**
  * Schema base per User (senza details)
  */
-const UserBaseSchema = z.object({
+export const UserBaseSchema = z.object({
   username: UsernameSchema,
   email: EmailSchema,
   password: PasswordSchema,
@@ -74,22 +77,35 @@ export const UserDetailsSchema = z.object({
   country: z.string().max(100, "Paese troppo lungo").optional().nullable(),
 
   // Personal
-  dateOfBirth: z.coerce
-    .date()
-    .max(new Date(), "La data di nascita non può essere futura")
-    .refine(
-      (date) => {
-        const minDate = new Date();
-        minDate.setFullYear(minDate.getFullYear() - 120);
-        return date >= minDate;
-      },
-      { message: "La data di nascita non è valida" }
-    )
-    .optional()
-    .nullable(),
+  dateOfBirth: dateStringSchema({
+    max: new Date(),
+    min: (() => {
+      const minDate = new Date();
+      minDate.setFullYear(minDate.getFullYear() - 120);
+      return minDate;
+    })(),
+    message: {
+      max: "La data di nascita non può essere futura",
+      min: "La data di nascita non è valida (massimo 120 anni)",
+    },
+  }),
   gender: GenderSchema.default("PREFER_NOT_TO_SAY"),
   bio: z.string().max(1000, "Biografia troppo lunga").optional().nullable(),
+  lastLogin: dateStringSchema({max: new Date()}).default(new Date())
 });
+
+// ============================================================================
+// Schema User completo
+// ============================================================================
+
+// Estendi lo schema con i campi aggiuntivi
+export const UserSchema = UserBaseSchema.extend({
+  id: UserIdSchema,
+  roles: z.array(UserRoleSchema).optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  details: UserDetailsSchema.optional(),
+}).omit({ password: true }); // Rimuovi password dal type pubblico
 
 // ============================================================================
 // FORM SCHEMAS (Frontend)
@@ -122,20 +138,14 @@ export const UpdateUserFormSchema = UserFormSchema.partial().extend({
  * Schema per validare ID utente nei params
  */
 export const UserIdParamSchema = z.object({
-  id: z
-    .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(z.number().int().positive("ID utente non valido")),
+  id: UserIdSchema,
 });
 
 /**
  * Schema alternativo per userId nei params
  */
 export const UserIdAsUserIdParamSchema = z.object({
-  userId: z
-    .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(z.number().int().positive("ID utente non valido")),
+  userId: UserIdSchema,
 });
 
 // ============================================================================
@@ -292,23 +302,3 @@ export const UserQuerySchema = z.object({
   sortBy: z.enum(["createdAt", "username", "email"]).default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
-
-// ============================================================================
-// TYPE EXPORTS
-// ============================================================================
-
-export type Gender = z.infer<typeof GenderSchema>;
-export type UserFormValues = z.infer<typeof UserFormSchema>;
-export type CreateUserFormValues = z.infer<typeof CreateUserFormSchema>;
-export type UpdateUserFormValues = z.infer<typeof UpdateUserFormSchema>;
-export type UpdateUserProfileInput = z.infer<typeof UpdateUserProfileSchema>;
-export type UpdateUserDetailsInput = z.infer<typeof UpdateUserDetailsSchema>;
-export type ChangePasswordInput = z.infer<typeof ChangePasswordSchema>;
-export type LoginInput = z.infer<typeof LoginSchema>;
-
-export type CreateUserInput = z.infer<typeof CreateUserSchema>;
-export type RegisterUserInput = z.infer<typeof RegisterUserSchema>;
-export type UpdateUserRolesInput = z.infer<typeof UpdateUserRolesSchema>;
-export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>;
-export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;
-export type UserQueryInput = z.infer<typeof UserQuerySchema>;

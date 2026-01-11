@@ -1,12 +1,17 @@
 // components/users/user-form.tsx
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { User } from '@/types/api';
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  User,
+  CreateUserFormValues,
+  UpdateUserFormValues,
+  CreateUserFormSchema,
+  UpdateUserFormSchema,
+} from "@/types/user";
 import {
   Form,
   FormControl,
@@ -15,66 +20,31 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from 'sonner';
-import { 
-  createUserAction, 
-  updateUserProfileAction, 
-  updateUserDetailsAction 
-} from '@/actions/user';
-import { Loader2, Save, X } from 'lucide-react';
-
-// ============================================================================
-// Validation Schema
-// ============================================================================
-
-const userFormSchema = z.object({
-  // Profile
-  username: z.string()
-    .min(3, 'Username deve essere almeno 3 caratteri')
-    .max(50, 'Username troppo lungo')
-    .regex(/^[a-zA-Z0-9_]+$/, 'Username può contenere solo lettere, numeri e underscore'),
-  email: z
-    .email('Email non valida')
-    .min(1, 'Email richiesta'),
-  password: z.string()
-    .min(8, 'Password deve essere almeno 8 caratteri')
-    .optional()
-    .or(z.literal('')),
-  
-  // Details
-  firstName: z.string().max(50, 'Nome troppo lungo').optional(),
-  lastName: z.string().max(50, 'Cognome troppo lungo').optional(),
-  phone: z.string().max(20, 'Telefono troppo lungo').optional(),
-  
-  // Address
-  address: z.string().max(200, 'Indirizzo troppo lungo').optional(),
-  city: z.string().max(100, 'Città troppo lungo').optional(),
-  state: z.string().max(100, 'Provincia troppo lungo').optional(),
-  zipCode: z.string().max(20, 'CAP troppo lungo').optional(),
-  country: z.string().max(100, 'Paese troppo lungo').optional(),
-  
-  // Personal
-  dateOfBirth: z.string().optional(),
-  gender: z.enum(['MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY']).optional(),
-  bio: z.string().max(1000, 'Biografia troppo lunga').optional(),
-  
-  // Roles
-  roleIds: z.array(z.number()).optional(),
-});
-
-type UserFormValues = z.infer<typeof userFormSchema>;
+} from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { toast } from "sonner";
+import {
+  createUserAction,
+  updateUserProfileAction,
+  updateUserDetailsAction,
+} from "@/actions/user";
+import { Loader2, Save, X } from "lucide-react";
 
 // ============================================================================
 // Component Props
@@ -82,7 +52,7 @@ type UserFormValues = z.infer<typeof userFormSchema>;
 
 interface UserFormProps {
   user?: User;
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
   roles?: Array<{ id: number; name: string; code: string }>;
 }
 
@@ -93,111 +63,128 @@ interface UserFormProps {
 export function UserForm({ user, mode, roles = [] }: UserFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [activeTab, setActiveTab] = useState<'profile' | 'details' | 'address'>('profile');
+  const [activeTab, setActiveTab] = useState<"profile" | "details" | "address">(
+    "profile"
+  );
+
+  const schema =
+    mode === "create" ? CreateUserFormSchema : UpdateUserFormSchema;
+  type FormValues = CreateUserFormValues | UpdateUserFormValues;
 
   // Initialize form
-  const form = useForm<UserFormValues>({
-    resolver: zodResolver(userFormSchema),
+  const form = useForm<FormValues>({
+    resolver: zodResolver(
+      mode === "create" ? CreateUserFormSchema : UpdateUserFormSchema
+    ) as any,
     defaultValues: {
-      username: user?.username || '',
-      email: user?.email || '',
-      password: '',
-      firstName: user?.details?.firstName || '',
-      lastName: user?.details?.lastName || '',
-      phone: user?.details?.phone || '',
-      address: user?.details?.address || '',
-      city: user?.details?.city || '',
-      state: user?.details?.state || '',
-      zipCode: user?.details?.zipCode || '',
-      country: user?.details?.country || '',
-      dateOfBirth: user?.details?.dateOfBirth || '',
+      username: user?.username || "",
+      email: user?.email || "",
+      password: "",
+      firstName: user?.details?.firstName || "",
+      lastName: user?.details?.lastName || "",
+      phone: user?.details?.phone || "",
+      address: user?.details?.address || "",
+      city: user?.details?.city || "",
+      state: user?.details?.state || "",
+      zipCode: user?.details?.zipCode || "",
+      country: user?.details?.country || "",
+      dateOfBirth: user?.details?.dateOfBirth || null,
       gender: user?.details?.gender || undefined,
-      bio: user?.details?.bio || '',
+      bio: user?.details?.bio || "",
       roleIds: user?.roles?.map((r) => r.id) || [],
     },
   });
 
   // Handle form submission
-  const onSubmit = async (data: UserFormValues) => {
+  const onSubmit = async (data: FormValues) => {
     startTransition(async () => {
       try {
-        if (mode === 'create') {
+        if (mode === "create") {
+          const createData = data as CreateUserFormValues;
+
           // Create new user
           const result = await createUserAction({
-            username: data.username,
-            email: data.email,
-            password: data.password || '',
-            roleIds: data.roleIds,
+            username: createData.username,
+            email: createData.email,
+            password: createData.password || "",
+            roleIds: createData.roleIds,
             details: {
-              firstName: data.firstName,
-              lastName: data.lastName,
-              phone: data.phone,
+              firstName: createData.firstName,
+              lastName: createData.lastName,
+              phone: createData.phone || "",
             },
           });
 
           if (result.success) {
-            toast.success(result.message || 'Utente creato con successo');
-            router.push('/settings/users');
+            toast.success(result.message || "Utente creato con successo");
+            router.push("/settings/users");
             router.refresh();
           } else {
-            toast.error(result.error || 'Errore durante la creazione');
+            toast.error(result.error || "Errore durante la creazione");
           }
         } else {
           // Update existing user
+          const updateData = data as UpdateUserFormValues;
           const userId = user!.id;
 
           // Update profile if changed
-          const profileChanged = 
-            data.username !== user!.username || 
-            data.email !== user!.email;
+          const profileChanged =
+            updateData.username !== updateData!.username ||
+            updateData.email !== updateData!.email;
 
           if (profileChanged) {
             const profileResult = await updateUserProfileAction(userId, {
-              username: data.username,
-              email: data.email,
+              username: updateData.username,
+              email: updateData.email,
             });
 
             if (!profileResult.success) {
-              toast.error(profileResult.error || 'Errore aggiornamento profilo');
+              toast.error(
+                profileResult.error || "Errore aggiornamento profilo"
+              );
               return;
             }
           }
 
           // Update details
           const detailsResult = await updateUserDetailsAction(userId, {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            phone: data.phone,
-            address: data.address,
-            city: data.city,
-            state: data.state,
-            zipCode: data.zipCode,
-            country: data.country,
-            dateOfBirth: data.dateOfBirth,
-            gender: data.gender,
-            bio: data.bio,
+            firstName: updateData.firstName,
+            lastName: updateData.lastName,
+            phone: updateData.phone,
+            address: updateData.address,
+            city: updateData.city,
+            state: updateData.state,
+            zipCode: updateData.zipCode,
+            country: updateData.country,
+            dateOfBirth: updateData.dateOfBirth,
+            gender: updateData.gender,
+            bio: updateData.bio,
           });
 
           if (detailsResult.success) {
-            toast.success(detailsResult.message || 'Utente aggiornato con successo');
+            toast.success(
+              detailsResult.message || "Utente aggiornato con successo"
+            );
             router.push(`/settings/users/${userId}`);
             router.refresh();
           } else {
-            toast.error(detailsResult.error || 'Errore durante l\'aggiornamento');
+            toast.error(
+              detailsResult.error || "Errore durante l'aggiornamento"
+            );
           }
         }
       } catch (error) {
-        console.error('Form submission error:', error);
-        toast.error('Errore imprevisto');
+        console.error("Form submission error:", error);
+        toast.error("Errore imprevisto");
       }
     });
   };
 
   const handleCancel = () => {
-    if (mode === 'edit' && user) {
+    if (mode === "edit" && user) {
       router.push(`/settings/users/${user.id}`);
     } else {
-      router.push('/settings/users');
+      router.push("/settings/users");
     }
   };
 
@@ -208,24 +195,24 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
         <div className="flex gap-2 border-b">
           <Button
             type="button"
-            variant={activeTab === 'profile' ? 'default' : 'ghost'}
-            onClick={() => setActiveTab('profile')}
+            variant={activeTab === "profile" ? "default" : "ghost"}
+            onClick={() => setActiveTab("profile")}
             className="rounded-b-none"
           >
             Profilo
           </Button>
           <Button
             type="button"
-            variant={activeTab === 'details' ? 'default' : 'ghost'}
-            onClick={() => setActiveTab('details')}
+            variant={activeTab === "details" ? "default" : "ghost"}
+            onClick={() => setActiveTab("details")}
             className="rounded-b-none"
           >
             Dettagli Personali
           </Button>
           <Button
             type="button"
-            variant={activeTab === 'address' ? 'default' : 'ghost'}
-            onClick={() => setActiveTab('address')}
+            variant={activeTab === "address" ? "default" : "ghost"}
+            onClick={() => setActiveTab("address")}
             className="rounded-b-none"
           >
             Indirizzo
@@ -233,7 +220,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
         </div>
 
         {/* Profile Tab */}
-        {activeTab === 'profile' && (
+        {activeTab === "profile" && (
           <Card>
             <CardHeader>
               <CardTitle>Informazioni Account</CardTitle>
@@ -250,7 +237,11 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Username *</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="johndoe" disabled={isPending} />
+                        <Input
+                          {...field}
+                          placeholder="johndoe"
+                          disabled={isPending}
+                        />
                       </FormControl>
                       <FormDescription>
                         Minimo 3 caratteri, solo lettere, numeri e underscore
@@ -267,10 +258,10 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Email *</FormLabel>
                       <FormControl>
-                        <Input 
-                          {...field} 
-                          type="email" 
-                          placeholder="john@example.com" 
+                        <Input
+                          {...field}
+                          type="email"
+                          placeholder="john@example.com"
                           disabled={isPending}
                         />
                       </FormControl>
@@ -280,7 +271,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                 />
               </div>
 
-              {mode === 'create' && (
+              {mode === "create" && (
                 <FormField
                   control={form.control}
                   name="password"
@@ -288,26 +279,25 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Password *</FormLabel>
                       <FormControl>
-                        <Input 
-                          {...field} 
-                          type="password" 
-                          placeholder="••••••••" 
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="••••••••"
                           disabled={isPending}
                         />
                       </FormControl>
-                      <FormDescription>
-                        Minimo 8 caratteri
-                      </FormDescription>
+                      <FormDescription>Minimo 8 caratteri</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               )}
 
-              {mode === 'edit' && (
+              {mode === "edit" && (
                 <div className="rounded-md border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
                   <p className="text-sm text-blue-800 dark:text-blue-200">
-                    Per cambiare la password, usa la funzione "Reset Password" dalla pagina dettagli utente
+                    Per cambiare la password, usa la funzione "Reset Password"
+                    dalla pagina dettagli utente
                   </p>
                 </div>
               )}
@@ -316,7 +306,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
         )}
 
         {/* Details Tab */}
-        {activeTab === 'details' && (
+        {activeTab === "details" && (
           <Card>
             <CardHeader>
               <CardTitle>Dettagli Personali</CardTitle>
@@ -333,7 +323,11 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Nome</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Mario" disabled={isPending} />
+                        <Input
+                          {...field}
+                          placeholder="Mario"
+                          disabled={isPending}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -347,7 +341,11 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Cognome</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Rossi" disabled={isPending} />
+                        <Input
+                          {...field}
+                          placeholder="Rossi"
+                          disabled={isPending}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -363,7 +361,12 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Telefono</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="+39 123 456 7890" disabled={isPending} />
+                        <Input
+                          {...field}
+                          value={field.value || ""}
+                          placeholder="+39 123 456 7890"
+                          disabled={isPending}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -377,7 +380,16 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Data di Nascita</FormLabel>
                       <FormControl>
-                        <Input {...field} type="date" disabled={isPending} />
+                        <Input
+                          {...field}
+                          value={
+                            field.value instanceof Date
+                              ? field.value.toISOString().split("T")[0]
+                              : field.value || ""
+                          }
+                          type="date"
+                          disabled={isPending}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -391,8 +403,8 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Genere</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
+                    <Select
+                      onValueChange={field.onChange}
                       defaultValue={field.value}
                       disabled={isPending}
                     >
@@ -405,7 +417,9 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                         <SelectItem value="MALE">Uomo</SelectItem>
                         <SelectItem value="FEMALE">Donna</SelectItem>
                         <SelectItem value="OTHER">Altro</SelectItem>
-                        <SelectItem value="PREFER_NOT_TO_SAY">Preferisco non specificare</SelectItem>
+                        <SelectItem value="PREFER_NOT_TO_SAY">
+                          Preferisco non specificare
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -420,16 +434,15 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                   <FormItem>
                     <FormLabel>Biografia</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        {...field} 
+                      <Textarea
+                        {...field}
+                        value={field.value || ''}
                         placeholder="Scrivi qualcosa su di te..."
                         rows={4}
                         disabled={isPending}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Massimo 1000 caratteri
-                    </FormDescription>
+                    <FormDescription>Massimo 1000 caratteri</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -439,13 +452,11 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
         )}
 
         {/* Address Tab */}
-        {activeTab === 'address' && (
+        {activeTab === "address" && (
           <Card>
             <CardHeader>
               <CardTitle>Indirizzo</CardTitle>
-              <CardDescription>
-                Informazioni sulla residenza
-              </CardDescription>
+              <CardDescription>Informazioni sulla residenza</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -455,7 +466,12 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                   <FormItem>
                     <FormLabel>Indirizzo</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Via Roma, 123" disabled={isPending} />
+                      <Input
+                        {...field}
+                        value={field.value || ''}
+                        placeholder="Via Roma, 123"
+                        disabled={isPending}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -470,7 +486,12 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Città</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Milano" disabled={isPending} />
+                        <Input
+                          {...field}
+                          value={field.value || ''}
+                          placeholder="Milano"
+                          disabled={isPending}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -484,7 +505,12 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Provincia/Stato</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="MI" disabled={isPending} />
+                        <Input
+                          {...field}
+                          value={field.value || ''}
+                          placeholder="MI"
+                          disabled={isPending}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -500,7 +526,12 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>CAP</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="20100" disabled={isPending} />
+                        <Input
+                          {...field}
+                          value={field.value || ''}
+                          placeholder="20100"
+                          disabled={isPending}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -514,7 +545,12 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Paese</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Italia" disabled={isPending} />
+                        <Input
+                          {...field}
+                          value={field.value || ''}
+                          placeholder="Italia"
+                          disabled={isPending}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -545,7 +581,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
             ) : (
               <>
                 <Save className="h-4 w-4 mr-2" />
-                {mode === 'create' ? 'Crea Utente' : 'Salva Modifiche'}
+                {mode === "create" ? "Crea Utente" : "Salva Modifiche"}
               </>
             )}
           </Button>

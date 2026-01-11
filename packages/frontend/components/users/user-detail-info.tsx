@@ -1,5 +1,4 @@
 // frontend/components/users/user-detail-info.tsx
-import { User } from '@/types/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { 
@@ -10,6 +9,7 @@ import {
   FileText,
   Globe
 } from 'lucide-react';
+import { User } from '@/types/user'
 
 interface UserDetailInfoProps {
   user: User;

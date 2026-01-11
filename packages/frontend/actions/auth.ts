@@ -5,9 +5,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { serverApi } from "@/lib/server/api";
 import { ServerApiError } from "@/types/server-client";
-import { AuthResponse, LoginCredentials } from "@/types/api";
+import { AuthResponse } from "@/types/api";
 import { logoutUser } from "@/services/server/auth";
 import { setCookies } from "@/lib/server/cookies";
+import { LoginInput } from "@/types/user"
 
 export async function loginAction(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
@@ -17,7 +18,7 @@ export async function loginAction(prevState: any, formData: FormData) {
 
   try {
     // Tipizziamo la chiamata:
-    const credentials: LoginCredentials = { email, password };
+    const credentials: LoginInput = { email, password };
 
     // Output atteso: AuthResponse
     const data = await serverApi.post<AuthResponse>(

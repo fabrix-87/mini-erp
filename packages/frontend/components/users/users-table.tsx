@@ -1,6 +1,6 @@
 // frontend/components/users/users-table.tsx
-import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -8,10 +8,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { ExternalLink } from 'lucide-react';
-import { User } from '@/types/api';
-import { GenderIcon } from '../gender-icon';
+} from "@/components/ui/table";
+import { ExternalLink } from "lucide-react";
+import { User } from "@/types/user";
+import { GenderIcon } from "../gender-icon";
 
 interface UsersTableProps {
   users: User[];
@@ -42,9 +42,9 @@ export function UsersTable({ users }: UsersTableProps) {
               <TableHead>Username</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Ruoli</TableHead>
-              <TableHead className="w-[100px]">Stato</TableHead>
-              <TableHead className="w-[120px]">Creato</TableHead>
-              <TableHead className="w-[100px] text-right">Azioni</TableHead>
+              <TableHead className="w-25">Stato</TableHead>
+              <TableHead className="w-30">Creato</TableHead>
+              <TableHead className="w-25 text-right">Azioni</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -52,37 +52,47 @@ export function UsersTable({ users }: UsersTableProps) {
               <TableRow key={user.id} className="group">
                 <TableCell className="font-mono text-sm">{user.id}</TableCell>
                 <TableCell>
-                    {user.details ? <GenderIcon gender={user.details.gender} /> : ''}
-                    {
-                        `${user.details?.firstName} ${user.details?.lastName} `
-                    }
+                  <div className="flex items-center gap-2">
+                    {user.details?.gender && (
+                      <GenderIcon gender={user.details.gender} />
+                    )}
+                    <span>
+                      {user.details?.firstName} {user.details?.lastName}
+                    </span>
+                  </div>
                 </TableCell>
                 <TableCell className="font-medium">{user.username}</TableCell>
-                <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                <TableCell className="text-muted-foreground">
+                  {user.email}
+                </TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {user.roles?.map((role) => (
-                      <Badge key={role.id} variant="secondary" className="text-xs">
+                      <Badge
+                        key={role.id}
+                        variant="secondary"
+                        className="text-xs"
+                      >
                         {role.name}
                       </Badge>
                     )) || (
                       <span className="text-sm text-muted-foreground">-</span>
                     )}
                   </div>
-                </TableCell>                
+                </TableCell>
                 <TableCell>
                   <Badge
-                    variant={user.active ? 'default' : 'secondary'}
-                    className={user.active ? 'bg-green-500' : 'bg-red-500'}
+                    variant={user.active ? "default" : "secondary"}
+                    className={user.active ? "bg-green-500" : "bg-red-500"}
                   >
-                    {user.active ? 'Attivo' : 'Inattivo'}
+                    {user.active ? "Attivo" : "Inattivo"}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  {new Date(user.createdAt).toLocaleDateString('it-IT', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
+                  {new Date(user.createdAt).toLocaleDateString("it-IT", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
                   })}
                 </TableCell>
                 <TableCell className="text-right">

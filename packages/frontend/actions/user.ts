@@ -18,7 +18,7 @@ import {
 } from '@/services/server/user';
 import { ServerApiError } from '@/types/server-client';
 import { redirect } from 'next/navigation';
-import type { UpdateProfileData, UpdateDetailsData } from '@/types/api';
+import type { UpdateUserProfileInput, UpdateUserDetailsInput } from '@/types/user';
 
 // ============================================================================
 // Types
@@ -114,7 +114,7 @@ export async function createUserAction(data: {
  */
 export async function updateUserProfileAction(
   userId: number,
-  data: UpdateProfileData
+  data: UpdateUserProfileInput
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
     const user = await updateUserProfile(userId, data);
@@ -134,7 +134,7 @@ export async function updateUserProfileAction(
  */
 export async function updateUserDetailsAction(
   userId: number,
-  data: UpdateDetailsData
+  data: UpdateUserDetailsInput
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
     const user = await updateUserDetails(userId, data);
@@ -291,7 +291,7 @@ export async function bulkUpdateRolesAction(
  * Bulk update users (usando il service bulkUpdateUsers)
  */
 export async function bulkUpdateUsersAction(
-  updates: Array<{ id: number; data: Partial<UpdateProfileData> }>
+  updates: Array<{ id: number; data: Partial<UpdateUserProfileInput> }>
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
     const users = await bulkUpdateUsers(updates);

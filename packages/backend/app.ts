@@ -9,6 +9,7 @@ import { prisma } from "./config/prisma-client";
 import { prismaVersion } from "./generated/prisma/internal/prismaNamespace";
 import apiRouter from "./routes/index";
 import validateEnv from "./config/validate-env";
+import morgan from "morgan";
 validateEnv();
 
 // Inizializza l'app Express
@@ -88,6 +89,11 @@ export const initApp = async (): Promise<Application> => {
     const statusCode = health.status === "ok" ? 200 : 503;
     res.status(statusCode).json(health);
   });
+
+  // Middleware per loggare le rotte in development
+  if (process.env.NODE_ENV === "development") {
+    app.use(morgan("dev")); // Formato colorato e conciso
+  }
 
   // 5. Carico tutti gli endpoint
   app.use("/api", apiRouter);

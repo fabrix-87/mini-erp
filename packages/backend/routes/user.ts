@@ -194,6 +194,7 @@ router.put(
   '/:id/details', 
   authenticateToken, 
   authorize(['user:update', 'user:manage']),
+  validateUserId,
   validateUpdateUserDetails,
   updateDetails
 );

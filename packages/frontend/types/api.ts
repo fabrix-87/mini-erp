@@ -1,4 +1,7 @@
 // types/api.ts
+
+import { User } from "./user";
+
 // ============ JWT Types ============
 export interface JWTPayload {
   userId: number;
@@ -55,86 +58,6 @@ export interface PaginationInfo {
 export interface ValidationError {
   field: string;
   message: string;
-}
-
-// ============ User Types ============
-export interface User {
-  id: number;
-  active: boolean;
-  username: string;
-  email: string;
-  roles?: UserRole[];
-  createdAt: string;
-  updatedAt: string;
-  details?: UserDetails;
-}
-export interface UserDetails {
-  id: number;
-  userId: number;
-  firstName?: string;
-  lastName?: string;
-  profilePicture?: string;
-  phone?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  country?: string;
-  dateOfBirth?: string;
-  gender?: GenderType;
-  bio?: string;
-  lastLogin?: string;
-  active: boolean;
-}
-
-export type GenderType = "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY";
-
-interface UserRole {
-  id: number;
-  code: string;
-  name: string;
-}
-
-/*
-export interface UserAuth {
-  userId: number;
-  email: string;
-  username: string;
-  roles: Array<{ id: number; code: string; name: string }>;
-}
-  */
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface RegisterData {
-  username: string;
-  email: string;
-  password: string;
-  firstName?: string;
-  lastName?: string;
-}
-
-export interface UpdateProfileData {
-  username?: string;
-  email?: string;
-}
-
-export interface UpdateDetailsData {
-  firstName?: string;
-  lastName?: string;
-  profilePicture?: string;
-  phone?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  country?: string;
-  dateOfBirth?: string;
-  gender?: GenderType
-  bio?: string;
 }
 
 export interface PaginatedResponse<T> {

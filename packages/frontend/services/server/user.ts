@@ -2,11 +2,14 @@
 
 import { serverApi } from '@/lib/server/api';
 import type {
-  User,
   PaginatedResponse,
-  UpdateProfileData,
-  UpdateDetailsData,
 } from '@/types/api';
+
+import type {
+  User,
+  UpdateUserDetailsInput,
+  UpdateUserProfileInput
+} from '@/types/user'
 
 // ============================================================================
 // Cache Tags
@@ -39,7 +42,7 @@ export async function getUser(options?: {
  * Update current user profile
  * Invalida cache automaticamente
  */
-export async function updateProfile(data: UpdateProfileData): Promise<User> {
+export async function updateProfile(data: UpdateUserProfileInput): Promise<User> {
   return serverApi.put<User>('/users/me/profile', data, {
     tags: [USER_TAGS.profile],
     revalidate: false,
@@ -49,7 +52,7 @@ export async function updateProfile(data: UpdateProfileData): Promise<User> {
 /**
  * Update current user details
  */
-export async function updateDetails(data: UpdateDetailsData): Promise<User> {
+export async function updateDetails(data: UpdateUserDetailsInput): Promise<User> {
   return serverApi.put<User>('/users/me/details', data, {
     tags: [USER_TAGS.profile],
     revalidate: false,
@@ -139,7 +142,7 @@ export async function createUser(data: {
  */
 export async function updateUserProfile(
   id: number,
-  data: UpdateProfileData
+  data: UpdateUserProfileInput
 ): Promise<User> {
   return serverApi.put<User>(`/users/${id}/profile`, data, {
     tags: [USER_TAGS.detail(id), USER_TAGS.list],
@@ -152,7 +155,7 @@ export async function updateUserProfile(
  */
 export async function updateUserDetails(
   id: number,
-  data: UpdateDetailsData
+  data: UpdateUserDetailsInput
 ): Promise<User> {
   return serverApi.put<User>(`/users/${id}/details`, data, {
     tags: [USER_TAGS.detail(id), USER_TAGS.list],
@@ -216,10 +219,10 @@ export async function getUsersByIds(
  * Bulk update users
  */
 export async function bulkUpdateUsers(
-  updates: Array<{ id: number; data: Partial<UpdateProfileData> }>
+  updates: Array<{ id: number; data: Partial<UpdateUserProfileInput> }>
 ): Promise<User[]> {
   const promises = updates.map(({ id, data }) =>
-    updateUserProfile(id, data as UpdateProfileData)
+    updateUserProfile(id, data as UpdateUserProfileInput)
   );
   return Promise.all(promises);
 }

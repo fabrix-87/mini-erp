@@ -11,7 +11,7 @@ import { prisma } from "../config/prisma-client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { AuthRequest, UserPayload } from "../types/user";
+import { UserPayload } from "../types/user";
 import {
   AuthenticatedValidatedRequest,
   ValidatedRequest,
@@ -33,6 +33,7 @@ import {
 } from "../helpers/user";
 import authConfig from "../config/auth";
 import { formatPaginatedResponse } from "../utils/response";
+import { UserIdInput } from '@mini-erp/shared/types';
 
 // ============================================================================
 // PUBLIC ROUTES - Authentication
@@ -637,9 +638,7 @@ export const updateDetails = asyncHandler(
     const updateData = req.validatedBody!;
 
     // Prendi userId dall'utente autenticato o dai params (admin)
-    const userId = req.validatedParams?.id
-      ? parseInt(req.validatedParams.id, 10)
-      : req.user!.userId;
+    const {id: userId} = req.validatedParams as UserIdInput
 
     // Upsert dettagli
     await prisma.userDetails.upsert({
@@ -841,7 +840,7 @@ export const getUserById = asyncHandler(
 export const createUser = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     const { username, email, password, roleIds, details, preferredLanguageId } =
-      req.validatedBody!;
+      req.validatedBody;
 
     // Verifica esistenza username/email
     const existingUser = await prisma.user.findFirst({

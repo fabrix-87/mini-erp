@@ -14,7 +14,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 
 interface UsersFilterBarProps {
   initialSearch?: string;
@@ -181,7 +180,7 @@ export function UsersFilterBar({
               onValueChange={(v) => handleSortOrderChange(v as 'asc' | 'desc')}
               disabled={isPending}
             >
-              <SelectTrigger className="w-[100px]">
+              <SelectTrigger className="w-25">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

@@ -118,6 +118,7 @@ router.put(
   '/permissions/:id',
   authenticateToken,
   authorize(['permission:update', 'permission:manage']),
+  validatePermissionId,
   validateUpdatePermission,
   updatePermission
 );
@@ -243,6 +244,7 @@ router.put(
   '/:id',
   authenticateToken,
   authorize(['role:update', 'role:manage']),
+  validateRoleId,
   validateUpdateRole,
   updateRole
 );
@@ -269,6 +271,7 @@ router.post(
   '/:id/permissions',
   authenticateToken,
   authorize(['role:manage']),
+  validateRoleId,
   validateAssignPermissions,
   assignPermissionsToRole
 );
@@ -282,6 +285,7 @@ router.delete(
   '/:id/permissions',
   authenticateToken,
   authorize(['role:manage']),
+  validateRoleId,
   validateRemovePermissions,
   removePermissionsFromRole
 );
