@@ -10,13 +10,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { it } from "date-fns/locale";
-import { getActivitiesParams } from "@/types/activitiy";
+import { ActivityQueryInput } from "@/types/activitiy";
 
 export function ActivityListClient() {
   const router = useRouter();
-  const [filters, setFilters] = useState<getActivitiesParams>({
+  const [filters, setFilters] = useState<ActivityQueryInput>({
     page: 1,
     limit: 20,
+    overdue: false,
+    requiresFollowUp: false,
+    myActivities: false,
+    sortBy: "scheduledStart",
+    sortOrder: "asc",
   });
 
   const { data: activitiesData, isLoading } = useActivities(filters);
@@ -69,9 +74,9 @@ export function ActivityListClient() {
                       <Badge variant="outline">{activity.type}</Badge>
                     </div>
                     
-                    {activity.Customer && (
+                    {activity.customer && (
                       <p className="text-sm text-muted-foreground">
-                        {activity.Customer.company.companyName}
+                        {activity.customer.company.companyName}
                       </p>
                     )}
                     

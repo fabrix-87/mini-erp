@@ -2,30 +2,27 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma-client";
 import { formatPaginatedResponse } from "../utils/response";
-import { AuthenticatedValidatedRequest } from '@/types/validate';
+import { AuthenticatedValidatedRequest } from "@/types/validate";
+import asyncHandler from "@/middleware/async-handler";
+import { CompanyQueryInput } from "@mini-erp/shared/types";
 
 /**
  * GET /companies
  * List / search companies with pagination
  */
-export const listCompanies = async (req: AuthenticatedValidatedRequest, res: Response) => {
-  try {
+export const listCompanies = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
     // query already validated by middleware; coerce defaults here
-    const q = (req.query.search as string) || undefined;
-    const page = Number((req.query.page as unknown) || 1);
-    const perPage = Number((req.query.limit as unknown) || 20);
-    const countryCode = (req.query.countryCode as string) || undefined;
-    const status = (req.query.status as string) || undefined;
-    const sortBy = (req.query.sortBy as string) || "companyName";
-    const sortDir = (req.query.sortOrder as string) === "desc" ? "desc" : "asc";
+    const { search, page, limit, countryCode, status, sortBy, sortOrder } =
+      req.validatedQuery as CompanyQueryInput;
 
     const where: any = {};
 
-    if (q) {
+    if (search) {
       where.OR = [
-        { code: { contains: q, mode: "insensitive" } },
-        { companyName: { contains: q, mode: "insensitive" } },
-        { tradeName: { contains: q, mode: "insensitive" } },
+        { code: { contains: search, mode: "insensitive" } },
+        { companyName: { contains: search, mode: "insensitive" } },
+        { tradeName: { contains: search, mode: "insensitive" } },
       ];
     }
 
@@ -36,9 +33,9 @@ export const listCompanies = async (req: AuthenticatedValidatedRequest, res: Res
       prisma.company.count({ where }),
       prisma.company.findMany({
         where,
-        orderBy: { [sortBy]: sortDir },
-        skip: (page - 1) * perPage,
-        take: perPage,
+        orderBy: { [sortBy]: sortOrder },
+        skip: (page - 1) * limit,
+        take: limit,
         select: {
           id: true,
           code: true,
@@ -53,17 +50,17 @@ export const listCompanies = async (req: AuthenticatedValidatedRequest, res: Res
       }),
     ]);
 
-    return res.json(formatPaginatedResponse(data, total, page, perPage))
-  } catch (error) {
-    console.error("listCompanies error:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    res.json(formatPaginatedResponse(data, total, page, limit));
   }
-};
+);
 
 /**
  * GET /companies/:id
  */
-export const getCompanyById = async (req: AuthenticatedValidatedRequest, res: Response) => {
+export const getCompanyById = async (
+  req: AuthenticatedValidatedRequest,
+  res: Response
+) => {
   try {
     const id = Number(req.validatedParams.id);
     const company = await prisma.company.findUnique({

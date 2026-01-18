@@ -3,31 +3,10 @@
 // types/contact.ts
 // ============================================================================
 
+import { Contact } from "@mini-erp/shared/types";
 import { PaginationInfo } from "./api";
 
-/**
- * Contact entity con relazioni
- */
-export interface Contact {
-  id: number;
-  companyId: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string | null;
-  mobilePhone?: string | null;
-  position?: string | null;
-  department?: string | null;
-  isPrimaryContact: boolean;
-  active: boolean;
-  notes?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  
-  // Relazioni
-  company?: ContactCompany;
-  documents?: ContactDocument[];
-}
+export type { Contact, ContactWithStats } from '@mini-erp/shared/types'
 
 /**
  * Company info minima per Contact
@@ -50,14 +29,6 @@ export interface ContactDocument {
   documentType: string;
   documentDate: string;
   totalAmount: number;
-}
-
-/**
- * Contact con dati aggregati
- */
-export interface ContactWithStats extends Contact {
-  documentCount: number;
-  lastContactDate?: string | null;
 }
 
 // ============================================================================

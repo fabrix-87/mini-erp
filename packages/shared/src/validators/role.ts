@@ -1,6 +1,7 @@
 // packages/shared/src/validators/role.ts
 import z from "zod";
 import { UserIdSchema } from "./base";
+import { createIdSchema } from "../utils";
 
 // ============================================================================
 // BASE SCHEMAS
@@ -9,10 +10,7 @@ import { UserIdSchema } from "./base";
 /**
  * Schema per validare ID ruolo
  */
-export const RoleIdSchema = z
-  .string()
-  .transform((val) => parseInt(val, 10))
-  .pipe(z.number().int().positive("ID ruolo non valido"));
+export const RoleIdSchema = createIdSchema("ID ruolo non valido");
 
 /**
  * Schema per validare ID ruolo nei params

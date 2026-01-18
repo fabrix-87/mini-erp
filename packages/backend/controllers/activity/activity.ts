@@ -1,9 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { Prisma } from "../../generated/prisma/client";
 import { prisma } from "../../config/prisma-client";
 import asyncHandler from "../../middleware/async-handler";
 import { AuthenticatedValidatedRequest } from "../../types/validate";
-import { ActivityStatsInput } from "../../validators/activity";
+import { ActivityQueryInput, ActivityStatsInput } from "@mini-erp/shared/types";
+import { formatPaginatedResponse } from "@/utils/response";
 
 // ============================================================================
 // ACTIVITY CONTROLLER
@@ -14,12 +15,8 @@ import { ActivityStatsInput } from "../../validators/activity";
  * @route   GET /api/activities
  * @access  Private (activity:read)
  */
-export const getAllActivities = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const getAllActivities = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const {
       page = 1,
       limit = 20,
@@ -39,42 +36,42 @@ export const getAllActivities = async (
       myActivities,
       sortBy = "scheduledStart",
       sortOrder = "asc",
-    } = req.query;
+    } = req.validatedQuery as ActivityQueryInput;
 
-    const skip = (Number(page) - 1) * Number(limit);
+    const skip = (page - 1) * limit;
     const where: Prisma.ActivityWhereInput = {};
 
     // Filtro ricerca
     if (search) {
       where.OR = [
-        { subject: { contains: search as string, mode: "insensitive" } },
-        { description: { contains: search as string, mode: "insensitive" } },
+        { subject: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
       ];
     }
 
     // Filtri enum
-    if (type) where.type = type as any;
-    if (status) where.status = status as any;
-    if (priority) where.priority = priority as any;
-    if (outcome) where.outcome = outcome as any;
+    if (type) where.type = type;
+    if (status) where.status = status;
+    if (priority) where.priority = priority;
+    if (outcome) where.outcome = outcome;
 
     // Filtri relazioni
-    if (companyId) where.companyId = Number(companyId);
-    if (customerId) where.customerId = Number(customerId);
-    if (opportunityId) where.opportunityId = Number(opportunityId);
+    if (companyId) where.companyId = companyId;
+    if (customerId) where.customerId = customerId;
+    if (opportunityId) where.opportunityId = opportunityId;
 
     // Filtro utente assegnato o "le mie attività"
     if (myActivities) {
       where.assignedUserId = (req as any).user.id;
     } else if (assignedUserId) {
-      where.assignedUserId = Number(assignedUserId);
+      where.assignedUserId = assignedUserId;
     }
 
     // Filtri data
     if (startDate || endDate) {
       where.scheduledStart = {};
-      if (startDate) where.scheduledStart.gte = new Date(startDate as string);
-      if (endDate) where.scheduledStart.lte = new Date(endDate as string);
+      if (startDate) where.scheduledStart.gte = new Date(startDate);
+      if (endDate) where.scheduledStart.lte = new Date(endDate);
     }
 
     // Filtro attività scadute
@@ -95,7 +92,7 @@ export const getAllActivities = async (
         where,
         skip,
         take: Number(limit),
-        orderBy: { [sortBy as string]: sortOrder },
+        orderBy: { [sortBy]: sortOrder },
         include: {
           company: {
             select: {
@@ -173,20 +170,11 @@ export const getAllActivities = async (
       prisma.activity.count({ where }),
     ]);
 
-    res.status(200).json({
-      success: true,
-      data: activities,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total,
-        totalPages: Math.ceil(total / Number(limit)),
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    res
+      .status(200)
+      .json(formatPaginatedResponse(activities, total, page, limit));
+  },
+);
 
 /**
  * @desc    Ottieni Activity per ID
@@ -196,7 +184,7 @@ export const getAllActivities = async (
 export const getActivityById = async (
   req: AuthenticatedValidatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { id } = req.validatedParams;
@@ -379,7 +367,8 @@ export const createActivity = asyncHandler(
       message: "Activity creata con successo",
       data: activity,
     });
-});
+  },
+);
 
 /**
  * @desc    Aggiorna Activity
@@ -389,7 +378,7 @@ export const createActivity = asyncHandler(
 export const updateActivity = async (
   req: AuthenticatedValidatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { id } = req.validatedParams;
@@ -444,11 +433,12 @@ export const updateActivity = async (
 export const updateActivityStatus = async (
   req: AuthenticatedValidatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { id } = req.validatedParams;
-    const { status, outcome, result, actualStart, actualEnd } = req.validatedBody;
+    const { status, outcome, result, actualStart, actualEnd } =
+      req.validatedBody;
 
     const activity = await prisma.activity.findUnique({
       where: { id: parseInt(id) },
@@ -512,7 +502,7 @@ export const updateActivityStatus = async (
 export const completeActivity = async (
   req: AuthenticatedValidatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { id } = req.validatedParams;
@@ -578,7 +568,7 @@ export const completeActivity = async (
 export const deleteActivity = async (
   req: AuthenticatedValidatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { id } = req.validatedParams;
@@ -615,7 +605,8 @@ export const deleteActivity = async (
  */
 export const getActivityStats = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { startDate, endDate, userId } = req.validatedQuery as ActivityStatsInput;
+    const { startDate, endDate, userId } =
+      req.validatedQuery as ActivityStatsInput;
     const currentUserId = (req as any).user.id;
 
     const where: Prisma.ActivityWhereInput = {};
@@ -707,5 +698,5 @@ export const getActivityStats = asyncHandler(
         followUp: followUpCount,
       },
     });
-  }
+  },
 );

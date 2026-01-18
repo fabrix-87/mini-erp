@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { UserRoleSchema } from "./role";
 import { UserIdSchema } from "./base";
-import { dateStringSchema } from "../utils";
+import { dateStringSchema, emailSchema } from "../utils";
 
 // ============================================================================
 // ENUMS
@@ -29,8 +29,6 @@ export const UsernameSchema = z
     "Username può contenere solo lettere, numeri e underscore"
   );
 
-export const EmailSchema = z.email("Email non valida").toLowerCase().trim();
-
 export const PasswordSchema = z
   .string()
   .min(8, "Password deve essere almeno 8 caratteri")
@@ -52,7 +50,7 @@ export const PhoneSchema = z
  */
 export const UserBaseSchema = z.object({
   username: UsernameSchema,
-  email: EmailSchema,
+  email: emailSchema(),
   password: PasswordSchema,
   active: z.boolean().default(true),
   preferredLanguageId: z.number().int().positive().optional().nullable(),
@@ -113,7 +111,7 @@ export const UserSchema = UserBaseSchema.extend({
 
 export const UserFormSchema = z.object({
   username: UsernameSchema,
-  email: EmailSchema,
+  email: emailSchema(),
   password: PasswordSchema.optional().or(z.literal("")),
   roleIds: z.array(z.number()).optional(),
   ...UserDetailsSchema.shape,
@@ -127,7 +125,7 @@ export const CreateUserFormSchema = UserFormSchema.required({
 
 export const UpdateUserFormSchema = UserFormSchema.partial().extend({
   username: UsernameSchema,
-  email: EmailSchema,
+  email: emailSchema(),
 });
 
 // ============================================================================
@@ -156,7 +154,7 @@ export const UserIdAsUserIdParamSchema = z.object({
  * Schema per il login
  */
 export const LoginSchema = z.object({
-  email: EmailSchema,
+  email: emailSchema(),
   password: z.string().min(1, "Password obbligatoria"),
 });
 
@@ -164,7 +162,7 @@ export const LoginSchema = z.object({
  * Schema per la richiesta di reset password
  */
 export const ForgotPasswordSchema = z.object({
-  email: EmailSchema,
+  email: emailSchema(),
 });
 
 /**

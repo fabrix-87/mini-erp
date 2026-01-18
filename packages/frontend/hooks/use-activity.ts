@@ -5,12 +5,12 @@ import {
   getActivities,
   getActivityById,  
 } from "@/services/client/activity";
-import { ActivityStatsParams, getActivitiesParams } from "@/types/activitiy";
+import { ActivityStatsInput, ActivityQueryInput } from "@/types/activitiy";
 
 /**
  * Hook per le statistiche delle attività
  */
-export function useActivityStats(params?: ActivityStatsParams) {
+export function useActivityStats(params?: ActivityStatsInput) {
   return useQuery({
     queryKey: ["activity-stats", params],
     queryFn: () => getActivityStats(params),
@@ -20,7 +20,7 @@ export function useActivityStats(params?: ActivityStatsParams) {
 /**
  * Hook per la lista delle attività
  */
-export function useActivities(params: getActivitiesParams) {
+export function useActivities(params: ActivityQueryInput) {
   return useQuery({
     queryKey: ["activities", params],
     queryFn: () => getActivities(params),

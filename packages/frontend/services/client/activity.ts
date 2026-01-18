@@ -6,8 +6,8 @@ import {
   Activity, 
   ActivityDashboardStats, 
   ActivityStats, 
-  ActivityStatsParams, 
-  getActivitiesParams 
+  ActivityStatsInput, 
+  ActivityQueryInput 
 } from "@/types/activitiy";
 import { ApiResponse } from "@/types/api";
 
@@ -15,7 +15,7 @@ import { ApiResponse } from "@/types/api";
  * Recupera le statistiche delle attività
  */
 export const getActivityStats = async (
-  params?: ActivityStatsParams
+  params?: ActivityStatsInput
 ): Promise<ApiResponse<ActivityStats>> => {
   const response = await api.get("/activities/stats", { params });
   return response.data;
@@ -26,7 +26,7 @@ export const getActivityStats = async (
  * Used for dynamic filtering and search on the client
  */
 export async function getActivities(
-  params: getActivitiesParams
+  params: ActivityQueryInput
 ): Promise<ApiResponse<Activity[]>> {
   const response = await api.get<ApiResponse<Activity[]>>("/activities", {
     params,

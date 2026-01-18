@@ -1,24 +1,21 @@
-import express from 'express';
-import { authenticateToken, authorize } from '../middleware/auth';
-import { validate, validateParams, validateQuery, validateBody } from '../middleware/validation';
+import express from "express";
+import { authenticateToken, authorize } from "../middleware/auth";
 import {
-  CreateActivitySchema,
-  UpdateActivitySchema,
-  ActivityIdSchema,
-  ActivityQuerySchema,
-  UpdateActivityStatusSchema,
-  CompleteActivitySchema,
-  CreateActivityParticipantSchema,
-  UpdateActivityParticipantSchema,
-  ActivityParticipantIdSchema,
-  CreateActivityTemplateSchema,
-  UpdateActivityTemplateSchema,
-  ActivityTemplateIdSchema,
-  CreateActivityFromTemplateSchema,
-  BulkActivityActionSchema,
   validateActivityStatsQuery,
   validateCreateActivity,
-} from '../validators/activity';
+  validateUpdateActivity,
+  validateActivityId,
+  validateActivityQuery,
+  validateActivityPartecipantId,
+  validateActivityTemplateId,
+  validateUpdateActivityStatus,
+  validateCompleteActivityStatus,
+  validateActivityIdAsActivityId,
+  validateUpdateActivityPartecipant,
+  validateCreateActivityTemplate,
+  validateCreateActivityFromTemplate,
+  validateUpdateActivityTemplate,
+} from "../validators/activity";
 import {
   getAllActivities,
   getActivityById,
@@ -42,7 +39,7 @@ import {
   deleteActivityTemplate,
   createActivityFromTemplate,
   toggleTemplateActive,
-} from '../controllers/activity';
+} from "../controllers/activity";
 
 const router = express.Router();
 
@@ -57,9 +54,9 @@ const router = express.Router();
  * @query   startDate, endDate, userId
  */
 router.get(
-  '/stats',
+  "/stats",
   authenticateToken,
-  authorize(['activity:read', 'activity:manage']),
+  authorize(["activity:read", "activity:manage"]),
   validateActivityStatsQuery,
   getActivityStats
 );
@@ -75,10 +72,10 @@ router.get(
  * @query   page, limit, search, type, status, priority, outcome, companyId, customerId, opportunityId, assignedUserId, startDate, endDate, overdue, requiresFollowUp, myActivities, sortBy, sortOrder
  */
 router.get(
-  '/',
+  "/",
   authenticateToken,
-  authorize(['activity:read', 'activity:manage']),
-  validateQuery(ActivityQuerySchema, 'Activity query'),
+  authorize(["activity:read", "activity:manage"]),
+  validateActivityQuery,
   getAllActivities
 );
 
@@ -88,10 +85,10 @@ router.get(
  * @access  Private (activity:read)
  */
 router.get(
-  '/:id',
+  "/:id",
   authenticateToken,
-  authorize(['activity:read', 'activity:manage']),
-  validateParams(ActivityIdSchema, 'Activity ID'),
+  authorize(["activity:read", "activity:manage"]),
+  validateActivityId,
   getActivityById
 );
 
@@ -101,9 +98,9 @@ router.get(
  * @access  Private (activity:create)
  */
 router.post(
-  '/',
+  "/",
   authenticateToken,
-  authorize(['activity:create', 'activity:manage']),
+  authorize(["activity:create", "activity:manage"]),
   validateCreateActivity,
   createActivity
 );
@@ -114,16 +111,11 @@ router.post(
  * @access  Private (activity:update)
  */
 router.put(
-  '/:id',
+  "/:id",
   authenticateToken,
-  authorize(['activity:update', 'activity:manage']),
-  validate(
-    {
-      params: ActivityIdSchema,
-      body: UpdateActivitySchema,
-    },
-    'Activity update'
-  ),
+  authorize(["activity:update", "activity:manage"]),
+  validateActivityId,
+  validateUpdateActivity,
   updateActivity
 );
 
@@ -133,16 +125,11 @@ router.put(
  * @access  Private (activity:update)
  */
 router.patch(
-  '/:id/status',
+  "/:id/status",
   authenticateToken,
-  authorize(['activity:update', 'activity:manage']),
-  validate(
-    {
-      params: ActivityIdSchema,
-      body: UpdateActivityStatusSchema,
-    },
-    'Activity status update'
-  ),
+  authorize(["activity:update", "activity:manage"]),
+  validateActivityId,
+  validateUpdateActivityStatus,
   updateActivityStatus
 );
 
@@ -152,16 +139,11 @@ router.patch(
  * @access  Private (activity:update)
  */
 router.patch(
-  '/:id/complete',
+  "/:id/complete",
   authenticateToken,
-  authorize(['activity:update', 'activity:manage']),
-  validate(
-    {
-      params: ActivityIdSchema,
-      body: CompleteActivitySchema,
-    },
-    'Activity completion'
-  ),
+  authorize(["activity:update", "activity:manage"]),
+  validateActivityId,
+  validateCompleteActivityStatus,
   completeActivity
 );
 
@@ -171,10 +153,10 @@ router.patch(
  * @access  Private (activity:delete)
  */
 router.delete(
-  '/:id',
+  "/:id",
   authenticateToken,
-  authorize(['activity:delete', 'activity:manage']),
-  validateParams(ActivityIdSchema, 'Activity ID'),
+  authorize(["activity:delete", "activity:manage"]),
+  validateActivityId,
   deleteActivity
 );
 
@@ -188,10 +170,10 @@ router.delete(
  * @access  Private (activity:read)
  */
 router.get(
-  '/:activityId/participants',
+  "/:activityId/participants",
   authenticateToken,
-  authorize(['activity:read', 'activity:manage']),
-  validateParams(ActivityIdSchema, 'Activity ID'),
+  authorize(["activity:read", "activity:manage"]),
+  validateActivityIdAsActivityId,
   getActivityParticipants
 );
 
@@ -201,10 +183,10 @@ router.get(
  * @access  Private (activity:update)
  */
 router.post(
-  '/:activityId/participants',
+  "/:activityId/participants",
   authenticateToken,
-  authorize(['activity:update', 'activity:manage']),
-  validateBody(CreateActivityParticipantSchema, 'Add participant'),
+  authorize(["activity:update", "activity:manage"]),
+  validateActivityIdAsActivityId,
   addActivityParticipant
 );
 
@@ -214,10 +196,10 @@ router.post(
  * @access  Private (activity:update)
  */
 router.post(
-  '/:activityId/participants/bulk',
+  "/:activityId/participants/bulk",
   authenticateToken,
-  authorize(['activity:update', 'activity:manage']),
-  validateParams(ActivityIdSchema, 'Activity ID'),
+  authorize(["activity:update", "activity:manage"]),
+  validateActivityIdAsActivityId,
   addBulkParticipants
 );
 
@@ -227,16 +209,11 @@ router.post(
  * @access  Private (activity:update)
  */
 router.put(
-  '/participants/:id',
+  "/participants/:id",
   authenticateToken,
-  authorize(['activity:update', 'activity:manage']),
-  validate(
-    {
-      params: ActivityParticipantIdSchema,
-      body: UpdateActivityParticipantSchema,
-    },
-    'Participant update'
-  ),
+  authorize(["activity:update", "activity:manage"]),
+  validateActivityPartecipantId,
+  validateUpdateActivityPartecipant,
   updateActivityParticipant
 );
 
@@ -246,10 +223,10 @@ router.put(
  * @access  Private (activity:update)
  */
 router.delete(
-  '/participants/:id',
+  "/participants/:id",
   authenticateToken,
-  authorize(['activity:update', 'activity:manage']),
-  validateParams(ActivityParticipantIdSchema, 'Participant ID'),
+  authorize(["activity:update", "activity:manage"]),
+  validateActivityPartecipantId,
   removeActivityParticipant
 );
 
@@ -264,9 +241,9 @@ router.delete(
  * @query   active, type, sortBy, sortOrder
  */
 router.get(
-  '/templates',
+  "/templates",
   authenticateToken,
-  authorize(['activity:read', 'activity:manage']),
+  authorize(["activity:read", "activity:manage"]),
   getAllActivityTemplates
 );
 
@@ -276,10 +253,10 @@ router.get(
  * @access  Private (activity:read)
  */
 router.get(
-  '/templates/:id',
+  "/templates/:id",
   authenticateToken,
-  authorize(['activity:read', 'activity:manage']),
-  validateParams(ActivityTemplateIdSchema, 'Template ID'),
+  authorize(["activity:read", "activity:manage"]),
+  validateActivityTemplateId,
   getActivityTemplateById
 );
 
@@ -289,10 +266,10 @@ router.get(
  * @access  Private (activity:manage)
  */
 router.post(
-  '/templates',
+  "/templates",
   authenticateToken,
-  authorize(['activity:manage']),
-  validateBody(CreateActivityTemplateSchema, 'Template creation'),
+  authorize(["activity:manage"]),
+  validateCreateActivityTemplate,
   createActivityTemplate
 );
 
@@ -302,16 +279,11 @@ router.post(
  * @access  Private (activity:create)
  */
 router.post(
-  '/templates/:id/create-activity',
+  "/templates/:id/create-activity",
   authenticateToken,
-  authorize(['activity:create', 'activity:manage']),
-  validate(
-    {
-      params: ActivityTemplateIdSchema,
-      body: CreateActivityFromTemplateSchema,
-    },
-    'Create activity from template'
-  ),
+  authorize(["activity:create", "activity:manage"]),
+  validateActivityTemplateId,
+  validateCreateActivityFromTemplate,
   createActivityFromTemplate
 );
 
@@ -321,16 +293,11 @@ router.post(
  * @access  Private (activity:manage)
  */
 router.put(
-  '/templates/:id',
+  "/templates/:id",
   authenticateToken,
-  authorize(['activity:manage']),
-  validate(
-    {
-      params: ActivityTemplateIdSchema,
-      body: UpdateActivityTemplateSchema,
-    },
-    'Template update'
-  ),
+  authorize(["activity:manage"]),
+  validateActivityTemplateId,
+  validateUpdateActivityTemplate,
   updateActivityTemplate
 );
 
@@ -340,10 +307,10 @@ router.put(
  * @access  Private (activity:manage)
  */
 router.patch(
-  '/templates/:id/toggle-active',
+  "/templates/:id/toggle-active",
   authenticateToken,
-  authorize(['activity:manage']),
-  validateParams(ActivityTemplateIdSchema, 'Template ID'),
+  authorize(["activity:manage"]),
+  validateActivityTemplateId,
   toggleTemplateActive
 );
 
@@ -353,10 +320,10 @@ router.patch(
  * @access  Private (activity:manage)
  */
 router.delete(
-  '/templates/:id',
+  "/templates/:id",
   authenticateToken,
-  authorize(['activity:manage']),
-  validateParams(ActivityTemplateIdSchema, 'Template ID'),
+  authorize(["activity:manage"]),
+  validateActivityTemplateId,
   deleteActivityTemplate
 );
 

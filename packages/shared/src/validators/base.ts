@@ -1,9 +1,6 @@
-import z from "zod";
+import { createIdSchema } from "../utils";
 
 /**
  * Schema per validare ID utente
  */
-export const UserIdSchema = z
-  .string()
-  .transform((val) => parseInt(val, 10))
-  .pipe(z.number().int().positive("ID utente non valido"));
+export const UserIdSchema = createIdSchema("ID utente non valido");

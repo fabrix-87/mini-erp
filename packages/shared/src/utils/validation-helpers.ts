@@ -1,5 +1,16 @@
 // packages/shared/src/utils/validation-helpers.ts
-import { z } from 'zod';
+import { z } from "zod";
+
+/**
+ * Schema base per gli ID
+ * @param errorMessage
+ * @returns <z.object>
+ */
+export const createIdSchema = (errorMessage: string) =>
+  z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive(errorMessage));
 
 /**
  * Schema per date input da form che gestisce stringhe vuote
@@ -17,32 +28,29 @@ export const dateStringSchema = (options?: {
   let schema = z
     .string()
     .optional()
-    .or(z.literal(''))
+    .or(z.literal(""))
     .transform((val) => {
-      if (!val || val.trim() === '') return null;
+      if (!val || val.trim() === "") return null;
       const date = new Date(val);
       return isNaN(date.getTime()) ? null : date;
     });
 
   if (options?.max) {
-    schema = schema.refine(
-      (date) => !date || date <= options.max!,
-      { message: options?.message?.max || "La data non può essere futura" }
-    );
+    schema = schema.refine((date) => !date || date <= options.max!, {
+      message: options?.message?.max || "La data non può essere futura",
+    });
   }
 
   if (options?.min) {
-    schema = schema.refine(
-      (date) => !date || date >= options.min!,
-      { message: options?.message?.min || "La data non è valida" }
-    );
+    schema = schema.refine((date) => !date || date >= options.min!, {
+      message: options?.message?.min || "La data non è valida",
+    });
   }
 
   if (options?.required) {
-    schema = schema.refine(
-      (date) => date !== null,
-      { message: options?.message?.required || "La data è obbligatoria" }
-    );
+    schema = schema.refine((date) => date !== null, {
+      message: options?.message?.required || "La data è obbligatoria",
+    });
   }
 
   return schema.nullable();
@@ -51,15 +59,11 @@ export const dateStringSchema = (options?: {
 /**
  * Schema per email normalizzato (Zod v4)
  */
-export const emailSchema = (options?: {
-  required?: boolean;
-  message?: string;
-}) => {
-  const baseSchema = z.email(options?.message || "Email non valida").toLowerCase().trim();
-  
-  return options?.required 
-    ? baseSchema 
-    : baseSchema.optional();
+export const emailSchema = (message?: string) => {
+  return z
+    .email(message || "Email non valida")
+    .toLowerCase()
+    .trim();
 };
 
 /**
@@ -70,11 +74,16 @@ export const isoDateSchema = (options?: {
   message?: string;
 }) => {
   const baseSchema = z.iso.datetime(options?.message || "Data non valida");
-  
-  return options?.required 
-    ? baseSchema 
+
+  return options?.required === true
+    ? baseSchema
     : baseSchema.optional().nullable();
 };
+
+/**
+ * Schema per numeri positivi
+ */
+export const positiveNumbersSchema = z.number().int().positive();
 
 /**
  * Schema per telefono
@@ -83,18 +92,16 @@ export const phoneSchema = (options?: {
   required?: boolean;
   international?: boolean;
 }) => {
-  const pattern = options?.international 
+  const pattern = options?.international
     ? /^[+]?[\d\s()-]*$/
     : /^[+]?39[\s]?[\d\s()-]*$/;
-  
+
   const baseSchema = z
     .string()
     .regex(pattern, "Formato telefono non valido")
     .max(20, "Telefono troppo lungo");
-  
-  return options?.required 
-    ? baseSchema 
-    : baseSchema.optional().nullable();
+
+  return options?.required ? baseSchema : baseSchema.optional().nullable();
 };
 
 /**
@@ -102,10 +109,8 @@ export const phoneSchema = (options?: {
  */
 export const urlSchema = (required = false) => {
   const baseSchema = z.url("URL non valido");
-  
-  return required 
-    ? baseSchema 
-    : baseSchema.optional().nullable();
+
+  return required ? baseSchema : baseSchema.optional().nullable();
 };
 
 /**
@@ -113,10 +118,8 @@ export const urlSchema = (required = false) => {
  */
 export const uuidSchema = (required = false) => {
   const baseSchema = z.uuid("UUID non valido");
-  
-  return required 
-    ? baseSchema 
-    : baseSchema.optional().nullable();
+
+  return required ? baseSchema : baseSchema.optional().nullable();
 };
 
 /**
@@ -124,10 +127,8 @@ export const uuidSchema = (required = false) => {
  */
 export const cuidSchema = (required = false) => {
   const baseSchema = z.cuid("CUID non valido");
-  
-  return required 
-    ? baseSchema 
-    : baseSchema.optional().nullable();
+
+  return required ? baseSchema : baseSchema.optional().nullable();
 };
 
 /**
@@ -140,7 +141,7 @@ export const vatNumberSchema = (required = false) => {
     .refine(
       (vat) => {
         if (vat.length !== 11) return false;
-        const digits = vat.split('').map(Number);
+        const digits = vat.split("").map(Number);
         let sum = 0;
         for (let i = 0; i < 11; i++) {
           if (i % 2 === 0) {
@@ -152,12 +153,10 @@ export const vatNumberSchema = (required = false) => {
         }
         return sum % 10 === 0;
       },
-      { message: "Partita IVA non valida" }
+      { message: "Partita IVA non valida" },
     );
-  
-  return required 
-    ? baseSchema 
-    : baseSchema.optional().nullable();
+
+  return required ? baseSchema : baseSchema.optional().nullable();
 };
 
 /**
@@ -168,14 +167,12 @@ export const fiscalCodeSchema = (required = false) => {
     .string()
     .regex(
       /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/,
-      "Formato codice fiscale non valido"
+      "Formato codice fiscale non valido",
     )
     .length(16, "Il codice fiscale deve contenere 16 caratteri")
     .toUpperCase();
-  
-  return required 
-    ? baseSchema 
-    : baseSchema.optional().nullable();
+
+  return required ? baseSchema : baseSchema.optional().nullable();
 };
 
 /**
@@ -187,19 +184,51 @@ export const priceSchema = (options?: {
   required?: boolean;
 }) => {
   let baseSchema = z.number().positive("Il prezzo deve essere positivo");
-  
+
   if (options?.min !== undefined) {
-    baseSchema = baseSchema.min(options.min, `Il prezzo minimo è ${options.min}`);
+    baseSchema = baseSchema.min(
+      options.min,
+      `Il prezzo minimo è ${options.min}`,
+    );
   }
-  
+
   if (options?.max !== undefined) {
-    baseSchema = baseSchema.max(options.max, `Il prezzo massimo è ${options.max}`);
+    baseSchema = baseSchema.max(
+      options.max,
+      `Il prezzo massimo è ${options.max}`,
+    );
   }
-  
-  return options?.required 
-    ? baseSchema 
-    : baseSchema.optional().nullable();
+
+  return options?.required ? baseSchema : baseSchema.optional().nullable();
 };
+
+/**
+ * Schema per Decimal(19, 2)
+ */
+export const CreditLimitSchema = z
+  .union([
+    z
+      .string()
+      .regex(/^\d+(\.\d{1,2})?$/, "Formato prezzo non valido (max 2 decimali)"),
+    z.number(),
+  ])
+  .transform((val) => {
+    const num = typeof val === "string" ? parseFloat(val) : val;
+    // Arrotonda a 2 decimali per evitare problemi di precisione float
+    return Math.round(num * 100) / 100;
+  })
+  .refine((val) => val >= 0, {
+    message: "Il limite deve essere >= 0",
+  })
+  .refine(
+    (val) => {
+      // Verifica che non ci siano più di 2 decimali
+      return (val * 100) % 1 < Number.EPSILON;
+    },
+    {
+      message: "Massimo 2 decimali consentiti",
+    },
+  );
 
 /**
  * Schema per percentuale (0-100)
@@ -209,8 +238,11 @@ export const percentageSchema = (required = false) => {
     .number()
     .min(0, "La percentuale non può essere negativa")
     .max(100, "La percentuale non può superare 100");
-  
-  return required 
-    ? baseSchema 
-    : baseSchema.optional().nullable();
+
+  return required ? baseSchema : baseSchema.optional().nullable();
 };
+
+/**
+ * Schema per direzione di ordinamento (asc, desc)
+ */
+export const sortOrderSchema = z.enum(["asc", "desc"]).default("asc");
