@@ -4,7 +4,7 @@
 
 import z from "zod";
 import { BaseCompanySchema, CompanyIdSchema, CompanyQueryBaseSchema, UpdateCompanySchema } from "./company";
-import { CreditLimitSchema } from "../utils";
+import { createIdSchema, CreditLimitSchema, positiveNumbersSchema } from "../utils";
 
 // ============================================================================
 // CUSTOMER-SPECIFIC ENUMS
@@ -62,38 +62,24 @@ export const CreateCustomerSchema = z
     // Nested Company (usa il base schema)
     company: BaseCompanySchema,
 
-    // ===== Dati CRM Specifici Customer =====
-    type: CustomerTypeSchema.default("LEAD"),
-
-    priority: CustomerPrioritySchema.default("MEDIUM"),
-
-    segment: CustomerSegmentSchema.default("STANDARD"),
-
-    leadStatus: LeadStatusSchema.default("NEW"),
-
+    // ===== Dati CRM Specifici Customer =====    
+    priority: CustomerPrioritySchema.default("MEDIUM"),  
+    segment: CustomerSegmentSchema.default("STANDARD"),    
+    leadStatus: LeadStatusSchema.default("NEW"),    
     size: CustomerSizeSchema.default("SMALL"),
-
+    type: CustomerTypeSchema.default("LEAD"),    
     creditStatus: CreditCheckStatusSchema.default("PENDING"),
 
     // ===== Dati Commerciali =====
-    defaultPriceListId: z
-      .number()
-      .int("Price List ID deve essere un intero")
-      .positive("Price List ID deve essere positivo")
+    defaultPriceListId: createIdSchema("Price List ID non valido")
       .optional()
       .nullable(),
 
-    customerTaxRuleId: z
-      .number()
-      .int("Tax Rule ID deve essere un intero")
-      .positive("Tax Rule ID deve essere positivo")
+    customerTaxRuleId: createIdSchema("Tax Rule ID non valido")
       .optional()
       .nullable(),
 
-    paymentMethodId: z
-      .number()
-      .int("Payment Method ID deve essere un intero")
-      .positive("Payment Method ID deve essere positivo")
+    paymentMethodId: createIdSchema("Payment Method ID non valido")
       .optional()
       .nullable(),
 
@@ -114,11 +100,11 @@ export const UpdateCustomerSchema = z
     size: CustomerSizeSchema.optional(),
     creditStatus: CreditCheckStatusSchema.optional(),
 
-    defaultPriceListId: z.number().int().positive().optional().nullable(),
+    defaultPriceListId: createIdSchema("Price List ID non valido").optional().nullable(),
 
-    customerTaxRuleId: z.number().int().positive().optional().nullable(),
+    customerTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
 
-    paymentMethodId: z.number().int().positive().optional().nullable(),
+    paymentMethodId: createIdSchema("Payment Method ID non valido").optional().nullable(),
 
     creditLimit: CreditLimitSchema.optional().nullable(),
   })
@@ -158,10 +144,7 @@ export const CustomerQuerySchema = CompanyQueryBaseSchema.extend({
   size: CustomerSizeSchema.optional(),
 
   // Filtri relazioni
-  priceListId: z
-    .string()
-    .optional()
-    .transform((val) => (val ? parseInt(val) : undefined)),
+  priceListId: createIdSchema("PriceListId non valido").optional(),
 
   hasOrders: z.enum(["true", "false"]).optional(),
   hasOpportunities: z.enum(["true", "false"]).optional(),

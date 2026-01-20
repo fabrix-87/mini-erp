@@ -1,10 +1,10 @@
 import { getCountries } from "@/services/client/country";
-import { CountryQueryParams } from "@/types/country";
+import { CountryQueryInput } from "@/types/country";
 import { useQuery } from "@tanstack/react-query";
 
 
 export function useCountries(
-  params: CountryQueryParams = {
+  params: CountryQueryInput = {
     page: 1,
     limit: 20,
   }

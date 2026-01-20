@@ -1,6 +1,6 @@
 // controllers/addresses.ts
-import { NextFunction, Request, Response } from "express";
-import { AuthenticatedValidatedRequest } from '@/types/validate';
+import { Response } from "express";
+import { AuthenticatedValidatedRequest } from "@/types/validate";
 import { prisma } from "../config/prisma-client";
 import { normalizeAddress } from "../utils/company";
 import {
@@ -9,16 +9,19 @@ import {
   clearPrimaryAddresses,
   setPrimaryAddressAtomic,
 } from "../helpers/company";
-import { AddressQueryInput } from "../validators/address";
 
-export const getAllAddresses = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+import asyncHandler from "@/middleware/async-handler";
+import {
+  AddressIdInput,
+  AddressQueryInput,
+  CreateAddressInput,
+  UpdateAddressInput,
+} from "@mini-erp/shared/types";
+
+export const getAllAddresses = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
     const where = buildAddressWhereClause(
-      req.validatedQuery as AddressQueryInput
+      req.validatedQuery as AddressQueryInput,
     );
     const addresses = await prisma.companyAddress.findMany({
       where,
@@ -26,19 +29,14 @@ export const getAllAddresses = async (
       orderBy: [{ isPrimary: "desc" }, { addressType: "asc" }],
     });
     res.json({ success: true, data: addresses, count: addresses.length });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
-export const getAddressById = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+export const getAddressById = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { id } = req.validatedParams as AddressIdInput;
     const address = await prisma.companyAddress.findUnique({
-      where: { id: parseInt(req.validatedParams.id) },
+      where: { id },
       include: getAddressInclude(),
     });
     if (!address) {
@@ -48,18 +46,12 @@ export const getAddressById = async (
       return;
     }
     res.json({ success: true, data: address });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
-export const createAddress = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const data = req.validatedBody;
+export const createAddress = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const data = req.validatedBody as CreateAddressInput;
 
     // Verifica company esiste
     const company = await prisma.company.findUnique({
@@ -118,22 +110,16 @@ export const createAddress = async (
         data: address,
       });
     }
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
-export const updateAddress = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.validatedParams;
-    const data = req.validatedBody;
+export const updateAddress = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { id } = req.validatedParams as AddressIdInput;
+    const data = req.validatedBody as UpdateAddressInput;
 
     const existing = await prisma.companyAddress.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
     if (!existing) {
       res
@@ -149,32 +135,26 @@ export const updateAddress = async (
       await clearPrimaryAddresses(
         prisma,
         existing.companyId,
-        existing.addressType
+        existing.addressType,
       );
     }
 
     const address = await prisma.companyAddress.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data,
       include: getAddressInclude(),
     });
 
     res.json({ success: true, message: "Indirizzo aggiornato", data: address });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
-export const setPrimaryAddress = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const setPrimaryAddress = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as AddressIdInput;
 
     const address = await prisma.companyAddress.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!address) {
@@ -186,27 +166,21 @@ export const setPrimaryAddress = async (
     }
 
     // Usa la versione atomica con transazione
-    const updated = await setPrimaryAddressAtomic(prisma, parseInt(id));
+    const updated = await setPrimaryAddressAtomic(prisma, id);
 
     res.json({
       success: true,
       message: "Indirizzo primario impostato",
       data: updated,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
-export const deleteAddress = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.validatedParams;
+export const deleteAddress = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const { id } = req.validatedParams as AddressIdInput;
     const address = await prisma.companyAddress.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!address) {
@@ -221,19 +195,15 @@ export const deleteAddress = async (
         where: { companyId: address.companyId, addressType: "LEGAL" },
       });
       if (count === 1) {
-        res
-          .status(400)
-          .json({
-            success: false,
-            message: "Non puoi eliminare l'unico indirizzo legale",
-          });
+        res.status(400).json({
+          success: false,
+          message: "Non puoi eliminare l'unico indirizzo legale",
+        });
         return;
       }
     }
 
-    await prisma.companyAddress.delete({ where: { id: parseInt(id) } });
+    await prisma.companyAddress.delete({ where: { id } });
     res.json({ success: true, message: "Indirizzo eliminato" });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);

@@ -1,7 +1,10 @@
-import { Response, NextFunction } from 'express';
-import { prisma } from '../config/prisma-client';
-import { Prisma } from '../generated/prisma/client';
-import { AuthenticatedValidatedRequest } from '@/types/validate';
+import { Response, NextFunction } from "express";
+import { prisma } from "../config/prisma-client";
+import { Prisma } from "../generated/prisma/client";
+import { AuthenticatedValidatedRequest } from "@/types/validate";
+import asyncHandler from "@/middleware/async-handler";
+import { CalculateDueDatesInput, CreatePaymentMethodInput, PaymentMethodIdInput, PaymentQueryInput, TogglePaymentStatusInput, UpdatePaymentMethodInput, UpdatePaymentTermDetailsInput } from "@mini-erp/shared";
+import { formatPaginatedResponse } from "@/utils/response";
 
 // ============================================================================
 // PAYMENT METHOD CONTROLLER
@@ -12,23 +15,23 @@ import { AuthenticatedValidatedRequest } from '@/types/validate';
  * @route   GET /api/payment-methods
  * @access  Private (payment:read)
  */
-export const getAllPaymentMethods = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { active, sortBy = 'position', sortOrder = 'asc' } = req.query;
+export const getAllPaymentMethods = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const {
+      active,
+      sortBy = "position",
+      sortOrder = "asc",
+    } = req.validatedQuery as PaymentQueryInput;
 
     const where: Prisma.PaymentMethodWhereInput = {};
 
     if (active !== undefined) {
-      where.active = active === 'true';
+      where.active = active === true;
     }
 
     const paymentMethods = await prisma.paymentMethod.findMany({
       where,
-      orderBy: { [sortBy as string]: sortOrder },
+      orderBy: { [sortBy]: sortOrder },
       include: {
         translations: {
           include: {
@@ -42,36 +45,35 @@ export const getAllPaymentMethods = async (
           },
         },
         details: {
-          orderBy: { position: 'asc' },
+          orderBy: { position: "asc" },
         },
       },
     });
 
-    res.status(200).json({
-      success: true,
-      data: paymentMethods,
-      count: paymentMethods.length,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    res
+      .status(200)
+      .json(
+        formatPaginatedResponse(
+          paymentMethods,
+          paymentMethods.length,
+          1,
+          paymentMethods.length,
+        ),
+      );
+  },
+);
 
 /**
  * @desc    Ottieni Payment Method per ID
  * @route   GET /api/payment-methods/:id
  * @access  Private (payment:read)
  */
-export const getPaymentMethodById = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const getPaymentMethodById = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as PaymentMethodIdInput;
 
     const paymentMethod = await prisma.paymentMethod.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         translations: {
           include: {
@@ -79,7 +81,7 @@ export const getPaymentMethodById = async (
           },
         },
         details: {
-          orderBy: { position: 'asc' },
+          orderBy: { position: "asc" },
         },
         customers: {
           select: {
@@ -106,33 +108,33 @@ export const getPaymentMethodById = async (
 
     if (!paymentMethod) {
       res.status(404).json({
-        success: false,
-        message: 'Payment Method non trovato',
+        status: "fail",
+        message: "Payment Method non trovato",
       });
       return;
     }
 
     res.status(200).json({
-      success: true,
+      status: "success",
       data: paymentMethod,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Crea nuovo Payment Method
  * @route   POST /api/payment-methods
  * @access  Private (payment:create)
  */
-export const createPaymentMethod = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { code, active = true, position = 0, translations, details } = req.validatedBody;
+export const createPaymentMethod = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const {
+      code,
+      active = true,
+      position = 0,
+      translations,
+      details,
+    } = req.validatedBody as CreatePaymentMethodInput;
 
     // Verifica unicità code
     const existingCode = await prisma.paymentMethod.findUnique({
@@ -141,8 +143,8 @@ export const createPaymentMethod = async (
 
     if (existingCode) {
       res.status(400).json({
-        success: false,
-        message: 'Codice già esistente',
+        status: "fail",
+        message: "Codice già esistente",
       });
       return;
     }
@@ -150,8 +152,8 @@ export const createPaymentMethod = async (
     // Verifica che almeno una traduzione sia presente
     if (!translations || translations.length === 0) {
       res.status(400).json({
-        success: false,
-        message: 'Almeno una traduzione è obbligatoria',
+        status: "fail",
+        message: "Almeno una traduzione è obbligatoria",
       });
       return;
     }
@@ -164,8 +166,8 @@ export const createPaymentMethod = async (
 
     if (languages.length !== languageIds.length) {
       res.status(404).json({
-        success: false,
-        message: 'Una o più lingue non trovate',
+        status: "fail",
+        message: "Una o più lingue non trovate",
       });
       return;
     }
@@ -174,13 +176,13 @@ export const createPaymentMethod = async (
     if (details && details.length > 0) {
       const totalPercentage = details.reduce(
         (sum: number, d: any) => sum + parseFloat(d.percentage),
-        0
+        0,
       );
 
       if (Math.abs(totalPercentage - 100) > 0.01) {
         res.status(400).json({
-          success: false,
-          message: 'La somma delle percentuali deve essere 100',
+          status: "fail",
+          message: "La somma delle percentuali deve essere 100",
           totalPercentage,
         });
         return;
@@ -203,7 +205,7 @@ export const createPaymentMethod = async (
           ? {
               create: details.map((d: any, index: number) => ({
                 percentage: new Prisma.Decimal(d.percentage),
-                termType: d.termType || 'days_from_invoice',
+                termType: d.termType || "days_from_invoice",
                 dueDays: d.dueDays || 0,
                 isEndOfMonth: d.isEndOfMonth || false,
                 isFixedDate: d.isFixedDate || false,
@@ -221,43 +223,37 @@ export const createPaymentMethod = async (
           },
         },
         details: {
-          orderBy: { position: 'asc' },
+          orderBy: { position: "asc" },
         },
       },
     });
 
     res.status(201).json({
-      success: true,
-      message: 'Payment Method creato con successo',
+      status: "success",
+      message: "Payment Method creato con successo",
       data: paymentMethod,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Aggiorna Payment Method
  * @route   PUT /api/payment-methods/:id
  * @access  Private (payment:update)
  */
-export const updatePaymentMethod = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { code, active, position, translations } = req.validatedBody;
+export const updatePaymentMethod = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as PaymentMethodIdInput;
+    const { code, active, position, translations } = req.validatedBody as UpdatePaymentMethodInput;
 
     const existingPaymentMethod = await prisma.paymentMethod.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!existingPaymentMethod) {
       res.status(404).json({
-        success: false,
-        message: 'Payment Method non trovato',
+        status: "fail",
+        message: "Payment Method non trovato",
       });
       return;
     }
@@ -270,8 +266,8 @@ export const updatePaymentMethod = async (
 
       if (duplicateCode) {
         res.status(400).json({
-          success: false,
-          message: 'Codice già esistente',
+          status: "fail",
+          message: "Codice già esistente",
         });
         return;
       }
@@ -286,7 +282,7 @@ export const updatePaymentMethod = async (
     if (translations && translations.length > 0) {
       // Elimina traduzioni esistenti
       await prisma.paymentMethodTranslation.deleteMany({
-        where: { paymentMethodId: parseInt(id) },
+        where: { paymentMethodId: id },
       });
 
       updateData.translations = {
@@ -299,7 +295,7 @@ export const updatePaymentMethod = async (
     }
 
     const paymentMethod = await prisma.paymentMethod.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: updateData,
       include: {
         translations: {
@@ -308,43 +304,37 @@ export const updatePaymentMethod = async (
           },
         },
         details: {
-          orderBy: { position: 'asc' },
+          orderBy: { position: "asc" },
         },
       },
     });
 
     res.status(200).json({
-      success: true,
-      message: 'Payment Method aggiornato con successo',
+      status: "success",
+      message: "Payment Method aggiornato con successo",
       data: paymentMethod,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Aggiorna Payment Term Details
  * @route   PUT /api/payment-methods/:id/details
  * @access  Private (payment:update)
  */
-export const updatePaymentTermDetails = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { details } = req.validatedBody;
+export const updatePaymentTermDetails = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as PaymentMethodIdInput;
+    const { details } = req.validatedBody as UpdatePaymentTermDetailsInput;
 
     const paymentMethod = await prisma.paymentMethod.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!paymentMethod) {
       res.status(404).json({
-        success: false,
-        message: 'Payment Method non trovato',
+        status: "fail",
+        message: "Payment Method non trovato",
       });
       return;
     }
@@ -352,13 +342,13 @@ export const updatePaymentTermDetails = async (
     // Validazione percentuali (devono sommare 100)
     const totalPercentage = details.reduce(
       (sum: number, d: any) => sum + parseFloat(d.percentage),
-      0
+      0,
     );
 
     if (Math.abs(totalPercentage - 100) > 0.01) {
       res.status(400).json({
-        success: false,
-        message: 'La somma delle percentuali deve essere 100',
+        status: "fail",
+        message: "La somma delle percentuali deve essere 100",
         totalPercentage,
       });
       return;
@@ -366,17 +356,17 @@ export const updatePaymentTermDetails = async (
 
     // Elimina dettagli esistenti
     await prisma.paymentTermDetail.deleteMany({
-      where: { paymentMethodId: parseInt(id) },
+      where: { paymentMethodId: id },
     });
 
     // Crea nuovi dettagli
     const updatedPaymentMethod = await prisma.paymentMethod.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: {
         details: {
           create: details.map((d: any, index: number) => ({
             percentage: new Prisma.Decimal(d.percentage),
-            termType: d.termType || 'days_from_invoice',
+            termType: d.termType || "days_from_invoice",
             dueDays: d.dueDays || 0,
             isEndOfMonth: d.isEndOfMonth || false,
             isFixedDate: d.isFixedDate || false,
@@ -389,49 +379,43 @@ export const updatePaymentTermDetails = async (
       include: {
         translations: true,
         details: {
-          orderBy: { position: 'asc' },
+          orderBy: { position: "asc" },
         },
       },
     });
 
     res.status(200).json({
-      success: true,
-      message: 'Payment Term Details aggiornati con successo',
+      status: "success",
+      message: "Payment Term Details aggiornati con successo",
       data: updatedPaymentMethod,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Toggle active status Payment Method
  * @route   PATCH /api/payment-methods/:id/toggle-active
  * @access  Private (payment:update)
  */
-export const togglePaymentMethodActive = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { active } = req.validatedBody;
+export const togglePaymentMethodActive = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as PaymentMethodIdInput;
+    const { active } = req.validatedBody as TogglePaymentStatusInput;
 
     const paymentMethod = await prisma.paymentMethod.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!paymentMethod) {
       res.status(404).json({
-        success: false,
-        message: 'Payment Method non trovato',
+        status: "fail",
+        message: "Payment Method non trovato",
       });
       return;
     }
 
     const updatedPaymentMethod = await prisma.paymentMethod.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: { active },
       include: {
         translations: true,
@@ -439,30 +423,24 @@ export const togglePaymentMethodActive = async (
     });
 
     res.status(200).json({
-      success: true,
-      message: `Payment Method ${active ? 'attivato' : 'disattivato'} con successo`,
+      status: "success",
+      message: `Payment Method ${active ? "attivato" : "disattivato"} con successo`,
       data: updatedPaymentMethod,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Elimina Payment Method
  * @route   DELETE /api/payment-methods/:id
  * @access  Private (payment:delete)
  */
-export const deletePaymentMethod = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const deletePaymentMethod = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as PaymentMethodIdInput;
 
     const paymentMethod = await prisma.paymentMethod.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         customers: { select: { id: true } },
         documents: { select: { id: true } },
@@ -471,18 +449,19 @@ export const deletePaymentMethod = async (
 
     if (!paymentMethod) {
       res.status(404).json({
-        success: false,
-        message: 'Payment Method non trovato',
+        status: "fail",
+        message: "Payment Method non trovato",
       });
       return;
     }
 
-    const totalUsage = paymentMethod.customers.length + paymentMethod.documents.length;
+    const totalUsage =
+      paymentMethod.customers.length + paymentMethod.documents.length;
 
     if (totalUsage > 0) {
       res.status(400).json({
-        success: false,
-        message: 'Impossibile eliminare: Payment Method in uso',
+        status: "fail",
+        message: "Impossibile eliminare: Payment Method in uso",
         usage: {
           customers: paymentMethod.customers.length,
           documents: paymentMethod.documents.length,
@@ -492,59 +471,53 @@ export const deletePaymentMethod = async (
     }
 
     await prisma.paymentMethod.delete({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     res.status(200).json({
-      success: true,
-      message: 'Payment Method eliminato con successo',
+      status: "success",
+      message: "Payment Method eliminato con successo",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Calcola date scadenza per un importo
  * @route   POST /api/payment-methods/:id/calculate-due-dates
  * @access  Private (payment:read)
  */
-export const calculateDueDates = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { invoiceDate, totalAmount } = req.validatedBody;
+export const calculateDueDates = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as PaymentMethodIdInput;
+    const { invoiceDate, totalAmount } = req.validatedBody as CalculateDueDatesInput;
 
     const paymentMethod = await prisma.paymentMethod.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         details: {
-          orderBy: { position: 'asc' },
+          orderBy: { position: "asc" },
         },
       },
     });
 
     if (!paymentMethod) {
       res.status(404).json({
-        success: false,
-        message: 'Payment Method non trovato',
+        status: "fail",
+        message: "Payment Method non trovato",
       });
       return;
     }
 
     if (!paymentMethod.details || paymentMethod.details.length === 0) {
       res.status(400).json({
-        success: false,
-        message: 'Payment Method non ha dettagli configurati',
+        status: "fail",
+        message: "Payment Method non ha dettagli configurati",
       });
       return;
     }
 
     const baseDate = invoiceDate ? new Date(invoiceDate) : new Date();
-    const amount = parseFloat(totalAmount);
+    const amount = totalAmount;
 
     const installments = paymentMethod.details.map((detail, index) => {
       const installmentAmount =
@@ -553,31 +526,35 @@ export const calculateDueDates = async (
       let dueDate = new Date(baseDate);
 
       switch (detail.termType) {
-        case 'anticipated':
+        case "anticipated":
           // Data fattura stessa
           break;
 
-        case 'days_from_invoice':
+        case "days_from_invoice":
           dueDate.setDate(dueDate.getDate() + detail.dueDays);
           if (detail.isEndOfMonth) {
-            dueDate = new Date(dueDate.getFullYear(), dueDate.getMonth() + 1, 0);
+            dueDate = new Date(
+              dueDate.getFullYear(),
+              dueDate.getMonth() + 1,
+              0,
+            );
           }
           break;
 
-        case 'end_of_month':
+        case "end_of_month":
           dueDate = new Date(
             dueDate.getFullYear(),
             dueDate.getMonth() + 1 + detail.fixedMonthOffset,
-            0
+            0,
           );
           break;
 
-        case 'fixed_date':
+        case "fixed_date":
           if (detail.fixedDay) {
             dueDate = new Date(
               dueDate.getFullYear(),
               dueDate.getMonth() + detail.fixedMonthOffset,
-              detail.fixedDay
+              detail.fixedDay,
             );
           }
           break;
@@ -594,14 +571,12 @@ export const calculateDueDates = async (
     });
 
     res.status(200).json({
-      success: true,
+      status: "success",
       data: {
         paymentMethodCode: paymentMethod.code,
         totalAmount: amount,
         installments,
       },
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);

@@ -1,5 +1,13 @@
 import z from "zod";
-import { createIdSchema, emailSchema, positiveNumbersSchema, sortOrderSchema } from "../utils";
+import {
+  createIdSchema,
+  emailSchema,
+  InputJsonValueSchema,
+  limitSchema,
+  pageSchema,
+  positiveNumbersSchema,
+  sortOrderSchema,
+} from "../utils";
 import { UserIdSchema } from "./base";
 
 // ============================================================================
@@ -29,7 +37,7 @@ export const CompanyIdAsCompanyIdSchema = z.object({
  * Schema per ID Company
  */
 export const CompanyIdSchema = z.object({
-  id: createIdSchema("Company ID non valido")
+  id: createIdSchema("Company ID non valido"),
 });
 
 // ============================================================================
@@ -77,7 +85,9 @@ export const BaseCompanySchema = z
     status: CompanyStatusSchema.default("ACTIVE"),
     entityType: CompanyTypeEntitySchema.default("JURIDICAL"),
 
-    legalAddressId: createIdSchema("LegalAddressId non valido").optional().nullable(),
+    legalAddressId: createIdSchema("LegalAddressId non valido")
+      .optional()
+      .nullable(),
 
     // ===== Dati Fiscali ITALIANI =====
     vatNumber: z
@@ -154,8 +164,8 @@ export const BaseCompanySchema = z
     assignedUserId: UserIdSchema.optional().nullable(),
 
     // ===== Campi Custom =====
-    customFields: z.json().optional().nullable(),
-    openingHours: z.json().optional().nullable(),
+    customFields: InputJsonValueSchema.optional().nullable(),
+    openingHours: InputJsonValueSchema.optional().nullable(),
   })
   .strict();
 
@@ -168,8 +178,8 @@ export const UpdateCompanySchema = BaseCompanySchema.partial().strict();
  * Schema per Query Parameters Company
  */
 export const CompanyQueryBaseSchema = z.object({
-  page: positiveNumbersSchema.default(1),
-  limit: positiveNumbersSchema.default(10),
+  page: pageSchema,
+  limit: limitSchema,
   search: z.string().optional(),
 
   status: CompanyStatusSchema.optional(),
@@ -187,3 +197,17 @@ export const CompanyQueryBaseSchema = z.object({
   sortOrder: sortOrderSchema,
 });
 
+/**
+ * Schema per Creazione note
+ */
+export const CreateCompanyNoteSchema = z.object({
+  companyId: createIdSchema("Company ID necessario"),
+  title: z.string().max(255),
+  content: z.string(),
+});
+
+/**
+ * Schema per Aggiornamento note
+ */
+export const UpdateCompanyNoteSchema =
+  CreateCompanyNoteSchema.omit("companyId");

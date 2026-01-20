@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { UserRoleSchema } from "./role";
 import { UserIdSchema } from "./base";
-import { dateStringSchema, emailSchema } from "../utils";
+import { dateStringSchema, emailSchema, PhoneSchema } from "../utils";
 
 // ============================================================================
 // ENUMS
@@ -37,13 +37,6 @@ export const PasswordSchema = z
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
     "Password deve contenere maiuscola, minuscola e numero"
   );
-
-export const PhoneSchema = z
-  .string()
-  .max(20, "Telefono troppo lungo")
-  .regex(/^[+]?[\d\s()-]*$/, "Formato telefono non valido")
-  .optional()
-  .nullable();
 
 /**
  * Schema base per User (senza details)

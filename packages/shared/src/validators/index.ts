@@ -6,6 +6,8 @@ export * from './role';
 export * from './contact';
 export * from './company';
 export * from './customer';
+export * from './supplier';
 export * from './address';
 export * from './language';
 export * from './country';
+export * from './payment';

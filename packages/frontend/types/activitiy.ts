@@ -7,6 +7,7 @@ export type {
   ActivityOutcome,
   Activity,
   ActivityQueryInput,
+  ActivityFormData,
  } from '@mini-erp/shared/types'
 
 export interface ActivityDashboardStats {

@@ -1,4 +1,4 @@
-import { Response, NextFunction } from "express";
+import { Response } from "express";
 import {
   buildCustomerWhereClause,
   buildPagination,
@@ -7,9 +7,15 @@ import {
 } from "../helpers/company";
 import { prisma } from "../config/prisma-client";
 import { calculateCustomerStats, validateFiscalData } from "../utils/company";
-import { CustomerQueryInput } from "../validators/customer";
 import { formatPaginatedResponse } from "../utils/response";
-import { AuthenticatedValidatedRequest } from '@/types/validate';
+import { AuthenticatedValidatedRequest } from "@/types/validate";
+import {
+  CustomerIdInput,
+  CustomerQueryInput,
+  UpdateCustomerCompanyInput,
+  UpdateCustomerInput,
+} from "@mini-erp/shared";
+import asyncHandler from "@/middleware/async-handler";
 
 // ============================================================================
 // CUSTOMER CONTROLLERS
@@ -20,12 +26,8 @@ import { AuthenticatedValidatedRequest } from '@/types/validate';
  * @route   GET /api/customers
  * @access  Private (customer:read)
  */
-export const getAllCustomers = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const getAllCustomers = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const {
       page = 1,
       limit = 10,
@@ -35,7 +37,7 @@ export const getAllCustomers = async (
     } = req.validatedQuery as CustomerQueryInput;
 
     const where = buildCustomerWhereClause(filters as any);
-    const { skip, take } = buildPagination(Number(page), Number(limit));
+    const { skip, take } = buildPagination(page, limit);
 
     const [customers, total] = await Promise.all([
       prisma.customer.findMany({
@@ -43,34 +45,26 @@ export const getAllCustomers = async (
         skip,
         take,
         include: getCustomerInclude(false),
-        orderBy: { id: sortOrder as any },
+        orderBy: { id: sortOrder },
       }),
       prisma.customer.count({ where }),
     ]);
 
-    res.json(
-      formatPaginatedResponse(customers, total, Number(page), Number(limit))
-    );
-  } catch (error) {
-    next(error);
-  }
-};
+    res.json(formatPaginatedResponse(customers, total, page, limit));
+  },
+);
 
 /**
  * @desc    Ottieni customer per ID
  * @route   GET /api/customers/:id
  * @access  Private (customer:read)
  */
-export const getCustomerById = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const getCustomerById = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as CustomerIdInput;
 
     const customer = await prisma.customer.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: getCustomerInclude(true),
     });
 
@@ -91,22 +85,16 @@ export const getCustomerById = async (
         stats,
       },
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Crea nuovo customer (con company)
  * @route   POST /api/customers
  * @access  Private (customer:create)
  */
-export const createCustomer = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const createCustomer = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const { company: companyData, ...customerData } = req.validatedBody;
 
     // Genera codice company se non fornito
@@ -215,27 +203,21 @@ export const createCustomer = async (
       message: "Customer creato con successo",
       data: customer,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Aggiorna customer
  * @route   PUT /api/customers/:id
  * @access  Private (customer:update)
  */
-export const updateCustomer = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const data = req.validatedBody;
+export const updateCustomer = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as CustomerIdInput;
+    const data = req.validatedBody as UpdateCustomerInput;
 
     const existing = await prisma.customer.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!existing) {
@@ -261,7 +243,7 @@ export const updateCustomer = async (
     }
 
     const customer = await prisma.customer.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data,
       include: getCustomerInclude(true),
     });
@@ -271,27 +253,21 @@ export const updateCustomer = async (
       message: "Customer aggiornato con successo",
       data: customer,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Aggiorna company del customer
  * @route   PUT /api/customers/:id/company
  * @access  Private (customer:update)
  */
-export const updateCustomerCompany = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const companyData = req.validatedBody;
+export const updateCustomerCompany = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as CustomerIdInput;
+    const companyData = req.validatedBody as UpdateCustomerCompanyInput;
 
     const customer = await prisma.customer.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: { company: true },
     });
 
@@ -344,7 +320,7 @@ export const updateCustomerCompany = async (
     }
 
     const updatedCustomer = await prisma.customer.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: {
         company: {
           update: companyData,
@@ -358,27 +334,21 @@ export const updateCustomerCompany = async (
       message: "Company aggiornata con successo",
       data: updatedCustomer,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Aggiorna lead status
  * @route   PATCH /api/customers/:id/lead-status
  * @access  Private (customer:update)
  */
-export const updateLeadStatus = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const updateLeadStatus = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as CustomerIdInput;
     const { leadStatus, notes } = req.validatedBody;
 
     const customer = await prisma.customer.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!customer) {
@@ -390,7 +360,7 @@ export const updateLeadStatus = async (
     }
 
     const updatedCustomer = await prisma.customer.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: { leadStatus },
       include: getCustomerInclude(false),
     });
@@ -412,26 +382,20 @@ export const updateLeadStatus = async (
       message: "Lead status aggiornato",
       data: updatedCustomer,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Ottieni statistiche customer
  * @route   GET /api/customers/:id/stats
  * @access  Private (customer:read)
  */
-export const getCustomerStats = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const getCustomerStats = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as CustomerIdInput;
 
     const customer = await prisma.customer.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         _count: {
           select: {
@@ -515,7 +479,7 @@ export const getCustomerStats = async (
           totalQuantity: item._sum.quantity,
           orderCount: item._count.id,
         };
-      })
+      }),
     );
 
     const stats = calculateCustomerStats(customer);
@@ -532,26 +496,20 @@ export const getCustomerStats = async (
         },
       },
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Elimina customer
  * @route   DELETE /api/customers/:id
  * @access  Private (customer:delete)
  */
-export const deleteCustomer = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const deleteCustomer = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as CustomerIdInput;
 
     const customer = await prisma.customer.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         _count: {
           select: {
@@ -587,14 +545,12 @@ export const deleteCustomer = async (
 
     // Elimina customer (cascade elimina anche company)
     await prisma.customer.delete({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     res.json({
       success: true,
       message: "Customer eliminato con successo",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);

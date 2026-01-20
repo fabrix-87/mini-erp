@@ -5,8 +5,7 @@ import { useState, useEffect } from "react";
 import { Activity, ActivityFormData } from "@/types/activitiy";
 import { useCustomer } from "@/hooks/use-company";
 import { useContactsByCompany } from "@/hooks/use-contact";
-import { Customer, CustomerQueryParams } from "@/types/customer";
-import { Contact } from "@/types/contact";
+import { Customer, CustomerQueryInput } from "@/types/customer";
 import { getCustomers } from "@/services/client/company";
 
 interface UseActivityFormProps {
@@ -105,7 +104,7 @@ export function useActivityForm({
       const params = {
         search: query,
         limit: 10
-      } as CustomerQueryParams
+      } as CustomerQueryInput
       const response = await getCustomers(params);
       setCustomers(response.data || []);
     } catch (error) {

@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCustomers } from "@/hooks/use-company";
-import { CustomerQueryParams } from "@/types/customer";
+import { CustomerQueryInput } from "@/types/customer";
 import { CompanyListTable } from "@/components/company/company-list-table";
 import { CompanyListSkeleton } from "@/components/company/company-list-skeleton";
 import { CompanyListStats } from "@/components/company/company-list-stats";
@@ -22,7 +22,7 @@ import { debounce } from "@/lib/utils";
 export default function CustomersPage() {
   const router = useRouter();
 
-  const [params, setParams] = useState<CustomerQueryParams>({
+  const [params, setParams] = useState<CustomerQueryInput>({
     page: 1,
     limit: 20,
     sortBy: "updatedAt",
@@ -57,7 +57,7 @@ export default function CustomersPage() {
     debouncedSetSearchParams(search); // Aggiorna i parametri con debounce
   };
 
-  const handleFilterChange = (key: keyof CustomerQueryParams, value: any) => {
+  const handleFilterChange = (key: keyof CustomerQueryInput, value: any) => {
     setParams({ ...params, [key]: value, page: 1 });
   };
 
@@ -114,7 +114,7 @@ export default function CustomersPage() {
           value={params.type}
           onValueChange={(value) => handleFilterChange("type", value)}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-45">
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>
           <SelectContent>
@@ -131,7 +131,7 @@ export default function CustomersPage() {
           value={params.segment}
           onValueChange={(value) => handleFilterChange("segment", value)}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-45">
             <SelectValue placeholder="Segmento" />
           </SelectTrigger>
           <SelectContent>
@@ -148,7 +148,7 @@ export default function CustomersPage() {
           value={params.leadStatus}
           onValueChange={(value) => handleFilterChange("leadStatus", value)}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-45">
             <SelectValue placeholder="Lead Status" />
           </SelectTrigger>
           <SelectContent>

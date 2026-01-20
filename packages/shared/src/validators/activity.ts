@@ -1,5 +1,5 @@
 import z from "zod";
-import { createIdSchema, emailSchema, isoDateSchema, positiveNumbersSchema, sortOrderSchema } from "../utils";
+import { createIdSchema, emailSchema, isoDateSchema, limitSchema, pageSchema, positiveNumbersSchema, sortOrderSchema } from "../utils";
 import { UserIdSchema } from "./base";
 
 // ============================================================================
@@ -143,14 +143,8 @@ export const ActivityIdAsActivityIdSchema = z.object({
  */
 export const ActivityQuerySchema = z
   .object({
-    page: z
-      .string()
-      .optional()
-      .transform((val) => (val ? parseInt(val, 10) : 1)),
-    limit: z
-      .string()
-      .optional()
-      .transform((val) => (val ? parseInt(val, 10) : 20)),
+    page: pageSchema,
+    limit: limitSchema,
     search: z.string().optional(),
 
     // Filtri

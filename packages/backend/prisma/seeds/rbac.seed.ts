@@ -103,6 +103,27 @@ async function seedRBAC() {
       { code: 'warehouse:update', resource: 'warehouse', action: 'update', description: 'Modifica magazzino' },
       { code: 'warehouse:manage', resource: 'warehouse', action: 'manage', description: 'Gestione completa magazzino' },
 
+      // Payment permissions
+      { code: 'payment:read', resource: 'payment', action: 'read', description: 'Lettura pagamenti' },
+      { code: 'payment:create', resource: 'payment', action: 'create', description: 'Creazione pagamenti' },
+      { code: 'payment:update', resource: 'payment', action: 'update', description: 'Modifica pagamenti' },
+      { code: 'payment:delete', resource: 'payment', action: 'delete', description: 'Elimina pagamenti' },
+      { code: 'payment:manage', resource: 'payment', action: 'manage', description: 'Gestione completa pagamenti' },
+
+      // Tax permissions
+      { code: 'tax:read', resource: 'tax', action: 'read', description: 'Lettura aliquota tasse' },
+      { code: 'tax:create', resource: 'tax', action: 'create', description: 'Creazione aliquota tasse' },
+      { code: 'tax:update', resource: 'tax', action: 'update', description: 'Modifica aliquota tasse' },
+      { code: 'tax:delete', resource: 'tax', action: 'delete', description: 'Elimina aliquota tasse' },
+      { code: 'tax:manage', resource: 'tax', action: 'manage', description: 'Gestione completa aliquota tasse' },
+
+      // pricelist permissions
+      { code: 'pricelist:read', resource: 'pricelist', action: 'read', description: 'Lettura Listini' },
+      { code: 'pricelist:create', resource: 'pricelist', action: 'create', description: 'Creazione Listini' },
+      { code: 'pricelist:update', resource: 'pricelist', action: 'update', description: 'Modifica Listini' },
+      { code: 'pricelist:delete', resource: 'pricelist', action: 'delete', description: 'Elimina Listini' },
+      { code: 'pricelist:manage', resource: 'pricelist', action: 'manage', description: 'Gestione completa Listini' },
+
       // Report permissions
       { code: 'report:read', resource: 'report', action: 'read', description: 'Visualizzazione report' },
       { code: 'report:export', resource: 'report', action: 'export', description: 'Esportazione report' },

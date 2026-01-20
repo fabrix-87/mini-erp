@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useSuppliers } from "@/hooks/use-company";
-import { SupplierQueryParams } from "@/types/supplier";
+import { SupplierQueryInput } from "@/types/supplier";
 import { CompanyListTable } from "@/components/company/company-list-table";
 import { CompanyListSkeleton } from "@/components/company/company-list-skeleton";
 import { CompanyListStats } from "@/components/company/company-list-stats";
@@ -22,7 +22,7 @@ import { CompanyListStats } from "@/components/company/company-list-stats";
 export default function SuppliersPage() {
   const router = useRouter();
 
-  const [params, setParams] = useState<SupplierQueryParams>({
+  const [params, setParams] = useState<SupplierQueryInput>({
     page: 1,
     limit: 20,
     sortBy: "updatedAt",
@@ -38,7 +38,7 @@ export default function SuppliersPage() {
     setParams({ ...params, search, page: 1 });
   };
 
-  const handleFilterChange = (key: keyof SupplierQueryParams, value: any) => {
+  const handleFilterChange = (key: keyof SupplierQueryInput, value: any) => {
     setParams({ ...params, [key]: value, page: 1 });
   };
 
@@ -97,7 +97,7 @@ export default function SuppliersPage() {
             handleFilterChange("minRating", parseInt(value))
           }
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-45">
             <SelectValue placeholder="Rating minimo" />
           </SelectTrigger>
           <SelectContent>

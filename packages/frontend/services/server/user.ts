@@ -1,15 +1,14 @@
 // services/server/user.ts
 
 import { serverApi } from '@/lib/server/api';
-import type {
-  PaginatedResponse,
-} from '@/types/api';
 
 import type {
   User,
   UpdateUserDetailsInput,
   UpdateUserProfileInput
 } from '@/types/user'
+import { ApiResponse } from '@mini-erp/shared';
+import { PaginatedResponse } from '@mini-erp/shared/types';
 
 // ============================================================================
 // Cache Tags
@@ -91,10 +90,10 @@ export async function getAllUsers(params?: {
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
   revalidate?: number | false;
-}): Promise<PaginatedResponse<User>> {
+}): Promise<ApiResponse<User[]>> {
   const { revalidate = 30, ...queryParams } = params || {};
 
-  return serverApi.get<PaginatedResponse<User>>('/users', {
+  return serverApi.get<ApiResponse<User[]>>('/users', {
     params: queryParams,
     revalidate,
     tags: [USER_TAGS.list],
@@ -240,7 +239,7 @@ export async function searchUsers(
     limit?: number;
     revalidate?: number | false;
   }
-): Promise<PaginatedResponse<User>> {
+): Promise<ApiResponse<User[]>> {
   return getAllUsers({
     search: query,
     limit: options?.limit ?? 10,
@@ -258,7 +257,7 @@ export async function getUsersByRole(
     limit?: number;
     revalidate?: number | false;
   }
-): Promise<PaginatedResponse<User>> {
+): Promise<ApiResponse<User[]>> {
   return getAllUsers({
     roleId,
     page: options?.page,
@@ -274,7 +273,7 @@ export async function getActiveUsers(options?: {
   page?: number;
   limit?: number;
   revalidate?: number | false;
-}): Promise<PaginatedResponse<User>> {
+}): Promise<ApiResponse<User[]>> {
   return getAllUsers({
     active: true,
     page: options?.page,
@@ -296,7 +295,7 @@ export async function getUserStats(): Promise<{
   inactive: number;
   byRole: Record<string, number>;
 }> {
-  const users = await getAllUsers({ limit: 1000, revalidate: 60 });
+  const users = await getAllUsers({ limit: 1000, revalidate: 60 }) as PaginatedResponse<User>;
 
   const stats = {
     total: users.pagination.totalItems,

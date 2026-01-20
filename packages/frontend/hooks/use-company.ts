@@ -19,9 +19,9 @@ import {
   deleteSupplier,
   getDashboardStats as getSupplierStats,
 } from "@/lib/client/modules/supplier";
-import { Customer, CustomerQueryParams } from "@/types/customer";
-import { Supplier, SupplierQueryParams } from "@/types/supplier";
-import { CompanyQueryParams, CompanyType } from "@/types/company";
+import { Customer, CustomerQueryInput, CustomerType } from "@/types/customer";
+import { Supplier, SupplierQueryInput } from "@/types/supplier";
+import { CompanyQueryInput } from "@/types/company";
 import { createAddress, updateAddress } from "@/lib/client/modules/address";
 import { Address } from "@/types/address";
 import {
@@ -37,10 +37,12 @@ import {
  * Hook per recuperare la lista dei clienti
  */
 export function useCompanies(
-  params: CompanyQueryParams = {
+  params: CompanyQueryInput = {
     page: 1,
     limit: 20,
-  }
+    sortOrder: "asc",
+    sortBy: "companyName",
+  },
 ) {
   return useQuery({
     queryKey: ["companies", params],
@@ -56,10 +58,12 @@ export function useCompanies(
  * Hook per recuperare la lista dei clienti
  */
 export function useCustomers(
-  params: CustomerQueryParams = {
+  params: CustomerQueryInput = {
     page: 1,
     limit: 20,
-  }
+    sortBy: "companyName",
+    sortOrder: "asc",
+  },
 ) {
   return useQuery({
     queryKey: ["customers", params],
@@ -96,7 +100,7 @@ export function useCreateCustomer() {
 
   return useMutation({
     mutationFn: async (
-      data: Partial<Customer> & { legalAddress?: Partial<Address> }
+      data: Partial<Customer> & { legalAddress?: Partial<Address> },
     ) => {
       // Estrai legalAddress dai dati
       const { legalAddress, ...customerData } = data;
@@ -106,11 +110,15 @@ export function useCreateCustomer() {
 
       // Se c'è un indirizzo legale, crealo associato al nuovo cliente
       if (legalAddress && customerResponse.data?.id) {
-        const newAddress = await createAddress(customerResponse.data.companyId, { // Nell'indirizzo metto l'id della company
-          ...legalAddress,
-          addressType: "LEGAL",
-          isPrimary: true,
-        });
+        const newAddress = await createAddress(
+          customerResponse.data.companyId,
+          {
+            // Nell'indirizzo metto l'id della company
+            ...legalAddress,
+            addressType: "LEGAL",
+            isPrimary: true,
+          },
+        );
         // Setta l'indirizzo legale appena creato nella company del fornitore
         await updateSupplierCompany(customerResponse.data.id, {
           legalAddressId: newAddress.data.id,
@@ -164,10 +172,11 @@ export function useUpdateCustomer(id: number) {
           await updateAddress(legalAddressId, legalAddress);
         } else {
           // Crea un nuovo indirizzo
-          const newAddress = await createAddress(companyId, {  // Nell'indirizzo metto l'id della company
+          const newAddress = await createAddress(companyId, {
+            // Nell'indirizzo metto l'id della company
             ...legalAddress,
             addressType: "LEGAL",
-            isPrimary: true
+            isPrimary: true,
           });
           // Setta l'indirizzo legale appena creato nella company del fornitore
           await updateSupplierCompany(id, {
@@ -214,7 +223,14 @@ export function useDeleteCustomer() {
 /**
  * Hook per recuperare la lista dei fornitori
  */
-export function useSuppliers(params: SupplierQueryParams = { page: 1 }) {
+export function useSuppliers(
+  params: SupplierQueryInput = {
+    page: 1,
+    limit: 20,
+    sortBy: "companyName",
+    sortOrder: "asc",
+  },
+) {
   return useQuery({
     queryKey: ["suppliers", params],
     queryFn: () => getSuppliers(params),
@@ -250,7 +266,7 @@ export function useCreateSupplier() {
 
   return useMutation({
     mutationFn: async (
-      data: Partial<Supplier> & { legalAddress?: Partial<Address> }
+      data: Partial<Supplier> & { legalAddress?: Partial<Address> },
     ) => {
       // Estrai legalAddress dai dati
       const { legalAddress, ...supplierData } = data;
@@ -260,11 +276,14 @@ export function useCreateSupplier() {
 
       // Se c'è un indirizzo legale, crealo associato al nuovo fornitore
       if (legalAddress && supplierResponse.data?.id) {
-        const newAddress = await createAddress(supplierResponse.data.companyId, {
-          ...legalAddress,
-          addressType: "LEGAL",
-          isPrimary: true
-        });
+        const newAddress = await createAddress(
+          supplierResponse.data.companyId,
+          {
+            ...legalAddress,
+            addressType: "LEGAL",
+            isPrimary: true,
+          },
+        );
         // Setta l'indirizzo legale appena creato nella company del fornitore
         await updateSupplierCompany(supplierResponse.data.id, {
           legalAddressId: newAddress.data.id,
@@ -369,9 +388,9 @@ export function useDeleteSupplier() {
  * Hook generico per recuperare un'entità (customer o supplier)
  */
 export function useCompanyEntity(
-  type: CompanyType,
+  type: CustomerType,
   id: number | undefined,
-  enabled = true
+  enabled = true,
 ) {
   return useQuery({
     queryKey: [type, id],
@@ -393,16 +412,16 @@ export function useCompanyEntity(
  * Hook generico per la lista di entità
  */
 export function useCompanyEntities(
-  type: CompanyType,
-  params: CustomerQueryParams | SupplierQueryParams = {}
+  type: CustomerType,
+  params: CustomerQueryInput | SupplierQueryInput,
 ) {
   return useQuery({
     queryKey: [type + "s", params],
     queryFn: async () => {
       const response =
         type === "CUSTOMER"
-          ? await getCustomers(params as CustomerQueryParams)
-          : await getSuppliers(params as SupplierQueryParams);
+          ? await getCustomers(params as CustomerQueryInput)
+          : await getSuppliers(params as SupplierQueryInput);
 
       return response.data;
     },

@@ -1,14 +1,14 @@
 import { ApiResponse } from "@/types/api";
-import { Customer, CustomerQueryParams, CustomerStats } from "@/types/customer";
+import { Customer, CustomerQueryInput, CustomerStats } from "@/types/customer";
 import api from "@/lib/client/api";
-import { BaseCompany, CompanyQueryParams } from "@/types/company";
+import { Company, CompanyQueryInput } from "@/types/company";
 
 /**
  * Recupera la lista dei clienti con filtri e paginazione
  */
 export const getCompanies = async (
-  params: CompanyQueryParams
-): Promise<ApiResponse<BaseCompany[]>> => {
+  params: CompanyQueryInput
+): Promise<ApiResponse<Company[]>> => {
     const defaultParams = { limit: 20, page: 1 };
 
     // I parametri forniti dall'utente (contenuti in 'params') SOVRASCRIVERANNO i default.
@@ -24,7 +24,7 @@ export const getCompanies = async (
  * Recupera la lista dei clienti con filtri e paginazione
  */
 export const getCustomers = async (
-  params: CustomerQueryParams
+  params: CustomerQueryInput
 ): Promise<ApiResponse<Customer[]>> => {
     const defaultParams = { limit: 20, page: 1 };
 

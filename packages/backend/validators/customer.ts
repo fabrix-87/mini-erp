@@ -6,11 +6,12 @@ import {
 import {
   CreateCustomerSchema,
   CustomerIdSchema,
+  CustomerQuerySchema,
+  PaymentMethodIdSchema,
   UpdateCustomerCompanySchema,
   UpdateCustomerSchema,
   UpdateLeadStatusSchema,
 } from "@mini-erp/shared/validators";
-import { CustomerQuerySchema } from "./dashboard";
 
 // ============================================================================
 // VALIDATION MIDDLEWARE EXPORTS

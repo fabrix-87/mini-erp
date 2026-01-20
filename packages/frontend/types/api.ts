@@ -37,59 +37,14 @@ export interface AuthResponse extends AuthTokens {
 }
 
 // ============ API Response Types ============
-export interface ApiResponse<T = any> {
-  status: "success" | "fail" | "error";
-  message?: string;
-  data: T;
-  results?: number;
-  pagination?: PaginationInfo;
-  errors?: ValidationError[];
-}
+export type {
+  ApiResponse,
+  PaginationInfo,
+  ValidationError,
+  ApiError,
+  ApiErrorResponse,
+  PaginatedResponse
+} from '@mini-erp/shared'
 
-export interface PaginationInfo {
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-  itemsPerPage: number;
-  hasNextPage: boolean;
-  hasPrevPage: boolean;
-}
 
-export interface ValidationError {
-  field: string;
-  message: string;
-}
 
-export interface PaginatedResponse<T> {
-  status: "success";
-  results: number;
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalItems: number;
-    itemsPerPage: number;
-    hasNextPage: boolean;
-    hasPrevPage: boolean;
-  };
-  data: T[];
-}
-
-export interface ApiError {
-  statusCode?: number;
-  status?: string;
-  message?: string;
-  errors?: Array<{
-    field?: string;
-    message: string;
-  }>;
-}
-
-export interface ApiErrorResponse {
-  status?: string;
-  error?: ApiError;
-  message?: string;
-  errors?: Array<{
-    field?: string;
-    message: string;
-  }>;
-}

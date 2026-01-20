@@ -1,15 +1,15 @@
 // lib/api/modules/supplier.ts
 
-import { ApiResponse } from "@/types/api";
+import { ApiResponse, PaginatedResponse } from "@/types/api";
 import api from "../api";
-import { Supplier, SupplierQueryParams, SupplierStats } from "@/types/supplier";
+import { Supplier, SupplierQueryInput, SupplierStats } from "@/types/supplier";
 
 /**
  * Recupera la lista dei fornitori con filtri e paginazione
  */
 export const getSuppliers = async (
-  params: SupplierQueryParams
-): Promise<ApiResponse<Supplier[]>> => {
+  params: SupplierQueryInput
+): Promise<PaginatedResponse<Supplier[]>> => {
   const response = await api.get('/suppliers', { params });
   return response.data;
 };

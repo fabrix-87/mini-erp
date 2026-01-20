@@ -4,13 +4,25 @@ import { z } from "zod";
 /**
  * Schema base per gli ID
  * @param errorMessage
- * @returns <z.object>
+ * @returns positive number
  */
 export const createIdSchema = (errorMessage: string) =>
-  z
-    .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(z.number().int().positive(errorMessage));
+  z.preprocess(
+    // 1. Se arriva una stringa vuota o null, la trasformiamo in undefined PRIMA di validare
+    (val) => (val === "" || val === null ? undefined : val),
+
+    // 2. Ora applichiamo la logica di conversione e validazione
+    z
+      .unknown()
+      .transform((val) => Number(val))
+      .refine((val) => !isNaN(val), { message: errorMessage })
+      .pipe(
+        z
+          .number()
+          .int({ message: errorMessage })
+          .positive({ message: errorMessage }),
+      ),
+  );
 
 /**
  * Schema per date input da form che gestisce stringhe vuote
@@ -88,21 +100,12 @@ export const positiveNumbersSchema = z.number().int().positive();
 /**
  * Schema per telefono
  */
-export const phoneSchema = (options?: {
-  required?: boolean;
-  international?: boolean;
-}) => {
-  const pattern = options?.international
-    ? /^[+]?[\d\s()-]*$/
-    : /^[+]?39[\s]?[\d\s()-]*$/;
-
-  const baseSchema = z
-    .string()
-    .regex(pattern, "Formato telefono non valido")
-    .max(20, "Telefono troppo lungo");
-
-  return options?.required ? baseSchema : baseSchema.optional().nullable();
-};
+export const PhoneSchema = z
+  .string()
+  .max(20, "Telefono troppo lungo")
+  .regex(/^[+]?[\d\s()-]*$/, "Formato telefono non valido")
+  .optional()
+  .nullable();
 
 /**
  * Schema per URL (Zod v4)
@@ -233,16 +236,64 @@ export const CreditLimitSchema = z
 /**
  * Schema per percentuale (0-100)
  */
-export const percentageSchema = (required = false) => {
-  const baseSchema = z
-    .number()
-    .min(0, "La percentuale non può essere negativa")
-    .max(100, "La percentuale non può superare 100");
-
-  return required ? baseSchema : baseSchema.optional().nullable();
-};
+export const PercentageSchema = z
+  .number()
+  .min(0, "La percentuale non può essere negativa")
+  .max(100, "La percentuale non può superare 100");
 
 /**
- * Schema per direzione di ordinamento (asc, desc)
+ * Schema per direzione Ordinamento (asc, desc)
  */
 export const sortOrderSchema = z.enum(["asc", "desc"]).default("asc");
+
+/**
+ * Schema per pagina paginazione
+ */
+export const pageSchema = z
+  .string()
+  .optional()
+  .transform((val) => (val ? parseInt(val, 10) : 1));
+
+/**
+ * Schema per limite paginazione
+ */
+export const limitSchema = z
+  .string()
+  .optional()
+  .transform((val) => (val ? parseInt(val, 10) : 20));
+
+// Definisci uno schema compatibile con InputJsonValue di Prisma
+export const InputJsonValueSchema: z.ZodType<any> = z.lazy(() =>
+  z.union([
+    z.string(),
+    z.number(),
+    z.boolean(),
+    z.null(),
+    z.record(z.string(), InputJsonValueSchema),
+    z.array(InputJsonValueSchema),
+  ]),
+);
+
+/**
+ * Trasforma stringe "true"/"false" in booleani
+ */
+export const QueryBooleanSchema = z
+  .enum(["true", "false"])
+  .transform((val) => val === "true")
+  .optional();
+
+/**
+ * // Helper per numeri sicuri da query string (gestisce stringa vuota e NaN)
+ * @param errorMessage
+ * @returns z.object
+ */
+export const queryNumberSchema = (errorMessage: string) =>
+  z.preprocess(
+    (val) => (val === "" || val === null ? undefined : val),
+    z
+      .unknown()
+      .transform((val) => (val !== undefined ? Number(val) : undefined))
+      .refine((val) => val === undefined || !isNaN(val), {
+        message: errorMessage,
+      }),
+  );

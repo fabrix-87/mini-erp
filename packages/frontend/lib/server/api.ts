@@ -2,7 +2,7 @@
 
 import { ServerApiError, ServerRequestOptions } from "@/types/server-client";
 import { getCookiesString } from "./cookies";
-import { ApiResponse, ApiError as ApiErrorType } from "@/types/api";
+import { ApiResponse, ApiError as ApiErrorType } from '@mini-erp/shared';
 import { getFingerprintForSSR } from "./fingerprint";
 
 // ============================================================================

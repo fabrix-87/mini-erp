@@ -1,15 +1,14 @@
-import express from 'express';
-import { authenticateToken, authorize } from '../middleware/auth';
-import { validate } from '../middleware/validation';
+import express from "express";
+import { authenticateToken, authorize } from "../middleware/auth";
+import { validate } from "../middleware/validation";
 import {
   CreatePaymentMethodSchema,
   UpdatePaymentMethodSchema,
   UpdatePaymentTermDetailsSchema,
   CalculateDueDatesSchema,
   PaymentMethodIdSchema,
-  PaymentQuerySchema,
   TogglePaymentStatusSchema,
-} from '../validators/payment';
+} from "@mini-erp/shared/validators";
 import {
   getAllPaymentMethods,
   getPaymentMethodById,
@@ -19,7 +18,16 @@ import {
   togglePaymentMethodActive,
   deletePaymentMethod,
   calculateDueDates,
-} from '../controllers/payment';
+} from "../controllers/payment";
+import {
+  validatePaymentQuery,
+  validatePaymentMethodIdParam,
+  validateCreatePaymentMethod,
+  validateUpdatePaymentMethod,
+  validateUpdatePaymentTermDetails,
+  validateTogglePaymentMethod,
+  validateCalcolateDueDates,
+} from "@/validators/payment";
 
 const router = express.Router();
 
@@ -34,11 +42,11 @@ const router = express.Router();
  * @query   active, sortBy, sortOrder
  */
 router.get(
-  '/',
+  "/",
   authenticateToken,
-  authorize(['payment:read', 'payment:manage']),
-  validate(PaymentQuerySchema, 'Payment query', { source: ['query'] }),
-  getAllPaymentMethods
+  authorize(["payment:read", "payment:manage"]),
+  validatePaymentQuery,
+  getAllPaymentMethods,
 );
 
 /**
@@ -47,11 +55,11 @@ router.get(
  * @access  Private (payment:read)
  */
 router.get(
-  '/:id',
+  "/:id",
   authenticateToken,
-  authorize(['payment:read', 'payment:manage']),
-  validate(PaymentMethodIdSchema, 'Payment Method ID', { source: ['params'] }),
-  getPaymentMethodById
+  authorize(["payment:read", "payment:manage"]),
+  validatePaymentMethodIdParam,
+  getPaymentMethodById,
 );
 
 /**
@@ -60,11 +68,11 @@ router.get(
  * @access  Private (payment:create)
  */
 router.post(
-  '/',
+  "/",
   authenticateToken,
-  authorize(['payment:create', 'payment:manage']),
-  validate(CreatePaymentMethodSchema, 'Payment method creation'),
-  createPaymentMethod
+  authorize(["payment:create", "payment:manage"]),
+  validateCreatePaymentMethod,
+  createPaymentMethod,
 );
 
 /**
@@ -73,12 +81,12 @@ router.post(
  * @access  Private (payment:update)
  */
 router.put(
-  '/:id',
+  "/:id",
   authenticateToken,
-  authorize(['payment:update', 'payment:manage']),
-  validate(PaymentMethodIdSchema, 'Payment Method ID', { source: ['params'] }),
-  validate(UpdatePaymentMethodSchema, 'Payment method update'),
-  updatePaymentMethod
+  authorize(["payment:update", "payment:manage"]),
+  validatePaymentMethodIdParam,
+  validateUpdatePaymentMethod,
+  updatePaymentMethod,
 );
 
 /**
@@ -87,12 +95,12 @@ router.put(
  * @access  Private (payment:update)
  */
 router.put(
-  '/:id/details',
+  "/:id/details",
   authenticateToken,
-  authorize(['payment:update', 'payment:manage']),
-  validate(PaymentMethodIdSchema, 'Payment Method ID', { source: ['params'] }),
-  validate(UpdatePaymentTermDetailsSchema, 'Payment term details'),
-  updatePaymentTermDetails
+  authorize(["payment:update", "payment:manage"]),
+  validatePaymentMethodIdParam,
+  validateUpdatePaymentTermDetails,
+  updatePaymentTermDetails,
 );
 
 /**
@@ -101,12 +109,12 @@ router.put(
  * @access  Private (payment:update)
  */
 router.patch(
-  '/:id/toggle-active',
+  "/:id/toggle-active",
   authenticateToken,
-  authorize(['payment:update', 'payment:manage']),
-  validate(PaymentMethodIdSchema, 'Payment Method ID', { source: ['params'] }),
-  validate(TogglePaymentStatusSchema, 'Toggle status'),
-  togglePaymentMethodActive
+  authorize(["payment:update", "payment:manage"]),
+  validatePaymentMethodIdParam,
+  validateTogglePaymentMethod,
+  togglePaymentMethodActive,
 );
 
 /**
@@ -116,12 +124,12 @@ router.patch(
  * @body    invoiceDate, totalAmount
  */
 router.post(
-  '/:id/calculate-due-dates',
+  "/:id/calculate-due-dates",
   authenticateToken,
-  authorize(['payment:read', 'payment:manage']),
-  validate(PaymentMethodIdSchema, 'Payment Method ID', { source: ['params'] }),
-  validate(CalculateDueDatesSchema, 'Calculate due dates'),
-  calculateDueDates
+  authorize(["payment:read", "payment:manage"]),
+  validatePaymentMethodIdParam,
+  validateCalcolateDueDates,
+  calculateDueDates,
 );
 
 /**
@@ -130,11 +138,11 @@ router.post(
  * @access  Private (payment:delete)
  */
 router.delete(
-  '/:id',
+  "/:id",
   authenticateToken,
-  authorize(['payment:delete', 'payment:manage']),
-  validate(PaymentMethodIdSchema, 'Payment Method ID', { source: ['params'] }),
-  deletePaymentMethod
+  authorize(["payment:delete", "payment:manage"]),
+  validatePaymentMethodIdParam,
+  deletePaymentMethod,
 );
 
 // ============================================================================

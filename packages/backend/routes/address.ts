@@ -14,7 +14,7 @@ import {
   getAllAddresses,
   setPrimaryAddress,
   updateAddress,
-} from "../controllers/addresses";
+} from "../controllers/address";
 
 const router = express.Router();
 
