@@ -11,3 +11,4 @@ export * from './address';
 export * from './language';
 export * from './country';
 export * from './payment';
+export * from './tax';

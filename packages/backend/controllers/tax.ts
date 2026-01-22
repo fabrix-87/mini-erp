@@ -1,7 +1,19 @@
-import { Response, NextFunction } from 'express';
-import { prisma } from '../config/prisma-client';
-import { Prisma } from '../generated/prisma/client';
-import { AuthenticatedValidatedRequest } from '@/types/validate';
+import { Response } from "express";
+import { prisma } from "../config/prisma-client";
+import { Prisma } from "../generated/prisma/client";
+import { AuthenticatedValidatedRequest } from "@/types/validate";
+import asyncHandler from "@/middleware/async-handler";
+import {
+  CreateTaxRateInput,
+  CreateTaxRuleInput,
+  TaxRateIdParam,
+  TaxRateQueryInput,
+  TaxRuleIdParam,
+  TaxRuleQueryInput,
+  ToggleTaxStatusInput,
+  UpdateTaxRateInput,
+  UpdateTaxRuleInput,
+} from "@mini-erp/shared";
 
 // ============================================================================
 // TAX RATE CONTROLLER
@@ -12,18 +24,18 @@ import { AuthenticatedValidatedRequest } from '@/types/validate';
  * @route   GET /api/tax/rates
  * @access  Private (tax:read)
  */
-export const getAllTaxRates = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { active, sortBy = 'rate', sortOrder = 'asc' } = req.query;
+export const getAllTaxRates = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const {
+      active,
+      sortBy = "rate",
+      sortOrder = "asc",
+    } = req.validatedQuery as TaxRateQueryInput;
 
     const where: Prisma.TaxRateWhereInput = {};
 
     if (active !== undefined) {
-      where.active = active === 'true';
+      where.active = active;
     }
 
     const taxRates = await prisma.taxRate.findMany({
@@ -41,30 +53,24 @@ export const getAllTaxRates = async (
     });
 
     res.status(200).json({
-      success: true,
+      status: "success",
       data: taxRates,
       count: taxRates.length,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Ottieni Tax Rate per ID
  * @route   GET /api/tax/rates/:id
  * @access  Private (tax:read)
  */
-export const getTaxRateById = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const getTaxRateById = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as TaxRateIdParam;
 
     const taxRate = await prisma.taxRate.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         rules: {
           include: {
@@ -76,33 +82,31 @@ export const getTaxRateById = async (
 
     if (!taxRate) {
       res.status(404).json({
-        success: false,
-        message: 'Tax Rate non trovata',
+        status: "fail",
+        message: "Tax Rate non trovata",
       });
       return;
     }
 
     res.status(200).json({
-      success: true,
+      status: "success",
       data: taxRate,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Crea nuova Tax Rate
  * @route   POST /api/tax/rates
  * @access  Private (tax:create)
  */
-export const createTaxRate = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { rate, name, active = true } = req.validatedBody;
+export const createTaxRate = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const {
+      rate,
+      name,
+      active = true,
+    } = req.validatedBody as CreateTaxRateInput;
 
     // Verifica unicità rate
     const existingRate = await prisma.taxRate.findUnique({
@@ -111,8 +115,8 @@ export const createTaxRate = async (
 
     if (existingRate) {
       res.status(400).json({
-        success: false,
-        message: 'Aliquota già esistente',
+        status: "fail",
+        message: "Aliquota già esistente",
       });
       return;
     }
@@ -124,8 +128,8 @@ export const createTaxRate = async (
 
     if (existingName) {
       res.status(400).json({
-        success: false,
-        message: 'Nome già esistente',
+        status: "fail",
+        message: "Nome già esistente",
       });
       return;
     }
@@ -139,51 +143,45 @@ export const createTaxRate = async (
     });
 
     res.status(201).json({
-      success: true,
-      message: 'Tax Rate creata con successo',
+      status: "success",
+      message: "Tax Rate creata con successo",
       data: taxRate,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Aggiorna Tax Rate
  * @route   PUT /api/tax/rates/:id
  * @access  Private (tax:update)
  */
-export const updateTaxRate = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { rate, name, active } = req.validatedBody;
+export const updateTaxRate = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as TaxRateIdParam;
+    const { rate, name, active } = req.validatedBody as UpdateTaxRateInput;
 
     const existingTaxRate = await prisma.taxRate.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!existingTaxRate) {
       res.status(404).json({
-        success: false,
-        message: 'Tax Rate non trovata',
+        status: "fail",
+        message: "Tax Rate non trovata",
       });
       return;
     }
 
     // Se rate cambia, verifica unicità
-    if (rate && rate !== existingTaxRate.rate.toString()) {
+    if (rate && Prisma.Decimal(rate) !== existingTaxRate.rate) {
       const duplicateRate = await prisma.taxRate.findUnique({
         where: { rate: new Prisma.Decimal(rate) },
       });
 
       if (duplicateRate) {
         res.status(400).json({
-          success: false,
-          message: 'Aliquota già esistente',
+          status: "fail",
+          message: "Aliquota già esistente",
         });
         return;
       }
@@ -197,8 +195,8 @@ export const updateTaxRate = async (
 
       if (duplicateName) {
         res.status(400).json({
-          success: false,
-          message: 'Nome già esistente',
+          status: "fail",
+          message: "Nome già esistente",
         });
         return;
       }
@@ -210,76 +208,64 @@ export const updateTaxRate = async (
     if (active !== undefined) updateData.active = active;
 
     const taxRate = await prisma.taxRate.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: updateData,
     });
 
     res.status(200).json({
-      success: true,
-      message: 'Tax Rate aggiornata con successo',
+      status: "success",
+      message: "Tax Rate aggiornata con successo",
       data: taxRate,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Toggle active status Tax Rate
  * @route   PATCH /api/tax/rates/:id/toggle-active
  * @access  Private (tax:update)
  */
-export const toggleTaxRateActive = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { active } = req.validatedBody;
+export const toggleTaxRateActive = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as TaxRateIdParam;
+    const { active } = req.validatedBody as ToggleTaxStatusInput;
 
     const taxRate = await prisma.taxRate.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!taxRate) {
       res.status(404).json({
-        success: false,
-        message: 'Tax Rate non trovata',
+        status: "fail",
+        message: "Tax Rate non trovata",
       });
       return;
     }
 
     const updatedTaxRate = await prisma.taxRate.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: { active },
     });
 
     res.status(200).json({
-      success: true,
-      message: `Tax Rate ${active ? 'attivata' : 'disattivata'} con successo`,
+      status: "success",
+      message: `Tax Rate ${active ? "attivata" : "disattivata"} con successo`,
       data: updatedTaxRate,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Elimina Tax Rate
  * @route   DELETE /api/tax/rates/:id
  * @access  Private (tax:delete)
  */
-export const deleteTaxRate = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const deleteTaxRate = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as TaxRateIdParam;
 
     const taxRate = await prisma.taxRate.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         rules: {
           select: { id: true },
@@ -289,33 +275,31 @@ export const deleteTaxRate = async (
 
     if (!taxRate) {
       res.status(404).json({
-        success: false,
-        message: 'Tax Rate non trovata',
+        status: "fail",
+        message: "Tax Rate non trovata",
       });
       return;
     }
 
     if (taxRate.rules.length > 0) {
       res.status(400).json({
-        success: false,
-        message: 'Impossibile eliminare: Tax Rate associata a regole esistenti',
+        status: "fail",
+        message: "Impossibile eliminare: Tax Rate associata a regole esistenti",
         rulesCount: taxRate.rules.length,
       });
       return;
     }
 
     await prisma.taxRate.delete({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     res.status(200).json({
-      success: true,
-      message: 'Tax Rate eliminata con successo',
+      status: "success",
+      message: "Tax Rate eliminata con successo",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 // ============================================================================
 // TAX RULE CONTROLLER
@@ -326,27 +310,28 @@ export const deleteTaxRate = async (
  * @route   GET /api/tax/rules
  * @access  Private (tax:read)
  */
-export const getAllTaxRules = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { active, operationType, sortBy = 'code', sortOrder = 'asc' } = req.query;
+export const getAllTaxRules = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const {
+      active,
+      operationType,
+      sortBy = "code",
+      sortOrder = "asc",
+    } = req.validatedQuery as TaxRuleQueryInput;
 
     const where: Prisma.TaxRuleWhereInput = {};
 
     if (active !== undefined) {
-      where.active = active === 'true';
+      where.active = active;
     }
 
     if (operationType) {
-      where.operationType = operationType as string;
+      where.operationType = operationType;
     }
 
     const taxRules = await prisma.taxRule.findMany({
       where,
-      orderBy: { [sortBy as string]: sortOrder },
+      orderBy: { [sortBy]: sortOrder },
       include: {
         taxRate: true,
         taxRuleTranslations: {
@@ -364,30 +349,24 @@ export const getAllTaxRules = async (
     });
 
     res.status(200).json({
-      success: true,
+      status: "success",
       data: taxRules,
       count: taxRules.length,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Ottieni Tax Rule per ID
  * @route   GET /api/tax/rules/:id
  * @access  Private (tax:read)
  */
-export const getTaxRuleById = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const getTaxRuleById = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as TaxRuleIdParam;
 
     const taxRule = await prisma.taxRule.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         taxRate: true,
         taxRuleTranslations: {
@@ -425,32 +404,26 @@ export const getTaxRuleById = async (
 
     if (!taxRule) {
       res.status(404).json({
-        success: false,
-        message: 'Tax Rule non trovata',
+        status: "fail",
+        message: "Tax Rule non trovata",
       });
       return;
     }
 
     res.status(200).json({
-      success: true,
+      status: "success",
       data: taxRule,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Crea nuova Tax Rule
  * @route   POST /api/tax/rules
  * @access  Private (tax:create)
  */
-export const createTaxRule = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const createTaxRule = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const {
       code,
       name,
@@ -459,7 +432,7 @@ export const createTaxRule = async (
       taxRateId,
       active = true,
       translations,
-    } = req.validatedBody;
+    } = req.validatedBody as CreateTaxRuleInput;
 
     // Verifica unicità code
     const existingCode = await prisma.taxRule.findUnique({
@@ -468,8 +441,8 @@ export const createTaxRule = async (
 
     if (existingCode) {
       res.status(400).json({
-        success: false,
-        message: 'Codice già esistente',
+        status: "fail",
+        message: "Codice già esistente",
       });
       return;
     }
@@ -481,8 +454,8 @@ export const createTaxRule = async (
 
     if (!taxRate) {
       res.status(404).json({
-        success: false,
-        message: 'Tax Rate non trovata',
+        status: "fail",
+        message: "Tax Rate non trovata",
       });
       return;
     }
@@ -511,37 +484,32 @@ export const createTaxRule = async (
     });
 
     res.status(201).json({
-      success: true,
-      message: 'Tax Rule creata con successo',
+      status: "success",
+      message: "Tax Rule creata con successo",
       data: taxRule,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Aggiorna Tax Rule
  * @route   PUT /api/tax/rules/:id
  * @access  Private (tax:update)
  */
-export const updateTaxRule = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { code, name, description, operationType, taxRateId, active } = req.validatedBody;
+export const updateTaxRule = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as TaxRuleIdParam;
+    const { code, name, description, operationType, taxRateId, active } =
+      req.validatedBody as UpdateTaxRuleInput;
 
     const existingTaxRule = await prisma.taxRule.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!existingTaxRule) {
       res.status(404).json({
-        success: false,
-        message: 'Tax Rule non trovata',
+        status: "fail",
+        message: "Tax Rule non trovata",
       });
       return;
     }
@@ -554,8 +522,8 @@ export const updateTaxRule = async (
 
       if (duplicateCode) {
         res.status(400).json({
-          success: false,
-          message: 'Codice già esistente',
+          status: "fail",
+          message: "Codice già esistente",
         });
         return;
       }
@@ -569,8 +537,8 @@ export const updateTaxRule = async (
 
       if (!taxRate) {
         res.status(404).json({
-          success: false,
-          message: 'Tax Rate non trovata',
+          status: "fail",
+          message: "Tax Rate non trovata",
         });
         return;
       }
@@ -585,7 +553,7 @@ export const updateTaxRule = async (
     if (active !== undefined) updateData.active = active;
 
     const taxRule = await prisma.taxRule.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: updateData,
       include: {
         taxRate: true,
@@ -594,43 +562,37 @@ export const updateTaxRule = async (
     });
 
     res.status(200).json({
-      success: true,
-      message: 'Tax Rule aggiornata con successo',
+      status: "success",
+      message: "Tax Rule aggiornata con successo",
       data: taxRule,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Toggle active status Tax Rule
  * @route   PATCH /api/tax/rules/:id/toggle-active
  * @access  Private (tax:update)
  */
-export const toggleTaxRuleActive = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { active } = req.validatedBody;
+export const toggleTaxRuleActive = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as TaxRuleIdParam;
+    const { active } = req.validatedBody as ToggleTaxStatusInput;
 
     const taxRule = await prisma.taxRule.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!taxRule) {
       res.status(404).json({
-        success: false,
-        message: 'Tax Rule non trovata',
+        status: "fail",
+        message: "Tax Rule non trovata",
       });
       return;
     }
 
     const updatedTaxRule = await prisma.taxRule.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: { active },
       include: {
         taxRate: true,
@@ -638,30 +600,24 @@ export const toggleTaxRuleActive = async (
     });
 
     res.status(200).json({
-      success: true,
-      message: `Tax Rule ${active ? 'attivata' : 'disattivata'} con successo`,
+      status: "success",
+      message: `Tax Rule ${active ? "attivata" : "disattivata"} con successo`,
       data: updatedTaxRule,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Elimina Tax Rule
  * @route   DELETE /api/tax/rules/:id
  * @access  Private (tax:delete)
  */
-export const deleteTaxRule = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const deleteTaxRule = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as TaxRuleIdParam;
 
     const taxRule = await prisma.taxRule.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         products: { select: { id: true } },
         documentLines: { select: { id: true } },
@@ -671,19 +627,21 @@ export const deleteTaxRule = async (
 
     if (!taxRule) {
       res.status(404).json({
-        success: false,
-        message: 'Tax Rule non trovata',
+        status: "fail",
+        message: "Tax Rule non trovata",
       });
       return;
     }
 
     const totalUsage =
-      taxRule.products.length + taxRule.documentLines.length + taxRule.customers.length;
+      taxRule.products.length +
+      taxRule.documentLines.length +
+      taxRule.customers.length;
 
     if (totalUsage > 0) {
       res.status(400).json({
-        success: false,
-        message: 'Impossibile eliminare: Tax Rule in uso',
+        status: "fail",
+        message: "Impossibile eliminare: Tax Rule in uso",
         usage: {
           products: taxRule.products.length,
           documentLines: taxRule.documentLines.length,
@@ -694,14 +652,12 @@ export const deleteTaxRule = async (
     }
 
     await prisma.taxRule.delete({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     res.status(200).json({
-      success: true,
-      message: 'Tax Rule eliminata con successo',
+      status: "success",
+      message: "Tax Rule eliminata con successo",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);

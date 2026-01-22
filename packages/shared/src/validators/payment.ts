@@ -19,7 +19,7 @@ export const TermTypeSchema = z.enum([
 /**
  * Schema per Payment Term Detail
  */
-const PaymentTermDetailSchema = z.object({
+export const PaymentTermDetailSchema = z.object({
   percentage: PercentageSchema,
 
   termType: TermTypeSchema.default('days_from_invoice'),

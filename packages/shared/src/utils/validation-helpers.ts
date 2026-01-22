@@ -79,6 +79,63 @@ export const emailSchema = (message?: string) => {
 };
 
 /**
+ * Schema factory per numeri decimali con precisione configurabile
+ * @param precision - Numero di decimali consentiti (default: 2)
+ * @param options - Opzioni di validazione
+ */
+export const createDecimalSchema = (
+  precision: number = 2,
+  options?: {
+    min?: number;
+    max?: number;
+    positiveOnly?: boolean;
+    error?: string;
+  },
+) => {
+  const regex = new RegExp(`^-?\\d+(\\.\\d{1,${precision}})?$`);
+
+  return z
+    .union([
+      z
+        .string()
+        .regex(
+          regex,
+          options?.error ?? `Formato non valido (max ${precision} decimali)`,
+        ),
+      z.number(),
+    ])
+    .transform((val) => {
+      const num = typeof val === "string" ? parseFloat(val) : val;
+      // Arrotonda alla precisione specificata
+      const factor = Math.pow(10, precision);
+      return Math.round(num * factor) / factor;
+    })
+    .refine(
+      (val) => {
+        if (options?.positiveOnly && val < 0) return false;
+        if (options?.min !== undefined && val < options.min) return false;
+        if (options?.max !== undefined && val > options.max) return false;
+        return true;
+      },
+      {
+        message: options?.positiveOnly
+          ? "Il valore deve essere positivo"
+          : (options?.error ?? "Valore non valido"),
+      },
+    )
+    .refine(
+      (val) => {
+        // Verifica che non ci siano più decimali della precisione specificata
+        const factor = Math.pow(10, precision);
+        return (val * factor) % 1 < Number.EPSILON;
+      },
+      {
+        message: `Massimo ${precision} decimali consentiti`,
+      },
+    );
+};
+
+/**
  * Schema per date ISO (Zod v4)
  */
 export const isoDateSchema = (options?: {
@@ -185,22 +242,17 @@ export const priceSchema = (options?: {
   min?: number;
   max?: number;
   required?: boolean;
+  precision?: number; // Opzionale: per override dei decimali (default: 2)
 }) => {
-  let baseSchema = z.number().positive("Il prezzo deve essere positivo");
-
-  if (options?.min !== undefined) {
-    baseSchema = baseSchema.min(
-      options.min,
-      `Il prezzo minimo è ${options.min}`,
-    );
-  }
-
-  if (options?.max !== undefined) {
-    baseSchema = baseSchema.max(
-      options.max,
-      `Il prezzo massimo è ${options.max}`,
-    );
-  }
+  const baseSchema = createDecimalSchema(options?.precision ?? 2, {
+    positiveOnly: true,
+    min: options?.min ?? 0,
+    max: options?.max,
+    error:
+      options?.min !== undefined
+        ? `Il prezzo deve essere compreso tra ${options.min} e ${options.max ?? "∞"}`
+        : "Il prezzo deve essere positivo",
+  });
 
   return options?.required ? baseSchema : baseSchema.optional().nullable();
 };
@@ -208,30 +260,9 @@ export const priceSchema = (options?: {
 /**
  * Schema per Decimal(19, 2)
  */
-export const CreditLimitSchema = z
-  .union([
-    z
-      .string()
-      .regex(/^\d+(\.\d{1,2})?$/, "Formato prezzo non valido (max 2 decimali)"),
-    z.number(),
-  ])
-  .transform((val) => {
-    const num = typeof val === "string" ? parseFloat(val) : val;
-    // Arrotonda a 2 decimali per evitare problemi di precisione float
-    return Math.round(num * 100) / 100;
-  })
-  .refine((val) => val >= 0, {
-    message: "Il limite deve essere >= 0",
-  })
-  .refine(
-    (val) => {
-      // Verifica che non ci siano più di 2 decimali
-      return (val * 100) % 1 < Number.EPSILON;
-    },
-    {
-      message: "Massimo 2 decimali consentiti",
-    },
-  );
+export const CreditLimitSchema = createDecimalSchema(2, {
+  min: 0,
+});
 
 /**
  * Schema per percentuale (0-100)
