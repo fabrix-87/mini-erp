@@ -2,7 +2,7 @@
 // TYPE EXPORTS
 // ============================================================================
 
-import z from "zod";
+import { z } from "zod";
 import {
   CreateCustomerSchema,
   CreateSupplierSchema,
@@ -14,11 +14,11 @@ import {
 import { Company } from "./company";
 import { Document } from "./document";
 
-// Supplier
-export type Supplier = Omit<z.infer<typeof CreateCustomerSchema>, 'company'> & {
+// Entities type
+export type Supplier = Omit<z.infer<typeof CreateCustomerSchema>, "company"> & {
   id: number;
   companyId: number;
-  company: Company
+  company: Company;
   // Dati specifici Fornitore
   paymentTerms?: string;
   creditLimit?: number;
@@ -48,6 +48,7 @@ export interface SupplierStats {
   byRating: Record<number, number>;
 }
 
+// Input types
 export type CreateSupplierInput = z.infer<typeof CreateSupplierSchema>;
 export type UpdateSupplierInput = z.infer<typeof UpdateSupplierSchema>;
 export type SupplierQueryInput = z.infer<typeof SupplierQuerySchema>;

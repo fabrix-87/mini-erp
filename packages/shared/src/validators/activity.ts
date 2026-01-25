@@ -1,5 +1,5 @@
 import z from "zod";
-import { createIdSchema, emailSchema, isoDateSchema, limitSchema, pageSchema, positiveNumbersSchema, sortOrderSchema } from "../utils";
+import { createIdSchema, emailSchema, isoDateSchema, limitSchema, pageSchema, positiveNumbersSchema, QueryBooleanSchema, sortOrderSchema } from "../utils";
 import { UserIdSchema } from "./base";
 
 // ============================================================================
@@ -153,40 +153,19 @@ export const ActivityQuerySchema = z
     priority: ActivityPrioritySchema.optional(),
     outcome: ActivityOutcomeSchema.optional(),
 
-    companyId: z
-      .string()
-      .optional()
-      .transform((val) => (val ? parseInt(val, 10) : undefined)),
-    customerId: z
-      .string()
-      .optional()
-      .transform((val) => (val ? parseInt(val, 10) : undefined)),
-    opportunityId: z
-      .string()
-      .optional()
-      .transform((val) => (val ? parseInt(val, 10) : undefined)),
-    assignedUserId: z
-      .string()
-      .optional()
-      .transform((val) => (val ? parseInt(val, 10) : undefined)),
+    companyId: createIdSchema("CompanyId non valido").optional(),
+    customerId: createIdSchema("CustomerId non valido").optional(),
+    opportunityId: createIdSchema("OpportunityId non valido").optional(),
+    assignedUserId: createIdSchema("Assigned User ID non valido").optional(),
 
     // Filtri data
     startDate: isoDateSchema({message: "Data inizio non valida"}),
     endDate: isoDateSchema({message: "Data fine non valida"}),
 
     // Filtri speciali
-    overdue: z
-      .string()
-      .optional()
-      .transform((val) => val === "true"),
-    requiresFollowUp: z
-      .string()
-      .optional()
-      .transform((val) => val === "true"),
-    myActivities: z
-      .string()
-      .optional()
-      .transform((val) => val === "true"), // Solo le mie attività
+    overdue: QueryBooleanSchema,
+    requiresFollowUp: QueryBooleanSchema,
+    myActivities: QueryBooleanSchema, // Solo le mie attività
 
     sortBy: z.string().default("scheduledStart"),
     sortOrder: sortOrderSchema,

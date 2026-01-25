@@ -1,4 +1,3 @@
-import { Numerals } from "react-day-picker";
 import { ActivityDashboardStats } from "./activitiy";
 import { CompanyDashboardStats } from "./company";
 import { OpportunityDashboardStats } from "./opportunity";

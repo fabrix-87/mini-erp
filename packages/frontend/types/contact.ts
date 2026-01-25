@@ -3,10 +3,19 @@
 // types/contact.ts
 // ============================================================================
 
-import { Contact } from "@mini-erp/shared/types";
+import { Contact, CreateContactInput, UpdateContactInput } from "@mini-erp/shared/types";
 import { PaginationInfo } from "./api";
+import { ContactSortField, SortOrder } from "@mini-erp/shared/constants";
 
-export type { Contact, ContactWithStats } from '@mini-erp/shared/types'
+export type {
+  Contact,
+  ContactWithStats,
+  ContactQueryInput,
+  CreateContactInput,
+  UpdateContactInput,
+} from "@mini-erp/shared/types";
+
+export type { ContactSortField } from "@mini-erp/shared/constants";
 
 /**
  * Company info minima per Contact
@@ -36,39 +45,6 @@ export interface ContactDocument {
 // ============================================================================
 
 /**
- * Dati per creazione Contact
- */
-export interface CreateContactInput {
-  companyId: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string | null;
-  mobilePhone?: string | null;
-  position?: string | null;
-  department?: string | null;
-  isPrimaryContact?: boolean;
-  active?: boolean;
-  notes?: string | null;
-}
-
-/**
- * Dati per aggiornamento Contact
- */
-export interface UpdateContactInput {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string | null;
-  mobilePhone?: string | null;
-  position?: string | null;
-  department?: string | null;
-  isPrimaryContact?: boolean;
-  active?: boolean;
-  notes?: string | null;
-}
-
-/**
  * Form values per Contact
  */
 export interface ContactFormValues {
@@ -88,39 +64,6 @@ export interface ContactFormValues {
 // ============================================================================
 // QUERY & FILTER TYPES
 // ============================================================================
-
-/**
- * Parametri query per lista Contact
- */
-export interface ContactQueryParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  companyId?: number;
-  active?: boolean;
-  isPrimaryContact?: boolean;
-  sortBy?: ContactSortField;
-  sortOrder?: SortOrder;
-  department?: string;
-  position?: string;
-}
-
-/**
- * Campi ordinabili per Contact
- */
-export type ContactSortField = 
-  | 'firstName'
-  | 'lastName'
-  | 'email'
-  | 'position'
-  | 'department'
-  | 'createdAt'
-  | 'updatedAt';
-
-/**
- * Ordine di sort
- */
-export type SortOrder = 'asc' | 'desc';
 
 /**
  * Filtri per Contact
@@ -218,7 +161,7 @@ export interface ContactModalProps {
 /**
  * Modalità modale
  */
-export type ContactModalMode = 'create' | 'edit' | 'view';
+export type ContactModalMode = "create" | "edit" | "view";
 
 /**
  * Props dialog delete
@@ -284,7 +227,7 @@ export interface ContactTableProps {
  */
 export interface ContactFormProps {
   contact?: Contact | null;
-  isNew?: boolean
+  isNew?: boolean;
   //companyId?: number;
   //onSubmit: (data: CreateContactInput | UpdateContactInput) => Promise<void>;
   //onCancel: () => void;
@@ -391,7 +334,11 @@ export interface ContactStats {
  * Validazione email
  */
 export interface ContactValidation {
-  isEmailUnique: (email: string, companyId: number, contactId?: number) => Promise<boolean>;
+  isEmailUnique: (
+    email: string,
+    companyId: number,
+    contactId?: number,
+  ) => Promise<boolean>;
   isPrimaryExists: (companyId: number, contactId?: number) => Promise<boolean>;
 }
 
@@ -434,14 +381,14 @@ export interface ContactApiError {
 /**
  * Tipo errore Contact
  */
-export type ContactErrorType = 
-  | 'VALIDATION_ERROR'
-  | 'NOT_FOUND'
-  | 'DUPLICATE_EMAIL'
-  | 'PRIMARY_EXISTS'
-  | 'NETWORK_ERROR'
-  | 'SERVER_ERROR'
-  | 'UNKNOWN_ERROR';
+export type ContactErrorType =
+  | "VALIDATION_ERROR"
+  | "NOT_FOUND"
+  | "DUPLICATE_EMAIL"
+  | "PRIMARY_EXISTS"
+  | "NETWORK_ERROR"
+  | "SERVER_ERROR"
+  | "UNKNOWN_ERROR";
 
 /**
  * Errore dettagliato Contact
@@ -463,14 +410,14 @@ export interface ContactError {
 export function isContact(obj: any): obj is Contact {
   return (
     obj &&
-    typeof obj === 'object' &&
-    typeof obj.id === 'number' &&
-    typeof obj.companyId === 'number' &&
-    typeof obj.firstName === 'string' &&
-    typeof obj.lastName === 'string' &&
-    typeof obj.email === 'string' &&
-    typeof obj.isPrimaryContact === 'boolean' &&
-    typeof obj.active === 'boolean'
+    typeof obj === "object" &&
+    typeof obj.id === "number" &&
+    typeof obj.companyId === "number" &&
+    typeof obj.firstName === "string" &&
+    typeof obj.lastName === "string" &&
+    typeof obj.email === "string" &&
+    typeof obj.isPrimaryContact === "boolean" &&
+    typeof obj.active === "boolean"
   );
 }
 
@@ -480,9 +427,9 @@ export function isContact(obj: any): obj is Contact {
 export function isContactApiError(obj: any): obj is ContactApiError {
   return (
     obj &&
-    typeof obj === 'object' &&
+    typeof obj === "object" &&
     obj.success === false &&
-    typeof obj.message === 'string'
+    typeof obj.message === "string"
   );
 }
 
@@ -498,19 +445,21 @@ export type PartialContact = Partial<Contact>;
 /**
  * Contatto senza metadati
  */
-export type ContactData = Omit<Contact, 'id' | 'createdAt' | 'updatedAt'>;
+export type ContactData = Omit<Contact, "id" | "createdAt" | "updatedAt">;
 
 /**
  * Contatto con campi required
  */
-export type RequiredContact = Required<Pick<Contact, 'firstName' | 'lastName' | 'email' | 'companyId'>>;
+export type RequiredContact = Required<
+  Pick<Contact, "firstName" | "lastName" | "email" | "companyId">
+>;
 
 /**
  * Tipo per bulk operations
  */
 export interface ContactBulkOperation {
   contactIds: number[];
-  operation: 'activate' | 'deactivate' | 'delete';
+  operation: "activate" | "deactivate" | "delete";
 }
 
 /**

@@ -1,5 +1,5 @@
 // ============ API Response Types ============
-type ApiStatus = "success" | "fail" | "error";
+export type ApiStatus = "success" | "fail" | "error";
 
 export interface ApiResponse<T = any> {
   status: ApiStatus,

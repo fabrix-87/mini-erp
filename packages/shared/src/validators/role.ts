@@ -1,7 +1,7 @@
 // packages/shared/src/validators/role.ts
 import z from "zod";
 import { UserIdSchema } from "./base";
-import { createIdSchema } from "../utils";
+import { createIdSchema, sortOrderSchema } from "../utils";
 
 // ============================================================================
 // BASE SCHEMAS
@@ -126,7 +126,7 @@ export const RoleQuerySchema = z.object({
       .pipe(z.boolean())
       .optional(),
     sortBy: z.enum(["createdAt", "name", "code"]).default("name"),
-    sortOrder: z.enum(["asc", "desc"]).default("asc"),
+    sortOrder: sortOrderSchema,
   }),
 });
 
@@ -204,7 +204,7 @@ export const PermissionQuerySchema = z.object({
   sortBy: z
     .enum(["createdAt", "code", "resource", "action"])
     .default("resource"),
-  sortOrder: z.enum(["asc", "desc"]).default("asc"),
+  sortOrder: sortOrderSchema,
 });
 
 /**

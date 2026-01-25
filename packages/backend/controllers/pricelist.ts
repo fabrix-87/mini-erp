@@ -1,8 +1,27 @@
-import { Response, NextFunction } from 'express';
-import { prisma } from '../config/prisma-client';
-import { Prisma } from '../generated/prisma/client';
-import { BulkImportInput, CalculatePriceInput, PriceListItemQueryInput, PriceListQueryInput } from '../validators/pricelist';
-import { AuthenticatedValidatedRequest } from '@/types/validate';
+import { Response } from "express";
+import { prisma } from "../config/prisma-client";
+import { Prisma } from "../generated/prisma/client";
+
+import { AuthenticatedValidatedRequest } from "@/types/validate";
+import asyncHandler from "@/middleware/async-handler";
+import {
+  BulkImportInput,
+  CalculatePriceInput,
+  CreatePriceListInput,
+  CreatePriceListItemInput,
+  PriceListIdParam,
+  PriceListItemIdParam,
+  PriceListItemQueryInput,
+  PriceListQueryInput,
+  UpdatePriceListInput,
+  UpdatePriceListItemInput,
+} from "@mini-erp/shared";
+import {
+  sendCreated,
+  sendDeleted,
+  sendFail,
+  sendSuccess,
+} from "@/utils/response";
 
 // ============================================================================
 // HELPER FUNCTIONS
@@ -15,24 +34,24 @@ const applyPricingStrategy = (
   basePrice: number,
   strategy: string,
   strategyValue: number,
-  roundingMethod: string | null
+  roundingMethod: string | null,
 ): number => {
   let finalPrice = basePrice;
 
   switch (strategy) {
-    case 'PERCENT_DECREASE':
+    case "PERCENT_DECREASE":
       finalPrice = basePrice * (1 - strategyValue / 100);
       break;
-    case 'PERCENT_INCREASE':
+    case "PERCENT_INCREASE":
       finalPrice = basePrice * (1 + strategyValue / 100);
       break;
-    case 'FIXED_DECREASE':
+    case "FIXED_DECREASE":
       finalPrice = basePrice - strategyValue;
       break;
-    case 'FIXED_INCREASE':
+    case "FIXED_INCREASE":
       finalPrice = basePrice + strategyValue;
       break;
-    case 'EXPLICIT':
+    case "EXPLICIT":
     default:
       finalPrice = basePrice;
   }
@@ -40,16 +59,16 @@ const applyPricingStrategy = (
   // Arrotondamento
   if (roundingMethod) {
     switch (roundingMethod) {
-      case 'nearest_05':
+      case "nearest_05":
         finalPrice = Math.round(finalPrice * 20) / 20;
         break;
-      case 'nearest_10':
+      case "nearest_10":
         finalPrice = Math.round(finalPrice / 10) * 10;
         break;
-      case 'up':
+      case "up":
         finalPrice = Math.ceil(finalPrice);
         break;
-      case 'down':
+      case "down":
         finalPrice = Math.floor(finalPrice);
         break;
     }
@@ -64,7 +83,7 @@ const applyPricingStrategy = (
 const calculatePriceFromParent = async (
   priceListId: number,
   variantId: number,
-  quantity: number = 1
+  quantity: number = 1,
 ): Promise<number | null> => {
   const priceList = await prisma.priceList.findUnique({
     where: { id: priceListId },
@@ -82,10 +101,10 @@ const calculatePriceFromParent = async (
       variantId,
       minQuantity: { lte: quantity },
     },
-    orderBy: { minQuantity: 'desc' },
+    orderBy: { minQuantity: "desc" },
   });
 
-  if (item && priceList.strategy === 'EXPLICIT') {
+  if (item && priceList.strategy === "EXPLICIT") {
     return parseFloat(item.price.toString());
   }
 
@@ -94,7 +113,7 @@ const calculatePriceFromParent = async (
     const parentPrice = await calculatePriceFromParent(
       priceList.parentListId,
       variantId,
-      quantity
+      quantity,
     );
 
     if (parentPrice !== null) {
@@ -102,7 +121,7 @@ const calculatePriceFromParent = async (
         parentPrice,
         priceList.strategy,
         parseFloat(priceList.strategyValue.toString()),
-        priceList.roundingMethod
+        priceList.roundingMethod,
       );
     }
   }
@@ -124,20 +143,16 @@ const calculatePriceFromParent = async (
  * @route   GET /api/price-lists
  * @access  Private (pricelist:read)
  */
-export const getAllPriceLists = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const getAllPriceLists = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const {
       active,
       type,
       currency,
       validAt,
-      sortBy = 'code',
-      sortOrder = 'asc',
-    } = req.query as unknown as PriceListQueryInput;
+      sortBy = "code",
+      sortOrder = "asc",
+    } = req.validatedQuery as PriceListQueryInput;
 
     const where: Prisma.PriceListWhereInput = {};
 
@@ -187,31 +202,24 @@ export const getAllPriceLists = async (
       },
     });
 
-    res.status(200).json({
-      success: true,
-      data: priceLists,
-      count: priceLists.length,
+    sendSuccess(res, priceLists, {
+      message: "PriceList recuperati",
+      results: priceLists.length,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Ottieni Price List per ID
  * @route   GET /api/price-lists/:id
  * @access  Private (pricelist:read)
  */
-export const getPriceListById = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const getPriceListById = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as PriceListIdParam;
 
     const priceList = await prisma.priceList.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         parentList: {
           select: {
@@ -262,46 +270,39 @@ export const getPriceListById = async (
     });
 
     if (!priceList) {
-      res.status(404).json({
-        success: false,
-        message: 'Price List non trovato',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Price List non trovata",
       });
       return;
     }
 
-    res.status(200).json({
-      success: true,
-      data: priceList,
+    sendSuccess(res, priceList, {
+      message: "Price List recuperato",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Crea nuovo Price List
  * @route   POST /api/price-lists
  * @access  Private (pricelist:create)
  */
-export const createPriceList = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const createPriceList = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const {
       code,
       name,
-      currency = 'EUR',
-      type = 'SALE',
+      currency = "EUR",
+      type = "SALE",
       validFrom,
       validTo,
       active = true,
       parentListId,
-      strategy = 'EXPLICIT',
+      strategy = "EXPLICIT",
       strategyValue = 0,
-      roundingMethod = 'none',
-    } = req.validatedBody;
+      roundingMethod = "none",
+    } = req.validatedBody as CreatePriceListInput;
 
     // Verifica unicità code
     const existingCode = await prisma.priceList.findUnique({
@@ -311,7 +312,7 @@ export const createPriceList = async (
     if (existingCode) {
       res.status(400).json({
         success: false,
-        message: 'Codice già esistente',
+        message: "Codice già esistente",
       });
       return;
     }
@@ -325,7 +326,7 @@ export const createPriceList = async (
       if (!parentList) {
         res.status(404).json({
           success: false,
-          message: 'Parent Price List non trovato',
+          message: "Parent Price List non trovato",
         });
         return;
       }
@@ -336,7 +337,7 @@ export const createPriceList = async (
         if (currentParent.parentListId === parentListId) {
           res.status(400).json({
             success: false,
-            message: 'Rilevato ciclo nella gerarchia dei listini',
+            message: "Rilevato ciclo nella gerarchia dei listini",
           });
           return;
         }
@@ -373,28 +374,20 @@ export const createPriceList = async (
       },
     });
 
-    res.status(201).json({
-      success: true,
-      message: 'Price List creato con successo',
-      data: priceList,
+    sendSuccess(res, priceList, {
+      message: "Price List creato con successo",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Aggiorna Price List
  * @route   PUT /api/price-lists/:id
  * @access  Private (pricelist:update)
  */
-export const updatePriceList = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const updatePriceList = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as PriceListIdParam;
     const {
       code,
       name,
@@ -407,16 +400,16 @@ export const updatePriceList = async (
       strategy,
       strategyValue,
       roundingMethod,
-    } = req.validatedBody;
+    } = req.validatedBody as UpdatePriceListInput;
 
     const existingPriceList = await prisma.priceList.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!existingPriceList) {
-      res.status(404).json({
-        success: false,
-        message: 'Price List non trovato',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Price List non trovata",
       });
       return;
     }
@@ -428,34 +421,37 @@ export const updatePriceList = async (
       });
 
       if (duplicateCode) {
-        res.status(400).json({
-          success: false,
-          message: 'Codice già esistente',
+        sendFail(res, {
+          statusCode: 400,
+          message: "Codice già esistente",
         });
         return;
       }
     }
 
     // Se parentListId cambia, verifica esistenza e cicli
-    if (parentListId !== undefined && parentListId !== existingPriceList.parentListId) {
+    if (
+      parentListId !== undefined &&
+      parentListId !== existingPriceList.parentListId
+    ) {
       if (parentListId !== null) {
         const parentList = await prisma.priceList.findUnique({
           where: { id: parentListId },
         });
 
         if (!parentList) {
-          res.status(404).json({
-            success: false,
-            message: 'Parent Price List non trovato',
+          sendFail(res, {
+            statusCode: 404,
+            message: "Parent Price List non trovata",
           });
           return;
         }
 
         // Verifica cicli
-        if (parentListId === parseInt(id)) {
-          res.status(400).json({
-            success: false,
-            message: 'Un listino non può essere parent di se stesso',
+        if (parentListId === id) {
+          sendFail(res, {
+            statusCode: 400,
+            message: "Un listino non può essere parent di se stesso",
           });
           return;
         }
@@ -469,16 +465,18 @@ export const updatePriceList = async (
     if (type !== undefined) updateData.type = type;
     if (validFrom !== undefined)
       updateData.validFrom = validFrom ? new Date(validFrom) : null;
-    if (validTo !== undefined) updateData.validTo = validTo ? new Date(validTo) : null;
+    if (validTo !== undefined)
+      updateData.validTo = validTo ? new Date(validTo) : null;
     if (active !== undefined) updateData.active = active;
     if (parentListId !== undefined) updateData.parentListId = parentListId;
     if (strategy !== undefined) updateData.strategy = strategy;
     if (strategyValue !== undefined)
       updateData.strategyValue = new Prisma.Decimal(strategyValue);
-    if (roundingMethod !== undefined) updateData.roundingMethod = roundingMethod;
+    if (roundingMethod !== undefined)
+      updateData.roundingMethod = roundingMethod;
 
     const priceList = await prisma.priceList.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: updateData,
       include: {
         parentList: {
@@ -491,31 +489,23 @@ export const updatePriceList = async (
       },
     });
 
-    res.status(200).json({
-      success: true,
-      message: 'Price List aggiornato con successo',
-      data: priceList,
+    sendSuccess(res, priceList, {
+      message: "Price List aggiornato con successo",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Elimina Price List
  * @route   DELETE /api/price-lists/:id
  * @access  Private (pricelist:delete)
  */
-export const deletePriceList = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const deletePriceList = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as PriceListIdParam;
 
     const priceList = await prisma.priceList.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         items: { select: { id: true } },
         customers: { select: { id: true } },
@@ -524,9 +514,9 @@ export const deletePriceList = async (
     });
 
     if (!priceList) {
-      res.status(404).json({
-        success: false,
-        message: 'Price List non trovato',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Price List non trovato",
       });
       return;
     }
@@ -537,30 +527,25 @@ export const deletePriceList = async (
       priceList.childrenLists.length;
 
     if (totalUsage > 0) {
-      res.status(400).json({
-        success: false,
-        message: 'Impossibile eliminare: Price List in uso',
-        usage: {
+      sendFail(res, {
+        message: "Impossibile eliminare: Price List in uso",
+      });
+      /*
+      usage: {
           items: priceList.items.length,
           customers: priceList.customers.length,
           childrenLists: priceList.childrenLists.length,
         },
-      });
+        */
       return;
     }
 
     await prisma.priceList.delete({
-      where: { id: parseInt(id) },
+      where: { id },
     });
-
-    res.status(200).json({
-      success: true,
-      message: 'Price List eliminato con successo',
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    sendDeleted(res, `Price List #${id} eliminato con successo`);
+  },
+);
 
 // ============================================================================
 // PRICE LIST ITEM CONTROLLER
@@ -571,17 +556,14 @@ export const deletePriceList = async (
  * @route   GET /api/price-lists/:priceListId/items
  * @access  Private (pricelist:read)
  */
-export const getPriceListItems = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { priceListId } = req.validatedParams;
-    const { variantId, minPrice, maxPrice } = req.query as PriceListItemQueryInput;
+export const getPriceListItems = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { priceListId } = req.validatedParams as PriceListItemIdParam;
+    const { variantId, minPrice, maxPrice } =
+      req.validatedQuery as PriceListItemQueryInput;
 
     const where: Prisma.PriceListItemWhereInput = {
-      priceListId: parseInt(priceListId),
+      priceListId,
     };
 
     if (variantId) {
@@ -614,30 +596,22 @@ export const getPriceListItems = async (
           },
         },
       },
-      orderBy: [{ variant: { variantCode: 'asc' } }, { minQuantity: 'asc' }],
+      orderBy: [{ variant: { variantCode: "asc" } }, { minQuantity: "asc" }],
     });
 
-    res.status(200).json({
-      success: true,
-      data: items,
-      count: items.length,
+    sendSuccess(res, items, {
+      results: items.length,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Crea Price List Item
  * @route   POST /api/price-lists/items
  * @access  Private (pricelist:create)
  */
-export const createPriceListItem = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const createPriceListItem = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const {
       priceListId,
       variantId,
@@ -646,7 +620,7 @@ export const createPriceListItem = async (
       discountPercent,
       validFrom,
       validTo,
-    } = req.validatedBody;
+    } = req.validatedBody as CreatePriceListItemInput;
 
     // Verifica esistenza Price List e Variant
     const [priceList, variant] = await Promise.all([
@@ -655,17 +629,17 @@ export const createPriceListItem = async (
     ]);
 
     if (!priceList) {
-      res.status(404).json({
-        success: false,
-        message: 'Price List non trovato',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Price List non trovato",
       });
       return;
     }
 
     if (!variant) {
-      res.status(404).json({
-        success: false,
-        message: 'Product Variant non trovato',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Product Variant non trovato",
       });
       return;
     }
@@ -682,9 +656,9 @@ export const createPriceListItem = async (
     });
 
     if (existing) {
-      res.status(400).json({
-        success: false,
-        message: 'Item già esistente per questa combinazione',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Item già esistente per questa combinazione",
       });
       return;
     }
@@ -694,8 +668,10 @@ export const createPriceListItem = async (
         priceListId,
         variantId,
         minQuantity,
-        price: new Prisma.Decimal(price),
-        discountPercent: discountPercent ? new Prisma.Decimal(discountPercent) : null,
+        price: price,
+        discountPercent: discountPercent
+          ? new Prisma.Decimal(discountPercent)
+          : null,
         validFrom: validFrom ? new Date(validFrom) : null,
         validTo: validTo ? new Date(validTo) : null,
       },
@@ -711,39 +687,29 @@ export const createPriceListItem = async (
         },
       },
     });
-
-    res.status(201).json({
-      success: true,
-      message: 'Price List Item creato con successo',
-      data: item,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    sendCreated(res, item, "Price List Item creato con successo");
+  },
+);
 
 /**
  * @desc    Aggiorna Price List Item
  * @route   PUT /api/price-lists/items/:id
  * @access  Private (pricelist:update)
  */
-export const updatePriceListItem = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { minQuantity, price, discountPercent, validFrom, validTo } = req.validatedBody;
+export const updatePriceListItem = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as PriceListIdParam;
+    const { minQuantity, price, discountPercent, validFrom, validTo } =
+      req.validatedBody as UpdatePriceListItemInput;
 
     const existingItem = await prisma.priceListItem.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!existingItem) {
-      res.status(404).json({
-        success: false,
-        message: 'Price List Item non trovato',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Price List Item non trovato",
       });
       return;
     }
@@ -757,86 +723,70 @@ export const updatePriceListItem = async (
         : null;
     if (validFrom !== undefined)
       updateData.validFrom = validFrom ? new Date(validFrom) : null;
-    if (validTo !== undefined) updateData.validTo = validTo ? new Date(validTo) : null;
+    if (validTo !== undefined)
+      updateData.validTo = validTo ? new Date(validTo) : null;
 
     const item = await prisma.priceListItem.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: updateData,
       include: {
         variant: true,
       },
     });
 
-    res.status(200).json({
-      success: true,
-      message: 'Price List Item aggiornato con successo',
-      data: item,
+    sendSuccess(res, item, {
+      message: "Price List Item aggiornato con successo",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Elimina Price List Item
  * @route   DELETE /api/price-lists/items/:id
  * @access  Private (pricelist:delete)
  */
-export const deletePriceListItem = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const deletePriceListItem = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as PriceListIdParam;
 
     const item = await prisma.priceListItem.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!item) {
-      res.status(404).json({
-        success: false,
-        message: 'Price List Item non trovato',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Price List Item non trovato",
       });
       return;
     }
 
     await prisma.priceListItem.delete({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
-    res.status(200).json({
-      success: true,
-      message: 'Price List Item eliminato con successo',
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    sendDeleted(res, "Price List Item eliminato con successo");
+  },
+);
 
 /**
  * @desc    Bulk import items
  * @route   POST /api/price-lists/:priceListId/items/bulk
  * @access  Private (pricelist:create)
  */
-export const bulkImportItems = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { priceListId } = req.validatedParams;
+export const bulkImportItems = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { priceListId } = req.validatedParams as PriceListItemIdParam;
     const { items } = req.validatedBody as BulkImportInput;
 
     const priceList = await prisma.priceList.findUnique({
-      where: { id: parseInt(priceListId) },
+      where: { id: priceListId },
     });
 
     if (!priceList) {
-      res.status(404).json({
-        success: false,
-        message: 'Price List non trovato',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Price List non trovato",
       });
       return;
     }
@@ -853,7 +803,7 @@ export const bulkImportItems = async (
         if (!variant) {
           errors.push({
             variantId: item.variantId,
-            error: 'Variant non trovato',
+            error: "Variant non trovato",
           });
           continue;
         }
@@ -862,7 +812,7 @@ export const bulkImportItems = async (
         const priceListItem = await prisma.priceListItem.upsert({
           where: {
             priceListId_variantId_minQuantity: {
-              priceListId: parseInt(priceListId),
+              priceListId,
               variantId: item.variantId,
               minQuantity: item.minQuantity || 1,
             },
@@ -874,7 +824,7 @@ export const bulkImportItems = async (
               : null,
           },
           create: {
-            priceListId: parseInt(priceListId),
+            priceListId,
             variantId: item.variantId,
             minQuantity: item.minQuantity || 1,
             price: new Prisma.Decimal(item.price),
@@ -893,53 +843,52 @@ export const bulkImportItems = async (
       }
     }
 
-    res.status(201).json({
-      success: true,
-      message: `${created.length} items importati con successo`,
-      data: {
+    sendSuccess(
+      res,
+      {
         created: created.length,
         errors: errors.length,
         errorDetails: errors,
       },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      {
+        message: `${created.length} items importati con successo`,
+      },
+    );
+  },
+);
 
 /**
  * @desc    Calcola prezzo per variant
  * @route   POST /api/price-lists/calculate-price
  * @access  Private (pricelist:read)
  */
-export const calculatePrice = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { priceListId, variantId, quantity = 1 } = req.validatedBody as CalculatePriceInput;
+export const calculatePrice = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const {
+      priceListId,
+      variantId,
+      quantity = 1,
+    } = req.validatedBody as CalculatePriceInput;
 
-    const price = await calculatePriceFromParent(priceListId, variantId, quantity);
+    const price = await calculatePriceFromParent(
+      priceListId,
+      variantId,
+      quantity,
+    );
 
     if (price === null) {
-      res.status(404).json({
-        success: false,
-        message: 'Prezzo non trovato per questa combinazione',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Prezzo non trovato per questa combinazione",
       });
       return;
     }
 
-    res.status(200).json({
-      success: true,
-      data: {
-        priceListId,
-        variantId,
-        quantity,
-        price: price.toFixed(4),
-      },
+    sendSuccess(res, {
+      priceListId,
+      variantId,
+      quantity,
+      price: price.toFixed(4),
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);

@@ -1,7 +1,27 @@
-import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../config/prisma-client';
-import { Prisma } from '../generated/prisma/client';
-import { AuthenticatedValidatedRequest } from '@/types/validate';
+import { Request, Response, NextFunction } from "express";
+import { prisma } from "../config/prisma-client";
+import { Prisma } from "../generated/prisma/client";
+import { AuthenticatedValidatedRequest } from "@/types/validate";
+import asyncHandler from "@/middleware/async-handler";
+import {
+  AssignUserInput,
+  CloseOpportunityLostInput,
+  CloseOpportunityWonInput,
+  CreateOpportunityInput,
+  CustomerIdParam,
+  OpportunityIdParam,
+  OpportunityQueryByStatusInput,
+  OpportunityQueryInput,
+  UpdateOpportunityInput,
+  UpdateStageInput,
+} from "@mini-erp/shared";
+import {
+  sendCreated,
+  sendDeleted,
+  sendFail,
+  sendPaginatedResponse,
+  sendSuccess,
+} from "@/utils/response";
 
 // ============================================================================
 // OPPORTUNITY CONTROLLER
@@ -24,7 +44,7 @@ const STAGE_PROBABILITY_MAP: Record<string, number> = {
  */
 const calculateWeightedValue = (
   estimatedValue: number | null,
-  probability: number
+  probability: number,
 ): number => {
   if (!estimatedValue) return 0;
   return (estimatedValue * probability) / 100;
@@ -35,12 +55,8 @@ const calculateWeightedValue = (
  * @route   GET /api/opportunities
  * @access  Private (opportunity:read)
  */
-export const getAllOpportunities = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const getAllOpportunities = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const {
       page = 1,
       limit = 10,
@@ -55,61 +71,57 @@ export const getAllOpportunities = async (
       maxProbability,
       expectedCloseDateFrom,
       expectedCloseDateTo,
-      sortBy = 'createdAt',
-      sortOrder = 'desc',
-    } = req.query;
+      sortBy = "createdAt",
+      sortOrder = "desc",
+    } = req.validatedQuery as OpportunityQueryInput;
 
-    const pageNum = parseInt(page as string);
-    const limitNum = parseInt(limit as string);
-    const skip = (pageNum - 1) * limitNum;
+    const skip = (page - 1) * limit;
 
     // Build where clause
     const where: Prisma.OpportunityWhereInput = {};
 
     if (search) {
       where.OR = [
-        { title: { contains: search as string, mode: 'insensitive' } },
-        { description: { contains: search as string, mode: 'insensitive' } },
-        { notes: { contains: search as string, mode: 'insensitive' } },
+        { title: { contains: search as string, mode: "insensitive" } },
+        { description: { contains: search as string, mode: "insensitive" } },
+        { notes: { contains: search as string, mode: "insensitive" } },
       ];
     }
 
     if (customerId) {
-      where.customerId = parseInt(customerId as string);
+      where.customerId = customerId;
     }
 
     if (assignedUserId) {
-      where.assignedUserId = parseInt(assignedUserId as string);
+      where.assignedUserId = assignedUserId;
     }
 
     if (status) {
-      where.status = status as any;
+      where.status = status;
     }
 
     if (stage) {
-      where.stage = stage as any;
+      where.stage = stage;
     }
 
     if (minValue || maxValue) {
       where.estimatedValue = {};
-      if (minValue) where.estimatedValue.gte = new Prisma.Decimal(minValue as string);
-      if (maxValue) where.estimatedValue.lte = new Prisma.Decimal(maxValue as string);
+      if (minValue) where.estimatedValue.gte = minValue;
+      if (maxValue) where.estimatedValue.lte = maxValue;
     }
 
     if (minProbability !== undefined || maxProbability !== undefined) {
       where.probability = {};
-      if (minProbability !== undefined)
-        where.probability.gte = parseInt(minProbability as string);
-      if (maxProbability !== undefined)
-        where.probability.lte = parseInt(maxProbability as string);
+      if (minProbability !== undefined) where.probability.gte = minProbability;
+      if (maxProbability !== undefined) where.probability.lte = maxProbability;
     }
 
     if (expectedCloseDateFrom || expectedCloseDateTo) {
       where.expectedCloseDate = {};
       if (expectedCloseDateFrom)
-        where.expectedCloseDate.gte = new Date(expectedCloseDateFrom as string);
+        where.expectedCloseDate.gte = new Date(expectedCloseDateFrom);
       if (expectedCloseDateTo)
-        where.expectedCloseDate.lte = new Date(expectedCloseDateTo as string);
+        where.expectedCloseDate.lte = new Date(expectedCloseDateTo);
     }
 
     // Execute query
@@ -117,8 +129,8 @@ export const getAllOpportunities = async (
       prisma.opportunity.findMany({
         where,
         skip,
-        take: limitNum,
-        orderBy: { [sortBy as string]: sortOrder },
+        take: limit,
+        orderBy: { [sortBy]: sortOrder },
         include: {
           customer: {
             include: {
@@ -159,46 +171,31 @@ export const getAllOpportunities = async (
       prisma.opportunity.count({ where }),
     ]);
 
-    res.status(200).json({
-      success: true,
-      data: opportunities,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total,
-        pages: Math.ceil(total / limitNum),
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    sendPaginatedResponse(res, opportunities, total, page, limit);
+  },
+);
 
 /**
  * @desc    Ottieni opportunità per Customer ID
  * @route   GET /api/opportunities/customer/:customerId
  * @access  Private (opportunity:read)
  */
-export const getOpportunitiesByCustomer = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { customerId } = req.validatedParams;
-    const { status } = req.query;
+export const getOpportunitiesByCustomer = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { customerId } = req.validatedParams as CustomerIdParam;
+    const { status } = req.validatedQuery as OpportunityQueryByStatusInput;
 
     const where: Prisma.OpportunityWhereInput = {
-      customerId: parseInt(customerId),
+      customerId,
     };
 
     if (status) {
-      where.status = status as any;
+      where.status = status;
     }
 
     const opportunities = await prisma.opportunity.findMany({
       where,
-      orderBy: [{ expectedCloseDate: 'asc' }, { createdAt: 'desc' }],
+      orderBy: [{ expectedCloseDate: "asc" }, { createdAt: "desc" }],
       include: {
         customer: {
           include: {
@@ -219,31 +216,23 @@ export const getOpportunitiesByCustomer = async (
       },
     });
 
-    res.status(200).json({
-      success: true,
-      data: opportunities,
-      count: opportunities.length,
+    sendSuccess(res, opportunities, {
+      results: opportunities.length,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Ottieni un'opportunità per ID
  * @route   GET /api/opportunities/:id
  * @access  Private (opportunity:read)
  */
-export const getOpportunityById = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const getOpportunityById = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as OpportunityIdParam;
 
     const opportunity = await prisma.opportunity.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         customer: {
           include: {
@@ -295,52 +284,43 @@ export const getOpportunityById = async (
             documentDate: true,
             totalAmount: true,
           },
-          orderBy: { documentDate: 'desc' },
+          orderBy: { documentDate: "desc" },
         },
       },
     });
 
     if (!opportunity) {
-      res.status(404).json({
-        success: false,
-        message: 'Opportunità non trovata',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Opportunità non trovata",
       });
       return;
     }
 
-    res.status(200).json({
-      success: true,
-      data: opportunity,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    sendSuccess(res, opportunity);
+  },
+);
 
 /**
  * @desc    Crea nuova opportunità
  * @route   POST /api/opportunities
  * @access  Private (opportunity:create)
  */
-export const createOpportunity = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const createOpportunity = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const {
       title,
       description,
       customerId,
-      status = 'OPEN',
-      stage = 'LEAD_QUALIFICATION',
+      status = "OPEN",
+      stage = "LEAD_QUALIFICATION",
       estimatedValue,
       probability,
       expectedCloseDate,
       assignedUserId,
       notes,
       customFields,
-    } = req.validatedBody;
+    } = req.validatedBody as CreateOpportunityInput;
 
     // Verifica che il customer esista
     const customer = await prisma.customer.findUnique({
@@ -348,9 +328,9 @@ export const createOpportunity = async (
     });
 
     if (!customer) {
-      res.status(404).json({
-        success: false,
-        message: 'Customer non trovato',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Customer non trovato",
       });
       return;
     }
@@ -362,9 +342,9 @@ export const createOpportunity = async (
       });
 
       if (!user) {
-        res.status(404).json({
-          success: false,
-          message: 'Utente assegnato non trovato',
+        sendFail(res, {
+          statusCode: 404,
+          message: "Utente assegnato non trovato",
         });
         return;
       }
@@ -372,12 +352,14 @@ export const createOpportunity = async (
 
     // Calcola probabilità default da stage se non fornita
     const finalProbability =
-      probability !== undefined ? probability : STAGE_PROBABILITY_MAP[stage] || 0;
+      probability !== undefined
+        ? probability
+        : STAGE_PROBABILITY_MAP[stage] || 0;
 
     // Calcola weighted value
     const weightedValue = calculateWeightedValue(
-      estimatedValue ? parseFloat(estimatedValue) : null,
-      finalProbability
+      estimatedValue ? estimatedValue : null,
+      finalProbability,
     );
 
     // Ottieni l'utente corrente dal token
@@ -391,10 +373,14 @@ export const createOpportunity = async (
         customerId,
         status,
         stage,
-        estimatedValue: estimatedValue ? new Prisma.Decimal(estimatedValue) : null,
+        estimatedValue: estimatedValue
+          ? new Prisma.Decimal(estimatedValue)
+          : null,
         probability: finalProbability,
         weightedValue: new Prisma.Decimal(weightedValue),
-        expectedCloseDate: expectedCloseDate ? new Date(expectedCloseDate) : null,
+        expectedCloseDate: expectedCloseDate
+          ? new Date(expectedCloseDate)
+          : null,
         createdByUserId: currentUserId,
         assignedUserId: assignedUserId || currentUserId,
         notes,
@@ -420,28 +406,18 @@ export const createOpportunity = async (
       },
     });
 
-    res.status(201).json({
-      success: true,
-      message: 'Opportunità creata con successo',
-      data: opportunity,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    sendCreated(res, opportunity, "Opportunità creata con successo");
+  },
+);
 
 /**
  * @desc    Aggiorna opportunità
  * @route   PUT /api/opportunities/:id
  * @access  Private (opportunity:update)
  */
-export const updateOpportunity = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const updateOpportunity = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as OpportunityIdParam;
     const {
       title,
       description,
@@ -456,31 +432,34 @@ export const updateOpportunity = async (
       assignedUserId,
       notes,
       customFields,
-    } = req.validatedBody;
+    } = req.validatedBody as UpdateOpportunityInput;
 
     // Verifica esistenza opportunità
     const existingOpportunity = await prisma.opportunity.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!existingOpportunity) {
-      res.status(404).json({
-        success: false,
-        message: 'Opportunità non trovata',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Opportunità non trovata",
       });
       return;
     }
 
     // Se assignedUserId viene cambiato, verifica che l'utente esista
-    if (assignedUserId && assignedUserId !== existingOpportunity.assignedUserId) {
+    if (
+      assignedUserId &&
+      assignedUserId !== existingOpportunity.assignedUserId
+    ) {
       const user = await prisma.user.findUnique({
         where: { id: assignedUserId },
       });
 
       if (!user) {
-        res.status(404).json({
-          success: false,
-          message: 'Utente assegnato non trovato',
+        sendFail(res, {
+          statusCode: 404,
+          message: "Utente assegnato non trovato",
         });
         return;
       }
@@ -493,8 +472,10 @@ export const updateOpportunity = async (
     if (description !== undefined) updateData.description = description;
     if (status !== undefined) updateData.status = status;
     if (notes !== undefined) updateData.notes = notes;
-    if (assignedUserId !== undefined) updateData.assignedUserId = assignedUserId;
-    if (closedReasonId !== undefined) updateData.closedReasonId = closedReasonId;
+    if (assignedUserId !== undefined)
+      updateData.assignedUserId = assignedUserId;
+    if (closedReasonId !== undefined)
+      updateData.closedReasonId = closedReasonId;
     if (closedNotes !== undefined) updateData.closedNotes = closedNotes;
 
     // Se stage cambia, aggiorna lastStageChange
@@ -504,18 +485,23 @@ export const updateOpportunity = async (
 
       // Aggiorna probabilità se non fornita esplicitamente
       if (probability === undefined) {
-        updateData.probability = STAGE_PROBABILITY_MAP[stage] || existingOpportunity.probability;
+        updateData.probability =
+          STAGE_PROBABILITY_MAP[stage] || existingOpportunity.probability;
       }
     }
 
     if (probability !== undefined) updateData.probability = probability;
 
     if (estimatedValue !== undefined) {
-      updateData.estimatedValue = estimatedValue ? new Prisma.Decimal(estimatedValue) : null;
+      updateData.estimatedValue = estimatedValue
+        ? new Prisma.Decimal(estimatedValue)
+        : null;
     }
 
     if (expectedCloseDate !== undefined) {
-      updateData.expectedCloseDate = expectedCloseDate ? new Date(expectedCloseDate) : null;
+      updateData.expectedCloseDate = expectedCloseDate
+        ? new Date(expectedCloseDate)
+        : null;
     }
 
     if (closedDate !== undefined) {
@@ -530,22 +516,22 @@ export const updateOpportunity = async (
     const finalEstimatedValue =
       estimatedValue !== undefined
         ? estimatedValue
-          ? parseFloat(estimatedValue)
+          ? estimatedValue
           : null
         : existingOpportunity.estimatedValue
-        ? parseFloat(existingOpportunity.estimatedValue.toString())
-        : null;
+          ? parseFloat(existingOpportunity.estimatedValue.toString())
+          : null;
 
     const finalProbability =
       probability !== undefined ? probability : existingOpportunity.probability;
 
     updateData.weightedValue = new Prisma.Decimal(
-      calculateWeightedValue(finalEstimatedValue, finalProbability)
+      calculateWeightedValue(finalEstimatedValue, finalProbability),
     );
 
     // Aggiorna opportunità
     const opportunity = await prisma.opportunity.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: updateData,
       include: {
         customer: {
@@ -567,53 +553,50 @@ export const updateOpportunity = async (
       },
     });
 
-    res.status(200).json({
-      success: true,
-      message: 'Opportunità aggiornata con successo',
-      data: opportunity,
+    sendSuccess(res, opportunity, {
+      message: "Opportunità aggiornata con successo",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Aggiorna stage opportunità
  * @route   PATCH /api/opportunities/:id/stage
  * @access  Private (opportunity:update)
  */
-export const updateStage = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { stage, probability } = req.validatedBody;
+export const updateStage = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as OpportunityIdParam;
+    const { stage, probability } = req.validatedBody as UpdateStageInput;
 
     const opportunity = await prisma.opportunity.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!opportunity) {
-      res.status(404).json({
-        success: false,
-        message: 'Opportunità non trovata',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Opportunità non trovata",
       });
       return;
     }
 
     const finalProbability =
-      probability !== undefined ? probability : STAGE_PROBABILITY_MAP[stage] || 0;
+      probability !== undefined
+        ? probability
+        : STAGE_PROBABILITY_MAP[stage] || 0;
 
     const estimatedValue = opportunity.estimatedValue
       ? parseFloat(opportunity.estimatedValue.toString())
       : null;
 
-    const weightedValue = calculateWeightedValue(estimatedValue, finalProbability);
+    const weightedValue = calculateWeightedValue(
+      estimatedValue,
+      finalProbability,
+    );
 
     const updatedOpportunity = await prisma.opportunity.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: {
         stage,
         probability: finalProbability,
@@ -634,47 +617,40 @@ export const updateStage = async (
       },
     });
 
-    res.status(200).json({
-      success: true,
-      message: 'Stage aggiornato con successo',
-      data: updatedOpportunity,
+    sendSuccess(res, updatedOpportunity, {
+      message: "Stage aggiornato con successo",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Chiudi opportunità come WON
  * @route   PATCH /api/opportunities/:id/close-won
  * @access  Private (opportunity:update)
  */
-export const closeOpportunityWon = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { closedDate, closedNotes } = req.validatedBody;
+export const closeOpportunityWon = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as OpportunityIdParam;
+    const { closedDate, closedNotes } =
+      req.validatedBody as CloseOpportunityWonInput;
 
     const opportunity = await prisma.opportunity.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!opportunity) {
-      res.status(404).json({
-        success: false,
-        message: 'Opportunità non trovata',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Opportunità non trovata",
       });
       return;
     }
 
     const updatedOpportunity = await prisma.opportunity.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: {
-        status: 'WON',
-        stage: 'COMMITMENT',
+        status: "WON",
+        stage: "COMMITMENT",
         probability: 100,
         closedDate: closedDate ? new Date(closedDate) : new Date(),
         closedNotes,
@@ -694,46 +670,39 @@ export const closeOpportunityWon = async (
       },
     });
 
-    res.status(200).json({
-      success: true,
-      message: 'Opportunità chiusa come WON',
-      data: updatedOpportunity,
+    sendSuccess(res, updatedOpportunity, {
+      message: "Opportunità chiusa come WON",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Chiudi opportunità come LOST
  * @route   PATCH /api/opportunities/:id/close-lost
  * @access  Private (opportunity:update)
  */
-export const closeOpportunityLost = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { closedReasonId, closedDate, closedNotes } = req.validatedBody;
+export const closeOpportunityLost = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as OpportunityIdParam;
+    const { closedReasonId, closedDate, closedNotes } =
+      req.validatedBody as CloseOpportunityLostInput;
 
     const opportunity = await prisma.opportunity.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
     if (!opportunity) {
-      res.status(404).json({
-        success: false,
-        message: 'Opportunità non trovata',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Opportunità non trovata",
       });
       return;
     }
 
     const updatedOpportunity = await prisma.opportunity.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: {
-        status: 'LOST',
+        status: "LOST",
         probability: 0,
         weightedValue: new Prisma.Decimal(0),
         closedDate: closedDate ? new Date(closedDate) : new Date(),
@@ -754,53 +723,45 @@ export const closeOpportunityLost = async (
       },
     });
 
-    res.status(200).json({
-      success: true,
-      message: 'Opportunità chiusa come LOST',
-      data: updatedOpportunity,
+    sendSuccess(res, updateOpportunity, {
+      message: "Opportunità chiusa come LOST",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Assegna opportunità a utente
  * @route   PATCH /api/opportunities/:id/assign
  * @access  Private (opportunity:update)
  */
-export const assignOpportunity = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const { assignedUserId } = req.validatedBody;
+export const assignOpportunity = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as OpportunityIdParam;
+    const { assignedUserId } = req.validatedBody as AssignUserInput;
 
     const [opportunity, user] = await Promise.all([
-      prisma.opportunity.findUnique({ where: { id: parseInt(id) } }),
+      prisma.opportunity.findUnique({ where: { id } }),
       prisma.user.findUnique({ where: { id: assignedUserId } }),
     ]);
 
     if (!opportunity) {
-      res.status(404).json({
-        success: false,
-        message: 'Opportunità non trovata',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Opportunità non trovata",
       });
       return;
     }
 
     if (!user) {
-      res.status(404).json({
-        success: false,
-        message: 'Utente non trovato',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Utente non trovato",
       });
       return;
     }
 
     const updatedOpportunity = await prisma.opportunity.update({
-      where: { id: parseInt(id) },
+      where: { id },
       data: { assignedUserId },
       include: {
         assignedUser: {
@@ -813,31 +774,23 @@ export const assignOpportunity = async (
       },
     });
 
-    res.status(200).json({
-      success: true,
-      message: 'Opportunità assegnata con successo',
-      data: updatedOpportunity,
+    sendSuccess(res, updateOpportunity, {
+      message: "Opportunità assegnata con successo",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Elimina opportunità
  * @route   DELETE /api/opportunities/:id
  * @access  Private (opportunity:delete)
  */
-export const deleteOpportunity = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const deleteOpportunity = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { id } = req.validatedParams as OpportunityIdParam;
 
     const opportunity = await prisma.opportunity.findUnique({
-      where: { id: parseInt(id) },
+      where: { id },
       include: {
         documents: {
           select: { id: true },
@@ -846,56 +799,46 @@ export const deleteOpportunity = async (
     });
 
     if (!opportunity) {
-      res.status(404).json({
-        success: false,
-        message: 'Opportunità non trovata',
+      sendFail(res, {
+        statusCode: 404,
+        message: "Opportunità non trovata",
       });
       return;
     }
 
     // Verifica se ha documenti associati
     if (opportunity.documents.length > 0) {
-      res.status(400).json({
-        success: false,
+      sendFail(res, {
+        statusCode: 404,
         message:
-          'Impossibile eliminare: opportunità associata a documenti esistenti',
-        documentsCount: opportunity.documents.length,
+          "Impossibile eliminare: opportunità associata a documenti esistenti",
       });
       return;
     }
 
     await prisma.opportunity.delete({
-      where: { id: parseInt(id) },
+      where: { id },
     });
 
-    res.status(200).json({
-      success: true,
-      message: 'Opportunità eliminata con successo',
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    sendDeleted(res, "Opportunità eliminata con successo");
+  },
+);
 
 /**
  * @desc    Ottieni statistiche pipeline
  * @route   GET /api/opportunities/stats/pipeline
  * @access  Private (opportunity:read)
  */
-export const getPipelineStats = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { assignedUserId } = req.query;
+export const getPipelineStats = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+    const { assignedUserId } = req.validatedQuery as AssignUserInput;
 
     const where: Prisma.OpportunityWhereInput = {
-      status: 'OPEN',
+      status: "OPEN",
     };
 
     if (assignedUserId) {
-      where.assignedUserId = parseInt(assignedUserId as string);
+      where.assignedUserId = assignedUserId;
     }
 
     const opportunities = await prisma.opportunity.findMany({
@@ -927,21 +870,20 @@ export const getPipelineStats = async (
 
       stats.byStage[stage].count++;
       stats.byStage[stage].totalEstimatedValue += parseFloat(
-        opp.estimatedValue?.toString() || '0'
+        opp.estimatedValue?.toString() || "0",
       );
       stats.byStage[stage].totalWeightedValue += parseFloat(
-        opp.weightedValue?.toString() || '0'
+        opp.weightedValue?.toString() || "0",
       );
 
-      stats.totalEstimatedValue += parseFloat(opp.estimatedValue?.toString() || '0');
-      stats.totalWeightedValue += parseFloat(opp.weightedValue?.toString() || '0');
+      stats.totalEstimatedValue += parseFloat(
+        opp.estimatedValue?.toString() || "0",
+      );
+      stats.totalWeightedValue += parseFloat(
+        opp.weightedValue?.toString() || "0",
+      );
     });
 
-    res.status(200).json({
-      success: true,
-      data: stats,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    sendSuccess(res, stats);
+  },
+);

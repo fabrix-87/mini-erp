@@ -4,11 +4,10 @@
 
 // Enum per il tipo di azienda
 enum CustomerType {
-    LEAD
-    PROSPECT
-    CUSTOMER
-    PARTNER
-    OTHER
+    PROSPECT // Cliente potenziale (già qualificato, non ancora acquistato)
+    CUSTOMER // Cliente attivo
+    PARTNER // Partner commerciale
+    OTHER // Altro
 }
 
 // Enum per lo stato di Credit Check
@@ -41,15 +40,17 @@ enum CustomerSegment {
     STANDARD
 }
 
-enum LeadStatus {
-    NEW
-    CONTACTED
-    QUALIFIED
-    PROPOSAL
-    NEGOTIATION
-    CLOSED_WON
-    CLOSED_LOST
-}
+/**
+ * enum LeadStatus {
+ * NEW
+ * CONTACTED
+ * QUALIFIED
+ * PROPOSAL
+ * NEGOTIATION
+ * CLOSED_WON
+ * CLOSED_LOST
+ * }
+ */
 
 enum CompanyTypeEntity {
     JURIDICAL // Persona Giuridica (Azienda)
@@ -150,9 +151,9 @@ model Customer {
     // Dati specifici Cliente/CRM
     priority     CustomerPriority  @default(LOW)
     segment      CustomerSegment   @default(STANDARD)
-    leadStatus   LeadStatus        @default(NEW)
+    //leadStatus   LeadStatus        @default(NEW)
     size         CustomerSize      @default(SMALL)
-    type         CustomerType      @default(LEAD)
+    type         CustomerType      @default(PROSPECT)
     creditStatus CreditCheckStatus @default(PENDING)
 
     // Dati Commerciali
@@ -178,10 +179,13 @@ model Customer {
     opportunities Opportunity[]
     activities    Activity[]
 
+    // Lead convertita in questo customer
+    convertedFromLead Lead? @relation("ConvertedCustomer")
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([leadStatus])
+    //@@index([leadStatus])
 }
 
 // Tabella Supplier

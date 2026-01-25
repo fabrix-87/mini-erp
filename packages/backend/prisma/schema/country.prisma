@@ -9,6 +9,8 @@ model Country {
   
   documentCountry Document[] @relation("DocumentCountry")
   documentShippingCountry Document[] @relation("DocumentShippingCountry")
+
+  leads Lead[] @relation("LeadCountry")
   
   // Opzionale, ma utile:
   languages       Language[]

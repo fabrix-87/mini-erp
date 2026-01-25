@@ -1,5 +1,8 @@
 export type {
   ApiResponse,
   PaginationInfo,
-  ValidationError
+  ValidationError,
+  PaginatedResponse,
+  ApiError,
+  ApiStatus
 } from '@mini-erp/shared'

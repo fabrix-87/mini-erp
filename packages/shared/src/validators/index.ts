@@ -12,3 +12,5 @@ export * from './language';
 export * from './country';
 export * from './payment';
 export * from './tax';
+export * from './pricelist';
+export * from './opportunity';

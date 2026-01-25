@@ -7,13 +7,15 @@ import { Contact } from "./contact";
 /**
  * Tipi uniti per i campi ENUM
  */
-export type OpportunityStage =
-  | "prospecting"
-  | "qualification"
-  | "proposal"
-  | "negotiation"
-  | "closed_won"
-  | "closed_lost";
+export type {
+  SalesStage as OpportunityStage,
+  OpportunityStatus
+} from '@mini-erp/shared/constants'
+
+export type {
+  OpportunityDashboardStats,
+  Opportunity
+} from '@mini-erp/shared/types'
 
 export type OpportunityType =
   | "new_business"
@@ -22,9 +24,7 @@ export type OpportunityType =
   | "cross_sell"
   | "renewal";
 
-export type OpportunityPriority = "low" | "medium" | "high" | "critical";
-
-export type OpportunityStatus = "open" | "won" | "lost" | "abandoned";
+//export type OpportunityPriority = "low" | "medium" | "high" | "critical";
 
 export type LossReasonCategory =
   | "price"
@@ -39,6 +39,7 @@ export type LossReasonCategory =
  * Le date vengono gestite come stringhe (formato ISO 8601) in JSON.
  * I decimali (es. estimatedValue) vengono tipizzati come number (o string se preferisci gestirli come tali)
  */
+/*
 export interface Opportunity {
   // Identificativi e Relazioni
   id: number;
@@ -109,19 +110,4 @@ export interface Opportunity {
   Company?: Company;
   Contact?: Contact;
 }
-
-export interface OpportunityDashboardStats {
-  totalOpen: number;
-  totalValue: number;
-  totalWeightedValue: number;
-  wonThisMonth: number;
-  wonValueThisMonth: number;
-  byStage: {
-    prospecting: number;
-    qualification: number;
-    proposal: number;
-    negotiation: number;
-    closed_won: number;
-    closed_lost: number;
-  };
-}
+*/

@@ -9,19 +9,20 @@ import {
   useContactExport,
   useContactBulkOperations,
 } from "@/hooks/use-contact";
-import type { ContactSortField, SortOrder, ContactQueryParams } from "@/types/contact";
+import type { ContactSortField, ContactQueryInput } from "@/types/contact";
 import ContactToolbar from "./contact-list/toolbar";
 import ContactFilters from "./contact-list/filters";
 import ContactBulkActions from "./contact-list/bulk-actions";
 import ContactTable from "./contact-list/table";
 import ContactPagination from "./contact-list/pagination";
+import { SortOrder } from "@mini-erp/shared/constants";
 
 export default function ContactListPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // Memoizza params per evitare re-render
-  const params = useMemo((): ContactQueryParams => {
+  const params = useMemo((): ContactQueryInput => {
     return {
       page: Number(searchParams.get("page")) || 1,
       limit: Number(searchParams.get("limit")) || 20,
@@ -62,7 +63,7 @@ export default function ContactListPage() {
     position: params.position,
   };
 
-  const updateURL = (newParams: Partial<ContactQueryParams>) => {
+  const updateURL = (newParams: Partial<ContactQueryInput>) => {
     const urlParams = new URLSearchParams();
     const merged = { ...params, ...newParams };
     

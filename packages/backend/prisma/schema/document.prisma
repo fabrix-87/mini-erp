@@ -54,20 +54,24 @@ model Document {
     documentYear   Int
 
     // Soggetti
-    companyId     Int
-    company       Company      @relation(fields: [companyId], references: [id])
+    companyId Int
+    company   Company @relation(fields: [companyId], references: [id])
 
     // RUOLO COMMERCIALE (Se è un documento di Vendita)
-    customerId      Int?
-    customer        Customer?     @relation("CustomerDocuments", fields: [customerId], references: [id])
+    customerId Int?
+    customer   Customer? @relation("CustomerDocuments", fields: [customerId], references: [id])
     // RUOLO COMMERCIALE (Se è un documento di Acquisto)
-    supplierId      Int?
-    supplier        Supplier?     @relation("SupplierDocuments", fields: [supplierId], references: [id])
+    supplierId Int?
+    supplier   Supplier? @relation("SupplierDocuments", fields: [supplierId], references: [id])
 
     contactId     Int?
     contact       Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
     opportunityId Int?
     opportunity   Opportunity? @relation(fields: [opportunityId], references: [id])
+
+    // Relazione con Lead
+    leadId Int?
+    lead   Lead? @relation(fields: [leadId], references: [id], onDelete: Cascade)
 
     // Magazzino di riferimento (Cruciale per DDT e Ordini)
     // Per vendita: Magazzino di partenza. Per acquisto: Magazzino di arrivo.
@@ -155,8 +159,8 @@ model Document {
     customFields Json?
 
     // Relazioni
-    lines        DocumentLine[]
-    installments DocumentPaymentInstallment[] // rate pagamento
+    lines                 DocumentLine[]
+    installments          DocumentPaymentInstallment[] // rate pagamento
     // Relazione alla transazione Intrastat
     intrastatTransactions IntrastatTransaction[]
 
@@ -168,6 +172,8 @@ model Document {
     @@index([companyId])
     @@index([customerId])
     @@index([supplierId])
+    @@index([opportunityId])
+    @@index([leadId])
     @@index([documentYear])
     @@index([customerCountryCode])
     @@index([shippingCountryCode])

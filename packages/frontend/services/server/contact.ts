@@ -7,7 +7,7 @@ import type {
   Contact,
   CreateContactInput,
   UpdateContactInput,
-  ContactQueryParams,
+  ContactQueryInput,
 } from '@/types/contact';
 
 // ============================================================================
@@ -26,7 +26,7 @@ interface ContactDeleteApiResponse extends ApiResponse<null> {}
 // QUERY BUILDER (helper privato, non server action)
 // ============================================================================
 
-function buildQueryString(params: ContactQueryParams): string {
+function buildQueryString(params: ContactQueryInput): string {
   const query = new URLSearchParams();
 
   if (params.page) query.append('page', params.page.toString());
@@ -51,7 +51,7 @@ function buildQueryString(params: ContactQueryParams): string {
  * Ottieni tutti i contatti con filtri e paginazione
  */
 export async function getAllContacts(
-  params: ContactQueryParams = {}
+  params: ContactQueryInput
 ): Promise<ContactListApiResponse> {
   const queryString = buildQueryString(params);
   const url = queryString ? `/contacts?${queryString}` : '/contacts';
@@ -171,7 +171,7 @@ export async function checkContactEmailUnique(
  * Export contatti in CSV
  */
 export async function exportContactsCSV(
-  params: ContactQueryParams = {}
+  params: ContactQueryInput
 ): Promise<Blob> {
   const queryString = buildQueryString(params);
   const url = `/contacts/export/csv${queryString ? `?${queryString}` : ''}`;
@@ -182,7 +182,7 @@ export async function exportContactsCSV(
  * Export contatti in Excel
  */
 export async function exportContactsExcel(
-  params: ContactQueryParams = {}
+  params: ContactQueryInput
 ): Promise<Blob> {
   const queryString = buildQueryString(params);
   const url = `/contacts/export/excel${queryString ? `?${queryString}` : ''}`;

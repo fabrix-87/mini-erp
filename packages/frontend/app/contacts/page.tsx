@@ -3,10 +3,11 @@ import { HydrationBoundary } from '@/providers/hydration-boundary';
 import ContactListPage from '@/components/contact/contact-list';
 import { getAllContacts } from '@/services/server/contact';
 import { contactKeys } from '@/hooks/contact-keys';
-import { ContactQueryParams, ContactSortField, SortOrder } from '@/types/contact';
+import { ContactQueryInput, ContactSortField } from '@/types/contact';
+import { SortOrder } from '@mini-erp/shared/constants';
 
 interface ContactsPageProps {
-  searchParams: Promise<ContactQueryParams>;
+  searchParams: Promise<ContactQueryInput>;
 }
 
 export default async function ContactsPage({ searchParams }: ContactsPageProps) {
@@ -14,7 +15,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
   
   const resolvedSearchParams = await searchParams;
 
-  const params: ContactQueryParams = {
+  const params: ContactQueryInput = {
     page: resolvedSearchParams.page || 1,
     limit: resolvedSearchParams.limit || 20,
     search: resolvedSearchParams.search,

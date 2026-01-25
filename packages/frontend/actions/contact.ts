@@ -11,7 +11,7 @@ import {
   bulkDeactivateContacts,
   bulkDeleteContacts,
 } from '@/services/server/contact';
-import type { ContactQueryParams, CreateContactInput, UpdateContactInput } from '@/types/contact';
+import type { ContactQueryInput, CreateContactInput, UpdateContactInput } from '@/types/contact';
 
 /**
  * Revalida cache contatti dopo mutazioni
@@ -130,7 +130,7 @@ export async function bulkDeleteContactsAction(contactIds: number[]) {
 }
 
 
-function buildQueryString(params: ContactQueryParams): string {
+function buildQueryString(params: ContactQueryInput): string {
   const query = new URLSearchParams();
   
   if (params.page) query.append('page', params.page.toString());

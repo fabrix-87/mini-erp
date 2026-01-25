@@ -80,6 +80,10 @@ model Activity {
   
   opportunityId   Int?
   opportunity     Opportunity?     @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
+
+  // Relazione con Lead
+  leadId          Int?
+  lead            Lead?            @relation(fields: [leadId], references: [id], onDelete: Cascade)
   
   // Utente responsabile
   assignedUserId  Int
@@ -120,6 +124,7 @@ model Activity {
   @@index([companyId])
   @@index([customerId])
   @@index([opportunityId])
+  @@index([leadId]) 
   @@index([assignedUserId])
   @@index([scheduledStart])
   @@index([scheduledEnd])

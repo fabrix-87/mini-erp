@@ -7,7 +7,7 @@ import type {
   Contact,
   CreateContactInput,
   UpdateContactInput,
-  ContactQueryParams,
+  ContactQueryInput,
 } from '@/types/contact';
 
 // ============================================================================
@@ -26,7 +26,7 @@ interface ContactDeleteApiResponse extends ApiResponse<null> {}
 // QUERY BUILDER
 // ============================================================================
 
-const buildQueryString = (params: ContactQueryParams): string => {
+const buildQueryString = (params: ContactQueryInput): string => {
   const query = new URLSearchParams();
 
   if (params.page) query.append('page', params.page.toString());
@@ -52,7 +52,7 @@ export const clientContactService = {
    * Ottieni tutti i contatti con filtri e paginazione
    * ⚠️ Solo per uso client-side (React Query)
    */
-  async getAll(params: ContactQueryParams = {}): Promise<ContactListApiResponse> {
+  async getAll(params: ContactQueryInput): Promise<ContactListApiResponse> {
     const queryString = buildQueryString(params);
     const url = queryString ? `/contacts?${queryString}` : '/contacts';
     const { data } = await api.get<ContactListApiResponse>(url);
@@ -160,7 +160,7 @@ export const clientContactService = {
   /**
    * Export contatti in CSV
    */
-  async exportCSV(params: ContactQueryParams = {}): Promise<Blob> {
+  async exportCSV(params: ContactQueryInput): Promise<Blob> {
     const queryString = buildQueryString(params);
     const url = `/contacts/export/csv${queryString ? `?${queryString}` : ''}`;
     const { data } = await api.get(url, { responseType: 'blob' });
@@ -170,7 +170,7 @@ export const clientContactService = {
   /**
    * Export contatti in Excel
    */
-  async exportExcel(params: ContactQueryParams = {}): Promise<Blob> {
+  async exportExcel(params: ContactQueryInput): Promise<Blob> {
     const queryString = buildQueryString(params);
     const url = `/contacts/export/excel${queryString ? `?${queryString}` : ''}`;
     const { data } = await api.get(url, { responseType: 'blob' });

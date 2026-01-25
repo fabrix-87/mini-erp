@@ -6,16 +6,16 @@ import { toast } from 'sonner';
 import contactService from '@/services/client/contact';
 import { contactKeys } from './contact-keys';
 import type {
-  ContactQueryParams,
+  ContactQueryInput,
   ContactFilters,
   ContactSortField,
-  SortOrder,
   CreateContactInput,
   UpdateContactInput,
   UseContactsReturn,
   UseContactReturn,
   UseContactMutationsReturn,
 } from '@/types/contact';
+import { SortOrder } from '@mini-erp/shared/constants';
 
 // Re-export per comodità
 export { contactKeys };
@@ -24,7 +24,7 @@ export { contactKeys };
 // HOOK: useContacts (Lista con filtri e paginazione)
 // ============================================================================
 
-export function useContactsList(params: ContactQueryParams) {
+export function useContactsList(params: ContactQueryInput) {
   const { data: response, isLoading, error, refetch } = useQuery({
     queryKey: contactKeys.list(params),
     queryFn: () => contactService.getAll(params),
@@ -42,8 +42,8 @@ export function useContactsList(params: ContactQueryParams) {
   };
 }
 
-export function useContacts(initialParams?: ContactQueryParams): UseContactsReturn {
-  const [params, setParams] = useState<ContactQueryParams>(
+export function useContacts(initialParams?: ContactQueryInput): UseContactsReturn {
+  const [params, setParams] = useState<ContactQueryInput>(
     initialParams || {
       page: 1,
       limit: 20,
@@ -299,7 +299,7 @@ export function useContactMutations(): UseContactMutationsReturn {
 export function useContactExport() {
   const [isExporting, setIsExporting] = useState(false);
 
-  const exportCSV = async (params?: ContactQueryParams) => {
+  const exportCSV = async (params?: ContactQueryInput) => {
     setIsExporting(true);
     try {
       const blob = await contactService.exportCSV(params);
@@ -320,7 +320,7 @@ export function useContactExport() {
     }
   };
 
-  const exportExcel = async (params?: ContactQueryParams) => {
+  const exportExcel = async (params?: ContactQueryInput) => {
     setIsExporting(true);
     try {
       const blob = await contactService.exportExcel(params);

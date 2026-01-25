@@ -3,20 +3,31 @@
 // ============================================================================
 
 enum OpportunityStatus {
-  OPEN // L'opportunità è attiva e in lavorazione
-  WON // Vendita conclusa con successo
-  LOST // Vendita persa
-  PENDING // In attesa di una decisione esterna (es. accettazione cliente)
-  CLOSED // Chiusa (generico, usata se WON/LOST non è ancora chiaro)
+  OPEN      // L'opportunità è attiva e in lavorazione
+  WON       // Vendita conclusa con successo
+  LOST      // Vendita persa
+  PENDING   // In attesa di una decisione esterna
+  CLOSED    // Chiusa (generico)
 }
 
 enum SalesStage {
-  LEAD_QUALIFICATION // Qualificazione del potenziale cliente
-  PROSPECTING // Ricerca e primo contatto
-  NEEDS_ANALYSIS // Analisi dei bisogni
-  PROPOSAL_SENT // Proposta inviata
-  NEGOTIATION // Trattativa
-  COMMITMENT // Impegno/Firma (Pre-Won)
+  LEAD_QUALIFICATION  // Qualificazione del potenziale cliente
+  PROSPECTING        // Ricerca e primo contatto
+  NEEDS_ANALYSIS     // Analisi dei bisogni
+  PROPOSAL_SENT      // Proposta inviata
+  NEGOTIATION        // Trattativa
+  COMMITMENT         // Impegno/Firma (Pre-Won)
+}
+
+enum OpportunitySource {
+  LEAD          // Generata da una Lead
+  CUSTOMER      // Generata da un Customer esistente (upsell/cross-sell)
+  INBOUND       // Richiesta inbound
+  OUTBOUND      // Azione outbound
+  REFERRAL      // Referral
+  PARTNER       // Partner
+  EVENT         // Evento/Fiera
+  OTHER         // Altro
 }
 
 // ============================================================================
@@ -27,10 +38,20 @@ model Opportunity {
   title       String  @db.VarChar(255)
   description String? @db.Text
 
+  // === RELAZIONI CON LEAD O CUSTOMER ===
+  // Un'opportunità può essere collegata a una Lead (prima della conversione)
+  // oppure a un Customer esistente (upsell/cross-sell)
+  // Almeno una delle due deve essere presente (validazione a livello applicativo)
+  leadId     Int?
+  lead       Lead?     @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
   customerId Int
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  // STATO E STAGE (MIGLIORATI CON ENUM)
+  // Fonte dell'opportunità
+  source OpportunitySource @default(OTHER)
+
+  // STATO E STAGE
   status OpportunityStatus @default(OPEN)
   stage  SalesStage        @default(LEAD_QUALIFICATION) // Lo stadio specifico della vendita
 
@@ -40,6 +61,9 @@ model Opportunity {
   weightedValue  Decimal  @default(0) @db.Decimal(15, 2)
   probability    Int      @default(0) // 0-100. Deve essere mappato allo Stage.
 
+  // Valore effettivo (se vinta)
+  actualValue    Decimal? @db.Decimal(15, 2)
+
   // TEMPISTICHE CHIAVE
   expectedCloseDate DateTime?
   closedDate        DateTime?
@@ -47,7 +71,7 @@ model Opportunity {
   // MOTIVAZIONI E RAGIONI
   // Aggiunto un campo per specificare la ragione della perdita/vittoria
   closedReasonId Int?
-
+  closedReason   ClosedReason? @relation(fields: [closedReasonId], references: [id])
   closedNotes String? @db.Text // Note sulla chiusura (utile per l'analisi)
 
   // DATI UTENTE
@@ -58,27 +82,53 @@ model Opportunity {
 
   // DATA DI CAMBIO STAGE
   lastStageChange DateTime @default(now()) // Utile per monitorare la stagnazione
+  daysInCurrentStage Int @default(0) // Calcolato, utile per identificare opportunità stagnanti
 
-  // RELAZIONI
+  // Contatori interazioni
+  totalActivities Int @default(0)
+  lastActivityDate DateTime?
+
+  // === PRODOTTI/SERVIZI ===
+  proposedProducts Json? // Array di {productId, quantity, price, discount}
+
+  // === NOTE E CAMPI CUSTOM ===
   notes        String? @db.Text
   customFields Json?
 
+  // RELAZIONI
   documents  Document[]
-  // Relazioni Activities
   activities Activity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // === INDICI ===
+  @@index([leadId])
   @@index([customerId])
   @@index([status])
-  @@index([stage]) // Indice critico per i report di pipeline
+  @@index([stage])
+  @@index([source])
   @@index([assignedUserId])
   @@index([expectedCloseDate])
+  @@index([closedDate])
 }
 
+// ============================================================================
+// MOTIVI DI CHIUSURA (WIN/LOSS)
+// ============================================================================
 model ClosedReason {
-  id          Int     @id @default(autoincrement())
-  code        String? @db.VarChar(50) // Es. 'PREZZO', 'CONCORRENZA', 'BISOGNO_NON_CONFERMATO'
-  description String?
+  id            Int           @id @default(autoincrement())
+  code          String        @unique @db.VarChar(50) // Es. 'PRICE', 'COMPETITOR', 'NO_BUDGET'
+  description   String        @db.VarChar(255)
+  isWon         Boolean       // true per motivi di vittoria, false per perdita
+  active        Boolean       @default(true)
+  displayOrder  Int           @default(0)
+  
+  opportunities Opportunity[]
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  @@index([isWon])
+  @@index([active])
 }

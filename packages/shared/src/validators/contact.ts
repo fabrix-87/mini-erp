@@ -1,5 +1,23 @@
 import z from "zod";
-import { createIdSchema, emailSchema, sortOrderSchema } from "../utils";
+import {
+  createIdSchema,
+  emailSchema,
+  QueryBooleanSchema,
+  sortOrderSchema,
+} from "../utils";
+
+/**
+ * Campi ordinabili per Contact
+ */
+export const ContactSortFieldSchema = z.enum([
+  "firstName",
+  "lastName",
+  "email",
+  "position",
+  "department",
+  "createdAt",
+  "updatedAt",
+]);
 
 /**
  * Schema per la creazione di un Contact
@@ -74,24 +92,10 @@ export const ContactIdSchema = z.object({
  * Schema per Query Parameters Contact
  */
 export const ContactQuerySchema = z.object({
-  companyId: z
-    .string()
-    .optional()
-    .transform((val) => (val ? parseInt(val) : undefined)),
+  companyId: createIdSchema("Company ID non valido").optional(),
 
-  active: z
-    .enum(["true", "false"])
-    .optional()
-    .transform((val) =>
-      val === "true" ? true : val === "false" ? false : undefined
-    ),
-
-  isPrimaryContact: z
-    .enum(["true", "false"])
-    .optional()
-    .transform((val) =>
-      val === "true" ? true : val === "false" ? false : undefined
-    ),
+  active: QueryBooleanSchema,
+  isPrimaryContact: QueryBooleanSchema,
 
   search: z.string().optional(),
 
@@ -101,7 +105,7 @@ export const ContactQuerySchema = z.object({
 
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
-  sortBy: z.enum(["firstName", "lastName", "companyId", "email"]).optional(),
+  sortBy: ContactSortFieldSchema.optional(),
   sortOrder: sortOrderSchema,
 });
 
@@ -118,6 +122,6 @@ export const ToggleContactActiveSchema = z
  * Schema per check mail
  */
 export const CheckEmailSchema = z.object({
-  email: z.email(),
+  email: emailSchema("Campo email necessario"),
   companyId: createIdSchema("ID company non valido"),
 });

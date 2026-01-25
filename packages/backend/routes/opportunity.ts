@@ -10,6 +10,7 @@ import {
   validateOpportunityWon,
   validateOpportunityLost,
   validateOpportunityAssignUser,
+  validateCustomerIdParam,
 } from '../validators/opportunity';
 import {
   getAllOpportunities,
@@ -70,6 +71,7 @@ router.get(
   '/customer/:customerId',
   authenticateToken,
   authorize(['opportunity:read', 'opportunity:manage']),
+  validateCustomerIdParam,
   validateGetOpportunitiesByCustomer,
   getOpportunitiesByCustomer
 );

@@ -30,6 +30,12 @@ model User {
   activityParticipants  ActivityParticipant[]
   companyNotes          CompanyNote[]
 
+  // Lead assegnate a questo utente
+  assignedLeads Lead[] @relation("LeadAssignedUser")
+  
+  // Lead convertite da questo utente
+  convertedLeads Lead[] @relation("LeadConvertedBy")
+
   details UserDetails?
 
   createdAt DateTime @default(now())
