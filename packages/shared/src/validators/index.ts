@@ -14,3 +14,6 @@ export * from './payment';
 export * from './tax';
 export * from './pricelist';
 export * from './opportunity';
+export * from './product';
+export * from './warehouse';
+export * from './attribute';

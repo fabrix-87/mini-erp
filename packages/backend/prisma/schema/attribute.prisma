@@ -59,7 +59,9 @@ model Attribute {
   
   // Metadati specifici
   colorHex          String?   @db.VarChar(7)   // es: #FF0000
+  colorHex2         String?   @db.VarChar(7)   // es: #FF0000
   colorPms          String?   @db.VarChar(20)  // es: PMS 485C
+  colorPms2         String?   @db.VarChar(20)  // es: PMS 485C
   imageUrl          String?   @db.VarChar(500) // URL icona/texture
   
   position          Int       @default(0)

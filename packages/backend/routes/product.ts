@@ -1,21 +1,24 @@
 import express from 'express';
 import { authenticateToken, authorize } from '../middleware/auth';
 import {
-  validateCreateProductMiddleware,
-  validateUpdateProductMiddleware,
-  validateProductIdMiddleware,
-  validateCreateVariantMiddleware,
-  validateUpdateVariantMiddleware,
-  validateVariantIdMiddleware,
-  validateCreateTranslationMiddleware,
-  validateUpdateTranslationMiddleware,
-  validateCreateImageMiddleware,
-  validateUpdateImageMiddleware,
-  validateCreateProductCategoryMiddleware,
-  validateCreateManufacturerMiddleware,
-  validateUpdateManufacturerMiddleware,
-  validateProductImageIdMiddleware,
-  validateManufacturerIdMiddleware,
+  validateCreateProduct,
+  validateUpdateProduct,
+  validateProductId,
+  validateCreateVariant,
+  validateUpdateVariant,
+  validateVariantId,
+  validateCreateTranslation,
+  validateUpdateTranslation,
+  validateCreateImage,
+  validateUpdateImage,
+  validateCreateProductCategory,
+  validateCreateManufacturer,
+  validateUpdateManufacturer,
+  validateProductImageId,
+  validateManufacturerId,
+  validateProductQuery,
+  validateProductIdLanguageId,
+  validatProductCategoryId,
 } from '../validators/product';
 import {
   // Products
@@ -70,42 +73,42 @@ const router = express.Router();
  * @access  Public
  * @query   page, limit, search, active, categoryId, manufacturerId, minPrice, maxPrice, sortBy, sortOrder
  */
-router.get('/', getAllProducts);
+router.get('/', validateProductQuery, getAllProducts);
 
 /**
  * @route   GET /api/products/:id
  * @desc    Ottieni dettagli prodotto con varianti, traduzioni e immagini
  * @access  Public
  */
-router.get('/:id', validateProductIdMiddleware, getProductById);
+router.get('/:id', validateProductId, getProductById);
 
 /**
  * @route   GET /api/products/:id/variants
  * @desc    Lista varianti di un prodotto
  * @access  Public
  */
-router.get('/:id/variants', validateProductIdMiddleware, getProductVariants);
+router.get('/:id/variants', validateProductId, getProductVariants);
 
 /**
  * @route   GET /api/products/:id/images
  * @desc    Lista immagini di un prodotto
  * @access  Public
  */
-router.get('/:id/images', validateProductIdMiddleware, getProductImages);
+router.get('/:id/images', validateProductId, getProductImages);
 
 /**
  * @route   GET /api/products/:id/categories
  * @desc    Lista categorie di un prodotto
  * @access  Public
  */
-router.get('/:id/categories', validateProductIdMiddleware, getProductCategories);
+router.get('/:id/categories', validateProductId, getProductCategories);
 
 /**
  * @route   GET /api/products/:id/translations
  * @desc    Lista traduzioni di un prodotto
  * @access  Public
  */
-router.get('/:id/translations', validateProductIdMiddleware, getProductTranslations);
+router.get('/:id/translations', validateProductId, getProductTranslations);
 
 // ============================================================================
 // ADMIN ROUTES - Product Management
@@ -120,7 +123,7 @@ router.post(
   '/',
   authenticateToken,
   authorize(['product:create', 'product:manage']),
-  validateCreateProductMiddleware,
+  validateCreateProduct,
   createProduct
 );
 
@@ -145,8 +148,8 @@ router.put(
   '/:id',
   authenticateToken,
   authorize(['product:update', 'product:manage']),
-  validateProductIdMiddleware,
-  validateUpdateProductMiddleware,
+  validateProductId,
+  validateUpdateProduct,
   updateProduct
 );
 
@@ -159,7 +162,7 @@ router.delete(
   '/:id',
   authenticateToken,
   authorize(['product:delete', 'product:manage']),
-  validateProductIdMiddleware,
+  validateProductId,
   deleteProduct
 );
 
@@ -198,7 +201,7 @@ router.post(
  */
 router.get(
   '/:productId/variants/:id',
-  validateVariantIdMiddleware,
+  validateVariantId,
   getVariantById
 );
 
@@ -211,7 +214,7 @@ router.post(
   '/:id/variants',
   authenticateToken,
   authorize(['product:create', 'product:manage']),
-  validateCreateVariantMiddleware,
+  validateCreateVariant,
   createVariant
 );
 
@@ -224,8 +227,8 @@ router.put(
   '/:productId/variants/:id',
   authenticateToken,
   authorize(['product:update', 'product:manage']),
-  validateVariantIdMiddleware,
-  validateUpdateVariantMiddleware,
+  validateVariantId,
+  validateUpdateVariant,
   updateVariant
 );
 
@@ -238,7 +241,7 @@ router.delete(
   '/:productId/variants/:id',
   authenticateToken,
   authorize(['product:delete', 'product:manage']),
-  validateVariantIdMiddleware,
+  validateVariantId,
   deleteVariant
 );
 
@@ -255,7 +258,7 @@ router.post(
   '/:id/translations',
   authenticateToken,
   authorize(['product:create', 'product:manage']),
-  validateCreateTranslationMiddleware,
+  validateCreateTranslation,
   createTranslation
 );
 
@@ -268,7 +271,8 @@ router.put(
   '/:id/translations/:languageId',
   authenticateToken,
   authorize(['product:update', 'product:manage']),
-  validateUpdateTranslationMiddleware,
+  validateProductIdLanguageId,
+  validateUpdateTranslation,
   updateTranslation
 );
 
@@ -281,6 +285,7 @@ router.delete(
   '/:id/translations/:languageId',
   authenticateToken,
   authorize(['product:delete', 'product:manage']),
+  validateProductIdLanguageId,
   deleteTranslation
 );
 
@@ -297,7 +302,8 @@ router.post(
   '/:id/images',
   authenticateToken,
   authorize(['product:create', 'product:manage']),
-  validateCreateImageMiddleware,
+  validateProductId,
+  validateCreateImage,
   createImage
 );
 
@@ -310,8 +316,8 @@ router.put(
   '/:productId/images/:id',
   authenticateToken,
   authorize(['product:update', 'product:manage']),
-  validateProductImageIdMiddleware,
-  validateUpdateImageMiddleware,
+  validateProductImageId,
+  validateUpdateImage,
   updateImage
 );
 
@@ -324,6 +330,7 @@ router.delete(
   '/:productId/images/:id',
   authenticateToken,
   authorize(['product:delete', 'product:manage']),
+  validateProductImageId,
   deleteImage
 );
 
@@ -336,6 +343,7 @@ router.patch(
   '/:productId/images/:id/set-cover',
   authenticateToken,
   authorize(['product:update', 'product:manage']),
+  validateProductImageId,
   setCoverImage
 );
 
@@ -352,7 +360,8 @@ router.post(
   '/:id/categories',
   authenticateToken,
   authorize(['product:update', 'product:manage']),
-  validateCreateProductCategoryMiddleware,
+  validateProductId,
+  validateCreateProductCategory,
   addCategory
 );
 
@@ -365,6 +374,7 @@ router.delete(
   '/:productId/categories/:categoryId',
   authenticateToken,
   authorize(['product:update', 'product:manage']),
+  validatProductCategoryId,
   removeCategory
 );
 
@@ -377,6 +387,7 @@ router.patch(
   '/:productId/categories/:categoryId/position',
   authenticateToken,
   authorize(['product:update', 'product:manage']),
+  validatProductCategoryId,
   updateCategoryPosition
 );
 
@@ -396,7 +407,7 @@ router.get('/manufacturers', getAllManufacturers);
  * @desc    Ottieni dettagli produttore
  * @access  Public
  */
-router.get('/manufacturers/:id', validateManufacturerIdMiddleware, getManufacturerById);
+router.get('/manufacturers/:id', validateManufacturerId, getManufacturerById);
 
 /**
  * @route   POST /api/products/manufacturers
@@ -407,7 +418,7 @@ router.post(
   '/manufacturers',
   authenticateToken,
   authorize(['product:create', 'product:manage']),
-  validateCreateManufacturerMiddleware,
+  validateCreateManufacturer,
   createManufacturer
 );
 
@@ -420,8 +431,8 @@ router.put(
   '/manufacturers/:id',
   authenticateToken,
   authorize(['product:update', 'product:manage']),
-  validateManufacturerIdMiddleware,
-  validateUpdateManufacturerMiddleware,
+  validateManufacturerId,
+  validateUpdateManufacturer,
   updateManufacturer
 );
 
@@ -434,7 +445,7 @@ router.delete(
   '/manufacturers/:id',
   authenticateToken,
   authorize(['product:delete', 'product:manage']),
-  validateManufacturerIdMiddleware,
+  validateManufacturerId,
   deleteManufacturer
 );
 
