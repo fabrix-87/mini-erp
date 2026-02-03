@@ -12,6 +12,8 @@ model Language {
   taxRuleTranslations TaxRuleTranslation[]
   attributeTranslations AttributeTranslation[]
   attributeGroupTranslations AttributeGroupTranslation[]
+  vatNatureTranslations VatNatureTranslation[]
+  tenant TenantSettings[]
   countries Country[]
 
   createdAt DateTime @default(now())

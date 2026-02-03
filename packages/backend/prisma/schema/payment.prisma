@@ -10,15 +10,16 @@ model PaymentMethod {
     position Int     @default(0)
 
     // Relazioni
-    translations PaymentMethodTranslation[] @relation(name: "PaymentMethodTranslations")
-    customers    Customer[]                  @relation(name: "CompanyPaymentMethod")
-    documents    Document[]                 @relation(name: "DocumentPaymentMethod")
+    translations                PaymentMethodTranslation[]   @relation(name: "PaymentMethodTranslations")
+    customers                   Customer[]                   @relation(name: "CompanyPaymentMethod")
+    documents                   Document[]                   @relation(name: "DocumentPaymentMethod")
+    documentPaymentInstallments DocumentPaymentInstallment[]
 
     // NUOVA RELAZIONE: Contiene tutti i dettagli di scadenza (le singole rate)
     details PaymentTermDetail[]
 
-    createdAt                 DateTime                   @default(now())
-    updatedAt                 DateTime                   @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@index([active])
 }
@@ -60,8 +61,8 @@ model PaymentMethodTranslation {
     name        String  @db.VarChar(100) // Bonifico Bancario, Bank Transfer
     description String? @db.Text
 
-    createdAt     DateTime      @default(now())
-    updatedAt     DateTime      @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     // Traduzione unica per modalità di pagamento e lingua.
     @@unique([paymentMethodId, languageId])

@@ -74,7 +74,8 @@ model Product {
 
     // soft delete per mantenere storico
     deletedAt DateTime? // NULL = attivo, NOT NULL = cancellato
-    deletedBy Int?      // User ID che ha cancellato
+    deletedBy Int? // User ID che ha cancellato
+    deletedByUser User? @relation("DeletedBy", fields: [deletedBy], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -172,6 +173,8 @@ model ProductVariant {
     // RELAZIONI
     attributes     ProductVariantAttribute[]
     stockMovement  StockMovement[]
+    stockReservations StockReservation[]
+    stockBatchs    StockBatch[]
     virtualStock   VirtualStock[]
     documentLines  DocumentLine[]
     priceListItems PriceListItem[]
@@ -179,7 +182,8 @@ model ProductVariant {
 
     // soft delete per mantenere storico
     deletedAt DateTime? // NULL = attivo, NOT NULL = cancellato
-    deletedBy Int?      // User ID che ha cancellato
+    deletedBy Int? // User ID che ha cancellato
+    deletedByUser User? @relation("DeletedBy", fields: [deletedBy], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

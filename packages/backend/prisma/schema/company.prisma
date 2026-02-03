@@ -97,9 +97,12 @@ model Company {
     countryCode String  @default("IT") @db.Char(2)
     country     Country @relation("CompanyCountry", fields: [countryCode], references: [code])
 
-    // Indirizzo Legale (Relazione 1-a-1)
-    legalAddressId Int?            @unique
-    legalAddress   CompanyAddress? @relation("LegalAddress", fields: [legalAddressId], references: [id])
+    // Regime fiscale
+    taxRegime String? @db.VarChar(20) // "ordinario", "semplificato", "forfettario"
+
+    // Esenzione IVA
+    vatExempt       Boolean @default(false)
+    vatExemptReason String? @db.VarChar(100) // Riferimento normativo Art. X
 
     // Contatti Generali
     mainEmail String? @db.VarChar(255)
@@ -118,7 +121,7 @@ model Company {
     activities     Activity[]
 
     // Indirizzi
-    addresses CompanyAddress[] @relation("OtherAddresses")
+    addresses CompanyAddress[] @relation("CompanyAddresses")
     contacts  Contact[]
     customers Customer[]
     suppliers Supplier[]
@@ -160,7 +163,7 @@ model Customer {
     defaultPriceListId Int?
     defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id])
 
-    customerTaxRuleId Int? // Regola fiscale predefinita (es. Esportazione Extra UE)
+    customerTaxRuleId Int?
     customerTaxRule   TaxRule? @relation("CustomerTaxRule", fields: [customerTaxRuleId], references: [id])
 
     paymentMethodId Int?
@@ -169,10 +172,27 @@ model Customer {
     creditLimit Decimal? @db.Decimal(15, 2) // Limite di credito CONCESSO al Cliente
 
     // Tracking/Reportistica
-    firstSaleDate DateTime?
-    lastSaleDate  DateTime?
-    totalSales    Int       @default(0)
-    totalRevenue  Decimal   @default(0) @db.Decimal(15, 2)
+    firstSaleDate DateTime? // Prima vendita CONFERMATA
+    lastSaleDate  DateTime? // Ultima vendita CONFERMATA
+    totalSales    Int       @default(0) // Numero ordini TOTALI
+    totalRevenue  Decimal   @default(0) @db.Decimal(15, 2) // Fatturato TOTALE reale
+
+    // Date estese
+    customerSince     DateTime? // Data entrata in CRM (può essere prima di firstSaleDate)
+    lastInteractionAt DateTime? // Ultima attività (vendita, email, call, meeting)
+
+    // Metriche calcolate
+    averageOrderValue Decimal @default(0) @db.Decimal(15, 2) // Fatturato medio ( totalRevenue / totalSales )
+    lifetimeValue     Decimal @default(0) @db.Decimal(15, 2) // LTV (storico + proiezione)
+
+    // Score predittivi
+    churnRisk   Int @default(0) @db.SmallInt // 0-100 (rischio abbandono)
+    healthScore Int @default(50) @db.SmallInt // 0-100 (salute complessiva)
+
+    // NPS e soddisfazione
+    npsScore         Int?      @db.SmallInt // -100 a +100
+    satisfactionRate Decimal?  @db.Decimal(3, 2) // 0.00 - 5.00
+    lastSurveyDate   DateTime?
 
     // Relazioni a documenti di Vendita
     documentsOut  Document[]    @relation("CustomerDocuments")
@@ -184,6 +204,12 @@ model Customer {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    deletedAt DateTime?
+
+    deletedBy Int?
+    deletedByUser User? @relation("DeletedBy", fields: [deletedBy], references: [id])
+
+    @@index([deletedAt])
 
     //@@index([leadStatus])
 }
@@ -212,12 +238,24 @@ model Supplier {
     totalSpent     Decimal   @default(0) @db.Decimal(15, 2)
     rating         Int?      @default(5) // 1-5 stelle
 
+    supplierTaxRuleId Int?
+    supplierTaxRule   TaxRule? @relation("SupplierTaxRule", fields: [supplierTaxRuleId], references: [id])
+
     // Relazioni a documenti di Acquisto
     documentsIn Document[] @relation("SupplierDocuments")
     products    Product[]
 
+    // Relazione stocks
+    stockBatchs StockBatch[]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    deletedAt DateTime?
+
+    deletedBy Int?
+    deletedByUser User? @relation("DeletedBy", fields: [deletedBy], references: [id])
+
+    @@index([deletedAt])
 }
 
 // Enum per tipo indirizzo
@@ -234,9 +272,11 @@ model CompanyAddress {
     id Int @id @default(autoincrement())
 
     companyId Int
-    company   Company @relation("OtherAddresses", fields: [companyId], references: [id], onDelete: Cascade)
+    company   Company @relation("CompanyAddresses", fields: [companyId], references: [id], onDelete: Cascade)
 
     addressType AddressType @default(LEGAL) // LEGAL, BILLING, SHIPPING, WAREHOUSE
+    isPrimary   Boolean     @default(false)
+    isLegal     Boolean     @default(false)
 
     // Campi base dell'indirizzo
     address String @db.VarChar(255)
@@ -257,17 +297,14 @@ model CompanyAddress {
     // Contatto specifico per questo indirizzo (es. telefono del magazzino)
     phone String? @db.VarChar(50)
 
-    isPrimary Boolean @default(false)
-
-    companyForLegal Company? @relation("LegalAddress")
-
     openingHours Json?
     notes        String? @db.Text
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([companyId])
+    @@unique([companyId, addressType, isPrimary])
+    @@index([companyId, isLegal])
     @@index([addressType])
     @@index([provinceCode])
 }
@@ -298,10 +335,10 @@ model Contact {
     activities           Activity[]
     activityParticipants ActivityParticipant[]
 
-    // Corretto: un contatto unico per email all'interno di un'azienda.
+    // Un contatto unico per email all'interno di un'azienda.
     @@unique([companyId, email])
     // Unico contatto primario in azienda
-    @@unique([companyId, isPrimaryContact])
+    @@index([companyId, isPrimaryContact])
     @@index([companyId])
     @@index([email])
     @@index([isPrimaryContact]) // Utile per trovare velocemente il contatto principale

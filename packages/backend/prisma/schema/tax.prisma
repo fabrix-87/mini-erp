@@ -1,65 +1,160 @@
-model TaxRate {
-    id Int @id @default(autoincrement())
+// ============================================================================
+// GESTIONE IVA E NATURE OPERAZIONI
+// ============================================================================
 
-    // Esempio: 4.00, 10.00, 22.00
-    rate Decimal @unique @db.Decimal(5, 2)
-    name String  @unique @db.VarChar(50) // Esempio: "IVA 22%", "IVA Ridotta 10%"
-
-    active Boolean @default(true)
-
-    rules TaxRule[]
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@index([rate])
+enum VatNatureCategory {
+  EXCLUDED      // N1 - Escluse
+  NOT_SUBJECT   // N2.x - Non soggette
+  NOT_TAXABLE   // N3.x - Non imponibili
+  EXEMPT        // N4 - Esenti
+  MARGIN        // N5 - Regime del margine
+  REVERSE       // N6.x - Inversione contabile
+  EU_VAT        // N7 - IVA altro stato UE
 }
 
+// ============================================================================
+// NATURE IVA (Codici obbligatori fattura elettronica)
+// ============================================================================
+model VatNature {
+  id   Int    @id @default(autoincrement())
+  code String @unique @db.VarChar(10) // N1, N2.1, N2.2, N3.1, ecc.
+  
+  category VatNatureCategory
+  
+  description         String  @db.VarChar(500)
+  extendedDescription String? @db.Text
+  legalReference      String? @db.VarChar(255)
+  
+  applicableToEntityTypes String? @db.VarChar(10)
+  validForSales           Boolean @default(true)
+  validForPurchases       Boolean @default(false)
+  vatReturnLine           String? @db.VarChar(10)
+  requiresNormReference   Boolean @default(false)
+  
+  usageExamples    String? @db.Text
+  operationalNotes String? @db.Text
+  
+  active       Boolean @default(true)
+  validFrom    DateTime @default("2021-01-01T00:00:00Z")
+  validTo      DateTime?
+  displayOrder Int @default(0)
+  
+  // Sostituzione codici legacy
+  replacedByCode String?     @db.VarChar(10)
+  replacedBy     VatNature?  @relation("VatNatureReplacement", fields: [replacedByCode], references: [code])
+  replacements   VatNature[] @relation("VatNatureReplacement")
+  
+  // === RELAZIONI ===
+  
+  // Regole fiscali che usano questa natura
+  taxRules TaxRule[]
+  
+  // Traduzioni
+  translations VatNatureTranslation[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([code])
+  @@index([category])
+  @@index([active, displayOrder])
+  @@index([validFrom, validTo])
+}
+
+model VatNatureTranslation {
+  id           Int        @id @default(autoincrement())
+  vatNatureId  Int
+  vatNature    VatNature  @relation(fields: [vatNatureId], references: [id], onDelete: Cascade)
+  
+  languageId   Int
+  language     Language   @relation(fields: [languageId], references: [id])
+  
+  description  String     @db.VarChar(500)
+  notes        String?    @db.Text
+  
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  
+  @@unique([vatNatureId, languageId])
+  @@index([languageId])
+}
+
+// ============================================================================
+// TAX RULE (Regole fiscali configurabili)
+// ============================================================================
 model TaxRule {
-    id Int @id @default(autoincrement())
-
-    // Codice fiscale (Esempio: N2, N3.1, N7)
-    code String @unique @db.VarChar(20)
-
-    // Descrizione legale/commerciale
-    name        String  @db.VarChar(255) // Esempio: "Esportazione Extra UE Art. 8/2", "IVA Esente"
-    description String? @db.Text
-
-    // Tipo di operazione (utile per la fatturazione elettronica, es. "Non Imponibile")
-    operationType String @db.VarChar(50)
-
-    // Relazione alla percentuale IVA
-    taxRateId Int
-    taxRate   TaxRate @relation(fields: [taxRateId], references: [id])
-
-    active Boolean @default(true)
-
-    // Relazioni ai modelli di prodotto e documento
-    products            Product[]            @relation("ProductTaxRule")
-    documentLines       DocumentLine[]       @relation("DocumentLineTaxRule")
-    customers           Customer[]            @relation("CustomerTaxRule")
-    taxRuleTranslations TaxRuleTranslation[]
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@index([code])
-    @@index([operationType])
-    @@index([taxRateId])
+  id   Int    @id @default(autoincrement())
+  code String @unique @db.VarChar(20)
+  
+  name        String  @db.VarChar(255)
+  description String? @db.Text
+  
+  // === ALIQUOTA IVA ===
+  rate Decimal @db.Decimal(5, 2) // 0.00, 4.00, 5.00, 10.00, 22.00
+  
+  // === NATURA IVA (obbligatoria se rate = 0) ===
+  vatNatureId        Int?
+  vatNature          VatNature? @relation(fields: [vatNatureId], references: [id])
+  normativeReference String?    @db.VarChar(255)
+  
+  // === APPLICABILITÀ ===
+  countryCode     String @default("IT") @db.Char(2)
+  country         Country @relation(fields: [countryCode], references: [code])
+  applicableFor   String  @default("both") @db.VarChar(20) // "sales", "purchases", "both"
+  productCategory String? @db.VarChar(50)
+  customerType    String? @db.VarChar(20)
+  
+  // === REGOLE SPECIALI ===
+  isSplitPayment       Boolean @default(false)
+  deductibilityPercent Decimal @default(100) @db.Decimal(5, 2)
+  vatDeductible        Boolean @default(true)
+  
+  // === VALIDITÀ ===
+  validFrom DateTime  @default(now())
+  validTo   DateTime?
+  
+  // === STATO ===
+  active       Boolean @default(true)
+  isDefault    Boolean @default(false)
+  displayOrder Int     @default(0)
+  color        String? @db.VarChar(7)
+  
+  // === RELAZIONI ===
+  translations TaxRuleTranslation[]
+  customers Customer[] @relation("CustomerTaxRule")
+  suppliers Supplier[] @relation("SupplierTaxRule")
+  tenantsSales TenantSettings[] @relation("TenantDefaultSalesTaxRule")
+  tenantsPurchases TenantSettings[] @relation("TenantDefaultPurchasesTaxRule")
+  priceListItems PriceListItem[] @relation("PriceListTaxRule")
+  documentLines DocumentLine[] @relation("DocumentLineTaxRule")
+  products Product[] @relation("ProductTaxRule")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([code])
+  @@index([rate])
+  @@index([vatNatureId])
+  @@index([countryCode])
+  @@index([active, isDefault])
+  @@index([validFrom, validTo])
+  @@index([applicableFor])
 }
 
 model TaxRuleTranslation {
-    id        Int     @id @default(autoincrement())
-    taxRuleId Int
-    taxRule   TaxRule @relation(fields: [taxRuleId], references: [id], onDelete: Cascade)
-
-    languageId Int
-    language   Language @relation(fields: [languageId], references: [id])
-
-    name String @db.VarChar(255) // Descrizione legale tradotta
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@unique([taxRuleId, languageId])
+  id        Int      @id @default(autoincrement())
+  taxRuleId Int
+  taxRule   TaxRule  @relation(fields: [taxRuleId], references: [id], onDelete: Cascade)
+  
+  languageId Int
+  language   Language @relation(fields: [languageId], references: [id])
+  
+  name        String  @db.VarChar(255)
+  description String? @db.Text
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([taxRuleId, languageId])
+  @@index([languageId])
 }

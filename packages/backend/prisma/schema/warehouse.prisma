@@ -7,6 +7,8 @@ model Warehouse {
 
     stockMovements StockMovement[] // solo per magazzini fisici
     virtualStocks  VirtualStock[] // solo per magazzini virtuali
+    documentLines DocumentLine[]
+    stockReservations StockReservation[]
     document Document[]
 }
 
@@ -26,6 +28,12 @@ enum MovementType {
     INVENTORY_START // stock iniziale
 }
 
+enum MovementStatus {
+    PENDING
+    CONFIRMED
+    CANCELLED
+}
+
 model StockMovement {
     id               Int          @id @default(autoincrement())
     productVariantId Int
@@ -35,14 +43,47 @@ model StockMovement {
     referenceId      String?
     note             String?
     movementDate     DateTime     @default(now())
-    createdAt        DateTime     @default(now())
+
+    // costo movimento (per valorizzazione)
+    unitCost  Decimal? @db.Decimal(20, 6)
+    totalCost Decimal? @db.Decimal(20, 2)
+    
+    // documenti collegati
+    documentId     Int?
+    document       Document? @relation(fields: [documentId], references: [id])
+    documentLineId Int?
+    documentLine   DocumentLine? @relation(fields: [documentLineId], references: [id])
+
+    // lotto/seriale
+    batchNumber  String? @db.VarChar(50)
+    serialNumber String? @db.VarChar(50)
+    expiryDate   DateTime?    
+
+    // utente che ha registrato
+    createdByUserId Int?
+    createdBy       User? @relation(fields: [createdByUserId], references: [id])
+
+    // stato movimento
+    status MovementStatus @default(PENDING)
 
     productVariant ProductVariant @relation(fields: [productVariantId], references: [id])
     warehouse      Warehouse      @relation(fields: [warehouseId], references: [id])
 
+    createdAt        DateTime     @default(now())
+
     @@index([productVariantId])
     @@index([warehouseId])
     @@index([movementDate])
+    @@index([documentId])
+    @@index([batchNumber])
+    @@index([serialNumber])
+    @@index([status])
+}
+
+enum VirtualSyncStatus {
+    PENDING
+    SUCCESS
+    ERROR
 }
 
 model VirtualStock {
@@ -56,5 +97,72 @@ model VirtualStock {
     productVariant ProductVariant @relation(fields: [productVariantId], references: [id])
     warehouse      Warehouse      @relation(fields: [warehouseId], references: [id])
 
+    // tracking sincronizzazione
+    lastSyncAt        DateTime?
+    syncStatus        VirtualSyncStatus   @default(PENDING)
+    syncError         String?  @db.Text
+    
+    // AGGIUNGERE: disponibilità attesa
+    expectedAvailableDate DateTime?
+    leadTimeDays          Int      @default(0)
+    
+    // AGGIUNGERE: prezzo fornitore
+    supplierPrice    Decimal? @db.Decimal(20, 6)
+    supplierCurrency String?  @db.VarChar(3)
+    
+    @@index([syncStatus, lastSyncAt])
     @@unique([productVariantId, warehouseId]) // Uno stock virtuale per variante per magazzino
+}
+
+// gestione lotti
+model StockBatch {
+    id               Int      @id @default(autoincrement())
+    productVariantId Int
+    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+    
+    batchNumber      String   @db.VarChar(50)
+    manufacturedDate DateTime?
+    expiryDate       DateTime?
+    
+    supplierId       Int?
+    supplier         Supplier? @relation(fields: [supplierId], references: [id])
+    
+    quantity         Int      @default(0)
+    reserved         Int      @default(0)
+    
+    status           String   @default("active") @db.VarChar(20) // "active", "quarantine", "expired"
+    
+    @@unique([productVariantId, batchNumber])
+    @@index([expiryDate])
+}
+
+// AGGIUNGERE: gestione prenotazioni
+model StockReservation {
+    id               Int      @id @default(autoincrement())
+    productVariantId Int
+    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+    
+    warehouseId      Int
+    warehouse        Warehouse @relation(fields: [warehouseId], references: [id])
+    
+    quantity         Int
+    
+    // Riferimento al documento che ha prenotato
+    documentId       Int
+    document         Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+    documentLineId   Int?
+    documentLine     DocumentLine? @relation(fields: [documentLineId], references: [id])
+    
+    status           String   @default("active") @db.VarChar(20) // "active", "fulfilled", "cancelled", "expired"
+    
+    reservedAt       DateTime @default(now())
+    expiresAt        DateTime? // Prenotazione temporanea (carrello)
+    fulfilledAt      DateTime?
+    cancelledAt      DateTime?
+    
+    batchNumber      String?  @db.VarChar(50) // Lotto specifico prenotato
+    
+    @@index([productVariantId, warehouseId, status])
+    @@index([documentId])
+    @@index([expiresAt])
 }

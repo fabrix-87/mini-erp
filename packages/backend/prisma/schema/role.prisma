@@ -12,6 +12,11 @@ model Role {
   // Relazioni
   users           User[]        @relation("UserRoles")
   permissions     RolePermission[]
+
+  // gerarchia ruoli
+    parentRoleId Int?
+    parentRole   Role?  @relation("RoleHierarchy", fields: [parentRoleId], references: [id])
+    childRoles   Role[] @relation("RoleHierarchy")
   
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -25,6 +30,7 @@ model Permission {
   
   resource        String        @db.VarChar(50) // Es. product, document, company
   action          String        @db.VarChar(50) // Es. read, create, update, delete, approve, export
+  scope           String        @default("own") @db.VarChar(20) // "own", "team", "all"
 
   description     String?       @db.Text
   
@@ -33,6 +39,8 @@ model Permission {
   
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+
+  @@unique([resource, action, scope])
 }
 
 model RolePermission {
@@ -45,4 +53,26 @@ model RolePermission {
   // Chiave primaria composta
   @@id([roleId, permissionId])
   @@index([permissionId])
+}
+
+// log modifiche per compliance
+model AuditLog {
+    id         String   @id @default(uuid())
+    
+    entityType String   @db.VarChar(50) // "Product", "Document", "Customer"
+    entityId   Int
+    
+    action     String   @db.VarChar(20) // "create", "update", "delete"
+    
+    userId     Int?
+    user       User?    @relation(fields: [userId], references: [id])
+    
+    changes    Json     // {field: {old: x, new: y}}
+    metadata   Json?    // IP, user agent, etc.
+    
+    createdAt  DateTime @default(now())
+    
+    @@index([entityType, entityId])
+    @@index([userId])
+    @@index([createdAt])
 }

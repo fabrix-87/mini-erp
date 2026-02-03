@@ -6,9 +6,9 @@ model User {
   active   Boolean @default(true)
 
   // Email verification
-  emailVerified          Boolean   @default(false)
-  emailVerificationToken String?   @unique @db.VarChar(255)
-  
+  emailVerified          Boolean @default(false)
+  emailVerificationToken String? @unique @db.VarChar(255)
+
   // Password reset
   resetPasswordToken   String?   @unique @db.VarChar(255)
   resetPasswordExpires DateTime?
@@ -29,10 +29,18 @@ model User {
   activitiesCreated     Activity[]            @relation("ActivityCreated")
   activityParticipants  ActivityParticipant[]
   companyNotes          CompanyNote[]
+  stockMovement         StockMovement[]
+  auditLogs             AuditLog[]
+
+  deletedDocuments       Document[]       @relation("DeletedBy")
+  deletedProducts        Product[]        @relation("DeletedBy")
+  deletedProductVariants ProductVariant[] @relation("DeletedBy")
+  deletedCustomers       Customer[]       @relation("DeletedBy")
+  deletedSuppliers       Supplier[]       @relation("DeletedBy")
 
   // Lead assegnate a questo utente
   assignedLeads Lead[] @relation("LeadAssignedUser")
-  
+
   // Lead convertite da questo utente
   convertedLeads Lead[] @relation("LeadConvertedBy")
 

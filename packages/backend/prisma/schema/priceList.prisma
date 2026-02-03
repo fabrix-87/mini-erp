@@ -75,6 +75,10 @@ model PriceListItem {
     validFrom DateTime?
     validTo   DateTime?
 
+    // Relazioni
+    taxRuleId Int?
+    taxRule   TaxRule? @relation("PriceListTaxRule", fields: [taxRuleId], references: [id])
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 

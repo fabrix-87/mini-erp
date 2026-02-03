@@ -16,6 +16,15 @@ enum DocumentType {
     ARCHIVED // Documento archiviato o non classificato
 }
 
+enum DocumentStatusCategory {
+    DRAFT_PHASE // Stati di lavorazione
+    APPROVAL_PHASE // Stato di invio
+    ACTIVE_PHASE // Stati di accettazione
+    FULFILLMENT_PHASE // Stati logistici/fiscali
+    PAYMENT_PHASE // Stati finanziari
+    CLOSED_PHASE // Stati finali
+}
+
 enum DocumentStatus {
     // Stati di lavorazione
     DRAFT // Bozza (non ancora numerato)
@@ -42,15 +51,25 @@ enum DocumentStatus {
     CLOSED // Chiuso (Generico, per chiudere il ciclo)
 }
 
+enum DocumentRelationType {
+    CONVERTS_TO
+    SPLITS_FROM
+    MERGES_INTO
+    CREDITS
+    AMENDS
+}
+
 model Document {
     id Int @id @default(autoincrement())
 
     // Classificazione
-    documentType DocumentType
-    status       DocumentStatus @default(DRAFT)
+    documentType   DocumentType
+    statusCategory DocumentStatusCategory @default(DRAFT_PHASE)
+    status         DocumentStatus         @default(DRAFT)
 
     // Numerazione
     documentNumber String? @unique
+    sequenceNumber Int? // Numero progressivo nella sequenza
     documentYear   Int
 
     // Soggetti
@@ -86,10 +105,13 @@ model Document {
     sentDate     DateTime?
 
     // Relazioni documento
-    relatedQuoteId       Int?
-    relatedOrderId       Int?
-    relatedInvoiceId     Int?
-    relatedOpportunityId Int?
+    parentDocumentId Int?
+    parentDocument   Document?  @relation("DocumentChain", fields: [parentDocumentId], references: [id])
+    childDocuments   Document[] @relation("DocumentChain")
+
+    // AGGIUNGERE: tabella junction per relazioni multiple
+    relatedDocuments   DocumentRelation[] @relation("SourceDocument")
+    relatedToDocuments DocumentRelation[] @relation("TargetDocument")
 
     // Dati cliente (snapshot)
     customerName      String
@@ -155,18 +177,37 @@ model Document {
     createdBy       User  @relation("CreatedBy", fields: [createdByUserId], references: [id])
     assignedUserId  Int?
     assignedUser    User? @relation("AssignedTo", fields: [assignedUserId], references: [id], onDelete: SetNull)
+    deletedBy       Int?
+    deletedByUser   User? @relation("DeletedBy", fields: [deletedBy], references: [id])
 
     customFields Json?
+
+    // Storico transizioni stato
+    statusHistory Json? // Array: [{from, to, by, at, reason}]
+
+    // date importanti 
+    approvedAt   DateTime?
+    invoicedAt   DateTime?
+    deliveredAt  DateTime?
+    closedAt     DateTime?
+    voidedAt     DateTime?
+    voidedReason String?   @db.Text
 
     // Relazioni
     lines                 DocumentLine[]
     installments          DocumentPaymentInstallment[] // rate pagamento
+    stockMovement         StockMovement[]
+    stockReservations StockReservation[]
     // Relazione alla transazione Intrastat
     intrastatTransactions IntrastatTransaction[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    deletedAt DateTime?
 
+@@index([deletedAt])
+
+    @@unique([documentType, documentYear, sequenceNumber])
     @@index([documentType])
     @@index([status])
     @@index([companyId])
@@ -177,6 +218,7 @@ model Document {
     @@index([documentYear])
     @@index([customerCountryCode])
     @@index([shippingCountryCode])
+    @@index([documentType, documentYear, documentNumber])
 }
 
 model DocumentLine {
@@ -217,13 +259,19 @@ model DocumentLine {
 
     lineTotal Decimal @default(0) @db.Decimal(15, 2)
 
+    // Regola fiscale applicata
     taxRuleId Int?
     taxRule   TaxRule? @relation("DocumentLineTaxRule", fields: [taxRuleId], references: [id], onDelete: SetNull)
 
-    // I campi snapshot di tasso/codice possono essere mantenuti per coerenza storica
+    // Snapshot valori al momento documento
     taxPercent Decimal @default(22) @db.Decimal(5, 2)
     taxAmount  Decimal @default(0) @db.Decimal(15, 2)
-    taxCode    String? @db.VarChar(10)
+
+    // Natura IVA utilizzata (snapshot)
+    vatNatureCode String? @db.VarChar(10) // N2.1, N3.2, ecc.
+
+    // Riferimento normativo utilizzato (per XML fattura elettronica)
+    vatNormReference String? @db.VarChar(255)
 
     lineTotalWithTax Decimal @default(0) @db.Decimal(15, 2)
 
@@ -233,6 +281,32 @@ model DocumentLine {
     // Relazione alla transazione Intrastat
     intrastatTransaction IntrastatTransaction?
 
+    // tracking magazzino
+    warehouseId Int?
+    warehouse   Warehouse? @relation(fields: [warehouseId], references: [id])
+
+    stockReservations StockReservation[]
+    stockMovement StockMovement[]
+
+    // gestione kit/bundle
+    parentLineId   Int?
+    parentLine     DocumentLine?  @relation("LineComponents", fields: [parentLineId], references: [id])
+    componentLines DocumentLine[] @relation("LineComponents")
+
+    isComponent Boolean @default(false) // True se fa parte di un kit
+
+    // tracking evasione
+    quantityInvoiced  Decimal @default(0) @db.Decimal(15, 6)
+    quantityDelivered Decimal @default(0) @db.Decimal(15, 6)
+    quantityReturned  Decimal @default(0) @db.Decimal(15, 6)
+
+    // prezzi originali per storico
+    originalUnitPrice   Decimal? @db.Decimal(20, 6)
+    priceOverrideReason String?  @db.Text
+
+    @@index([warehouseId])
+    @@index([parentLineId])
+    @@index([documentId, lineNumber]) // Ordinamento righe
     @@index([documentId])
     @@index([productId])
 }
@@ -255,10 +329,55 @@ model DocumentPaymentInstallment {
 
     notes String? @db.Text
 
+    // metodo pagamento specifico per rata
+    paymentMethodId Int?
+    paymentMethod   PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+
+    // riferimenti transazioni
+    paymentReference  String? @db.VarChar(100) // CRO, TRN, ecc.
+    bankTransactionId String? @db.VarChar(100)
+
+    // gestione solleciti
+    remindersSent  Int       @default(0)
+    lastReminderAt DateTime?
+
+    // penali ritardo
+    lateFeeAmount Decimal @default(0) @db.Decimal(15, 2)
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    @@index([status, dueDate]) // Solleciti automatici
     @@index([documentId])
     @@index([dueDate])
     @@index([status])
+}
+
+// tabella per gestire sequenze
+model DocumentSequence {
+    id           Int          @id @default(autoincrement())
+    documentType DocumentType @unique
+    year         Int
+    lastNumber   Int          @default(0)
+    prefix       String?      @db.VarChar(10) // Es. "FT", "DDT", "PRV" 
+
+    updatedAt DateTime @updatedAt
+
+    @@unique([documentType, year])
+}
+
+// gestione relazioni complesse
+model DocumentRelation {
+    sourceDocumentId Int
+    sourceDocument   Document @relation("SourceDocument", fields: [sourceDocumentId], references: [id], onDelete: Cascade)
+
+    targetDocumentId Int
+    targetDocument   Document @relation("TargetDocument", fields: [targetDocumentId], references: [id], onDelete: Cascade)
+
+    relationType DocumentRelationType
+
+    createdAt DateTime @default(now())
+
+    @@id([sourceDocumentId, targetDocumentId, relationType])
+    @@index([targetDocumentId])
 }

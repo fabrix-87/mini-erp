@@ -11,7 +11,10 @@ model Country {
   documentShippingCountry Document[] @relation("DocumentShippingCountry")
 
   leads Lead[] @relation("LeadCountry")
+
+  taxRule TaxRule[]
   
-  // Opzionale, ma utile:
+  tenant TenantSettings[]
+  
   languages       Language[]
 }
