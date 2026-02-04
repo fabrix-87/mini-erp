@@ -33,6 +33,9 @@ export type DocumentPaymentInstallmentAvgAggregateOutputType = {
   percentage: runtime.Decimal | null
   amount: runtime.Decimal | null
   paidAmount: runtime.Decimal | null
+  paymentMethodId: number | null
+  remindersSent: number | null
+  lateFeeAmount: runtime.Decimal | null
 }
 
 export type DocumentPaymentInstallmentSumAggregateOutputType = {
@@ -42,6 +45,9 @@ export type DocumentPaymentInstallmentSumAggregateOutputType = {
   percentage: runtime.Decimal | null
   amount: runtime.Decimal | null
   paidAmount: runtime.Decimal | null
+  paymentMethodId: number | null
+  remindersSent: number | null
+  lateFeeAmount: runtime.Decimal | null
 }
 
 export type DocumentPaymentInstallmentMinAggregateOutputType = {
@@ -55,6 +61,12 @@ export type DocumentPaymentInstallmentMinAggregateOutputType = {
   paidAmount: runtime.Decimal | null
   status: string | null
   notes: string | null
+  paymentMethodId: number | null
+  paymentReference: string | null
+  bankTransactionId: string | null
+  remindersSent: number | null
+  lastReminderAt: Date | null
+  lateFeeAmount: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -70,6 +82,12 @@ export type DocumentPaymentInstallmentMaxAggregateOutputType = {
   paidAmount: runtime.Decimal | null
   status: string | null
   notes: string | null
+  paymentMethodId: number | null
+  paymentReference: string | null
+  bankTransactionId: string | null
+  remindersSent: number | null
+  lastReminderAt: Date | null
+  lateFeeAmount: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -85,6 +103,12 @@ export type DocumentPaymentInstallmentCountAggregateOutputType = {
   paidAmount: number
   status: number
   notes: number
+  paymentMethodId: number
+  paymentReference: number
+  bankTransactionId: number
+  remindersSent: number
+  lastReminderAt: number
+  lateFeeAmount: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -98,6 +122,9 @@ export type DocumentPaymentInstallmentAvgAggregateInputType = {
   percentage?: true
   amount?: true
   paidAmount?: true
+  paymentMethodId?: true
+  remindersSent?: true
+  lateFeeAmount?: true
 }
 
 export type DocumentPaymentInstallmentSumAggregateInputType = {
@@ -107,6 +134,9 @@ export type DocumentPaymentInstallmentSumAggregateInputType = {
   percentage?: true
   amount?: true
   paidAmount?: true
+  paymentMethodId?: true
+  remindersSent?: true
+  lateFeeAmount?: true
 }
 
 export type DocumentPaymentInstallmentMinAggregateInputType = {
@@ -120,6 +150,12 @@ export type DocumentPaymentInstallmentMinAggregateInputType = {
   paidAmount?: true
   status?: true
   notes?: true
+  paymentMethodId?: true
+  paymentReference?: true
+  bankTransactionId?: true
+  remindersSent?: true
+  lastReminderAt?: true
+  lateFeeAmount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -135,6 +171,12 @@ export type DocumentPaymentInstallmentMaxAggregateInputType = {
   paidAmount?: true
   status?: true
   notes?: true
+  paymentMethodId?: true
+  paymentReference?: true
+  bankTransactionId?: true
+  remindersSent?: true
+  lastReminderAt?: true
+  lateFeeAmount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -150,6 +192,12 @@ export type DocumentPaymentInstallmentCountAggregateInputType = {
   paidAmount?: true
   status?: true
   notes?: true
+  paymentMethodId?: true
+  paymentReference?: true
+  bankTransactionId?: true
+  remindersSent?: true
+  lastReminderAt?: true
+  lateFeeAmount?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -252,6 +300,12 @@ export type DocumentPaymentInstallmentGroupByOutputType = {
   paidAmount: runtime.Decimal
   status: string
   notes: string | null
+  paymentMethodId: number | null
+  paymentReference: string | null
+  bankTransactionId: string | null
+  remindersSent: number
+  lastReminderAt: Date | null
+  lateFeeAmount: runtime.Decimal
   createdAt: Date
   updatedAt: Date
   _count: DocumentPaymentInstallmentCountAggregateOutputType | null
@@ -290,9 +344,16 @@ export type DocumentPaymentInstallmentWhereInput = {
   paidAmount?: Prisma.DecimalFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.StringFilter<"DocumentPaymentInstallment"> | string
   notes?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
+  paymentMethodId?: Prisma.IntNullableFilter<"DocumentPaymentInstallment"> | number | null
+  paymentReference?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
+  bankTransactionId?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
+  remindersSent?: Prisma.IntFilter<"DocumentPaymentInstallment"> | number
+  lastReminderAt?: Prisma.DateTimeNullableFilter<"DocumentPaymentInstallment"> | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"DocumentPaymentInstallment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DocumentPaymentInstallment"> | Date | string
   document?: Prisma.XOR<Prisma.DocumentScalarRelationFilter, Prisma.DocumentWhereInput>
+  paymentMethod?: Prisma.XOR<Prisma.PaymentMethodNullableScalarRelationFilter, Prisma.PaymentMethodWhereInput> | null
 }
 
 export type DocumentPaymentInstallmentOrderByWithRelationInput = {
@@ -306,9 +367,16 @@ export type DocumentPaymentInstallmentOrderByWithRelationInput = {
   paidAmount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentMethodId?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentReference?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankTransactionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  remindersSent?: Prisma.SortOrder
+  lastReminderAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lateFeeAmount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   document?: Prisma.DocumentOrderByWithRelationInput
+  paymentMethod?: Prisma.PaymentMethodOrderByWithRelationInput
 }
 
 export type DocumentPaymentInstallmentWhereUniqueInput = Prisma.AtLeast<{
@@ -325,9 +393,16 @@ export type DocumentPaymentInstallmentWhereUniqueInput = Prisma.AtLeast<{
   paidAmount?: Prisma.DecimalFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.StringFilter<"DocumentPaymentInstallment"> | string
   notes?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
+  paymentMethodId?: Prisma.IntNullableFilter<"DocumentPaymentInstallment"> | number | null
+  paymentReference?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
+  bankTransactionId?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
+  remindersSent?: Prisma.IntFilter<"DocumentPaymentInstallment"> | number
+  lastReminderAt?: Prisma.DateTimeNullableFilter<"DocumentPaymentInstallment"> | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"DocumentPaymentInstallment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DocumentPaymentInstallment"> | Date | string
   document?: Prisma.XOR<Prisma.DocumentScalarRelationFilter, Prisma.DocumentWhereInput>
+  paymentMethod?: Prisma.XOR<Prisma.PaymentMethodNullableScalarRelationFilter, Prisma.PaymentMethodWhereInput> | null
 }, "id">
 
 export type DocumentPaymentInstallmentOrderByWithAggregationInput = {
@@ -341,6 +416,12 @@ export type DocumentPaymentInstallmentOrderByWithAggregationInput = {
   paidAmount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentMethodId?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentReference?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankTransactionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  remindersSent?: Prisma.SortOrder
+  lastReminderAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lateFeeAmount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DocumentPaymentInstallmentCountOrderByAggregateInput
@@ -364,6 +445,12 @@ export type DocumentPaymentInstallmentScalarWhereWithAggregatesInput = {
   paidAmount?: Prisma.DecimalWithAggregatesFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.StringWithAggregatesFilter<"DocumentPaymentInstallment"> | string
   notes?: Prisma.StringNullableWithAggregatesFilter<"DocumentPaymentInstallment"> | string | null
+  paymentMethodId?: Prisma.IntNullableWithAggregatesFilter<"DocumentPaymentInstallment"> | number | null
+  paymentReference?: Prisma.StringNullableWithAggregatesFilter<"DocumentPaymentInstallment"> | string | null
+  bankTransactionId?: Prisma.StringNullableWithAggregatesFilter<"DocumentPaymentInstallment"> | string | null
+  remindersSent?: Prisma.IntWithAggregatesFilter<"DocumentPaymentInstallment"> | number
+  lastReminderAt?: Prisma.DateTimeNullableWithAggregatesFilter<"DocumentPaymentInstallment"> | Date | string | null
+  lateFeeAmount?: Prisma.DecimalWithAggregatesFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DocumentPaymentInstallment"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"DocumentPaymentInstallment"> | Date | string
 }
@@ -377,9 +464,15 @@ export type DocumentPaymentInstallmentCreateInput = {
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: string
   notes?: string | null
+  paymentReference?: string | null
+  bankTransactionId?: string | null
+  remindersSent?: number
+  lastReminderAt?: Date | string | null
+  lateFeeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
   document: Prisma.DocumentCreateNestedOneWithoutInstallmentsInput
+  paymentMethod?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentPaymentInstallmentsInput
 }
 
 export type DocumentPaymentInstallmentUncheckedCreateInput = {
@@ -393,6 +486,12 @@ export type DocumentPaymentInstallmentUncheckedCreateInput = {
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: string
   notes?: string | null
+  paymentMethodId?: number | null
+  paymentReference?: string | null
+  bankTransactionId?: string | null
+  remindersSent?: number
+  lastReminderAt?: Date | string | null
+  lateFeeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -406,9 +505,15 @@ export type DocumentPaymentInstallmentUpdateInput = {
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remindersSent?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReminderAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   document?: Prisma.DocumentUpdateOneRequiredWithoutInstallmentsNestedInput
+  paymentMethod?: Prisma.PaymentMethodUpdateOneWithoutDocumentPaymentInstallmentsNestedInput
 }
 
 export type DocumentPaymentInstallmentUncheckedUpdateInput = {
@@ -422,6 +527,12 @@ export type DocumentPaymentInstallmentUncheckedUpdateInput = {
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remindersSent?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReminderAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -437,6 +548,12 @@ export type DocumentPaymentInstallmentCreateManyInput = {
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: string
   notes?: string | null
+  paymentMethodId?: number | null
+  paymentReference?: string | null
+  bankTransactionId?: string | null
+  remindersSent?: number
+  lastReminderAt?: Date | string | null
+  lateFeeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -450,6 +567,11 @@ export type DocumentPaymentInstallmentUpdateManyMutationInput = {
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remindersSent?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReminderAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -465,6 +587,12 @@ export type DocumentPaymentInstallmentUncheckedUpdateManyInput = {
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remindersSent?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReminderAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -490,6 +618,12 @@ export type DocumentPaymentInstallmentCountOrderByAggregateInput = {
   paidAmount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  paymentMethodId?: Prisma.SortOrder
+  paymentReference?: Prisma.SortOrder
+  bankTransactionId?: Prisma.SortOrder
+  remindersSent?: Prisma.SortOrder
+  lastReminderAt?: Prisma.SortOrder
+  lateFeeAmount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -501,6 +635,9 @@ export type DocumentPaymentInstallmentAvgOrderByAggregateInput = {
   percentage?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
+  paymentMethodId?: Prisma.SortOrder
+  remindersSent?: Prisma.SortOrder
+  lateFeeAmount?: Prisma.SortOrder
 }
 
 export type DocumentPaymentInstallmentMaxOrderByAggregateInput = {
@@ -514,6 +651,12 @@ export type DocumentPaymentInstallmentMaxOrderByAggregateInput = {
   paidAmount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  paymentMethodId?: Prisma.SortOrder
+  paymentReference?: Prisma.SortOrder
+  bankTransactionId?: Prisma.SortOrder
+  remindersSent?: Prisma.SortOrder
+  lastReminderAt?: Prisma.SortOrder
+  lateFeeAmount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -529,6 +672,12 @@ export type DocumentPaymentInstallmentMinOrderByAggregateInput = {
   paidAmount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  paymentMethodId?: Prisma.SortOrder
+  paymentReference?: Prisma.SortOrder
+  bankTransactionId?: Prisma.SortOrder
+  remindersSent?: Prisma.SortOrder
+  lastReminderAt?: Prisma.SortOrder
+  lateFeeAmount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -540,6 +689,9 @@ export type DocumentPaymentInstallmentSumOrderByAggregateInput = {
   percentage?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
+  paymentMethodId?: Prisma.SortOrder
+  remindersSent?: Prisma.SortOrder
+  lateFeeAmount?: Prisma.SortOrder
 }
 
 export type DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput = {
@@ -584,6 +736,48 @@ export type DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedIn
   deleteMany?: Prisma.DocumentPaymentInstallmentScalarWhereInput | Prisma.DocumentPaymentInstallmentScalarWhereInput[]
 }
 
+export type DocumentPaymentInstallmentCreateNestedManyWithoutPaymentMethodInput = {
+  create?: Prisma.XOR<Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput, Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput> | Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput[] | Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput[]
+  connectOrCreate?: Prisma.DocumentPaymentInstallmentCreateOrConnectWithoutPaymentMethodInput | Prisma.DocumentPaymentInstallmentCreateOrConnectWithoutPaymentMethodInput[]
+  createMany?: Prisma.DocumentPaymentInstallmentCreateManyPaymentMethodInputEnvelope
+  connect?: Prisma.DocumentPaymentInstallmentWhereUniqueInput | Prisma.DocumentPaymentInstallmentWhereUniqueInput[]
+}
+
+export type DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutPaymentMethodInput = {
+  create?: Prisma.XOR<Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput, Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput> | Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput[] | Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput[]
+  connectOrCreate?: Prisma.DocumentPaymentInstallmentCreateOrConnectWithoutPaymentMethodInput | Prisma.DocumentPaymentInstallmentCreateOrConnectWithoutPaymentMethodInput[]
+  createMany?: Prisma.DocumentPaymentInstallmentCreateManyPaymentMethodInputEnvelope
+  connect?: Prisma.DocumentPaymentInstallmentWhereUniqueInput | Prisma.DocumentPaymentInstallmentWhereUniqueInput[]
+}
+
+export type DocumentPaymentInstallmentUpdateManyWithoutPaymentMethodNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput, Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput> | Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput[] | Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput[]
+  connectOrCreate?: Prisma.DocumentPaymentInstallmentCreateOrConnectWithoutPaymentMethodInput | Prisma.DocumentPaymentInstallmentCreateOrConnectWithoutPaymentMethodInput[]
+  upsert?: Prisma.DocumentPaymentInstallmentUpsertWithWhereUniqueWithoutPaymentMethodInput | Prisma.DocumentPaymentInstallmentUpsertWithWhereUniqueWithoutPaymentMethodInput[]
+  createMany?: Prisma.DocumentPaymentInstallmentCreateManyPaymentMethodInputEnvelope
+  set?: Prisma.DocumentPaymentInstallmentWhereUniqueInput | Prisma.DocumentPaymentInstallmentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentPaymentInstallmentWhereUniqueInput | Prisma.DocumentPaymentInstallmentWhereUniqueInput[]
+  delete?: Prisma.DocumentPaymentInstallmentWhereUniqueInput | Prisma.DocumentPaymentInstallmentWhereUniqueInput[]
+  connect?: Prisma.DocumentPaymentInstallmentWhereUniqueInput | Prisma.DocumentPaymentInstallmentWhereUniqueInput[]
+  update?: Prisma.DocumentPaymentInstallmentUpdateWithWhereUniqueWithoutPaymentMethodInput | Prisma.DocumentPaymentInstallmentUpdateWithWhereUniqueWithoutPaymentMethodInput[]
+  updateMany?: Prisma.DocumentPaymentInstallmentUpdateManyWithWhereWithoutPaymentMethodInput | Prisma.DocumentPaymentInstallmentUpdateManyWithWhereWithoutPaymentMethodInput[]
+  deleteMany?: Prisma.DocumentPaymentInstallmentScalarWhereInput | Prisma.DocumentPaymentInstallmentScalarWhereInput[]
+}
+
+export type DocumentPaymentInstallmentUncheckedUpdateManyWithoutPaymentMethodNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput, Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput> | Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput[] | Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput[]
+  connectOrCreate?: Prisma.DocumentPaymentInstallmentCreateOrConnectWithoutPaymentMethodInput | Prisma.DocumentPaymentInstallmentCreateOrConnectWithoutPaymentMethodInput[]
+  upsert?: Prisma.DocumentPaymentInstallmentUpsertWithWhereUniqueWithoutPaymentMethodInput | Prisma.DocumentPaymentInstallmentUpsertWithWhereUniqueWithoutPaymentMethodInput[]
+  createMany?: Prisma.DocumentPaymentInstallmentCreateManyPaymentMethodInputEnvelope
+  set?: Prisma.DocumentPaymentInstallmentWhereUniqueInput | Prisma.DocumentPaymentInstallmentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentPaymentInstallmentWhereUniqueInput | Prisma.DocumentPaymentInstallmentWhereUniqueInput[]
+  delete?: Prisma.DocumentPaymentInstallmentWhereUniqueInput | Prisma.DocumentPaymentInstallmentWhereUniqueInput[]
+  connect?: Prisma.DocumentPaymentInstallmentWhereUniqueInput | Prisma.DocumentPaymentInstallmentWhereUniqueInput[]
+  update?: Prisma.DocumentPaymentInstallmentUpdateWithWhereUniqueWithoutPaymentMethodInput | Prisma.DocumentPaymentInstallmentUpdateWithWhereUniqueWithoutPaymentMethodInput[]
+  updateMany?: Prisma.DocumentPaymentInstallmentUpdateManyWithWhereWithoutPaymentMethodInput | Prisma.DocumentPaymentInstallmentUpdateManyWithWhereWithoutPaymentMethodInput[]
+  deleteMany?: Prisma.DocumentPaymentInstallmentScalarWhereInput | Prisma.DocumentPaymentInstallmentScalarWhereInput[]
+}
+
 export type DocumentPaymentInstallmentCreateWithoutDocumentInput = {
   installmentNumber?: number
   percentage: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -593,8 +787,14 @@ export type DocumentPaymentInstallmentCreateWithoutDocumentInput = {
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: string
   notes?: string | null
+  paymentReference?: string | null
+  bankTransactionId?: string | null
+  remindersSent?: number
+  lastReminderAt?: Date | string | null
+  lateFeeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  paymentMethod?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentPaymentInstallmentsInput
 }
 
 export type DocumentPaymentInstallmentUncheckedCreateWithoutDocumentInput = {
@@ -607,6 +807,12 @@ export type DocumentPaymentInstallmentUncheckedCreateWithoutDocumentInput = {
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: string
   notes?: string | null
+  paymentMethodId?: number | null
+  paymentReference?: string | null
+  bankTransactionId?: string | null
+  remindersSent?: number
+  lastReminderAt?: Date | string | null
+  lateFeeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -651,8 +857,79 @@ export type DocumentPaymentInstallmentScalarWhereInput = {
   paidAmount?: Prisma.DecimalFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.StringFilter<"DocumentPaymentInstallment"> | string
   notes?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
+  paymentMethodId?: Prisma.IntNullableFilter<"DocumentPaymentInstallment"> | number | null
+  paymentReference?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
+  bankTransactionId?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
+  remindersSent?: Prisma.IntFilter<"DocumentPaymentInstallment"> | number
+  lastReminderAt?: Prisma.DateTimeNullableFilter<"DocumentPaymentInstallment"> | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"DocumentPaymentInstallment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DocumentPaymentInstallment"> | Date | string
+}
+
+export type DocumentPaymentInstallmentCreateWithoutPaymentMethodInput = {
+  installmentNumber?: number
+  percentage: runtime.Decimal | runtime.DecimalJsLike | number | string
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  dueDate: Date | string
+  paidDate?: Date | string | null
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: string
+  notes?: string | null
+  paymentReference?: string | null
+  bankTransactionId?: string | null
+  remindersSent?: number
+  lastReminderAt?: Date | string | null
+  lateFeeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  document: Prisma.DocumentCreateNestedOneWithoutInstallmentsInput
+}
+
+export type DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput = {
+  id?: number
+  documentId: number
+  installmentNumber?: number
+  percentage: runtime.Decimal | runtime.DecimalJsLike | number | string
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  dueDate: Date | string
+  paidDate?: Date | string | null
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: string
+  notes?: string | null
+  paymentReference?: string | null
+  bankTransactionId?: string | null
+  remindersSent?: number
+  lastReminderAt?: Date | string | null
+  lateFeeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DocumentPaymentInstallmentCreateOrConnectWithoutPaymentMethodInput = {
+  where: Prisma.DocumentPaymentInstallmentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput, Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput>
+}
+
+export type DocumentPaymentInstallmentCreateManyPaymentMethodInputEnvelope = {
+  data: Prisma.DocumentPaymentInstallmentCreateManyPaymentMethodInput | Prisma.DocumentPaymentInstallmentCreateManyPaymentMethodInput[]
+  skipDuplicates?: boolean
+}
+
+export type DocumentPaymentInstallmentUpsertWithWhereUniqueWithoutPaymentMethodInput = {
+  where: Prisma.DocumentPaymentInstallmentWhereUniqueInput
+  update: Prisma.XOR<Prisma.DocumentPaymentInstallmentUpdateWithoutPaymentMethodInput, Prisma.DocumentPaymentInstallmentUncheckedUpdateWithoutPaymentMethodInput>
+  create: Prisma.XOR<Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput, Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput>
+}
+
+export type DocumentPaymentInstallmentUpdateWithWhereUniqueWithoutPaymentMethodInput = {
+  where: Prisma.DocumentPaymentInstallmentWhereUniqueInput
+  data: Prisma.XOR<Prisma.DocumentPaymentInstallmentUpdateWithoutPaymentMethodInput, Prisma.DocumentPaymentInstallmentUncheckedUpdateWithoutPaymentMethodInput>
+}
+
+export type DocumentPaymentInstallmentUpdateManyWithWhereWithoutPaymentMethodInput = {
+  where: Prisma.DocumentPaymentInstallmentScalarWhereInput
+  data: Prisma.XOR<Prisma.DocumentPaymentInstallmentUpdateManyMutationInput, Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutPaymentMethodInput>
 }
 
 export type DocumentPaymentInstallmentCreateManyDocumentInput = {
@@ -665,6 +942,12 @@ export type DocumentPaymentInstallmentCreateManyDocumentInput = {
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: string
   notes?: string | null
+  paymentMethodId?: number | null
+  paymentReference?: string | null
+  bankTransactionId?: string | null
+  remindersSent?: number
+  lastReminderAt?: Date | string | null
+  lateFeeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -678,8 +961,14 @@ export type DocumentPaymentInstallmentUpdateWithoutDocumentInput = {
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remindersSent?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReminderAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentMethod?: Prisma.PaymentMethodUpdateOneWithoutDocumentPaymentInstallmentsNestedInput
 }
 
 export type DocumentPaymentInstallmentUncheckedUpdateWithoutDocumentInput = {
@@ -692,6 +981,12 @@ export type DocumentPaymentInstallmentUncheckedUpdateWithoutDocumentInput = {
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remindersSent?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReminderAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -706,6 +1001,91 @@ export type DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentInput = 
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remindersSent?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReminderAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DocumentPaymentInstallmentCreateManyPaymentMethodInput = {
+  id?: number
+  documentId: number
+  installmentNumber?: number
+  percentage: runtime.Decimal | runtime.DecimalJsLike | number | string
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  dueDate: Date | string
+  paidDate?: Date | string | null
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: string
+  notes?: string | null
+  paymentReference?: string | null
+  bankTransactionId?: string | null
+  remindersSent?: number
+  lastReminderAt?: Date | string | null
+  lateFeeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DocumentPaymentInstallmentUpdateWithoutPaymentMethodInput = {
+  installmentNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  percentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remindersSent?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReminderAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  document?: Prisma.DocumentUpdateOneRequiredWithoutInstallmentsNestedInput
+}
+
+export type DocumentPaymentInstallmentUncheckedUpdateWithoutPaymentMethodInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentId?: Prisma.IntFieldUpdateOperationsInput | number
+  installmentNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  percentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remindersSent?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReminderAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DocumentPaymentInstallmentUncheckedUpdateManyWithoutPaymentMethodInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentId?: Prisma.IntFieldUpdateOperationsInput | number
+  installmentNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  percentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  remindersSent?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReminderAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lateFeeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -723,9 +1103,16 @@ export type DocumentPaymentInstallmentSelect<ExtArgs extends runtime.Types.Exten
   paidAmount?: boolean
   status?: boolean
   notes?: boolean
+  paymentMethodId?: boolean
+  paymentReference?: boolean
+  bankTransactionId?: boolean
+  remindersSent?: boolean
+  lastReminderAt?: boolean
+  lateFeeAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
+  paymentMethod?: boolean | Prisma.DocumentPaymentInstallment$paymentMethodArgs<ExtArgs>
 }, ExtArgs["result"]["documentPaymentInstallment"]>
 
 export type DocumentPaymentInstallmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -739,9 +1126,16 @@ export type DocumentPaymentInstallmentSelectCreateManyAndReturn<ExtArgs extends 
   paidAmount?: boolean
   status?: boolean
   notes?: boolean
+  paymentMethodId?: boolean
+  paymentReference?: boolean
+  bankTransactionId?: boolean
+  remindersSent?: boolean
+  lastReminderAt?: boolean
+  lateFeeAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
+  paymentMethod?: boolean | Prisma.DocumentPaymentInstallment$paymentMethodArgs<ExtArgs>
 }, ExtArgs["result"]["documentPaymentInstallment"]>
 
 export type DocumentPaymentInstallmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -755,9 +1149,16 @@ export type DocumentPaymentInstallmentSelectUpdateManyAndReturn<ExtArgs extends 
   paidAmount?: boolean
   status?: boolean
   notes?: boolean
+  paymentMethodId?: boolean
+  paymentReference?: boolean
+  bankTransactionId?: boolean
+  remindersSent?: boolean
+  lastReminderAt?: boolean
+  lateFeeAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
+  paymentMethod?: boolean | Prisma.DocumentPaymentInstallment$paymentMethodArgs<ExtArgs>
 }, ExtArgs["result"]["documentPaymentInstallment"]>
 
 export type DocumentPaymentInstallmentSelectScalar = {
@@ -771,25 +1172,35 @@ export type DocumentPaymentInstallmentSelectScalar = {
   paidAmount?: boolean
   status?: boolean
   notes?: boolean
+  paymentMethodId?: boolean
+  paymentReference?: boolean
+  bankTransactionId?: boolean
+  remindersSent?: boolean
+  lastReminderAt?: boolean
+  lateFeeAmount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DocumentPaymentInstallmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "documentId" | "installmentNumber" | "percentage" | "amount" | "dueDate" | "paidDate" | "paidAmount" | "status" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["documentPaymentInstallment"]>
+export type DocumentPaymentInstallmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "documentId" | "installmentNumber" | "percentage" | "amount" | "dueDate" | "paidDate" | "paidAmount" | "status" | "notes" | "paymentMethodId" | "paymentReference" | "bankTransactionId" | "remindersSent" | "lastReminderAt" | "lateFeeAmount" | "createdAt" | "updatedAt", ExtArgs["result"]["documentPaymentInstallment"]>
 export type DocumentPaymentInstallmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
+  paymentMethod?: boolean | Prisma.DocumentPaymentInstallment$paymentMethodArgs<ExtArgs>
 }
 export type DocumentPaymentInstallmentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
+  paymentMethod?: boolean | Prisma.DocumentPaymentInstallment$paymentMethodArgs<ExtArgs>
 }
 export type DocumentPaymentInstallmentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
+  paymentMethod?: boolean | Prisma.DocumentPaymentInstallment$paymentMethodArgs<ExtArgs>
 }
 
 export type $DocumentPaymentInstallmentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DocumentPaymentInstallment"
   objects: {
     document: Prisma.$DocumentPayload<ExtArgs>
+    paymentMethod: Prisma.$PaymentMethodPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -802,6 +1213,12 @@ export type $DocumentPaymentInstallmentPayload<ExtArgs extends runtime.Types.Ext
     paidAmount: runtime.Decimal
     status: string
     notes: string | null
+    paymentMethodId: number | null
+    paymentReference: string | null
+    bankTransactionId: string | null
+    remindersSent: number
+    lastReminderAt: Date | null
+    lateFeeAmount: runtime.Decimal
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["documentPaymentInstallment"]>
@@ -1199,6 +1616,7 @@ readonly fields: DocumentPaymentInstallmentFieldRefs;
 export interface Prisma__DocumentPaymentInstallmentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   document<T extends Prisma.DocumentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentDefaultArgs<ExtArgs>>): Prisma.Prisma__DocumentClient<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  paymentMethod<T extends Prisma.DocumentPaymentInstallment$paymentMethodArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentPaymentInstallment$paymentMethodArgs<ExtArgs>>): Prisma.Prisma__PaymentMethodClient<runtime.Types.Result.GetResult<Prisma.$PaymentMethodPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1238,6 +1656,12 @@ export interface DocumentPaymentInstallmentFieldRefs {
   readonly paidAmount: Prisma.FieldRef<"DocumentPaymentInstallment", 'Decimal'>
   readonly status: Prisma.FieldRef<"DocumentPaymentInstallment", 'String'>
   readonly notes: Prisma.FieldRef<"DocumentPaymentInstallment", 'String'>
+  readonly paymentMethodId: Prisma.FieldRef<"DocumentPaymentInstallment", 'Int'>
+  readonly paymentReference: Prisma.FieldRef<"DocumentPaymentInstallment", 'String'>
+  readonly bankTransactionId: Prisma.FieldRef<"DocumentPaymentInstallment", 'String'>
+  readonly remindersSent: Prisma.FieldRef<"DocumentPaymentInstallment", 'Int'>
+  readonly lastReminderAt: Prisma.FieldRef<"DocumentPaymentInstallment", 'DateTime'>
+  readonly lateFeeAmount: Prisma.FieldRef<"DocumentPaymentInstallment", 'Decimal'>
   readonly createdAt: Prisma.FieldRef<"DocumentPaymentInstallment", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"DocumentPaymentInstallment", 'DateTime'>
 }
@@ -1633,6 +2057,25 @@ export type DocumentPaymentInstallmentDeleteManyArgs<ExtArgs extends runtime.Typ
    * Limit how many DocumentPaymentInstallments to delete.
    */
   limit?: number
+}
+
+/**
+ * DocumentPaymentInstallment.paymentMethod
+ */
+export type DocumentPaymentInstallment$paymentMethodArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PaymentMethod
+   */
+  select?: Prisma.PaymentMethodSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PaymentMethod
+   */
+  omit?: Prisma.PaymentMethodOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentMethodInclude<ExtArgs> | null
+  where?: Prisma.PaymentMethodWhereInput
 }
 
 /**

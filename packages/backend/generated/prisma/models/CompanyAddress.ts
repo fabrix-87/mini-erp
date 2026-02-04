@@ -44,6 +44,8 @@ export type CompanyAddressMinAggregateOutputType = {
   id: number | null
   companyId: number | null
   addressType: $Enums.AddressType | null
+  isPrimary: boolean | null
+  isLegal: boolean | null
   address: string | null
   city: string | null
   provinceCode: string | null
@@ -52,7 +54,6 @@ export type CompanyAddressMinAggregateOutputType = {
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
   phone: string | null
-  isPrimary: boolean | null
   notes: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -62,6 +63,8 @@ export type CompanyAddressMaxAggregateOutputType = {
   id: number | null
   companyId: number | null
   addressType: $Enums.AddressType | null
+  isPrimary: boolean | null
+  isLegal: boolean | null
   address: string | null
   city: string | null
   provinceCode: string | null
@@ -70,7 +73,6 @@ export type CompanyAddressMaxAggregateOutputType = {
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
   phone: string | null
-  isPrimary: boolean | null
   notes: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -80,6 +82,8 @@ export type CompanyAddressCountAggregateOutputType = {
   id: number
   companyId: number
   addressType: number
+  isPrimary: number
+  isLegal: number
   address: number
   city: number
   provinceCode: number
@@ -88,7 +92,6 @@ export type CompanyAddressCountAggregateOutputType = {
   latitude: number
   longitude: number
   phone: number
-  isPrimary: number
   openingHours: number
   notes: number
   createdAt: number
@@ -115,6 +118,8 @@ export type CompanyAddressMinAggregateInputType = {
   id?: true
   companyId?: true
   addressType?: true
+  isPrimary?: true
+  isLegal?: true
   address?: true
   city?: true
   provinceCode?: true
@@ -123,7 +128,6 @@ export type CompanyAddressMinAggregateInputType = {
   latitude?: true
   longitude?: true
   phone?: true
-  isPrimary?: true
   notes?: true
   createdAt?: true
   updatedAt?: true
@@ -133,6 +137,8 @@ export type CompanyAddressMaxAggregateInputType = {
   id?: true
   companyId?: true
   addressType?: true
+  isPrimary?: true
+  isLegal?: true
   address?: true
   city?: true
   provinceCode?: true
@@ -141,7 +147,6 @@ export type CompanyAddressMaxAggregateInputType = {
   latitude?: true
   longitude?: true
   phone?: true
-  isPrimary?: true
   notes?: true
   createdAt?: true
   updatedAt?: true
@@ -151,6 +156,8 @@ export type CompanyAddressCountAggregateInputType = {
   id?: true
   companyId?: true
   addressType?: true
+  isPrimary?: true
+  isLegal?: true
   address?: true
   city?: true
   provinceCode?: true
@@ -159,7 +166,6 @@ export type CompanyAddressCountAggregateInputType = {
   latitude?: true
   longitude?: true
   phone?: true
-  isPrimary?: true
   openingHours?: true
   notes?: true
   createdAt?: true
@@ -257,6 +263,8 @@ export type CompanyAddressGroupByOutputType = {
   id: number
   companyId: number
   addressType: $Enums.AddressType
+  isPrimary: boolean
+  isLegal: boolean
   address: string
   city: string
   provinceCode: string | null
@@ -265,7 +273,6 @@ export type CompanyAddressGroupByOutputType = {
   latitude: runtime.Decimal | null
   longitude: runtime.Decimal | null
   phone: string | null
-  isPrimary: boolean
   openingHours: runtime.JsonValue | null
   notes: string | null
   createdAt: Date
@@ -299,6 +306,8 @@ export type CompanyAddressWhereInput = {
   id?: Prisma.IntFilter<"CompanyAddress"> | number
   companyId?: Prisma.IntFilter<"CompanyAddress"> | number
   addressType?: Prisma.EnumAddressTypeFilter<"CompanyAddress"> | $Enums.AddressType
+  isPrimary?: Prisma.BoolFilter<"CompanyAddress"> | boolean
+  isLegal?: Prisma.BoolFilter<"CompanyAddress"> | boolean
   address?: Prisma.StringFilter<"CompanyAddress"> | string
   city?: Prisma.StringFilter<"CompanyAddress"> | string
   provinceCode?: Prisma.StringNullableFilter<"CompanyAddress"> | string | null
@@ -307,20 +316,20 @@ export type CompanyAddressWhereInput = {
   latitude?: Prisma.DecimalNullableFilter<"CompanyAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableFilter<"CompanyAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.StringNullableFilter<"CompanyAddress"> | string | null
-  isPrimary?: Prisma.BoolFilter<"CompanyAddress"> | boolean
   openingHours?: Prisma.JsonNullableFilter<"CompanyAddress">
   notes?: Prisma.StringNullableFilter<"CompanyAddress"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CompanyAddress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CompanyAddress"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   country?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
-  companyForLegal?: Prisma.XOR<Prisma.CompanyNullableScalarRelationFilter, Prisma.CompanyWhereInput> | null
 }
 
 export type CompanyAddressOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   addressType?: Prisma.SortOrder
+  isPrimary?: Prisma.SortOrder
+  isLegal?: Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
   provinceCode?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -329,23 +338,24 @@ export type CompanyAddressOrderByWithRelationInput = {
   latitude?: Prisma.SortOrderInput | Prisma.SortOrder
   longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
-  isPrimary?: Prisma.SortOrder
   openingHours?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   company?: Prisma.CompanyOrderByWithRelationInput
   country?: Prisma.CountryOrderByWithRelationInput
-  companyForLegal?: Prisma.CompanyOrderByWithRelationInput
 }
 
 export type CompanyAddressWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  companyId_addressType_isPrimary?: Prisma.CompanyAddressCompanyIdAddressTypeIsPrimaryCompoundUniqueInput
   AND?: Prisma.CompanyAddressWhereInput | Prisma.CompanyAddressWhereInput[]
   OR?: Prisma.CompanyAddressWhereInput[]
   NOT?: Prisma.CompanyAddressWhereInput | Prisma.CompanyAddressWhereInput[]
   companyId?: Prisma.IntFilter<"CompanyAddress"> | number
   addressType?: Prisma.EnumAddressTypeFilter<"CompanyAddress"> | $Enums.AddressType
+  isPrimary?: Prisma.BoolFilter<"CompanyAddress"> | boolean
+  isLegal?: Prisma.BoolFilter<"CompanyAddress"> | boolean
   address?: Prisma.StringFilter<"CompanyAddress"> | string
   city?: Prisma.StringFilter<"CompanyAddress"> | string
   provinceCode?: Prisma.StringNullableFilter<"CompanyAddress"> | string | null
@@ -354,20 +364,20 @@ export type CompanyAddressWhereUniqueInput = Prisma.AtLeast<{
   latitude?: Prisma.DecimalNullableFilter<"CompanyAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableFilter<"CompanyAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.StringNullableFilter<"CompanyAddress"> | string | null
-  isPrimary?: Prisma.BoolFilter<"CompanyAddress"> | boolean
   openingHours?: Prisma.JsonNullableFilter<"CompanyAddress">
   notes?: Prisma.StringNullableFilter<"CompanyAddress"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CompanyAddress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CompanyAddress"> | Date | string
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   country?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
-  companyForLegal?: Prisma.XOR<Prisma.CompanyNullableScalarRelationFilter, Prisma.CompanyWhereInput> | null
-}, "id">
+}, "id" | "companyId_addressType_isPrimary">
 
 export type CompanyAddressOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   addressType?: Prisma.SortOrder
+  isPrimary?: Prisma.SortOrder
+  isLegal?: Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
   provinceCode?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -376,7 +386,6 @@ export type CompanyAddressOrderByWithAggregationInput = {
   latitude?: Prisma.SortOrderInput | Prisma.SortOrder
   longitude?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
-  isPrimary?: Prisma.SortOrder
   openingHours?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -395,6 +404,8 @@ export type CompanyAddressScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"CompanyAddress"> | number
   companyId?: Prisma.IntWithAggregatesFilter<"CompanyAddress"> | number
   addressType?: Prisma.EnumAddressTypeWithAggregatesFilter<"CompanyAddress"> | $Enums.AddressType
+  isPrimary?: Prisma.BoolWithAggregatesFilter<"CompanyAddress"> | boolean
+  isLegal?: Prisma.BoolWithAggregatesFilter<"CompanyAddress"> | boolean
   address?: Prisma.StringWithAggregatesFilter<"CompanyAddress"> | string
   city?: Prisma.StringWithAggregatesFilter<"CompanyAddress"> | string
   provinceCode?: Prisma.StringNullableWithAggregatesFilter<"CompanyAddress"> | string | null
@@ -403,7 +414,6 @@ export type CompanyAddressScalarWhereWithAggregatesInput = {
   latitude?: Prisma.DecimalNullableWithAggregatesFilter<"CompanyAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableWithAggregatesFilter<"CompanyAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"CompanyAddress"> | string | null
-  isPrimary?: Prisma.BoolWithAggregatesFilter<"CompanyAddress"> | boolean
   openingHours?: Prisma.JsonNullableWithAggregatesFilter<"CompanyAddress">
   notes?: Prisma.StringNullableWithAggregatesFilter<"CompanyAddress"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CompanyAddress"> | Date | string
@@ -412,6 +422,8 @@ export type CompanyAddressScalarWhereWithAggregatesInput = {
 
 export type CompanyAddressCreateInput = {
   addressType?: $Enums.AddressType
+  isPrimary?: boolean
+  isLegal?: boolean
   address: string
   city: string
   provinceCode?: string | null
@@ -419,20 +431,20 @@ export type CompanyAddressCreateInput = {
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: string | null
-  isPrimary?: boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutAddressesInput
   country?: Prisma.CountryCreateNestedOneWithoutCompanyAddressesInput
-  companyForLegal?: Prisma.CompanyCreateNestedOneWithoutLegalAddressInput
 }
 
 export type CompanyAddressUncheckedCreateInput = {
   id?: number
   companyId: number
   addressType?: $Enums.AddressType
+  isPrimary?: boolean
+  isLegal?: boolean
   address: string
   city: string
   provinceCode?: string | null
@@ -441,16 +453,16 @@ export type CompanyAddressUncheckedCreateInput = {
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: string | null
-  isPrimary?: boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  companyForLegal?: Prisma.CompanyUncheckedCreateNestedOneWithoutLegalAddressInput
 }
 
 export type CompanyAddressUpdateInput = {
   addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLegal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -458,20 +470,20 @@ export type CompanyAddressUpdateInput = {
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutAddressesNestedInput
   country?: Prisma.CountryUpdateOneRequiredWithoutCompanyAddressesNestedInput
-  companyForLegal?: Prisma.CompanyUpdateOneWithoutLegalAddressNestedInput
 }
 
 export type CompanyAddressUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLegal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -480,18 +492,18 @@ export type CompanyAddressUncheckedUpdateInput = {
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  companyForLegal?: Prisma.CompanyUncheckedUpdateOneWithoutLegalAddressNestedInput
 }
 
 export type CompanyAddressCreateManyInput = {
   id?: number
   companyId: number
   addressType?: $Enums.AddressType
+  isPrimary?: boolean
+  isLegal?: boolean
   address: string
   city: string
   provinceCode?: string | null
@@ -500,7 +512,6 @@ export type CompanyAddressCreateManyInput = {
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: string | null
-  isPrimary?: boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdAt?: Date | string
@@ -509,6 +520,8 @@ export type CompanyAddressCreateManyInput = {
 
 export type CompanyAddressUpdateManyMutationInput = {
   addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLegal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -516,7 +529,6 @@ export type CompanyAddressUpdateManyMutationInput = {
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -527,6 +539,8 @@ export type CompanyAddressUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLegal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -535,16 +549,10 @@ export type CompanyAddressUncheckedUpdateManyInput = {
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type CompanyAddressNullableScalarRelationFilter = {
-  is?: Prisma.CompanyAddressWhereInput | null
-  isNot?: Prisma.CompanyAddressWhereInput | null
 }
 
 export type CompanyAddressListRelationFilter = {
@@ -557,10 +565,18 @@ export type CompanyAddressOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type CompanyAddressCompanyIdAddressTypeIsPrimaryCompoundUniqueInput = {
+  companyId: number
+  addressType: $Enums.AddressType
+  isPrimary: boolean
+}
+
 export type CompanyAddressCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   addressType?: Prisma.SortOrder
+  isPrimary?: Prisma.SortOrder
+  isLegal?: Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
   provinceCode?: Prisma.SortOrder
@@ -569,7 +585,6 @@ export type CompanyAddressCountOrderByAggregateInput = {
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  isPrimary?: Prisma.SortOrder
   openingHours?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -587,6 +602,8 @@ export type CompanyAddressMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   addressType?: Prisma.SortOrder
+  isPrimary?: Prisma.SortOrder
+  isLegal?: Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
   provinceCode?: Prisma.SortOrder
@@ -595,7 +612,6 @@ export type CompanyAddressMaxOrderByAggregateInput = {
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  isPrimary?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -605,6 +621,8 @@ export type CompanyAddressMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   addressType?: Prisma.SortOrder
+  isPrimary?: Prisma.SortOrder
+  isLegal?: Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
   provinceCode?: Prisma.SortOrder
@@ -613,7 +631,6 @@ export type CompanyAddressMinOrderByAggregateInput = {
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
   phone?: Prisma.SortOrder
-  isPrimary?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -624,12 +641,6 @@ export type CompanyAddressSumOrderByAggregateInput = {
   companyId?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
-}
-
-export type CompanyAddressCreateNestedOneWithoutCompanyForLegalInput = {
-  create?: Prisma.XOR<Prisma.CompanyAddressCreateWithoutCompanyForLegalInput, Prisma.CompanyAddressUncheckedCreateWithoutCompanyForLegalInput>
-  connectOrCreate?: Prisma.CompanyAddressCreateOrConnectWithoutCompanyForLegalInput
-  connect?: Prisma.CompanyAddressWhereUniqueInput
 }
 
 export type CompanyAddressCreateNestedManyWithoutCompanyInput = {
@@ -644,16 +655,6 @@ export type CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput = {
   connectOrCreate?: Prisma.CompanyAddressCreateOrConnectWithoutCompanyInput | Prisma.CompanyAddressCreateOrConnectWithoutCompanyInput[]
   createMany?: Prisma.CompanyAddressCreateManyCompanyInputEnvelope
   connect?: Prisma.CompanyAddressWhereUniqueInput | Prisma.CompanyAddressWhereUniqueInput[]
-}
-
-export type CompanyAddressUpdateOneWithoutCompanyForLegalNestedInput = {
-  create?: Prisma.XOR<Prisma.CompanyAddressCreateWithoutCompanyForLegalInput, Prisma.CompanyAddressUncheckedCreateWithoutCompanyForLegalInput>
-  connectOrCreate?: Prisma.CompanyAddressCreateOrConnectWithoutCompanyForLegalInput
-  upsert?: Prisma.CompanyAddressUpsertWithoutCompanyForLegalInput
-  disconnect?: Prisma.CompanyAddressWhereInput | boolean
-  delete?: Prisma.CompanyAddressWhereInput | boolean
-  connect?: Prisma.CompanyAddressWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyAddressUpdateToOneWithWhereWithoutCompanyForLegalInput, Prisma.CompanyAddressUpdateWithoutCompanyForLegalInput>, Prisma.CompanyAddressUncheckedUpdateWithoutCompanyForLegalInput>
 }
 
 export type CompanyAddressUpdateManyWithoutCompanyNestedInput = {
@@ -730,50 +731,10 @@ export type CompanyAddressUncheckedUpdateManyWithoutCountryNestedInput = {
   deleteMany?: Prisma.CompanyAddressScalarWhereInput | Prisma.CompanyAddressScalarWhereInput[]
 }
 
-export type CompanyAddressCreateWithoutCompanyForLegalInput = {
-  addressType?: $Enums.AddressType
-  address: string
-  city: string
-  provinceCode?: string | null
-  zipCode: string
-  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  phone?: string | null
-  isPrimary?: boolean
-  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  notes?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  company: Prisma.CompanyCreateNestedOneWithoutAddressesInput
-  country?: Prisma.CountryCreateNestedOneWithoutCompanyAddressesInput
-}
-
-export type CompanyAddressUncheckedCreateWithoutCompanyForLegalInput = {
-  id?: number
-  companyId: number
-  addressType?: $Enums.AddressType
-  address: string
-  city: string
-  provinceCode?: string | null
-  zipCode: string
-  countryCode?: string
-  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  phone?: string | null
-  isPrimary?: boolean
-  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  notes?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type CompanyAddressCreateOrConnectWithoutCompanyForLegalInput = {
-  where: Prisma.CompanyAddressWhereUniqueInput
-  create: Prisma.XOR<Prisma.CompanyAddressCreateWithoutCompanyForLegalInput, Prisma.CompanyAddressUncheckedCreateWithoutCompanyForLegalInput>
-}
-
 export type CompanyAddressCreateWithoutCompanyInput = {
   addressType?: $Enums.AddressType
+  isPrimary?: boolean
+  isLegal?: boolean
   address: string
   city: string
   provinceCode?: string | null
@@ -781,18 +742,18 @@ export type CompanyAddressCreateWithoutCompanyInput = {
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: string | null
-  isPrimary?: boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   country?: Prisma.CountryCreateNestedOneWithoutCompanyAddressesInput
-  companyForLegal?: Prisma.CompanyCreateNestedOneWithoutLegalAddressInput
 }
 
 export type CompanyAddressUncheckedCreateWithoutCompanyInput = {
   id?: number
   addressType?: $Enums.AddressType
+  isPrimary?: boolean
+  isLegal?: boolean
   address: string
   city: string
   provinceCode?: string | null
@@ -801,12 +762,10 @@ export type CompanyAddressUncheckedCreateWithoutCompanyInput = {
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: string | null
-  isPrimary?: boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  companyForLegal?: Prisma.CompanyUncheckedCreateNestedOneWithoutLegalAddressInput
 }
 
 export type CompanyAddressCreateOrConnectWithoutCompanyInput = {
@@ -817,54 +776,6 @@ export type CompanyAddressCreateOrConnectWithoutCompanyInput = {
 export type CompanyAddressCreateManyCompanyInputEnvelope = {
   data: Prisma.CompanyAddressCreateManyCompanyInput | Prisma.CompanyAddressCreateManyCompanyInput[]
   skipDuplicates?: boolean
-}
-
-export type CompanyAddressUpsertWithoutCompanyForLegalInput = {
-  update: Prisma.XOR<Prisma.CompanyAddressUpdateWithoutCompanyForLegalInput, Prisma.CompanyAddressUncheckedUpdateWithoutCompanyForLegalInput>
-  create: Prisma.XOR<Prisma.CompanyAddressCreateWithoutCompanyForLegalInput, Prisma.CompanyAddressUncheckedCreateWithoutCompanyForLegalInput>
-  where?: Prisma.CompanyAddressWhereInput
-}
-
-export type CompanyAddressUpdateToOneWithWhereWithoutCompanyForLegalInput = {
-  where?: Prisma.CompanyAddressWhereInput
-  data: Prisma.XOR<Prisma.CompanyAddressUpdateWithoutCompanyForLegalInput, Prisma.CompanyAddressUncheckedUpdateWithoutCompanyForLegalInput>
-}
-
-export type CompanyAddressUpdateWithoutCompanyForLegalInput = {
-  addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
-  address?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zipCode?: Prisma.StringFieldUpdateOperationsInput | string
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  company?: Prisma.CompanyUpdateOneRequiredWithoutAddressesNestedInput
-  country?: Prisma.CountryUpdateOneRequiredWithoutCompanyAddressesNestedInput
-}
-
-export type CompanyAddressUncheckedUpdateWithoutCompanyForLegalInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  companyId?: Prisma.IntFieldUpdateOperationsInput | number
-  addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
-  address?: Prisma.StringFieldUpdateOperationsInput | string
-  city?: Prisma.StringFieldUpdateOperationsInput | string
-  provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zipCode?: Prisma.StringFieldUpdateOperationsInput | string
-  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CompanyAddressUpsertWithWhereUniqueWithoutCompanyInput = {
@@ -890,6 +801,8 @@ export type CompanyAddressScalarWhereInput = {
   id?: Prisma.IntFilter<"CompanyAddress"> | number
   companyId?: Prisma.IntFilter<"CompanyAddress"> | number
   addressType?: Prisma.EnumAddressTypeFilter<"CompanyAddress"> | $Enums.AddressType
+  isPrimary?: Prisma.BoolFilter<"CompanyAddress"> | boolean
+  isLegal?: Prisma.BoolFilter<"CompanyAddress"> | boolean
   address?: Prisma.StringFilter<"CompanyAddress"> | string
   city?: Prisma.StringFilter<"CompanyAddress"> | string
   provinceCode?: Prisma.StringNullableFilter<"CompanyAddress"> | string | null
@@ -898,7 +811,6 @@ export type CompanyAddressScalarWhereInput = {
   latitude?: Prisma.DecimalNullableFilter<"CompanyAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.DecimalNullableFilter<"CompanyAddress"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.StringNullableFilter<"CompanyAddress"> | string | null
-  isPrimary?: Prisma.BoolFilter<"CompanyAddress"> | boolean
   openingHours?: Prisma.JsonNullableFilter<"CompanyAddress">
   notes?: Prisma.StringNullableFilter<"CompanyAddress"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CompanyAddress"> | Date | string
@@ -907,6 +819,8 @@ export type CompanyAddressScalarWhereInput = {
 
 export type CompanyAddressCreateWithoutCountryInput = {
   addressType?: $Enums.AddressType
+  isPrimary?: boolean
+  isLegal?: boolean
   address: string
   city: string
   provinceCode?: string | null
@@ -914,19 +828,19 @@ export type CompanyAddressCreateWithoutCountryInput = {
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: string | null
-  isPrimary?: boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   company: Prisma.CompanyCreateNestedOneWithoutAddressesInput
-  companyForLegal?: Prisma.CompanyCreateNestedOneWithoutLegalAddressInput
 }
 
 export type CompanyAddressUncheckedCreateWithoutCountryInput = {
   id?: number
   companyId: number
   addressType?: $Enums.AddressType
+  isPrimary?: boolean
+  isLegal?: boolean
   address: string
   city: string
   provinceCode?: string | null
@@ -934,12 +848,10 @@ export type CompanyAddressUncheckedCreateWithoutCountryInput = {
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: string | null
-  isPrimary?: boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  companyForLegal?: Prisma.CompanyUncheckedCreateNestedOneWithoutLegalAddressInput
 }
 
 export type CompanyAddressCreateOrConnectWithoutCountryInput = {
@@ -971,6 +883,8 @@ export type CompanyAddressUpdateManyWithWhereWithoutCountryInput = {
 export type CompanyAddressCreateManyCompanyInput = {
   id?: number
   addressType?: $Enums.AddressType
+  isPrimary?: boolean
+  isLegal?: boolean
   address: string
   city: string
   provinceCode?: string | null
@@ -979,7 +893,6 @@ export type CompanyAddressCreateManyCompanyInput = {
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: string | null
-  isPrimary?: boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdAt?: Date | string
@@ -988,6 +901,8 @@ export type CompanyAddressCreateManyCompanyInput = {
 
 export type CompanyAddressUpdateWithoutCompanyInput = {
   addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLegal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -995,18 +910,18 @@ export type CompanyAddressUpdateWithoutCompanyInput = {
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   country?: Prisma.CountryUpdateOneRequiredWithoutCompanyAddressesNestedInput
-  companyForLegal?: Prisma.CompanyUpdateOneWithoutLegalAddressNestedInput
 }
 
 export type CompanyAddressUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLegal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1015,17 +930,17 @@ export type CompanyAddressUncheckedUpdateWithoutCompanyInput = {
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  companyForLegal?: Prisma.CompanyUncheckedUpdateOneWithoutLegalAddressNestedInput
 }
 
 export type CompanyAddressUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLegal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1034,7 +949,6 @@ export type CompanyAddressUncheckedUpdateManyWithoutCompanyInput = {
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1045,6 +959,8 @@ export type CompanyAddressCreateManyCountryInput = {
   id?: number
   companyId: number
   addressType?: $Enums.AddressType
+  isPrimary?: boolean
+  isLegal?: boolean
   address: string
   city: string
   provinceCode?: string | null
@@ -1052,7 +968,6 @@ export type CompanyAddressCreateManyCountryInput = {
   latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: string | null
-  isPrimary?: boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdAt?: Date | string
@@ -1061,6 +976,8 @@ export type CompanyAddressCreateManyCountryInput = {
 
 export type CompanyAddressUpdateWithoutCountryInput = {
   addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLegal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1068,19 +985,19 @@ export type CompanyAddressUpdateWithoutCountryInput = {
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   company?: Prisma.CompanyUpdateOneRequiredWithoutAddressesNestedInput
-  companyForLegal?: Prisma.CompanyUpdateOneWithoutLegalAddressNestedInput
 }
 
 export type CompanyAddressUncheckedUpdateWithoutCountryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLegal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1088,18 +1005,18 @@ export type CompanyAddressUncheckedUpdateWithoutCountryInput = {
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  companyForLegal?: Prisma.CompanyUncheckedUpdateOneWithoutLegalAddressNestedInput
 }
 
 export type CompanyAddressUncheckedUpdateManyWithoutCountryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   addressType?: Prisma.EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isLegal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   provinceCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1107,7 +1024,6 @@ export type CompanyAddressUncheckedUpdateManyWithoutCountryInput = {
   latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1120,6 +1036,8 @@ export type CompanyAddressSelect<ExtArgs extends runtime.Types.Extensions.Intern
   id?: boolean
   companyId?: boolean
   addressType?: boolean
+  isPrimary?: boolean
+  isLegal?: boolean
   address?: boolean
   city?: boolean
   provinceCode?: boolean
@@ -1128,20 +1046,20 @@ export type CompanyAddressSelect<ExtArgs extends runtime.Types.Extensions.Intern
   latitude?: boolean
   longitude?: boolean
   phone?: boolean
-  isPrimary?: boolean
   openingHours?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
-  companyForLegal?: boolean | Prisma.CompanyAddress$companyForLegalArgs<ExtArgs>
 }, ExtArgs["result"]["companyAddress"]>
 
 export type CompanyAddressSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   companyId?: boolean
   addressType?: boolean
+  isPrimary?: boolean
+  isLegal?: boolean
   address?: boolean
   city?: boolean
   provinceCode?: boolean
@@ -1150,7 +1068,6 @@ export type CompanyAddressSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   latitude?: boolean
   longitude?: boolean
   phone?: boolean
-  isPrimary?: boolean
   openingHours?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -1163,6 +1080,8 @@ export type CompanyAddressSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   id?: boolean
   companyId?: boolean
   addressType?: boolean
+  isPrimary?: boolean
+  isLegal?: boolean
   address?: boolean
   city?: boolean
   provinceCode?: boolean
@@ -1171,7 +1090,6 @@ export type CompanyAddressSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   latitude?: boolean
   longitude?: boolean
   phone?: boolean
-  isPrimary?: boolean
   openingHours?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -1184,6 +1102,8 @@ export type CompanyAddressSelectScalar = {
   id?: boolean
   companyId?: boolean
   addressType?: boolean
+  isPrimary?: boolean
+  isLegal?: boolean
   address?: boolean
   city?: boolean
   provinceCode?: boolean
@@ -1192,18 +1112,16 @@ export type CompanyAddressSelectScalar = {
   latitude?: boolean
   longitude?: boolean
   phone?: boolean
-  isPrimary?: boolean
   openingHours?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CompanyAddressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "addressType" | "address" | "city" | "provinceCode" | "zipCode" | "countryCode" | "latitude" | "longitude" | "phone" | "isPrimary" | "openingHours" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["companyAddress"]>
+export type CompanyAddressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "addressType" | "isPrimary" | "isLegal" | "address" | "city" | "provinceCode" | "zipCode" | "countryCode" | "latitude" | "longitude" | "phone" | "openingHours" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["companyAddress"]>
 export type CompanyAddressInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
-  companyForLegal?: boolean | Prisma.CompanyAddress$companyForLegalArgs<ExtArgs>
 }
 export type CompanyAddressIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -1219,12 +1137,13 @@ export type $CompanyAddressPayload<ExtArgs extends runtime.Types.Extensions.Inte
   objects: {
     company: Prisma.$CompanyPayload<ExtArgs>
     country: Prisma.$CountryPayload<ExtArgs>
-    companyForLegal: Prisma.$CompanyPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     companyId: number
     addressType: $Enums.AddressType
+    isPrimary: boolean
+    isLegal: boolean
     address: string
     city: string
     provinceCode: string | null
@@ -1233,7 +1152,6 @@ export type $CompanyAddressPayload<ExtArgs extends runtime.Types.Extensions.Inte
     latitude: runtime.Decimal | null
     longitude: runtime.Decimal | null
     phone: string | null
-    isPrimary: boolean
     openingHours: runtime.JsonValue | null
     notes: string | null
     createdAt: Date
@@ -1634,7 +1552,6 @@ export interface Prisma__CompanyAddressClient<T, Null = never, ExtArgs extends r
   readonly [Symbol.toStringTag]: "PrismaPromise"
   company<T extends Prisma.CompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__CompanyClient<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   country<T extends Prisma.CountryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CountryDefaultArgs<ExtArgs>>): Prisma.Prisma__CountryClient<runtime.Types.Result.GetResult<Prisma.$CountryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  companyForLegal<T extends Prisma.CompanyAddress$companyForLegalArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CompanyAddress$companyForLegalArgs<ExtArgs>>): Prisma.Prisma__CompanyClient<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1667,6 +1584,8 @@ export interface CompanyAddressFieldRefs {
   readonly id: Prisma.FieldRef<"CompanyAddress", 'Int'>
   readonly companyId: Prisma.FieldRef<"CompanyAddress", 'Int'>
   readonly addressType: Prisma.FieldRef<"CompanyAddress", 'AddressType'>
+  readonly isPrimary: Prisma.FieldRef<"CompanyAddress", 'Boolean'>
+  readonly isLegal: Prisma.FieldRef<"CompanyAddress", 'Boolean'>
   readonly address: Prisma.FieldRef<"CompanyAddress", 'String'>
   readonly city: Prisma.FieldRef<"CompanyAddress", 'String'>
   readonly provinceCode: Prisma.FieldRef<"CompanyAddress", 'String'>
@@ -1675,7 +1594,6 @@ export interface CompanyAddressFieldRefs {
   readonly latitude: Prisma.FieldRef<"CompanyAddress", 'Decimal'>
   readonly longitude: Prisma.FieldRef<"CompanyAddress", 'Decimal'>
   readonly phone: Prisma.FieldRef<"CompanyAddress", 'String'>
-  readonly isPrimary: Prisma.FieldRef<"CompanyAddress", 'Boolean'>
   readonly openingHours: Prisma.FieldRef<"CompanyAddress", 'Json'>
   readonly notes: Prisma.FieldRef<"CompanyAddress", 'String'>
   readonly createdAt: Prisma.FieldRef<"CompanyAddress", 'DateTime'>
@@ -2073,25 +1991,6 @@ export type CompanyAddressDeleteManyArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many CompanyAddresses to delete.
    */
   limit?: number
-}
-
-/**
- * CompanyAddress.companyForLegal
- */
-export type CompanyAddress$companyForLegalArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Company
-   */
-  select?: Prisma.CompanySelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Company
-   */
-  omit?: Prisma.CompanyOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.CompanyInclude<ExtArgs> | null
-  where?: Prisma.CompanyWhereInput
 }
 
 /**

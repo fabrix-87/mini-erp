@@ -1,7 +1,7 @@
 // packages/backend/prisma/seeds/vatNatures.seed.ts
 
 import { prisma } from '@/config/prisma-client';
-import { VatNatureCategory } from '@prisma/client';
+import { VatNatureCategory } from '@/generated/prisma/enums';
 
 const vatNatures = [
   // ========================================
@@ -443,5 +443,14 @@ async function seedVatNatures() {
 
   console.log(`✅ Seeded ${vatNatures.length} VAT Nature codes`);
 }
+
+seedVatNatures()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
 
 export default seedVatNatures;

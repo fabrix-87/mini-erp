@@ -28,17 +28,16 @@ export type AggregateDocument = {
 
 export type DocumentAvgAggregateOutputType = {
   id: number | null
+  sequenceNumber: number | null
   documentYear: number | null
   companyId: number | null
   customerId: number | null
   supplierId: number | null
   contactId: number | null
   opportunityId: number | null
+  leadId: number | null
   warehouseId: number | null
-  relatedQuoteId: number | null
-  relatedOrderId: number | null
-  relatedInvoiceId: number | null
-  relatedOpportunityId: number | null
+  parentDocumentId: number | null
   subtotal: runtime.Decimal | null
   discountPercent: runtime.Decimal | null
   discountAmount: runtime.Decimal | null
@@ -48,24 +47,25 @@ export type DocumentAvgAggregateOutputType = {
   taxAmount: runtime.Decimal | null
   totalAmount: runtime.Decimal | null
   paidAmount: runtime.Decimal | null
+  exchangeRate: runtime.Decimal | null
   paymentMethodId: number | null
   createdByUserId: number | null
   assignedUserId: number | null
+  deletedBy: number | null
 }
 
 export type DocumentSumAggregateOutputType = {
   id: number | null
+  sequenceNumber: number | null
   documentYear: number | null
   companyId: number | null
   customerId: number | null
   supplierId: number | null
   contactId: number | null
   opportunityId: number | null
+  leadId: number | null
   warehouseId: number | null
-  relatedQuoteId: number | null
-  relatedOrderId: number | null
-  relatedInvoiceId: number | null
-  relatedOpportunityId: number | null
+  parentDocumentId: number | null
   subtotal: runtime.Decimal | null
   discountPercent: runtime.Decimal | null
   discountAmount: runtime.Decimal | null
@@ -75,32 +75,34 @@ export type DocumentSumAggregateOutputType = {
   taxAmount: runtime.Decimal | null
   totalAmount: runtime.Decimal | null
   paidAmount: runtime.Decimal | null
+  exchangeRate: runtime.Decimal | null
   paymentMethodId: number | null
   createdByUserId: number | null
   assignedUserId: number | null
+  deletedBy: number | null
 }
 
 export type DocumentMinAggregateOutputType = {
   id: number | null
   documentType: $Enums.DocumentType | null
+  statusCategory: $Enums.DocumentStatusCategory | null
   status: $Enums.DocumentStatus | null
   documentNumber: string | null
+  sequenceNumber: number | null
   documentYear: number | null
   companyId: number | null
   customerId: number | null
   supplierId: number | null
   contactId: number | null
   opportunityId: number | null
+  leadId: number | null
   warehouseId: number | null
   documentDate: Date | null
   dueDate: Date | null
   deliveryDate: Date | null
   validUntil: Date | null
   sentDate: Date | null
-  relatedQuoteId: number | null
-  relatedOrderId: number | null
-  relatedInvoiceId: number | null
-  relatedOpportunityId: number | null
+  parentDocumentId: number | null
   customerName: string | null
   customerVatNumber: string | null
   customerTaxCode: string | null
@@ -119,7 +121,6 @@ export type DocumentMinAggregateOutputType = {
   shippingPostalCode: string | null
   shippingProvince: string | null
   shippingCountryCode: string | null
-  currency: string | null
   subtotal: runtime.Decimal | null
   discountPercent: runtime.Decimal | null
   discountAmount: runtime.Decimal | null
@@ -129,6 +130,10 @@ export type DocumentMinAggregateOutputType = {
   taxAmount: runtime.Decimal | null
   totalAmount: runtime.Decimal | null
   paidAmount: runtime.Decimal | null
+  currencyCode: string | null
+  exchangeRate: runtime.Decimal | null
+  exchangeRateDate: Date | null
+  baseCurrencyCode: string | null
   paymentMethodId: number | null
   paymentMethod: string | null
   paymentTerms: string | null
@@ -140,31 +145,39 @@ export type DocumentMinAggregateOutputType = {
   termsAndConditions: string | null
   createdByUserId: number | null
   assignedUserId: number | null
+  deletedBy: number | null
+  approvedAt: Date | null
+  invoicedAt: Date | null
+  deliveredAt: Date | null
+  closedAt: Date | null
+  voidedAt: Date | null
+  voidedReason: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type DocumentMaxAggregateOutputType = {
   id: number | null
   documentType: $Enums.DocumentType | null
+  statusCategory: $Enums.DocumentStatusCategory | null
   status: $Enums.DocumentStatus | null
   documentNumber: string | null
+  sequenceNumber: number | null
   documentYear: number | null
   companyId: number | null
   customerId: number | null
   supplierId: number | null
   contactId: number | null
   opportunityId: number | null
+  leadId: number | null
   warehouseId: number | null
   documentDate: Date | null
   dueDate: Date | null
   deliveryDate: Date | null
   validUntil: Date | null
   sentDate: Date | null
-  relatedQuoteId: number | null
-  relatedOrderId: number | null
-  relatedInvoiceId: number | null
-  relatedOpportunityId: number | null
+  parentDocumentId: number | null
   customerName: string | null
   customerVatNumber: string | null
   customerTaxCode: string | null
@@ -183,7 +196,6 @@ export type DocumentMaxAggregateOutputType = {
   shippingPostalCode: string | null
   shippingProvince: string | null
   shippingCountryCode: string | null
-  currency: string | null
   subtotal: runtime.Decimal | null
   discountPercent: runtime.Decimal | null
   discountAmount: runtime.Decimal | null
@@ -193,6 +205,10 @@ export type DocumentMaxAggregateOutputType = {
   taxAmount: runtime.Decimal | null
   totalAmount: runtime.Decimal | null
   paidAmount: runtime.Decimal | null
+  currencyCode: string | null
+  exchangeRate: runtime.Decimal | null
+  exchangeRateDate: Date | null
+  baseCurrencyCode: string | null
   paymentMethodId: number | null
   paymentMethod: string | null
   paymentTerms: string | null
@@ -204,31 +220,39 @@ export type DocumentMaxAggregateOutputType = {
   termsAndConditions: string | null
   createdByUserId: number | null
   assignedUserId: number | null
+  deletedBy: number | null
+  approvedAt: Date | null
+  invoicedAt: Date | null
+  deliveredAt: Date | null
+  closedAt: Date | null
+  voidedAt: Date | null
+  voidedReason: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type DocumentCountAggregateOutputType = {
   id: number
   documentType: number
+  statusCategory: number
   status: number
   documentNumber: number
+  sequenceNumber: number
   documentYear: number
   companyId: number
   customerId: number
   supplierId: number
   contactId: number
   opportunityId: number
+  leadId: number
   warehouseId: number
   documentDate: number
   dueDate: number
   deliveryDate: number
   validUntil: number
   sentDate: number
-  relatedQuoteId: number
-  relatedOrderId: number
-  relatedInvoiceId: number
-  relatedOpportunityId: number
+  parentDocumentId: number
   customerName: number
   customerVatNumber: number
   customerTaxCode: number
@@ -247,7 +271,6 @@ export type DocumentCountAggregateOutputType = {
   shippingPostalCode: number
   shippingProvince: number
   shippingCountryCode: number
-  currency: number
   subtotal: number
   discountPercent: number
   discountAmount: number
@@ -257,6 +280,10 @@ export type DocumentCountAggregateOutputType = {
   taxAmount: number
   totalAmount: number
   paidAmount: number
+  currencyCode: number
+  exchangeRate: number
+  exchangeRateDate: number
+  baseCurrencyCode: number
   paymentMethodId: number
   paymentMethod: number
   paymentTerms: number
@@ -268,26 +295,34 @@ export type DocumentCountAggregateOutputType = {
   termsAndConditions: number
   createdByUserId: number
   assignedUserId: number
+  deletedBy: number
   customFields: number
+  statusHistory: number
+  approvedAt: number
+  invoicedAt: number
+  deliveredAt: number
+  closedAt: number
+  voidedAt: number
+  voidedReason: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
   _all: number
 }
 
 
 export type DocumentAvgAggregateInputType = {
   id?: true
+  sequenceNumber?: true
   documentYear?: true
   companyId?: true
   customerId?: true
   supplierId?: true
   contactId?: true
   opportunityId?: true
+  leadId?: true
   warehouseId?: true
-  relatedQuoteId?: true
-  relatedOrderId?: true
-  relatedInvoiceId?: true
-  relatedOpportunityId?: true
+  parentDocumentId?: true
   subtotal?: true
   discountPercent?: true
   discountAmount?: true
@@ -297,24 +332,25 @@ export type DocumentAvgAggregateInputType = {
   taxAmount?: true
   totalAmount?: true
   paidAmount?: true
+  exchangeRate?: true
   paymentMethodId?: true
   createdByUserId?: true
   assignedUserId?: true
+  deletedBy?: true
 }
 
 export type DocumentSumAggregateInputType = {
   id?: true
+  sequenceNumber?: true
   documentYear?: true
   companyId?: true
   customerId?: true
   supplierId?: true
   contactId?: true
   opportunityId?: true
+  leadId?: true
   warehouseId?: true
-  relatedQuoteId?: true
-  relatedOrderId?: true
-  relatedInvoiceId?: true
-  relatedOpportunityId?: true
+  parentDocumentId?: true
   subtotal?: true
   discountPercent?: true
   discountAmount?: true
@@ -324,32 +360,34 @@ export type DocumentSumAggregateInputType = {
   taxAmount?: true
   totalAmount?: true
   paidAmount?: true
+  exchangeRate?: true
   paymentMethodId?: true
   createdByUserId?: true
   assignedUserId?: true
+  deletedBy?: true
 }
 
 export type DocumentMinAggregateInputType = {
   id?: true
   documentType?: true
+  statusCategory?: true
   status?: true
   documentNumber?: true
+  sequenceNumber?: true
   documentYear?: true
   companyId?: true
   customerId?: true
   supplierId?: true
   contactId?: true
   opportunityId?: true
+  leadId?: true
   warehouseId?: true
   documentDate?: true
   dueDate?: true
   deliveryDate?: true
   validUntil?: true
   sentDate?: true
-  relatedQuoteId?: true
-  relatedOrderId?: true
-  relatedInvoiceId?: true
-  relatedOpportunityId?: true
+  parentDocumentId?: true
   customerName?: true
   customerVatNumber?: true
   customerTaxCode?: true
@@ -368,7 +406,6 @@ export type DocumentMinAggregateInputType = {
   shippingPostalCode?: true
   shippingProvince?: true
   shippingCountryCode?: true
-  currency?: true
   subtotal?: true
   discountPercent?: true
   discountAmount?: true
@@ -378,6 +415,10 @@ export type DocumentMinAggregateInputType = {
   taxAmount?: true
   totalAmount?: true
   paidAmount?: true
+  currencyCode?: true
+  exchangeRate?: true
+  exchangeRateDate?: true
+  baseCurrencyCode?: true
   paymentMethodId?: true
   paymentMethod?: true
   paymentTerms?: true
@@ -389,31 +430,39 @@ export type DocumentMinAggregateInputType = {
   termsAndConditions?: true
   createdByUserId?: true
   assignedUserId?: true
+  deletedBy?: true
+  approvedAt?: true
+  invoicedAt?: true
+  deliveredAt?: true
+  closedAt?: true
+  voidedAt?: true
+  voidedReason?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type DocumentMaxAggregateInputType = {
   id?: true
   documentType?: true
+  statusCategory?: true
   status?: true
   documentNumber?: true
+  sequenceNumber?: true
   documentYear?: true
   companyId?: true
   customerId?: true
   supplierId?: true
   contactId?: true
   opportunityId?: true
+  leadId?: true
   warehouseId?: true
   documentDate?: true
   dueDate?: true
   deliveryDate?: true
   validUntil?: true
   sentDate?: true
-  relatedQuoteId?: true
-  relatedOrderId?: true
-  relatedInvoiceId?: true
-  relatedOpportunityId?: true
+  parentDocumentId?: true
   customerName?: true
   customerVatNumber?: true
   customerTaxCode?: true
@@ -432,7 +481,6 @@ export type DocumentMaxAggregateInputType = {
   shippingPostalCode?: true
   shippingProvince?: true
   shippingCountryCode?: true
-  currency?: true
   subtotal?: true
   discountPercent?: true
   discountAmount?: true
@@ -442,6 +490,10 @@ export type DocumentMaxAggregateInputType = {
   taxAmount?: true
   totalAmount?: true
   paidAmount?: true
+  currencyCode?: true
+  exchangeRate?: true
+  exchangeRateDate?: true
+  baseCurrencyCode?: true
   paymentMethodId?: true
   paymentMethod?: true
   paymentTerms?: true
@@ -453,31 +505,39 @@ export type DocumentMaxAggregateInputType = {
   termsAndConditions?: true
   createdByUserId?: true
   assignedUserId?: true
+  deletedBy?: true
+  approvedAt?: true
+  invoicedAt?: true
+  deliveredAt?: true
+  closedAt?: true
+  voidedAt?: true
+  voidedReason?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type DocumentCountAggregateInputType = {
   id?: true
   documentType?: true
+  statusCategory?: true
   status?: true
   documentNumber?: true
+  sequenceNumber?: true
   documentYear?: true
   companyId?: true
   customerId?: true
   supplierId?: true
   contactId?: true
   opportunityId?: true
+  leadId?: true
   warehouseId?: true
   documentDate?: true
   dueDate?: true
   deliveryDate?: true
   validUntil?: true
   sentDate?: true
-  relatedQuoteId?: true
-  relatedOrderId?: true
-  relatedInvoiceId?: true
-  relatedOpportunityId?: true
+  parentDocumentId?: true
   customerName?: true
   customerVatNumber?: true
   customerTaxCode?: true
@@ -496,7 +556,6 @@ export type DocumentCountAggregateInputType = {
   shippingPostalCode?: true
   shippingProvince?: true
   shippingCountryCode?: true
-  currency?: true
   subtotal?: true
   discountPercent?: true
   discountAmount?: true
@@ -506,6 +565,10 @@ export type DocumentCountAggregateInputType = {
   taxAmount?: true
   totalAmount?: true
   paidAmount?: true
+  currencyCode?: true
+  exchangeRate?: true
+  exchangeRateDate?: true
+  baseCurrencyCode?: true
   paymentMethodId?: true
   paymentMethod?: true
   paymentTerms?: true
@@ -517,9 +580,18 @@ export type DocumentCountAggregateInputType = {
   termsAndConditions?: true
   createdByUserId?: true
   assignedUserId?: true
+  deletedBy?: true
   customFields?: true
+  statusHistory?: true
+  approvedAt?: true
+  invoicedAt?: true
+  deliveredAt?: true
+  closedAt?: true
+  voidedAt?: true
+  voidedReason?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -612,24 +684,24 @@ export type DocumentGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type DocumentGroupByOutputType = {
   id: number
   documentType: $Enums.DocumentType
+  statusCategory: $Enums.DocumentStatusCategory
   status: $Enums.DocumentStatus
   documentNumber: string | null
+  sequenceNumber: number | null
   documentYear: number
   companyId: number
   customerId: number | null
   supplierId: number | null
   contactId: number | null
   opportunityId: number | null
+  leadId: number | null
   warehouseId: number | null
   documentDate: Date
   dueDate: Date | null
   deliveryDate: Date | null
   validUntil: Date | null
   sentDate: Date | null
-  relatedQuoteId: number | null
-  relatedOrderId: number | null
-  relatedInvoiceId: number | null
-  relatedOpportunityId: number | null
+  parentDocumentId: number | null
   customerName: string
   customerVatNumber: string | null
   customerTaxCode: string | null
@@ -648,7 +720,6 @@ export type DocumentGroupByOutputType = {
   shippingPostalCode: string | null
   shippingProvince: string | null
   shippingCountryCode: string | null
-  currency: string
   subtotal: runtime.Decimal
   discountPercent: runtime.Decimal
   discountAmount: runtime.Decimal
@@ -658,6 +729,10 @@ export type DocumentGroupByOutputType = {
   taxAmount: runtime.Decimal
   totalAmount: runtime.Decimal
   paidAmount: runtime.Decimal
+  currencyCode: string
+  exchangeRate: runtime.Decimal
+  exchangeRateDate: Date
+  baseCurrencyCode: string
   paymentMethodId: number | null
   paymentMethod: string
   paymentTerms: string | null
@@ -669,9 +744,18 @@ export type DocumentGroupByOutputType = {
   termsAndConditions: string | null
   createdByUserId: number
   assignedUserId: number | null
+  deletedBy: number | null
   customFields: runtime.JsonValue | null
+  statusHistory: runtime.JsonValue | null
+  approvedAt: Date | null
+  invoicedAt: Date | null
+  deliveredAt: Date | null
+  closedAt: Date | null
+  voidedAt: Date | null
+  voidedReason: string | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
   _count: DocumentCountAggregateOutputType | null
   _avg: DocumentAvgAggregateOutputType | null
   _sum: DocumentSumAggregateOutputType | null
@@ -700,24 +784,24 @@ export type DocumentWhereInput = {
   NOT?: Prisma.DocumentWhereInput | Prisma.DocumentWhereInput[]
   id?: Prisma.IntFilter<"Document"> | number
   documentType?: Prisma.EnumDocumentTypeFilter<"Document"> | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFilter<"Document"> | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFilter<"Document"> | $Enums.DocumentStatus
   documentNumber?: Prisma.StringNullableFilter<"Document"> | string | null
+  sequenceNumber?: Prisma.IntNullableFilter<"Document"> | number | null
   documentYear?: Prisma.IntFilter<"Document"> | number
   companyId?: Prisma.IntFilter<"Document"> | number
   customerId?: Prisma.IntNullableFilter<"Document"> | number | null
   supplierId?: Prisma.IntNullableFilter<"Document"> | number | null
   contactId?: Prisma.IntNullableFilter<"Document"> | number | null
   opportunityId?: Prisma.IntNullableFilter<"Document"> | number | null
+  leadId?: Prisma.IntNullableFilter<"Document"> | number | null
   warehouseId?: Prisma.IntNullableFilter<"Document"> | number | null
   documentDate?: Prisma.DateTimeFilter<"Document"> | Date | string
   dueDate?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   deliveryDate?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   validUntil?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   sentDate?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
-  relatedQuoteId?: Prisma.IntNullableFilter<"Document"> | number | null
-  relatedOrderId?: Prisma.IntNullableFilter<"Document"> | number | null
-  relatedInvoiceId?: Prisma.IntNullableFilter<"Document"> | number | null
-  relatedOpportunityId?: Prisma.IntNullableFilter<"Document"> | number | null
+  parentDocumentId?: Prisma.IntNullableFilter<"Document"> | number | null
   customerName?: Prisma.StringFilter<"Document"> | string
   customerVatNumber?: Prisma.StringNullableFilter<"Document"> | string | null
   customerTaxCode?: Prisma.StringNullableFilter<"Document"> | string | null
@@ -736,7 +820,6 @@ export type DocumentWhereInput = {
   shippingPostalCode?: Prisma.StringNullableFilter<"Document"> | string | null
   shippingProvince?: Prisma.StringNullableFilter<"Document"> | string | null
   shippingCountryCode?: Prisma.StringNullableFilter<"Document"> | string | null
-  currency?: Prisma.StringFilter<"Document"> | string
   subtotal?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -746,6 +829,10 @@ export type DocumentWhereInput = {
   taxAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFilter<"Document"> | string
+  exchangeRate?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFilter<"Document"> | Date | string
+  baseCurrencyCode?: Prisma.StringFilter<"Document"> | string
   paymentMethodId?: Prisma.IntNullableFilter<"Document"> | number | null
   paymentMethod?: Prisma.StringFilter<"Document"> | string
   paymentTerms?: Prisma.StringNullableFilter<"Document"> | string | null
@@ -757,46 +844,64 @@ export type DocumentWhereInput = {
   termsAndConditions?: Prisma.StringNullableFilter<"Document"> | string | null
   createdByUserId?: Prisma.IntFilter<"Document"> | number
   assignedUserId?: Prisma.IntNullableFilter<"Document"> | number | null
+  deletedBy?: Prisma.IntNullableFilter<"Document"> | number | null
   customFields?: Prisma.JsonNullableFilter<"Document">
+  statusHistory?: Prisma.JsonNullableFilter<"Document">
+  approvedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  invoicedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  deliveredAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  closedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  voidedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  voidedReason?: Prisma.StringNullableFilter<"Document"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   supplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
   contact?: Prisma.XOR<Prisma.ContactNullableScalarRelationFilter, Prisma.ContactWhereInput> | null
   opportunity?: Prisma.XOR<Prisma.OpportunityNullableScalarRelationFilter, Prisma.OpportunityWhereInput> | null
+  lead?: Prisma.XOR<Prisma.LeadNullableScalarRelationFilter, Prisma.LeadWhereInput> | null
   warehouse?: Prisma.XOR<Prisma.WarehouseNullableScalarRelationFilter, Prisma.WarehouseWhereInput> | null
+  parentDocument?: Prisma.XOR<Prisma.DocumentNullableScalarRelationFilter, Prisma.DocumentWhereInput> | null
+  childDocuments?: Prisma.DocumentListRelationFilter
+  relatedDocuments?: Prisma.DocumentRelationListRelationFilter
+  relatedToDocuments?: Prisma.DocumentRelationListRelationFilter
   customerCountry?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
   shippingCountry?: Prisma.XOR<Prisma.CountryNullableScalarRelationFilter, Prisma.CountryWhereInput> | null
+  currency?: Prisma.XOR<Prisma.CurrencyScalarRelationFilter, Prisma.CurrencyWhereInput>
   paymentMethodRel?: Prisma.XOR<Prisma.PaymentMethodNullableScalarRelationFilter, Prisma.PaymentMethodWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   assignedUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  deletedByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   lines?: Prisma.DocumentLineListRelationFilter
   installments?: Prisma.DocumentPaymentInstallmentListRelationFilter
+  stockMovement?: Prisma.StockMovementListRelationFilter
+  stockReservations?: Prisma.StockReservationListRelationFilter
   intrastatTransactions?: Prisma.IntrastatTransactionListRelationFilter
 }
 
 export type DocumentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   documentType?: Prisma.SortOrder
+  statusCategory?: Prisma.SortOrder
   status?: Prisma.SortOrder
   documentNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  sequenceNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   documentYear?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   customerId?: Prisma.SortOrderInput | Prisma.SortOrder
   supplierId?: Prisma.SortOrderInput | Prisma.SortOrder
   contactId?: Prisma.SortOrderInput | Prisma.SortOrder
   opportunityId?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadId?: Prisma.SortOrderInput | Prisma.SortOrder
   warehouseId?: Prisma.SortOrderInput | Prisma.SortOrder
   documentDate?: Prisma.SortOrder
   dueDate?: Prisma.SortOrderInput | Prisma.SortOrder
   deliveryDate?: Prisma.SortOrderInput | Prisma.SortOrder
   validUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   sentDate?: Prisma.SortOrderInput | Prisma.SortOrder
-  relatedQuoteId?: Prisma.SortOrderInput | Prisma.SortOrder
-  relatedOrderId?: Prisma.SortOrderInput | Prisma.SortOrder
-  relatedInvoiceId?: Prisma.SortOrderInput | Prisma.SortOrder
-  relatedOpportunityId?: Prisma.SortOrderInput | Prisma.SortOrder
+  parentDocumentId?: Prisma.SortOrderInput | Prisma.SortOrder
   customerName?: Prisma.SortOrder
   customerVatNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   customerTaxCode?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -815,7 +920,6 @@ export type DocumentOrderByWithRelationInput = {
   shippingPostalCode?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingProvince?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingCountryCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  currency?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountPercent?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
@@ -825,6 +929,10 @@ export type DocumentOrderByWithRelationInput = {
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
+  currencyCode?: Prisma.SortOrder
+  exchangeRate?: Prisma.SortOrder
+  exchangeRateDate?: Prisma.SortOrder
+  baseCurrencyCode?: Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentTerms?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -836,49 +944,68 @@ export type DocumentOrderByWithRelationInput = {
   termsAndConditions?: Prisma.SortOrderInput | Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   customFields?: Prisma.SortOrderInput | Prisma.SortOrder
+  statusHistory?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  invoicedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  closedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   company?: Prisma.CompanyOrderByWithRelationInput
   customer?: Prisma.CustomerOrderByWithRelationInput
   supplier?: Prisma.SupplierOrderByWithRelationInput
   contact?: Prisma.ContactOrderByWithRelationInput
   opportunity?: Prisma.OpportunityOrderByWithRelationInput
+  lead?: Prisma.LeadOrderByWithRelationInput
   warehouse?: Prisma.WarehouseOrderByWithRelationInput
+  parentDocument?: Prisma.DocumentOrderByWithRelationInput
+  childDocuments?: Prisma.DocumentOrderByRelationAggregateInput
+  relatedDocuments?: Prisma.DocumentRelationOrderByRelationAggregateInput
+  relatedToDocuments?: Prisma.DocumentRelationOrderByRelationAggregateInput
   customerCountry?: Prisma.CountryOrderByWithRelationInput
   shippingCountry?: Prisma.CountryOrderByWithRelationInput
+  currency?: Prisma.CurrencyOrderByWithRelationInput
   paymentMethodRel?: Prisma.PaymentMethodOrderByWithRelationInput
   createdBy?: Prisma.UserOrderByWithRelationInput
   assignedUser?: Prisma.UserOrderByWithRelationInput
+  deletedByUser?: Prisma.UserOrderByWithRelationInput
   lines?: Prisma.DocumentLineOrderByRelationAggregateInput
   installments?: Prisma.DocumentPaymentInstallmentOrderByRelationAggregateInput
+  stockMovement?: Prisma.StockMovementOrderByRelationAggregateInput
+  stockReservations?: Prisma.StockReservationOrderByRelationAggregateInput
   intrastatTransactions?: Prisma.IntrastatTransactionOrderByRelationAggregateInput
 }
 
 export type DocumentWhereUniqueInput = Prisma.AtLeast<{
   id?: number
   documentNumber?: string
+  documentType_documentYear_sequenceNumber?: Prisma.DocumentDocumentTypeDocumentYearSequenceNumberCompoundUniqueInput
   AND?: Prisma.DocumentWhereInput | Prisma.DocumentWhereInput[]
   OR?: Prisma.DocumentWhereInput[]
   NOT?: Prisma.DocumentWhereInput | Prisma.DocumentWhereInput[]
   documentType?: Prisma.EnumDocumentTypeFilter<"Document"> | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFilter<"Document"> | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFilter<"Document"> | $Enums.DocumentStatus
+  sequenceNumber?: Prisma.IntNullableFilter<"Document"> | number | null
   documentYear?: Prisma.IntFilter<"Document"> | number
   companyId?: Prisma.IntFilter<"Document"> | number
   customerId?: Prisma.IntNullableFilter<"Document"> | number | null
   supplierId?: Prisma.IntNullableFilter<"Document"> | number | null
   contactId?: Prisma.IntNullableFilter<"Document"> | number | null
   opportunityId?: Prisma.IntNullableFilter<"Document"> | number | null
+  leadId?: Prisma.IntNullableFilter<"Document"> | number | null
   warehouseId?: Prisma.IntNullableFilter<"Document"> | number | null
   documentDate?: Prisma.DateTimeFilter<"Document"> | Date | string
   dueDate?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   deliveryDate?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   validUntil?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   sentDate?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
-  relatedQuoteId?: Prisma.IntNullableFilter<"Document"> | number | null
-  relatedOrderId?: Prisma.IntNullableFilter<"Document"> | number | null
-  relatedInvoiceId?: Prisma.IntNullableFilter<"Document"> | number | null
-  relatedOpportunityId?: Prisma.IntNullableFilter<"Document"> | number | null
+  parentDocumentId?: Prisma.IntNullableFilter<"Document"> | number | null
   customerName?: Prisma.StringFilter<"Document"> | string
   customerVatNumber?: Prisma.StringNullableFilter<"Document"> | string | null
   customerTaxCode?: Prisma.StringNullableFilter<"Document"> | string | null
@@ -897,7 +1024,6 @@ export type DocumentWhereUniqueInput = Prisma.AtLeast<{
   shippingPostalCode?: Prisma.StringNullableFilter<"Document"> | string | null
   shippingProvince?: Prisma.StringNullableFilter<"Document"> | string | null
   shippingCountryCode?: Prisma.StringNullableFilter<"Document"> | string | null
-  currency?: Prisma.StringFilter<"Document"> | string
   subtotal?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -907,6 +1033,10 @@ export type DocumentWhereUniqueInput = Prisma.AtLeast<{
   taxAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFilter<"Document"> | string
+  exchangeRate?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFilter<"Document"> | Date | string
+  baseCurrencyCode?: Prisma.StringFilter<"Document"> | string
   paymentMethodId?: Prisma.IntNullableFilter<"Document"> | number | null
   paymentMethod?: Prisma.StringFilter<"Document"> | string
   paymentTerms?: Prisma.StringNullableFilter<"Document"> | string | null
@@ -918,46 +1048,64 @@ export type DocumentWhereUniqueInput = Prisma.AtLeast<{
   termsAndConditions?: Prisma.StringNullableFilter<"Document"> | string | null
   createdByUserId?: Prisma.IntFilter<"Document"> | number
   assignedUserId?: Prisma.IntNullableFilter<"Document"> | number | null
+  deletedBy?: Prisma.IntNullableFilter<"Document"> | number | null
   customFields?: Prisma.JsonNullableFilter<"Document">
+  statusHistory?: Prisma.JsonNullableFilter<"Document">
+  approvedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  invoicedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  deliveredAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  closedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  voidedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  voidedReason?: Prisma.StringNullableFilter<"Document"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   supplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
   contact?: Prisma.XOR<Prisma.ContactNullableScalarRelationFilter, Prisma.ContactWhereInput> | null
   opportunity?: Prisma.XOR<Prisma.OpportunityNullableScalarRelationFilter, Prisma.OpportunityWhereInput> | null
+  lead?: Prisma.XOR<Prisma.LeadNullableScalarRelationFilter, Prisma.LeadWhereInput> | null
   warehouse?: Prisma.XOR<Prisma.WarehouseNullableScalarRelationFilter, Prisma.WarehouseWhereInput> | null
+  parentDocument?: Prisma.XOR<Prisma.DocumentNullableScalarRelationFilter, Prisma.DocumentWhereInput> | null
+  childDocuments?: Prisma.DocumentListRelationFilter
+  relatedDocuments?: Prisma.DocumentRelationListRelationFilter
+  relatedToDocuments?: Prisma.DocumentRelationListRelationFilter
   customerCountry?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
   shippingCountry?: Prisma.XOR<Prisma.CountryNullableScalarRelationFilter, Prisma.CountryWhereInput> | null
+  currency?: Prisma.XOR<Prisma.CurrencyScalarRelationFilter, Prisma.CurrencyWhereInput>
   paymentMethodRel?: Prisma.XOR<Prisma.PaymentMethodNullableScalarRelationFilter, Prisma.PaymentMethodWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   assignedUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  deletedByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   lines?: Prisma.DocumentLineListRelationFilter
   installments?: Prisma.DocumentPaymentInstallmentListRelationFilter
+  stockMovement?: Prisma.StockMovementListRelationFilter
+  stockReservations?: Prisma.StockReservationListRelationFilter
   intrastatTransactions?: Prisma.IntrastatTransactionListRelationFilter
-}, "id" | "documentNumber">
+}, "id" | "documentNumber" | "documentType_documentYear_sequenceNumber">
 
 export type DocumentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   documentType?: Prisma.SortOrder
+  statusCategory?: Prisma.SortOrder
   status?: Prisma.SortOrder
   documentNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  sequenceNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   documentYear?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   customerId?: Prisma.SortOrderInput | Prisma.SortOrder
   supplierId?: Prisma.SortOrderInput | Prisma.SortOrder
   contactId?: Prisma.SortOrderInput | Prisma.SortOrder
   opportunityId?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadId?: Prisma.SortOrderInput | Prisma.SortOrder
   warehouseId?: Prisma.SortOrderInput | Prisma.SortOrder
   documentDate?: Prisma.SortOrder
   dueDate?: Prisma.SortOrderInput | Prisma.SortOrder
   deliveryDate?: Prisma.SortOrderInput | Prisma.SortOrder
   validUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   sentDate?: Prisma.SortOrderInput | Prisma.SortOrder
-  relatedQuoteId?: Prisma.SortOrderInput | Prisma.SortOrder
-  relatedOrderId?: Prisma.SortOrderInput | Prisma.SortOrder
-  relatedInvoiceId?: Prisma.SortOrderInput | Prisma.SortOrder
-  relatedOpportunityId?: Prisma.SortOrderInput | Prisma.SortOrder
+  parentDocumentId?: Prisma.SortOrderInput | Prisma.SortOrder
   customerName?: Prisma.SortOrder
   customerVatNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   customerTaxCode?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -976,7 +1124,6 @@ export type DocumentOrderByWithAggregationInput = {
   shippingPostalCode?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingProvince?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingCountryCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  currency?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountPercent?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
@@ -986,6 +1133,10 @@ export type DocumentOrderByWithAggregationInput = {
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
+  currencyCode?: Prisma.SortOrder
+  exchangeRate?: Prisma.SortOrder
+  exchangeRateDate?: Prisma.SortOrder
+  baseCurrencyCode?: Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentTerms?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -997,9 +1148,18 @@ export type DocumentOrderByWithAggregationInput = {
   termsAndConditions?: Prisma.SortOrderInput | Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   customFields?: Prisma.SortOrderInput | Prisma.SortOrder
+  statusHistory?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  invoicedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  closedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.DocumentCountOrderByAggregateInput
   _avg?: Prisma.DocumentAvgOrderByAggregateInput
   _max?: Prisma.DocumentMaxOrderByAggregateInput
@@ -1013,24 +1173,24 @@ export type DocumentScalarWhereWithAggregatesInput = {
   NOT?: Prisma.DocumentScalarWhereWithAggregatesInput | Prisma.DocumentScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Document"> | number
   documentType?: Prisma.EnumDocumentTypeWithAggregatesFilter<"Document"> | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryWithAggregatesFilter<"Document"> | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusWithAggregatesFilter<"Document"> | $Enums.DocumentStatus
   documentNumber?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
+  sequenceNumber?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
   documentYear?: Prisma.IntWithAggregatesFilter<"Document"> | number
   companyId?: Prisma.IntWithAggregatesFilter<"Document"> | number
   customerId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
   supplierId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
   contactId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
   opportunityId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
+  leadId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
   warehouseId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
   documentDate?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
   dueDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Document"> | Date | string | null
   deliveryDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Document"> | Date | string | null
   validUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"Document"> | Date | string | null
   sentDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Document"> | Date | string | null
-  relatedQuoteId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
-  relatedOrderId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
-  relatedInvoiceId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
-  relatedOpportunityId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
+  parentDocumentId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
   customerName?: Prisma.StringWithAggregatesFilter<"Document"> | string
   customerVatNumber?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
   customerTaxCode?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
@@ -1049,7 +1209,6 @@ export type DocumentScalarWhereWithAggregatesInput = {
   shippingPostalCode?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
   shippingProvince?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
   shippingCountryCode?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
-  currency?: Prisma.StringWithAggregatesFilter<"Document"> | string
   subtotal?: Prisma.DecimalWithAggregatesFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalWithAggregatesFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalWithAggregatesFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1059,6 +1218,10 @@ export type DocumentScalarWhereWithAggregatesInput = {
   taxAmount?: Prisma.DecimalWithAggregatesFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalWithAggregatesFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalWithAggregatesFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringWithAggregatesFilter<"Document"> | string
+  exchangeRate?: Prisma.DecimalWithAggregatesFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
+  baseCurrencyCode?: Prisma.StringWithAggregatesFilter<"Document"> | string
   paymentMethodId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
   paymentMethod?: Prisma.StringWithAggregatesFilter<"Document"> | string
   paymentTerms?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
@@ -1070,25 +1233,32 @@ export type DocumentScalarWhereWithAggregatesInput = {
   termsAndConditions?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
   createdByUserId?: Prisma.IntWithAggregatesFilter<"Document"> | number
   assignedUserId?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
+  deletedBy?: Prisma.IntNullableWithAggregatesFilter<"Document"> | number | null
   customFields?: Prisma.JsonNullableWithAggregatesFilter<"Document">
+  statusHistory?: Prisma.JsonNullableWithAggregatesFilter<"Document">
+  approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Document"> | Date | string | null
+  invoicedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Document"> | Date | string | null
+  deliveredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Document"> | Date | string | null
+  closedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Document"> | Date | string | null
+  voidedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Document"> | Date | string | null
+  voidedReason?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Document"> | Date | string | null
 }
 
 export type DocumentCreateInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -1105,7 +1275,6 @@ export type DocumentCreateInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1115,6 +1284,9 @@ export type DocumentCreateInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -1124,45 +1296,62 @@ export type DocumentCreateInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -1181,7 +1370,6 @@ export type DocumentUncheckedCreateInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1191,6 +1379,10 @@ export type DocumentUncheckedCreateInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -1202,28 +1394,40 @@ export type DocumentUncheckedCreateInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUpdateInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1240,7 +1444,6 @@ export type DocumentUpdateInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1250,6 +1453,9 @@ export type DocumentUpdateInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1259,45 +1465,62 @@ export type DocumentUpdateInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1316,7 +1539,6 @@ export type DocumentUncheckedUpdateInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1326,6 +1548,10 @@ export type DocumentUncheckedUpdateInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1337,35 +1563,49 @@ export type DocumentUncheckedUpdateInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentCreateManyInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -1384,7 +1624,6 @@ export type DocumentCreateManyInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1394,6 +1633,10 @@ export type DocumentCreateManyInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -1405,25 +1648,32 @@ export type DocumentCreateManyInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type DocumentUpdateManyMutationInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1440,7 +1690,6 @@ export type DocumentUpdateManyMutationInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1450,6 +1699,9 @@ export type DocumentUpdateManyMutationInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1459,31 +1711,39 @@ export type DocumentUpdateManyMutationInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1502,7 +1762,6 @@ export type DocumentUncheckedUpdateManyInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1512,6 +1771,10 @@ export type DocumentUncheckedUpdateManyInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1523,9 +1786,18 @@ export type DocumentUncheckedUpdateManyInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentListRelationFilter = {
@@ -1538,27 +1810,38 @@ export type DocumentOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type DocumentNullableScalarRelationFilter = {
+  is?: Prisma.DocumentWhereInput | null
+  isNot?: Prisma.DocumentWhereInput | null
+}
+
+export type DocumentDocumentTypeDocumentYearSequenceNumberCompoundUniqueInput = {
+  documentType: $Enums.DocumentType
+  documentYear: number
+  sequenceNumber: number
+}
+
 export type DocumentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   documentType?: Prisma.SortOrder
+  statusCategory?: Prisma.SortOrder
   status?: Prisma.SortOrder
   documentNumber?: Prisma.SortOrder
+  sequenceNumber?: Prisma.SortOrder
   documentYear?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   supplierId?: Prisma.SortOrder
   contactId?: Prisma.SortOrder
   opportunityId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   warehouseId?: Prisma.SortOrder
   documentDate?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
   deliveryDate?: Prisma.SortOrder
   validUntil?: Prisma.SortOrder
   sentDate?: Prisma.SortOrder
-  relatedQuoteId?: Prisma.SortOrder
-  relatedOrderId?: Prisma.SortOrder
-  relatedInvoiceId?: Prisma.SortOrder
-  relatedOpportunityId?: Prisma.SortOrder
+  parentDocumentId?: Prisma.SortOrder
   customerName?: Prisma.SortOrder
   customerVatNumber?: Prisma.SortOrder
   customerTaxCode?: Prisma.SortOrder
@@ -1577,7 +1860,6 @@ export type DocumentCountOrderByAggregateInput = {
   shippingPostalCode?: Prisma.SortOrder
   shippingProvince?: Prisma.SortOrder
   shippingCountryCode?: Prisma.SortOrder
-  currency?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountPercent?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
@@ -1587,6 +1869,10 @@ export type DocumentCountOrderByAggregateInput = {
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
+  currencyCode?: Prisma.SortOrder
+  exchangeRate?: Prisma.SortOrder
+  exchangeRateDate?: Prisma.SortOrder
+  baseCurrencyCode?: Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentTerms?: Prisma.SortOrder
@@ -1598,24 +1884,32 @@ export type DocumentCountOrderByAggregateInput = {
   termsAndConditions?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
+  deletedBy?: Prisma.SortOrder
   customFields?: Prisma.SortOrder
+  statusHistory?: Prisma.SortOrder
+  approvedAt?: Prisma.SortOrder
+  invoicedAt?: Prisma.SortOrder
+  deliveredAt?: Prisma.SortOrder
+  closedAt?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  voidedReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type DocumentAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  sequenceNumber?: Prisma.SortOrder
   documentYear?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   supplierId?: Prisma.SortOrder
   contactId?: Prisma.SortOrder
   opportunityId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   warehouseId?: Prisma.SortOrder
-  relatedQuoteId?: Prisma.SortOrder
-  relatedOrderId?: Prisma.SortOrder
-  relatedInvoiceId?: Prisma.SortOrder
-  relatedOpportunityId?: Prisma.SortOrder
+  parentDocumentId?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountPercent?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
@@ -1625,32 +1919,34 @@ export type DocumentAvgOrderByAggregateInput = {
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
+  exchangeRate?: Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
+  deletedBy?: Prisma.SortOrder
 }
 
 export type DocumentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   documentType?: Prisma.SortOrder
+  statusCategory?: Prisma.SortOrder
   status?: Prisma.SortOrder
   documentNumber?: Prisma.SortOrder
+  sequenceNumber?: Prisma.SortOrder
   documentYear?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   supplierId?: Prisma.SortOrder
   contactId?: Prisma.SortOrder
   opportunityId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   warehouseId?: Prisma.SortOrder
   documentDate?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
   deliveryDate?: Prisma.SortOrder
   validUntil?: Prisma.SortOrder
   sentDate?: Prisma.SortOrder
-  relatedQuoteId?: Prisma.SortOrder
-  relatedOrderId?: Prisma.SortOrder
-  relatedInvoiceId?: Prisma.SortOrder
-  relatedOpportunityId?: Prisma.SortOrder
+  parentDocumentId?: Prisma.SortOrder
   customerName?: Prisma.SortOrder
   customerVatNumber?: Prisma.SortOrder
   customerTaxCode?: Prisma.SortOrder
@@ -1669,7 +1965,6 @@ export type DocumentMaxOrderByAggregateInput = {
   shippingPostalCode?: Prisma.SortOrder
   shippingProvince?: Prisma.SortOrder
   shippingCountryCode?: Prisma.SortOrder
-  currency?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountPercent?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
@@ -1679,6 +1974,10 @@ export type DocumentMaxOrderByAggregateInput = {
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
+  currencyCode?: Prisma.SortOrder
+  exchangeRate?: Prisma.SortOrder
+  exchangeRateDate?: Prisma.SortOrder
+  baseCurrencyCode?: Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentTerms?: Prisma.SortOrder
@@ -1690,31 +1989,39 @@ export type DocumentMaxOrderByAggregateInput = {
   termsAndConditions?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
+  deletedBy?: Prisma.SortOrder
+  approvedAt?: Prisma.SortOrder
+  invoicedAt?: Prisma.SortOrder
+  deliveredAt?: Prisma.SortOrder
+  closedAt?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  voidedReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type DocumentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   documentType?: Prisma.SortOrder
+  statusCategory?: Prisma.SortOrder
   status?: Prisma.SortOrder
   documentNumber?: Prisma.SortOrder
+  sequenceNumber?: Prisma.SortOrder
   documentYear?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   supplierId?: Prisma.SortOrder
   contactId?: Prisma.SortOrder
   opportunityId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   warehouseId?: Prisma.SortOrder
   documentDate?: Prisma.SortOrder
   dueDate?: Prisma.SortOrder
   deliveryDate?: Prisma.SortOrder
   validUntil?: Prisma.SortOrder
   sentDate?: Prisma.SortOrder
-  relatedQuoteId?: Prisma.SortOrder
-  relatedOrderId?: Prisma.SortOrder
-  relatedInvoiceId?: Prisma.SortOrder
-  relatedOpportunityId?: Prisma.SortOrder
+  parentDocumentId?: Prisma.SortOrder
   customerName?: Prisma.SortOrder
   customerVatNumber?: Prisma.SortOrder
   customerTaxCode?: Prisma.SortOrder
@@ -1733,7 +2040,6 @@ export type DocumentMinOrderByAggregateInput = {
   shippingPostalCode?: Prisma.SortOrder
   shippingProvince?: Prisma.SortOrder
   shippingCountryCode?: Prisma.SortOrder
-  currency?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountPercent?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
@@ -1743,6 +2049,10 @@ export type DocumentMinOrderByAggregateInput = {
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
+  currencyCode?: Prisma.SortOrder
+  exchangeRate?: Prisma.SortOrder
+  exchangeRateDate?: Prisma.SortOrder
+  baseCurrencyCode?: Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   paymentTerms?: Prisma.SortOrder
@@ -1754,23 +2064,30 @@ export type DocumentMinOrderByAggregateInput = {
   termsAndConditions?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
+  deletedBy?: Prisma.SortOrder
+  approvedAt?: Prisma.SortOrder
+  invoicedAt?: Prisma.SortOrder
+  deliveredAt?: Prisma.SortOrder
+  closedAt?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  voidedReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type DocumentSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  sequenceNumber?: Prisma.SortOrder
   documentYear?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   supplierId?: Prisma.SortOrder
   contactId?: Prisma.SortOrder
   opportunityId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   warehouseId?: Prisma.SortOrder
-  relatedQuoteId?: Prisma.SortOrder
-  relatedOrderId?: Prisma.SortOrder
-  relatedInvoiceId?: Prisma.SortOrder
-  relatedOpportunityId?: Prisma.SortOrder
+  parentDocumentId?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   discountPercent?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
@@ -1780,9 +2097,11 @@ export type DocumentSumOrderByAggregateInput = {
   taxAmount?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   paidAmount?: Prisma.SortOrder
+  exchangeRate?: Prisma.SortOrder
   paymentMethodId?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
+  deletedBy?: Prisma.SortOrder
 }
 
 export type DocumentScalarRelationFilter = {
@@ -2042,12 +2361,116 @@ export type DocumentUncheckedUpdateManyWithoutShippingCountryNestedInput = {
   deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
 }
 
+export type DocumentCreateNestedManyWithoutCurrencyInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutCurrencyInput, Prisma.DocumentUncheckedCreateWithoutCurrencyInput> | Prisma.DocumentCreateWithoutCurrencyInput[] | Prisma.DocumentUncheckedCreateWithoutCurrencyInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutCurrencyInput | Prisma.DocumentCreateOrConnectWithoutCurrencyInput[]
+  createMany?: Prisma.DocumentCreateManyCurrencyInputEnvelope
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+}
+
+export type DocumentUncheckedCreateNestedManyWithoutCurrencyInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutCurrencyInput, Prisma.DocumentUncheckedCreateWithoutCurrencyInput> | Prisma.DocumentCreateWithoutCurrencyInput[] | Prisma.DocumentUncheckedCreateWithoutCurrencyInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutCurrencyInput | Prisma.DocumentCreateOrConnectWithoutCurrencyInput[]
+  createMany?: Prisma.DocumentCreateManyCurrencyInputEnvelope
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+}
+
+export type DocumentUpdateManyWithoutCurrencyNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutCurrencyInput, Prisma.DocumentUncheckedCreateWithoutCurrencyInput> | Prisma.DocumentCreateWithoutCurrencyInput[] | Prisma.DocumentUncheckedCreateWithoutCurrencyInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutCurrencyInput | Prisma.DocumentCreateOrConnectWithoutCurrencyInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutCurrencyInput | Prisma.DocumentUpsertWithWhereUniqueWithoutCurrencyInput[]
+  createMany?: Prisma.DocumentCreateManyCurrencyInputEnvelope
+  set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutCurrencyInput | Prisma.DocumentUpdateWithWhereUniqueWithoutCurrencyInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutCurrencyInput | Prisma.DocumentUpdateManyWithWhereWithoutCurrencyInput[]
+  deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
+}
+
+export type DocumentUncheckedUpdateManyWithoutCurrencyNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutCurrencyInput, Prisma.DocumentUncheckedCreateWithoutCurrencyInput> | Prisma.DocumentCreateWithoutCurrencyInput[] | Prisma.DocumentUncheckedCreateWithoutCurrencyInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutCurrencyInput | Prisma.DocumentCreateOrConnectWithoutCurrencyInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutCurrencyInput | Prisma.DocumentUpsertWithWhereUniqueWithoutCurrencyInput[]
+  createMany?: Prisma.DocumentCreateManyCurrencyInputEnvelope
+  set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutCurrencyInput | Prisma.DocumentUpdateWithWhereUniqueWithoutCurrencyInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutCurrencyInput | Prisma.DocumentUpdateManyWithWhereWithoutCurrencyInput[]
+  deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
+}
+
+export type DocumentCreateNestedOneWithoutChildDocumentsInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutChildDocumentsInput, Prisma.DocumentUncheckedCreateWithoutChildDocumentsInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutChildDocumentsInput
+  connect?: Prisma.DocumentWhereUniqueInput
+}
+
+export type DocumentCreateNestedManyWithoutParentDocumentInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutParentDocumentInput, Prisma.DocumentUncheckedCreateWithoutParentDocumentInput> | Prisma.DocumentCreateWithoutParentDocumentInput[] | Prisma.DocumentUncheckedCreateWithoutParentDocumentInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutParentDocumentInput | Prisma.DocumentCreateOrConnectWithoutParentDocumentInput[]
+  createMany?: Prisma.DocumentCreateManyParentDocumentInputEnvelope
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+}
+
+export type DocumentUncheckedCreateNestedManyWithoutParentDocumentInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutParentDocumentInput, Prisma.DocumentUncheckedCreateWithoutParentDocumentInput> | Prisma.DocumentCreateWithoutParentDocumentInput[] | Prisma.DocumentUncheckedCreateWithoutParentDocumentInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutParentDocumentInput | Prisma.DocumentCreateOrConnectWithoutParentDocumentInput[]
+  createMany?: Prisma.DocumentCreateManyParentDocumentInputEnvelope
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+}
+
 export type EnumDocumentTypeFieldUpdateOperationsInput = {
   set?: $Enums.DocumentType
 }
 
+export type EnumDocumentStatusCategoryFieldUpdateOperationsInput = {
+  set?: $Enums.DocumentStatusCategory
+}
+
 export type EnumDocumentStatusFieldUpdateOperationsInput = {
   set?: $Enums.DocumentStatus
+}
+
+export type DocumentUpdateOneWithoutChildDocumentsNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutChildDocumentsInput, Prisma.DocumentUncheckedCreateWithoutChildDocumentsInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutChildDocumentsInput
+  upsert?: Prisma.DocumentUpsertWithoutChildDocumentsInput
+  disconnect?: Prisma.DocumentWhereInput | boolean
+  delete?: Prisma.DocumentWhereInput | boolean
+  connect?: Prisma.DocumentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentUpdateToOneWithWhereWithoutChildDocumentsInput, Prisma.DocumentUpdateWithoutChildDocumentsInput>, Prisma.DocumentUncheckedUpdateWithoutChildDocumentsInput>
+}
+
+export type DocumentUpdateManyWithoutParentDocumentNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutParentDocumentInput, Prisma.DocumentUncheckedCreateWithoutParentDocumentInput> | Prisma.DocumentCreateWithoutParentDocumentInput[] | Prisma.DocumentUncheckedCreateWithoutParentDocumentInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutParentDocumentInput | Prisma.DocumentCreateOrConnectWithoutParentDocumentInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutParentDocumentInput | Prisma.DocumentUpsertWithWhereUniqueWithoutParentDocumentInput[]
+  createMany?: Prisma.DocumentCreateManyParentDocumentInputEnvelope
+  set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutParentDocumentInput | Prisma.DocumentUpdateWithWhereUniqueWithoutParentDocumentInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutParentDocumentInput | Prisma.DocumentUpdateManyWithWhereWithoutParentDocumentInput[]
+  deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
+}
+
+export type DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutParentDocumentInput, Prisma.DocumentUncheckedCreateWithoutParentDocumentInput> | Prisma.DocumentCreateWithoutParentDocumentInput[] | Prisma.DocumentUncheckedCreateWithoutParentDocumentInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutParentDocumentInput | Prisma.DocumentCreateOrConnectWithoutParentDocumentInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutParentDocumentInput | Prisma.DocumentUpsertWithWhereUniqueWithoutParentDocumentInput[]
+  createMany?: Prisma.DocumentCreateManyParentDocumentInputEnvelope
+  set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutParentDocumentInput | Prisma.DocumentUpdateWithWhereUniqueWithoutParentDocumentInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutParentDocumentInput | Prisma.DocumentUpdateManyWithWhereWithoutParentDocumentInput[]
+  deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
 }
 
 export type DocumentCreateNestedOneWithoutLinesInput = {
@@ -2078,6 +2501,34 @@ export type DocumentUpdateOneRequiredWithoutInstallmentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentUpdateToOneWithWhereWithoutInstallmentsInput, Prisma.DocumentUpdateWithoutInstallmentsInput>, Prisma.DocumentUncheckedUpdateWithoutInstallmentsInput>
 }
 
+export type DocumentCreateNestedOneWithoutRelatedDocumentsInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutRelatedDocumentsInput, Prisma.DocumentUncheckedCreateWithoutRelatedDocumentsInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutRelatedDocumentsInput
+  connect?: Prisma.DocumentWhereUniqueInput
+}
+
+export type DocumentCreateNestedOneWithoutRelatedToDocumentsInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutRelatedToDocumentsInput, Prisma.DocumentUncheckedCreateWithoutRelatedToDocumentsInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutRelatedToDocumentsInput
+  connect?: Prisma.DocumentWhereUniqueInput
+}
+
+export type DocumentUpdateOneRequiredWithoutRelatedDocumentsNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutRelatedDocumentsInput, Prisma.DocumentUncheckedCreateWithoutRelatedDocumentsInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutRelatedDocumentsInput
+  upsert?: Prisma.DocumentUpsertWithoutRelatedDocumentsInput
+  connect?: Prisma.DocumentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentUpdateToOneWithWhereWithoutRelatedDocumentsInput, Prisma.DocumentUpdateWithoutRelatedDocumentsInput>, Prisma.DocumentUncheckedUpdateWithoutRelatedDocumentsInput>
+}
+
+export type DocumentUpdateOneRequiredWithoutRelatedToDocumentsNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutRelatedToDocumentsInput, Prisma.DocumentUncheckedCreateWithoutRelatedToDocumentsInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutRelatedToDocumentsInput
+  upsert?: Prisma.DocumentUpsertWithoutRelatedToDocumentsInput
+  connect?: Prisma.DocumentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentUpdateToOneWithWhereWithoutRelatedToDocumentsInput, Prisma.DocumentUpdateWithoutRelatedToDocumentsInput>, Prisma.DocumentUncheckedUpdateWithoutRelatedToDocumentsInput>
+}
+
 export type DocumentCreateNestedOneWithoutIntrastatTransactionsInput = {
   create?: Prisma.XOR<Prisma.DocumentCreateWithoutIntrastatTransactionsInput, Prisma.DocumentUncheckedCreateWithoutIntrastatTransactionsInput>
   connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutIntrastatTransactionsInput
@@ -2090,6 +2541,48 @@ export type DocumentUpdateOneRequiredWithoutIntrastatTransactionsNestedInput = {
   upsert?: Prisma.DocumentUpsertWithoutIntrastatTransactionsInput
   connect?: Prisma.DocumentWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentUpdateToOneWithWhereWithoutIntrastatTransactionsInput, Prisma.DocumentUpdateWithoutIntrastatTransactionsInput>, Prisma.DocumentUncheckedUpdateWithoutIntrastatTransactionsInput>
+}
+
+export type DocumentCreateNestedManyWithoutLeadInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutLeadInput, Prisma.DocumentUncheckedCreateWithoutLeadInput> | Prisma.DocumentCreateWithoutLeadInput[] | Prisma.DocumentUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutLeadInput | Prisma.DocumentCreateOrConnectWithoutLeadInput[]
+  createMany?: Prisma.DocumentCreateManyLeadInputEnvelope
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+}
+
+export type DocumentUncheckedCreateNestedManyWithoutLeadInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutLeadInput, Prisma.DocumentUncheckedCreateWithoutLeadInput> | Prisma.DocumentCreateWithoutLeadInput[] | Prisma.DocumentUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutLeadInput | Prisma.DocumentCreateOrConnectWithoutLeadInput[]
+  createMany?: Prisma.DocumentCreateManyLeadInputEnvelope
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+}
+
+export type DocumentUpdateManyWithoutLeadNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutLeadInput, Prisma.DocumentUncheckedCreateWithoutLeadInput> | Prisma.DocumentCreateWithoutLeadInput[] | Prisma.DocumentUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutLeadInput | Prisma.DocumentCreateOrConnectWithoutLeadInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutLeadInput | Prisma.DocumentUpsertWithWhereUniqueWithoutLeadInput[]
+  createMany?: Prisma.DocumentCreateManyLeadInputEnvelope
+  set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutLeadInput | Prisma.DocumentUpdateWithWhereUniqueWithoutLeadInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutLeadInput | Prisma.DocumentUpdateManyWithWhereWithoutLeadInput[]
+  deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
+}
+
+export type DocumentUncheckedUpdateManyWithoutLeadNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutLeadInput, Prisma.DocumentUncheckedCreateWithoutLeadInput> | Prisma.DocumentCreateWithoutLeadInput[] | Prisma.DocumentUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutLeadInput | Prisma.DocumentCreateOrConnectWithoutLeadInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutLeadInput | Prisma.DocumentUpsertWithWhereUniqueWithoutLeadInput[]
+  createMany?: Prisma.DocumentCreateManyLeadInputEnvelope
+  set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutLeadInput | Prisma.DocumentUpdateWithWhereUniqueWithoutLeadInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutLeadInput | Prisma.DocumentUpdateManyWithWhereWithoutLeadInput[]
+  deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
 }
 
 export type DocumentCreateNestedManyWithoutOpportunityInput = {
@@ -2190,6 +2683,13 @@ export type DocumentCreateNestedManyWithoutAssignedUserInput = {
   connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
 }
 
+export type DocumentCreateNestedManyWithoutDeletedByUserInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutDeletedByUserInput, Prisma.DocumentUncheckedCreateWithoutDeletedByUserInput> | Prisma.DocumentCreateWithoutDeletedByUserInput[] | Prisma.DocumentUncheckedCreateWithoutDeletedByUserInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutDeletedByUserInput | Prisma.DocumentCreateOrConnectWithoutDeletedByUserInput[]
+  createMany?: Prisma.DocumentCreateManyDeletedByUserInputEnvelope
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+}
+
 export type DocumentUncheckedCreateNestedManyWithoutCreatedByInput = {
   create?: Prisma.XOR<Prisma.DocumentCreateWithoutCreatedByInput, Prisma.DocumentUncheckedCreateWithoutCreatedByInput> | Prisma.DocumentCreateWithoutCreatedByInput[] | Prisma.DocumentUncheckedCreateWithoutCreatedByInput[]
   connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutCreatedByInput | Prisma.DocumentCreateOrConnectWithoutCreatedByInput[]
@@ -2201,6 +2701,13 @@ export type DocumentUncheckedCreateNestedManyWithoutAssignedUserInput = {
   create?: Prisma.XOR<Prisma.DocumentCreateWithoutAssignedUserInput, Prisma.DocumentUncheckedCreateWithoutAssignedUserInput> | Prisma.DocumentCreateWithoutAssignedUserInput[] | Prisma.DocumentUncheckedCreateWithoutAssignedUserInput[]
   connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutAssignedUserInput | Prisma.DocumentCreateOrConnectWithoutAssignedUserInput[]
   createMany?: Prisma.DocumentCreateManyAssignedUserInputEnvelope
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+}
+
+export type DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutDeletedByUserInput, Prisma.DocumentUncheckedCreateWithoutDeletedByUserInput> | Prisma.DocumentCreateWithoutDeletedByUserInput[] | Prisma.DocumentUncheckedCreateWithoutDeletedByUserInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutDeletedByUserInput | Prisma.DocumentCreateOrConnectWithoutDeletedByUserInput[]
+  createMany?: Prisma.DocumentCreateManyDeletedByUserInputEnvelope
   connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
 }
 
@@ -2232,6 +2739,20 @@ export type DocumentUpdateManyWithoutAssignedUserNestedInput = {
   deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
 }
 
+export type DocumentUpdateManyWithoutDeletedByUserNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutDeletedByUserInput, Prisma.DocumentUncheckedCreateWithoutDeletedByUserInput> | Prisma.DocumentCreateWithoutDeletedByUserInput[] | Prisma.DocumentUncheckedCreateWithoutDeletedByUserInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutDeletedByUserInput | Prisma.DocumentCreateOrConnectWithoutDeletedByUserInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutDeletedByUserInput | Prisma.DocumentUpsertWithWhereUniqueWithoutDeletedByUserInput[]
+  createMany?: Prisma.DocumentCreateManyDeletedByUserInputEnvelope
+  set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutDeletedByUserInput | Prisma.DocumentUpdateWithWhereUniqueWithoutDeletedByUserInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutDeletedByUserInput | Prisma.DocumentUpdateManyWithWhereWithoutDeletedByUserInput[]
+  deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
+}
+
 export type DocumentUncheckedUpdateManyWithoutCreatedByNestedInput = {
   create?: Prisma.XOR<Prisma.DocumentCreateWithoutCreatedByInput, Prisma.DocumentUncheckedCreateWithoutCreatedByInput> | Prisma.DocumentCreateWithoutCreatedByInput[] | Prisma.DocumentUncheckedCreateWithoutCreatedByInput[]
   connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutCreatedByInput | Prisma.DocumentCreateOrConnectWithoutCreatedByInput[]
@@ -2257,6 +2778,20 @@ export type DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput = {
   connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
   update?: Prisma.DocumentUpdateWithWhereUniqueWithoutAssignedUserInput | Prisma.DocumentUpdateWithWhereUniqueWithoutAssignedUserInput[]
   updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutAssignedUserInput | Prisma.DocumentUpdateManyWithWhereWithoutAssignedUserInput[]
+  deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
+}
+
+export type DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutDeletedByUserInput, Prisma.DocumentUncheckedCreateWithoutDeletedByUserInput> | Prisma.DocumentCreateWithoutDeletedByUserInput[] | Prisma.DocumentUncheckedCreateWithoutDeletedByUserInput[]
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutDeletedByUserInput | Prisma.DocumentCreateOrConnectWithoutDeletedByUserInput[]
+  upsert?: Prisma.DocumentUpsertWithWhereUniqueWithoutDeletedByUserInput | Prisma.DocumentUpsertWithWhereUniqueWithoutDeletedByUserInput[]
+  createMany?: Prisma.DocumentCreateManyDeletedByUserInputEnvelope
+  set?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  disconnect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  delete?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  connect?: Prisma.DocumentWhereUniqueInput | Prisma.DocumentWhereUniqueInput[]
+  update?: Prisma.DocumentUpdateWithWhereUniqueWithoutDeletedByUserInput | Prisma.DocumentUpdateWithWhereUniqueWithoutDeletedByUserInput[]
+  updateMany?: Prisma.DocumentUpdateManyWithWhereWithoutDeletedByUserInput | Prisma.DocumentUpdateManyWithWhereWithoutDeletedByUserInput[]
   deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
 }
 
@@ -2302,20 +2837,48 @@ export type DocumentUncheckedUpdateManyWithoutWarehouseNestedInput = {
   deleteMany?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
 }
 
+export type DocumentCreateNestedOneWithoutStockMovementInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutStockMovementInput, Prisma.DocumentUncheckedCreateWithoutStockMovementInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutStockMovementInput
+  connect?: Prisma.DocumentWhereUniqueInput
+}
+
+export type DocumentUpdateOneWithoutStockMovementNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutStockMovementInput, Prisma.DocumentUncheckedCreateWithoutStockMovementInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutStockMovementInput
+  upsert?: Prisma.DocumentUpsertWithoutStockMovementInput
+  disconnect?: Prisma.DocumentWhereInput | boolean
+  delete?: Prisma.DocumentWhereInput | boolean
+  connect?: Prisma.DocumentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentUpdateToOneWithWhereWithoutStockMovementInput, Prisma.DocumentUpdateWithoutStockMovementInput>, Prisma.DocumentUncheckedUpdateWithoutStockMovementInput>
+}
+
+export type DocumentCreateNestedOneWithoutStockReservationsInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutStockReservationsInput, Prisma.DocumentUncheckedCreateWithoutStockReservationsInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutStockReservationsInput
+  connect?: Prisma.DocumentWhereUniqueInput
+}
+
+export type DocumentUpdateOneRequiredWithoutStockReservationsNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentCreateWithoutStockReservationsInput, Prisma.DocumentUncheckedCreateWithoutStockReservationsInput>
+  connectOrCreate?: Prisma.DocumentCreateOrConnectWithoutStockReservationsInput
+  upsert?: Prisma.DocumentUpsertWithoutStockReservationsInput
+  connect?: Prisma.DocumentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentUpdateToOneWithWhereWithoutStockReservationsInput, Prisma.DocumentUpdateWithoutStockReservationsInput>, Prisma.DocumentUncheckedUpdateWithoutStockReservationsInput>
+}
+
 export type DocumentCreateWithoutCompanyInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -2332,7 +2895,6 @@ export type DocumentCreateWithoutCompanyInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2342,6 +2904,9 @@ export type DocumentCreateWithoutCompanyInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -2351,43 +2916,60 @@ export type DocumentCreateWithoutCompanyInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutCompanyInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -2406,7 +2988,6 @@ export type DocumentUncheckedCreateWithoutCompanyInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2416,6 +2997,10 @@ export type DocumentUncheckedCreateWithoutCompanyInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -2427,11 +3012,25 @@ export type DocumentUncheckedCreateWithoutCompanyInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -2467,24 +3066,24 @@ export type DocumentScalarWhereInput = {
   NOT?: Prisma.DocumentScalarWhereInput | Prisma.DocumentScalarWhereInput[]
   id?: Prisma.IntFilter<"Document"> | number
   documentType?: Prisma.EnumDocumentTypeFilter<"Document"> | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFilter<"Document"> | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFilter<"Document"> | $Enums.DocumentStatus
   documentNumber?: Prisma.StringNullableFilter<"Document"> | string | null
+  sequenceNumber?: Prisma.IntNullableFilter<"Document"> | number | null
   documentYear?: Prisma.IntFilter<"Document"> | number
   companyId?: Prisma.IntFilter<"Document"> | number
   customerId?: Prisma.IntNullableFilter<"Document"> | number | null
   supplierId?: Prisma.IntNullableFilter<"Document"> | number | null
   contactId?: Prisma.IntNullableFilter<"Document"> | number | null
   opportunityId?: Prisma.IntNullableFilter<"Document"> | number | null
+  leadId?: Prisma.IntNullableFilter<"Document"> | number | null
   warehouseId?: Prisma.IntNullableFilter<"Document"> | number | null
   documentDate?: Prisma.DateTimeFilter<"Document"> | Date | string
   dueDate?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   deliveryDate?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   validUntil?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
   sentDate?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
-  relatedQuoteId?: Prisma.IntNullableFilter<"Document"> | number | null
-  relatedOrderId?: Prisma.IntNullableFilter<"Document"> | number | null
-  relatedInvoiceId?: Prisma.IntNullableFilter<"Document"> | number | null
-  relatedOpportunityId?: Prisma.IntNullableFilter<"Document"> | number | null
+  parentDocumentId?: Prisma.IntNullableFilter<"Document"> | number | null
   customerName?: Prisma.StringFilter<"Document"> | string
   customerVatNumber?: Prisma.StringNullableFilter<"Document"> | string | null
   customerTaxCode?: Prisma.StringNullableFilter<"Document"> | string | null
@@ -2503,7 +3102,6 @@ export type DocumentScalarWhereInput = {
   shippingPostalCode?: Prisma.StringNullableFilter<"Document"> | string | null
   shippingProvince?: Prisma.StringNullableFilter<"Document"> | string | null
   shippingCountryCode?: Prisma.StringNullableFilter<"Document"> | string | null
-  currency?: Prisma.StringFilter<"Document"> | string
   subtotal?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2513,6 +3111,10 @@ export type DocumentScalarWhereInput = {
   taxAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFilter<"Document"> | string
+  exchangeRate?: Prisma.DecimalFilter<"Document"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFilter<"Document"> | Date | string
+  baseCurrencyCode?: Prisma.StringFilter<"Document"> | string
   paymentMethodId?: Prisma.IntNullableFilter<"Document"> | number | null
   paymentMethod?: Prisma.StringFilter<"Document"> | string
   paymentTerms?: Prisma.StringNullableFilter<"Document"> | string | null
@@ -2524,25 +3126,32 @@ export type DocumentScalarWhereInput = {
   termsAndConditions?: Prisma.StringNullableFilter<"Document"> | string | null
   createdByUserId?: Prisma.IntFilter<"Document"> | number
   assignedUserId?: Prisma.IntNullableFilter<"Document"> | number | null
+  deletedBy?: Prisma.IntNullableFilter<"Document"> | number | null
   customFields?: Prisma.JsonNullableFilter<"Document">
+  statusHistory?: Prisma.JsonNullableFilter<"Document">
+  approvedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  invoicedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  deliveredAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  closedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  voidedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
+  voidedReason?: Prisma.StringNullableFilter<"Document"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Document"> | Date | string | null
 }
 
 export type DocumentCreateWithoutCustomerInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -2559,7 +3168,6 @@ export type DocumentCreateWithoutCustomerInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2569,6 +3177,9 @@ export type DocumentCreateWithoutCustomerInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -2578,43 +3189,60 @@ export type DocumentCreateWithoutCustomerInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutCustomerInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -2633,7 +3261,6 @@ export type DocumentUncheckedCreateWithoutCustomerInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2643,6 +3270,10 @@ export type DocumentUncheckedCreateWithoutCustomerInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -2654,11 +3285,25 @@ export type DocumentUncheckedCreateWithoutCustomerInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -2690,18 +3335,16 @@ export type DocumentUpdateManyWithWhereWithoutCustomerInput = {
 
 export type DocumentCreateWithoutSupplierInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -2718,7 +3361,6 @@ export type DocumentCreateWithoutSupplierInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2728,6 +3370,9 @@ export type DocumentCreateWithoutSupplierInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -2737,43 +3382,60 @@ export type DocumentCreateWithoutSupplierInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutSupplierInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -2792,7 +3454,6 @@ export type DocumentUncheckedCreateWithoutSupplierInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2802,6 +3463,10 @@ export type DocumentUncheckedCreateWithoutSupplierInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -2813,11 +3478,25 @@ export type DocumentUncheckedCreateWithoutSupplierInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -2849,18 +3528,16 @@ export type DocumentUpdateManyWithWhereWithoutSupplierInput = {
 
 export type DocumentCreateWithoutContactInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -2877,7 +3554,6 @@ export type DocumentCreateWithoutContactInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2887,6 +3563,9 @@ export type DocumentCreateWithoutContactInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -2896,43 +3575,60 @@ export type DocumentCreateWithoutContactInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutContactInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -2951,7 +3647,6 @@ export type DocumentUncheckedCreateWithoutContactInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2961,6 +3656,10 @@ export type DocumentUncheckedCreateWithoutContactInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -2972,11 +3671,25 @@ export type DocumentUncheckedCreateWithoutContactInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -3008,18 +3721,16 @@ export type DocumentUpdateManyWithWhereWithoutContactInput = {
 
 export type DocumentCreateWithoutCustomerCountryInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -3036,7 +3747,6 @@ export type DocumentCreateWithoutCustomerCountryInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3046,6 +3756,9 @@ export type DocumentCreateWithoutCustomerCountryInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -3055,44 +3768,61 @@ export type DocumentCreateWithoutCustomerCountryInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutCustomerCountryInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -3110,7 +3840,6 @@ export type DocumentUncheckedCreateWithoutCustomerCountryInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3120,6 +3849,10 @@ export type DocumentUncheckedCreateWithoutCustomerCountryInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -3131,11 +3864,25 @@ export type DocumentUncheckedCreateWithoutCustomerCountryInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -3151,18 +3898,16 @@ export type DocumentCreateManyCustomerCountryInputEnvelope = {
 
 export type DocumentCreateWithoutShippingCountryInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -3179,7 +3924,6 @@ export type DocumentCreateWithoutShippingCountryInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3189,6 +3933,9 @@ export type DocumentCreateWithoutShippingCountryInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -3198,44 +3945,61 @@ export type DocumentCreateWithoutShippingCountryInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutShippingCountryInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -3253,7 +4017,6 @@ export type DocumentUncheckedCreateWithoutShippingCountryInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3263,6 +4026,10 @@ export type DocumentUncheckedCreateWithoutShippingCountryInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -3274,11 +4041,25 @@ export type DocumentUncheckedCreateWithoutShippingCountryInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -3324,20 +4105,18 @@ export type DocumentUpdateManyWithWhereWithoutShippingCountryInput = {
   data: Prisma.XOR<Prisma.DocumentUpdateManyMutationInput, Prisma.DocumentUncheckedUpdateManyWithoutShippingCountryInput>
 }
 
-export type DocumentCreateWithoutLinesInput = {
+export type DocumentCreateWithoutCurrencyInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -3354,7 +4133,6 @@ export type DocumentCreateWithoutLinesInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3364,6 +4142,9 @@ export type DocumentCreateWithoutLinesInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -3373,44 +4154,61 @@ export type DocumentCreateWithoutLinesInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
+  lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
-export type DocumentUncheckedCreateWithoutLinesInput = {
+export type DocumentUncheckedCreateWithoutCurrencyInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -3429,7 +4227,6 @@ export type DocumentUncheckedCreateWithoutLinesInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3439,6 +4236,9 @@ export type DocumentUncheckedCreateWithoutLinesInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -3450,10 +4250,761 @@ export type DocumentUncheckedCreateWithoutLinesInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
+  lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentCreateOrConnectWithoutCurrencyInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutCurrencyInput, Prisma.DocumentUncheckedCreateWithoutCurrencyInput>
+}
+
+export type DocumentCreateManyCurrencyInputEnvelope = {
+  data: Prisma.DocumentCreateManyCurrencyInput | Prisma.DocumentCreateManyCurrencyInput[]
+  skipDuplicates?: boolean
+}
+
+export type DocumentUpsertWithWhereUniqueWithoutCurrencyInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutCurrencyInput, Prisma.DocumentUncheckedUpdateWithoutCurrencyInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutCurrencyInput, Prisma.DocumentUncheckedCreateWithoutCurrencyInput>
+}
+
+export type DocumentUpdateWithWhereUniqueWithoutCurrencyInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutCurrencyInput, Prisma.DocumentUncheckedUpdateWithoutCurrencyInput>
+}
+
+export type DocumentUpdateManyWithWhereWithoutCurrencyInput = {
+  where: Prisma.DocumentScalarWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateManyMutationInput, Prisma.DocumentUncheckedUpdateManyWithoutCurrencyInput>
+}
+
+export type DocumentCreateWithoutChildDocumentsInput = {
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
+  supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
+  contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
+  opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
+  customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
+  shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
+  paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
+  createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
+  assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
+  lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentUncheckedCreateWithoutChildDocumentsInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  parentDocumentId?: number | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  deletedBy?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
+  lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentCreateOrConnectWithoutChildDocumentsInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutChildDocumentsInput, Prisma.DocumentUncheckedCreateWithoutChildDocumentsInput>
+}
+
+export type DocumentCreateWithoutParentDocumentInput = {
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
+  supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
+  contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
+  opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
+  customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
+  shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
+  paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
+  createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
+  assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
+  lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentUncheckedCreateWithoutParentDocumentInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  deletedBy?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
+  lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentCreateOrConnectWithoutParentDocumentInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutParentDocumentInput, Prisma.DocumentUncheckedCreateWithoutParentDocumentInput>
+}
+
+export type DocumentCreateManyParentDocumentInputEnvelope = {
+  data: Prisma.DocumentCreateManyParentDocumentInput | Prisma.DocumentCreateManyParentDocumentInput[]
+  skipDuplicates?: boolean
+}
+
+export type DocumentUpsertWithoutChildDocumentsInput = {
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutChildDocumentsInput, Prisma.DocumentUncheckedUpdateWithoutChildDocumentsInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutChildDocumentsInput, Prisma.DocumentUncheckedCreateWithoutChildDocumentsInput>
+  where?: Prisma.DocumentWhereInput
+}
+
+export type DocumentUpdateToOneWithWhereWithoutChildDocumentsInput = {
+  where?: Prisma.DocumentWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutChildDocumentsInput, Prisma.DocumentUncheckedUpdateWithoutChildDocumentsInput>
+}
+
+export type DocumentUpdateWithoutChildDocumentsInput = {
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
+  supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
+  contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
+  opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
+  customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
+  shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
+  paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
+  assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
+  lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutChildDocumentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
+  lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUpsertWithWhereUniqueWithoutParentDocumentInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutParentDocumentInput, Prisma.DocumentUncheckedUpdateWithoutParentDocumentInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutParentDocumentInput, Prisma.DocumentUncheckedCreateWithoutParentDocumentInput>
+}
+
+export type DocumentUpdateWithWhereUniqueWithoutParentDocumentInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutParentDocumentInput, Prisma.DocumentUncheckedUpdateWithoutParentDocumentInput>
+}
+
+export type DocumentUpdateManyWithWhereWithoutParentDocumentInput = {
+  where: Prisma.DocumentScalarWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateManyMutationInput, Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentInput>
+}
+
+export type DocumentCreateWithoutLinesInput = {
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
+  supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
+  contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
+  opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
+  customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
+  shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
+  paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
+  createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
+  assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
+  installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentUncheckedCreateWithoutLinesInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  parentDocumentId?: number | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  deletedBy?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -3475,18 +5026,16 @@ export type DocumentUpdateToOneWithWhereWithoutLinesInput = {
 
 export type DocumentUpdateWithoutLinesInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3503,7 +5052,6 @@ export type DocumentUpdateWithoutLinesInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3513,6 +5061,9 @@ export type DocumentUpdateWithoutLinesInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3522,44 +5073,61 @@ export type DocumentUpdateWithoutLinesInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutLinesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3578,7 +5146,6 @@ export type DocumentUncheckedUpdateWithoutLinesInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3588,6 +5155,10 @@ export type DocumentUncheckedUpdateWithoutLinesInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3599,27 +5170,39 @@ export type DocumentUncheckedUpdateWithoutLinesInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentCreateWithoutInstallmentsInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -3636,7 +5219,6 @@ export type DocumentCreateWithoutInstallmentsInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3646,6 +5228,9 @@ export type DocumentCreateWithoutInstallmentsInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -3655,44 +5240,61 @@ export type DocumentCreateWithoutInstallmentsInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutInstallmentsInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -3711,7 +5313,6 @@ export type DocumentUncheckedCreateWithoutInstallmentsInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3721,6 +5322,10 @@ export type DocumentUncheckedCreateWithoutInstallmentsInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -3732,10 +5337,24 @@ export type DocumentUncheckedCreateWithoutInstallmentsInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -3757,18 +5376,16 @@ export type DocumentUpdateToOneWithWhereWithoutInstallmentsInput = {
 
 export type DocumentUpdateWithoutInstallmentsInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3785,7 +5402,6 @@ export type DocumentUpdateWithoutInstallmentsInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3795,6 +5411,9 @@ export type DocumentUpdateWithoutInstallmentsInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3804,44 +5423,61 @@ export type DocumentUpdateWithoutInstallmentsInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutInstallmentsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3860,7 +5496,6 @@ export type DocumentUncheckedUpdateWithoutInstallmentsInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3870,6 +5505,10 @@ export type DocumentUncheckedUpdateWithoutInstallmentsInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3881,27 +5520,39 @@ export type DocumentUncheckedUpdateWithoutInstallmentsInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
-export type DocumentCreateWithoutIntrastatTransactionsInput = {
+export type DocumentCreateWithoutRelatedDocumentsInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -3918,7 +5569,6 @@ export type DocumentCreateWithoutIntrastatTransactionsInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3928,6 +5578,9 @@ export type DocumentCreateWithoutIntrastatTransactionsInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -3937,44 +5590,61 @@ export type DocumentCreateWithoutIntrastatTransactionsInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
-export type DocumentUncheckedCreateWithoutIntrastatTransactionsInput = {
+export type DocumentUncheckedCreateWithoutRelatedDocumentsInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -3993,7 +5663,6 @@ export type DocumentUncheckedCreateWithoutIntrastatTransactionsInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4003,6 +5672,10 @@ export type DocumentUncheckedCreateWithoutIntrastatTransactionsInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -4014,11 +5687,725 @@ export type DocumentUncheckedCreateWithoutIntrastatTransactionsInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentCreateOrConnectWithoutRelatedDocumentsInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutRelatedDocumentsInput, Prisma.DocumentUncheckedCreateWithoutRelatedDocumentsInput>
+}
+
+export type DocumentCreateWithoutRelatedToDocumentsInput = {
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
+  supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
+  contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
+  opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
+  shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
+  paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
+  createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
+  assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
+  lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentUncheckedCreateWithoutRelatedToDocumentsInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  parentDocumentId?: number | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  deletedBy?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentCreateOrConnectWithoutRelatedToDocumentsInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutRelatedToDocumentsInput, Prisma.DocumentUncheckedCreateWithoutRelatedToDocumentsInput>
+}
+
+export type DocumentUpsertWithoutRelatedDocumentsInput = {
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutRelatedDocumentsInput, Prisma.DocumentUncheckedUpdateWithoutRelatedDocumentsInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutRelatedDocumentsInput, Prisma.DocumentUncheckedCreateWithoutRelatedDocumentsInput>
+  where?: Prisma.DocumentWhereInput
+}
+
+export type DocumentUpdateToOneWithWhereWithoutRelatedDocumentsInput = {
+  where?: Prisma.DocumentWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutRelatedDocumentsInput, Prisma.DocumentUncheckedUpdateWithoutRelatedDocumentsInput>
+}
+
+export type DocumentUpdateWithoutRelatedDocumentsInput = {
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
+  supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
+  contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
+  opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
+  customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
+  shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
+  paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
+  assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
+  lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutRelatedDocumentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
+  lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUpsertWithoutRelatedToDocumentsInput = {
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutRelatedToDocumentsInput, Prisma.DocumentUncheckedUpdateWithoutRelatedToDocumentsInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutRelatedToDocumentsInput, Prisma.DocumentUncheckedCreateWithoutRelatedToDocumentsInput>
+  where?: Prisma.DocumentWhereInput
+}
+
+export type DocumentUpdateToOneWithWhereWithoutRelatedToDocumentsInput = {
+  where?: Prisma.DocumentWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutRelatedToDocumentsInput, Prisma.DocumentUncheckedUpdateWithoutRelatedToDocumentsInput>
+}
+
+export type DocumentUpdateWithoutRelatedToDocumentsInput = {
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
+  supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
+  contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
+  opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
+  shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
+  paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
+  assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
+  lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutRelatedToDocumentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentCreateWithoutIntrastatTransactionsInput = {
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
+  supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
+  contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
+  opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
+  customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
+  shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
+  paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
+  createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
+  assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
+  lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentUncheckedCreateWithoutIntrastatTransactionsInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  parentDocumentId?: number | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  deletedBy?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
+  lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentCreateOrConnectWithoutIntrastatTransactionsInput = {
@@ -4039,18 +6426,16 @@ export type DocumentUpdateToOneWithWhereWithoutIntrastatTransactionsInput = {
 
 export type DocumentUpdateWithoutIntrastatTransactionsInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4067,7 +6452,6 @@ export type DocumentUpdateWithoutIntrastatTransactionsInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4077,6 +6461,9 @@ export type DocumentUpdateWithoutIntrastatTransactionsInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4086,44 +6473,61 @@ export type DocumentUpdateWithoutIntrastatTransactionsInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutIntrastatTransactionsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4142,7 +6546,6 @@ export type DocumentUncheckedUpdateWithoutIntrastatTransactionsInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4152,6 +6555,10 @@ export type DocumentUncheckedUpdateWithoutIntrastatTransactionsInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4163,27 +6570,39 @@ export type DocumentUncheckedUpdateWithoutIntrastatTransactionsInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
-export type DocumentCreateWithoutOpportunityInput = {
+export type DocumentCreateWithoutLeadInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -4200,7 +6619,6 @@ export type DocumentCreateWithoutOpportunityInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4210,6 +6628,9 @@ export type DocumentCreateWithoutOpportunityInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -4219,43 +6640,60 @@ export type DocumentCreateWithoutOpportunityInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
+  opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
-export type DocumentUncheckedCreateWithoutOpportunityInput = {
+export type DocumentUncheckedCreateWithoutLeadInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
+  opportunityId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -4274,7 +6712,6 @@ export type DocumentUncheckedCreateWithoutOpportunityInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4284,6 +6721,10 @@ export type DocumentUncheckedCreateWithoutOpportunityInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -4295,11 +6736,218 @@ export type DocumentUncheckedCreateWithoutOpportunityInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentCreateOrConnectWithoutLeadInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutLeadInput, Prisma.DocumentUncheckedCreateWithoutLeadInput>
+}
+
+export type DocumentCreateManyLeadInputEnvelope = {
+  data: Prisma.DocumentCreateManyLeadInput | Prisma.DocumentCreateManyLeadInput[]
+  skipDuplicates?: boolean
+}
+
+export type DocumentUpsertWithWhereUniqueWithoutLeadInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutLeadInput, Prisma.DocumentUncheckedUpdateWithoutLeadInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutLeadInput, Prisma.DocumentUncheckedCreateWithoutLeadInput>
+}
+
+export type DocumentUpdateWithWhereUniqueWithoutLeadInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutLeadInput, Prisma.DocumentUncheckedUpdateWithoutLeadInput>
+}
+
+export type DocumentUpdateManyWithWhereWithoutLeadInput = {
+  where: Prisma.DocumentScalarWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateManyMutationInput, Prisma.DocumentUncheckedUpdateManyWithoutLeadInput>
+}
+
+export type DocumentCreateWithoutOpportunityInput = {
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
+  supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
+  contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
+  customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
+  shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
+  paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
+  createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
+  assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
+  lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentUncheckedCreateWithoutOpportunityInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  parentDocumentId?: number | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  deletedBy?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
+  lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -4331,18 +6979,16 @@ export type DocumentUpdateManyWithWhereWithoutOpportunityInput = {
 
 export type DocumentCreateWithoutPaymentMethodRelInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -4359,7 +7005,6 @@ export type DocumentCreateWithoutPaymentMethodRelInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4369,6 +7014,9 @@ export type DocumentCreateWithoutPaymentMethodRelInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -4378,44 +7026,61 @@ export type DocumentCreateWithoutPaymentMethodRelInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutPaymentMethodRelInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -4434,7 +7099,6 @@ export type DocumentUncheckedCreateWithoutPaymentMethodRelInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4444,6 +7108,10 @@ export type DocumentUncheckedCreateWithoutPaymentMethodRelInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -4454,11 +7122,25 @@ export type DocumentUncheckedCreateWithoutPaymentMethodRelInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -4490,18 +7172,16 @@ export type DocumentUpdateManyWithWhereWithoutPaymentMethodRelInput = {
 
 export type DocumentCreateWithoutCreatedByInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -4518,7 +7198,6 @@ export type DocumentCreateWithoutCreatedByInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4528,6 +7207,9 @@ export type DocumentCreateWithoutCreatedByInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -4537,44 +7219,61 @@ export type DocumentCreateWithoutCreatedByInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutCreatedByInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -4593,7 +7292,6 @@ export type DocumentUncheckedCreateWithoutCreatedByInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4603,6 +7301,10 @@ export type DocumentUncheckedCreateWithoutCreatedByInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -4613,11 +7315,25 @@ export type DocumentUncheckedCreateWithoutCreatedByInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -4633,18 +7349,16 @@ export type DocumentCreateManyCreatedByInputEnvelope = {
 
 export type DocumentCreateWithoutAssignedUserInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -4661,7 +7375,6 @@ export type DocumentCreateWithoutAssignedUserInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4671,6 +7384,9 @@ export type DocumentCreateWithoutAssignedUserInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -4680,44 +7396,61 @@ export type DocumentCreateWithoutAssignedUserInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
   warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutAssignedUserInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -4736,7 +7469,6 @@ export type DocumentUncheckedCreateWithoutAssignedUserInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4746,6 +7478,10 @@ export type DocumentUncheckedCreateWithoutAssignedUserInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -4756,11 +7492,25 @@ export type DocumentUncheckedCreateWithoutAssignedUserInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   createdByUserId: number
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -4771,6 +7521,183 @@ export type DocumentCreateOrConnectWithoutAssignedUserInput = {
 
 export type DocumentCreateManyAssignedUserInputEnvelope = {
   data: Prisma.DocumentCreateManyAssignedUserInput | Prisma.DocumentCreateManyAssignedUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type DocumentCreateWithoutDeletedByUserInput = {
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
+  supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
+  contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
+  opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
+  customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
+  shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
+  paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
+  createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
+  assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentUncheckedCreateWithoutDeletedByUserInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  parentDocumentId?: number | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
+  lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentCreateOrConnectWithoutDeletedByUserInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutDeletedByUserInput, Prisma.DocumentUncheckedCreateWithoutDeletedByUserInput>
+}
+
+export type DocumentCreateManyDeletedByUserInputEnvelope = {
+  data: Prisma.DocumentCreateManyDeletedByUserInput | Prisma.DocumentCreateManyDeletedByUserInput[]
   skipDuplicates?: boolean
 }
 
@@ -4806,20 +7733,34 @@ export type DocumentUpdateManyWithWhereWithoutAssignedUserInput = {
   data: Prisma.XOR<Prisma.DocumentUpdateManyMutationInput, Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserInput>
 }
 
+export type DocumentUpsertWithWhereUniqueWithoutDeletedByUserInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutDeletedByUserInput, Prisma.DocumentUncheckedUpdateWithoutDeletedByUserInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutDeletedByUserInput, Prisma.DocumentUncheckedCreateWithoutDeletedByUserInput>
+}
+
+export type DocumentUpdateWithWhereUniqueWithoutDeletedByUserInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutDeletedByUserInput, Prisma.DocumentUncheckedUpdateWithoutDeletedByUserInput>
+}
+
+export type DocumentUpdateManyWithWhereWithoutDeletedByUserInput = {
+  where: Prisma.DocumentScalarWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateManyMutationInput, Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserInput>
+}
+
 export type DocumentCreateWithoutWarehouseInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -4836,7 +7777,6 @@ export type DocumentCreateWithoutWarehouseInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4846,6 +7786,9 @@ export type DocumentCreateWithoutWarehouseInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -4855,43 +7798,60 @@ export type DocumentCreateWithoutWarehouseInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
   customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
   contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
   customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
   shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
   paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
   createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
   assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
   lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
 }
 
 export type DocumentUncheckedCreateWithoutWarehouseInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -4910,7 +7870,6 @@ export type DocumentUncheckedCreateWithoutWarehouseInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4920,6 +7879,10 @@ export type DocumentUncheckedCreateWithoutWarehouseInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -4931,11 +7894,25 @@ export type DocumentUncheckedCreateWithoutWarehouseInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
   lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
@@ -4965,26 +7942,110 @@ export type DocumentUpdateManyWithWhereWithoutWarehouseInput = {
   data: Prisma.XOR<Prisma.DocumentUpdateManyMutationInput, Prisma.DocumentUncheckedUpdateManyWithoutWarehouseInput>
 }
 
-export type DocumentCreateManyCompanyInput = {
-  id?: number
+export type DocumentCreateWithoutStockMovementInput = {
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
+  supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
+  contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
+  opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
+  customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
+  shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
+  paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
+  createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
+  assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
+  lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentUncheckedCreateWithoutStockMovementInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -5003,7 +8064,6 @@ export type DocumentCreateManyCompanyInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5013,6 +8073,10 @@ export type DocumentCreateManyCompanyInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -5024,25 +8088,55 @@ export type DocumentCreateManyCompanyInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
+  lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
 }
 
-export type DocumentUpdateWithoutCompanyInput = {
+export type DocumentCreateOrConnectWithoutStockMovementInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutStockMovementInput, Prisma.DocumentUncheckedCreateWithoutStockMovementInput>
+}
+
+export type DocumentUpsertWithoutStockMovementInput = {
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutStockMovementInput, Prisma.DocumentUncheckedUpdateWithoutStockMovementInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutStockMovementInput, Prisma.DocumentUncheckedCreateWithoutStockMovementInput>
+  where?: Prisma.DocumentWhereInput
+}
+
+export type DocumentUpdateToOneWithWhereWithoutStockMovementInput = {
+  where?: Prisma.DocumentWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutStockMovementInput, Prisma.DocumentUncheckedUpdateWithoutStockMovementInput>
+}
+
+export type DocumentUpdateWithoutStockMovementInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5059,7 +8153,6 @@ export type DocumentUpdateWithoutCompanyInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5069,6 +8162,9 @@ export type DocumentUpdateWithoutCompanyInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5078,43 +8174,653 @@ export type DocumentUpdateWithoutCompanyInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutStockMovementInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
+  lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentCreateWithoutStockReservationsInput = {
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutDocumentsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutDocumentsOutInput
+  supplier?: Prisma.SupplierCreateNestedOneWithoutDocumentsInInput
+  contact?: Prisma.ContactCreateNestedOneWithoutDocumentsInput
+  opportunity?: Prisma.OpportunityCreateNestedOneWithoutDocumentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutDocumentsInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentInput
+  parentDocument?: Prisma.DocumentCreateNestedOneWithoutChildDocumentsInput
+  childDocuments?: Prisma.DocumentCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationCreateNestedManyWithoutTargetDocumentInput
+  customerCountry?: Prisma.CountryCreateNestedOneWithoutDocumentCountryInput
+  shippingCountry?: Prisma.CountryCreateNestedOneWithoutDocumentShippingCountryInput
+  currency?: Prisma.CurrencyCreateNestedOneWithoutDocumentsInput
+  paymentMethodRel?: Prisma.PaymentMethodCreateNestedOneWithoutDocumentsInput
+  createdBy: Prisma.UserCreateNestedOneWithoutCreatedDocumentsInput
+  assignedUser?: Prisma.UserCreateNestedOneWithoutAssignedDocumentsInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedDocumentsInput
+  lines?: Prisma.DocumentLineCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentUncheckedCreateWithoutStockReservationsInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  parentDocumentId?: number | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  deletedBy?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutParentDocumentInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutSourceDocumentInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedCreateNestedManyWithoutTargetDocumentInput
+  lines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutDocumentInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutDocumentInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedCreateNestedManyWithoutDocumentInput
+}
+
+export type DocumentCreateOrConnectWithoutStockReservationsInput = {
+  where: Prisma.DocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutStockReservationsInput, Prisma.DocumentUncheckedCreateWithoutStockReservationsInput>
+}
+
+export type DocumentUpsertWithoutStockReservationsInput = {
+  update: Prisma.XOR<Prisma.DocumentUpdateWithoutStockReservationsInput, Prisma.DocumentUncheckedUpdateWithoutStockReservationsInput>
+  create: Prisma.XOR<Prisma.DocumentCreateWithoutStockReservationsInput, Prisma.DocumentUncheckedCreateWithoutStockReservationsInput>
+  where?: Prisma.DocumentWhereInput
+}
+
+export type DocumentUpdateToOneWithWhereWithoutStockReservationsInput = {
+  where?: Prisma.DocumentWhereInput
+  data: Prisma.XOR<Prisma.DocumentUpdateWithoutStockReservationsInput, Prisma.DocumentUncheckedUpdateWithoutStockReservationsInput>
+}
+
+export type DocumentUpdateWithoutStockReservationsInput = {
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
+  supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
+  contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
+  opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
+  customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
+  shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
+  paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
+  assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
+  lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutStockReservationsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
+  lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentCreateManyCompanyInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  parentDocumentId?: number | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  deletedBy?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type DocumentUpdateWithoutCompanyInput = {
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
+  supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
+  contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
+  opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
+  customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
+  shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
+  paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
+  assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
+  lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5133,7 +8839,6 @@ export type DocumentUncheckedUpdateWithoutCompanyInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5143,6 +8848,10 @@ export type DocumentUncheckedUpdateWithoutCompanyInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5154,34 +8863,48 @@ export type DocumentUncheckedUpdateWithoutCompanyInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5200,7 +8923,6 @@ export type DocumentUncheckedUpdateManyWithoutCompanyInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5210,6 +8932,10 @@ export type DocumentUncheckedUpdateManyWithoutCompanyInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5221,31 +8947,40 @@ export type DocumentUncheckedUpdateManyWithoutCompanyInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentCreateManyCustomerInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -5264,7 +8999,6 @@ export type DocumentCreateManyCustomerInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5274,6 +9008,10 @@ export type DocumentCreateManyCustomerInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -5285,25 +9023,32 @@ export type DocumentCreateManyCustomerInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type DocumentUpdateWithoutCustomerInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5320,7 +9065,6 @@ export type DocumentUpdateWithoutCustomerInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5330,6 +9074,9 @@ export type DocumentUpdateWithoutCustomerInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5339,43 +9086,60 @@ export type DocumentUpdateWithoutCustomerInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutCustomerInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5394,7 +9158,6 @@ export type DocumentUncheckedUpdateWithoutCustomerInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5404,6 +9167,10 @@ export type DocumentUncheckedUpdateWithoutCustomerInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5415,34 +9182,48 @@ export type DocumentUncheckedUpdateWithoutCustomerInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutCustomerInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5461,7 +9242,6 @@ export type DocumentUncheckedUpdateManyWithoutCustomerInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5471,6 +9251,10 @@ export type DocumentUncheckedUpdateManyWithoutCustomerInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5482,31 +9266,40 @@ export type DocumentUncheckedUpdateManyWithoutCustomerInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentCreateManySupplierInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -5525,7 +9318,6 @@ export type DocumentCreateManySupplierInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5535,6 +9327,10 @@ export type DocumentCreateManySupplierInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -5546,25 +9342,32 @@ export type DocumentCreateManySupplierInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type DocumentUpdateWithoutSupplierInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5581,7 +9384,6 @@ export type DocumentUpdateWithoutSupplierInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5591,6 +9393,9 @@ export type DocumentUpdateWithoutSupplierInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5600,43 +9405,60 @@ export type DocumentUpdateWithoutSupplierInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutSupplierInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5655,7 +9477,6 @@ export type DocumentUncheckedUpdateWithoutSupplierInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5665,6 +9486,10 @@ export type DocumentUncheckedUpdateWithoutSupplierInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5676,34 +9501,48 @@ export type DocumentUncheckedUpdateWithoutSupplierInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutSupplierInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5722,7 +9561,6 @@ export type DocumentUncheckedUpdateManyWithoutSupplierInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5732,6 +9570,10 @@ export type DocumentUncheckedUpdateManyWithoutSupplierInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5743,31 +9585,40 @@ export type DocumentUncheckedUpdateManyWithoutSupplierInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentCreateManyContactInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -5786,7 +9637,6 @@ export type DocumentCreateManyContactInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5796,6 +9646,10 @@ export type DocumentCreateManyContactInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -5807,25 +9661,32 @@ export type DocumentCreateManyContactInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type DocumentUpdateWithoutContactInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5842,7 +9703,6 @@ export type DocumentUpdateWithoutContactInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5852,6 +9712,9 @@ export type DocumentUpdateWithoutContactInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5861,43 +9724,60 @@ export type DocumentUpdateWithoutContactInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutContactInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5916,7 +9796,6 @@ export type DocumentUncheckedUpdateWithoutContactInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5926,6 +9805,10 @@ export type DocumentUncheckedUpdateWithoutContactInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5937,34 +9820,48 @@ export type DocumentUncheckedUpdateWithoutContactInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutContactInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5983,7 +9880,6 @@ export type DocumentUncheckedUpdateManyWithoutContactInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -5993,6 +9889,10 @@ export type DocumentUncheckedUpdateManyWithoutContactInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6004,32 +9904,41 @@ export type DocumentUncheckedUpdateManyWithoutContactInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentCreateManyCustomerCountryInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -6047,7 +9956,6 @@ export type DocumentCreateManyCustomerCountryInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6057,6 +9965,10 @@ export type DocumentCreateManyCustomerCountryInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -6068,32 +9980,41 @@ export type DocumentCreateManyCustomerCountryInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type DocumentCreateManyShippingCountryInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -6111,7 +10032,6 @@ export type DocumentCreateManyShippingCountryInput = {
   shippingCity?: string | null
   shippingPostalCode?: string | null
   shippingProvince?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6121,6 +10041,10 @@ export type DocumentCreateManyShippingCountryInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -6132,25 +10056,32 @@ export type DocumentCreateManyShippingCountryInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type DocumentUpdateWithoutCustomerCountryInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6167,7 +10098,6 @@ export type DocumentUpdateWithoutCustomerCountryInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6177,6 +10107,9 @@ export type DocumentUpdateWithoutCustomerCountryInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6186,44 +10119,61 @@ export type DocumentUpdateWithoutCustomerCountryInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutCustomerCountryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6241,7 +10191,6 @@ export type DocumentUncheckedUpdateWithoutCustomerCountryInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6251,6 +10200,10 @@ export type DocumentUncheckedUpdateWithoutCustomerCountryInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6262,35 +10215,49 @@ export type DocumentUncheckedUpdateWithoutCustomerCountryInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutCustomerCountryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6308,7 +10275,6 @@ export type DocumentUncheckedUpdateManyWithoutCustomerCountryInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6318,6 +10284,10 @@ export type DocumentUncheckedUpdateManyWithoutCustomerCountryInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6329,25 +10299,32 @@ export type DocumentUncheckedUpdateManyWithoutCustomerCountryInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentUpdateWithoutShippingCountryInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6364,7 +10341,6 @@ export type DocumentUpdateWithoutShippingCountryInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6374,6 +10350,9 @@ export type DocumentUpdateWithoutShippingCountryInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6383,44 +10362,61 @@ export type DocumentUpdateWithoutShippingCountryInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutShippingCountryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6438,7 +10434,6 @@ export type DocumentUncheckedUpdateWithoutShippingCountryInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6448,6 +10443,10 @@ export type DocumentUncheckedUpdateWithoutShippingCountryInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6459,35 +10458,49 @@ export type DocumentUncheckedUpdateWithoutShippingCountryInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutShippingCountryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6505,7 +10518,6 @@ export type DocumentUncheckedUpdateManyWithoutShippingCountryInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6515,6 +10527,10 @@ export type DocumentUncheckedUpdateManyWithoutShippingCountryInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6526,31 +10542,41 @@ export type DocumentUncheckedUpdateManyWithoutShippingCountryInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
-export type DocumentCreateManyOpportunityInput = {
+export type DocumentCreateManyCurrencyInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
+  opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -6569,7 +10595,6 @@ export type DocumentCreateManyOpportunityInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6579,6 +10604,9 @@ export type DocumentCreateManyOpportunityInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -6590,25 +10618,32 @@ export type DocumentCreateManyOpportunityInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
-export type DocumentUpdateWithoutOpportunityInput = {
+export type DocumentUpdateWithoutCurrencyInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6625,7 +10660,6 @@ export type DocumentUpdateWithoutOpportunityInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6635,6 +10669,9 @@ export type DocumentUpdateWithoutOpportunityInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6644,43 +10681,1017 @@ export type DocumentUpdateWithoutOpportunityInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
+  opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutCurrencyInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
+  lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateManyWithoutCurrencyInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type DocumentCreateManyParentDocumentInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  deletedBy?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type DocumentUpdateWithoutParentDocumentInput = {
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
+  supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
+  contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
+  opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
+  customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
+  shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
+  paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
+  assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
+  lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutParentDocumentInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
+  lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateManyWithoutParentDocumentInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type DocumentCreateManyLeadInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  parentDocumentId?: number | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  deletedBy?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type DocumentUpdateWithoutLeadInput = {
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
+  supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
+  contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
+  opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
+  customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
+  shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
+  paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
+  assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
+  lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutLeadInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
+  lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateManyWithoutLeadInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type DocumentCreateManyOpportunityInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  parentDocumentId?: number | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  deletedBy?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type DocumentUpdateWithoutOpportunityInput = {
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
+  supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
+  contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
+  customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
+  shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
+  paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
+  assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
+  lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutOpportunityInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6699,7 +11710,6 @@ export type DocumentUncheckedUpdateWithoutOpportunityInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6709,6 +11719,10 @@ export type DocumentUncheckedUpdateWithoutOpportunityInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6720,34 +11734,48 @@ export type DocumentUncheckedUpdateWithoutOpportunityInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutOpportunityInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6766,7 +11794,6 @@ export type DocumentUncheckedUpdateManyWithoutOpportunityInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6776,6 +11803,10 @@ export type DocumentUncheckedUpdateManyWithoutOpportunityInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6787,32 +11818,41 @@ export type DocumentUncheckedUpdateManyWithoutOpportunityInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentCreateManyPaymentMethodRelInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -6831,7 +11871,6 @@ export type DocumentCreateManyPaymentMethodRelInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6841,6 +11880,10 @@ export type DocumentCreateManyPaymentMethodRelInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethod?: string
   paymentTerms?: string | null
   bankName?: string | null
@@ -6851,25 +11894,32 @@ export type DocumentCreateManyPaymentMethodRelInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type DocumentUpdateWithoutPaymentMethodRelInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6886,7 +11936,6 @@ export type DocumentUpdateWithoutPaymentMethodRelInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6896,6 +11945,9 @@ export type DocumentUpdateWithoutPaymentMethodRelInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6905,44 +11957,61 @@ export type DocumentUpdateWithoutPaymentMethodRelInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutPaymentMethodRelInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6961,7 +12030,6 @@ export type DocumentUncheckedUpdateWithoutPaymentMethodRelInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -6971,6 +12039,10 @@ export type DocumentUncheckedUpdateWithoutPaymentMethodRelInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6981,35 +12053,49 @@ export type DocumentUncheckedUpdateWithoutPaymentMethodRelInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutPaymentMethodRelInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7028,7 +12114,6 @@ export type DocumentUncheckedUpdateManyWithoutPaymentMethodRelInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7038,6 +12123,10 @@ export type DocumentUncheckedUpdateManyWithoutPaymentMethodRelInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7048,32 +12137,41 @@ export type DocumentUncheckedUpdateManyWithoutPaymentMethodRelInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentCreateManyCreatedByInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -7092,7 +12190,6 @@ export type DocumentCreateManyCreatedByInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7102,6 +12199,10 @@ export type DocumentCreateManyCreatedByInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -7112,32 +12213,41 @@ export type DocumentCreateManyCreatedByInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type DocumentCreateManyAssignedUserInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   warehouseId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -7156,7 +12266,6 @@ export type DocumentCreateManyAssignedUserInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7166,6 +12275,10 @@ export type DocumentCreateManyAssignedUserInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -7176,25 +12289,108 @@ export type DocumentCreateManyAssignedUserInput = {
   internalNotes?: string | null
   termsAndConditions?: string | null
   createdByUserId: number
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type DocumentCreateManyDeletedByUserInput = {
+  id?: number
+  documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
+  status?: $Enums.DocumentStatus
+  documentNumber?: string | null
+  sequenceNumber?: number | null
+  documentYear: number
+  companyId: number
+  customerId?: number | null
+  supplierId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  leadId?: number | null
+  warehouseId?: number | null
+  documentDate?: Date | string
+  dueDate?: Date | string | null
+  deliveryDate?: Date | string | null
+  validUntil?: Date | string | null
+  sentDate?: Date | string | null
+  parentDocumentId?: number | null
+  customerName: string
+  customerVatNumber?: string | null
+  customerTaxCode?: string | null
+  customerPec?: string | null
+  customerSdiCode?: string | null
+  customerAddress?: string | null
+  customerCity?: string | null
+  customerPostalCode?: string | null
+  customerProvince?: string | null
+  customerCountryCode?: string
+  customerEmail?: string | null
+  customerPhone?: string | null
+  shippingName?: string | null
+  shippingAddress?: string | null
+  shippingCity?: string | null
+  shippingPostalCode?: string | null
+  shippingProvince?: string | null
+  shippingCountryCode?: string | null
+  subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
+  paymentMethodId?: number | null
+  paymentMethod?: string
+  paymentTerms?: string | null
+  bankName?: string | null
+  bankIban?: string | null
+  bankSwift?: string | null
+  notes?: string | null
+  internalNotes?: string | null
+  termsAndConditions?: string | null
+  createdByUserId: number
+  assignedUserId?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type DocumentUpdateWithoutCreatedByInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7211,7 +12407,6 @@ export type DocumentUpdateWithoutCreatedByInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7221,6 +12416,9 @@ export type DocumentUpdateWithoutCreatedByInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7230,44 +12428,61 @@ export type DocumentUpdateWithoutCreatedByInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutCreatedByInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7286,7 +12501,6 @@ export type DocumentUncheckedUpdateWithoutCreatedByInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7296,6 +12510,10 @@ export type DocumentUncheckedUpdateWithoutCreatedByInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7306,35 +12524,49 @@ export type DocumentUncheckedUpdateWithoutCreatedByInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutCreatedByInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7353,7 +12585,6 @@ export type DocumentUncheckedUpdateManyWithoutCreatedByInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7363,6 +12594,10 @@ export type DocumentUncheckedUpdateManyWithoutCreatedByInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7373,25 +12608,32 @@ export type DocumentUncheckedUpdateManyWithoutCreatedByInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentUpdateWithoutAssignedUserInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7408,7 +12650,6 @@ export type DocumentUpdateWithoutAssignedUserInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7418,6 +12659,9 @@ export type DocumentUpdateWithoutAssignedUserInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7427,44 +12671,61 @@ export type DocumentUpdateWithoutAssignedUserInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
   warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutAssignedUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7483,7 +12744,6 @@ export type DocumentUncheckedUpdateWithoutAssignedUserInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7493,6 +12753,10 @@ export type DocumentUncheckedUpdateWithoutAssignedUserInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7503,35 +12767,49 @@ export type DocumentUncheckedUpdateWithoutAssignedUserInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutAssignedUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7550,7 +12828,6 @@ export type DocumentUncheckedUpdateManyWithoutAssignedUserInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7560,6 +12837,10 @@ export type DocumentUncheckedUpdateManyWithoutAssignedUserInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7570,31 +12851,283 @@ export type DocumentUncheckedUpdateManyWithoutAssignedUserInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type DocumentUpdateWithoutDeletedByUserInput = {
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
+  supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
+  contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
+  opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
+  customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
+  shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
+  paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
+  assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateWithoutDeletedByUserInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
+  lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
+  installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
+  intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
+}
+
+export type DocumentUncheckedUpdateManyWithoutDeletedByUserInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
+  status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
+  documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentYear?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerSdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerCountryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingTaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankIban?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankSwift?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type DocumentCreateManyWarehouseInput = {
   id?: number
   documentType: $Enums.DocumentType
+  statusCategory?: $Enums.DocumentStatusCategory
   status?: $Enums.DocumentStatus
   documentNumber?: string | null
+  sequenceNumber?: number | null
   documentYear: number
   companyId: number
   customerId?: number | null
   supplierId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   documentDate?: Date | string
   dueDate?: Date | string | null
   deliveryDate?: Date | string | null
   validUntil?: Date | string | null
   sentDate?: Date | string | null
-  relatedQuoteId?: number | null
-  relatedOrderId?: number | null
-  relatedInvoiceId?: number | null
-  relatedOpportunityId?: number | null
+  parentDocumentId?: number | null
   customerName: string
   customerVatNumber?: string | null
   customerTaxCode?: string | null
@@ -7613,7 +13146,6 @@ export type DocumentCreateManyWarehouseInput = {
   shippingPostalCode?: string | null
   shippingProvince?: string | null
   shippingCountryCode?: string | null
-  currency?: string
   subtotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7623,6 +13155,10 @@ export type DocumentCreateManyWarehouseInput = {
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: string
+  exchangeRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Date | string
+  baseCurrencyCode?: string
   paymentMethodId?: number | null
   paymentMethod?: string
   paymentTerms?: string | null
@@ -7634,25 +13170,32 @@ export type DocumentCreateManyWarehouseInput = {
   termsAndConditions?: string | null
   createdByUserId: number
   assignedUserId?: number | null
+  deletedBy?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Date | string | null
+  invoicedAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  closedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  voidedReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type DocumentUpdateWithoutWarehouseInput = {
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7669,7 +13212,6 @@ export type DocumentUpdateWithoutWarehouseInput = {
   shippingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7679,6 +13221,9 @@ export type DocumentUpdateWithoutWarehouseInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7688,43 +13233,60 @@ export type DocumentUpdateWithoutWarehouseInput = {
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutDocumentsNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutDocumentsOutNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutDocumentsInNestedInput
   contact?: Prisma.ContactUpdateOneWithoutDocumentsNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutDocumentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutDocumentsNestedInput
+  parentDocument?: Prisma.DocumentUpdateOneWithoutChildDocumentsNestedInput
+  childDocuments?: Prisma.DocumentUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUpdateManyWithoutTargetDocumentNestedInput
   customerCountry?: Prisma.CountryUpdateOneRequiredWithoutDocumentCountryNestedInput
   shippingCountry?: Prisma.CountryUpdateOneWithoutDocumentShippingCountryNestedInput
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutDocumentsNestedInput
   paymentMethodRel?: Prisma.PaymentMethodUpdateOneWithoutDocumentsNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput
   assignedUser?: Prisma.UserUpdateOneWithoutAssignedDocumentsNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedDocumentsNestedInput
   lines?: Prisma.DocumentLineUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateWithoutWarehouseInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7743,7 +13305,6 @@ export type DocumentUncheckedUpdateWithoutWarehouseInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7753,6 +13314,10 @@ export type DocumentUncheckedUpdateWithoutWarehouseInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7764,34 +13329,48 @@ export type DocumentUncheckedUpdateWithoutWarehouseInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutParentDocumentNestedInput
+  relatedDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutSourceDocumentNestedInput
+  relatedToDocuments?: Prisma.DocumentRelationUncheckedUpdateManyWithoutTargetDocumentNestedInput
   lines?: Prisma.DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput
   installments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentNestedInput
   intrastatTransactions?: Prisma.IntrastatTransactionUncheckedUpdateManyWithoutDocumentNestedInput
 }
 
 export type DocumentUncheckedUpdateManyWithoutWarehouseInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   documentType?: Prisma.EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+  statusCategory?: Prisma.EnumDocumentStatusCategoryFieldUpdateOperationsInput | $Enums.DocumentStatusCategory
   status?: Prisma.EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
   documentNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sequenceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentYear?: Prisma.IntFieldUpdateOperationsInput | number
   companyId?: Prisma.IntFieldUpdateOperationsInput | number
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  relatedQuoteId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOrderId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedInvoiceId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  relatedOpportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentDocumentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerVatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerTaxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7810,7 +13389,6 @@ export type DocumentUncheckedUpdateManyWithoutWarehouseInput = {
   shippingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingProvince?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shippingCountryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -7820,6 +13398,10 @@ export type DocumentUncheckedUpdateManyWithoutWarehouseInput = {
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  exchangeRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  exchangeRateDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  baseCurrencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7831,9 +13413,18 @@ export type DocumentUncheckedUpdateManyWithoutWarehouseInput = {
   termsAndConditions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  statusHistory?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  invoicedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -7842,14 +13433,24 @@ export type DocumentUncheckedUpdateManyWithoutWarehouseInput = {
  */
 
 export type DocumentCountOutputType = {
+  childDocuments: number
+  relatedDocuments: number
+  relatedToDocuments: number
   lines: number
   installments: number
+  stockMovement: number
+  stockReservations: number
   intrastatTransactions: number
 }
 
 export type DocumentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  childDocuments?: boolean | DocumentCountOutputTypeCountChildDocumentsArgs
+  relatedDocuments?: boolean | DocumentCountOutputTypeCountRelatedDocumentsArgs
+  relatedToDocuments?: boolean | DocumentCountOutputTypeCountRelatedToDocumentsArgs
   lines?: boolean | DocumentCountOutputTypeCountLinesArgs
   installments?: boolean | DocumentCountOutputTypeCountInstallmentsArgs
+  stockMovement?: boolean | DocumentCountOutputTypeCountStockMovementArgs
+  stockReservations?: boolean | DocumentCountOutputTypeCountStockReservationsArgs
   intrastatTransactions?: boolean | DocumentCountOutputTypeCountIntrastatTransactionsArgs
 }
 
@@ -7861,6 +13462,27 @@ export type DocumentCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ext
    * Select specific fields to fetch from the DocumentCountOutputType
    */
   select?: Prisma.DocumentCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * DocumentCountOutputType without action
+ */
+export type DocumentCountOutputTypeCountChildDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentWhereInput
+}
+
+/**
+ * DocumentCountOutputType without action
+ */
+export type DocumentCountOutputTypeCountRelatedDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentRelationWhereInput
+}
+
+/**
+ * DocumentCountOutputType without action
+ */
+export type DocumentCountOutputTypeCountRelatedToDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentRelationWhereInput
 }
 
 /**
@@ -7880,6 +13502,20 @@ export type DocumentCountOutputTypeCountInstallmentsArgs<ExtArgs extends runtime
 /**
  * DocumentCountOutputType without action
  */
+export type DocumentCountOutputTypeCountStockMovementArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StockMovementWhereInput
+}
+
+/**
+ * DocumentCountOutputType without action
+ */
+export type DocumentCountOutputTypeCountStockReservationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StockReservationWhereInput
+}
+
+/**
+ * DocumentCountOutputType without action
+ */
 export type DocumentCountOutputTypeCountIntrastatTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.IntrastatTransactionWhereInput
 }
@@ -7888,24 +13524,24 @@ export type DocumentCountOutputTypeCountIntrastatTransactionsArgs<ExtArgs extend
 export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   documentType?: boolean
+  statusCategory?: boolean
   status?: boolean
   documentNumber?: boolean
+  sequenceNumber?: boolean
   documentYear?: boolean
   companyId?: boolean
   customerId?: boolean
   supplierId?: boolean
   contactId?: boolean
   opportunityId?: boolean
+  leadId?: boolean
   warehouseId?: boolean
   documentDate?: boolean
   dueDate?: boolean
   deliveryDate?: boolean
   validUntil?: boolean
   sentDate?: boolean
-  relatedQuoteId?: boolean
-  relatedOrderId?: boolean
-  relatedInvoiceId?: boolean
-  relatedOpportunityId?: boolean
+  parentDocumentId?: boolean
   customerName?: boolean
   customerVatNumber?: boolean
   customerTaxCode?: boolean
@@ -7924,7 +13560,6 @@ export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   shippingPostalCode?: boolean
   shippingProvince?: boolean
   shippingCountryCode?: boolean
-  currency?: boolean
   subtotal?: boolean
   discountPercent?: boolean
   discountAmount?: boolean
@@ -7934,6 +13569,10 @@ export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   taxAmount?: boolean
   totalAmount?: boolean
   paidAmount?: boolean
+  currencyCode?: boolean
+  exchangeRate?: boolean
+  exchangeRateDate?: boolean
+  baseCurrencyCode?: boolean
   paymentMethodId?: boolean
   paymentMethod?: boolean
   paymentTerms?: boolean
@@ -7945,22 +13584,40 @@ export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   termsAndConditions?: boolean
   createdByUserId?: boolean
   assignedUserId?: boolean
+  deletedBy?: boolean
   customFields?: boolean
+  statusHistory?: boolean
+  approvedAt?: boolean
+  invoicedAt?: boolean
+  deliveredAt?: boolean
+  closedAt?: boolean
+  voidedAt?: boolean
+  voidedReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   customer?: boolean | Prisma.Document$customerArgs<ExtArgs>
   supplier?: boolean | Prisma.Document$supplierArgs<ExtArgs>
   contact?: boolean | Prisma.Document$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Document$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Document$leadArgs<ExtArgs>
   warehouse?: boolean | Prisma.Document$warehouseArgs<ExtArgs>
+  parentDocument?: boolean | Prisma.Document$parentDocumentArgs<ExtArgs>
+  childDocuments?: boolean | Prisma.Document$childDocumentsArgs<ExtArgs>
+  relatedDocuments?: boolean | Prisma.Document$relatedDocumentsArgs<ExtArgs>
+  relatedToDocuments?: boolean | Prisma.Document$relatedToDocumentsArgs<ExtArgs>
   customerCountry?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   shippingCountry?: boolean | Prisma.Document$shippingCountryArgs<ExtArgs>
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   paymentMethodRel?: boolean | Prisma.Document$paymentMethodRelArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedUser?: boolean | Prisma.Document$assignedUserArgs<ExtArgs>
+  deletedByUser?: boolean | Prisma.Document$deletedByUserArgs<ExtArgs>
   lines?: boolean | Prisma.Document$linesArgs<ExtArgs>
   installments?: boolean | Prisma.Document$installmentsArgs<ExtArgs>
+  stockMovement?: boolean | Prisma.Document$stockMovementArgs<ExtArgs>
+  stockReservations?: boolean | Prisma.Document$stockReservationsArgs<ExtArgs>
   intrastatTransactions?: boolean | Prisma.Document$intrastatTransactionsArgs<ExtArgs>
   _count?: boolean | Prisma.DocumentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
@@ -7968,24 +13625,24 @@ export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   documentType?: boolean
+  statusCategory?: boolean
   status?: boolean
   documentNumber?: boolean
+  sequenceNumber?: boolean
   documentYear?: boolean
   companyId?: boolean
   customerId?: boolean
   supplierId?: boolean
   contactId?: boolean
   opportunityId?: boolean
+  leadId?: boolean
   warehouseId?: boolean
   documentDate?: boolean
   dueDate?: boolean
   deliveryDate?: boolean
   validUntil?: boolean
   sentDate?: boolean
-  relatedQuoteId?: boolean
-  relatedOrderId?: boolean
-  relatedInvoiceId?: boolean
-  relatedOpportunityId?: boolean
+  parentDocumentId?: boolean
   customerName?: boolean
   customerVatNumber?: boolean
   customerTaxCode?: boolean
@@ -8004,7 +13661,6 @@ export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   shippingPostalCode?: boolean
   shippingProvince?: boolean
   shippingCountryCode?: boolean
-  currency?: boolean
   subtotal?: boolean
   discountPercent?: boolean
   discountAmount?: boolean
@@ -8014,6 +13670,10 @@ export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   taxAmount?: boolean
   totalAmount?: boolean
   paidAmount?: boolean
+  currencyCode?: boolean
+  exchangeRate?: boolean
+  exchangeRateDate?: boolean
+  baseCurrencyCode?: boolean
   paymentMethodId?: boolean
   paymentMethod?: boolean
   paymentTerms?: boolean
@@ -8025,43 +13685,56 @@ export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   termsAndConditions?: boolean
   createdByUserId?: boolean
   assignedUserId?: boolean
+  deletedBy?: boolean
   customFields?: boolean
+  statusHistory?: boolean
+  approvedAt?: boolean
+  invoicedAt?: boolean
+  deliveredAt?: boolean
+  closedAt?: boolean
+  voidedAt?: boolean
+  voidedReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   customer?: boolean | Prisma.Document$customerArgs<ExtArgs>
   supplier?: boolean | Prisma.Document$supplierArgs<ExtArgs>
   contact?: boolean | Prisma.Document$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Document$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Document$leadArgs<ExtArgs>
   warehouse?: boolean | Prisma.Document$warehouseArgs<ExtArgs>
+  parentDocument?: boolean | Prisma.Document$parentDocumentArgs<ExtArgs>
   customerCountry?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   shippingCountry?: boolean | Prisma.Document$shippingCountryArgs<ExtArgs>
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   paymentMethodRel?: boolean | Prisma.Document$paymentMethodRelArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedUser?: boolean | Prisma.Document$assignedUserArgs<ExtArgs>
+  deletedByUser?: boolean | Prisma.Document$deletedByUserArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
 export type DocumentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   documentType?: boolean
+  statusCategory?: boolean
   status?: boolean
   documentNumber?: boolean
+  sequenceNumber?: boolean
   documentYear?: boolean
   companyId?: boolean
   customerId?: boolean
   supplierId?: boolean
   contactId?: boolean
   opportunityId?: boolean
+  leadId?: boolean
   warehouseId?: boolean
   documentDate?: boolean
   dueDate?: boolean
   deliveryDate?: boolean
   validUntil?: boolean
   sentDate?: boolean
-  relatedQuoteId?: boolean
-  relatedOrderId?: boolean
-  relatedInvoiceId?: boolean
-  relatedOpportunityId?: boolean
+  parentDocumentId?: boolean
   customerName?: boolean
   customerVatNumber?: boolean
   customerTaxCode?: boolean
@@ -8080,7 +13753,6 @@ export type DocumentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   shippingPostalCode?: boolean
   shippingProvince?: boolean
   shippingCountryCode?: boolean
-  currency?: boolean
   subtotal?: boolean
   discountPercent?: boolean
   discountAmount?: boolean
@@ -8090,6 +13762,10 @@ export type DocumentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   taxAmount?: boolean
   totalAmount?: boolean
   paidAmount?: boolean
+  currencyCode?: boolean
+  exchangeRate?: boolean
+  exchangeRateDate?: boolean
+  baseCurrencyCode?: boolean
   paymentMethodId?: boolean
   paymentMethod?: boolean
   paymentTerms?: boolean
@@ -8101,43 +13777,56 @@ export type DocumentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   termsAndConditions?: boolean
   createdByUserId?: boolean
   assignedUserId?: boolean
+  deletedBy?: boolean
   customFields?: boolean
+  statusHistory?: boolean
+  approvedAt?: boolean
+  invoicedAt?: boolean
+  deliveredAt?: boolean
+  closedAt?: boolean
+  voidedAt?: boolean
+  voidedReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   customer?: boolean | Prisma.Document$customerArgs<ExtArgs>
   supplier?: boolean | Prisma.Document$supplierArgs<ExtArgs>
   contact?: boolean | Prisma.Document$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Document$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Document$leadArgs<ExtArgs>
   warehouse?: boolean | Prisma.Document$warehouseArgs<ExtArgs>
+  parentDocument?: boolean | Prisma.Document$parentDocumentArgs<ExtArgs>
   customerCountry?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   shippingCountry?: boolean | Prisma.Document$shippingCountryArgs<ExtArgs>
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   paymentMethodRel?: boolean | Prisma.Document$paymentMethodRelArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedUser?: boolean | Prisma.Document$assignedUserArgs<ExtArgs>
+  deletedByUser?: boolean | Prisma.Document$deletedByUserArgs<ExtArgs>
 }, ExtArgs["result"]["document"]>
 
 export type DocumentSelectScalar = {
   id?: boolean
   documentType?: boolean
+  statusCategory?: boolean
   status?: boolean
   documentNumber?: boolean
+  sequenceNumber?: boolean
   documentYear?: boolean
   companyId?: boolean
   customerId?: boolean
   supplierId?: boolean
   contactId?: boolean
   opportunityId?: boolean
+  leadId?: boolean
   warehouseId?: boolean
   documentDate?: boolean
   dueDate?: boolean
   deliveryDate?: boolean
   validUntil?: boolean
   sentDate?: boolean
-  relatedQuoteId?: boolean
-  relatedOrderId?: boolean
-  relatedInvoiceId?: boolean
-  relatedOpportunityId?: boolean
+  parentDocumentId?: boolean
   customerName?: boolean
   customerVatNumber?: boolean
   customerTaxCode?: boolean
@@ -8156,7 +13845,6 @@ export type DocumentSelectScalar = {
   shippingPostalCode?: boolean
   shippingProvince?: boolean
   shippingCountryCode?: boolean
-  currency?: boolean
   subtotal?: boolean
   discountPercent?: boolean
   discountAmount?: boolean
@@ -8166,6 +13854,10 @@ export type DocumentSelectScalar = {
   taxAmount?: boolean
   totalAmount?: boolean
   paidAmount?: boolean
+  currencyCode?: boolean
+  exchangeRate?: boolean
+  exchangeRateDate?: boolean
+  baseCurrencyCode?: boolean
   paymentMethodId?: boolean
   paymentMethod?: boolean
   paymentTerms?: boolean
@@ -8177,26 +13869,44 @@ export type DocumentSelectScalar = {
   termsAndConditions?: boolean
   createdByUserId?: boolean
   assignedUserId?: boolean
+  deletedBy?: boolean
   customFields?: boolean
+  statusHistory?: boolean
+  approvedAt?: boolean
+  invoicedAt?: boolean
+  deliveredAt?: boolean
+  closedAt?: boolean
+  voidedAt?: boolean
+  voidedReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }
 
-export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "documentType" | "status" | "documentNumber" | "documentYear" | "companyId" | "customerId" | "supplierId" | "contactId" | "opportunityId" | "warehouseId" | "documentDate" | "dueDate" | "deliveryDate" | "validUntil" | "sentDate" | "relatedQuoteId" | "relatedOrderId" | "relatedInvoiceId" | "relatedOpportunityId" | "customerName" | "customerVatNumber" | "customerTaxCode" | "customerPec" | "customerSdiCode" | "customerAddress" | "customerCity" | "customerPostalCode" | "customerProvince" | "customerCountryCode" | "customerEmail" | "customerPhone" | "shippingName" | "shippingAddress" | "shippingCity" | "shippingPostalCode" | "shippingProvince" | "shippingCountryCode" | "currency" | "subtotal" | "discountPercent" | "discountAmount" | "shippingCost" | "shippingTaxAmount" | "taxableAmount" | "taxAmount" | "totalAmount" | "paidAmount" | "paymentMethodId" | "paymentMethod" | "paymentTerms" | "bankName" | "bankIban" | "bankSwift" | "notes" | "internalNotes" | "termsAndConditions" | "createdByUserId" | "assignedUserId" | "customFields" | "createdAt" | "updatedAt", ExtArgs["result"]["document"]>
+export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "documentType" | "statusCategory" | "status" | "documentNumber" | "sequenceNumber" | "documentYear" | "companyId" | "customerId" | "supplierId" | "contactId" | "opportunityId" | "leadId" | "warehouseId" | "documentDate" | "dueDate" | "deliveryDate" | "validUntil" | "sentDate" | "parentDocumentId" | "customerName" | "customerVatNumber" | "customerTaxCode" | "customerPec" | "customerSdiCode" | "customerAddress" | "customerCity" | "customerPostalCode" | "customerProvince" | "customerCountryCode" | "customerEmail" | "customerPhone" | "shippingName" | "shippingAddress" | "shippingCity" | "shippingPostalCode" | "shippingProvince" | "shippingCountryCode" | "subtotal" | "discountPercent" | "discountAmount" | "shippingCost" | "shippingTaxAmount" | "taxableAmount" | "taxAmount" | "totalAmount" | "paidAmount" | "currencyCode" | "exchangeRate" | "exchangeRateDate" | "baseCurrencyCode" | "paymentMethodId" | "paymentMethod" | "paymentTerms" | "bankName" | "bankIban" | "bankSwift" | "notes" | "internalNotes" | "termsAndConditions" | "createdByUserId" | "assignedUserId" | "deletedBy" | "customFields" | "statusHistory" | "approvedAt" | "invoicedAt" | "deliveredAt" | "closedAt" | "voidedAt" | "voidedReason" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["document"]>
 export type DocumentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   customer?: boolean | Prisma.Document$customerArgs<ExtArgs>
   supplier?: boolean | Prisma.Document$supplierArgs<ExtArgs>
   contact?: boolean | Prisma.Document$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Document$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Document$leadArgs<ExtArgs>
   warehouse?: boolean | Prisma.Document$warehouseArgs<ExtArgs>
+  parentDocument?: boolean | Prisma.Document$parentDocumentArgs<ExtArgs>
+  childDocuments?: boolean | Prisma.Document$childDocumentsArgs<ExtArgs>
+  relatedDocuments?: boolean | Prisma.Document$relatedDocumentsArgs<ExtArgs>
+  relatedToDocuments?: boolean | Prisma.Document$relatedToDocumentsArgs<ExtArgs>
   customerCountry?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   shippingCountry?: boolean | Prisma.Document$shippingCountryArgs<ExtArgs>
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   paymentMethodRel?: boolean | Prisma.Document$paymentMethodRelArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedUser?: boolean | Prisma.Document$assignedUserArgs<ExtArgs>
+  deletedByUser?: boolean | Prisma.Document$deletedByUserArgs<ExtArgs>
   lines?: boolean | Prisma.Document$linesArgs<ExtArgs>
   installments?: boolean | Prisma.Document$installmentsArgs<ExtArgs>
+  stockMovement?: boolean | Prisma.Document$stockMovementArgs<ExtArgs>
+  stockReservations?: boolean | Prisma.Document$stockReservationsArgs<ExtArgs>
   intrastatTransactions?: boolean | Prisma.Document$intrastatTransactionsArgs<ExtArgs>
   _count?: boolean | Prisma.DocumentCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -8206,12 +13916,16 @@ export type DocumentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   supplier?: boolean | Prisma.Document$supplierArgs<ExtArgs>
   contact?: boolean | Prisma.Document$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Document$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Document$leadArgs<ExtArgs>
   warehouse?: boolean | Prisma.Document$warehouseArgs<ExtArgs>
+  parentDocument?: boolean | Prisma.Document$parentDocumentArgs<ExtArgs>
   customerCountry?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   shippingCountry?: boolean | Prisma.Document$shippingCountryArgs<ExtArgs>
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   paymentMethodRel?: boolean | Prisma.Document$paymentMethodRelArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedUser?: boolean | Prisma.Document$assignedUserArgs<ExtArgs>
+  deletedByUser?: boolean | Prisma.Document$deletedByUserArgs<ExtArgs>
 }
 export type DocumentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
@@ -8219,12 +13933,16 @@ export type DocumentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   supplier?: boolean | Prisma.Document$supplierArgs<ExtArgs>
   contact?: boolean | Prisma.Document$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Document$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Document$leadArgs<ExtArgs>
   warehouse?: boolean | Prisma.Document$warehouseArgs<ExtArgs>
+  parentDocument?: boolean | Prisma.Document$parentDocumentArgs<ExtArgs>
   customerCountry?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   shippingCountry?: boolean | Prisma.Document$shippingCountryArgs<ExtArgs>
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   paymentMethodRel?: boolean | Prisma.Document$paymentMethodRelArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   assignedUser?: boolean | Prisma.Document$assignedUserArgs<ExtArgs>
+  deletedByUser?: boolean | Prisma.Document$deletedByUserArgs<ExtArgs>
 }
 
 export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -8235,37 +13953,46 @@ export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     supplier: Prisma.$SupplierPayload<ExtArgs> | null
     contact: Prisma.$ContactPayload<ExtArgs> | null
     opportunity: Prisma.$OpportunityPayload<ExtArgs> | null
+    lead: Prisma.$LeadPayload<ExtArgs> | null
     warehouse: Prisma.$WarehousePayload<ExtArgs> | null
+    parentDocument: Prisma.$DocumentPayload<ExtArgs> | null
+    childDocuments: Prisma.$DocumentPayload<ExtArgs>[]
+    relatedDocuments: Prisma.$DocumentRelationPayload<ExtArgs>[]
+    relatedToDocuments: Prisma.$DocumentRelationPayload<ExtArgs>[]
     customerCountry: Prisma.$CountryPayload<ExtArgs>
     shippingCountry: Prisma.$CountryPayload<ExtArgs> | null
+    currency: Prisma.$CurrencyPayload<ExtArgs>
     paymentMethodRel: Prisma.$PaymentMethodPayload<ExtArgs> | null
     createdBy: Prisma.$UserPayload<ExtArgs>
     assignedUser: Prisma.$UserPayload<ExtArgs> | null
+    deletedByUser: Prisma.$UserPayload<ExtArgs> | null
     lines: Prisma.$DocumentLinePayload<ExtArgs>[]
     installments: Prisma.$DocumentPaymentInstallmentPayload<ExtArgs>[]
+    stockMovement: Prisma.$StockMovementPayload<ExtArgs>[]
+    stockReservations: Prisma.$StockReservationPayload<ExtArgs>[]
     intrastatTransactions: Prisma.$IntrastatTransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     documentType: $Enums.DocumentType
+    statusCategory: $Enums.DocumentStatusCategory
     status: $Enums.DocumentStatus
     documentNumber: string | null
+    sequenceNumber: number | null
     documentYear: number
     companyId: number
     customerId: number | null
     supplierId: number | null
     contactId: number | null
     opportunityId: number | null
+    leadId: number | null
     warehouseId: number | null
     documentDate: Date
     dueDate: Date | null
     deliveryDate: Date | null
     validUntil: Date | null
     sentDate: Date | null
-    relatedQuoteId: number | null
-    relatedOrderId: number | null
-    relatedInvoiceId: number | null
-    relatedOpportunityId: number | null
+    parentDocumentId: number | null
     customerName: string
     customerVatNumber: string | null
     customerTaxCode: string | null
@@ -8284,7 +14011,6 @@ export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     shippingPostalCode: string | null
     shippingProvince: string | null
     shippingCountryCode: string | null
-    currency: string
     subtotal: runtime.Decimal
     discountPercent: runtime.Decimal
     discountAmount: runtime.Decimal
@@ -8294,6 +14020,10 @@ export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     taxAmount: runtime.Decimal
     totalAmount: runtime.Decimal
     paidAmount: runtime.Decimal
+    currencyCode: string
+    exchangeRate: runtime.Decimal
+    exchangeRateDate: Date
+    baseCurrencyCode: string
     paymentMethodId: number | null
     paymentMethod: string
     paymentTerms: string | null
@@ -8305,9 +14035,18 @@ export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     termsAndConditions: string | null
     createdByUserId: number
     assignedUserId: number | null
+    deletedBy: number | null
     customFields: runtime.JsonValue | null
+    statusHistory: runtime.JsonValue | null
+    approvedAt: Date | null
+    invoicedAt: Date | null
+    deliveredAt: Date | null
+    closedAt: Date | null
+    voidedAt: Date | null
+    voidedReason: string | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["document"]>
   composites: {}
 }
@@ -8707,14 +14446,23 @@ export interface Prisma__DocumentClient<T, Null = never, ExtArgs extends runtime
   supplier<T extends Prisma.Document$supplierArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$supplierArgs<ExtArgs>>): Prisma.Prisma__SupplierClient<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   contact<T extends Prisma.Document$contactArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$contactArgs<ExtArgs>>): Prisma.Prisma__ContactClient<runtime.Types.Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   opportunity<T extends Prisma.Document$opportunityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$opportunityArgs<ExtArgs>>): Prisma.Prisma__OpportunityClient<runtime.Types.Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  lead<T extends Prisma.Document$leadArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$leadArgs<ExtArgs>>): Prisma.Prisma__LeadClient<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   warehouse<T extends Prisma.Document$warehouseArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$warehouseArgs<ExtArgs>>): Prisma.Prisma__WarehouseClient<runtime.Types.Result.GetResult<Prisma.$WarehousePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  parentDocument<T extends Prisma.Document$parentDocumentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$parentDocumentArgs<ExtArgs>>): Prisma.Prisma__DocumentClient<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  childDocuments<T extends Prisma.Document$childDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$childDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  relatedDocuments<T extends Prisma.Document$relatedDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$relatedDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentRelationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  relatedToDocuments<T extends Prisma.Document$relatedToDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$relatedToDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentRelationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customerCountry<T extends Prisma.CountryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CountryDefaultArgs<ExtArgs>>): Prisma.Prisma__CountryClient<runtime.Types.Result.GetResult<Prisma.$CountryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   shippingCountry<T extends Prisma.Document$shippingCountryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$shippingCountryArgs<ExtArgs>>): Prisma.Prisma__CountryClient<runtime.Types.Result.GetResult<Prisma.$CountryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  currency<T extends Prisma.CurrencyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CurrencyDefaultArgs<ExtArgs>>): Prisma.Prisma__CurrencyClient<runtime.Types.Result.GetResult<Prisma.$CurrencyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   paymentMethodRel<T extends Prisma.Document$paymentMethodRelArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$paymentMethodRelArgs<ExtArgs>>): Prisma.Prisma__PaymentMethodClient<runtime.Types.Result.GetResult<Prisma.$PaymentMethodPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   assignedUser<T extends Prisma.Document$assignedUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$assignedUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  deletedByUser<T extends Prisma.Document$deletedByUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$deletedByUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   lines<T extends Prisma.Document$linesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$linesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentLinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   installments<T extends Prisma.Document$installmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$installmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPaymentInstallmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  stockMovement<T extends Prisma.Document$stockMovementArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$stockMovementArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  stockReservations<T extends Prisma.Document$stockReservationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$stockReservationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   intrastatTransactions<T extends Prisma.Document$intrastatTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Document$intrastatTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IntrastatTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -8747,24 +14495,24 @@ export interface Prisma__DocumentClient<T, Null = never, ExtArgs extends runtime
 export interface DocumentFieldRefs {
   readonly id: Prisma.FieldRef<"Document", 'Int'>
   readonly documentType: Prisma.FieldRef<"Document", 'DocumentType'>
+  readonly statusCategory: Prisma.FieldRef<"Document", 'DocumentStatusCategory'>
   readonly status: Prisma.FieldRef<"Document", 'DocumentStatus'>
   readonly documentNumber: Prisma.FieldRef<"Document", 'String'>
+  readonly sequenceNumber: Prisma.FieldRef<"Document", 'Int'>
   readonly documentYear: Prisma.FieldRef<"Document", 'Int'>
   readonly companyId: Prisma.FieldRef<"Document", 'Int'>
   readonly customerId: Prisma.FieldRef<"Document", 'Int'>
   readonly supplierId: Prisma.FieldRef<"Document", 'Int'>
   readonly contactId: Prisma.FieldRef<"Document", 'Int'>
   readonly opportunityId: Prisma.FieldRef<"Document", 'Int'>
+  readonly leadId: Prisma.FieldRef<"Document", 'Int'>
   readonly warehouseId: Prisma.FieldRef<"Document", 'Int'>
   readonly documentDate: Prisma.FieldRef<"Document", 'DateTime'>
   readonly dueDate: Prisma.FieldRef<"Document", 'DateTime'>
   readonly deliveryDate: Prisma.FieldRef<"Document", 'DateTime'>
   readonly validUntil: Prisma.FieldRef<"Document", 'DateTime'>
   readonly sentDate: Prisma.FieldRef<"Document", 'DateTime'>
-  readonly relatedQuoteId: Prisma.FieldRef<"Document", 'Int'>
-  readonly relatedOrderId: Prisma.FieldRef<"Document", 'Int'>
-  readonly relatedInvoiceId: Prisma.FieldRef<"Document", 'Int'>
-  readonly relatedOpportunityId: Prisma.FieldRef<"Document", 'Int'>
+  readonly parentDocumentId: Prisma.FieldRef<"Document", 'Int'>
   readonly customerName: Prisma.FieldRef<"Document", 'String'>
   readonly customerVatNumber: Prisma.FieldRef<"Document", 'String'>
   readonly customerTaxCode: Prisma.FieldRef<"Document", 'String'>
@@ -8783,7 +14531,6 @@ export interface DocumentFieldRefs {
   readonly shippingPostalCode: Prisma.FieldRef<"Document", 'String'>
   readonly shippingProvince: Prisma.FieldRef<"Document", 'String'>
   readonly shippingCountryCode: Prisma.FieldRef<"Document", 'String'>
-  readonly currency: Prisma.FieldRef<"Document", 'String'>
   readonly subtotal: Prisma.FieldRef<"Document", 'Decimal'>
   readonly discountPercent: Prisma.FieldRef<"Document", 'Decimal'>
   readonly discountAmount: Prisma.FieldRef<"Document", 'Decimal'>
@@ -8793,6 +14540,10 @@ export interface DocumentFieldRefs {
   readonly taxAmount: Prisma.FieldRef<"Document", 'Decimal'>
   readonly totalAmount: Prisma.FieldRef<"Document", 'Decimal'>
   readonly paidAmount: Prisma.FieldRef<"Document", 'Decimal'>
+  readonly currencyCode: Prisma.FieldRef<"Document", 'String'>
+  readonly exchangeRate: Prisma.FieldRef<"Document", 'Decimal'>
+  readonly exchangeRateDate: Prisma.FieldRef<"Document", 'DateTime'>
+  readonly baseCurrencyCode: Prisma.FieldRef<"Document", 'String'>
   readonly paymentMethodId: Prisma.FieldRef<"Document", 'Int'>
   readonly paymentMethod: Prisma.FieldRef<"Document", 'String'>
   readonly paymentTerms: Prisma.FieldRef<"Document", 'String'>
@@ -8804,9 +14555,18 @@ export interface DocumentFieldRefs {
   readonly termsAndConditions: Prisma.FieldRef<"Document", 'String'>
   readonly createdByUserId: Prisma.FieldRef<"Document", 'Int'>
   readonly assignedUserId: Prisma.FieldRef<"Document", 'Int'>
+  readonly deletedBy: Prisma.FieldRef<"Document", 'Int'>
   readonly customFields: Prisma.FieldRef<"Document", 'Json'>
+  readonly statusHistory: Prisma.FieldRef<"Document", 'Json'>
+  readonly approvedAt: Prisma.FieldRef<"Document", 'DateTime'>
+  readonly invoicedAt: Prisma.FieldRef<"Document", 'DateTime'>
+  readonly deliveredAt: Prisma.FieldRef<"Document", 'DateTime'>
+  readonly closedAt: Prisma.FieldRef<"Document", 'DateTime'>
+  readonly voidedAt: Prisma.FieldRef<"Document", 'DateTime'>
+  readonly voidedReason: Prisma.FieldRef<"Document", 'String'>
   readonly createdAt: Prisma.FieldRef<"Document", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Document", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Document", 'DateTime'>
 }
     
 
@@ -9279,6 +15039,25 @@ export type Document$opportunityArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 /**
+ * Document.lead
+ */
+export type Document$leadArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
+}
+
+/**
  * Document.warehouse
  */
 export type Document$warehouseArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -9295,6 +15074,97 @@ export type Document$warehouseArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   include?: Prisma.WarehouseInclude<ExtArgs> | null
   where?: Prisma.WarehouseWhereInput
+}
+
+/**
+ * Document.parentDocument
+ */
+export type Document$parentDocumentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Document
+   */
+  select?: Prisma.DocumentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Document
+   */
+  omit?: Prisma.DocumentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentInclude<ExtArgs> | null
+  where?: Prisma.DocumentWhereInput
+}
+
+/**
+ * Document.childDocuments
+ */
+export type Document$childDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Document
+   */
+  select?: Prisma.DocumentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Document
+   */
+  omit?: Prisma.DocumentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentInclude<ExtArgs> | null
+  where?: Prisma.DocumentWhereInput
+  orderBy?: Prisma.DocumentOrderByWithRelationInput | Prisma.DocumentOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DocumentScalarFieldEnum | Prisma.DocumentScalarFieldEnum[]
+}
+
+/**
+ * Document.relatedDocuments
+ */
+export type Document$relatedDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentRelation
+   */
+  select?: Prisma.DocumentRelationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DocumentRelation
+   */
+  omit?: Prisma.DocumentRelationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentRelationInclude<ExtArgs> | null
+  where?: Prisma.DocumentRelationWhereInput
+  orderBy?: Prisma.DocumentRelationOrderByWithRelationInput | Prisma.DocumentRelationOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentRelationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DocumentRelationScalarFieldEnum | Prisma.DocumentRelationScalarFieldEnum[]
+}
+
+/**
+ * Document.relatedToDocuments
+ */
+export type Document$relatedToDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentRelation
+   */
+  select?: Prisma.DocumentRelationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DocumentRelation
+   */
+  omit?: Prisma.DocumentRelationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentRelationInclude<ExtArgs> | null
+  where?: Prisma.DocumentRelationWhereInput
+  orderBy?: Prisma.DocumentRelationOrderByWithRelationInput | Prisma.DocumentRelationOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentRelationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DocumentRelationScalarFieldEnum | Prisma.DocumentRelationScalarFieldEnum[]
 }
 
 /**
@@ -9339,6 +15209,25 @@ export type Document$paymentMethodRelArgs<ExtArgs extends runtime.Types.Extensio
  * Document.assignedUser
  */
 export type Document$assignedUserArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * Document.deletedByUser
+ */
+export type Document$deletedByUserArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the User
    */
@@ -9400,6 +15289,54 @@ export type Document$installmentsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.DocumentPaymentInstallmentScalarFieldEnum | Prisma.DocumentPaymentInstallmentScalarFieldEnum[]
+}
+
+/**
+ * Document.stockMovement
+ */
+export type Document$stockMovementArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StockMovement
+   */
+  select?: Prisma.StockMovementSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StockMovement
+   */
+  omit?: Prisma.StockMovementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StockMovementInclude<ExtArgs> | null
+  where?: Prisma.StockMovementWhereInput
+  orderBy?: Prisma.StockMovementOrderByWithRelationInput | Prisma.StockMovementOrderByWithRelationInput[]
+  cursor?: Prisma.StockMovementWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StockMovementScalarFieldEnum | Prisma.StockMovementScalarFieldEnum[]
+}
+
+/**
+ * Document.stockReservations
+ */
+export type Document$stockReservationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StockReservation
+   */
+  select?: Prisma.StockReservationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StockReservation
+   */
+  omit?: Prisma.StockReservationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StockReservationInclude<ExtArgs> | null
+  where?: Prisma.StockReservationWhereInput
+  orderBy?: Prisma.StockReservationOrderByWithRelationInput | Prisma.StockReservationOrderByWithRelationInput[]
+  cursor?: Prisma.StockReservationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StockReservationScalarFieldEnum | Prisma.StockReservationScalarFieldEnum[]
 }
 
 /**

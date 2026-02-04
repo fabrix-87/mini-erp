@@ -1,6 +1,7 @@
 model Category {
     id       Int        @id @default(autoincrement())
     parentId Int?
+    code     String?    @db.VarChar(50) @unique
     // Relazione auto-referenziante per la gerarchia
     parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
     children Category[] @relation("CategoryHierarchy")
@@ -30,10 +31,11 @@ model CategoryTranslation {
     language   Language @relation(fields: [languageId], references: [id])
 
     name            String  @db.VarChar(255)
-    description     String? @db.Text 
+    slug            String? @db.VarChar(255)
+    description     String? @db.Text
     linkRewrite     String? @db.VarChar(255)
     metaTitle       String? @db.VarChar(255)
-    metaDescription String? @db.Text 
+    metaDescription String? @db.Text
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

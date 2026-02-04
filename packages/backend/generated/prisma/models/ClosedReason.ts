@@ -28,56 +28,90 @@ export type AggregateClosedReason = {
 
 export type ClosedReasonAvgAggregateOutputType = {
   id: number | null
+  displayOrder: number | null
 }
 
 export type ClosedReasonSumAggregateOutputType = {
   id: number | null
+  displayOrder: number | null
 }
 
 export type ClosedReasonMinAggregateOutputType = {
   id: number | null
   code: string | null
   description: string | null
+  isWon: boolean | null
+  active: boolean | null
+  displayOrder: number | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ClosedReasonMaxAggregateOutputType = {
   id: number | null
   code: string | null
   description: string | null
+  isWon: boolean | null
+  active: boolean | null
+  displayOrder: number | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ClosedReasonCountAggregateOutputType = {
   id: number
   code: number
   description: number
+  isWon: number
+  active: number
+  displayOrder: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
 
 export type ClosedReasonAvgAggregateInputType = {
   id?: true
+  displayOrder?: true
 }
 
 export type ClosedReasonSumAggregateInputType = {
   id?: true
+  displayOrder?: true
 }
 
 export type ClosedReasonMinAggregateInputType = {
   id?: true
   code?: true
   description?: true
+  isWon?: true
+  active?: true
+  displayOrder?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type ClosedReasonMaxAggregateInputType = {
   id?: true
   code?: true
   description?: true
+  isWon?: true
+  active?: true
+  displayOrder?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type ClosedReasonCountAggregateInputType = {
   id?: true
   code?: true
   description?: true
+  isWon?: true
+  active?: true
+  displayOrder?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -169,8 +203,13 @@ export type ClosedReasonGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type ClosedReasonGroupByOutputType = {
   id: number
-  code: string | null
-  description: string | null
+  code: string
+  description: string
+  isWon: boolean
+  active: boolean
+  displayOrder: number
+  createdAt: Date
+  updatedAt: Date
   _count: ClosedReasonCountAggregateOutputType | null
   _avg: ClosedReasonAvgAggregateOutputType | null
   _sum: ClosedReasonSumAggregateOutputType | null
@@ -198,29 +237,52 @@ export type ClosedReasonWhereInput = {
   OR?: Prisma.ClosedReasonWhereInput[]
   NOT?: Prisma.ClosedReasonWhereInput | Prisma.ClosedReasonWhereInput[]
   id?: Prisma.IntFilter<"ClosedReason"> | number
-  code?: Prisma.StringNullableFilter<"ClosedReason"> | string | null
-  description?: Prisma.StringNullableFilter<"ClosedReason"> | string | null
+  code?: Prisma.StringFilter<"ClosedReason"> | string
+  description?: Prisma.StringFilter<"ClosedReason"> | string
+  isWon?: Prisma.BoolFilter<"ClosedReason"> | boolean
+  active?: Prisma.BoolFilter<"ClosedReason"> | boolean
+  displayOrder?: Prisma.IntFilter<"ClosedReason"> | number
+  createdAt?: Prisma.DateTimeFilter<"ClosedReason"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ClosedReason"> | Date | string
+  opportunities?: Prisma.OpportunityListRelationFilter
 }
 
 export type ClosedReasonOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  code?: Prisma.SortOrderInput | Prisma.SortOrder
-  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  code?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  isWon?: Prisma.SortOrder
+  active?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  opportunities?: Prisma.OpportunityOrderByRelationAggregateInput
 }
 
 export type ClosedReasonWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  code?: string
   AND?: Prisma.ClosedReasonWhereInput | Prisma.ClosedReasonWhereInput[]
   OR?: Prisma.ClosedReasonWhereInput[]
   NOT?: Prisma.ClosedReasonWhereInput | Prisma.ClosedReasonWhereInput[]
-  code?: Prisma.StringNullableFilter<"ClosedReason"> | string | null
-  description?: Prisma.StringNullableFilter<"ClosedReason"> | string | null
-}, "id">
+  description?: Prisma.StringFilter<"ClosedReason"> | string
+  isWon?: Prisma.BoolFilter<"ClosedReason"> | boolean
+  active?: Prisma.BoolFilter<"ClosedReason"> | boolean
+  displayOrder?: Prisma.IntFilter<"ClosedReason"> | number
+  createdAt?: Prisma.DateTimeFilter<"ClosedReason"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ClosedReason"> | Date | string
+  opportunities?: Prisma.OpportunityListRelationFilter
+}, "id" | "code">
 
 export type ClosedReasonOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  code?: Prisma.SortOrderInput | Prisma.SortOrder
-  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  code?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  isWon?: Prisma.SortOrder
+  active?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.ClosedReasonCountOrderByAggregateInput
   _avg?: Prisma.ClosedReasonAvgOrderByAggregateInput
   _max?: Prisma.ClosedReasonMaxOrderByAggregateInput
@@ -233,110 +295,314 @@ export type ClosedReasonScalarWhereWithAggregatesInput = {
   OR?: Prisma.ClosedReasonScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ClosedReasonScalarWhereWithAggregatesInput | Prisma.ClosedReasonScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"ClosedReason"> | number
-  code?: Prisma.StringNullableWithAggregatesFilter<"ClosedReason"> | string | null
-  description?: Prisma.StringNullableWithAggregatesFilter<"ClosedReason"> | string | null
+  code?: Prisma.StringWithAggregatesFilter<"ClosedReason"> | string
+  description?: Prisma.StringWithAggregatesFilter<"ClosedReason"> | string
+  isWon?: Prisma.BoolWithAggregatesFilter<"ClosedReason"> | boolean
+  active?: Prisma.BoolWithAggregatesFilter<"ClosedReason"> | boolean
+  displayOrder?: Prisma.IntWithAggregatesFilter<"ClosedReason"> | number
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"ClosedReason"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ClosedReason"> | Date | string
 }
 
 export type ClosedReasonCreateInput = {
-  code?: string | null
-  description?: string | null
+  code: string
+  description: string
+  isWon: boolean
+  active?: boolean
+  displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutClosedReasonInput
 }
 
 export type ClosedReasonUncheckedCreateInput = {
   id?: number
-  code?: string | null
-  description?: string | null
+  code: string
+  description: string
+  isWon: boolean
+  active?: boolean
+  displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutClosedReasonInput
 }
 
 export type ClosedReasonUpdateInput = {
-  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  isWon?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  opportunities?: Prisma.OpportunityUpdateManyWithoutClosedReasonNestedInput
 }
 
 export type ClosedReasonUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  isWon?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutClosedReasonNestedInput
 }
 
 export type ClosedReasonCreateManyInput = {
   id?: number
-  code?: string | null
-  description?: string | null
+  code: string
+  description: string
+  isWon: boolean
+  active?: boolean
+  displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ClosedReasonUpdateManyMutationInput = {
-  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  isWon?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ClosedReasonUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  isWon?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ClosedReasonNullableScalarRelationFilter = {
+  is?: Prisma.ClosedReasonWhereInput | null
+  isNot?: Prisma.ClosedReasonWhereInput | null
 }
 
 export type ClosedReasonCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  isWon?: Prisma.SortOrder
+  active?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ClosedReasonAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
 }
 
 export type ClosedReasonMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  isWon?: Prisma.SortOrder
+  active?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ClosedReasonMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  isWon?: Prisma.SortOrder
+  active?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ClosedReasonSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
 }
 
+export type ClosedReasonCreateNestedOneWithoutOpportunitiesInput = {
+  create?: Prisma.XOR<Prisma.ClosedReasonCreateWithoutOpportunitiesInput, Prisma.ClosedReasonUncheckedCreateWithoutOpportunitiesInput>
+  connectOrCreate?: Prisma.ClosedReasonCreateOrConnectWithoutOpportunitiesInput
+  connect?: Prisma.ClosedReasonWhereUniqueInput
+}
+
+export type ClosedReasonUpdateOneWithoutOpportunitiesNestedInput = {
+  create?: Prisma.XOR<Prisma.ClosedReasonCreateWithoutOpportunitiesInput, Prisma.ClosedReasonUncheckedCreateWithoutOpportunitiesInput>
+  connectOrCreate?: Prisma.ClosedReasonCreateOrConnectWithoutOpportunitiesInput
+  upsert?: Prisma.ClosedReasonUpsertWithoutOpportunitiesInput
+  disconnect?: Prisma.ClosedReasonWhereInput | boolean
+  delete?: Prisma.ClosedReasonWhereInput | boolean
+  connect?: Prisma.ClosedReasonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ClosedReasonUpdateToOneWithWhereWithoutOpportunitiesInput, Prisma.ClosedReasonUpdateWithoutOpportunitiesInput>, Prisma.ClosedReasonUncheckedUpdateWithoutOpportunitiesInput>
+}
+
+export type ClosedReasonCreateWithoutOpportunitiesInput = {
+  code: string
+  description: string
+  isWon: boolean
+  active?: boolean
+  displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ClosedReasonUncheckedCreateWithoutOpportunitiesInput = {
+  id?: number
+  code: string
+  description: string
+  isWon: boolean
+  active?: boolean
+  displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ClosedReasonCreateOrConnectWithoutOpportunitiesInput = {
+  where: Prisma.ClosedReasonWhereUniqueInput
+  create: Prisma.XOR<Prisma.ClosedReasonCreateWithoutOpportunitiesInput, Prisma.ClosedReasonUncheckedCreateWithoutOpportunitiesInput>
+}
+
+export type ClosedReasonUpsertWithoutOpportunitiesInput = {
+  update: Prisma.XOR<Prisma.ClosedReasonUpdateWithoutOpportunitiesInput, Prisma.ClosedReasonUncheckedUpdateWithoutOpportunitiesInput>
+  create: Prisma.XOR<Prisma.ClosedReasonCreateWithoutOpportunitiesInput, Prisma.ClosedReasonUncheckedCreateWithoutOpportunitiesInput>
+  where?: Prisma.ClosedReasonWhereInput
+}
+
+export type ClosedReasonUpdateToOneWithWhereWithoutOpportunitiesInput = {
+  where?: Prisma.ClosedReasonWhereInput
+  data: Prisma.XOR<Prisma.ClosedReasonUpdateWithoutOpportunitiesInput, Prisma.ClosedReasonUncheckedUpdateWithoutOpportunitiesInput>
+}
+
+export type ClosedReasonUpdateWithoutOpportunitiesInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  isWon?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ClosedReasonUncheckedUpdateWithoutOpportunitiesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  isWon?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type ClosedReasonCountOutputType
+ */
+
+export type ClosedReasonCountOutputType = {
+  opportunities: number
+}
+
+export type ClosedReasonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  opportunities?: boolean | ClosedReasonCountOutputTypeCountOpportunitiesArgs
+}
+
+/**
+ * ClosedReasonCountOutputType without action
+ */
+export type ClosedReasonCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ClosedReasonCountOutputType
+   */
+  select?: Prisma.ClosedReasonCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ClosedReasonCountOutputType without action
+ */
+export type ClosedReasonCountOutputTypeCountOpportunitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OpportunityWhereInput
+}
 
 
 export type ClosedReasonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   code?: boolean
   description?: boolean
+  isWon?: boolean
+  active?: boolean
+  displayOrder?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  opportunities?: boolean | Prisma.ClosedReason$opportunitiesArgs<ExtArgs>
+  _count?: boolean | Prisma.ClosedReasonCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["closedReason"]>
 
 export type ClosedReasonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   code?: boolean
   description?: boolean
+  isWon?: boolean
+  active?: boolean
+  displayOrder?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["closedReason"]>
 
 export type ClosedReasonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   code?: boolean
   description?: boolean
+  isWon?: boolean
+  active?: boolean
+  displayOrder?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["closedReason"]>
 
 export type ClosedReasonSelectScalar = {
   id?: boolean
   code?: boolean
   description?: boolean
+  isWon?: boolean
+  active?: boolean
+  displayOrder?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type ClosedReasonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "description", ExtArgs["result"]["closedReason"]>
+export type ClosedReasonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "description" | "isWon" | "active" | "displayOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["closedReason"]>
+export type ClosedReasonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  opportunities?: boolean | Prisma.ClosedReason$opportunitiesArgs<ExtArgs>
+  _count?: boolean | Prisma.ClosedReasonCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type ClosedReasonIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type ClosedReasonIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $ClosedReasonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ClosedReason"
-  objects: {}
+  objects: {
+    opportunities: Prisma.$OpportunityPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    code: string | null
-    description: string | null
+    code: string
+    description: string
+    isWon: boolean
+    active: boolean
+    displayOrder: number
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["closedReason"]>
   composites: {}
 }
@@ -731,6 +997,7 @@ readonly fields: ClosedReasonFieldRefs;
  */
 export interface Prisma__ClosedReasonClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  opportunities<T extends Prisma.ClosedReason$opportunitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClosedReason$opportunitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -763,6 +1030,11 @@ export interface ClosedReasonFieldRefs {
   readonly id: Prisma.FieldRef<"ClosedReason", 'Int'>
   readonly code: Prisma.FieldRef<"ClosedReason", 'String'>
   readonly description: Prisma.FieldRef<"ClosedReason", 'String'>
+  readonly isWon: Prisma.FieldRef<"ClosedReason", 'Boolean'>
+  readonly active: Prisma.FieldRef<"ClosedReason", 'Boolean'>
+  readonly displayOrder: Prisma.FieldRef<"ClosedReason", 'Int'>
+  readonly createdAt: Prisma.FieldRef<"ClosedReason", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"ClosedReason", 'DateTime'>
 }
     
 
@@ -779,6 +1051,10 @@ export type ClosedReasonFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the ClosedReason
    */
   omit?: Prisma.ClosedReasonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClosedReasonInclude<ExtArgs> | null
   /**
    * Filter, which ClosedReason to fetch.
    */
@@ -798,6 +1074,10 @@ export type ClosedReasonFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.ClosedReasonOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClosedReasonInclude<ExtArgs> | null
+  /**
    * Filter, which ClosedReason to fetch.
    */
   where: Prisma.ClosedReasonWhereUniqueInput
@@ -815,6 +1095,10 @@ export type ClosedReasonFindFirstArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the ClosedReason
    */
   omit?: Prisma.ClosedReasonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClosedReasonInclude<ExtArgs> | null
   /**
    * Filter, which ClosedReason to fetch.
    */
@@ -864,6 +1148,10 @@ export type ClosedReasonFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.ClosedReasonOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClosedReasonInclude<ExtArgs> | null
+  /**
    * Filter, which ClosedReason to fetch.
    */
   where?: Prisma.ClosedReasonWhereInput
@@ -912,6 +1200,10 @@ export type ClosedReasonFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.ClosedReasonOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClosedReasonInclude<ExtArgs> | null
+  /**
    * Filter, which ClosedReasons to fetch.
    */
   where?: Prisma.ClosedReasonWhereInput
@@ -955,9 +1247,13 @@ export type ClosedReasonCreateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.ClosedReasonOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClosedReasonInclude<ExtArgs> | null
+  /**
    * The data needed to create a ClosedReason.
    */
-  data?: Prisma.XOR<Prisma.ClosedReasonCreateInput, Prisma.ClosedReasonUncheckedCreateInput>
+  data: Prisma.XOR<Prisma.ClosedReasonCreateInput, Prisma.ClosedReasonUncheckedCreateInput>
 }
 
 /**
@@ -1002,6 +1298,10 @@ export type ClosedReasonUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the ClosedReason
    */
   omit?: Prisma.ClosedReasonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClosedReasonInclude<ExtArgs> | null
   /**
    * The data needed to update a ClosedReason.
    */
@@ -1069,6 +1369,10 @@ export type ClosedReasonUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.ClosedReasonOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClosedReasonInclude<ExtArgs> | null
+  /**
    * The filter to search for the ClosedReason to update in case it exists.
    */
   where: Prisma.ClosedReasonWhereUniqueInput
@@ -1095,6 +1399,10 @@ export type ClosedReasonDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.ClosedReasonOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClosedReasonInclude<ExtArgs> | null
+  /**
    * Filter which ClosedReason to delete.
    */
   where: Prisma.ClosedReasonWhereUniqueInput
@@ -1115,6 +1423,30 @@ export type ClosedReasonDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
+ * ClosedReason.opportunities
+ */
+export type ClosedReason$opportunitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Opportunity
+   */
+  select?: Prisma.OpportunitySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Opportunity
+   */
+  omit?: Prisma.OpportunityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpportunityInclude<ExtArgs> | null
+  where?: Prisma.OpportunityWhereInput
+  orderBy?: Prisma.OpportunityOrderByWithRelationInput | Prisma.OpportunityOrderByWithRelationInput[]
+  cursor?: Prisma.OpportunityWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OpportunityScalarFieldEnum | Prisma.OpportunityScalarFieldEnum[]
+}
+
+/**
  * ClosedReason without action
  */
 export type ClosedReasonDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1126,4 +1458,8 @@ export type ClosedReasonDefaultArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the ClosedReason
    */
   omit?: Prisma.ClosedReasonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClosedReasonInclude<ExtArgs> | null
 }

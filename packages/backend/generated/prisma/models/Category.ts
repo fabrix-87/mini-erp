@@ -43,6 +43,7 @@ export type CategorySumAggregateOutputType = {
 export type CategoryMinAggregateOutputType = {
   id: number | null
   parentId: number | null
+  code: string | null
   active: boolean | null
   position: number | null
   level: number | null
@@ -53,6 +54,7 @@ export type CategoryMinAggregateOutputType = {
 export type CategoryMaxAggregateOutputType = {
   id: number | null
   parentId: number | null
+  code: string | null
   active: boolean | null
   position: number | null
   level: number | null
@@ -63,6 +65,7 @@ export type CategoryMaxAggregateOutputType = {
 export type CategoryCountAggregateOutputType = {
   id: number
   parentId: number
+  code: number
   active: number
   position: number
   level: number
@@ -89,6 +92,7 @@ export type CategorySumAggregateInputType = {
 export type CategoryMinAggregateInputType = {
   id?: true
   parentId?: true
+  code?: true
   active?: true
   position?: true
   level?: true
@@ -99,6 +103,7 @@ export type CategoryMinAggregateInputType = {
 export type CategoryMaxAggregateInputType = {
   id?: true
   parentId?: true
+  code?: true
   active?: true
   position?: true
   level?: true
@@ -109,6 +114,7 @@ export type CategoryMaxAggregateInputType = {
 export type CategoryCountAggregateInputType = {
   id?: true
   parentId?: true
+  code?: true
   active?: true
   position?: true
   level?: true
@@ -206,6 +212,7 @@ export type CategoryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type CategoryGroupByOutputType = {
   id: number
   parentId: number | null
+  code: string | null
   active: boolean
   position: number
   level: number
@@ -239,6 +246,7 @@ export type CategoryWhereInput = {
   NOT?: Prisma.CategoryWhereInput | Prisma.CategoryWhereInput[]
   id?: Prisma.IntFilter<"Category"> | number
   parentId?: Prisma.IntNullableFilter<"Category"> | number | null
+  code?: Prisma.StringNullableFilter<"Category"> | string | null
   active?: Prisma.BoolFilter<"Category"> | boolean
   position?: Prisma.IntFilter<"Category"> | number
   level?: Prisma.IntFilter<"Category"> | number
@@ -253,6 +261,7 @@ export type CategoryWhereInput = {
 export type CategoryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   parentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  code?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   position?: Prisma.SortOrder
   level?: Prisma.SortOrder
@@ -266,6 +275,7 @@ export type CategoryOrderByWithRelationInput = {
 
 export type CategoryWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  code?: string
   AND?: Prisma.CategoryWhereInput | Prisma.CategoryWhereInput[]
   OR?: Prisma.CategoryWhereInput[]
   NOT?: Prisma.CategoryWhereInput | Prisma.CategoryWhereInput[]
@@ -279,11 +289,12 @@ export type CategoryWhereUniqueInput = Prisma.AtLeast<{
   children?: Prisma.CategoryListRelationFilter
   translations?: Prisma.CategoryTranslationListRelationFilter
   products?: Prisma.ProductCategoryListRelationFilter
-}, "id">
+}, "id" | "code">
 
 export type CategoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   parentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  code?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   position?: Prisma.SortOrder
   level?: Prisma.SortOrder
@@ -302,6 +313,7 @@ export type CategoryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.CategoryScalarWhereWithAggregatesInput | Prisma.CategoryScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Category"> | number
   parentId?: Prisma.IntNullableWithAggregatesFilter<"Category"> | number | null
+  code?: Prisma.StringNullableWithAggregatesFilter<"Category"> | string | null
   active?: Prisma.BoolWithAggregatesFilter<"Category"> | boolean
   position?: Prisma.IntWithAggregatesFilter<"Category"> | number
   level?: Prisma.IntWithAggregatesFilter<"Category"> | number
@@ -310,6 +322,7 @@ export type CategoryScalarWhereWithAggregatesInput = {
 }
 
 export type CategoryCreateInput = {
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -324,6 +337,7 @@ export type CategoryCreateInput = {
 export type CategoryUncheckedCreateInput = {
   id?: number
   parentId?: number | null
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -335,6 +349,7 @@ export type CategoryUncheckedCreateInput = {
 }
 
 export type CategoryUpdateInput = {
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -349,6 +364,7 @@ export type CategoryUpdateInput = {
 export type CategoryUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -362,6 +378,7 @@ export type CategoryUncheckedUpdateInput = {
 export type CategoryCreateManyInput = {
   id?: number
   parentId?: number | null
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -370,6 +387,7 @@ export type CategoryCreateManyInput = {
 }
 
 export type CategoryUpdateManyMutationInput = {
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -380,6 +398,7 @@ export type CategoryUpdateManyMutationInput = {
 export type CategoryUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -405,6 +424,7 @@ export type CategoryOrderByRelationAggregateInput = {
 export type CategoryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   parentId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   active?: Prisma.SortOrder
   position?: Prisma.SortOrder
   level?: Prisma.SortOrder
@@ -422,6 +442,7 @@ export type CategoryAvgOrderByAggregateInput = {
 export type CategoryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   parentId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   active?: Prisma.SortOrder
   position?: Prisma.SortOrder
   level?: Prisma.SortOrder
@@ -432,6 +453,7 @@ export type CategoryMaxOrderByAggregateInput = {
 export type CategoryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   parentId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   active?: Prisma.SortOrder
   position?: Prisma.SortOrder
   level?: Prisma.SortOrder
@@ -538,6 +560,7 @@ export type CategoryUpdateOneRequiredWithoutProductsNestedInput = {
 }
 
 export type CategoryCreateWithoutChildrenInput = {
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -551,6 +574,7 @@ export type CategoryCreateWithoutChildrenInput = {
 export type CategoryUncheckedCreateWithoutChildrenInput = {
   id?: number
   parentId?: number | null
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -566,6 +590,7 @@ export type CategoryCreateOrConnectWithoutChildrenInput = {
 }
 
 export type CategoryCreateWithoutParentInput = {
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -578,6 +603,7 @@ export type CategoryCreateWithoutParentInput = {
 
 export type CategoryUncheckedCreateWithoutParentInput = {
   id?: number
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -610,6 +636,7 @@ export type CategoryUpdateToOneWithWhereWithoutChildrenInput = {
 }
 
 export type CategoryUpdateWithoutChildrenInput = {
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -623,6 +650,7 @@ export type CategoryUpdateWithoutChildrenInput = {
 export type CategoryUncheckedUpdateWithoutChildrenInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -654,6 +682,7 @@ export type CategoryScalarWhereInput = {
   NOT?: Prisma.CategoryScalarWhereInput | Prisma.CategoryScalarWhereInput[]
   id?: Prisma.IntFilter<"Category"> | number
   parentId?: Prisma.IntNullableFilter<"Category"> | number | null
+  code?: Prisma.StringNullableFilter<"Category"> | string | null
   active?: Prisma.BoolFilter<"Category"> | boolean
   position?: Prisma.IntFilter<"Category"> | number
   level?: Prisma.IntFilter<"Category"> | number
@@ -662,6 +691,7 @@ export type CategoryScalarWhereInput = {
 }
 
 export type CategoryCreateWithoutTranslationsInput = {
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -675,6 +705,7 @@ export type CategoryCreateWithoutTranslationsInput = {
 export type CategoryUncheckedCreateWithoutTranslationsInput = {
   id?: number
   parentId?: number | null
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -701,6 +732,7 @@ export type CategoryUpdateToOneWithWhereWithoutTranslationsInput = {
 }
 
 export type CategoryUpdateWithoutTranslationsInput = {
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -714,6 +746,7 @@ export type CategoryUpdateWithoutTranslationsInput = {
 export type CategoryUncheckedUpdateWithoutTranslationsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -724,6 +757,7 @@ export type CategoryUncheckedUpdateWithoutTranslationsInput = {
 }
 
 export type CategoryCreateWithoutProductsInput = {
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -737,6 +771,7 @@ export type CategoryCreateWithoutProductsInput = {
 export type CategoryUncheckedCreateWithoutProductsInput = {
   id?: number
   parentId?: number | null
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -763,6 +798,7 @@ export type CategoryUpdateToOneWithWhereWithoutProductsInput = {
 }
 
 export type CategoryUpdateWithoutProductsInput = {
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -776,6 +812,7 @@ export type CategoryUpdateWithoutProductsInput = {
 export type CategoryUncheckedUpdateWithoutProductsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   parentId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -787,6 +824,7 @@ export type CategoryUncheckedUpdateWithoutProductsInput = {
 
 export type CategoryCreateManyParentInput = {
   id?: number
+  code?: string | null
   active?: boolean
   position?: number
   level?: number
@@ -795,6 +833,7 @@ export type CategoryCreateManyParentInput = {
 }
 
 export type CategoryUpdateWithoutParentInput = {
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -807,6 +846,7 @@ export type CategoryUpdateWithoutParentInput = {
 
 export type CategoryUncheckedUpdateWithoutParentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -819,6 +859,7 @@ export type CategoryUncheckedUpdateWithoutParentInput = {
 
 export type CategoryUncheckedUpdateManyWithoutParentInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   position?: Prisma.IntFieldUpdateOperationsInput | number
   level?: Prisma.IntFieldUpdateOperationsInput | number
@@ -878,6 +919,7 @@ export type CategoryCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Typ
 export type CategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   parentId?: boolean
+  code?: boolean
   active?: boolean
   position?: boolean
   level?: boolean
@@ -893,6 +935,7 @@ export type CategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type CategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   parentId?: boolean
+  code?: boolean
   active?: boolean
   position?: boolean
   level?: boolean
@@ -904,6 +947,7 @@ export type CategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type CategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   parentId?: boolean
+  code?: boolean
   active?: boolean
   position?: boolean
   level?: boolean
@@ -915,6 +959,7 @@ export type CategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type CategorySelectScalar = {
   id?: boolean
   parentId?: boolean
+  code?: boolean
   active?: boolean
   position?: boolean
   level?: boolean
@@ -922,7 +967,7 @@ export type CategorySelectScalar = {
   updatedAt?: boolean
 }
 
-export type CategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "parentId" | "active" | "position" | "level" | "createdAt" | "updatedAt", ExtArgs["result"]["category"]>
+export type CategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "parentId" | "code" | "active" | "position" | "level" | "createdAt" | "updatedAt", ExtArgs["result"]["category"]>
 export type CategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   parent?: boolean | Prisma.Category$parentArgs<ExtArgs>
   children?: boolean | Prisma.Category$childrenArgs<ExtArgs>
@@ -948,6 +993,7 @@ export type $CategoryPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     parentId: number | null
+    code: string | null
     active: boolean
     position: number
     level: number
@@ -1382,6 +1428,7 @@ export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends runtime
 export interface CategoryFieldRefs {
   readonly id: Prisma.FieldRef<"Category", 'Int'>
   readonly parentId: Prisma.FieldRef<"Category", 'Int'>
+  readonly code: Prisma.FieldRef<"Category", 'String'>
   readonly active: Prisma.FieldRef<"Category", 'Boolean'>
   readonly position: Prisma.FieldRef<"Category", 'Int'>
   readonly level: Prisma.FieldRef<"Category", 'Int'>

@@ -1,20 +1,28 @@
 model Country {
-  code   String  @id     // IT, DE, FR…
-  name   String
-  isEU   Boolean @default(false)
+  code        String  @id // IT, DE, FR…
+  name        String
+  isEU        Boolean @default(false)
+  iso3        String  @db.VarChar(3)
+  numericCode String  @db.VarChar(3)
+  phoneCode   String  @db.VarChar(4)
+  continent   String
+  active      Boolean
+
+  currencyCode String   @default("EUR") @db.Char(3)
+  currency     Currency @relation("CountryCurrency", fields: [currencyCode], references: [code])
 
   // Relazioni inverse
   companyAddresses CompanyAddress[] @relation("AddressCountry")
-  companies Company[] @relation("CompanyCountry")
-  
-  documentCountry Document[] @relation("DocumentCountry")
+  companies        Company[]        @relation("CompanyCountry")
+
+  documentCountry         Document[] @relation("DocumentCountry")
   documentShippingCountry Document[] @relation("DocumentShippingCountry")
 
   leads Lead[] @relation("LeadCountry")
 
   taxRule TaxRule[]
-  
+
   tenant TenantSettings[]
-  
-  languages       Language[]
+
+  languages Language[]
 }

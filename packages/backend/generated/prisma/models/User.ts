@@ -287,6 +287,15 @@ export type UserWhereInput = {
   activitiesCreated?: Prisma.ActivityListRelationFilter
   activityParticipants?: Prisma.ActivityParticipantListRelationFilter
   companyNotes?: Prisma.CompanyNoteListRelationFilter
+  stockMovement?: Prisma.StockMovementListRelationFilter
+  auditLogs?: Prisma.AuditLogListRelationFilter
+  deletedDocuments?: Prisma.DocumentListRelationFilter
+  deletedProducts?: Prisma.ProductListRelationFilter
+  deletedProductVariants?: Prisma.ProductVariantListRelationFilter
+  deletedCustomers?: Prisma.CustomerListRelationFilter
+  deletedSuppliers?: Prisma.SupplierListRelationFilter
+  assignedLeads?: Prisma.LeadListRelationFilter
+  convertedLeads?: Prisma.LeadListRelationFilter
   details?: Prisma.XOR<Prisma.UserDetailsNullableScalarRelationFilter, Prisma.UserDetailsWhereInput> | null
 }
 
@@ -314,6 +323,15 @@ export type UserOrderByWithRelationInput = {
   activitiesCreated?: Prisma.ActivityOrderByRelationAggregateInput
   activityParticipants?: Prisma.ActivityParticipantOrderByRelationAggregateInput
   companyNotes?: Prisma.CompanyNoteOrderByRelationAggregateInput
+  stockMovement?: Prisma.StockMovementOrderByRelationAggregateInput
+  auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
+  deletedDocuments?: Prisma.DocumentOrderByRelationAggregateInput
+  deletedProducts?: Prisma.ProductOrderByRelationAggregateInput
+  deletedProductVariants?: Prisma.ProductVariantOrderByRelationAggregateInput
+  deletedCustomers?: Prisma.CustomerOrderByRelationAggregateInput
+  deletedSuppliers?: Prisma.SupplierOrderByRelationAggregateInput
+  assignedLeads?: Prisma.LeadOrderByRelationAggregateInput
+  convertedLeads?: Prisma.LeadOrderByRelationAggregateInput
   details?: Prisma.UserDetailsOrderByWithRelationInput
 }
 
@@ -344,6 +362,15 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   activitiesCreated?: Prisma.ActivityListRelationFilter
   activityParticipants?: Prisma.ActivityParticipantListRelationFilter
   companyNotes?: Prisma.CompanyNoteListRelationFilter
+  stockMovement?: Prisma.StockMovementListRelationFilter
+  auditLogs?: Prisma.AuditLogListRelationFilter
+  deletedDocuments?: Prisma.DocumentListRelationFilter
+  deletedProducts?: Prisma.ProductListRelationFilter
+  deletedProductVariants?: Prisma.ProductVariantListRelationFilter
+  deletedCustomers?: Prisma.CustomerListRelationFilter
+  deletedSuppliers?: Prisma.SupplierListRelationFilter
+  assignedLeads?: Prisma.LeadListRelationFilter
+  convertedLeads?: Prisma.LeadListRelationFilter
   details?: Prisma.XOR<Prisma.UserDetailsNullableScalarRelationFilter, Prisma.UserDetailsWhereInput> | null
 }, "id" | "username" | "email" | "emailVerificationToken" | "resetPasswordToken">
 
@@ -407,6 +434,15 @@ export type UserCreateInput = {
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -433,6 +469,15 @@ export type UserUncheckedCreateInput = {
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -458,6 +503,15 @@ export type UserUpdateInput = {
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -484,6 +538,15 @@ export type UserUncheckedUpdateInput = {
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -665,6 +728,38 @@ export type UserUpdateOneWithoutAssignedCompaniesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAssignedCompaniesInput, Prisma.UserUpdateWithoutAssignedCompaniesInput>, Prisma.UserUncheckedUpdateWithoutAssignedCompaniesInput>
 }
 
+export type UserCreateNestedOneWithoutDeletedCustomersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedCustomersInput, Prisma.UserUncheckedCreateWithoutDeletedCustomersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedCustomersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutDeletedCustomersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedCustomersInput, Prisma.UserUncheckedCreateWithoutDeletedCustomersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedCustomersInput
+  upsert?: Prisma.UserUpsertWithoutDeletedCustomersInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeletedCustomersInput, Prisma.UserUpdateWithoutDeletedCustomersInput>, Prisma.UserUncheckedUpdateWithoutDeletedCustomersInput>
+}
+
+export type UserCreateNestedOneWithoutDeletedSuppliersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedSuppliersInput, Prisma.UserUncheckedCreateWithoutDeletedSuppliersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedSuppliersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutDeletedSuppliersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedSuppliersInput, Prisma.UserUncheckedCreateWithoutDeletedSuppliersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedSuppliersInput
+  upsert?: Prisma.UserUpsertWithoutDeletedSuppliersInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeletedSuppliersInput, Prisma.UserUpdateWithoutDeletedSuppliersInput>, Prisma.UserUncheckedUpdateWithoutDeletedSuppliersInput>
+}
+
 export type UserCreateNestedOneWithoutCompanyNotesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutCompanyNotesInput, Prisma.UserUncheckedCreateWithoutCompanyNotesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutCompanyNotesInput
@@ -691,6 +786,12 @@ export type UserCreateNestedOneWithoutAssignedDocumentsInput = {
   connect?: Prisma.UserWhereUniqueInput
 }
 
+export type UserCreateNestedOneWithoutDeletedDocumentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedDocumentsInput, Prisma.UserUncheckedCreateWithoutDeletedDocumentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedDocumentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
 export type UserUpdateOneRequiredWithoutCreatedDocumentsNestedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedDocumentsInput, Prisma.UserUncheckedCreateWithoutCreatedDocumentsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedDocumentsInput
@@ -707,6 +808,16 @@ export type UserUpdateOneWithoutAssignedDocumentsNestedInput = {
   delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAssignedDocumentsInput, Prisma.UserUpdateWithoutAssignedDocumentsInput>, Prisma.UserUncheckedUpdateWithoutAssignedDocumentsInput>
+}
+
+export type UserUpdateOneWithoutDeletedDocumentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedDocumentsInput, Prisma.UserUncheckedCreateWithoutDeletedDocumentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedDocumentsInput
+  upsert?: Prisma.UserUpsertWithoutDeletedDocumentsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeletedDocumentsInput, Prisma.UserUpdateWithoutDeletedDocumentsInput>, Prisma.UserUncheckedUpdateWithoutDeletedDocumentsInput>
 }
 
 export type UserCreateNestedManyWithoutPreferredLanguageInput = {
@@ -751,6 +862,38 @@ export type UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
+export type UserCreateNestedOneWithoutAssignedLeadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedLeadsInput, Prisma.UserUncheckedCreateWithoutAssignedLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedLeadsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutConvertedLeadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutConvertedLeadsInput, Prisma.UserUncheckedCreateWithoutConvertedLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutConvertedLeadsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutAssignedLeadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedLeadsInput, Prisma.UserUncheckedCreateWithoutAssignedLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedLeadsInput
+  upsert?: Prisma.UserUpsertWithoutAssignedLeadsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAssignedLeadsInput, Prisma.UserUpdateWithoutAssignedLeadsInput>, Prisma.UserUncheckedUpdateWithoutAssignedLeadsInput>
+}
+
+export type UserUpdateOneWithoutConvertedLeadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutConvertedLeadsInput, Prisma.UserUncheckedCreateWithoutConvertedLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutConvertedLeadsInput
+  upsert?: Prisma.UserUpsertWithoutConvertedLeadsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutConvertedLeadsInput, Prisma.UserUpdateWithoutConvertedLeadsInput>, Prisma.UserUncheckedUpdateWithoutConvertedLeadsInput>
+}
+
 export type UserCreateNestedOneWithoutCreatedOpportunitiesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedOpportunitiesInput, Prisma.UserUncheckedCreateWithoutCreatedOpportunitiesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedOpportunitiesInput
@@ -779,6 +922,38 @@ export type UserUpdateOneWithoutAssignedOpportunitiesNestedInput = {
   delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAssignedOpportunitiesInput, Prisma.UserUpdateWithoutAssignedOpportunitiesInput>, Prisma.UserUncheckedUpdateWithoutAssignedOpportunitiesInput>
+}
+
+export type UserCreateNestedOneWithoutDeletedProductsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedProductsInput, Prisma.UserUncheckedCreateWithoutDeletedProductsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedProductsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutDeletedProductsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedProductsInput, Prisma.UserUncheckedCreateWithoutDeletedProductsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedProductsInput
+  upsert?: Prisma.UserUpsertWithoutDeletedProductsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeletedProductsInput, Prisma.UserUpdateWithoutDeletedProductsInput>, Prisma.UserUncheckedUpdateWithoutDeletedProductsInput>
+}
+
+export type UserCreateNestedOneWithoutDeletedProductVariantsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedProductVariantsInput, Prisma.UserUncheckedCreateWithoutDeletedProductVariantsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedProductVariantsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutDeletedProductVariantsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeletedProductVariantsInput, Prisma.UserUncheckedCreateWithoutDeletedProductVariantsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeletedProductVariantsInput
+  upsert?: Prisma.UserUpsertWithoutDeletedProductVariantsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeletedProductVariantsInput, Prisma.UserUpdateWithoutDeletedProductVariantsInput>, Prisma.UserUncheckedUpdateWithoutDeletedProductVariantsInput>
 }
 
 export type UserCreateNestedManyWithoutRolesInput = {
@@ -819,6 +994,22 @@ export type UserUncheckedUpdateManyWithoutRolesNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
+export type UserCreateNestedOneWithoutAuditLogsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuditLogsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutAuditLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuditLogsInput
+  upsert?: Prisma.UserUpsertWithoutAuditLogsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.UserUpdateWithoutAuditLogsInput>, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
+}
+
 export type UserCreateNestedOneWithoutDetailsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutDetailsInput, Prisma.UserUncheckedCreateWithoutDetailsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutDetailsInput
@@ -831,6 +1022,22 @@ export type UserUpdateOneRequiredWithoutDetailsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutDetailsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDetailsInput, Prisma.UserUpdateWithoutDetailsInput>, Prisma.UserUncheckedUpdateWithoutDetailsInput>
+}
+
+export type UserCreateNestedOneWithoutStockMovementInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutStockMovementInput, Prisma.UserUncheckedCreateWithoutStockMovementInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutStockMovementInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutStockMovementNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutStockMovementInput, Prisma.UserUncheckedCreateWithoutStockMovementInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutStockMovementInput
+  upsert?: Prisma.UserUpsertWithoutStockMovementInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutStockMovementInput, Prisma.UserUpdateWithoutStockMovementInput>, Prisma.UserUncheckedUpdateWithoutStockMovementInput>
 }
 
 export type UserCreateWithoutActivitiesAssignedInput = {
@@ -854,6 +1061,15 @@ export type UserCreateWithoutActivitiesAssignedInput = {
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -879,6 +1095,15 @@ export type UserUncheckedCreateWithoutActivitiesAssignedInput = {
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -908,6 +1133,15 @@ export type UserCreateWithoutActivitiesCreatedInput = {
   activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -933,6 +1167,15 @@ export type UserUncheckedCreateWithoutActivitiesCreatedInput = {
   activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -973,6 +1216,15 @@ export type UserUpdateWithoutActivitiesAssignedInput = {
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -998,6 +1250,15 @@ export type UserUncheckedUpdateWithoutActivitiesAssignedInput = {
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1033,6 +1294,15 @@ export type UserUpdateWithoutActivitiesCreatedInput = {
   activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -1058,6 +1328,15 @@ export type UserUncheckedUpdateWithoutActivitiesCreatedInput = {
   activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1082,6 +1361,15 @@ export type UserCreateWithoutActivityParticipantsInput = {
   activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1107,6 +1395,15 @@ export type UserUncheckedCreateWithoutActivityParticipantsInput = {
   activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1147,6 +1444,15 @@ export type UserUpdateWithoutActivityParticipantsInput = {
   activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -1172,6 +1478,15 @@ export type UserUncheckedUpdateWithoutActivityParticipantsInput = {
   activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1196,6 +1511,15 @@ export type UserCreateWithoutAssignedCompaniesInput = {
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1221,6 +1545,15 @@ export type UserUncheckedCreateWithoutAssignedCompaniesInput = {
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1261,6 +1594,15 @@ export type UserUpdateWithoutAssignedCompaniesInput = {
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -1286,6 +1628,315 @@ export type UserUncheckedUpdateWithoutAssignedCompaniesInput = {
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutDeletedCustomersInput = {
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
+  createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutDeletedCustomersInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  preferredLanguageId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutDeletedCustomersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedCustomersInput, Prisma.UserUncheckedCreateWithoutDeletedCustomersInput>
+}
+
+export type UserUpsertWithoutDeletedCustomersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDeletedCustomersInput, Prisma.UserUncheckedUpdateWithoutDeletedCustomersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedCustomersInput, Prisma.UserUncheckedCreateWithoutDeletedCustomersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDeletedCustomersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDeletedCustomersInput, Prisma.UserUncheckedUpdateWithoutDeletedCustomersInput>
+}
+
+export type UserUpdateWithoutDeletedCustomersInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDeletedCustomersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutDeletedSuppliersInput = {
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
+  createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutDeletedSuppliersInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  preferredLanguageId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutDeletedSuppliersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedSuppliersInput, Prisma.UserUncheckedCreateWithoutDeletedSuppliersInput>
+}
+
+export type UserUpsertWithoutDeletedSuppliersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDeletedSuppliersInput, Prisma.UserUncheckedUpdateWithoutDeletedSuppliersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedSuppliersInput, Prisma.UserUncheckedCreateWithoutDeletedSuppliersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDeletedSuppliersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDeletedSuppliersInput, Prisma.UserUncheckedUpdateWithoutDeletedSuppliersInput>
+}
+
+export type UserUpdateWithoutDeletedSuppliersInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDeletedSuppliersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1310,6 +1961,15 @@ export type UserCreateWithoutCompanyNotesInput = {
   activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1335,6 +1995,15 @@ export type UserUncheckedCreateWithoutCompanyNotesInput = {
   activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1375,6 +2044,15 @@ export type UserUpdateWithoutCompanyNotesInput = {
   activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -1400,6 +2078,15 @@ export type UserUncheckedUpdateWithoutCompanyNotesInput = {
   activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1424,6 +2111,15 @@ export type UserCreateWithoutCreatedDocumentsInput = {
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1449,6 +2145,15 @@ export type UserUncheckedCreateWithoutCreatedDocumentsInput = {
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1478,6 +2183,15 @@ export type UserCreateWithoutAssignedDocumentsInput = {
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1503,12 +2217,93 @@ export type UserUncheckedCreateWithoutAssignedDocumentsInput = {
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAssignedDocumentsInput = {
   where: Prisma.UserWhereUniqueInput
   create: Prisma.XOR<Prisma.UserCreateWithoutAssignedDocumentsInput, Prisma.UserUncheckedCreateWithoutAssignedDocumentsInput>
+}
+
+export type UserCreateWithoutDeletedDocumentsInput = {
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
+  createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutDeletedDocumentsInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  preferredLanguageId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutDeletedDocumentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedDocumentsInput, Prisma.UserUncheckedCreateWithoutDeletedDocumentsInput>
 }
 
 export type UserUpsertWithoutCreatedDocumentsInput = {
@@ -1543,6 +2338,15 @@ export type UserUpdateWithoutCreatedDocumentsInput = {
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -1568,6 +2372,15 @@ export type UserUncheckedUpdateWithoutCreatedDocumentsInput = {
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1603,6 +2416,15 @@ export type UserUpdateWithoutAssignedDocumentsInput = {
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -1628,6 +2450,93 @@ export type UserUncheckedUpdateWithoutAssignedDocumentsInput = {
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutDeletedDocumentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDeletedDocumentsInput, Prisma.UserUncheckedUpdateWithoutDeletedDocumentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedDocumentsInput, Prisma.UserUncheckedCreateWithoutDeletedDocumentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDeletedDocumentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDeletedDocumentsInput, Prisma.UserUncheckedUpdateWithoutDeletedDocumentsInput>
+}
+
+export type UserUpdateWithoutDeletedDocumentsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDeletedDocumentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1652,6 +2561,15 @@ export type UserCreateWithoutPreferredLanguageInput = {
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1677,6 +2595,15 @@ export type UserUncheckedCreateWithoutPreferredLanguageInput = {
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1724,6 +2651,306 @@ export type UserScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
 }
 
+export type UserCreateWithoutAssignedLeadsInput = {
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
+  createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAssignedLeadsInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  preferredLanguageId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAssignedLeadsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAssignedLeadsInput, Prisma.UserUncheckedCreateWithoutAssignedLeadsInput>
+}
+
+export type UserCreateWithoutConvertedLeadsInput = {
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
+  createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutConvertedLeadsInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  preferredLanguageId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutConvertedLeadsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutConvertedLeadsInput, Prisma.UserUncheckedCreateWithoutConvertedLeadsInput>
+}
+
+export type UserUpsertWithoutAssignedLeadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAssignedLeadsInput, Prisma.UserUncheckedUpdateWithoutAssignedLeadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAssignedLeadsInput, Prisma.UserUncheckedCreateWithoutAssignedLeadsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAssignedLeadsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAssignedLeadsInput, Prisma.UserUncheckedUpdateWithoutAssignedLeadsInput>
+}
+
+export type UserUpdateWithoutAssignedLeadsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAssignedLeadsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutConvertedLeadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutConvertedLeadsInput, Prisma.UserUncheckedUpdateWithoutConvertedLeadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutConvertedLeadsInput, Prisma.UserUncheckedCreateWithoutConvertedLeadsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutConvertedLeadsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutConvertedLeadsInput, Prisma.UserUncheckedUpdateWithoutConvertedLeadsInput>
+}
+
+export type UserUpdateWithoutConvertedLeadsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutConvertedLeadsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
+}
+
 export type UserCreateWithoutCreatedOpportunitiesInput = {
   username: string
   email: string
@@ -1745,6 +2972,15 @@ export type UserCreateWithoutCreatedOpportunitiesInput = {
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1770,6 +3006,15 @@ export type UserUncheckedCreateWithoutCreatedOpportunitiesInput = {
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1799,6 +3044,15 @@ export type UserCreateWithoutAssignedOpportunitiesInput = {
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1824,6 +3078,15 @@ export type UserUncheckedCreateWithoutAssignedOpportunitiesInput = {
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1864,6 +3127,15 @@ export type UserUpdateWithoutCreatedOpportunitiesInput = {
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -1889,6 +3161,15 @@ export type UserUncheckedUpdateWithoutCreatedOpportunitiesInput = {
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1924,6 +3205,15 @@ export type UserUpdateWithoutAssignedOpportunitiesInput = {
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -1949,6 +3239,315 @@ export type UserUncheckedUpdateWithoutAssignedOpportunitiesInput = {
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutDeletedProductsInput = {
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
+  createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutDeletedProductsInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  preferredLanguageId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutDeletedProductsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedProductsInput, Prisma.UserUncheckedCreateWithoutDeletedProductsInput>
+}
+
+export type UserUpsertWithoutDeletedProductsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDeletedProductsInput, Prisma.UserUncheckedUpdateWithoutDeletedProductsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedProductsInput, Prisma.UserUncheckedCreateWithoutDeletedProductsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDeletedProductsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDeletedProductsInput, Prisma.UserUncheckedUpdateWithoutDeletedProductsInput>
+}
+
+export type UserUpdateWithoutDeletedProductsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDeletedProductsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutDeletedProductVariantsInput = {
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
+  createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutDeletedProductVariantsInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  preferredLanguageId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutDeletedProductVariantsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedProductVariantsInput, Prisma.UserUncheckedCreateWithoutDeletedProductVariantsInput>
+}
+
+export type UserUpsertWithoutDeletedProductVariantsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDeletedProductVariantsInput, Prisma.UserUncheckedUpdateWithoutDeletedProductVariantsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeletedProductVariantsInput, Prisma.UserUncheckedCreateWithoutDeletedProductVariantsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDeletedProductVariantsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDeletedProductVariantsInput, Prisma.UserUncheckedUpdateWithoutDeletedProductVariantsInput>
+}
+
+export type UserUpdateWithoutDeletedProductVariantsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDeletedProductVariantsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1973,6 +3572,15 @@ export type UserCreateWithoutRolesInput = {
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1998,6 +3606,15 @@ export type UserUncheckedCreateWithoutRolesInput = {
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -2022,6 +3639,156 @@ export type UserUpdateManyWithWhereWithoutRolesInput = {
   data: Prisma.XOR<Prisma.UserUpdateManyMutationInput, Prisma.UserUncheckedUpdateManyWithoutRolesInput>
 }
 
+export type UserCreateWithoutAuditLogsInput = {
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
+  createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAuditLogsInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  preferredLanguageId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAuditLogsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
+}
+
+export type UserUpsertWithoutAuditLogsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAuditLogsInput, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAuditLogsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAuditLogsInput, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
+}
+
+export type UserUpdateWithoutAuditLogsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAuditLogsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
+}
+
 export type UserCreateWithoutDetailsInput = {
   username: string
   email: string
@@ -2044,6 +3811,15 @@ export type UserCreateWithoutDetailsInput = {
   activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
 }
 
 export type UserUncheckedCreateWithoutDetailsInput = {
@@ -2069,6 +3845,15 @@ export type UserUncheckedCreateWithoutDetailsInput = {
   activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
   companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
 }
 
 export type UserCreateOrConnectWithoutDetailsInput = {
@@ -2109,6 +3894,15 @@ export type UserUpdateWithoutDetailsInput = {
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDetailsInput = {
@@ -2134,6 +3928,165 @@ export type UserUncheckedUpdateWithoutDetailsInput = {
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+}
+
+export type UserCreateWithoutStockMovementInput = {
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
+  createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutStockMovementInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  preferredLanguageId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutStockMovementInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutStockMovementInput, Prisma.UserUncheckedCreateWithoutStockMovementInput>
+}
+
+export type UserUpsertWithoutStockMovementInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutStockMovementInput, Prisma.UserUncheckedUpdateWithoutStockMovementInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutStockMovementInput, Prisma.UserUncheckedCreateWithoutStockMovementInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutStockMovementInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutStockMovementInput, Prisma.UserUncheckedUpdateWithoutStockMovementInput>
+}
+
+export type UserUpdateWithoutStockMovementInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutStockMovementInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyPreferredLanguageInput = {
@@ -2171,6 +4124,15 @@ export type UserUpdateWithoutPreferredLanguageInput = {
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -2196,6 +4158,15 @@ export type UserUncheckedUpdateWithoutPreferredLanguageInput = {
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -2234,6 +4205,15 @@ export type UserUpdateWithoutRolesInput = {
   activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -2259,6 +4239,15 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
   companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -2293,6 +4282,15 @@ export type UserCountOutputType = {
   activitiesCreated: number
   activityParticipants: number
   companyNotes: number
+  stockMovement: number
+  auditLogs: number
+  deletedDocuments: number
+  deletedProducts: number
+  deletedProductVariants: number
+  deletedCustomers: number
+  deletedSuppliers: number
+  assignedLeads: number
+  convertedLeads: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2306,6 +4304,15 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   activitiesCreated?: boolean | UserCountOutputTypeCountActivitiesCreatedArgs
   activityParticipants?: boolean | UserCountOutputTypeCountActivityParticipantsArgs
   companyNotes?: boolean | UserCountOutputTypeCountCompanyNotesArgs
+  stockMovement?: boolean | UserCountOutputTypeCountStockMovementArgs
+  auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
+  deletedDocuments?: boolean | UserCountOutputTypeCountDeletedDocumentsArgs
+  deletedProducts?: boolean | UserCountOutputTypeCountDeletedProductsArgs
+  deletedProductVariants?: boolean | UserCountOutputTypeCountDeletedProductVariantsArgs
+  deletedCustomers?: boolean | UserCountOutputTypeCountDeletedCustomersArgs
+  deletedSuppliers?: boolean | UserCountOutputTypeCountDeletedSuppliersArgs
+  assignedLeads?: boolean | UserCountOutputTypeCountAssignedLeadsArgs
+  convertedLeads?: boolean | UserCountOutputTypeCountConvertedLeadsArgs
 }
 
 /**
@@ -2388,6 +4395,69 @@ export type UserCountOutputTypeCountCompanyNotesArgs<ExtArgs extends runtime.Typ
   where?: Prisma.CompanyNoteWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountStockMovementArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StockMovementWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AuditLogWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDeletedDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDeletedProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDeletedProductVariantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductVariantWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDeletedCustomersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CustomerWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDeletedSuppliersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupplierWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAssignedLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeadWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountConvertedLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeadWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2413,6 +4483,15 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   activitiesCreated?: boolean | Prisma.User$activitiesCreatedArgs<ExtArgs>
   activityParticipants?: boolean | Prisma.User$activityParticipantsArgs<ExtArgs>
   companyNotes?: boolean | Prisma.User$companyNotesArgs<ExtArgs>
+  stockMovement?: boolean | Prisma.User$stockMovementArgs<ExtArgs>
+  auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  deletedDocuments?: boolean | Prisma.User$deletedDocumentsArgs<ExtArgs>
+  deletedProducts?: boolean | Prisma.User$deletedProductsArgs<ExtArgs>
+  deletedProductVariants?: boolean | Prisma.User$deletedProductVariantsArgs<ExtArgs>
+  deletedCustomers?: boolean | Prisma.User$deletedCustomersArgs<ExtArgs>
+  deletedSuppliers?: boolean | Prisma.User$deletedSuppliersArgs<ExtArgs>
+  assignedLeads?: boolean | Prisma.User$assignedLeadsArgs<ExtArgs>
+  convertedLeads?: boolean | Prisma.User$convertedLeadsArgs<ExtArgs>
   details?: boolean | Prisma.User$detailsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -2477,6 +4556,15 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   activitiesCreated?: boolean | Prisma.User$activitiesCreatedArgs<ExtArgs>
   activityParticipants?: boolean | Prisma.User$activityParticipantsArgs<ExtArgs>
   companyNotes?: boolean | Prisma.User$companyNotesArgs<ExtArgs>
+  stockMovement?: boolean | Prisma.User$stockMovementArgs<ExtArgs>
+  auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
+  deletedDocuments?: boolean | Prisma.User$deletedDocumentsArgs<ExtArgs>
+  deletedProducts?: boolean | Prisma.User$deletedProductsArgs<ExtArgs>
+  deletedProductVariants?: boolean | Prisma.User$deletedProductVariantsArgs<ExtArgs>
+  deletedCustomers?: boolean | Prisma.User$deletedCustomersArgs<ExtArgs>
+  deletedSuppliers?: boolean | Prisma.User$deletedSuppliersArgs<ExtArgs>
+  assignedLeads?: boolean | Prisma.User$assignedLeadsArgs<ExtArgs>
+  convertedLeads?: boolean | Prisma.User$convertedLeadsArgs<ExtArgs>
   details?: boolean | Prisma.User$detailsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -2501,6 +4589,15 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     activitiesCreated: Prisma.$ActivityPayload<ExtArgs>[]
     activityParticipants: Prisma.$ActivityParticipantPayload<ExtArgs>[]
     companyNotes: Prisma.$CompanyNotePayload<ExtArgs>[]
+    stockMovement: Prisma.$StockMovementPayload<ExtArgs>[]
+    auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+    deletedDocuments: Prisma.$DocumentPayload<ExtArgs>[]
+    deletedProducts: Prisma.$ProductPayload<ExtArgs>[]
+    deletedProductVariants: Prisma.$ProductVariantPayload<ExtArgs>[]
+    deletedCustomers: Prisma.$CustomerPayload<ExtArgs>[]
+    deletedSuppliers: Prisma.$SupplierPayload<ExtArgs>[]
+    assignedLeads: Prisma.$LeadPayload<ExtArgs>[]
+    convertedLeads: Prisma.$LeadPayload<ExtArgs>[]
     details: Prisma.$UserDetailsPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -2921,6 +5018,15 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   activitiesCreated<T extends Prisma.User$activitiesCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activitiesCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   activityParticipants<T extends Prisma.User$activityParticipantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activityParticipantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   companyNotes<T extends Prisma.User$companyNotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$companyNotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanyNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  stockMovement<T extends Prisma.User$stockMovementArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$stockMovementArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  auditLogs<T extends Prisma.User$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedDocuments<T extends Prisma.User$deletedDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deletedDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedProducts<T extends Prisma.User$deletedProductsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deletedProductsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedProductVariants<T extends Prisma.User$deletedProductVariantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deletedProductVariantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedCustomers<T extends Prisma.User$deletedCustomersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deletedCustomersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedSuppliers<T extends Prisma.User$deletedSuppliersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deletedSuppliersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  assignedLeads<T extends Prisma.User$assignedLeadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedLeadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  convertedLeads<T extends Prisma.User$convertedLeadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$convertedLeadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   details<T extends Prisma.User$detailsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$detailsArgs<ExtArgs>>): Prisma.Prisma__UserDetailsClient<runtime.Types.Result.GetResult<Prisma.$UserDetailsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3615,6 +5721,222 @@ export type User$companyNotesArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.CompanyNoteScalarFieldEnum | Prisma.CompanyNoteScalarFieldEnum[]
+}
+
+/**
+ * User.stockMovement
+ */
+export type User$stockMovementArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StockMovement
+   */
+  select?: Prisma.StockMovementSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StockMovement
+   */
+  omit?: Prisma.StockMovementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StockMovementInclude<ExtArgs> | null
+  where?: Prisma.StockMovementWhereInput
+  orderBy?: Prisma.StockMovementOrderByWithRelationInput | Prisma.StockMovementOrderByWithRelationInput[]
+  cursor?: Prisma.StockMovementWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StockMovementScalarFieldEnum | Prisma.StockMovementScalarFieldEnum[]
+}
+
+/**
+ * User.auditLogs
+ */
+export type User$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AuditLog
+   */
+  select?: Prisma.AuditLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AuditLog
+   */
+  omit?: Prisma.AuditLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AuditLogInclude<ExtArgs> | null
+  where?: Prisma.AuditLogWhereInput
+  orderBy?: Prisma.AuditLogOrderByWithRelationInput | Prisma.AuditLogOrderByWithRelationInput[]
+  cursor?: Prisma.AuditLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
+}
+
+/**
+ * User.deletedDocuments
+ */
+export type User$deletedDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Document
+   */
+  select?: Prisma.DocumentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Document
+   */
+  omit?: Prisma.DocumentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentInclude<ExtArgs> | null
+  where?: Prisma.DocumentWhereInput
+  orderBy?: Prisma.DocumentOrderByWithRelationInput | Prisma.DocumentOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DocumentScalarFieldEnum | Prisma.DocumentScalarFieldEnum[]
+}
+
+/**
+ * User.deletedProducts
+ */
+export type User$deletedProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Product
+   */
+  select?: Prisma.ProductSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Product
+   */
+  omit?: Prisma.ProductOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductInclude<ExtArgs> | null
+  where?: Prisma.ProductWhereInput
+  orderBy?: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[]
+  cursor?: Prisma.ProductWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductScalarFieldEnum | Prisma.ProductScalarFieldEnum[]
+}
+
+/**
+ * User.deletedProductVariants
+ */
+export type User$deletedProductVariantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductVariant
+   */
+  select?: Prisma.ProductVariantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductVariant
+   */
+  omit?: Prisma.ProductVariantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductVariantInclude<ExtArgs> | null
+  where?: Prisma.ProductVariantWhereInput
+  orderBy?: Prisma.ProductVariantOrderByWithRelationInput | Prisma.ProductVariantOrderByWithRelationInput[]
+  cursor?: Prisma.ProductVariantWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductVariantScalarFieldEnum | Prisma.ProductVariantScalarFieldEnum[]
+}
+
+/**
+ * User.deletedCustomers
+ */
+export type User$deletedCustomersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Customer
+   */
+  select?: Prisma.CustomerSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Customer
+   */
+  omit?: Prisma.CustomerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerInclude<ExtArgs> | null
+  where?: Prisma.CustomerWhereInput
+  orderBy?: Prisma.CustomerOrderByWithRelationInput | Prisma.CustomerOrderByWithRelationInput[]
+  cursor?: Prisma.CustomerWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CustomerScalarFieldEnum | Prisma.CustomerScalarFieldEnum[]
+}
+
+/**
+ * User.deletedSuppliers
+ */
+export type User$deletedSuppliersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Supplier
+   */
+  select?: Prisma.SupplierSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Supplier
+   */
+  omit?: Prisma.SupplierOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupplierInclude<ExtArgs> | null
+  where?: Prisma.SupplierWhereInput
+  orderBy?: Prisma.SupplierOrderByWithRelationInput | Prisma.SupplierOrderByWithRelationInput[]
+  cursor?: Prisma.SupplierWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupplierScalarFieldEnum | Prisma.SupplierScalarFieldEnum[]
+}
+
+/**
+ * User.assignedLeads
+ */
+export type User$assignedLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
+  orderBy?: Prisma.LeadOrderByWithRelationInput | Prisma.LeadOrderByWithRelationInput[]
+  cursor?: Prisma.LeadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeadScalarFieldEnum | Prisma.LeadScalarFieldEnum[]
+}
+
+/**
+ * User.convertedLeads
+ */
+export type User$convertedLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
+  orderBy?: Prisma.LeadOrderByWithRelationInput | Prisma.LeadOrderByWithRelationInput[]
+  cursor?: Prisma.LeadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeadScalarFieldEnum | Prisma.LeadScalarFieldEnum[]
 }
 
 /**

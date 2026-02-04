@@ -322,7 +322,6 @@ export type ContactOrderByWithRelationInput = {
 export type ContactWhereUniqueInput = Prisma.AtLeast<{
   id?: number
   companyId_email?: Prisma.ContactCompanyIdEmailCompoundUniqueInput
-  companyId_isPrimaryContact?: Prisma.ContactCompanyIdIsPrimaryContactCompoundUniqueInput
   AND?: Prisma.ContactWhereInput | Prisma.ContactWhereInput[]
   OR?: Prisma.ContactWhereInput[]
   NOT?: Prisma.ContactWhereInput | Prisma.ContactWhereInput[]
@@ -343,7 +342,7 @@ export type ContactWhereUniqueInput = Prisma.AtLeast<{
   documents?: Prisma.DocumentListRelationFilter
   activities?: Prisma.ActivityListRelationFilter
   activityParticipants?: Prisma.ActivityParticipantListRelationFilter
-}, "id" | "companyId_email" | "companyId_isPrimaryContact">
+}, "id" | "companyId_email">
 
 export type ContactOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -532,11 +531,6 @@ export type ContactOrderByRelationAggregateInput = {
 export type ContactCompanyIdEmailCompoundUniqueInput = {
   companyId: number
   email: string
-}
-
-export type ContactCompanyIdIsPrimaryContactCompoundUniqueInput = {
-  companyId: number
-  isPrimaryContact: boolean
 }
 
 export type ContactCountOrderByAggregateInput = {

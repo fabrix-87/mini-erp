@@ -143,17 +143,23 @@ model Document {
     shippingCountryCode String?  @db.Char(2) // Sostituisce shippingCountry
     shippingCountry     Country? @relation("DocumentShippingCountry", fields: [shippingCountryCode], references: [code])
 
-    // Importi
-    currency          String  @default("EUR")
-    subtotal          Decimal @default(0) @db.Decimal(15, 2)
-    discountPercent   Decimal @default(0) @db.Decimal(5, 2)
-    discountAmount    Decimal @default(0) @db.Decimal(15, 2)
-    shippingCost      Decimal @default(0) @db.Decimal(15, 2)
-    shippingTaxAmount Decimal @default(0) @db.Decimal(15, 2)
-    taxableAmount     Decimal @default(0) @db.Decimal(15, 2)
-    taxAmount         Decimal @default(0) @db.Decimal(15, 2)
-    totalAmount       Decimal @default(0) @db.Decimal(15, 2)
-    paidAmount        Decimal @default(0) @db.Decimal(15, 2)
+    // Importi    
+    subtotal          Decimal  @default(0) @db.Decimal(15, 2)
+    discountPercent   Decimal  @default(0) @db.Decimal(5, 2)
+    discountAmount    Decimal  @default(0) @db.Decimal(15, 2)
+    shippingCost      Decimal  @default(0) @db.Decimal(15, 2)
+    shippingTaxAmount Decimal  @default(0) @db.Decimal(15, 2)
+    taxableAmount     Decimal  @default(0) @db.Decimal(15, 2)
+    taxAmount         Decimal  @default(0) @db.Decimal(15, 2)
+    totalAmount       Decimal  @default(0) @db.Decimal(15, 2)
+    paidAmount        Decimal  @default(0) @db.Decimal(15, 2)
+    currencyCode      String   @default("EUR") @db.Char(3)
+    currency          Currency @relation("DocumentCurrency", fields: [currencyCode], references: [code])
+
+    // Snapshot tasso cambio al momento documento (per storicizzazione)
+    exchangeRate     Decimal  @default(1.0) @db.Decimal(12, 6)
+    exchangeRateDate DateTime @default(now())
+    baseCurrencyCode String   @default("EUR") @db.Char(3) // Valuta contabile aziendale
 
     // Pagamento
     // FK al set di regole usate per calcolare la scadenza
@@ -197,17 +203,17 @@ model Document {
     lines                 DocumentLine[]
     installments          DocumentPaymentInstallment[] // rate pagamento
     stockMovement         StockMovement[]
-    stockReservations StockReservation[]
+    stockReservations     StockReservation[]
     // Relazione alla transazione Intrastat
     intrastatTransactions IntrastatTransaction[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
     deletedAt DateTime?
 
-@@index([deletedAt])
-
     @@unique([documentType, documentYear, sequenceNumber])
+    @@index([currencyCode])
+    @@index([deletedAt])
     @@index([documentType])
     @@index([status])
     @@index([companyId])
@@ -286,7 +292,7 @@ model DocumentLine {
     warehouse   Warehouse? @relation(fields: [warehouseId], references: [id])
 
     stockReservations StockReservation[]
-    stockMovement StockMovement[]
+    stockMovement     StockMovement[]
 
     // gestione kit/bundle
     parentLineId   Int?

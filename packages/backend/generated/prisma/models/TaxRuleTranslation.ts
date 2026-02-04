@@ -43,6 +43,7 @@ export type TaxRuleTranslationMinAggregateOutputType = {
   taxRuleId: number | null
   languageId: number | null
   name: string | null
+  description: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +53,7 @@ export type TaxRuleTranslationMaxAggregateOutputType = {
   taxRuleId: number | null
   languageId: number | null
   name: string | null
+  description: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -61,6 +63,7 @@ export type TaxRuleTranslationCountAggregateOutputType = {
   taxRuleId: number
   languageId: number
   name: number
+  description: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -84,6 +87,7 @@ export type TaxRuleTranslationMinAggregateInputType = {
   taxRuleId?: true
   languageId?: true
   name?: true
+  description?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -93,6 +97,7 @@ export type TaxRuleTranslationMaxAggregateInputType = {
   taxRuleId?: true
   languageId?: true
   name?: true
+  description?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -102,6 +107,7 @@ export type TaxRuleTranslationCountAggregateInputType = {
   taxRuleId?: true
   languageId?: true
   name?: true
+  description?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -198,6 +204,7 @@ export type TaxRuleTranslationGroupByOutputType = {
   taxRuleId: number
   languageId: number
   name: string
+  description: string | null
   createdAt: Date
   updatedAt: Date
   _count: TaxRuleTranslationCountAggregateOutputType | null
@@ -230,6 +237,7 @@ export type TaxRuleTranslationWhereInput = {
   taxRuleId?: Prisma.IntFilter<"TaxRuleTranslation"> | number
   languageId?: Prisma.IntFilter<"TaxRuleTranslation"> | number
   name?: Prisma.StringFilter<"TaxRuleTranslation"> | string
+  description?: Prisma.StringNullableFilter<"TaxRuleTranslation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"TaxRuleTranslation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TaxRuleTranslation"> | Date | string
   taxRule?: Prisma.XOR<Prisma.TaxRuleScalarRelationFilter, Prisma.TaxRuleWhereInput>
@@ -241,6 +249,7 @@ export type TaxRuleTranslationOrderByWithRelationInput = {
   taxRuleId?: Prisma.SortOrder
   languageId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   taxRule?: Prisma.TaxRuleOrderByWithRelationInput
@@ -256,6 +265,7 @@ export type TaxRuleTranslationWhereUniqueInput = Prisma.AtLeast<{
   taxRuleId?: Prisma.IntFilter<"TaxRuleTranslation"> | number
   languageId?: Prisma.IntFilter<"TaxRuleTranslation"> | number
   name?: Prisma.StringFilter<"TaxRuleTranslation"> | string
+  description?: Prisma.StringNullableFilter<"TaxRuleTranslation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"TaxRuleTranslation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TaxRuleTranslation"> | Date | string
   taxRule?: Prisma.XOR<Prisma.TaxRuleScalarRelationFilter, Prisma.TaxRuleWhereInput>
@@ -267,6 +277,7 @@ export type TaxRuleTranslationOrderByWithAggregationInput = {
   taxRuleId?: Prisma.SortOrder
   languageId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TaxRuleTranslationCountOrderByAggregateInput
@@ -284,15 +295,17 @@ export type TaxRuleTranslationScalarWhereWithAggregatesInput = {
   taxRuleId?: Prisma.IntWithAggregatesFilter<"TaxRuleTranslation"> | number
   languageId?: Prisma.IntWithAggregatesFilter<"TaxRuleTranslation"> | number
   name?: Prisma.StringWithAggregatesFilter<"TaxRuleTranslation"> | string
+  description?: Prisma.StringNullableWithAggregatesFilter<"TaxRuleTranslation"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"TaxRuleTranslation"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"TaxRuleTranslation"> | Date | string
 }
 
 export type TaxRuleTranslationCreateInput = {
   name: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  taxRule: Prisma.TaxRuleCreateNestedOneWithoutTaxRuleTranslationsInput
+  taxRule: Prisma.TaxRuleCreateNestedOneWithoutTranslationsInput
   language: Prisma.LanguageCreateNestedOneWithoutTaxRuleTranslationsInput
 }
 
@@ -301,15 +314,17 @@ export type TaxRuleTranslationUncheckedCreateInput = {
   taxRuleId: number
   languageId: number
   name: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type TaxRuleTranslationUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  taxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutTaxRuleTranslationsNestedInput
+  taxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutTranslationsNestedInput
   language?: Prisma.LanguageUpdateOneRequiredWithoutTaxRuleTranslationsNestedInput
 }
 
@@ -318,6 +333,7 @@ export type TaxRuleTranslationUncheckedUpdateInput = {
   taxRuleId?: Prisma.IntFieldUpdateOperationsInput | number
   languageId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -327,12 +343,14 @@ export type TaxRuleTranslationCreateManyInput = {
   taxRuleId: number
   languageId: number
   name: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type TaxRuleTranslationUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -342,6 +360,7 @@ export type TaxRuleTranslationUncheckedUpdateManyInput = {
   taxRuleId?: Prisma.IntFieldUpdateOperationsInput | number
   languageId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -366,6 +385,7 @@ export type TaxRuleTranslationCountOrderByAggregateInput = {
   taxRuleId?: Prisma.SortOrder
   languageId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -381,6 +401,7 @@ export type TaxRuleTranslationMaxOrderByAggregateInput = {
   taxRuleId?: Prisma.SortOrder
   languageId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -390,6 +411,7 @@ export type TaxRuleTranslationMinOrderByAggregateInput = {
   taxRuleId?: Prisma.SortOrder
   languageId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -486,15 +508,17 @@ export type TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput = {
 
 export type TaxRuleTranslationCreateWithoutLanguageInput = {
   name: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  taxRule: Prisma.TaxRuleCreateNestedOneWithoutTaxRuleTranslationsInput
+  taxRule: Prisma.TaxRuleCreateNestedOneWithoutTranslationsInput
 }
 
 export type TaxRuleTranslationUncheckedCreateWithoutLanguageInput = {
   id?: number
   taxRuleId: number
   name: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -533,12 +557,14 @@ export type TaxRuleTranslationScalarWhereInput = {
   taxRuleId?: Prisma.IntFilter<"TaxRuleTranslation"> | number
   languageId?: Prisma.IntFilter<"TaxRuleTranslation"> | number
   name?: Prisma.StringFilter<"TaxRuleTranslation"> | string
+  description?: Prisma.StringNullableFilter<"TaxRuleTranslation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"TaxRuleTranslation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TaxRuleTranslation"> | Date | string
 }
 
 export type TaxRuleTranslationCreateWithoutTaxRuleInput = {
   name: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   language: Prisma.LanguageCreateNestedOneWithoutTaxRuleTranslationsInput
@@ -548,6 +574,7 @@ export type TaxRuleTranslationUncheckedCreateWithoutTaxRuleInput = {
   id?: number
   languageId: number
   name: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -582,21 +609,24 @@ export type TaxRuleTranslationCreateManyLanguageInput = {
   id?: number
   taxRuleId: number
   name: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type TaxRuleTranslationUpdateWithoutLanguageInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  taxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutTaxRuleTranslationsNestedInput
+  taxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutTranslationsNestedInput
 }
 
 export type TaxRuleTranslationUncheckedUpdateWithoutLanguageInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   taxRuleId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -605,6 +635,7 @@ export type TaxRuleTranslationUncheckedUpdateManyWithoutLanguageInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   taxRuleId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -613,12 +644,14 @@ export type TaxRuleTranslationCreateManyTaxRuleInput = {
   id?: number
   languageId: number
   name: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type TaxRuleTranslationUpdateWithoutTaxRuleInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   language?: Prisma.LanguageUpdateOneRequiredWithoutTaxRuleTranslationsNestedInput
@@ -628,6 +661,7 @@ export type TaxRuleTranslationUncheckedUpdateWithoutTaxRuleInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   languageId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -636,6 +670,7 @@ export type TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   languageId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -647,6 +682,7 @@ export type TaxRuleTranslationSelect<ExtArgs extends runtime.Types.Extensions.In
   taxRuleId?: boolean
   languageId?: boolean
   name?: boolean
+  description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   taxRule?: boolean | Prisma.TaxRuleDefaultArgs<ExtArgs>
@@ -658,6 +694,7 @@ export type TaxRuleTranslationSelectCreateManyAndReturn<ExtArgs extends runtime.
   taxRuleId?: boolean
   languageId?: boolean
   name?: boolean
+  description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   taxRule?: boolean | Prisma.TaxRuleDefaultArgs<ExtArgs>
@@ -669,6 +706,7 @@ export type TaxRuleTranslationSelectUpdateManyAndReturn<ExtArgs extends runtime.
   taxRuleId?: boolean
   languageId?: boolean
   name?: boolean
+  description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   taxRule?: boolean | Prisma.TaxRuleDefaultArgs<ExtArgs>
@@ -680,11 +718,12 @@ export type TaxRuleTranslationSelectScalar = {
   taxRuleId?: boolean
   languageId?: boolean
   name?: boolean
+  description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TaxRuleTranslationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "taxRuleId" | "languageId" | "name" | "createdAt" | "updatedAt", ExtArgs["result"]["taxRuleTranslation"]>
+export type TaxRuleTranslationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "taxRuleId" | "languageId" | "name" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["taxRuleTranslation"]>
 export type TaxRuleTranslationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   taxRule?: boolean | Prisma.TaxRuleDefaultArgs<ExtArgs>
   language?: boolean | Prisma.LanguageDefaultArgs<ExtArgs>
@@ -709,6 +748,7 @@ export type $TaxRuleTranslationPayload<ExtArgs extends runtime.Types.Extensions.
     taxRuleId: number
     languageId: number
     name: string
+    description: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["taxRuleTranslation"]>
@@ -1140,6 +1180,7 @@ export interface TaxRuleTranslationFieldRefs {
   readonly taxRuleId: Prisma.FieldRef<"TaxRuleTranslation", 'Int'>
   readonly languageId: Prisma.FieldRef<"TaxRuleTranslation", 'Int'>
   readonly name: Prisma.FieldRef<"TaxRuleTranslation", 'String'>
+  readonly description: Prisma.FieldRef<"TaxRuleTranslation", 'String'>
   readonly createdAt: Prisma.FieldRef<"TaxRuleTranslation", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"TaxRuleTranslation", 'DateTime'>
 }

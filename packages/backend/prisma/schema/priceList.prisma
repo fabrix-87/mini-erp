@@ -19,9 +19,10 @@ model PriceList {
     id Int @id @default(autoincrement())
 
     // Identificazione
-    code     String @unique @db.VarChar(50) // Es. LIST_PUB, LIST_GOLD
-    name     String @db.VarChar(100)
-    currency String @default("EUR") @db.Char(3)
+    code         String   @unique @db.VarChar(50) // Es. LIST_PUB, LIST_GOLD
+    name         String   @db.VarChar(100)
+    currencyCode String   @default("EUR") @db.Char(3)
+    currency     Currency @relation("PriceListCurrency", fields: [currencyCode], references: [code])
 
     type PriceListType @default(SALE)
 

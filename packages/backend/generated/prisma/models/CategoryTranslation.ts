@@ -43,6 +43,7 @@ export type CategoryTranslationMinAggregateOutputType = {
   categoryId: number | null
   languageId: number | null
   name: string | null
+  slug: string | null
   description: string | null
   linkRewrite: string | null
   metaTitle: string | null
@@ -56,6 +57,7 @@ export type CategoryTranslationMaxAggregateOutputType = {
   categoryId: number | null
   languageId: number | null
   name: string | null
+  slug: string | null
   description: string | null
   linkRewrite: string | null
   metaTitle: string | null
@@ -69,6 +71,7 @@ export type CategoryTranslationCountAggregateOutputType = {
   categoryId: number
   languageId: number
   name: number
+  slug: number
   description: number
   linkRewrite: number
   metaTitle: number
@@ -96,6 +99,7 @@ export type CategoryTranslationMinAggregateInputType = {
   categoryId?: true
   languageId?: true
   name?: true
+  slug?: true
   description?: true
   linkRewrite?: true
   metaTitle?: true
@@ -109,6 +113,7 @@ export type CategoryTranslationMaxAggregateInputType = {
   categoryId?: true
   languageId?: true
   name?: true
+  slug?: true
   description?: true
   linkRewrite?: true
   metaTitle?: true
@@ -122,6 +127,7 @@ export type CategoryTranslationCountAggregateInputType = {
   categoryId?: true
   languageId?: true
   name?: true
+  slug?: true
   description?: true
   linkRewrite?: true
   metaTitle?: true
@@ -222,6 +228,7 @@ export type CategoryTranslationGroupByOutputType = {
   categoryId: number
   languageId: number
   name: string
+  slug: string | null
   description: string | null
   linkRewrite: string | null
   metaTitle: string | null
@@ -258,6 +265,7 @@ export type CategoryTranslationWhereInput = {
   categoryId?: Prisma.IntFilter<"CategoryTranslation"> | number
   languageId?: Prisma.IntFilter<"CategoryTranslation"> | number
   name?: Prisma.StringFilter<"CategoryTranslation"> | string
+  slug?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
   description?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
   linkRewrite?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
   metaTitle?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
@@ -273,6 +281,7 @@ export type CategoryTranslationOrderByWithRelationInput = {
   categoryId?: Prisma.SortOrder
   languageId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  slug?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   linkRewrite?: Prisma.SortOrderInput | Prisma.SortOrder
   metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -292,6 +301,7 @@ export type CategoryTranslationWhereUniqueInput = Prisma.AtLeast<{
   categoryId?: Prisma.IntFilter<"CategoryTranslation"> | number
   languageId?: Prisma.IntFilter<"CategoryTranslation"> | number
   name?: Prisma.StringFilter<"CategoryTranslation"> | string
+  slug?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
   description?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
   linkRewrite?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
   metaTitle?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
@@ -307,6 +317,7 @@ export type CategoryTranslationOrderByWithAggregationInput = {
   categoryId?: Prisma.SortOrder
   languageId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  slug?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   linkRewrite?: Prisma.SortOrderInput | Prisma.SortOrder
   metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -328,6 +339,7 @@ export type CategoryTranslationScalarWhereWithAggregatesInput = {
   categoryId?: Prisma.IntWithAggregatesFilter<"CategoryTranslation"> | number
   languageId?: Prisma.IntWithAggregatesFilter<"CategoryTranslation"> | number
   name?: Prisma.StringWithAggregatesFilter<"CategoryTranslation"> | string
+  slug?: Prisma.StringNullableWithAggregatesFilter<"CategoryTranslation"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"CategoryTranslation"> | string | null
   linkRewrite?: Prisma.StringNullableWithAggregatesFilter<"CategoryTranslation"> | string | null
   metaTitle?: Prisma.StringNullableWithAggregatesFilter<"CategoryTranslation"> | string | null
@@ -338,6 +350,7 @@ export type CategoryTranslationScalarWhereWithAggregatesInput = {
 
 export type CategoryTranslationCreateInput = {
   name: string
+  slug?: string | null
   description?: string | null
   linkRewrite?: string | null
   metaTitle?: string | null
@@ -353,6 +366,7 @@ export type CategoryTranslationUncheckedCreateInput = {
   categoryId: number
   languageId: number
   name: string
+  slug?: string | null
   description?: string | null
   linkRewrite?: string | null
   metaTitle?: string | null
@@ -363,6 +377,7 @@ export type CategoryTranslationUncheckedCreateInput = {
 
 export type CategoryTranslationUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkRewrite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -378,6 +393,7 @@ export type CategoryTranslationUncheckedUpdateInput = {
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
   languageId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkRewrite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -391,6 +407,7 @@ export type CategoryTranslationCreateManyInput = {
   categoryId: number
   languageId: number
   name: string
+  slug?: string | null
   description?: string | null
   linkRewrite?: string | null
   metaTitle?: string | null
@@ -401,6 +418,7 @@ export type CategoryTranslationCreateManyInput = {
 
 export type CategoryTranslationUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkRewrite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -414,6 +432,7 @@ export type CategoryTranslationUncheckedUpdateManyInput = {
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
   languageId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkRewrite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -442,6 +461,7 @@ export type CategoryTranslationCountOrderByAggregateInput = {
   categoryId?: Prisma.SortOrder
   languageId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   linkRewrite?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
@@ -461,6 +481,7 @@ export type CategoryTranslationMaxOrderByAggregateInput = {
   categoryId?: Prisma.SortOrder
   languageId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   linkRewrite?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
@@ -474,6 +495,7 @@ export type CategoryTranslationMinOrderByAggregateInput = {
   categoryId?: Prisma.SortOrder
   languageId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   linkRewrite?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
@@ -574,6 +596,7 @@ export type CategoryTranslationUncheckedUpdateManyWithoutLanguageNestedInput = {
 
 export type CategoryTranslationCreateWithoutCategoryInput = {
   name: string
+  slug?: string | null
   description?: string | null
   linkRewrite?: string | null
   metaTitle?: string | null
@@ -587,6 +610,7 @@ export type CategoryTranslationUncheckedCreateWithoutCategoryInput = {
   id?: number
   languageId: number
   name: string
+  slug?: string | null
   description?: string | null
   linkRewrite?: string | null
   metaTitle?: string | null
@@ -629,6 +653,7 @@ export type CategoryTranslationScalarWhereInput = {
   categoryId?: Prisma.IntFilter<"CategoryTranslation"> | number
   languageId?: Prisma.IntFilter<"CategoryTranslation"> | number
   name?: Prisma.StringFilter<"CategoryTranslation"> | string
+  slug?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
   description?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
   linkRewrite?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
   metaTitle?: Prisma.StringNullableFilter<"CategoryTranslation"> | string | null
@@ -639,6 +664,7 @@ export type CategoryTranslationScalarWhereInput = {
 
 export type CategoryTranslationCreateWithoutLanguageInput = {
   name: string
+  slug?: string | null
   description?: string | null
   linkRewrite?: string | null
   metaTitle?: string | null
@@ -652,6 +678,7 @@ export type CategoryTranslationUncheckedCreateWithoutLanguageInput = {
   id?: number
   categoryId: number
   name: string
+  slug?: string | null
   description?: string | null
   linkRewrite?: string | null
   metaTitle?: string | null
@@ -690,6 +717,7 @@ export type CategoryTranslationCreateManyCategoryInput = {
   id?: number
   languageId: number
   name: string
+  slug?: string | null
   description?: string | null
   linkRewrite?: string | null
   metaTitle?: string | null
@@ -700,6 +728,7 @@ export type CategoryTranslationCreateManyCategoryInput = {
 
 export type CategoryTranslationUpdateWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkRewrite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -713,6 +742,7 @@ export type CategoryTranslationUncheckedUpdateWithoutCategoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   languageId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkRewrite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -725,6 +755,7 @@ export type CategoryTranslationUncheckedUpdateManyWithoutCategoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   languageId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkRewrite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -737,6 +768,7 @@ export type CategoryTranslationCreateManyLanguageInput = {
   id?: number
   categoryId: number
   name: string
+  slug?: string | null
   description?: string | null
   linkRewrite?: string | null
   metaTitle?: string | null
@@ -747,6 +779,7 @@ export type CategoryTranslationCreateManyLanguageInput = {
 
 export type CategoryTranslationUpdateWithoutLanguageInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkRewrite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -760,6 +793,7 @@ export type CategoryTranslationUncheckedUpdateWithoutLanguageInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkRewrite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -772,6 +806,7 @@ export type CategoryTranslationUncheckedUpdateManyWithoutLanguageInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkRewrite?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -787,6 +822,7 @@ export type CategoryTranslationSelect<ExtArgs extends runtime.Types.Extensions.I
   categoryId?: boolean
   languageId?: boolean
   name?: boolean
+  slug?: boolean
   description?: boolean
   linkRewrite?: boolean
   metaTitle?: boolean
@@ -802,6 +838,7 @@ export type CategoryTranslationSelectCreateManyAndReturn<ExtArgs extends runtime
   categoryId?: boolean
   languageId?: boolean
   name?: boolean
+  slug?: boolean
   description?: boolean
   linkRewrite?: boolean
   metaTitle?: boolean
@@ -817,6 +854,7 @@ export type CategoryTranslationSelectUpdateManyAndReturn<ExtArgs extends runtime
   categoryId?: boolean
   languageId?: boolean
   name?: boolean
+  slug?: boolean
   description?: boolean
   linkRewrite?: boolean
   metaTitle?: boolean
@@ -832,6 +870,7 @@ export type CategoryTranslationSelectScalar = {
   categoryId?: boolean
   languageId?: boolean
   name?: boolean
+  slug?: boolean
   description?: boolean
   linkRewrite?: boolean
   metaTitle?: boolean
@@ -840,7 +879,7 @@ export type CategoryTranslationSelectScalar = {
   updatedAt?: boolean
 }
 
-export type CategoryTranslationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "categoryId" | "languageId" | "name" | "description" | "linkRewrite" | "metaTitle" | "metaDescription" | "createdAt" | "updatedAt", ExtArgs["result"]["categoryTranslation"]>
+export type CategoryTranslationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "categoryId" | "languageId" | "name" | "slug" | "description" | "linkRewrite" | "metaTitle" | "metaDescription" | "createdAt" | "updatedAt", ExtArgs["result"]["categoryTranslation"]>
 export type CategoryTranslationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   language?: boolean | Prisma.LanguageDefaultArgs<ExtArgs>
@@ -865,6 +904,7 @@ export type $CategoryTranslationPayload<ExtArgs extends runtime.Types.Extensions
     categoryId: number
     languageId: number
     name: string
+    slug: string | null
     description: string | null
     linkRewrite: string | null
     metaTitle: string | null
@@ -1300,6 +1340,7 @@ export interface CategoryTranslationFieldRefs {
   readonly categoryId: Prisma.FieldRef<"CategoryTranslation", 'Int'>
   readonly languageId: Prisma.FieldRef<"CategoryTranslation", 'Int'>
   readonly name: Prisma.FieldRef<"CategoryTranslation", 'String'>
+  readonly slug: Prisma.FieldRef<"CategoryTranslation", 'String'>
   readonly description: Prisma.FieldRef<"CategoryTranslation", 'String'>
   readonly linkRewrite: Prisma.FieldRef<"CategoryTranslation", 'String'>
   readonly metaTitle: Prisma.FieldRef<"CategoryTranslation", 'String'>

@@ -33,6 +33,7 @@ export type PriceListItemAvgAggregateOutputType = {
   minQuantity: number | null
   price: runtime.Decimal | null
   discountPercent: runtime.Decimal | null
+  taxRuleId: number | null
 }
 
 export type PriceListItemSumAggregateOutputType = {
@@ -42,6 +43,7 @@ export type PriceListItemSumAggregateOutputType = {
   minQuantity: number | null
   price: runtime.Decimal | null
   discountPercent: runtime.Decimal | null
+  taxRuleId: number | null
 }
 
 export type PriceListItemMinAggregateOutputType = {
@@ -53,6 +55,7 @@ export type PriceListItemMinAggregateOutputType = {
   discountPercent: runtime.Decimal | null
   validFrom: Date | null
   validTo: Date | null
+  taxRuleId: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +69,7 @@ export type PriceListItemMaxAggregateOutputType = {
   discountPercent: runtime.Decimal | null
   validFrom: Date | null
   validTo: Date | null
+  taxRuleId: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -79,6 +83,7 @@ export type PriceListItemCountAggregateOutputType = {
   discountPercent: number
   validFrom: number
   validTo: number
+  taxRuleId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -92,6 +97,7 @@ export type PriceListItemAvgAggregateInputType = {
   minQuantity?: true
   price?: true
   discountPercent?: true
+  taxRuleId?: true
 }
 
 export type PriceListItemSumAggregateInputType = {
@@ -101,6 +107,7 @@ export type PriceListItemSumAggregateInputType = {
   minQuantity?: true
   price?: true
   discountPercent?: true
+  taxRuleId?: true
 }
 
 export type PriceListItemMinAggregateInputType = {
@@ -112,6 +119,7 @@ export type PriceListItemMinAggregateInputType = {
   discountPercent?: true
   validFrom?: true
   validTo?: true
+  taxRuleId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -125,6 +133,7 @@ export type PriceListItemMaxAggregateInputType = {
   discountPercent?: true
   validFrom?: true
   validTo?: true
+  taxRuleId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -138,6 +147,7 @@ export type PriceListItemCountAggregateInputType = {
   discountPercent?: true
   validFrom?: true
   validTo?: true
+  taxRuleId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -238,6 +248,7 @@ export type PriceListItemGroupByOutputType = {
   discountPercent: runtime.Decimal | null
   validFrom: Date | null
   validTo: Date | null
+  taxRuleId: number | null
   createdAt: Date
   updatedAt: Date
   _count: PriceListItemCountAggregateOutputType | null
@@ -274,10 +285,12 @@ export type PriceListItemWhereInput = {
   discountPercent?: Prisma.DecimalNullableFilter<"PriceListItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Prisma.DateTimeNullableFilter<"PriceListItem"> | Date | string | null
   validTo?: Prisma.DateTimeNullableFilter<"PriceListItem"> | Date | string | null
+  taxRuleId?: Prisma.IntNullableFilter<"PriceListItem"> | number | null
   createdAt?: Prisma.DateTimeFilter<"PriceListItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PriceListItem"> | Date | string
   priceList?: Prisma.XOR<Prisma.PriceListScalarRelationFilter, Prisma.PriceListWhereInput>
   variant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
+  taxRule?: Prisma.XOR<Prisma.TaxRuleNullableScalarRelationFilter, Prisma.TaxRuleWhereInput> | null
 }
 
 export type PriceListItemOrderByWithRelationInput = {
@@ -289,10 +302,12 @@ export type PriceListItemOrderByWithRelationInput = {
   discountPercent?: Prisma.SortOrderInput | Prisma.SortOrder
   validFrom?: Prisma.SortOrderInput | Prisma.SortOrder
   validTo?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   priceList?: Prisma.PriceListOrderByWithRelationInput
   variant?: Prisma.ProductVariantOrderByWithRelationInput
+  taxRule?: Prisma.TaxRuleOrderByWithRelationInput
 }
 
 export type PriceListItemWhereUniqueInput = Prisma.AtLeast<{
@@ -308,10 +323,12 @@ export type PriceListItemWhereUniqueInput = Prisma.AtLeast<{
   discountPercent?: Prisma.DecimalNullableFilter<"PriceListItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Prisma.DateTimeNullableFilter<"PriceListItem"> | Date | string | null
   validTo?: Prisma.DateTimeNullableFilter<"PriceListItem"> | Date | string | null
+  taxRuleId?: Prisma.IntNullableFilter<"PriceListItem"> | number | null
   createdAt?: Prisma.DateTimeFilter<"PriceListItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PriceListItem"> | Date | string
   priceList?: Prisma.XOR<Prisma.PriceListScalarRelationFilter, Prisma.PriceListWhereInput>
   variant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
+  taxRule?: Prisma.XOR<Prisma.TaxRuleNullableScalarRelationFilter, Prisma.TaxRuleWhereInput> | null
 }, "id" | "priceListId_variantId_minQuantity">
 
 export type PriceListItemOrderByWithAggregationInput = {
@@ -323,6 +340,7 @@ export type PriceListItemOrderByWithAggregationInput = {
   discountPercent?: Prisma.SortOrderInput | Prisma.SortOrder
   validFrom?: Prisma.SortOrderInput | Prisma.SortOrder
   validTo?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PriceListItemCountOrderByAggregateInput
@@ -344,6 +362,7 @@ export type PriceListItemScalarWhereWithAggregatesInput = {
   discountPercent?: Prisma.DecimalNullableWithAggregatesFilter<"PriceListItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Prisma.DateTimeNullableWithAggregatesFilter<"PriceListItem"> | Date | string | null
   validTo?: Prisma.DateTimeNullableWithAggregatesFilter<"PriceListItem"> | Date | string | null
+  taxRuleId?: Prisma.IntNullableWithAggregatesFilter<"PriceListItem"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PriceListItem"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PriceListItem"> | Date | string
 }
@@ -358,6 +377,7 @@ export type PriceListItemCreateInput = {
   updatedAt?: Date | string
   priceList: Prisma.PriceListCreateNestedOneWithoutItemsInput
   variant: Prisma.ProductVariantCreateNestedOneWithoutPriceListItemsInput
+  taxRule?: Prisma.TaxRuleCreateNestedOneWithoutPriceListItemsInput
 }
 
 export type PriceListItemUncheckedCreateInput = {
@@ -369,6 +389,7 @@ export type PriceListItemUncheckedCreateInput = {
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Date | string | null
   validTo?: Date | string | null
+  taxRuleId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -383,6 +404,7 @@ export type PriceListItemUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   priceList?: Prisma.PriceListUpdateOneRequiredWithoutItemsNestedInput
   variant?: Prisma.ProductVariantUpdateOneRequiredWithoutPriceListItemsNestedInput
+  taxRule?: Prisma.TaxRuleUpdateOneWithoutPriceListItemsNestedInput
 }
 
 export type PriceListItemUncheckedUpdateInput = {
@@ -394,6 +416,7 @@ export type PriceListItemUncheckedUpdateInput = {
   discountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -407,6 +430,7 @@ export type PriceListItemCreateManyInput = {
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Date | string | null
   validTo?: Date | string | null
+  taxRuleId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -430,6 +454,7 @@ export type PriceListItemUncheckedUpdateManyInput = {
   discountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -459,6 +484,7 @@ export type PriceListItemCountOrderByAggregateInput = {
   discountPercent?: Prisma.SortOrder
   validFrom?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
+  taxRuleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -470,6 +496,7 @@ export type PriceListItemAvgOrderByAggregateInput = {
   minQuantity?: Prisma.SortOrder
   price?: Prisma.SortOrder
   discountPercent?: Prisma.SortOrder
+  taxRuleId?: Prisma.SortOrder
 }
 
 export type PriceListItemMaxOrderByAggregateInput = {
@@ -481,6 +508,7 @@ export type PriceListItemMaxOrderByAggregateInput = {
   discountPercent?: Prisma.SortOrder
   validFrom?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
+  taxRuleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -494,6 +522,7 @@ export type PriceListItemMinOrderByAggregateInput = {
   discountPercent?: Prisma.SortOrder
   validFrom?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
+  taxRuleId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -505,6 +534,7 @@ export type PriceListItemSumOrderByAggregateInput = {
   minQuantity?: Prisma.SortOrder
   price?: Prisma.SortOrder
   discountPercent?: Prisma.SortOrder
+  taxRuleId?: Prisma.SortOrder
 }
 
 export type PriceListItemCreateNestedManyWithoutPriceListInput = {
@@ -591,6 +621,48 @@ export type PriceListItemUncheckedUpdateManyWithoutVariantNestedInput = {
   deleteMany?: Prisma.PriceListItemScalarWhereInput | Prisma.PriceListItemScalarWhereInput[]
 }
 
+export type PriceListItemCreateNestedManyWithoutTaxRuleInput = {
+  create?: Prisma.XOR<Prisma.PriceListItemCreateWithoutTaxRuleInput, Prisma.PriceListItemUncheckedCreateWithoutTaxRuleInput> | Prisma.PriceListItemCreateWithoutTaxRuleInput[] | Prisma.PriceListItemUncheckedCreateWithoutTaxRuleInput[]
+  connectOrCreate?: Prisma.PriceListItemCreateOrConnectWithoutTaxRuleInput | Prisma.PriceListItemCreateOrConnectWithoutTaxRuleInput[]
+  createMany?: Prisma.PriceListItemCreateManyTaxRuleInputEnvelope
+  connect?: Prisma.PriceListItemWhereUniqueInput | Prisma.PriceListItemWhereUniqueInput[]
+}
+
+export type PriceListItemUncheckedCreateNestedManyWithoutTaxRuleInput = {
+  create?: Prisma.XOR<Prisma.PriceListItemCreateWithoutTaxRuleInput, Prisma.PriceListItemUncheckedCreateWithoutTaxRuleInput> | Prisma.PriceListItemCreateWithoutTaxRuleInput[] | Prisma.PriceListItemUncheckedCreateWithoutTaxRuleInput[]
+  connectOrCreate?: Prisma.PriceListItemCreateOrConnectWithoutTaxRuleInput | Prisma.PriceListItemCreateOrConnectWithoutTaxRuleInput[]
+  createMany?: Prisma.PriceListItemCreateManyTaxRuleInputEnvelope
+  connect?: Prisma.PriceListItemWhereUniqueInput | Prisma.PriceListItemWhereUniqueInput[]
+}
+
+export type PriceListItemUpdateManyWithoutTaxRuleNestedInput = {
+  create?: Prisma.XOR<Prisma.PriceListItemCreateWithoutTaxRuleInput, Prisma.PriceListItemUncheckedCreateWithoutTaxRuleInput> | Prisma.PriceListItemCreateWithoutTaxRuleInput[] | Prisma.PriceListItemUncheckedCreateWithoutTaxRuleInput[]
+  connectOrCreate?: Prisma.PriceListItemCreateOrConnectWithoutTaxRuleInput | Prisma.PriceListItemCreateOrConnectWithoutTaxRuleInput[]
+  upsert?: Prisma.PriceListItemUpsertWithWhereUniqueWithoutTaxRuleInput | Prisma.PriceListItemUpsertWithWhereUniqueWithoutTaxRuleInput[]
+  createMany?: Prisma.PriceListItemCreateManyTaxRuleInputEnvelope
+  set?: Prisma.PriceListItemWhereUniqueInput | Prisma.PriceListItemWhereUniqueInput[]
+  disconnect?: Prisma.PriceListItemWhereUniqueInput | Prisma.PriceListItemWhereUniqueInput[]
+  delete?: Prisma.PriceListItemWhereUniqueInput | Prisma.PriceListItemWhereUniqueInput[]
+  connect?: Prisma.PriceListItemWhereUniqueInput | Prisma.PriceListItemWhereUniqueInput[]
+  update?: Prisma.PriceListItemUpdateWithWhereUniqueWithoutTaxRuleInput | Prisma.PriceListItemUpdateWithWhereUniqueWithoutTaxRuleInput[]
+  updateMany?: Prisma.PriceListItemUpdateManyWithWhereWithoutTaxRuleInput | Prisma.PriceListItemUpdateManyWithWhereWithoutTaxRuleInput[]
+  deleteMany?: Prisma.PriceListItemScalarWhereInput | Prisma.PriceListItemScalarWhereInput[]
+}
+
+export type PriceListItemUncheckedUpdateManyWithoutTaxRuleNestedInput = {
+  create?: Prisma.XOR<Prisma.PriceListItemCreateWithoutTaxRuleInput, Prisma.PriceListItemUncheckedCreateWithoutTaxRuleInput> | Prisma.PriceListItemCreateWithoutTaxRuleInput[] | Prisma.PriceListItemUncheckedCreateWithoutTaxRuleInput[]
+  connectOrCreate?: Prisma.PriceListItemCreateOrConnectWithoutTaxRuleInput | Prisma.PriceListItemCreateOrConnectWithoutTaxRuleInput[]
+  upsert?: Prisma.PriceListItemUpsertWithWhereUniqueWithoutTaxRuleInput | Prisma.PriceListItemUpsertWithWhereUniqueWithoutTaxRuleInput[]
+  createMany?: Prisma.PriceListItemCreateManyTaxRuleInputEnvelope
+  set?: Prisma.PriceListItemWhereUniqueInput | Prisma.PriceListItemWhereUniqueInput[]
+  disconnect?: Prisma.PriceListItemWhereUniqueInput | Prisma.PriceListItemWhereUniqueInput[]
+  delete?: Prisma.PriceListItemWhereUniqueInput | Prisma.PriceListItemWhereUniqueInput[]
+  connect?: Prisma.PriceListItemWhereUniqueInput | Prisma.PriceListItemWhereUniqueInput[]
+  update?: Prisma.PriceListItemUpdateWithWhereUniqueWithoutTaxRuleInput | Prisma.PriceListItemUpdateWithWhereUniqueWithoutTaxRuleInput[]
+  updateMany?: Prisma.PriceListItemUpdateManyWithWhereWithoutTaxRuleInput | Prisma.PriceListItemUpdateManyWithWhereWithoutTaxRuleInput[]
+  deleteMany?: Prisma.PriceListItemScalarWhereInput | Prisma.PriceListItemScalarWhereInput[]
+}
+
 export type PriceListItemCreateWithoutPriceListInput = {
   minQuantity?: number
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -600,6 +672,7 @@ export type PriceListItemCreateWithoutPriceListInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   variant: Prisma.ProductVariantCreateNestedOneWithoutPriceListItemsInput
+  taxRule?: Prisma.TaxRuleCreateNestedOneWithoutPriceListItemsInput
 }
 
 export type PriceListItemUncheckedCreateWithoutPriceListInput = {
@@ -610,6 +683,7 @@ export type PriceListItemUncheckedCreateWithoutPriceListInput = {
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Date | string | null
   validTo?: Date | string | null
+  taxRuleId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -652,6 +726,7 @@ export type PriceListItemScalarWhereInput = {
   discountPercent?: Prisma.DecimalNullableFilter<"PriceListItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Prisma.DateTimeNullableFilter<"PriceListItem"> | Date | string | null
   validTo?: Prisma.DateTimeNullableFilter<"PriceListItem"> | Date | string | null
+  taxRuleId?: Prisma.IntNullableFilter<"PriceListItem"> | number | null
   createdAt?: Prisma.DateTimeFilter<"PriceListItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PriceListItem"> | Date | string
 }
@@ -665,6 +740,7 @@ export type PriceListItemCreateWithoutVariantInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   priceList: Prisma.PriceListCreateNestedOneWithoutItemsInput
+  taxRule?: Prisma.TaxRuleCreateNestedOneWithoutPriceListItemsInput
 }
 
 export type PriceListItemUncheckedCreateWithoutVariantInput = {
@@ -675,6 +751,7 @@ export type PriceListItemUncheckedCreateWithoutVariantInput = {
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Date | string | null
   validTo?: Date | string | null
+  taxRuleId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -705,6 +782,57 @@ export type PriceListItemUpdateManyWithWhereWithoutVariantInput = {
   data: Prisma.XOR<Prisma.PriceListItemUpdateManyMutationInput, Prisma.PriceListItemUncheckedUpdateManyWithoutVariantInput>
 }
 
+export type PriceListItemCreateWithoutTaxRuleInput = {
+  minQuantity?: number
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  validFrom?: Date | string | null
+  validTo?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  priceList: Prisma.PriceListCreateNestedOneWithoutItemsInput
+  variant: Prisma.ProductVariantCreateNestedOneWithoutPriceListItemsInput
+}
+
+export type PriceListItemUncheckedCreateWithoutTaxRuleInput = {
+  id?: number
+  priceListId: number
+  variantId: number
+  minQuantity?: number
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  validFrom?: Date | string | null
+  validTo?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PriceListItemCreateOrConnectWithoutTaxRuleInput = {
+  where: Prisma.PriceListItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.PriceListItemCreateWithoutTaxRuleInput, Prisma.PriceListItemUncheckedCreateWithoutTaxRuleInput>
+}
+
+export type PriceListItemCreateManyTaxRuleInputEnvelope = {
+  data: Prisma.PriceListItemCreateManyTaxRuleInput | Prisma.PriceListItemCreateManyTaxRuleInput[]
+  skipDuplicates?: boolean
+}
+
+export type PriceListItemUpsertWithWhereUniqueWithoutTaxRuleInput = {
+  where: Prisma.PriceListItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.PriceListItemUpdateWithoutTaxRuleInput, Prisma.PriceListItemUncheckedUpdateWithoutTaxRuleInput>
+  create: Prisma.XOR<Prisma.PriceListItemCreateWithoutTaxRuleInput, Prisma.PriceListItemUncheckedCreateWithoutTaxRuleInput>
+}
+
+export type PriceListItemUpdateWithWhereUniqueWithoutTaxRuleInput = {
+  where: Prisma.PriceListItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.PriceListItemUpdateWithoutTaxRuleInput, Prisma.PriceListItemUncheckedUpdateWithoutTaxRuleInput>
+}
+
+export type PriceListItemUpdateManyWithWhereWithoutTaxRuleInput = {
+  where: Prisma.PriceListItemScalarWhereInput
+  data: Prisma.XOR<Prisma.PriceListItemUpdateManyMutationInput, Prisma.PriceListItemUncheckedUpdateManyWithoutTaxRuleInput>
+}
+
 export type PriceListItemCreateManyPriceListInput = {
   id?: number
   variantId: number
@@ -713,6 +841,7 @@ export type PriceListItemCreateManyPriceListInput = {
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Date | string | null
   validTo?: Date | string | null
+  taxRuleId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -726,6 +855,7 @@ export type PriceListItemUpdateWithoutPriceListInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   variant?: Prisma.ProductVariantUpdateOneRequiredWithoutPriceListItemsNestedInput
+  taxRule?: Prisma.TaxRuleUpdateOneWithoutPriceListItemsNestedInput
 }
 
 export type PriceListItemUncheckedUpdateWithoutPriceListInput = {
@@ -736,6 +866,7 @@ export type PriceListItemUncheckedUpdateWithoutPriceListInput = {
   discountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -748,6 +879,7 @@ export type PriceListItemUncheckedUpdateManyWithoutPriceListInput = {
   discountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -760,6 +892,7 @@ export type PriceListItemCreateManyVariantInput = {
   discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Date | string | null
   validTo?: Date | string | null
+  taxRuleId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -773,6 +906,7 @@ export type PriceListItemUpdateWithoutVariantInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   priceList?: Prisma.PriceListUpdateOneRequiredWithoutItemsNestedInput
+  taxRule?: Prisma.TaxRuleUpdateOneWithoutPriceListItemsNestedInput
 }
 
 export type PriceListItemUncheckedUpdateWithoutVariantInput = {
@@ -783,6 +917,7 @@ export type PriceListItemUncheckedUpdateWithoutVariantInput = {
   discountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -790,6 +925,58 @@ export type PriceListItemUncheckedUpdateWithoutVariantInput = {
 export type PriceListItemUncheckedUpdateManyWithoutVariantInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   priceListId?: Prisma.IntFieldUpdateOperationsInput | number
+  minQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PriceListItemCreateManyTaxRuleInput = {
+  id?: number
+  priceListId: number
+  variantId: number
+  minQuantity?: number
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  validFrom?: Date | string | null
+  validTo?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PriceListItemUpdateWithoutTaxRuleInput = {
+  minQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  priceList?: Prisma.PriceListUpdateOneRequiredWithoutItemsNestedInput
+  variant?: Prisma.ProductVariantUpdateOneRequiredWithoutPriceListItemsNestedInput
+}
+
+export type PriceListItemUncheckedUpdateWithoutTaxRuleInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  priceListId?: Prisma.IntFieldUpdateOperationsInput | number
+  variantId?: Prisma.IntFieldUpdateOperationsInput | number
+  minQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PriceListItemUncheckedUpdateManyWithoutTaxRuleInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  priceListId?: Prisma.IntFieldUpdateOperationsInput | number
+  variantId?: Prisma.IntFieldUpdateOperationsInput | number
   minQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   discountPercent?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -810,10 +997,12 @@ export type PriceListItemSelect<ExtArgs extends runtime.Types.Extensions.Interna
   discountPercent?: boolean
   validFrom?: boolean
   validTo?: boolean
+  taxRuleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   priceList?: boolean | Prisma.PriceListDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  taxRule?: boolean | Prisma.PriceListItem$taxRuleArgs<ExtArgs>
 }, ExtArgs["result"]["priceListItem"]>
 
 export type PriceListItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -825,10 +1014,12 @@ export type PriceListItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   discountPercent?: boolean
   validFrom?: boolean
   validTo?: boolean
+  taxRuleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   priceList?: boolean | Prisma.PriceListDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  taxRule?: boolean | Prisma.PriceListItem$taxRuleArgs<ExtArgs>
 }, ExtArgs["result"]["priceListItem"]>
 
 export type PriceListItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -840,10 +1031,12 @@ export type PriceListItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   discountPercent?: boolean
   validFrom?: boolean
   validTo?: boolean
+  taxRuleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   priceList?: boolean | Prisma.PriceListDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  taxRule?: boolean | Prisma.PriceListItem$taxRuleArgs<ExtArgs>
 }, ExtArgs["result"]["priceListItem"]>
 
 export type PriceListItemSelectScalar = {
@@ -855,22 +1048,26 @@ export type PriceListItemSelectScalar = {
   discountPercent?: boolean
   validFrom?: boolean
   validTo?: boolean
+  taxRuleId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PriceListItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "priceListId" | "variantId" | "minQuantity" | "price" | "discountPercent" | "validFrom" | "validTo" | "createdAt" | "updatedAt", ExtArgs["result"]["priceListItem"]>
+export type PriceListItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "priceListId" | "variantId" | "minQuantity" | "price" | "discountPercent" | "validFrom" | "validTo" | "taxRuleId" | "createdAt" | "updatedAt", ExtArgs["result"]["priceListItem"]>
 export type PriceListItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   priceList?: boolean | Prisma.PriceListDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  taxRule?: boolean | Prisma.PriceListItem$taxRuleArgs<ExtArgs>
 }
 export type PriceListItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   priceList?: boolean | Prisma.PriceListDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  taxRule?: boolean | Prisma.PriceListItem$taxRuleArgs<ExtArgs>
 }
 export type PriceListItemIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   priceList?: boolean | Prisma.PriceListDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
+  taxRule?: boolean | Prisma.PriceListItem$taxRuleArgs<ExtArgs>
 }
 
 export type $PriceListItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -878,6 +1075,7 @@ export type $PriceListItemPayload<ExtArgs extends runtime.Types.Extensions.Inter
   objects: {
     priceList: Prisma.$PriceListPayload<ExtArgs>
     variant: Prisma.$ProductVariantPayload<ExtArgs>
+    taxRule: Prisma.$TaxRulePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -888,6 +1086,7 @@ export type $PriceListItemPayload<ExtArgs extends runtime.Types.Extensions.Inter
     discountPercent: runtime.Decimal | null
     validFrom: Date | null
     validTo: Date | null
+    taxRuleId: number | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["priceListItem"]>
@@ -1286,6 +1485,7 @@ export interface Prisma__PriceListItemClient<T, Null = never, ExtArgs extends ru
   readonly [Symbol.toStringTag]: "PrismaPromise"
   priceList<T extends Prisma.PriceListDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PriceListDefaultArgs<ExtArgs>>): Prisma.Prisma__PriceListClient<runtime.Types.Result.GetResult<Prisma.$PriceListPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   variant<T extends Prisma.ProductVariantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariantDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductVariantClient<runtime.Types.Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  taxRule<T extends Prisma.PriceListItem$taxRuleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PriceListItem$taxRuleArgs<ExtArgs>>): Prisma.Prisma__TaxRuleClient<runtime.Types.Result.GetResult<Prisma.$TaxRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1323,6 +1523,7 @@ export interface PriceListItemFieldRefs {
   readonly discountPercent: Prisma.FieldRef<"PriceListItem", 'Decimal'>
   readonly validFrom: Prisma.FieldRef<"PriceListItem", 'DateTime'>
   readonly validTo: Prisma.FieldRef<"PriceListItem", 'DateTime'>
+  readonly taxRuleId: Prisma.FieldRef<"PriceListItem", 'Int'>
   readonly createdAt: Prisma.FieldRef<"PriceListItem", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"PriceListItem", 'DateTime'>
 }
@@ -1718,6 +1919,25 @@ export type PriceListItemDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many PriceListItems to delete.
    */
   limit?: number
+}
+
+/**
+ * PriceListItem.taxRule
+ */
+export type PriceListItem$taxRuleArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TaxRule
+   */
+  select?: Prisma.TaxRuleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TaxRule
+   */
+  omit?: Prisma.TaxRuleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaxRuleInclude<ExtArgs> | null
+  where?: Prisma.TaxRuleWhereInput
 }
 
 /**

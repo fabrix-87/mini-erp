@@ -73,7 +73,6 @@ export type AttributeDisplayType = (typeof AttributeDisplayType)[keyof typeof At
 
 
 export const CustomerType = {
-  LEAD: 'LEAD',
   PROSPECT: 'PROSPECT',
   CUSTOMER: 'CUSTOMER',
   PARTNER: 'PARTNER',
@@ -124,19 +123,6 @@ export const CustomerSegment = {
 export type CustomerSegment = (typeof CustomerSegment)[keyof typeof CustomerSegment]
 
 
-export const LeadStatus = {
-  NEW: 'NEW',
-  CONTACTED: 'CONTACTED',
-  QUALIFIED: 'QUALIFIED',
-  PROPOSAL: 'PROPOSAL',
-  NEGOTIATION: 'NEGOTIATION',
-  CLOSED_WON: 'CLOSED_WON',
-  CLOSED_LOST: 'CLOSED_LOST'
-} as const
-
-export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus]
-
-
 export const CompanyTypeEntity = {
   JURIDICAL: 'JURIDICAL',
   NATURAL: 'NATURAL',
@@ -183,6 +169,18 @@ export const DocumentType = {
 export type DocumentType = (typeof DocumentType)[keyof typeof DocumentType]
 
 
+export const DocumentStatusCategory = {
+  DRAFT_PHASE: 'DRAFT_PHASE',
+  APPROVAL_PHASE: 'APPROVAL_PHASE',
+  ACTIVE_PHASE: 'ACTIVE_PHASE',
+  FULFILLMENT_PHASE: 'FULFILLMENT_PHASE',
+  PAYMENT_PHASE: 'PAYMENT_PHASE',
+  CLOSED_PHASE: 'CLOSED_PHASE'
+} as const
+
+export type DocumentStatusCategory = (typeof DocumentStatusCategory)[keyof typeof DocumentStatusCategory]
+
+
 export const DocumentStatus = {
   DRAFT: 'DRAFT',
   PENDING_APPROVAL: 'PENDING_APPROVAL',
@@ -203,12 +201,66 @@ export const DocumentStatus = {
 export type DocumentStatus = (typeof DocumentStatus)[keyof typeof DocumentStatus]
 
 
+export const DocumentRelationType = {
+  CONVERTS_TO: 'CONVERTS_TO',
+  SPLITS_FROM: 'SPLITS_FROM',
+  MERGES_INTO: 'MERGES_INTO',
+  CREDITS: 'CREDITS',
+  AMENDS: 'AMENDS'
+} as const
+
+export type DocumentRelationType = (typeof DocumentRelationType)[keyof typeof DocumentRelationType]
+
+
 export const IntrastatFlow = {
   ARRIVAL: 'ARRIVAL',
   DISPATCH: 'DISPATCH'
 } as const
 
 export type IntrastatFlow = (typeof IntrastatFlow)[keyof typeof IntrastatFlow]
+
+
+export const LeadStatus = {
+  NEW: 'NEW',
+  CONTACTED: 'CONTACTED',
+  QUALIFIED: 'QUALIFIED',
+  UNQUALIFIED: 'UNQUALIFIED',
+  NURTURING: 'NURTURING',
+  CONVERTED: 'CONVERTED',
+  LOST: 'LOST',
+  DUPLICATE: 'DUPLICATE',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus]
+
+
+export const LeadSource = {
+  WEBSITE: 'WEBSITE',
+  REFERRAL: 'REFERRAL',
+  SOCIAL_MEDIA: 'SOCIAL_MEDIA',
+  EMAIL_CAMPAIGN: 'EMAIL_CAMPAIGN',
+  PHONE_CALL: 'PHONE_CALL',
+  COLD_CALL: 'COLD_CALL',
+  EVENT: 'EVENT',
+  PARTNER: 'PARTNER',
+  ADVERTISING: 'ADVERTISING',
+  CONTENT: 'CONTENT',
+  DIRECT: 'DIRECT',
+  CHAT: 'CHAT',
+  OTHER: 'OTHER'
+} as const
+
+export type LeadSource = (typeof LeadSource)[keyof typeof LeadSource]
+
+
+export const LeadQuality = {
+  HOT: 'HOT',
+  WARM: 'WARM',
+  COLD: 'COLD'
+} as const
+
+export type LeadQuality = (typeof LeadQuality)[keyof typeof LeadQuality]
 
 
 export const OpportunityStatus = {
@@ -232,6 +284,20 @@ export const SalesStage = {
 } as const
 
 export type SalesStage = (typeof SalesStage)[keyof typeof SalesStage]
+
+
+export const OpportunitySource = {
+  LEAD: 'LEAD',
+  CUSTOMER: 'CUSTOMER',
+  INBOUND: 'INBOUND',
+  OUTBOUND: 'OUTBOUND',
+  REFERRAL: 'REFERRAL',
+  PARTNER: 'PARTNER',
+  EVENT: 'EVENT',
+  OTHER: 'OTHER'
+} as const
+
+export type OpportunitySource = (typeof OpportunitySource)[keyof typeof OpportunitySource]
 
 
 export const PriceListType = {
@@ -258,10 +324,20 @@ export type PriceListStrategy = (typeof PriceListStrategy)[keyof typeof PriceLis
 export const ProductType = {
   STANDARD: 'STANDARD',
   PACK: 'PACK',
-  VIRTUAL: 'VIRTUAL'
+  VIRTUAL: 'VIRTUAL',
+  SERVICE: 'SERVICE'
 } as const
 
 export type ProductType = (typeof ProductType)[keyof typeof ProductType]
+
+
+export const ProductStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type ProductStatus = (typeof ProductStatus)[keyof typeof ProductStatus]
 
 
 export const ProductCondition = {
@@ -271,6 +347,19 @@ export const ProductCondition = {
 } as const
 
 export type ProductCondition = (typeof ProductCondition)[keyof typeof ProductCondition]
+
+
+export const VatNatureCategory = {
+  EXCLUDED: 'EXCLUDED',
+  NOT_SUBJECT: 'NOT_SUBJECT',
+  NOT_TAXABLE: 'NOT_TAXABLE',
+  EXEMPT: 'EXEMPT',
+  MARGIN: 'MARGIN',
+  REVERSE: 'REVERSE',
+  EU_VAT: 'EU_VAT'
+} as const
+
+export type VatNatureCategory = (typeof VatNatureCategory)[keyof typeof VatNatureCategory]
 
 
 export const Gender = {
@@ -303,3 +392,21 @@ export const MovementType = {
 } as const
 
 export type MovementType = (typeof MovementType)[keyof typeof MovementType]
+
+
+export const MovementStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type MovementStatus = (typeof MovementStatus)[keyof typeof MovementStatus]
+
+
+export const VirtualSyncStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  ERROR: 'ERROR'
+} as const
+
+export type VirtualSyncStatus = (typeof VirtualSyncStatus)[keyof typeof VirtualSyncStatus]

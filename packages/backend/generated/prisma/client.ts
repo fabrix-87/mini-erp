@@ -12,6 +12,8 @@
 
 import * as process from 'node:process'
 import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
+globalThis['__dirname'] = path.dirname(fileURLToPath(import.meta.url))
 
 import * as runtime from "@prisma/client/runtime/client"
 import * as $Enums from "./enums"
@@ -123,6 +125,21 @@ export type CompanyNote = Prisma.CompanyNoteModel
  */
 export type Country = Prisma.CountryModel
 /**
+ * Model Currency
+ * 
+ */
+export type Currency = Prisma.CurrencyModel
+/**
+ * Model ExchangeRateHistory
+ * 
+ */
+export type ExchangeRateHistory = Prisma.ExchangeRateHistoryModel
+/**
+ * Model CurrencyTranslation
+ * 
+ */
+export type CurrencyTranslation = Prisma.CurrencyTranslationModel
+/**
  * Model Document
  * 
  */
@@ -137,6 +154,16 @@ export type DocumentLine = Prisma.DocumentLineModel
  * 
  */
 export type DocumentPaymentInstallment = Prisma.DocumentPaymentInstallmentModel
+/**
+ * Model DocumentSequence
+ * 
+ */
+export type DocumentSequence = Prisma.DocumentSequenceModel
+/**
+ * Model DocumentRelation
+ * 
+ */
+export type DocumentRelation = Prisma.DocumentRelationModel
 /**
  * Model IntrastatTransaction
  * 
@@ -157,6 +184,11 @@ export type IntrastatCommodityCode = Prisma.IntrastatCommodityCodeModel
  * 
  */
 export type Language = Prisma.LanguageModel
+/**
+ * Model Lead
+ * 
+ */
+export type Lead = Prisma.LeadModel
 /**
  * Model Opportunity
  * 
@@ -198,10 +230,10 @@ export type PriceListItem = Prisma.PriceListItemModel
  */
 export type Product = Prisma.ProductModel
 /**
- * Model ProductTranslation
+ * Model ProductVariantTranslation
  * 
  */
-export type ProductTranslation = Prisma.ProductTranslationModel
+export type ProductVariantTranslation = Prisma.ProductVariantTranslationModel
 /**
  * Model ProductVariant
  * 
@@ -238,10 +270,25 @@ export type Permission = Prisma.PermissionModel
  */
 export type RolePermission = Prisma.RolePermissionModel
 /**
- * Model TaxRate
+ * Model AuditLog
  * 
  */
-export type TaxRate = Prisma.TaxRateModel
+export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model TenantSettings
+ * 
+ */
+export type TenantSettings = Prisma.TenantSettingsModel
+/**
+ * Model VatNature
+ * 
+ */
+export type VatNature = Prisma.VatNatureModel
+/**
+ * Model VatNatureTranslation
+ * 
+ */
+export type VatNatureTranslation = Prisma.VatNatureTranslationModel
 /**
  * Model TaxRule
  * 
@@ -277,3 +324,13 @@ export type StockMovement = Prisma.StockMovementModel
  * 
  */
 export type VirtualStock = Prisma.VirtualStockModel
+/**
+ * Model StockBatch
+ * 
+ */
+export type StockBatch = Prisma.StockBatchModel
+/**
+ * Model StockReservation
+ * 
+ */
+export type StockReservation = Prisma.StockReservationModel

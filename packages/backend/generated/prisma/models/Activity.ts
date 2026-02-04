@@ -34,6 +34,7 @@ export type ActivityAvgAggregateOutputType = {
   customerId: number | null
   contactId: number | null
   opportunityId: number | null
+  leadId: number | null
   assignedUserId: number | null
   createdByUserId: number | null
   followUpActivityId: number | null
@@ -47,6 +48,7 @@ export type ActivitySumAggregateOutputType = {
   customerId: number | null
   contactId: number | null
   opportunityId: number | null
+  leadId: number | null
   assignedUserId: number | null
   createdByUserId: number | null
   followUpActivityId: number | null
@@ -72,6 +74,7 @@ export type ActivityMinAggregateOutputType = {
   customerId: number | null
   contactId: number | null
   opportunityId: number | null
+  leadId: number | null
   assignedUserId: number | null
   createdByUserId: number | null
   internalNotes: string | null
@@ -103,6 +106,7 @@ export type ActivityMaxAggregateOutputType = {
   customerId: number | null
   contactId: number | null
   opportunityId: number | null
+  leadId: number | null
   assignedUserId: number | null
   createdByUserId: number | null
   internalNotes: string | null
@@ -134,6 +138,7 @@ export type ActivityCountAggregateOutputType = {
   customerId: number
   contactId: number
   opportunityId: number
+  leadId: number
   assignedUserId: number
   createdByUserId: number
   attachments: number
@@ -157,6 +162,7 @@ export type ActivityAvgAggregateInputType = {
   customerId?: true
   contactId?: true
   opportunityId?: true
+  leadId?: true
   assignedUserId?: true
   createdByUserId?: true
   followUpActivityId?: true
@@ -170,6 +176,7 @@ export type ActivitySumAggregateInputType = {
   customerId?: true
   contactId?: true
   opportunityId?: true
+  leadId?: true
   assignedUserId?: true
   createdByUserId?: true
   followUpActivityId?: true
@@ -195,6 +202,7 @@ export type ActivityMinAggregateInputType = {
   customerId?: true
   contactId?: true
   opportunityId?: true
+  leadId?: true
   assignedUserId?: true
   createdByUserId?: true
   internalNotes?: true
@@ -226,6 +234,7 @@ export type ActivityMaxAggregateInputType = {
   customerId?: true
   contactId?: true
   opportunityId?: true
+  leadId?: true
   assignedUserId?: true
   createdByUserId?: true
   internalNotes?: true
@@ -257,6 +266,7 @@ export type ActivityCountAggregateInputType = {
   customerId?: true
   contactId?: true
   opportunityId?: true
+  leadId?: true
   assignedUserId?: true
   createdByUserId?: true
   attachments?: true
@@ -377,6 +387,7 @@ export type ActivityGroupByOutputType = {
   customerId: number | null
   contactId: number | null
   opportunityId: number | null
+  leadId: number | null
   assignedUserId: number
   createdByUserId: number
   attachments: runtime.JsonValue | null
@@ -433,6 +444,7 @@ export type ActivityWhereInput = {
   customerId?: Prisma.IntNullableFilter<"Activity"> | number | null
   contactId?: Prisma.IntNullableFilter<"Activity"> | number | null
   opportunityId?: Prisma.IntNullableFilter<"Activity"> | number | null
+  leadId?: Prisma.IntNullableFilter<"Activity"> | number | null
   assignedUserId?: Prisma.IntFilter<"Activity"> | number
   createdByUserId?: Prisma.IntFilter<"Activity"> | number
   attachments?: Prisma.JsonNullableFilter<"Activity">
@@ -448,6 +460,7 @@ export type ActivityWhereInput = {
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   contact?: Prisma.XOR<Prisma.ContactNullableScalarRelationFilter, Prisma.ContactWhereInput> | null
   opportunity?: Prisma.XOR<Prisma.OpportunityNullableScalarRelationFilter, Prisma.OpportunityWhereInput> | null
+  lead?: Prisma.XOR<Prisma.LeadNullableScalarRelationFilter, Prisma.LeadWhereInput> | null
   assignedUser?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   participants?: Prisma.ActivityParticipantListRelationFilter
@@ -475,6 +488,7 @@ export type ActivityOrderByWithRelationInput = {
   customerId?: Prisma.SortOrderInput | Prisma.SortOrder
   contactId?: Prisma.SortOrderInput | Prisma.SortOrder
   opportunityId?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadId?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   attachments?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -490,6 +504,7 @@ export type ActivityOrderByWithRelationInput = {
   customer?: Prisma.CustomerOrderByWithRelationInput
   contact?: Prisma.ContactOrderByWithRelationInput
   opportunity?: Prisma.OpportunityOrderByWithRelationInput
+  lead?: Prisma.LeadOrderByWithRelationInput
   assignedUser?: Prisma.UserOrderByWithRelationInput
   createdBy?: Prisma.UserOrderByWithRelationInput
   participants?: Prisma.ActivityParticipantOrderByRelationAggregateInput
@@ -520,6 +535,7 @@ export type ActivityWhereUniqueInput = Prisma.AtLeast<{
   customerId?: Prisma.IntNullableFilter<"Activity"> | number | null
   contactId?: Prisma.IntNullableFilter<"Activity"> | number | null
   opportunityId?: Prisma.IntNullableFilter<"Activity"> | number | null
+  leadId?: Prisma.IntNullableFilter<"Activity"> | number | null
   assignedUserId?: Prisma.IntFilter<"Activity"> | number
   createdByUserId?: Prisma.IntFilter<"Activity"> | number
   attachments?: Prisma.JsonNullableFilter<"Activity">
@@ -535,6 +551,7 @@ export type ActivityWhereUniqueInput = Prisma.AtLeast<{
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   contact?: Prisma.XOR<Prisma.ContactNullableScalarRelationFilter, Prisma.ContactWhereInput> | null
   opportunity?: Prisma.XOR<Prisma.OpportunityNullableScalarRelationFilter, Prisma.OpportunityWhereInput> | null
+  lead?: Prisma.XOR<Prisma.LeadNullableScalarRelationFilter, Prisma.LeadWhereInput> | null
   assignedUser?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   participants?: Prisma.ActivityParticipantListRelationFilter
@@ -562,6 +579,7 @@ export type ActivityOrderByWithAggregationInput = {
   customerId?: Prisma.SortOrderInput | Prisma.SortOrder
   contactId?: Prisma.SortOrderInput | Prisma.SortOrder
   opportunityId?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadId?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   attachments?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -603,6 +621,7 @@ export type ActivityScalarWhereWithAggregatesInput = {
   customerId?: Prisma.IntNullableWithAggregatesFilter<"Activity"> | number | null
   contactId?: Prisma.IntNullableWithAggregatesFilter<"Activity"> | number | null
   opportunityId?: Prisma.IntNullableWithAggregatesFilter<"Activity"> | number | null
+  leadId?: Prisma.IntNullableWithAggregatesFilter<"Activity"> | number | null
   assignedUserId?: Prisma.IntWithAggregatesFilter<"Activity"> | number
   createdByUserId?: Prisma.IntWithAggregatesFilter<"Activity"> | number
   attachments?: Prisma.JsonNullableWithAggregatesFilter<"Activity">
@@ -643,6 +662,7 @@ export type ActivityCreateInput = {
   customer?: Prisma.CustomerCreateNestedOneWithoutActivitiesInput
   contact?: Prisma.ContactCreateNestedOneWithoutActivitiesInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutActivitiesInput
+  lead?: Prisma.LeadCreateNestedOneWithoutActivitiesInput
   assignedUser: Prisma.UserCreateNestedOneWithoutActivitiesAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutActivitiesCreatedInput
   participants?: Prisma.ActivityParticipantCreateNestedManyWithoutActivityInput
@@ -670,6 +690,7 @@ export type ActivityUncheckedCreateInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -712,6 +733,7 @@ export type ActivityUpdateInput = {
   customer?: Prisma.CustomerUpdateOneWithoutActivitiesNestedInput
   contact?: Prisma.ContactUpdateOneWithoutActivitiesNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutActivitiesNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutActivitiesNestedInput
   assignedUser?: Prisma.UserUpdateOneRequiredWithoutActivitiesAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutActivitiesCreatedNestedInput
   participants?: Prisma.ActivityParticipantUpdateManyWithoutActivityNestedInput
@@ -739,6 +761,7 @@ export type ActivityUncheckedUpdateInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -774,6 +797,7 @@ export type ActivityCreateManyInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -832,6 +856,7 @@ export type ActivityUncheckedUpdateManyInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -880,6 +905,7 @@ export type ActivityCountOrderByAggregateInput = {
   customerId?: Prisma.SortOrder
   contactId?: Prisma.SortOrder
   opportunityId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   attachments?: Prisma.SortOrder
@@ -901,6 +927,7 @@ export type ActivityAvgOrderByAggregateInput = {
   customerId?: Prisma.SortOrder
   contactId?: Prisma.SortOrder
   opportunityId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   followUpActivityId?: Prisma.SortOrder
@@ -926,6 +953,7 @@ export type ActivityMaxOrderByAggregateInput = {
   customerId?: Prisma.SortOrder
   contactId?: Prisma.SortOrder
   opportunityId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   internalNotes?: Prisma.SortOrder
@@ -957,6 +985,7 @@ export type ActivityMinOrderByAggregateInput = {
   customerId?: Prisma.SortOrder
   contactId?: Prisma.SortOrder
   opportunityId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   internalNotes?: Prisma.SortOrder
@@ -976,6 +1005,7 @@ export type ActivitySumOrderByAggregateInput = {
   customerId?: Prisma.SortOrder
   contactId?: Prisma.SortOrder
   opportunityId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   followUpActivityId?: Prisma.SortOrder
@@ -1236,6 +1266,48 @@ export type ActivityUncheckedUpdateManyWithoutContactNestedInput = {
   deleteMany?: Prisma.ActivityScalarWhereInput | Prisma.ActivityScalarWhereInput[]
 }
 
+export type ActivityCreateNestedManyWithoutLeadInput = {
+  create?: Prisma.XOR<Prisma.ActivityCreateWithoutLeadInput, Prisma.ActivityUncheckedCreateWithoutLeadInput> | Prisma.ActivityCreateWithoutLeadInput[] | Prisma.ActivityUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutLeadInput | Prisma.ActivityCreateOrConnectWithoutLeadInput[]
+  createMany?: Prisma.ActivityCreateManyLeadInputEnvelope
+  connect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
+}
+
+export type ActivityUncheckedCreateNestedManyWithoutLeadInput = {
+  create?: Prisma.XOR<Prisma.ActivityCreateWithoutLeadInput, Prisma.ActivityUncheckedCreateWithoutLeadInput> | Prisma.ActivityCreateWithoutLeadInput[] | Prisma.ActivityUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutLeadInput | Prisma.ActivityCreateOrConnectWithoutLeadInput[]
+  createMany?: Prisma.ActivityCreateManyLeadInputEnvelope
+  connect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
+}
+
+export type ActivityUpdateManyWithoutLeadNestedInput = {
+  create?: Prisma.XOR<Prisma.ActivityCreateWithoutLeadInput, Prisma.ActivityUncheckedCreateWithoutLeadInput> | Prisma.ActivityCreateWithoutLeadInput[] | Prisma.ActivityUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutLeadInput | Prisma.ActivityCreateOrConnectWithoutLeadInput[]
+  upsert?: Prisma.ActivityUpsertWithWhereUniqueWithoutLeadInput | Prisma.ActivityUpsertWithWhereUniqueWithoutLeadInput[]
+  createMany?: Prisma.ActivityCreateManyLeadInputEnvelope
+  set?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
+  disconnect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
+  delete?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
+  connect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
+  update?: Prisma.ActivityUpdateWithWhereUniqueWithoutLeadInput | Prisma.ActivityUpdateWithWhereUniqueWithoutLeadInput[]
+  updateMany?: Prisma.ActivityUpdateManyWithWhereWithoutLeadInput | Prisma.ActivityUpdateManyWithWhereWithoutLeadInput[]
+  deleteMany?: Prisma.ActivityScalarWhereInput | Prisma.ActivityScalarWhereInput[]
+}
+
+export type ActivityUncheckedUpdateManyWithoutLeadNestedInput = {
+  create?: Prisma.XOR<Prisma.ActivityCreateWithoutLeadInput, Prisma.ActivityUncheckedCreateWithoutLeadInput> | Prisma.ActivityCreateWithoutLeadInput[] | Prisma.ActivityUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutLeadInput | Prisma.ActivityCreateOrConnectWithoutLeadInput[]
+  upsert?: Prisma.ActivityUpsertWithWhereUniqueWithoutLeadInput | Prisma.ActivityUpsertWithWhereUniqueWithoutLeadInput[]
+  createMany?: Prisma.ActivityCreateManyLeadInputEnvelope
+  set?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
+  disconnect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
+  delete?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
+  connect?: Prisma.ActivityWhereUniqueInput | Prisma.ActivityWhereUniqueInput[]
+  update?: Prisma.ActivityUpdateWithWhereUniqueWithoutLeadInput | Prisma.ActivityUpdateWithWhereUniqueWithoutLeadInput[]
+  updateMany?: Prisma.ActivityUpdateManyWithWhereWithoutLeadInput | Prisma.ActivityUpdateManyWithWhereWithoutLeadInput[]
+  deleteMany?: Prisma.ActivityScalarWhereInput | Prisma.ActivityScalarWhereInput[]
+}
+
 export type ActivityCreateNestedManyWithoutOpportunityInput = {
   create?: Prisma.XOR<Prisma.ActivityCreateWithoutOpportunityInput, Prisma.ActivityUncheckedCreateWithoutOpportunityInput> | Prisma.ActivityCreateWithoutOpportunityInput[] | Prisma.ActivityUncheckedCreateWithoutOpportunityInput[]
   connectOrCreate?: Prisma.ActivityCreateOrConnectWithoutOpportunityInput | Prisma.ActivityCreateOrConnectWithoutOpportunityInput[]
@@ -1389,6 +1461,7 @@ export type ActivityCreateWithoutFollowedUpByInput = {
   customer?: Prisma.CustomerCreateNestedOneWithoutActivitiesInput
   contact?: Prisma.ContactCreateNestedOneWithoutActivitiesInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutActivitiesInput
+  lead?: Prisma.LeadCreateNestedOneWithoutActivitiesInput
   assignedUser: Prisma.UserCreateNestedOneWithoutActivitiesAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutActivitiesCreatedInput
   participants?: Prisma.ActivityParticipantCreateNestedManyWithoutActivityInput
@@ -1415,6 +1488,7 @@ export type ActivityUncheckedCreateWithoutFollowedUpByInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1461,6 +1535,7 @@ export type ActivityCreateWithoutFollowUpActivityInput = {
   customer?: Prisma.CustomerCreateNestedOneWithoutActivitiesInput
   contact?: Prisma.ContactCreateNestedOneWithoutActivitiesInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutActivitiesInput
+  lead?: Prisma.LeadCreateNestedOneWithoutActivitiesInput
   assignedUser: Prisma.UserCreateNestedOneWithoutActivitiesAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutActivitiesCreatedInput
   participants?: Prisma.ActivityParticipantCreateNestedManyWithoutActivityInput
@@ -1487,6 +1562,7 @@ export type ActivityUncheckedCreateWithoutFollowUpActivityInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1549,6 +1625,7 @@ export type ActivityUpdateWithoutFollowedUpByInput = {
   customer?: Prisma.CustomerUpdateOneWithoutActivitiesNestedInput
   contact?: Prisma.ContactUpdateOneWithoutActivitiesNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutActivitiesNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutActivitiesNestedInput
   assignedUser?: Prisma.UserUpdateOneRequiredWithoutActivitiesAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutActivitiesCreatedNestedInput
   participants?: Prisma.ActivityParticipantUpdateManyWithoutActivityNestedInput
@@ -1575,6 +1652,7 @@ export type ActivityUncheckedUpdateWithoutFollowedUpByInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1628,6 +1706,7 @@ export type ActivityScalarWhereInput = {
   customerId?: Prisma.IntNullableFilter<"Activity"> | number | null
   contactId?: Prisma.IntNullableFilter<"Activity"> | number | null
   opportunityId?: Prisma.IntNullableFilter<"Activity"> | number | null
+  leadId?: Prisma.IntNullableFilter<"Activity"> | number | null
   assignedUserId?: Prisma.IntFilter<"Activity"> | number
   createdByUserId?: Prisma.IntFilter<"Activity"> | number
   attachments?: Prisma.JsonNullableFilter<"Activity">
@@ -1668,6 +1747,7 @@ export type ActivityCreateWithoutParticipantsInput = {
   customer?: Prisma.CustomerCreateNestedOneWithoutActivitiesInput
   contact?: Prisma.ContactCreateNestedOneWithoutActivitiesInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutActivitiesInput
+  lead?: Prisma.LeadCreateNestedOneWithoutActivitiesInput
   assignedUser: Prisma.UserCreateNestedOneWithoutActivitiesAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutActivitiesCreatedInput
   followUpActivity?: Prisma.ActivityCreateNestedOneWithoutFollowedUpByInput
@@ -1694,6 +1774,7 @@ export type ActivityUncheckedCreateWithoutParticipantsInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1751,6 +1832,7 @@ export type ActivityUpdateWithoutParticipantsInput = {
   customer?: Prisma.CustomerUpdateOneWithoutActivitiesNestedInput
   contact?: Prisma.ContactUpdateOneWithoutActivitiesNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutActivitiesNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutActivitiesNestedInput
   assignedUser?: Prisma.UserUpdateOneRequiredWithoutActivitiesAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutActivitiesCreatedNestedInput
   followUpActivity?: Prisma.ActivityUpdateOneWithoutFollowedUpByNestedInput
@@ -1777,6 +1859,7 @@ export type ActivityUncheckedUpdateWithoutParticipantsInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1817,6 +1900,7 @@ export type ActivityCreateWithoutCompanyInput = {
   customer?: Prisma.CustomerCreateNestedOneWithoutActivitiesInput
   contact?: Prisma.ContactCreateNestedOneWithoutActivitiesInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutActivitiesInput
+  lead?: Prisma.LeadCreateNestedOneWithoutActivitiesInput
   assignedUser: Prisma.UserCreateNestedOneWithoutActivitiesAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutActivitiesCreatedInput
   participants?: Prisma.ActivityParticipantCreateNestedManyWithoutActivityInput
@@ -1843,6 +1927,7 @@ export type ActivityUncheckedCreateWithoutCompanyInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1910,6 +1995,7 @@ export type ActivityCreateWithoutCustomerInput = {
   company?: Prisma.CompanyCreateNestedOneWithoutActivitiesInput
   contact?: Prisma.ContactCreateNestedOneWithoutActivitiesInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutActivitiesInput
+  lead?: Prisma.LeadCreateNestedOneWithoutActivitiesInput
   assignedUser: Prisma.UserCreateNestedOneWithoutActivitiesAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutActivitiesCreatedInput
   participants?: Prisma.ActivityParticipantCreateNestedManyWithoutActivityInput
@@ -1936,6 +2022,7 @@ export type ActivityUncheckedCreateWithoutCustomerInput = {
   companyId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2003,6 +2090,7 @@ export type ActivityCreateWithoutContactInput = {
   company?: Prisma.CompanyCreateNestedOneWithoutActivitiesInput
   customer?: Prisma.CustomerCreateNestedOneWithoutActivitiesInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutActivitiesInput
+  lead?: Prisma.LeadCreateNestedOneWithoutActivitiesInput
   assignedUser: Prisma.UserCreateNestedOneWithoutActivitiesAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutActivitiesCreatedInput
   participants?: Prisma.ActivityParticipantCreateNestedManyWithoutActivityInput
@@ -2029,6 +2117,7 @@ export type ActivityUncheckedCreateWithoutContactInput = {
   companyId?: number | null
   customerId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2070,6 +2159,101 @@ export type ActivityUpdateManyWithWhereWithoutContactInput = {
   data: Prisma.XOR<Prisma.ActivityUpdateManyMutationInput, Prisma.ActivityUncheckedUpdateManyWithoutContactInput>
 }
 
+export type ActivityCreateWithoutLeadInput = {
+  type: $Enums.ActivityType
+  status?: $Enums.ActivityStatus
+  priority?: $Enums.ActivityPriority
+  outcome?: $Enums.ActivityOutcome | null
+  subject: string
+  description?: string | null
+  location?: string | null
+  scheduledStart: Date | string
+  scheduledEnd?: Date | string | null
+  actualStart?: Date | string | null
+  actualEnd?: Date | string | null
+  duration?: number | null
+  reminderMinutes?: number | null
+  reminderSent?: boolean
+  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  internalNotes?: string | null
+  result?: string | null
+  requiresFollowUp?: boolean
+  followUpDate?: Date | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  company?: Prisma.CompanyCreateNestedOneWithoutActivitiesInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutActivitiesInput
+  contact?: Prisma.ContactCreateNestedOneWithoutActivitiesInput
+  opportunity?: Prisma.OpportunityCreateNestedOneWithoutActivitiesInput
+  assignedUser: Prisma.UserCreateNestedOneWithoutActivitiesAssignedInput
+  createdBy: Prisma.UserCreateNestedOneWithoutActivitiesCreatedInput
+  participants?: Prisma.ActivityParticipantCreateNestedManyWithoutActivityInput
+  followUpActivity?: Prisma.ActivityCreateNestedOneWithoutFollowedUpByInput
+  followedUpBy?: Prisma.ActivityCreateNestedManyWithoutFollowUpActivityInput
+}
+
+export type ActivityUncheckedCreateWithoutLeadInput = {
+  id?: number
+  type: $Enums.ActivityType
+  status?: $Enums.ActivityStatus
+  priority?: $Enums.ActivityPriority
+  outcome?: $Enums.ActivityOutcome | null
+  subject: string
+  description?: string | null
+  location?: string | null
+  scheduledStart: Date | string
+  scheduledEnd?: Date | string | null
+  actualStart?: Date | string | null
+  actualEnd?: Date | string | null
+  duration?: number | null
+  reminderMinutes?: number | null
+  reminderSent?: boolean
+  companyId?: number | null
+  customerId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  assignedUserId: number
+  createdByUserId: number
+  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  internalNotes?: string | null
+  result?: string | null
+  requiresFollowUp?: boolean
+  followUpDate?: Date | string | null
+  followUpActivityId?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  participants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutActivityInput
+  followedUpBy?: Prisma.ActivityUncheckedCreateNestedManyWithoutFollowUpActivityInput
+}
+
+export type ActivityCreateOrConnectWithoutLeadInput = {
+  where: Prisma.ActivityWhereUniqueInput
+  create: Prisma.XOR<Prisma.ActivityCreateWithoutLeadInput, Prisma.ActivityUncheckedCreateWithoutLeadInput>
+}
+
+export type ActivityCreateManyLeadInputEnvelope = {
+  data: Prisma.ActivityCreateManyLeadInput | Prisma.ActivityCreateManyLeadInput[]
+  skipDuplicates?: boolean
+}
+
+export type ActivityUpsertWithWhereUniqueWithoutLeadInput = {
+  where: Prisma.ActivityWhereUniqueInput
+  update: Prisma.XOR<Prisma.ActivityUpdateWithoutLeadInput, Prisma.ActivityUncheckedUpdateWithoutLeadInput>
+  create: Prisma.XOR<Prisma.ActivityCreateWithoutLeadInput, Prisma.ActivityUncheckedCreateWithoutLeadInput>
+}
+
+export type ActivityUpdateWithWhereUniqueWithoutLeadInput = {
+  where: Prisma.ActivityWhereUniqueInput
+  data: Prisma.XOR<Prisma.ActivityUpdateWithoutLeadInput, Prisma.ActivityUncheckedUpdateWithoutLeadInput>
+}
+
+export type ActivityUpdateManyWithWhereWithoutLeadInput = {
+  where: Prisma.ActivityScalarWhereInput
+  data: Prisma.XOR<Prisma.ActivityUpdateManyMutationInput, Prisma.ActivityUncheckedUpdateManyWithoutLeadInput>
+}
+
 export type ActivityCreateWithoutOpportunityInput = {
   type: $Enums.ActivityType
   status?: $Enums.ActivityStatus
@@ -2096,6 +2280,7 @@ export type ActivityCreateWithoutOpportunityInput = {
   company?: Prisma.CompanyCreateNestedOneWithoutActivitiesInput
   customer?: Prisma.CustomerCreateNestedOneWithoutActivitiesInput
   contact?: Prisma.ContactCreateNestedOneWithoutActivitiesInput
+  lead?: Prisma.LeadCreateNestedOneWithoutActivitiesInput
   assignedUser: Prisma.UserCreateNestedOneWithoutActivitiesAssignedInput
   createdBy: Prisma.UserCreateNestedOneWithoutActivitiesCreatedInput
   participants?: Prisma.ActivityParticipantCreateNestedManyWithoutActivityInput
@@ -2122,6 +2307,7 @@ export type ActivityUncheckedCreateWithoutOpportunityInput = {
   companyId?: number | null
   customerId?: number | null
   contactId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2190,6 +2376,7 @@ export type ActivityCreateWithoutAssignedUserInput = {
   customer?: Prisma.CustomerCreateNestedOneWithoutActivitiesInput
   contact?: Prisma.ContactCreateNestedOneWithoutActivitiesInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutActivitiesInput
+  lead?: Prisma.LeadCreateNestedOneWithoutActivitiesInput
   createdBy: Prisma.UserCreateNestedOneWithoutActivitiesCreatedInput
   participants?: Prisma.ActivityParticipantCreateNestedManyWithoutActivityInput
   followUpActivity?: Prisma.ActivityCreateNestedOneWithoutFollowedUpByInput
@@ -2216,6 +2403,7 @@ export type ActivityUncheckedCreateWithoutAssignedUserInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
@@ -2267,6 +2455,7 @@ export type ActivityCreateWithoutCreatedByInput = {
   customer?: Prisma.CustomerCreateNestedOneWithoutActivitiesInput
   contact?: Prisma.ContactCreateNestedOneWithoutActivitiesInput
   opportunity?: Prisma.OpportunityCreateNestedOneWithoutActivitiesInput
+  lead?: Prisma.LeadCreateNestedOneWithoutActivitiesInput
   assignedUser: Prisma.UserCreateNestedOneWithoutActivitiesAssignedInput
   participants?: Prisma.ActivityParticipantCreateNestedManyWithoutActivityInput
   followUpActivity?: Prisma.ActivityCreateNestedOneWithoutFollowedUpByInput
@@ -2293,6 +2482,7 @@ export type ActivityUncheckedCreateWithoutCreatedByInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
@@ -2369,6 +2559,7 @@ export type ActivityCreateManyFollowUpActivityInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2408,6 +2599,7 @@ export type ActivityUpdateWithoutFollowUpActivityInput = {
   customer?: Prisma.CustomerUpdateOneWithoutActivitiesNestedInput
   contact?: Prisma.ContactUpdateOneWithoutActivitiesNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutActivitiesNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutActivitiesNestedInput
   assignedUser?: Prisma.UserUpdateOneRequiredWithoutActivitiesAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutActivitiesCreatedNestedInput
   participants?: Prisma.ActivityParticipantUpdateManyWithoutActivityNestedInput
@@ -2434,6 +2626,7 @@ export type ActivityUncheckedUpdateWithoutFollowUpActivityInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2468,6 +2661,7 @@ export type ActivityUncheckedUpdateManyWithoutFollowUpActivityInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2499,6 +2693,7 @@ export type ActivityCreateManyCompanyInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2538,6 +2733,7 @@ export type ActivityUpdateWithoutCompanyInput = {
   customer?: Prisma.CustomerUpdateOneWithoutActivitiesNestedInput
   contact?: Prisma.ContactUpdateOneWithoutActivitiesNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutActivitiesNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutActivitiesNestedInput
   assignedUser?: Prisma.UserUpdateOneRequiredWithoutActivitiesAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutActivitiesCreatedNestedInput
   participants?: Prisma.ActivityParticipantUpdateManyWithoutActivityNestedInput
@@ -2564,6 +2760,7 @@ export type ActivityUncheckedUpdateWithoutCompanyInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2598,6 +2795,7 @@ export type ActivityUncheckedUpdateManyWithoutCompanyInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2630,6 +2828,7 @@ export type ActivityCreateManyCustomerInput = {
   companyId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2669,6 +2868,7 @@ export type ActivityUpdateWithoutCustomerInput = {
   company?: Prisma.CompanyUpdateOneWithoutActivitiesNestedInput
   contact?: Prisma.ContactUpdateOneWithoutActivitiesNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutActivitiesNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutActivitiesNestedInput
   assignedUser?: Prisma.UserUpdateOneRequiredWithoutActivitiesAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutActivitiesCreatedNestedInput
   participants?: Prisma.ActivityParticipantUpdateManyWithoutActivityNestedInput
@@ -2695,6 +2895,7 @@ export type ActivityUncheckedUpdateWithoutCustomerInput = {
   companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2729,6 +2930,7 @@ export type ActivityUncheckedUpdateManyWithoutCustomerInput = {
   companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2761,6 +2963,7 @@ export type ActivityCreateManyContactInput = {
   companyId?: number | null
   customerId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2800,6 +3003,7 @@ export type ActivityUpdateWithoutContactInput = {
   company?: Prisma.CompanyUpdateOneWithoutActivitiesNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutActivitiesNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutActivitiesNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutActivitiesNestedInput
   assignedUser?: Prisma.UserUpdateOneRequiredWithoutActivitiesAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutActivitiesCreatedNestedInput
   participants?: Prisma.ActivityParticipantUpdateManyWithoutActivityNestedInput
@@ -2826,6 +3030,7 @@ export type ActivityUncheckedUpdateWithoutContactInput = {
   companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2860,6 +3065,142 @@ export type ActivityUncheckedUpdateManyWithoutContactInput = {
   companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ActivityCreateManyLeadInput = {
+  id?: number
+  type: $Enums.ActivityType
+  status?: $Enums.ActivityStatus
+  priority?: $Enums.ActivityPriority
+  outcome?: $Enums.ActivityOutcome | null
+  subject: string
+  description?: string | null
+  location?: string | null
+  scheduledStart: Date | string
+  scheduledEnd?: Date | string | null
+  actualStart?: Date | string | null
+  actualEnd?: Date | string | null
+  duration?: number | null
+  reminderMinutes?: number | null
+  reminderSent?: boolean
+  companyId?: number | null
+  customerId?: number | null
+  contactId?: number | null
+  opportunityId?: number | null
+  assignedUserId: number
+  createdByUserId: number
+  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  internalNotes?: string | null
+  result?: string | null
+  requiresFollowUp?: boolean
+  followUpDate?: Date | string | null
+  followUpActivityId?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ActivityUpdateWithoutLeadInput = {
+  type?: Prisma.EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+  status?: Prisma.EnumActivityStatusFieldUpdateOperationsInput | $Enums.ActivityStatus
+  priority?: Prisma.EnumActivityPriorityFieldUpdateOperationsInput | $Enums.ActivityPriority
+  outcome?: Prisma.NullableEnumActivityOutcomeFieldUpdateOperationsInput | $Enums.ActivityOutcome | null
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduledStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  scheduledEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  actualStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  actualEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reminderMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reminderSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  company?: Prisma.CompanyUpdateOneWithoutActivitiesNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutActivitiesNestedInput
+  contact?: Prisma.ContactUpdateOneWithoutActivitiesNestedInput
+  opportunity?: Prisma.OpportunityUpdateOneWithoutActivitiesNestedInput
+  assignedUser?: Prisma.UserUpdateOneRequiredWithoutActivitiesAssignedNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutActivitiesCreatedNestedInput
+  participants?: Prisma.ActivityParticipantUpdateManyWithoutActivityNestedInput
+  followUpActivity?: Prisma.ActivityUpdateOneWithoutFollowedUpByNestedInput
+  followedUpBy?: Prisma.ActivityUpdateManyWithoutFollowUpActivityNestedInput
+}
+
+export type ActivityUncheckedUpdateWithoutLeadInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+  status?: Prisma.EnumActivityStatusFieldUpdateOperationsInput | $Enums.ActivityStatus
+  priority?: Prisma.EnumActivityPriorityFieldUpdateOperationsInput | $Enums.ActivityPriority
+  outcome?: Prisma.NullableEnumActivityOutcomeFieldUpdateOperationsInput | $Enums.ActivityOutcome | null
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduledStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  scheduledEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  actualStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  actualEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reminderMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reminderSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
+  attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  participants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutActivityNestedInput
+  followedUpBy?: Prisma.ActivityUncheckedUpdateManyWithoutFollowUpActivityNestedInput
+}
+
+export type ActivityUncheckedUpdateManyWithoutLeadInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+  status?: Prisma.EnumActivityStatusFieldUpdateOperationsInput | $Enums.ActivityStatus
+  priority?: Prisma.EnumActivityPriorityFieldUpdateOperationsInput | $Enums.ActivityPriority
+  outcome?: Prisma.NullableEnumActivityOutcomeFieldUpdateOperationsInput | $Enums.ActivityOutcome | null
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduledStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  scheduledEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  actualStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  actualEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  duration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reminderMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  reminderSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2892,6 +3233,7 @@ export type ActivityCreateManyOpportunityInput = {
   companyId?: number | null
   customerId?: number | null
   contactId?: number | null
+  leadId?: number | null
   assignedUserId: number
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2931,6 +3273,7 @@ export type ActivityUpdateWithoutOpportunityInput = {
   company?: Prisma.CompanyUpdateOneWithoutActivitiesNestedInput
   customer?: Prisma.CustomerUpdateOneWithoutActivitiesNestedInput
   contact?: Prisma.ContactUpdateOneWithoutActivitiesNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutActivitiesNestedInput
   assignedUser?: Prisma.UserUpdateOneRequiredWithoutActivitiesAssignedNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutActivitiesCreatedNestedInput
   participants?: Prisma.ActivityParticipantUpdateManyWithoutActivityNestedInput
@@ -2957,6 +3300,7 @@ export type ActivityUncheckedUpdateWithoutOpportunityInput = {
   companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -2991,6 +3335,7 @@ export type ActivityUncheckedUpdateManyWithoutOpportunityInput = {
   companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -3024,6 +3369,7 @@ export type ActivityCreateManyAssignedUserInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   createdByUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
@@ -3056,6 +3402,7 @@ export type ActivityCreateManyCreatedByInput = {
   customerId?: number | null
   contactId?: number | null
   opportunityId?: number | null
+  leadId?: number | null
   assignedUserId: number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
@@ -3095,6 +3442,7 @@ export type ActivityUpdateWithoutAssignedUserInput = {
   customer?: Prisma.CustomerUpdateOneWithoutActivitiesNestedInput
   contact?: Prisma.ContactUpdateOneWithoutActivitiesNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutActivitiesNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutActivitiesNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutActivitiesCreatedNestedInput
   participants?: Prisma.ActivityParticipantUpdateManyWithoutActivityNestedInput
   followUpActivity?: Prisma.ActivityUpdateOneWithoutFollowedUpByNestedInput
@@ -3121,6 +3469,7 @@ export type ActivityUncheckedUpdateWithoutAssignedUserInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3155,6 +3504,7 @@ export type ActivityUncheckedUpdateManyWithoutAssignedUserInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdByUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3194,6 +3544,7 @@ export type ActivityUpdateWithoutCreatedByInput = {
   customer?: Prisma.CustomerUpdateOneWithoutActivitiesNestedInput
   contact?: Prisma.ContactUpdateOneWithoutActivitiesNestedInput
   opportunity?: Prisma.OpportunityUpdateOneWithoutActivitiesNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutActivitiesNestedInput
   assignedUser?: Prisma.UserUpdateOneRequiredWithoutActivitiesAssignedNestedInput
   participants?: Prisma.ActivityParticipantUpdateManyWithoutActivityNestedInput
   followUpActivity?: Prisma.ActivityUpdateOneWithoutFollowedUpByNestedInput
@@ -3220,6 +3571,7 @@ export type ActivityUncheckedUpdateWithoutCreatedByInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3254,6 +3606,7 @@ export type ActivityUncheckedUpdateManyWithoutCreatedByInput = {
   customerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   contactId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leadId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   assignedUserId?: Prisma.IntFieldUpdateOperationsInput | number
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3326,6 +3679,7 @@ export type ActivitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   customerId?: boolean
   contactId?: boolean
   opportunityId?: boolean
+  leadId?: boolean
   assignedUserId?: boolean
   createdByUserId?: boolean
   attachments?: boolean
@@ -3341,6 +3695,7 @@ export type ActivitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   customer?: boolean | Prisma.Activity$customerArgs<ExtArgs>
   contact?: boolean | Prisma.Activity$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Activity$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Activity$leadArgs<ExtArgs>
   assignedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   participants?: boolean | Prisma.Activity$participantsArgs<ExtArgs>
@@ -3369,6 +3724,7 @@ export type ActivitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   customerId?: boolean
   contactId?: boolean
   opportunityId?: boolean
+  leadId?: boolean
   assignedUserId?: boolean
   createdByUserId?: boolean
   attachments?: boolean
@@ -3384,6 +3740,7 @@ export type ActivitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   customer?: boolean | Prisma.Activity$customerArgs<ExtArgs>
   contact?: boolean | Prisma.Activity$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Activity$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Activity$leadArgs<ExtArgs>
   assignedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   followUpActivity?: boolean | Prisma.Activity$followUpActivityArgs<ExtArgs>
@@ -3409,6 +3766,7 @@ export type ActivitySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   customerId?: boolean
   contactId?: boolean
   opportunityId?: boolean
+  leadId?: boolean
   assignedUserId?: boolean
   createdByUserId?: boolean
   attachments?: boolean
@@ -3424,6 +3782,7 @@ export type ActivitySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   customer?: boolean | Prisma.Activity$customerArgs<ExtArgs>
   contact?: boolean | Prisma.Activity$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Activity$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Activity$leadArgs<ExtArgs>
   assignedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   followUpActivity?: boolean | Prisma.Activity$followUpActivityArgs<ExtArgs>
@@ -3449,6 +3808,7 @@ export type ActivitySelectScalar = {
   customerId?: boolean
   contactId?: boolean
   opportunityId?: boolean
+  leadId?: boolean
   assignedUserId?: boolean
   createdByUserId?: boolean
   attachments?: boolean
@@ -3462,12 +3822,13 @@ export type ActivitySelectScalar = {
   updatedAt?: boolean
 }
 
-export type ActivityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "status" | "priority" | "outcome" | "subject" | "description" | "location" | "scheduledStart" | "scheduledEnd" | "actualStart" | "actualEnd" | "duration" | "reminderMinutes" | "reminderSent" | "companyId" | "customerId" | "contactId" | "opportunityId" | "assignedUserId" | "createdByUserId" | "attachments" | "internalNotes" | "result" | "requiresFollowUp" | "followUpDate" | "followUpActivityId" | "customFields" | "createdAt" | "updatedAt", ExtArgs["result"]["activity"]>
+export type ActivityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "status" | "priority" | "outcome" | "subject" | "description" | "location" | "scheduledStart" | "scheduledEnd" | "actualStart" | "actualEnd" | "duration" | "reminderMinutes" | "reminderSent" | "companyId" | "customerId" | "contactId" | "opportunityId" | "leadId" | "assignedUserId" | "createdByUserId" | "attachments" | "internalNotes" | "result" | "requiresFollowUp" | "followUpDate" | "followUpActivityId" | "customFields" | "createdAt" | "updatedAt", ExtArgs["result"]["activity"]>
 export type ActivityInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.Activity$companyArgs<ExtArgs>
   customer?: boolean | Prisma.Activity$customerArgs<ExtArgs>
   contact?: boolean | Prisma.Activity$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Activity$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Activity$leadArgs<ExtArgs>
   assignedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   participants?: boolean | Prisma.Activity$participantsArgs<ExtArgs>
@@ -3480,6 +3841,7 @@ export type ActivityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   customer?: boolean | Prisma.Activity$customerArgs<ExtArgs>
   contact?: boolean | Prisma.Activity$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Activity$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Activity$leadArgs<ExtArgs>
   assignedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   followUpActivity?: boolean | Prisma.Activity$followUpActivityArgs<ExtArgs>
@@ -3489,6 +3851,7 @@ export type ActivityIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   customer?: boolean | Prisma.Activity$customerArgs<ExtArgs>
   contact?: boolean | Prisma.Activity$contactArgs<ExtArgs>
   opportunity?: boolean | Prisma.Activity$opportunityArgs<ExtArgs>
+  lead?: boolean | Prisma.Activity$leadArgs<ExtArgs>
   assignedUser?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   followUpActivity?: boolean | Prisma.Activity$followUpActivityArgs<ExtArgs>
@@ -3501,6 +3864,7 @@ export type $ActivityPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     customer: Prisma.$CustomerPayload<ExtArgs> | null
     contact: Prisma.$ContactPayload<ExtArgs> | null
     opportunity: Prisma.$OpportunityPayload<ExtArgs> | null
+    lead: Prisma.$LeadPayload<ExtArgs> | null
     assignedUser: Prisma.$UserPayload<ExtArgs>
     createdBy: Prisma.$UserPayload<ExtArgs>
     participants: Prisma.$ActivityParticipantPayload<ExtArgs>[]
@@ -3527,6 +3891,7 @@ export type $ActivityPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     customerId: number | null
     contactId: number | null
     opportunityId: number | null
+    leadId: number | null
     assignedUserId: number
     createdByUserId: number
     attachments: runtime.JsonValue | null
@@ -3936,6 +4301,7 @@ export interface Prisma__ActivityClient<T, Null = never, ExtArgs extends runtime
   customer<T extends Prisma.Activity$customerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Activity$customerArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   contact<T extends Prisma.Activity$contactArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Activity$contactArgs<ExtArgs>>): Prisma.Prisma__ContactClient<runtime.Types.Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   opportunity<T extends Prisma.Activity$opportunityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Activity$opportunityArgs<ExtArgs>>): Prisma.Prisma__OpportunityClient<runtime.Types.Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  lead<T extends Prisma.Activity$leadArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Activity$leadArgs<ExtArgs>>): Prisma.Prisma__LeadClient<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   assignedUser<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   participants<T extends Prisma.Activity$participantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Activity$participantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3989,6 +4355,7 @@ export interface ActivityFieldRefs {
   readonly customerId: Prisma.FieldRef<"Activity", 'Int'>
   readonly contactId: Prisma.FieldRef<"Activity", 'Int'>
   readonly opportunityId: Prisma.FieldRef<"Activity", 'Int'>
+  readonly leadId: Prisma.FieldRef<"Activity", 'Int'>
   readonly assignedUserId: Prisma.FieldRef<"Activity", 'Int'>
   readonly createdByUserId: Prisma.FieldRef<"Activity", 'Int'>
   readonly attachments: Prisma.FieldRef<"Activity", 'Json'>
@@ -4469,6 +4836,25 @@ export type Activity$opportunityArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   include?: Prisma.OpportunityInclude<ExtArgs> | null
   where?: Prisma.OpportunityWhereInput
+}
+
+/**
+ * Activity.lead
+ */
+export type Activity$leadArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
 }
 
 /**

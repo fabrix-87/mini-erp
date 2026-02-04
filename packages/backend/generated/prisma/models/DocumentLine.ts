@@ -42,6 +42,12 @@ export type DocumentLineAvgAggregateOutputType = {
   taxPercent: runtime.Decimal | null
   taxAmount: runtime.Decimal | null
   lineTotalWithTax: runtime.Decimal | null
+  warehouseId: number | null
+  parentLineId: number | null
+  quantityInvoiced: runtime.Decimal | null
+  quantityDelivered: runtime.Decimal | null
+  quantityReturned: runtime.Decimal | null
+  originalUnitPrice: runtime.Decimal | null
 }
 
 export type DocumentLineSumAggregateOutputType = {
@@ -60,6 +66,12 @@ export type DocumentLineSumAggregateOutputType = {
   taxPercent: runtime.Decimal | null
   taxAmount: runtime.Decimal | null
   lineTotalWithTax: runtime.Decimal | null
+  warehouseId: number | null
+  parentLineId: number | null
+  quantityInvoiced: runtime.Decimal | null
+  quantityDelivered: runtime.Decimal | null
+  quantityReturned: runtime.Decimal | null
+  originalUnitPrice: runtime.Decimal | null
 }
 
 export type DocumentLineMinAggregateOutputType = {
@@ -84,9 +96,18 @@ export type DocumentLineMinAggregateOutputType = {
   taxRuleId: number | null
   taxPercent: runtime.Decimal | null
   taxAmount: runtime.Decimal | null
-  taxCode: string | null
+  vatNatureCode: string | null
+  vatNormReference: string | null
   lineTotalWithTax: runtime.Decimal | null
   notes: string | null
+  warehouseId: number | null
+  parentLineId: number | null
+  isComponent: boolean | null
+  quantityInvoiced: runtime.Decimal | null
+  quantityDelivered: runtime.Decimal | null
+  quantityReturned: runtime.Decimal | null
+  originalUnitPrice: runtime.Decimal | null
+  priceOverrideReason: string | null
 }
 
 export type DocumentLineMaxAggregateOutputType = {
@@ -111,9 +132,18 @@ export type DocumentLineMaxAggregateOutputType = {
   taxRuleId: number | null
   taxPercent: runtime.Decimal | null
   taxAmount: runtime.Decimal | null
-  taxCode: string | null
+  vatNatureCode: string | null
+  vatNormReference: string | null
   lineTotalWithTax: runtime.Decimal | null
   notes: string | null
+  warehouseId: number | null
+  parentLineId: number | null
+  isComponent: boolean | null
+  quantityInvoiced: runtime.Decimal | null
+  quantityDelivered: runtime.Decimal | null
+  quantityReturned: runtime.Decimal | null
+  originalUnitPrice: runtime.Decimal | null
+  priceOverrideReason: string | null
 }
 
 export type DocumentLineCountAggregateOutputType = {
@@ -138,10 +168,19 @@ export type DocumentLineCountAggregateOutputType = {
   taxRuleId: number
   taxPercent: number
   taxAmount: number
-  taxCode: number
+  vatNatureCode: number
+  vatNormReference: number
   lineTotalWithTax: number
   notes: number
   customFields: number
+  warehouseId: number
+  parentLineId: number
+  isComponent: number
+  quantityInvoiced: number
+  quantityDelivered: number
+  quantityReturned: number
+  originalUnitPrice: number
+  priceOverrideReason: number
   _all: number
 }
 
@@ -162,6 +201,12 @@ export type DocumentLineAvgAggregateInputType = {
   taxPercent?: true
   taxAmount?: true
   lineTotalWithTax?: true
+  warehouseId?: true
+  parentLineId?: true
+  quantityInvoiced?: true
+  quantityDelivered?: true
+  quantityReturned?: true
+  originalUnitPrice?: true
 }
 
 export type DocumentLineSumAggregateInputType = {
@@ -180,6 +225,12 @@ export type DocumentLineSumAggregateInputType = {
   taxPercent?: true
   taxAmount?: true
   lineTotalWithTax?: true
+  warehouseId?: true
+  parentLineId?: true
+  quantityInvoiced?: true
+  quantityDelivered?: true
+  quantityReturned?: true
+  originalUnitPrice?: true
 }
 
 export type DocumentLineMinAggregateInputType = {
@@ -204,9 +255,18 @@ export type DocumentLineMinAggregateInputType = {
   taxRuleId?: true
   taxPercent?: true
   taxAmount?: true
-  taxCode?: true
+  vatNatureCode?: true
+  vatNormReference?: true
   lineTotalWithTax?: true
   notes?: true
+  warehouseId?: true
+  parentLineId?: true
+  isComponent?: true
+  quantityInvoiced?: true
+  quantityDelivered?: true
+  quantityReturned?: true
+  originalUnitPrice?: true
+  priceOverrideReason?: true
 }
 
 export type DocumentLineMaxAggregateInputType = {
@@ -231,9 +291,18 @@ export type DocumentLineMaxAggregateInputType = {
   taxRuleId?: true
   taxPercent?: true
   taxAmount?: true
-  taxCode?: true
+  vatNatureCode?: true
+  vatNormReference?: true
   lineTotalWithTax?: true
   notes?: true
+  warehouseId?: true
+  parentLineId?: true
+  isComponent?: true
+  quantityInvoiced?: true
+  quantityDelivered?: true
+  quantityReturned?: true
+  originalUnitPrice?: true
+  priceOverrideReason?: true
 }
 
 export type DocumentLineCountAggregateInputType = {
@@ -258,10 +327,19 @@ export type DocumentLineCountAggregateInputType = {
   taxRuleId?: true
   taxPercent?: true
   taxAmount?: true
-  taxCode?: true
+  vatNatureCode?: true
+  vatNormReference?: true
   lineTotalWithTax?: true
   notes?: true
   customFields?: true
+  warehouseId?: true
+  parentLineId?: true
+  isComponent?: true
+  quantityInvoiced?: true
+  quantityDelivered?: true
+  quantityReturned?: true
+  originalUnitPrice?: true
+  priceOverrideReason?: true
   _all?: true
 }
 
@@ -373,10 +451,19 @@ export type DocumentLineGroupByOutputType = {
   taxRuleId: number | null
   taxPercent: runtime.Decimal
   taxAmount: runtime.Decimal
-  taxCode: string | null
+  vatNatureCode: string | null
+  vatNormReference: string | null
   lineTotalWithTax: runtime.Decimal
   notes: string | null
   customFields: runtime.JsonValue | null
+  warehouseId: number | null
+  parentLineId: number | null
+  isComponent: boolean
+  quantityInvoiced: runtime.Decimal
+  quantityDelivered: runtime.Decimal
+  quantityReturned: runtime.Decimal
+  originalUnitPrice: runtime.Decimal | null
+  priceOverrideReason: string | null
   _count: DocumentLineCountAggregateOutputType | null
   _avg: DocumentLineAvgAggregateOutputType | null
   _sum: DocumentLineSumAggregateOutputType | null
@@ -424,15 +511,29 @@ export type DocumentLineWhereInput = {
   taxRuleId?: Prisma.IntNullableFilter<"DocumentLine"> | number | null
   taxPercent?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
+  vatNatureCode?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
+  vatNormReference?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
   lineTotalWithTax?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
   customFields?: Prisma.JsonNullableFilter<"DocumentLine">
+  warehouseId?: Prisma.IntNullableFilter<"DocumentLine"> | number | null
+  parentLineId?: Prisma.IntNullableFilter<"DocumentLine"> | number | null
+  isComponent?: Prisma.BoolFilter<"DocumentLine"> | boolean
+  quantityInvoiced?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.DecimalNullableFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
   document?: Prisma.XOR<Prisma.DocumentScalarRelationFilter, Prisma.DocumentWhereInput>
   productVariant?: Prisma.XOR<Prisma.ProductVariantNullableScalarRelationFilter, Prisma.ProductVariantWhereInput> | null
   product?: Prisma.XOR<Prisma.ProductNullableScalarRelationFilter, Prisma.ProductWhereInput> | null
   taxRule?: Prisma.XOR<Prisma.TaxRuleNullableScalarRelationFilter, Prisma.TaxRuleWhereInput> | null
   intrastatTransaction?: Prisma.XOR<Prisma.IntrastatTransactionNullableScalarRelationFilter, Prisma.IntrastatTransactionWhereInput> | null
+  warehouse?: Prisma.XOR<Prisma.WarehouseNullableScalarRelationFilter, Prisma.WarehouseWhereInput> | null
+  stockReservations?: Prisma.StockReservationListRelationFilter
+  stockMovement?: Prisma.StockMovementListRelationFilter
+  parentLine?: Prisma.XOR<Prisma.DocumentLineNullableScalarRelationFilter, Prisma.DocumentLineWhereInput> | null
+  componentLines?: Prisma.DocumentLineListRelationFilter
 }
 
 export type DocumentLineOrderByWithRelationInput = {
@@ -457,15 +558,29 @@ export type DocumentLineOrderByWithRelationInput = {
   taxRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
   taxPercent?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
-  taxCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  vatNatureCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  vatNormReference?: Prisma.SortOrderInput | Prisma.SortOrder
   lineTotalWithTax?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   customFields?: Prisma.SortOrderInput | Prisma.SortOrder
+  warehouseId?: Prisma.SortOrderInput | Prisma.SortOrder
+  parentLineId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isComponent?: Prisma.SortOrder
+  quantityInvoiced?: Prisma.SortOrder
+  quantityDelivered?: Prisma.SortOrder
+  quantityReturned?: Prisma.SortOrder
+  originalUnitPrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  priceOverrideReason?: Prisma.SortOrderInput | Prisma.SortOrder
   document?: Prisma.DocumentOrderByWithRelationInput
   productVariant?: Prisma.ProductVariantOrderByWithRelationInput
   product?: Prisma.ProductOrderByWithRelationInput
   taxRule?: Prisma.TaxRuleOrderByWithRelationInput
   intrastatTransaction?: Prisma.IntrastatTransactionOrderByWithRelationInput
+  warehouse?: Prisma.WarehouseOrderByWithRelationInput
+  stockReservations?: Prisma.StockReservationOrderByRelationAggregateInput
+  stockMovement?: Prisma.StockMovementOrderByRelationAggregateInput
+  parentLine?: Prisma.DocumentLineOrderByWithRelationInput
+  componentLines?: Prisma.DocumentLineOrderByRelationAggregateInput
 }
 
 export type DocumentLineWhereUniqueInput = Prisma.AtLeast<{
@@ -493,15 +608,29 @@ export type DocumentLineWhereUniqueInput = Prisma.AtLeast<{
   taxRuleId?: Prisma.IntNullableFilter<"DocumentLine"> | number | null
   taxPercent?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
+  vatNatureCode?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
+  vatNormReference?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
   lineTotalWithTax?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
   customFields?: Prisma.JsonNullableFilter<"DocumentLine">
+  warehouseId?: Prisma.IntNullableFilter<"DocumentLine"> | number | null
+  parentLineId?: Prisma.IntNullableFilter<"DocumentLine"> | number | null
+  isComponent?: Prisma.BoolFilter<"DocumentLine"> | boolean
+  quantityInvoiced?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.DecimalNullableFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
   document?: Prisma.XOR<Prisma.DocumentScalarRelationFilter, Prisma.DocumentWhereInput>
   productVariant?: Prisma.XOR<Prisma.ProductVariantNullableScalarRelationFilter, Prisma.ProductVariantWhereInput> | null
   product?: Prisma.XOR<Prisma.ProductNullableScalarRelationFilter, Prisma.ProductWhereInput> | null
   taxRule?: Prisma.XOR<Prisma.TaxRuleNullableScalarRelationFilter, Prisma.TaxRuleWhereInput> | null
   intrastatTransaction?: Prisma.XOR<Prisma.IntrastatTransactionNullableScalarRelationFilter, Prisma.IntrastatTransactionWhereInput> | null
+  warehouse?: Prisma.XOR<Prisma.WarehouseNullableScalarRelationFilter, Prisma.WarehouseWhereInput> | null
+  stockReservations?: Prisma.StockReservationListRelationFilter
+  stockMovement?: Prisma.StockMovementListRelationFilter
+  parentLine?: Prisma.XOR<Prisma.DocumentLineNullableScalarRelationFilter, Prisma.DocumentLineWhereInput> | null
+  componentLines?: Prisma.DocumentLineListRelationFilter
 }, "id">
 
 export type DocumentLineOrderByWithAggregationInput = {
@@ -526,10 +655,19 @@ export type DocumentLineOrderByWithAggregationInput = {
   taxRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
   taxPercent?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
-  taxCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  vatNatureCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  vatNormReference?: Prisma.SortOrderInput | Prisma.SortOrder
   lineTotalWithTax?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   customFields?: Prisma.SortOrderInput | Prisma.SortOrder
+  warehouseId?: Prisma.SortOrderInput | Prisma.SortOrder
+  parentLineId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isComponent?: Prisma.SortOrder
+  quantityInvoiced?: Prisma.SortOrder
+  quantityDelivered?: Prisma.SortOrder
+  quantityReturned?: Prisma.SortOrder
+  originalUnitPrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  priceOverrideReason?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.DocumentLineCountOrderByAggregateInput
   _avg?: Prisma.DocumentLineAvgOrderByAggregateInput
   _max?: Prisma.DocumentLineMaxOrderByAggregateInput
@@ -562,10 +700,19 @@ export type DocumentLineScalarWhereWithAggregatesInput = {
   taxRuleId?: Prisma.IntNullableWithAggregatesFilter<"DocumentLine"> | number | null
   taxPercent?: Prisma.DecimalWithAggregatesFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalWithAggregatesFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.StringNullableWithAggregatesFilter<"DocumentLine"> | string | null
+  vatNatureCode?: Prisma.StringNullableWithAggregatesFilter<"DocumentLine"> | string | null
+  vatNormReference?: Prisma.StringNullableWithAggregatesFilter<"DocumentLine"> | string | null
   lineTotalWithTax?: Prisma.DecimalWithAggregatesFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.StringNullableWithAggregatesFilter<"DocumentLine"> | string | null
   customFields?: Prisma.JsonNullableWithAggregatesFilter<"DocumentLine">
+  warehouseId?: Prisma.IntNullableWithAggregatesFilter<"DocumentLine"> | number | null
+  parentLineId?: Prisma.IntNullableWithAggregatesFilter<"DocumentLine"> | number | null
+  isComponent?: Prisma.BoolWithAggregatesFilter<"DocumentLine"> | boolean
+  quantityInvoiced?: Prisma.DecimalWithAggregatesFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalWithAggregatesFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalWithAggregatesFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.DecimalNullableWithAggregatesFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.StringNullableWithAggregatesFilter<"DocumentLine"> | string | null
 }
 
 export type DocumentLineCreateInput = {
@@ -585,15 +732,27 @@ export type DocumentLineCreateInput = {
   lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
   document: Prisma.DocumentCreateNestedOneWithoutLinesInput
   productVariant?: Prisma.ProductVariantCreateNestedOneWithoutDocumentLinesInput
   product?: Prisma.ProductCreateNestedOneWithoutDocumentLinesInput
   taxRule?: Prisma.TaxRuleCreateNestedOneWithoutDocumentLinesInput
   intrastatTransaction?: Prisma.IntrastatTransactionCreateNestedOneWithoutDocumentLineInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentLinesInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentLineInput
+  parentLine?: Prisma.DocumentLineCreateNestedOneWithoutComponentLinesInput
+  componentLines?: Prisma.DocumentLineCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineUncheckedCreateInput = {
@@ -618,11 +777,23 @@ export type DocumentLineUncheckedCreateInput = {
   taxRuleId?: number | null
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
   intrastatTransaction?: Prisma.IntrastatTransactionUncheckedCreateNestedOneWithoutDocumentLineInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentLineInput
+  componentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineUpdateInput = {
@@ -642,15 +813,27 @@ export type DocumentLineUpdateInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   document?: Prisma.DocumentUpdateOneRequiredWithoutLinesNestedInput
   productVariant?: Prisma.ProductVariantUpdateOneWithoutDocumentLinesNestedInput
   product?: Prisma.ProductUpdateOneWithoutDocumentLinesNestedInput
   taxRule?: Prisma.TaxRuleUpdateOneWithoutDocumentLinesNestedInput
   intrastatTransaction?: Prisma.IntrastatTransactionUpdateOneWithoutDocumentLineNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentLinesNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentLineNestedInput
+  parentLine?: Prisma.DocumentLineUpdateOneWithoutComponentLinesNestedInput
+  componentLines?: Prisma.DocumentLineUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineUncheckedUpdateInput = {
@@ -675,11 +858,23 @@ export type DocumentLineUncheckedUpdateInput = {
   taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   intrastatTransaction?: Prisma.IntrastatTransactionUncheckedUpdateOneWithoutDocumentLineNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentLineNestedInput
+  componentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineCreateManyInput = {
@@ -704,10 +899,19 @@ export type DocumentLineCreateManyInput = {
   taxRuleId?: number | null
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
 }
 
 export type DocumentLineUpdateManyMutationInput = {
@@ -727,10 +931,17 @@ export type DocumentLineUpdateManyMutationInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DocumentLineUncheckedUpdateManyInput = {
@@ -755,10 +966,19 @@ export type DocumentLineUncheckedUpdateManyInput = {
   taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DocumentLineListRelationFilter = {
@@ -769,6 +989,11 @@ export type DocumentLineListRelationFilter = {
 
 export type DocumentLineOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type DocumentLineNullableScalarRelationFilter = {
+  is?: Prisma.DocumentLineWhereInput | null
+  isNot?: Prisma.DocumentLineWhereInput | null
 }
 
 export type DocumentLineCountOrderByAggregateInput = {
@@ -793,10 +1018,19 @@ export type DocumentLineCountOrderByAggregateInput = {
   taxRuleId?: Prisma.SortOrder
   taxPercent?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
-  taxCode?: Prisma.SortOrder
+  vatNatureCode?: Prisma.SortOrder
+  vatNormReference?: Prisma.SortOrder
   lineTotalWithTax?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   customFields?: Prisma.SortOrder
+  warehouseId?: Prisma.SortOrder
+  parentLineId?: Prisma.SortOrder
+  isComponent?: Prisma.SortOrder
+  quantityInvoiced?: Prisma.SortOrder
+  quantityDelivered?: Prisma.SortOrder
+  quantityReturned?: Prisma.SortOrder
+  originalUnitPrice?: Prisma.SortOrder
+  priceOverrideReason?: Prisma.SortOrder
 }
 
 export type DocumentLineAvgOrderByAggregateInput = {
@@ -815,6 +1049,12 @@ export type DocumentLineAvgOrderByAggregateInput = {
   taxPercent?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   lineTotalWithTax?: Prisma.SortOrder
+  warehouseId?: Prisma.SortOrder
+  parentLineId?: Prisma.SortOrder
+  quantityInvoiced?: Prisma.SortOrder
+  quantityDelivered?: Prisma.SortOrder
+  quantityReturned?: Prisma.SortOrder
+  originalUnitPrice?: Prisma.SortOrder
 }
 
 export type DocumentLineMaxOrderByAggregateInput = {
@@ -839,9 +1079,18 @@ export type DocumentLineMaxOrderByAggregateInput = {
   taxRuleId?: Prisma.SortOrder
   taxPercent?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
-  taxCode?: Prisma.SortOrder
+  vatNatureCode?: Prisma.SortOrder
+  vatNormReference?: Prisma.SortOrder
   lineTotalWithTax?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  warehouseId?: Prisma.SortOrder
+  parentLineId?: Prisma.SortOrder
+  isComponent?: Prisma.SortOrder
+  quantityInvoiced?: Prisma.SortOrder
+  quantityDelivered?: Prisma.SortOrder
+  quantityReturned?: Prisma.SortOrder
+  originalUnitPrice?: Prisma.SortOrder
+  priceOverrideReason?: Prisma.SortOrder
 }
 
 export type DocumentLineMinOrderByAggregateInput = {
@@ -866,9 +1115,18 @@ export type DocumentLineMinOrderByAggregateInput = {
   taxRuleId?: Prisma.SortOrder
   taxPercent?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
-  taxCode?: Prisma.SortOrder
+  vatNatureCode?: Prisma.SortOrder
+  vatNormReference?: Prisma.SortOrder
   lineTotalWithTax?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  warehouseId?: Prisma.SortOrder
+  parentLineId?: Prisma.SortOrder
+  isComponent?: Prisma.SortOrder
+  quantityInvoiced?: Prisma.SortOrder
+  quantityDelivered?: Prisma.SortOrder
+  quantityReturned?: Prisma.SortOrder
+  originalUnitPrice?: Prisma.SortOrder
+  priceOverrideReason?: Prisma.SortOrder
 }
 
 export type DocumentLineSumOrderByAggregateInput = {
@@ -887,6 +1145,12 @@ export type DocumentLineSumOrderByAggregateInput = {
   taxPercent?: Prisma.SortOrder
   taxAmount?: Prisma.SortOrder
   lineTotalWithTax?: Prisma.SortOrder
+  warehouseId?: Prisma.SortOrder
+  parentLineId?: Prisma.SortOrder
+  quantityInvoiced?: Prisma.SortOrder
+  quantityDelivered?: Prisma.SortOrder
+  quantityReturned?: Prisma.SortOrder
+  originalUnitPrice?: Prisma.SortOrder
 }
 
 export type DocumentLineScalarRelationFilter = {
@@ -933,6 +1197,64 @@ export type DocumentLineUncheckedUpdateManyWithoutDocumentNestedInput = {
   connect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
   update?: Prisma.DocumentLineUpdateWithWhereUniqueWithoutDocumentInput | Prisma.DocumentLineUpdateWithWhereUniqueWithoutDocumentInput[]
   updateMany?: Prisma.DocumentLineUpdateManyWithWhereWithoutDocumentInput | Prisma.DocumentLineUpdateManyWithWhereWithoutDocumentInput[]
+  deleteMany?: Prisma.DocumentLineScalarWhereInput | Prisma.DocumentLineScalarWhereInput[]
+}
+
+export type DocumentLineCreateNestedOneWithoutComponentLinesInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutComponentLinesInput, Prisma.DocumentLineUncheckedCreateWithoutComponentLinesInput>
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutComponentLinesInput
+  connect?: Prisma.DocumentLineWhereUniqueInput
+}
+
+export type DocumentLineCreateNestedManyWithoutParentLineInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutParentLineInput, Prisma.DocumentLineUncheckedCreateWithoutParentLineInput> | Prisma.DocumentLineCreateWithoutParentLineInput[] | Prisma.DocumentLineUncheckedCreateWithoutParentLineInput[]
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutParentLineInput | Prisma.DocumentLineCreateOrConnectWithoutParentLineInput[]
+  createMany?: Prisma.DocumentLineCreateManyParentLineInputEnvelope
+  connect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+}
+
+export type DocumentLineUncheckedCreateNestedManyWithoutParentLineInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutParentLineInput, Prisma.DocumentLineUncheckedCreateWithoutParentLineInput> | Prisma.DocumentLineCreateWithoutParentLineInput[] | Prisma.DocumentLineUncheckedCreateWithoutParentLineInput[]
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutParentLineInput | Prisma.DocumentLineCreateOrConnectWithoutParentLineInput[]
+  createMany?: Prisma.DocumentLineCreateManyParentLineInputEnvelope
+  connect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+}
+
+export type DocumentLineUpdateOneWithoutComponentLinesNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutComponentLinesInput, Prisma.DocumentLineUncheckedCreateWithoutComponentLinesInput>
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutComponentLinesInput
+  upsert?: Prisma.DocumentLineUpsertWithoutComponentLinesInput
+  disconnect?: Prisma.DocumentLineWhereInput | boolean
+  delete?: Prisma.DocumentLineWhereInput | boolean
+  connect?: Prisma.DocumentLineWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentLineUpdateToOneWithWhereWithoutComponentLinesInput, Prisma.DocumentLineUpdateWithoutComponentLinesInput>, Prisma.DocumentLineUncheckedUpdateWithoutComponentLinesInput>
+}
+
+export type DocumentLineUpdateManyWithoutParentLineNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutParentLineInput, Prisma.DocumentLineUncheckedCreateWithoutParentLineInput> | Prisma.DocumentLineCreateWithoutParentLineInput[] | Prisma.DocumentLineUncheckedCreateWithoutParentLineInput[]
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutParentLineInput | Prisma.DocumentLineCreateOrConnectWithoutParentLineInput[]
+  upsert?: Prisma.DocumentLineUpsertWithWhereUniqueWithoutParentLineInput | Prisma.DocumentLineUpsertWithWhereUniqueWithoutParentLineInput[]
+  createMany?: Prisma.DocumentLineCreateManyParentLineInputEnvelope
+  set?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  disconnect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  delete?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  connect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  update?: Prisma.DocumentLineUpdateWithWhereUniqueWithoutParentLineInput | Prisma.DocumentLineUpdateWithWhereUniqueWithoutParentLineInput[]
+  updateMany?: Prisma.DocumentLineUpdateManyWithWhereWithoutParentLineInput | Prisma.DocumentLineUpdateManyWithWhereWithoutParentLineInput[]
+  deleteMany?: Prisma.DocumentLineScalarWhereInput | Prisma.DocumentLineScalarWhereInput[]
+}
+
+export type DocumentLineUncheckedUpdateManyWithoutParentLineNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutParentLineInput, Prisma.DocumentLineUncheckedCreateWithoutParentLineInput> | Prisma.DocumentLineCreateWithoutParentLineInput[] | Prisma.DocumentLineUncheckedCreateWithoutParentLineInput[]
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutParentLineInput | Prisma.DocumentLineCreateOrConnectWithoutParentLineInput[]
+  upsert?: Prisma.DocumentLineUpsertWithWhereUniqueWithoutParentLineInput | Prisma.DocumentLineUpsertWithWhereUniqueWithoutParentLineInput[]
+  createMany?: Prisma.DocumentLineCreateManyParentLineInputEnvelope
+  set?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  disconnect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  delete?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  connect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  update?: Prisma.DocumentLineUpdateWithWhereUniqueWithoutParentLineInput | Prisma.DocumentLineUpdateWithWhereUniqueWithoutParentLineInput[]
+  updateMany?: Prisma.DocumentLineUpdateManyWithWhereWithoutParentLineInput | Prisma.DocumentLineUpdateManyWithWhereWithoutParentLineInput[]
   deleteMany?: Prisma.DocumentLineScalarWhereInput | Prisma.DocumentLineScalarWhereInput[]
 }
 
@@ -1076,6 +1398,80 @@ export type DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput = {
   deleteMany?: Prisma.DocumentLineScalarWhereInput | Prisma.DocumentLineScalarWhereInput[]
 }
 
+export type DocumentLineCreateNestedManyWithoutWarehouseInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutWarehouseInput, Prisma.DocumentLineUncheckedCreateWithoutWarehouseInput> | Prisma.DocumentLineCreateWithoutWarehouseInput[] | Prisma.DocumentLineUncheckedCreateWithoutWarehouseInput[]
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutWarehouseInput | Prisma.DocumentLineCreateOrConnectWithoutWarehouseInput[]
+  createMany?: Prisma.DocumentLineCreateManyWarehouseInputEnvelope
+  connect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+}
+
+export type DocumentLineUncheckedCreateNestedManyWithoutWarehouseInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutWarehouseInput, Prisma.DocumentLineUncheckedCreateWithoutWarehouseInput> | Prisma.DocumentLineCreateWithoutWarehouseInput[] | Prisma.DocumentLineUncheckedCreateWithoutWarehouseInput[]
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutWarehouseInput | Prisma.DocumentLineCreateOrConnectWithoutWarehouseInput[]
+  createMany?: Prisma.DocumentLineCreateManyWarehouseInputEnvelope
+  connect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+}
+
+export type DocumentLineUpdateManyWithoutWarehouseNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutWarehouseInput, Prisma.DocumentLineUncheckedCreateWithoutWarehouseInput> | Prisma.DocumentLineCreateWithoutWarehouseInput[] | Prisma.DocumentLineUncheckedCreateWithoutWarehouseInput[]
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutWarehouseInput | Prisma.DocumentLineCreateOrConnectWithoutWarehouseInput[]
+  upsert?: Prisma.DocumentLineUpsertWithWhereUniqueWithoutWarehouseInput | Prisma.DocumentLineUpsertWithWhereUniqueWithoutWarehouseInput[]
+  createMany?: Prisma.DocumentLineCreateManyWarehouseInputEnvelope
+  set?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  disconnect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  delete?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  connect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  update?: Prisma.DocumentLineUpdateWithWhereUniqueWithoutWarehouseInput | Prisma.DocumentLineUpdateWithWhereUniqueWithoutWarehouseInput[]
+  updateMany?: Prisma.DocumentLineUpdateManyWithWhereWithoutWarehouseInput | Prisma.DocumentLineUpdateManyWithWhereWithoutWarehouseInput[]
+  deleteMany?: Prisma.DocumentLineScalarWhereInput | Prisma.DocumentLineScalarWhereInput[]
+}
+
+export type DocumentLineUncheckedUpdateManyWithoutWarehouseNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutWarehouseInput, Prisma.DocumentLineUncheckedCreateWithoutWarehouseInput> | Prisma.DocumentLineCreateWithoutWarehouseInput[] | Prisma.DocumentLineUncheckedCreateWithoutWarehouseInput[]
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutWarehouseInput | Prisma.DocumentLineCreateOrConnectWithoutWarehouseInput[]
+  upsert?: Prisma.DocumentLineUpsertWithWhereUniqueWithoutWarehouseInput | Prisma.DocumentLineUpsertWithWhereUniqueWithoutWarehouseInput[]
+  createMany?: Prisma.DocumentLineCreateManyWarehouseInputEnvelope
+  set?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  disconnect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  delete?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  connect?: Prisma.DocumentLineWhereUniqueInput | Prisma.DocumentLineWhereUniqueInput[]
+  update?: Prisma.DocumentLineUpdateWithWhereUniqueWithoutWarehouseInput | Prisma.DocumentLineUpdateWithWhereUniqueWithoutWarehouseInput[]
+  updateMany?: Prisma.DocumentLineUpdateManyWithWhereWithoutWarehouseInput | Prisma.DocumentLineUpdateManyWithWhereWithoutWarehouseInput[]
+  deleteMany?: Prisma.DocumentLineScalarWhereInput | Prisma.DocumentLineScalarWhereInput[]
+}
+
+export type DocumentLineCreateNestedOneWithoutStockMovementInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutStockMovementInput, Prisma.DocumentLineUncheckedCreateWithoutStockMovementInput>
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutStockMovementInput
+  connect?: Prisma.DocumentLineWhereUniqueInput
+}
+
+export type DocumentLineUpdateOneWithoutStockMovementNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutStockMovementInput, Prisma.DocumentLineUncheckedCreateWithoutStockMovementInput>
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutStockMovementInput
+  upsert?: Prisma.DocumentLineUpsertWithoutStockMovementInput
+  disconnect?: Prisma.DocumentLineWhereInput | boolean
+  delete?: Prisma.DocumentLineWhereInput | boolean
+  connect?: Prisma.DocumentLineWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentLineUpdateToOneWithWhereWithoutStockMovementInput, Prisma.DocumentLineUpdateWithoutStockMovementInput>, Prisma.DocumentLineUncheckedUpdateWithoutStockMovementInput>
+}
+
+export type DocumentLineCreateNestedOneWithoutStockReservationsInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutStockReservationsInput, Prisma.DocumentLineUncheckedCreateWithoutStockReservationsInput>
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutStockReservationsInput
+  connect?: Prisma.DocumentLineWhereUniqueInput
+}
+
+export type DocumentLineUpdateOneWithoutStockReservationsNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentLineCreateWithoutStockReservationsInput, Prisma.DocumentLineUncheckedCreateWithoutStockReservationsInput>
+  connectOrCreate?: Prisma.DocumentLineCreateOrConnectWithoutStockReservationsInput
+  upsert?: Prisma.DocumentLineUpsertWithoutStockReservationsInput
+  disconnect?: Prisma.DocumentLineWhereInput | boolean
+  delete?: Prisma.DocumentLineWhereInput | boolean
+  connect?: Prisma.DocumentLineWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentLineUpdateToOneWithWhereWithoutStockReservationsInput, Prisma.DocumentLineUpdateWithoutStockReservationsInput>, Prisma.DocumentLineUncheckedUpdateWithoutStockReservationsInput>
+}
+
 export type DocumentLineCreateWithoutDocumentInput = {
   lineNumber: number
   lineType?: string
@@ -1093,14 +1489,26 @@ export type DocumentLineCreateWithoutDocumentInput = {
   lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
   productVariant?: Prisma.ProductVariantCreateNestedOneWithoutDocumentLinesInput
   product?: Prisma.ProductCreateNestedOneWithoutDocumentLinesInput
   taxRule?: Prisma.TaxRuleCreateNestedOneWithoutDocumentLinesInput
   intrastatTransaction?: Prisma.IntrastatTransactionCreateNestedOneWithoutDocumentLineInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentLinesInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentLineInput
+  parentLine?: Prisma.DocumentLineCreateNestedOneWithoutComponentLinesInput
+  componentLines?: Prisma.DocumentLineCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineUncheckedCreateWithoutDocumentInput = {
@@ -1124,11 +1532,23 @@ export type DocumentLineUncheckedCreateWithoutDocumentInput = {
   taxRuleId?: number | null
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
   intrastatTransaction?: Prisma.IntrastatTransactionUncheckedCreateNestedOneWithoutDocumentLineInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentLineInput
+  componentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineCreateOrConnectWithoutDocumentInput = {
@@ -1182,10 +1602,298 @@ export type DocumentLineScalarWhereInput = {
   taxRuleId?: Prisma.IntNullableFilter<"DocumentLine"> | number | null
   taxPercent?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
+  vatNatureCode?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
+  vatNormReference?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
   lineTotalWithTax?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
   customFields?: Prisma.JsonNullableFilter<"DocumentLine">
+  warehouseId?: Prisma.IntNullableFilter<"DocumentLine"> | number | null
+  parentLineId?: Prisma.IntNullableFilter<"DocumentLine"> | number | null
+  isComponent?: Prisma.BoolFilter<"DocumentLine"> | boolean
+  quantityInvoiced?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.DecimalNullableFilter<"DocumentLine"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.StringNullableFilter<"DocumentLine"> | string | null
+}
+
+export type DocumentLineCreateWithoutComponentLinesInput = {
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+  document: Prisma.DocumentCreateNestedOneWithoutLinesInput
+  productVariant?: Prisma.ProductVariantCreateNestedOneWithoutDocumentLinesInput
+  product?: Prisma.ProductCreateNestedOneWithoutDocumentLinesInput
+  taxRule?: Prisma.TaxRuleCreateNestedOneWithoutDocumentLinesInput
+  intrastatTransaction?: Prisma.IntrastatTransactionCreateNestedOneWithoutDocumentLineInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentLinesInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentLineInput
+  parentLine?: Prisma.DocumentLineCreateNestedOneWithoutComponentLinesInput
+}
+
+export type DocumentLineUncheckedCreateWithoutComponentLinesInput = {
+  id?: number
+  documentId: number
+  productVariantId?: number | null
+  productId?: number | null
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: number | null
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+  intrastatTransaction?: Prisma.IntrastatTransactionUncheckedCreateNestedOneWithoutDocumentLineInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentLineInput
+}
+
+export type DocumentLineCreateOrConnectWithoutComponentLinesInput = {
+  where: Prisma.DocumentLineWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentLineCreateWithoutComponentLinesInput, Prisma.DocumentLineUncheckedCreateWithoutComponentLinesInput>
+}
+
+export type DocumentLineCreateWithoutParentLineInput = {
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+  document: Prisma.DocumentCreateNestedOneWithoutLinesInput
+  productVariant?: Prisma.ProductVariantCreateNestedOneWithoutDocumentLinesInput
+  product?: Prisma.ProductCreateNestedOneWithoutDocumentLinesInput
+  taxRule?: Prisma.TaxRuleCreateNestedOneWithoutDocumentLinesInput
+  intrastatTransaction?: Prisma.IntrastatTransactionCreateNestedOneWithoutDocumentLineInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentLinesInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentLineInput
+  componentLines?: Prisma.DocumentLineCreateNestedManyWithoutParentLineInput
+}
+
+export type DocumentLineUncheckedCreateWithoutParentLineInput = {
+  id?: number
+  documentId: number
+  productVariantId?: number | null
+  productId?: number | null
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: number | null
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+  intrastatTransaction?: Prisma.IntrastatTransactionUncheckedCreateNestedOneWithoutDocumentLineInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentLineInput
+  componentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutParentLineInput
+}
+
+export type DocumentLineCreateOrConnectWithoutParentLineInput = {
+  where: Prisma.DocumentLineWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentLineCreateWithoutParentLineInput, Prisma.DocumentLineUncheckedCreateWithoutParentLineInput>
+}
+
+export type DocumentLineCreateManyParentLineInputEnvelope = {
+  data: Prisma.DocumentLineCreateManyParentLineInput | Prisma.DocumentLineCreateManyParentLineInput[]
+  skipDuplicates?: boolean
+}
+
+export type DocumentLineUpsertWithoutComponentLinesInput = {
+  update: Prisma.XOR<Prisma.DocumentLineUpdateWithoutComponentLinesInput, Prisma.DocumentLineUncheckedUpdateWithoutComponentLinesInput>
+  create: Prisma.XOR<Prisma.DocumentLineCreateWithoutComponentLinesInput, Prisma.DocumentLineUncheckedCreateWithoutComponentLinesInput>
+  where?: Prisma.DocumentLineWhereInput
+}
+
+export type DocumentLineUpdateToOneWithWhereWithoutComponentLinesInput = {
+  where?: Prisma.DocumentLineWhereInput
+  data: Prisma.XOR<Prisma.DocumentLineUpdateWithoutComponentLinesInput, Prisma.DocumentLineUncheckedUpdateWithoutComponentLinesInput>
+}
+
+export type DocumentLineUpdateWithoutComponentLinesInput = {
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.DocumentUpdateOneRequiredWithoutLinesNestedInput
+  productVariant?: Prisma.ProductVariantUpdateOneWithoutDocumentLinesNestedInput
+  product?: Prisma.ProductUpdateOneWithoutDocumentLinesNestedInput
+  taxRule?: Prisma.TaxRuleUpdateOneWithoutDocumentLinesNestedInput
+  intrastatTransaction?: Prisma.IntrastatTransactionUpdateOneWithoutDocumentLineNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentLinesNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentLineNestedInput
+  parentLine?: Prisma.DocumentLineUpdateOneWithoutComponentLinesNestedInput
+}
+
+export type DocumentLineUncheckedUpdateWithoutComponentLinesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentId?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  productId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intrastatTransaction?: Prisma.IntrastatTransactionUncheckedUpdateOneWithoutDocumentLineNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentLineNestedInput
+}
+
+export type DocumentLineUpsertWithWhereUniqueWithoutParentLineInput = {
+  where: Prisma.DocumentLineWhereUniqueInput
+  update: Prisma.XOR<Prisma.DocumentLineUpdateWithoutParentLineInput, Prisma.DocumentLineUncheckedUpdateWithoutParentLineInput>
+  create: Prisma.XOR<Prisma.DocumentLineCreateWithoutParentLineInput, Prisma.DocumentLineUncheckedCreateWithoutParentLineInput>
+}
+
+export type DocumentLineUpdateWithWhereUniqueWithoutParentLineInput = {
+  where: Prisma.DocumentLineWhereUniqueInput
+  data: Prisma.XOR<Prisma.DocumentLineUpdateWithoutParentLineInput, Prisma.DocumentLineUncheckedUpdateWithoutParentLineInput>
+}
+
+export type DocumentLineUpdateManyWithWhereWithoutParentLineInput = {
+  where: Prisma.DocumentLineScalarWhereInput
+  data: Prisma.XOR<Prisma.DocumentLineUpdateManyMutationInput, Prisma.DocumentLineUncheckedUpdateManyWithoutParentLineInput>
 }
 
 export type DocumentLineCreateWithoutIntrastatTransactionInput = {
@@ -1205,14 +1913,26 @@ export type DocumentLineCreateWithoutIntrastatTransactionInput = {
   lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
   document: Prisma.DocumentCreateNestedOneWithoutLinesInput
   productVariant?: Prisma.ProductVariantCreateNestedOneWithoutDocumentLinesInput
   product?: Prisma.ProductCreateNestedOneWithoutDocumentLinesInput
   taxRule?: Prisma.TaxRuleCreateNestedOneWithoutDocumentLinesInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentLinesInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentLineInput
+  parentLine?: Prisma.DocumentLineCreateNestedOneWithoutComponentLinesInput
+  componentLines?: Prisma.DocumentLineCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineUncheckedCreateWithoutIntrastatTransactionInput = {
@@ -1237,10 +1957,22 @@ export type DocumentLineUncheckedCreateWithoutIntrastatTransactionInput = {
   taxRuleId?: number | null
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentLineInput
+  componentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineCreateOrConnectWithoutIntrastatTransactionInput = {
@@ -1276,14 +2008,26 @@ export type DocumentLineUpdateWithoutIntrastatTransactionInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   document?: Prisma.DocumentUpdateOneRequiredWithoutLinesNestedInput
   productVariant?: Prisma.ProductVariantUpdateOneWithoutDocumentLinesNestedInput
   product?: Prisma.ProductUpdateOneWithoutDocumentLinesNestedInput
   taxRule?: Prisma.TaxRuleUpdateOneWithoutDocumentLinesNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentLinesNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentLineNestedInput
+  parentLine?: Prisma.DocumentLineUpdateOneWithoutComponentLinesNestedInput
+  componentLines?: Prisma.DocumentLineUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineUncheckedUpdateWithoutIntrastatTransactionInput = {
@@ -1308,10 +2052,22 @@ export type DocumentLineUncheckedUpdateWithoutIntrastatTransactionInput = {
   taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentLineNestedInput
+  componentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineCreateWithoutProductInput = {
@@ -1331,14 +2087,26 @@ export type DocumentLineCreateWithoutProductInput = {
   lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
   document: Prisma.DocumentCreateNestedOneWithoutLinesInput
   productVariant?: Prisma.ProductVariantCreateNestedOneWithoutDocumentLinesInput
   taxRule?: Prisma.TaxRuleCreateNestedOneWithoutDocumentLinesInput
   intrastatTransaction?: Prisma.IntrastatTransactionCreateNestedOneWithoutDocumentLineInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentLinesInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentLineInput
+  parentLine?: Prisma.DocumentLineCreateNestedOneWithoutComponentLinesInput
+  componentLines?: Prisma.DocumentLineCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineUncheckedCreateWithoutProductInput = {
@@ -1362,11 +2130,23 @@ export type DocumentLineUncheckedCreateWithoutProductInput = {
   taxRuleId?: number | null
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
   intrastatTransaction?: Prisma.IntrastatTransactionUncheckedCreateNestedOneWithoutDocumentLineInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentLineInput
+  componentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineCreateOrConnectWithoutProductInput = {
@@ -1412,14 +2192,26 @@ export type DocumentLineCreateWithoutProductVariantInput = {
   lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
   document: Prisma.DocumentCreateNestedOneWithoutLinesInput
   product?: Prisma.ProductCreateNestedOneWithoutDocumentLinesInput
   taxRule?: Prisma.TaxRuleCreateNestedOneWithoutDocumentLinesInput
   intrastatTransaction?: Prisma.IntrastatTransactionCreateNestedOneWithoutDocumentLineInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentLinesInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentLineInput
+  parentLine?: Prisma.DocumentLineCreateNestedOneWithoutComponentLinesInput
+  componentLines?: Prisma.DocumentLineCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineUncheckedCreateWithoutProductVariantInput = {
@@ -1443,11 +2235,23 @@ export type DocumentLineUncheckedCreateWithoutProductVariantInput = {
   taxRuleId?: number | null
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
   intrastatTransaction?: Prisma.IntrastatTransactionUncheckedCreateNestedOneWithoutDocumentLineInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentLineInput
+  componentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineCreateOrConnectWithoutProductVariantInput = {
@@ -1493,14 +2297,26 @@ export type DocumentLineCreateWithoutTaxRuleInput = {
   lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
   document: Prisma.DocumentCreateNestedOneWithoutLinesInput
   productVariant?: Prisma.ProductVariantCreateNestedOneWithoutDocumentLinesInput
   product?: Prisma.ProductCreateNestedOneWithoutDocumentLinesInput
   intrastatTransaction?: Prisma.IntrastatTransactionCreateNestedOneWithoutDocumentLineInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentLinesInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentLineInput
+  parentLine?: Prisma.DocumentLineCreateNestedOneWithoutComponentLinesInput
+  componentLines?: Prisma.DocumentLineCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineUncheckedCreateWithoutTaxRuleInput = {
@@ -1524,11 +2340,23 @@ export type DocumentLineUncheckedCreateWithoutTaxRuleInput = {
   lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
   intrastatTransaction?: Prisma.IntrastatTransactionUncheckedCreateNestedOneWithoutDocumentLineInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentLineInput
+  componentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutParentLineInput
 }
 
 export type DocumentLineCreateOrConnectWithoutTaxRuleInput = {
@@ -1557,6 +2385,459 @@ export type DocumentLineUpdateManyWithWhereWithoutTaxRuleInput = {
   data: Prisma.XOR<Prisma.DocumentLineUpdateManyMutationInput, Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleInput>
 }
 
+export type DocumentLineCreateWithoutWarehouseInput = {
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+  document: Prisma.DocumentCreateNestedOneWithoutLinesInput
+  productVariant?: Prisma.ProductVariantCreateNestedOneWithoutDocumentLinesInput
+  product?: Prisma.ProductCreateNestedOneWithoutDocumentLinesInput
+  taxRule?: Prisma.TaxRuleCreateNestedOneWithoutDocumentLinesInput
+  intrastatTransaction?: Prisma.IntrastatTransactionCreateNestedOneWithoutDocumentLineInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentLineInput
+  parentLine?: Prisma.DocumentLineCreateNestedOneWithoutComponentLinesInput
+  componentLines?: Prisma.DocumentLineCreateNestedManyWithoutParentLineInput
+}
+
+export type DocumentLineUncheckedCreateWithoutWarehouseInput = {
+  id?: number
+  documentId: number
+  productVariantId?: number | null
+  productId?: number | null
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: number | null
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+  intrastatTransaction?: Prisma.IntrastatTransactionUncheckedCreateNestedOneWithoutDocumentLineInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentLineInput
+  componentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutParentLineInput
+}
+
+export type DocumentLineCreateOrConnectWithoutWarehouseInput = {
+  where: Prisma.DocumentLineWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentLineCreateWithoutWarehouseInput, Prisma.DocumentLineUncheckedCreateWithoutWarehouseInput>
+}
+
+export type DocumentLineCreateManyWarehouseInputEnvelope = {
+  data: Prisma.DocumentLineCreateManyWarehouseInput | Prisma.DocumentLineCreateManyWarehouseInput[]
+  skipDuplicates?: boolean
+}
+
+export type DocumentLineUpsertWithWhereUniqueWithoutWarehouseInput = {
+  where: Prisma.DocumentLineWhereUniqueInput
+  update: Prisma.XOR<Prisma.DocumentLineUpdateWithoutWarehouseInput, Prisma.DocumentLineUncheckedUpdateWithoutWarehouseInput>
+  create: Prisma.XOR<Prisma.DocumentLineCreateWithoutWarehouseInput, Prisma.DocumentLineUncheckedCreateWithoutWarehouseInput>
+}
+
+export type DocumentLineUpdateWithWhereUniqueWithoutWarehouseInput = {
+  where: Prisma.DocumentLineWhereUniqueInput
+  data: Prisma.XOR<Prisma.DocumentLineUpdateWithoutWarehouseInput, Prisma.DocumentLineUncheckedUpdateWithoutWarehouseInput>
+}
+
+export type DocumentLineUpdateManyWithWhereWithoutWarehouseInput = {
+  where: Prisma.DocumentLineScalarWhereInput
+  data: Prisma.XOR<Prisma.DocumentLineUpdateManyMutationInput, Prisma.DocumentLineUncheckedUpdateManyWithoutWarehouseInput>
+}
+
+export type DocumentLineCreateWithoutStockMovementInput = {
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+  document: Prisma.DocumentCreateNestedOneWithoutLinesInput
+  productVariant?: Prisma.ProductVariantCreateNestedOneWithoutDocumentLinesInput
+  product?: Prisma.ProductCreateNestedOneWithoutDocumentLinesInput
+  taxRule?: Prisma.TaxRuleCreateNestedOneWithoutDocumentLinesInput
+  intrastatTransaction?: Prisma.IntrastatTransactionCreateNestedOneWithoutDocumentLineInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentLinesInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutDocumentLineInput
+  parentLine?: Prisma.DocumentLineCreateNestedOneWithoutComponentLinesInput
+  componentLines?: Prisma.DocumentLineCreateNestedManyWithoutParentLineInput
+}
+
+export type DocumentLineUncheckedCreateWithoutStockMovementInput = {
+  id?: number
+  documentId: number
+  productVariantId?: number | null
+  productId?: number | null
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: number | null
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+  intrastatTransaction?: Prisma.IntrastatTransactionUncheckedCreateNestedOneWithoutDocumentLineInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutDocumentLineInput
+  componentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutParentLineInput
+}
+
+export type DocumentLineCreateOrConnectWithoutStockMovementInput = {
+  where: Prisma.DocumentLineWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentLineCreateWithoutStockMovementInput, Prisma.DocumentLineUncheckedCreateWithoutStockMovementInput>
+}
+
+export type DocumentLineUpsertWithoutStockMovementInput = {
+  update: Prisma.XOR<Prisma.DocumentLineUpdateWithoutStockMovementInput, Prisma.DocumentLineUncheckedUpdateWithoutStockMovementInput>
+  create: Prisma.XOR<Prisma.DocumentLineCreateWithoutStockMovementInput, Prisma.DocumentLineUncheckedCreateWithoutStockMovementInput>
+  where?: Prisma.DocumentLineWhereInput
+}
+
+export type DocumentLineUpdateToOneWithWhereWithoutStockMovementInput = {
+  where?: Prisma.DocumentLineWhereInput
+  data: Prisma.XOR<Prisma.DocumentLineUpdateWithoutStockMovementInput, Prisma.DocumentLineUncheckedUpdateWithoutStockMovementInput>
+}
+
+export type DocumentLineUpdateWithoutStockMovementInput = {
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.DocumentUpdateOneRequiredWithoutLinesNestedInput
+  productVariant?: Prisma.ProductVariantUpdateOneWithoutDocumentLinesNestedInput
+  product?: Prisma.ProductUpdateOneWithoutDocumentLinesNestedInput
+  taxRule?: Prisma.TaxRuleUpdateOneWithoutDocumentLinesNestedInput
+  intrastatTransaction?: Prisma.IntrastatTransactionUpdateOneWithoutDocumentLineNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentLinesNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentLineNestedInput
+  parentLine?: Prisma.DocumentLineUpdateOneWithoutComponentLinesNestedInput
+  componentLines?: Prisma.DocumentLineUpdateManyWithoutParentLineNestedInput
+}
+
+export type DocumentLineUncheckedUpdateWithoutStockMovementInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentId?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  productId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intrastatTransaction?: Prisma.IntrastatTransactionUncheckedUpdateOneWithoutDocumentLineNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentLineNestedInput
+  componentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutParentLineNestedInput
+}
+
+export type DocumentLineCreateWithoutStockReservationsInput = {
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+  document: Prisma.DocumentCreateNestedOneWithoutLinesInput
+  productVariant?: Prisma.ProductVariantCreateNestedOneWithoutDocumentLinesInput
+  product?: Prisma.ProductCreateNestedOneWithoutDocumentLinesInput
+  taxRule?: Prisma.TaxRuleCreateNestedOneWithoutDocumentLinesInput
+  intrastatTransaction?: Prisma.IntrastatTransactionCreateNestedOneWithoutDocumentLineInput
+  warehouse?: Prisma.WarehouseCreateNestedOneWithoutDocumentLinesInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutDocumentLineInput
+  parentLine?: Prisma.DocumentLineCreateNestedOneWithoutComponentLinesInput
+  componentLines?: Prisma.DocumentLineCreateNestedManyWithoutParentLineInput
+}
+
+export type DocumentLineUncheckedCreateWithoutStockReservationsInput = {
+  id?: number
+  documentId: number
+  productVariantId?: number | null
+  productId?: number | null
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: number | null
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+  intrastatTransaction?: Prisma.IntrastatTransactionUncheckedCreateNestedOneWithoutDocumentLineInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutDocumentLineInput
+  componentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutParentLineInput
+}
+
+export type DocumentLineCreateOrConnectWithoutStockReservationsInput = {
+  where: Prisma.DocumentLineWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentLineCreateWithoutStockReservationsInput, Prisma.DocumentLineUncheckedCreateWithoutStockReservationsInput>
+}
+
+export type DocumentLineUpsertWithoutStockReservationsInput = {
+  update: Prisma.XOR<Prisma.DocumentLineUpdateWithoutStockReservationsInput, Prisma.DocumentLineUncheckedUpdateWithoutStockReservationsInput>
+  create: Prisma.XOR<Prisma.DocumentLineCreateWithoutStockReservationsInput, Prisma.DocumentLineUncheckedCreateWithoutStockReservationsInput>
+  where?: Prisma.DocumentLineWhereInput
+}
+
+export type DocumentLineUpdateToOneWithWhereWithoutStockReservationsInput = {
+  where?: Prisma.DocumentLineWhereInput
+  data: Prisma.XOR<Prisma.DocumentLineUpdateWithoutStockReservationsInput, Prisma.DocumentLineUncheckedUpdateWithoutStockReservationsInput>
+}
+
+export type DocumentLineUpdateWithoutStockReservationsInput = {
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.DocumentUpdateOneRequiredWithoutLinesNestedInput
+  productVariant?: Prisma.ProductVariantUpdateOneWithoutDocumentLinesNestedInput
+  product?: Prisma.ProductUpdateOneWithoutDocumentLinesNestedInput
+  taxRule?: Prisma.TaxRuleUpdateOneWithoutDocumentLinesNestedInput
+  intrastatTransaction?: Prisma.IntrastatTransactionUpdateOneWithoutDocumentLineNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentLinesNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentLineNestedInput
+  parentLine?: Prisma.DocumentLineUpdateOneWithoutComponentLinesNestedInput
+  componentLines?: Prisma.DocumentLineUpdateManyWithoutParentLineNestedInput
+}
+
+export type DocumentLineUncheckedUpdateWithoutStockReservationsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentId?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  productId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intrastatTransaction?: Prisma.IntrastatTransactionUncheckedUpdateOneWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentLineNestedInput
+  componentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutParentLineNestedInput
+}
+
 export type DocumentLineCreateManyDocumentInput = {
   id?: number
   productVariantId?: number | null
@@ -1578,10 +2859,19 @@ export type DocumentLineCreateManyDocumentInput = {
   taxRuleId?: number | null
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
 }
 
 export type DocumentLineUpdateWithoutDocumentInput = {
@@ -1601,14 +2891,26 @@ export type DocumentLineUpdateWithoutDocumentInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productVariant?: Prisma.ProductVariantUpdateOneWithoutDocumentLinesNestedInput
   product?: Prisma.ProductUpdateOneWithoutDocumentLinesNestedInput
   taxRule?: Prisma.TaxRuleUpdateOneWithoutDocumentLinesNestedInput
   intrastatTransaction?: Prisma.IntrastatTransactionUpdateOneWithoutDocumentLineNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentLinesNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentLineNestedInput
+  parentLine?: Prisma.DocumentLineUpdateOneWithoutComponentLinesNestedInput
+  componentLines?: Prisma.DocumentLineUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineUncheckedUpdateWithoutDocumentInput = {
@@ -1632,11 +2934,23 @@ export type DocumentLineUncheckedUpdateWithoutDocumentInput = {
   taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   intrastatTransaction?: Prisma.IntrastatTransactionUncheckedUpdateOneWithoutDocumentLineNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentLineNestedInput
+  componentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineUncheckedUpdateManyWithoutDocumentInput = {
@@ -1660,10 +2974,170 @@ export type DocumentLineUncheckedUpdateManyWithoutDocumentInput = {
   taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type DocumentLineCreateManyParentLineInput = {
+  id?: number
+  documentId: number
+  productVariantId?: number | null
+  productId?: number | null
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: number | null
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+}
+
+export type DocumentLineUpdateWithoutParentLineInput = {
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.DocumentUpdateOneRequiredWithoutLinesNestedInput
+  productVariant?: Prisma.ProductVariantUpdateOneWithoutDocumentLinesNestedInput
+  product?: Prisma.ProductUpdateOneWithoutDocumentLinesNestedInput
+  taxRule?: Prisma.TaxRuleUpdateOneWithoutDocumentLinesNestedInput
+  intrastatTransaction?: Prisma.IntrastatTransactionUpdateOneWithoutDocumentLineNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentLinesNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentLineNestedInput
+  componentLines?: Prisma.DocumentLineUpdateManyWithoutParentLineNestedInput
+}
+
+export type DocumentLineUncheckedUpdateWithoutParentLineInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentId?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  productId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intrastatTransaction?: Prisma.IntrastatTransactionUncheckedUpdateOneWithoutDocumentLineNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentLineNestedInput
+  componentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutParentLineNestedInput
+}
+
+export type DocumentLineUncheckedUpdateManyWithoutParentLineInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentId?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  productId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DocumentLineCreateManyProductInput = {
@@ -1687,10 +3161,19 @@ export type DocumentLineCreateManyProductInput = {
   taxRuleId?: number | null
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
 }
 
 export type DocumentLineUpdateWithoutProductInput = {
@@ -1710,14 +3193,26 @@ export type DocumentLineUpdateWithoutProductInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   document?: Prisma.DocumentUpdateOneRequiredWithoutLinesNestedInput
   productVariant?: Prisma.ProductVariantUpdateOneWithoutDocumentLinesNestedInput
   taxRule?: Prisma.TaxRuleUpdateOneWithoutDocumentLinesNestedInput
   intrastatTransaction?: Prisma.IntrastatTransactionUpdateOneWithoutDocumentLineNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentLinesNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentLineNestedInput
+  parentLine?: Prisma.DocumentLineUpdateOneWithoutComponentLinesNestedInput
+  componentLines?: Prisma.DocumentLineUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineUncheckedUpdateWithoutProductInput = {
@@ -1741,11 +3236,23 @@ export type DocumentLineUncheckedUpdateWithoutProductInput = {
   taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   intrastatTransaction?: Prisma.IntrastatTransactionUncheckedUpdateOneWithoutDocumentLineNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentLineNestedInput
+  componentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineUncheckedUpdateManyWithoutProductInput = {
@@ -1769,10 +3276,19 @@ export type DocumentLineUncheckedUpdateManyWithoutProductInput = {
   taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DocumentLineCreateManyProductVariantInput = {
@@ -1796,10 +3312,19 @@ export type DocumentLineCreateManyProductVariantInput = {
   taxRuleId?: number | null
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
 }
 
 export type DocumentLineUpdateWithoutProductVariantInput = {
@@ -1819,14 +3344,26 @@ export type DocumentLineUpdateWithoutProductVariantInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   document?: Prisma.DocumentUpdateOneRequiredWithoutLinesNestedInput
   product?: Prisma.ProductUpdateOneWithoutDocumentLinesNestedInput
   taxRule?: Prisma.TaxRuleUpdateOneWithoutDocumentLinesNestedInput
   intrastatTransaction?: Prisma.IntrastatTransactionUpdateOneWithoutDocumentLineNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentLinesNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentLineNestedInput
+  parentLine?: Prisma.DocumentLineUpdateOneWithoutComponentLinesNestedInput
+  componentLines?: Prisma.DocumentLineUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineUncheckedUpdateWithoutProductVariantInput = {
@@ -1850,11 +3387,23 @@ export type DocumentLineUncheckedUpdateWithoutProductVariantInput = {
   taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   intrastatTransaction?: Prisma.IntrastatTransactionUncheckedUpdateOneWithoutDocumentLineNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentLineNestedInput
+  componentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineUncheckedUpdateManyWithoutProductVariantInput = {
@@ -1878,10 +3427,19 @@ export type DocumentLineUncheckedUpdateManyWithoutProductVariantInput = {
   taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DocumentLineCreateManyTaxRuleInput = {
@@ -1905,10 +3463,19 @@ export type DocumentLineCreateManyTaxRuleInput = {
   lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: string | null
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
   lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: number | null
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
 }
 
 export type DocumentLineUpdateWithoutTaxRuleInput = {
@@ -1928,14 +3495,26 @@ export type DocumentLineUpdateWithoutTaxRuleInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   document?: Prisma.DocumentUpdateOneRequiredWithoutLinesNestedInput
   productVariant?: Prisma.ProductVariantUpdateOneWithoutDocumentLinesNestedInput
   product?: Prisma.ProductUpdateOneWithoutDocumentLinesNestedInput
   intrastatTransaction?: Prisma.IntrastatTransactionUpdateOneWithoutDocumentLineNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneWithoutDocumentLinesNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentLineNestedInput
+  parentLine?: Prisma.DocumentLineUpdateOneWithoutComponentLinesNestedInput
+  componentLines?: Prisma.DocumentLineUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineUncheckedUpdateWithoutTaxRuleInput = {
@@ -1959,11 +3538,23 @@ export type DocumentLineUncheckedUpdateWithoutTaxRuleInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   intrastatTransaction?: Prisma.IntrastatTransactionUncheckedUpdateOneWithoutDocumentLineNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentLineNestedInput
+  componentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutParentLineNestedInput
 }
 
 export type DocumentLineUncheckedUpdateManyWithoutTaxRuleInput = {
@@ -1987,12 +3578,219 @@ export type DocumentLineUncheckedUpdateManyWithoutTaxRuleInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  warehouseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
+export type DocumentLineCreateManyWarehouseInput = {
+  id?: number
+  documentId: number
+  productVariantId?: number | null
+  productId?: number | null
+  lineNumber: number
+  lineType?: string
+  code?: string | null
+  nameSystem: string
+  descriptionSystem?: string | null
+  nameCustomer?: string | null
+  descriptionCustomer?: string | null
+  quantity?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  unitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: number | null
+  taxPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: string | null
+  vatNormReference?: string | null
+  lineTotalWithTax?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  parentLineId?: number | null
+  isComponent?: boolean
+  quantityInvoiced?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: string | null
+}
+
+export type DocumentLineUpdateWithoutWarehouseInput = {
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.DocumentUpdateOneRequiredWithoutLinesNestedInput
+  productVariant?: Prisma.ProductVariantUpdateOneWithoutDocumentLinesNestedInput
+  product?: Prisma.ProductUpdateOneWithoutDocumentLinesNestedInput
+  taxRule?: Prisma.TaxRuleUpdateOneWithoutDocumentLinesNestedInput
+  intrastatTransaction?: Prisma.IntrastatTransactionUpdateOneWithoutDocumentLineNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutDocumentLineNestedInput
+  parentLine?: Prisma.DocumentLineUpdateOneWithoutComponentLinesNestedInput
+  componentLines?: Prisma.DocumentLineUpdateManyWithoutParentLineNestedInput
+}
+
+export type DocumentLineUncheckedUpdateWithoutWarehouseInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentId?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  productId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  intrastatTransaction?: Prisma.IntrastatTransactionUncheckedUpdateOneWithoutDocumentLineNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutDocumentLineNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutDocumentLineNestedInput
+  componentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutParentLineNestedInput
+}
+
+export type DocumentLineUncheckedUpdateManyWithoutWarehouseInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  documentId?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  productId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lineNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lineType?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameSystem?: Prisma.StringFieldUpdateOperationsInput | string
+  descriptionSystem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionCustomer?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unitCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  taxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatNormReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineTotalWithTax?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  parentLineId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isComponent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  quantityInvoiced?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityDelivered?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  quantityReturned?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  originalUnitPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  priceOverrideReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+
+/**
+ * Count Type DocumentLineCountOutputType
+ */
+
+export type DocumentLineCountOutputType = {
+  stockReservations: number
+  stockMovement: number
+  componentLines: number
+}
+
+export type DocumentLineCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  stockReservations?: boolean | DocumentLineCountOutputTypeCountStockReservationsArgs
+  stockMovement?: boolean | DocumentLineCountOutputTypeCountStockMovementArgs
+  componentLines?: boolean | DocumentLineCountOutputTypeCountComponentLinesArgs
+}
+
+/**
+ * DocumentLineCountOutputType without action
+ */
+export type DocumentLineCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentLineCountOutputType
+   */
+  select?: Prisma.DocumentLineCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * DocumentLineCountOutputType without action
+ */
+export type DocumentLineCountOutputTypeCountStockReservationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StockReservationWhereInput
+}
+
+/**
+ * DocumentLineCountOutputType without action
+ */
+export type DocumentLineCountOutputTypeCountStockMovementArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StockMovementWhereInput
+}
+
+/**
+ * DocumentLineCountOutputType without action
+ */
+export type DocumentLineCountOutputTypeCountComponentLinesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentLineWhereInput
+}
 
 
 export type DocumentLineSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2017,15 +3815,30 @@ export type DocumentLineSelect<ExtArgs extends runtime.Types.Extensions.Internal
   taxRuleId?: boolean
   taxPercent?: boolean
   taxAmount?: boolean
-  taxCode?: boolean
+  vatNatureCode?: boolean
+  vatNormReference?: boolean
   lineTotalWithTax?: boolean
   notes?: boolean
   customFields?: boolean
+  warehouseId?: boolean
+  parentLineId?: boolean
+  isComponent?: boolean
+  quantityInvoiced?: boolean
+  quantityDelivered?: boolean
+  quantityReturned?: boolean
+  originalUnitPrice?: boolean
+  priceOverrideReason?: boolean
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
   productVariant?: boolean | Prisma.DocumentLine$productVariantArgs<ExtArgs>
   product?: boolean | Prisma.DocumentLine$productArgs<ExtArgs>
   taxRule?: boolean | Prisma.DocumentLine$taxRuleArgs<ExtArgs>
   intrastatTransaction?: boolean | Prisma.DocumentLine$intrastatTransactionArgs<ExtArgs>
+  warehouse?: boolean | Prisma.DocumentLine$warehouseArgs<ExtArgs>
+  stockReservations?: boolean | Prisma.DocumentLine$stockReservationsArgs<ExtArgs>
+  stockMovement?: boolean | Prisma.DocumentLine$stockMovementArgs<ExtArgs>
+  parentLine?: boolean | Prisma.DocumentLine$parentLineArgs<ExtArgs>
+  componentLines?: boolean | Prisma.DocumentLine$componentLinesArgs<ExtArgs>
+  _count?: boolean | Prisma.DocumentLineCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["documentLine"]>
 
 export type DocumentLineSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2050,14 +3863,25 @@ export type DocumentLineSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   taxRuleId?: boolean
   taxPercent?: boolean
   taxAmount?: boolean
-  taxCode?: boolean
+  vatNatureCode?: boolean
+  vatNormReference?: boolean
   lineTotalWithTax?: boolean
   notes?: boolean
   customFields?: boolean
+  warehouseId?: boolean
+  parentLineId?: boolean
+  isComponent?: boolean
+  quantityInvoiced?: boolean
+  quantityDelivered?: boolean
+  quantityReturned?: boolean
+  originalUnitPrice?: boolean
+  priceOverrideReason?: boolean
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
   productVariant?: boolean | Prisma.DocumentLine$productVariantArgs<ExtArgs>
   product?: boolean | Prisma.DocumentLine$productArgs<ExtArgs>
   taxRule?: boolean | Prisma.DocumentLine$taxRuleArgs<ExtArgs>
+  warehouse?: boolean | Prisma.DocumentLine$warehouseArgs<ExtArgs>
+  parentLine?: boolean | Prisma.DocumentLine$parentLineArgs<ExtArgs>
 }, ExtArgs["result"]["documentLine"]>
 
 export type DocumentLineSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2082,14 +3906,25 @@ export type DocumentLineSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   taxRuleId?: boolean
   taxPercent?: boolean
   taxAmount?: boolean
-  taxCode?: boolean
+  vatNatureCode?: boolean
+  vatNormReference?: boolean
   lineTotalWithTax?: boolean
   notes?: boolean
   customFields?: boolean
+  warehouseId?: boolean
+  parentLineId?: boolean
+  isComponent?: boolean
+  quantityInvoiced?: boolean
+  quantityDelivered?: boolean
+  quantityReturned?: boolean
+  originalUnitPrice?: boolean
+  priceOverrideReason?: boolean
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
   productVariant?: boolean | Prisma.DocumentLine$productVariantArgs<ExtArgs>
   product?: boolean | Prisma.DocumentLine$productArgs<ExtArgs>
   taxRule?: boolean | Prisma.DocumentLine$taxRuleArgs<ExtArgs>
+  warehouse?: boolean | Prisma.DocumentLine$warehouseArgs<ExtArgs>
+  parentLine?: boolean | Prisma.DocumentLine$parentLineArgs<ExtArgs>
 }, ExtArgs["result"]["documentLine"]>
 
 export type DocumentLineSelectScalar = {
@@ -2114,31 +3949,50 @@ export type DocumentLineSelectScalar = {
   taxRuleId?: boolean
   taxPercent?: boolean
   taxAmount?: boolean
-  taxCode?: boolean
+  vatNatureCode?: boolean
+  vatNormReference?: boolean
   lineTotalWithTax?: boolean
   notes?: boolean
   customFields?: boolean
+  warehouseId?: boolean
+  parentLineId?: boolean
+  isComponent?: boolean
+  quantityInvoiced?: boolean
+  quantityDelivered?: boolean
+  quantityReturned?: boolean
+  originalUnitPrice?: boolean
+  priceOverrideReason?: boolean
 }
 
-export type DocumentLineOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "documentId" | "productVariantId" | "productId" | "lineNumber" | "lineType" | "code" | "nameSystem" | "descriptionSystem" | "nameCustomer" | "descriptionCustomer" | "quantity" | "unit" | "unitPrice" | "unitCost" | "discountPercent" | "discountAmount" | "lineTotal" | "taxRuleId" | "taxPercent" | "taxAmount" | "taxCode" | "lineTotalWithTax" | "notes" | "customFields", ExtArgs["result"]["documentLine"]>
+export type DocumentLineOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "documentId" | "productVariantId" | "productId" | "lineNumber" | "lineType" | "code" | "nameSystem" | "descriptionSystem" | "nameCustomer" | "descriptionCustomer" | "quantity" | "unit" | "unitPrice" | "unitCost" | "discountPercent" | "discountAmount" | "lineTotal" | "taxRuleId" | "taxPercent" | "taxAmount" | "vatNatureCode" | "vatNormReference" | "lineTotalWithTax" | "notes" | "customFields" | "warehouseId" | "parentLineId" | "isComponent" | "quantityInvoiced" | "quantityDelivered" | "quantityReturned" | "originalUnitPrice" | "priceOverrideReason", ExtArgs["result"]["documentLine"]>
 export type DocumentLineInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
   productVariant?: boolean | Prisma.DocumentLine$productVariantArgs<ExtArgs>
   product?: boolean | Prisma.DocumentLine$productArgs<ExtArgs>
   taxRule?: boolean | Prisma.DocumentLine$taxRuleArgs<ExtArgs>
   intrastatTransaction?: boolean | Prisma.DocumentLine$intrastatTransactionArgs<ExtArgs>
+  warehouse?: boolean | Prisma.DocumentLine$warehouseArgs<ExtArgs>
+  stockReservations?: boolean | Prisma.DocumentLine$stockReservationsArgs<ExtArgs>
+  stockMovement?: boolean | Prisma.DocumentLine$stockMovementArgs<ExtArgs>
+  parentLine?: boolean | Prisma.DocumentLine$parentLineArgs<ExtArgs>
+  componentLines?: boolean | Prisma.DocumentLine$componentLinesArgs<ExtArgs>
+  _count?: boolean | Prisma.DocumentLineCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DocumentLineIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
   productVariant?: boolean | Prisma.DocumentLine$productVariantArgs<ExtArgs>
   product?: boolean | Prisma.DocumentLine$productArgs<ExtArgs>
   taxRule?: boolean | Prisma.DocumentLine$taxRuleArgs<ExtArgs>
+  warehouse?: boolean | Prisma.DocumentLine$warehouseArgs<ExtArgs>
+  parentLine?: boolean | Prisma.DocumentLine$parentLineArgs<ExtArgs>
 }
 export type DocumentLineIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
   productVariant?: boolean | Prisma.DocumentLine$productVariantArgs<ExtArgs>
   product?: boolean | Prisma.DocumentLine$productArgs<ExtArgs>
   taxRule?: boolean | Prisma.DocumentLine$taxRuleArgs<ExtArgs>
+  warehouse?: boolean | Prisma.DocumentLine$warehouseArgs<ExtArgs>
+  parentLine?: boolean | Prisma.DocumentLine$parentLineArgs<ExtArgs>
 }
 
 export type $DocumentLinePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2149,6 +4003,11 @@ export type $DocumentLinePayload<ExtArgs extends runtime.Types.Extensions.Intern
     product: Prisma.$ProductPayload<ExtArgs> | null
     taxRule: Prisma.$TaxRulePayload<ExtArgs> | null
     intrastatTransaction: Prisma.$IntrastatTransactionPayload<ExtArgs> | null
+    warehouse: Prisma.$WarehousePayload<ExtArgs> | null
+    stockReservations: Prisma.$StockReservationPayload<ExtArgs>[]
+    stockMovement: Prisma.$StockMovementPayload<ExtArgs>[]
+    parentLine: Prisma.$DocumentLinePayload<ExtArgs> | null
+    componentLines: Prisma.$DocumentLinePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2172,10 +4031,19 @@ export type $DocumentLinePayload<ExtArgs extends runtime.Types.Extensions.Intern
     taxRuleId: number | null
     taxPercent: runtime.Decimal
     taxAmount: runtime.Decimal
-    taxCode: string | null
+    vatNatureCode: string | null
+    vatNormReference: string | null
     lineTotalWithTax: runtime.Decimal
     notes: string | null
     customFields: runtime.JsonValue | null
+    warehouseId: number | null
+    parentLineId: number | null
+    isComponent: boolean
+    quantityInvoiced: runtime.Decimal
+    quantityDelivered: runtime.Decimal
+    quantityReturned: runtime.Decimal
+    originalUnitPrice: runtime.Decimal | null
+    priceOverrideReason: string | null
   }, ExtArgs["result"]["documentLine"]>
   composites: {}
 }
@@ -2575,6 +4443,11 @@ export interface Prisma__DocumentLineClient<T, Null = never, ExtArgs extends run
   product<T extends Prisma.DocumentLine$productArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentLine$productArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   taxRule<T extends Prisma.DocumentLine$taxRuleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentLine$taxRuleArgs<ExtArgs>>): Prisma.Prisma__TaxRuleClient<runtime.Types.Result.GetResult<Prisma.$TaxRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   intrastatTransaction<T extends Prisma.DocumentLine$intrastatTransactionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentLine$intrastatTransactionArgs<ExtArgs>>): Prisma.Prisma__IntrastatTransactionClient<runtime.Types.Result.GetResult<Prisma.$IntrastatTransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  warehouse<T extends Prisma.DocumentLine$warehouseArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentLine$warehouseArgs<ExtArgs>>): Prisma.Prisma__WarehouseClient<runtime.Types.Result.GetResult<Prisma.$WarehousePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  stockReservations<T extends Prisma.DocumentLine$stockReservationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentLine$stockReservationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  stockMovement<T extends Prisma.DocumentLine$stockMovementArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentLine$stockMovementArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  parentLine<T extends Prisma.DocumentLine$parentLineArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentLine$parentLineArgs<ExtArgs>>): Prisma.Prisma__DocumentLineClient<runtime.Types.Result.GetResult<Prisma.$DocumentLinePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  componentLines<T extends Prisma.DocumentLine$componentLinesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentLine$componentLinesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentLinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2625,10 +4498,19 @@ export interface DocumentLineFieldRefs {
   readonly taxRuleId: Prisma.FieldRef<"DocumentLine", 'Int'>
   readonly taxPercent: Prisma.FieldRef<"DocumentLine", 'Decimal'>
   readonly taxAmount: Prisma.FieldRef<"DocumentLine", 'Decimal'>
-  readonly taxCode: Prisma.FieldRef<"DocumentLine", 'String'>
+  readonly vatNatureCode: Prisma.FieldRef<"DocumentLine", 'String'>
+  readonly vatNormReference: Prisma.FieldRef<"DocumentLine", 'String'>
   readonly lineTotalWithTax: Prisma.FieldRef<"DocumentLine", 'Decimal'>
   readonly notes: Prisma.FieldRef<"DocumentLine", 'String'>
   readonly customFields: Prisma.FieldRef<"DocumentLine", 'Json'>
+  readonly warehouseId: Prisma.FieldRef<"DocumentLine", 'Int'>
+  readonly parentLineId: Prisma.FieldRef<"DocumentLine", 'Int'>
+  readonly isComponent: Prisma.FieldRef<"DocumentLine", 'Boolean'>
+  readonly quantityInvoiced: Prisma.FieldRef<"DocumentLine", 'Decimal'>
+  readonly quantityDelivered: Prisma.FieldRef<"DocumentLine", 'Decimal'>
+  readonly quantityReturned: Prisma.FieldRef<"DocumentLine", 'Decimal'>
+  readonly originalUnitPrice: Prisma.FieldRef<"DocumentLine", 'Decimal'>
+  readonly priceOverrideReason: Prisma.FieldRef<"DocumentLine", 'String'>
 }
     
 
@@ -3098,6 +4980,116 @@ export type DocumentLine$intrastatTransactionArgs<ExtArgs extends runtime.Types.
    */
   include?: Prisma.IntrastatTransactionInclude<ExtArgs> | null
   where?: Prisma.IntrastatTransactionWhereInput
+}
+
+/**
+ * DocumentLine.warehouse
+ */
+export type DocumentLine$warehouseArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Warehouse
+   */
+  select?: Prisma.WarehouseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Warehouse
+   */
+  omit?: Prisma.WarehouseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WarehouseInclude<ExtArgs> | null
+  where?: Prisma.WarehouseWhereInput
+}
+
+/**
+ * DocumentLine.stockReservations
+ */
+export type DocumentLine$stockReservationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StockReservation
+   */
+  select?: Prisma.StockReservationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StockReservation
+   */
+  omit?: Prisma.StockReservationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StockReservationInclude<ExtArgs> | null
+  where?: Prisma.StockReservationWhereInput
+  orderBy?: Prisma.StockReservationOrderByWithRelationInput | Prisma.StockReservationOrderByWithRelationInput[]
+  cursor?: Prisma.StockReservationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StockReservationScalarFieldEnum | Prisma.StockReservationScalarFieldEnum[]
+}
+
+/**
+ * DocumentLine.stockMovement
+ */
+export type DocumentLine$stockMovementArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StockMovement
+   */
+  select?: Prisma.StockMovementSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StockMovement
+   */
+  omit?: Prisma.StockMovementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StockMovementInclude<ExtArgs> | null
+  where?: Prisma.StockMovementWhereInput
+  orderBy?: Prisma.StockMovementOrderByWithRelationInput | Prisma.StockMovementOrderByWithRelationInput[]
+  cursor?: Prisma.StockMovementWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StockMovementScalarFieldEnum | Prisma.StockMovementScalarFieldEnum[]
+}
+
+/**
+ * DocumentLine.parentLine
+ */
+export type DocumentLine$parentLineArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentLine
+   */
+  select?: Prisma.DocumentLineSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DocumentLine
+   */
+  omit?: Prisma.DocumentLineOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentLineInclude<ExtArgs> | null
+  where?: Prisma.DocumentLineWhereInput
+}
+
+/**
+ * DocumentLine.componentLines
+ */
+export type DocumentLine$componentLinesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentLine
+   */
+  select?: Prisma.DocumentLineSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DocumentLine
+   */
+  omit?: Prisma.DocumentLineOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentLineInclude<ExtArgs> | null
+  where?: Prisma.DocumentLineWhereInput
+  orderBy?: Prisma.DocumentLineOrderByWithRelationInput | Prisma.DocumentLineOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentLineWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DocumentLineScalarFieldEnum | Prisma.DocumentLineScalarFieldEnum[]
 }
 
 /**

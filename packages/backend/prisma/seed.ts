@@ -91,33 +91,6 @@ async function main() {
     });
   }
   
-  // 2. TAX RATE
-  console.log('Seeding TaxRate...');
-  for (const rate of TAX_RATE_DATA) {
-    await prisma.taxRate.upsert({
-      where: { rate: rate.rate }, // Usa 'rate' come chiave univoca
-      update: {},
-      create: rate
-    });
-  }
-
-  // 3. TAX RULE
-  console.log('Seeding TaxRule...');
-  for (const rule of TAX_RULE_DATA) {
-    await prisma.taxRule.upsert({
-      where: { code: rule.code },
-      update: {},
-      create: rule,
-    });
-  }
-
-  // 4. TAX RULE TRANSLATION
-  console.log('Seeding TaxRuleTranslation...');
-  for (const translation of TAX_RULE_TRANSLATION_DATA) {
-    await prisma.taxRuleTranslation.create({
-      data: translation,
-    });
-  }
 
   console.log('Inizio del seeding per l\'utente amministratore...');
 

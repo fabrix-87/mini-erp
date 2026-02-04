@@ -28,12 +28,18 @@ export type AggregateTaxRule = {
 
 export type TaxRuleAvgAggregateOutputType = {
   id: number | null
-  taxRateId: number | null
+  rate: runtime.Decimal | null
+  vatNatureId: number | null
+  deductibilityPercent: runtime.Decimal | null
+  displayOrder: number | null
 }
 
 export type TaxRuleSumAggregateOutputType = {
   id: number | null
-  taxRateId: number | null
+  rate: runtime.Decimal | null
+  vatNatureId: number | null
+  deductibilityPercent: runtime.Decimal | null
+  displayOrder: number | null
 }
 
 export type TaxRuleMinAggregateOutputType = {
@@ -41,9 +47,22 @@ export type TaxRuleMinAggregateOutputType = {
   code: string | null
   name: string | null
   description: string | null
-  operationType: string | null
-  taxRateId: number | null
+  rate: runtime.Decimal | null
+  vatNatureId: number | null
+  normativeReference: string | null
+  countryCode: string | null
+  applicableFor: string | null
+  productCategory: string | null
+  customerType: string | null
+  isSplitPayment: boolean | null
+  deductibilityPercent: runtime.Decimal | null
+  vatDeductible: boolean | null
+  validFrom: Date | null
+  validTo: Date | null
   active: boolean | null
+  isDefault: boolean | null
+  displayOrder: number | null
+  color: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -53,9 +72,22 @@ export type TaxRuleMaxAggregateOutputType = {
   code: string | null
   name: string | null
   description: string | null
-  operationType: string | null
-  taxRateId: number | null
+  rate: runtime.Decimal | null
+  vatNatureId: number | null
+  normativeReference: string | null
+  countryCode: string | null
+  applicableFor: string | null
+  productCategory: string | null
+  customerType: string | null
+  isSplitPayment: boolean | null
+  deductibilityPercent: runtime.Decimal | null
+  vatDeductible: boolean | null
+  validFrom: Date | null
+  validTo: Date | null
   active: boolean | null
+  isDefault: boolean | null
+  displayOrder: number | null
+  color: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -65,9 +97,22 @@ export type TaxRuleCountAggregateOutputType = {
   code: number
   name: number
   description: number
-  operationType: number
-  taxRateId: number
+  rate: number
+  vatNatureId: number
+  normativeReference: number
+  countryCode: number
+  applicableFor: number
+  productCategory: number
+  customerType: number
+  isSplitPayment: number
+  deductibilityPercent: number
+  vatDeductible: number
+  validFrom: number
+  validTo: number
   active: number
+  isDefault: number
+  displayOrder: number
+  color: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -76,12 +121,18 @@ export type TaxRuleCountAggregateOutputType = {
 
 export type TaxRuleAvgAggregateInputType = {
   id?: true
-  taxRateId?: true
+  rate?: true
+  vatNatureId?: true
+  deductibilityPercent?: true
+  displayOrder?: true
 }
 
 export type TaxRuleSumAggregateInputType = {
   id?: true
-  taxRateId?: true
+  rate?: true
+  vatNatureId?: true
+  deductibilityPercent?: true
+  displayOrder?: true
 }
 
 export type TaxRuleMinAggregateInputType = {
@@ -89,9 +140,22 @@ export type TaxRuleMinAggregateInputType = {
   code?: true
   name?: true
   description?: true
-  operationType?: true
-  taxRateId?: true
+  rate?: true
+  vatNatureId?: true
+  normativeReference?: true
+  countryCode?: true
+  applicableFor?: true
+  productCategory?: true
+  customerType?: true
+  isSplitPayment?: true
+  deductibilityPercent?: true
+  vatDeductible?: true
+  validFrom?: true
+  validTo?: true
   active?: true
+  isDefault?: true
+  displayOrder?: true
+  color?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -101,9 +165,22 @@ export type TaxRuleMaxAggregateInputType = {
   code?: true
   name?: true
   description?: true
-  operationType?: true
-  taxRateId?: true
+  rate?: true
+  vatNatureId?: true
+  normativeReference?: true
+  countryCode?: true
+  applicableFor?: true
+  productCategory?: true
+  customerType?: true
+  isSplitPayment?: true
+  deductibilityPercent?: true
+  vatDeductible?: true
+  validFrom?: true
+  validTo?: true
   active?: true
+  isDefault?: true
+  displayOrder?: true
+  color?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -113,9 +190,22 @@ export type TaxRuleCountAggregateInputType = {
   code?: true
   name?: true
   description?: true
-  operationType?: true
-  taxRateId?: true
+  rate?: true
+  vatNatureId?: true
+  normativeReference?: true
+  countryCode?: true
+  applicableFor?: true
+  productCategory?: true
+  customerType?: true
+  isSplitPayment?: true
+  deductibilityPercent?: true
+  vatDeductible?: true
+  validFrom?: true
+  validTo?: true
   active?: true
+  isDefault?: true
+  displayOrder?: true
+  color?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -212,9 +302,22 @@ export type TaxRuleGroupByOutputType = {
   code: string
   name: string
   description: string | null
-  operationType: string
-  taxRateId: number
+  rate: runtime.Decimal
+  vatNatureId: number | null
+  normativeReference: string | null
+  countryCode: string
+  applicableFor: string
+  productCategory: string | null
+  customerType: string | null
+  isSplitPayment: boolean
+  deductibilityPercent: runtime.Decimal
+  vatDeductible: boolean
+  validFrom: Date
+  validTo: Date | null
   active: boolean
+  isDefault: boolean
+  displayOrder: number
+  color: string | null
   createdAt: Date
   updatedAt: Date
   _count: TaxRuleCountAggregateOutputType | null
@@ -247,16 +350,34 @@ export type TaxRuleWhereInput = {
   code?: Prisma.StringFilter<"TaxRule"> | string
   name?: Prisma.StringFilter<"TaxRule"> | string
   description?: Prisma.StringNullableFilter<"TaxRule"> | string | null
-  operationType?: Prisma.StringFilter<"TaxRule"> | string
-  taxRateId?: Prisma.IntFilter<"TaxRule"> | number
+  rate?: Prisma.DecimalFilter<"TaxRule"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.IntNullableFilter<"TaxRule"> | number | null
+  normativeReference?: Prisma.StringNullableFilter<"TaxRule"> | string | null
+  countryCode?: Prisma.StringFilter<"TaxRule"> | string
+  applicableFor?: Prisma.StringFilter<"TaxRule"> | string
+  productCategory?: Prisma.StringNullableFilter<"TaxRule"> | string | null
+  customerType?: Prisma.StringNullableFilter<"TaxRule"> | string | null
+  isSplitPayment?: Prisma.BoolFilter<"TaxRule"> | boolean
+  deductibilityPercent?: Prisma.DecimalFilter<"TaxRule"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFilter<"TaxRule"> | boolean
+  validFrom?: Prisma.DateTimeFilter<"TaxRule"> | Date | string
+  validTo?: Prisma.DateTimeNullableFilter<"TaxRule"> | Date | string | null
   active?: Prisma.BoolFilter<"TaxRule"> | boolean
+  isDefault?: Prisma.BoolFilter<"TaxRule"> | boolean
+  displayOrder?: Prisma.IntFilter<"TaxRule"> | number
+  color?: Prisma.StringNullableFilter<"TaxRule"> | string | null
   createdAt?: Prisma.DateTimeFilter<"TaxRule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TaxRule"> | Date | string
-  taxRate?: Prisma.XOR<Prisma.TaxRateScalarRelationFilter, Prisma.TaxRateWhereInput>
-  products?: Prisma.ProductListRelationFilter
-  documentLines?: Prisma.DocumentLineListRelationFilter
+  vatNature?: Prisma.XOR<Prisma.VatNatureNullableScalarRelationFilter, Prisma.VatNatureWhereInput> | null
+  country?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
+  translations?: Prisma.TaxRuleTranslationListRelationFilter
   customers?: Prisma.CustomerListRelationFilter
-  taxRuleTranslations?: Prisma.TaxRuleTranslationListRelationFilter
+  suppliers?: Prisma.SupplierListRelationFilter
+  tenantsSales?: Prisma.TenantSettingsListRelationFilter
+  tenantsPurchases?: Prisma.TenantSettingsListRelationFilter
+  priceListItems?: Prisma.PriceListItemListRelationFilter
+  documentLines?: Prisma.DocumentLineListRelationFilter
+  products?: Prisma.ProductListRelationFilter
 }
 
 export type TaxRuleOrderByWithRelationInput = {
@@ -264,16 +385,34 @@ export type TaxRuleOrderByWithRelationInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  operationType?: Prisma.SortOrder
-  taxRateId?: Prisma.SortOrder
+  rate?: Prisma.SortOrder
+  vatNatureId?: Prisma.SortOrderInput | Prisma.SortOrder
+  normativeReference?: Prisma.SortOrderInput | Prisma.SortOrder
+  countryCode?: Prisma.SortOrder
+  applicableFor?: Prisma.SortOrder
+  productCategory?: Prisma.SortOrderInput | Prisma.SortOrder
+  customerType?: Prisma.SortOrderInput | Prisma.SortOrder
+  isSplitPayment?: Prisma.SortOrder
+  deductibilityPercent?: Prisma.SortOrder
+  vatDeductible?: Prisma.SortOrder
+  validFrom?: Prisma.SortOrder
+  validTo?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
+  isDefault?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
+  color?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  taxRate?: Prisma.TaxRateOrderByWithRelationInput
-  products?: Prisma.ProductOrderByRelationAggregateInput
-  documentLines?: Prisma.DocumentLineOrderByRelationAggregateInput
+  vatNature?: Prisma.VatNatureOrderByWithRelationInput
+  country?: Prisma.CountryOrderByWithRelationInput
+  translations?: Prisma.TaxRuleTranslationOrderByRelationAggregateInput
   customers?: Prisma.CustomerOrderByRelationAggregateInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationOrderByRelationAggregateInput
+  suppliers?: Prisma.SupplierOrderByRelationAggregateInput
+  tenantsSales?: Prisma.TenantSettingsOrderByRelationAggregateInput
+  tenantsPurchases?: Prisma.TenantSettingsOrderByRelationAggregateInput
+  priceListItems?: Prisma.PriceListItemOrderByRelationAggregateInput
+  documentLines?: Prisma.DocumentLineOrderByRelationAggregateInput
+  products?: Prisma.ProductOrderByRelationAggregateInput
 }
 
 export type TaxRuleWhereUniqueInput = Prisma.AtLeast<{
@@ -284,16 +423,34 @@ export type TaxRuleWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.TaxRuleWhereInput | Prisma.TaxRuleWhereInput[]
   name?: Prisma.StringFilter<"TaxRule"> | string
   description?: Prisma.StringNullableFilter<"TaxRule"> | string | null
-  operationType?: Prisma.StringFilter<"TaxRule"> | string
-  taxRateId?: Prisma.IntFilter<"TaxRule"> | number
+  rate?: Prisma.DecimalFilter<"TaxRule"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.IntNullableFilter<"TaxRule"> | number | null
+  normativeReference?: Prisma.StringNullableFilter<"TaxRule"> | string | null
+  countryCode?: Prisma.StringFilter<"TaxRule"> | string
+  applicableFor?: Prisma.StringFilter<"TaxRule"> | string
+  productCategory?: Prisma.StringNullableFilter<"TaxRule"> | string | null
+  customerType?: Prisma.StringNullableFilter<"TaxRule"> | string | null
+  isSplitPayment?: Prisma.BoolFilter<"TaxRule"> | boolean
+  deductibilityPercent?: Prisma.DecimalFilter<"TaxRule"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFilter<"TaxRule"> | boolean
+  validFrom?: Prisma.DateTimeFilter<"TaxRule"> | Date | string
+  validTo?: Prisma.DateTimeNullableFilter<"TaxRule"> | Date | string | null
   active?: Prisma.BoolFilter<"TaxRule"> | boolean
+  isDefault?: Prisma.BoolFilter<"TaxRule"> | boolean
+  displayOrder?: Prisma.IntFilter<"TaxRule"> | number
+  color?: Prisma.StringNullableFilter<"TaxRule"> | string | null
   createdAt?: Prisma.DateTimeFilter<"TaxRule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TaxRule"> | Date | string
-  taxRate?: Prisma.XOR<Prisma.TaxRateScalarRelationFilter, Prisma.TaxRateWhereInput>
-  products?: Prisma.ProductListRelationFilter
-  documentLines?: Prisma.DocumentLineListRelationFilter
+  vatNature?: Prisma.XOR<Prisma.VatNatureNullableScalarRelationFilter, Prisma.VatNatureWhereInput> | null
+  country?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
+  translations?: Prisma.TaxRuleTranslationListRelationFilter
   customers?: Prisma.CustomerListRelationFilter
-  taxRuleTranslations?: Prisma.TaxRuleTranslationListRelationFilter
+  suppliers?: Prisma.SupplierListRelationFilter
+  tenantsSales?: Prisma.TenantSettingsListRelationFilter
+  tenantsPurchases?: Prisma.TenantSettingsListRelationFilter
+  priceListItems?: Prisma.PriceListItemListRelationFilter
+  documentLines?: Prisma.DocumentLineListRelationFilter
+  products?: Prisma.ProductListRelationFilter
 }, "id" | "code">
 
 export type TaxRuleOrderByWithAggregationInput = {
@@ -301,9 +458,22 @@ export type TaxRuleOrderByWithAggregationInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  operationType?: Prisma.SortOrder
-  taxRateId?: Prisma.SortOrder
+  rate?: Prisma.SortOrder
+  vatNatureId?: Prisma.SortOrderInput | Prisma.SortOrder
+  normativeReference?: Prisma.SortOrderInput | Prisma.SortOrder
+  countryCode?: Prisma.SortOrder
+  applicableFor?: Prisma.SortOrder
+  productCategory?: Prisma.SortOrderInput | Prisma.SortOrder
+  customerType?: Prisma.SortOrderInput | Prisma.SortOrder
+  isSplitPayment?: Prisma.SortOrder
+  deductibilityPercent?: Prisma.SortOrder
+  vatDeductible?: Prisma.SortOrder
+  validFrom?: Prisma.SortOrder
+  validTo?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
+  isDefault?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
+  color?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TaxRuleCountOrderByAggregateInput
@@ -321,9 +491,22 @@ export type TaxRuleScalarWhereWithAggregatesInput = {
   code?: Prisma.StringWithAggregatesFilter<"TaxRule"> | string
   name?: Prisma.StringWithAggregatesFilter<"TaxRule"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"TaxRule"> | string | null
-  operationType?: Prisma.StringWithAggregatesFilter<"TaxRule"> | string
-  taxRateId?: Prisma.IntWithAggregatesFilter<"TaxRule"> | number
+  rate?: Prisma.DecimalWithAggregatesFilter<"TaxRule"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.IntNullableWithAggregatesFilter<"TaxRule"> | number | null
+  normativeReference?: Prisma.StringNullableWithAggregatesFilter<"TaxRule"> | string | null
+  countryCode?: Prisma.StringWithAggregatesFilter<"TaxRule"> | string
+  applicableFor?: Prisma.StringWithAggregatesFilter<"TaxRule"> | string
+  productCategory?: Prisma.StringNullableWithAggregatesFilter<"TaxRule"> | string | null
+  customerType?: Prisma.StringNullableWithAggregatesFilter<"TaxRule"> | string | null
+  isSplitPayment?: Prisma.BoolWithAggregatesFilter<"TaxRule"> | boolean
+  deductibilityPercent?: Prisma.DecimalWithAggregatesFilter<"TaxRule"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolWithAggregatesFilter<"TaxRule"> | boolean
+  validFrom?: Prisma.DateTimeWithAggregatesFilter<"TaxRule"> | Date | string
+  validTo?: Prisma.DateTimeNullableWithAggregatesFilter<"TaxRule"> | Date | string | null
   active?: Prisma.BoolWithAggregatesFilter<"TaxRule"> | boolean
+  isDefault?: Prisma.BoolWithAggregatesFilter<"TaxRule"> | boolean
+  displayOrder?: Prisma.IntWithAggregatesFilter<"TaxRule"> | number
+  color?: Prisma.StringNullableWithAggregatesFilter<"TaxRule"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"TaxRule"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"TaxRule"> | Date | string
 }
@@ -332,15 +515,32 @@ export type TaxRuleCreateInput = {
   code: string
   name: string
   description?: string | null
-  operationType: string
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  taxRate: Prisma.TaxRateCreateNestedOneWithoutRulesInput
-  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
-  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  vatNature?: Prisma.VatNatureCreateNestedOneWithoutTaxRulesInput
+  country?: Prisma.CountryCreateNestedOneWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCustomerTaxRuleInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
 }
 
 export type TaxRuleUncheckedCreateInput = {
@@ -348,30 +548,64 @@ export type TaxRuleUncheckedCreateInput = {
   code: string
   name: string
   description?: string | null
-  operationType: string
-  taxRateId: number
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
-  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCustomerTaxRuleInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
 }
 
 export type TaxRuleUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  taxRate?: Prisma.TaxRateUpdateOneRequiredWithoutRulesNestedInput
-  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
-  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  vatNature?: Prisma.VatNatureUpdateOneWithoutTaxRulesNestedInput
+  country?: Prisma.CountryUpdateOneRequiredWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCustomerTaxRuleNestedInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
 }
 
 export type TaxRuleUncheckedUpdateInput = {
@@ -379,15 +613,32 @@ export type TaxRuleUncheckedUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
-  taxRateId?: Prisma.IntFieldUpdateOperationsInput | number
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
-  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCustomerTaxRuleNestedInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
 }
 
 export type TaxRuleCreateManyInput = {
@@ -395,9 +646,22 @@ export type TaxRuleCreateManyInput = {
   code: string
   name: string
   description?: string | null
-  operationType: string
-  taxRateId: number
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -406,8 +670,20 @@ export type TaxRuleUpdateManyMutationInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -417,9 +693,22 @@ export type TaxRuleUncheckedUpdateManyInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
-  taxRateId?: Prisma.IntFieldUpdateOperationsInput | number
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -427,11 +716,6 @@ export type TaxRuleUncheckedUpdateManyInput = {
 export type TaxRuleNullableScalarRelationFilter = {
   is?: Prisma.TaxRuleWhereInput | null
   isNot?: Prisma.TaxRuleWhereInput | null
-}
-
-export type TaxRuleScalarRelationFilter = {
-  is?: Prisma.TaxRuleWhereInput
-  isNot?: Prisma.TaxRuleWhereInput
 }
 
 export type TaxRuleListRelationFilter = {
@@ -444,21 +728,42 @@ export type TaxRuleOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type TaxRuleScalarRelationFilter = {
+  is?: Prisma.TaxRuleWhereInput
+  isNot?: Prisma.TaxRuleWhereInput
+}
+
 export type TaxRuleCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  operationType?: Prisma.SortOrder
-  taxRateId?: Prisma.SortOrder
+  rate?: Prisma.SortOrder
+  vatNatureId?: Prisma.SortOrder
+  normativeReference?: Prisma.SortOrder
+  countryCode?: Prisma.SortOrder
+  applicableFor?: Prisma.SortOrder
+  productCategory?: Prisma.SortOrder
+  customerType?: Prisma.SortOrder
+  isSplitPayment?: Prisma.SortOrder
+  deductibilityPercent?: Prisma.SortOrder
+  vatDeductible?: Prisma.SortOrder
+  validFrom?: Prisma.SortOrder
+  validTo?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  isDefault?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
+  color?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type TaxRuleAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  taxRateId?: Prisma.SortOrder
+  rate?: Prisma.SortOrder
+  vatNatureId?: Prisma.SortOrder
+  deductibilityPercent?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
 }
 
 export type TaxRuleMaxOrderByAggregateInput = {
@@ -466,9 +771,22 @@ export type TaxRuleMaxOrderByAggregateInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  operationType?: Prisma.SortOrder
-  taxRateId?: Prisma.SortOrder
+  rate?: Prisma.SortOrder
+  vatNatureId?: Prisma.SortOrder
+  normativeReference?: Prisma.SortOrder
+  countryCode?: Prisma.SortOrder
+  applicableFor?: Prisma.SortOrder
+  productCategory?: Prisma.SortOrder
+  customerType?: Prisma.SortOrder
+  isSplitPayment?: Prisma.SortOrder
+  deductibilityPercent?: Prisma.SortOrder
+  vatDeductible?: Prisma.SortOrder
+  validFrom?: Prisma.SortOrder
+  validTo?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  isDefault?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
+  color?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -478,16 +796,32 @@ export type TaxRuleMinOrderByAggregateInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  operationType?: Prisma.SortOrder
-  taxRateId?: Prisma.SortOrder
+  rate?: Prisma.SortOrder
+  vatNatureId?: Prisma.SortOrder
+  normativeReference?: Prisma.SortOrder
+  countryCode?: Prisma.SortOrder
+  applicableFor?: Prisma.SortOrder
+  productCategory?: Prisma.SortOrder
+  customerType?: Prisma.SortOrder
+  isSplitPayment?: Prisma.SortOrder
+  deductibilityPercent?: Prisma.SortOrder
+  vatDeductible?: Prisma.SortOrder
+  validFrom?: Prisma.SortOrder
+  validTo?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  isDefault?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
+  color?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type TaxRuleSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  taxRateId?: Prisma.SortOrder
+  rate?: Prisma.SortOrder
+  vatNatureId?: Prisma.SortOrder
+  deductibilityPercent?: Prisma.SortOrder
+  displayOrder?: Prisma.SortOrder
 }
 
 export type TaxRuleCreateNestedOneWithoutCustomersInput = {
@@ -506,6 +840,64 @@ export type TaxRuleUpdateOneWithoutCustomersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TaxRuleUpdateToOneWithWhereWithoutCustomersInput, Prisma.TaxRuleUpdateWithoutCustomersInput>, Prisma.TaxRuleUncheckedUpdateWithoutCustomersInput>
 }
 
+export type TaxRuleCreateNestedOneWithoutSuppliersInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutSuppliersInput, Prisma.TaxRuleUncheckedCreateWithoutSuppliersInput>
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutSuppliersInput
+  connect?: Prisma.TaxRuleWhereUniqueInput
+}
+
+export type TaxRuleUpdateOneWithoutSuppliersNestedInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutSuppliersInput, Prisma.TaxRuleUncheckedCreateWithoutSuppliersInput>
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutSuppliersInput
+  upsert?: Prisma.TaxRuleUpsertWithoutSuppliersInput
+  disconnect?: Prisma.TaxRuleWhereInput | boolean
+  delete?: Prisma.TaxRuleWhereInput | boolean
+  connect?: Prisma.TaxRuleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TaxRuleUpdateToOneWithWhereWithoutSuppliersInput, Prisma.TaxRuleUpdateWithoutSuppliersInput>, Prisma.TaxRuleUncheckedUpdateWithoutSuppliersInput>
+}
+
+export type TaxRuleCreateNestedManyWithoutCountryInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutCountryInput, Prisma.TaxRuleUncheckedCreateWithoutCountryInput> | Prisma.TaxRuleCreateWithoutCountryInput[] | Prisma.TaxRuleUncheckedCreateWithoutCountryInput[]
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutCountryInput | Prisma.TaxRuleCreateOrConnectWithoutCountryInput[]
+  createMany?: Prisma.TaxRuleCreateManyCountryInputEnvelope
+  connect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
+}
+
+export type TaxRuleUncheckedCreateNestedManyWithoutCountryInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutCountryInput, Prisma.TaxRuleUncheckedCreateWithoutCountryInput> | Prisma.TaxRuleCreateWithoutCountryInput[] | Prisma.TaxRuleUncheckedCreateWithoutCountryInput[]
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutCountryInput | Prisma.TaxRuleCreateOrConnectWithoutCountryInput[]
+  createMany?: Prisma.TaxRuleCreateManyCountryInputEnvelope
+  connect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
+}
+
+export type TaxRuleUpdateManyWithoutCountryNestedInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutCountryInput, Prisma.TaxRuleUncheckedCreateWithoutCountryInput> | Prisma.TaxRuleCreateWithoutCountryInput[] | Prisma.TaxRuleUncheckedCreateWithoutCountryInput[]
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutCountryInput | Prisma.TaxRuleCreateOrConnectWithoutCountryInput[]
+  upsert?: Prisma.TaxRuleUpsertWithWhereUniqueWithoutCountryInput | Prisma.TaxRuleUpsertWithWhereUniqueWithoutCountryInput[]
+  createMany?: Prisma.TaxRuleCreateManyCountryInputEnvelope
+  set?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
+  disconnect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
+  delete?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
+  connect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
+  update?: Prisma.TaxRuleUpdateWithWhereUniqueWithoutCountryInput | Prisma.TaxRuleUpdateWithWhereUniqueWithoutCountryInput[]
+  updateMany?: Prisma.TaxRuleUpdateManyWithWhereWithoutCountryInput | Prisma.TaxRuleUpdateManyWithWhereWithoutCountryInput[]
+  deleteMany?: Prisma.TaxRuleScalarWhereInput | Prisma.TaxRuleScalarWhereInput[]
+}
+
+export type TaxRuleUncheckedUpdateManyWithoutCountryNestedInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutCountryInput, Prisma.TaxRuleUncheckedCreateWithoutCountryInput> | Prisma.TaxRuleCreateWithoutCountryInput[] | Prisma.TaxRuleUncheckedCreateWithoutCountryInput[]
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutCountryInput | Prisma.TaxRuleCreateOrConnectWithoutCountryInput[]
+  upsert?: Prisma.TaxRuleUpsertWithWhereUniqueWithoutCountryInput | Prisma.TaxRuleUpsertWithWhereUniqueWithoutCountryInput[]
+  createMany?: Prisma.TaxRuleCreateManyCountryInputEnvelope
+  set?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
+  disconnect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
+  delete?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
+  connect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
+  update?: Prisma.TaxRuleUpdateWithWhereUniqueWithoutCountryInput | Prisma.TaxRuleUpdateWithWhereUniqueWithoutCountryInput[]
+  updateMany?: Prisma.TaxRuleUpdateManyWithWhereWithoutCountryInput | Prisma.TaxRuleUpdateManyWithWhereWithoutCountryInput[]
+  deleteMany?: Prisma.TaxRuleScalarWhereInput | Prisma.TaxRuleScalarWhereInput[]
+}
+
 export type TaxRuleCreateNestedOneWithoutDocumentLinesInput = {
   create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutDocumentLinesInput, Prisma.TaxRuleUncheckedCreateWithoutDocumentLinesInput>
   connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutDocumentLinesInput
@@ -522,6 +914,22 @@ export type TaxRuleUpdateOneWithoutDocumentLinesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TaxRuleUpdateToOneWithWhereWithoutDocumentLinesInput, Prisma.TaxRuleUpdateWithoutDocumentLinesInput>, Prisma.TaxRuleUncheckedUpdateWithoutDocumentLinesInput>
 }
 
+export type TaxRuleCreateNestedOneWithoutPriceListItemsInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutPriceListItemsInput, Prisma.TaxRuleUncheckedCreateWithoutPriceListItemsInput>
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutPriceListItemsInput
+  connect?: Prisma.TaxRuleWhereUniqueInput
+}
+
+export type TaxRuleUpdateOneWithoutPriceListItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutPriceListItemsInput, Prisma.TaxRuleUncheckedCreateWithoutPriceListItemsInput>
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutPriceListItemsInput
+  upsert?: Prisma.TaxRuleUpsertWithoutPriceListItemsInput
+  disconnect?: Prisma.TaxRuleWhereInput | boolean
+  delete?: Prisma.TaxRuleWhereInput | boolean
+  connect?: Prisma.TaxRuleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TaxRuleUpdateToOneWithWhereWithoutPriceListItemsInput, Prisma.TaxRuleUpdateWithoutPriceListItemsInput>, Prisma.TaxRuleUncheckedUpdateWithoutPriceListItemsInput>
+}
+
 export type TaxRuleCreateNestedOneWithoutProductsInput = {
   create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutProductsInput, Prisma.TaxRuleUncheckedCreateWithoutProductsInput>
   connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutProductsInput
@@ -536,74 +944,123 @@ export type TaxRuleUpdateOneRequiredWithoutProductsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TaxRuleUpdateToOneWithWhereWithoutProductsInput, Prisma.TaxRuleUpdateWithoutProductsInput>, Prisma.TaxRuleUncheckedUpdateWithoutProductsInput>
 }
 
-export type TaxRuleCreateNestedManyWithoutTaxRateInput = {
-  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTaxRateInput, Prisma.TaxRuleUncheckedCreateWithoutTaxRateInput> | Prisma.TaxRuleCreateWithoutTaxRateInput[] | Prisma.TaxRuleUncheckedCreateWithoutTaxRateInput[]
-  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTaxRateInput | Prisma.TaxRuleCreateOrConnectWithoutTaxRateInput[]
-  createMany?: Prisma.TaxRuleCreateManyTaxRateInputEnvelope
+export type TaxRuleCreateNestedOneWithoutTenantsSalesInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTenantsSalesInput, Prisma.TaxRuleUncheckedCreateWithoutTenantsSalesInput>
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTenantsSalesInput
+  connect?: Prisma.TaxRuleWhereUniqueInput
+}
+
+export type TaxRuleCreateNestedOneWithoutTenantsPurchasesInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTenantsPurchasesInput, Prisma.TaxRuleUncheckedCreateWithoutTenantsPurchasesInput>
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTenantsPurchasesInput
+  connect?: Prisma.TaxRuleWhereUniqueInput
+}
+
+export type TaxRuleUpdateOneWithoutTenantsSalesNestedInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTenantsSalesInput, Prisma.TaxRuleUncheckedCreateWithoutTenantsSalesInput>
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTenantsSalesInput
+  upsert?: Prisma.TaxRuleUpsertWithoutTenantsSalesInput
+  disconnect?: Prisma.TaxRuleWhereInput | boolean
+  delete?: Prisma.TaxRuleWhereInput | boolean
+  connect?: Prisma.TaxRuleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TaxRuleUpdateToOneWithWhereWithoutTenantsSalesInput, Prisma.TaxRuleUpdateWithoutTenantsSalesInput>, Prisma.TaxRuleUncheckedUpdateWithoutTenantsSalesInput>
+}
+
+export type TaxRuleUpdateOneWithoutTenantsPurchasesNestedInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTenantsPurchasesInput, Prisma.TaxRuleUncheckedCreateWithoutTenantsPurchasesInput>
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTenantsPurchasesInput
+  upsert?: Prisma.TaxRuleUpsertWithoutTenantsPurchasesInput
+  disconnect?: Prisma.TaxRuleWhereInput | boolean
+  delete?: Prisma.TaxRuleWhereInput | boolean
+  connect?: Prisma.TaxRuleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TaxRuleUpdateToOneWithWhereWithoutTenantsPurchasesInput, Prisma.TaxRuleUpdateWithoutTenantsPurchasesInput>, Prisma.TaxRuleUncheckedUpdateWithoutTenantsPurchasesInput>
+}
+
+export type TaxRuleCreateNestedManyWithoutVatNatureInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutVatNatureInput, Prisma.TaxRuleUncheckedCreateWithoutVatNatureInput> | Prisma.TaxRuleCreateWithoutVatNatureInput[] | Prisma.TaxRuleUncheckedCreateWithoutVatNatureInput[]
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutVatNatureInput | Prisma.TaxRuleCreateOrConnectWithoutVatNatureInput[]
+  createMany?: Prisma.TaxRuleCreateManyVatNatureInputEnvelope
   connect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
 }
 
-export type TaxRuleUncheckedCreateNestedManyWithoutTaxRateInput = {
-  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTaxRateInput, Prisma.TaxRuleUncheckedCreateWithoutTaxRateInput> | Prisma.TaxRuleCreateWithoutTaxRateInput[] | Prisma.TaxRuleUncheckedCreateWithoutTaxRateInput[]
-  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTaxRateInput | Prisma.TaxRuleCreateOrConnectWithoutTaxRateInput[]
-  createMany?: Prisma.TaxRuleCreateManyTaxRateInputEnvelope
+export type TaxRuleUncheckedCreateNestedManyWithoutVatNatureInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutVatNatureInput, Prisma.TaxRuleUncheckedCreateWithoutVatNatureInput> | Prisma.TaxRuleCreateWithoutVatNatureInput[] | Prisma.TaxRuleUncheckedCreateWithoutVatNatureInput[]
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutVatNatureInput | Prisma.TaxRuleCreateOrConnectWithoutVatNatureInput[]
+  createMany?: Prisma.TaxRuleCreateManyVatNatureInputEnvelope
   connect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
 }
 
-export type TaxRuleUpdateManyWithoutTaxRateNestedInput = {
-  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTaxRateInput, Prisma.TaxRuleUncheckedCreateWithoutTaxRateInput> | Prisma.TaxRuleCreateWithoutTaxRateInput[] | Prisma.TaxRuleUncheckedCreateWithoutTaxRateInput[]
-  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTaxRateInput | Prisma.TaxRuleCreateOrConnectWithoutTaxRateInput[]
-  upsert?: Prisma.TaxRuleUpsertWithWhereUniqueWithoutTaxRateInput | Prisma.TaxRuleUpsertWithWhereUniqueWithoutTaxRateInput[]
-  createMany?: Prisma.TaxRuleCreateManyTaxRateInputEnvelope
+export type TaxRuleUpdateManyWithoutVatNatureNestedInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutVatNatureInput, Prisma.TaxRuleUncheckedCreateWithoutVatNatureInput> | Prisma.TaxRuleCreateWithoutVatNatureInput[] | Prisma.TaxRuleUncheckedCreateWithoutVatNatureInput[]
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutVatNatureInput | Prisma.TaxRuleCreateOrConnectWithoutVatNatureInput[]
+  upsert?: Prisma.TaxRuleUpsertWithWhereUniqueWithoutVatNatureInput | Prisma.TaxRuleUpsertWithWhereUniqueWithoutVatNatureInput[]
+  createMany?: Prisma.TaxRuleCreateManyVatNatureInputEnvelope
   set?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
   disconnect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
   delete?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
   connect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
-  update?: Prisma.TaxRuleUpdateWithWhereUniqueWithoutTaxRateInput | Prisma.TaxRuleUpdateWithWhereUniqueWithoutTaxRateInput[]
-  updateMany?: Prisma.TaxRuleUpdateManyWithWhereWithoutTaxRateInput | Prisma.TaxRuleUpdateManyWithWhereWithoutTaxRateInput[]
+  update?: Prisma.TaxRuleUpdateWithWhereUniqueWithoutVatNatureInput | Prisma.TaxRuleUpdateWithWhereUniqueWithoutVatNatureInput[]
+  updateMany?: Prisma.TaxRuleUpdateManyWithWhereWithoutVatNatureInput | Prisma.TaxRuleUpdateManyWithWhereWithoutVatNatureInput[]
   deleteMany?: Prisma.TaxRuleScalarWhereInput | Prisma.TaxRuleScalarWhereInput[]
 }
 
-export type TaxRuleUncheckedUpdateManyWithoutTaxRateNestedInput = {
-  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTaxRateInput, Prisma.TaxRuleUncheckedCreateWithoutTaxRateInput> | Prisma.TaxRuleCreateWithoutTaxRateInput[] | Prisma.TaxRuleUncheckedCreateWithoutTaxRateInput[]
-  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTaxRateInput | Prisma.TaxRuleCreateOrConnectWithoutTaxRateInput[]
-  upsert?: Prisma.TaxRuleUpsertWithWhereUniqueWithoutTaxRateInput | Prisma.TaxRuleUpsertWithWhereUniqueWithoutTaxRateInput[]
-  createMany?: Prisma.TaxRuleCreateManyTaxRateInputEnvelope
+export type TaxRuleUncheckedUpdateManyWithoutVatNatureNestedInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutVatNatureInput, Prisma.TaxRuleUncheckedCreateWithoutVatNatureInput> | Prisma.TaxRuleCreateWithoutVatNatureInput[] | Prisma.TaxRuleUncheckedCreateWithoutVatNatureInput[]
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutVatNatureInput | Prisma.TaxRuleCreateOrConnectWithoutVatNatureInput[]
+  upsert?: Prisma.TaxRuleUpsertWithWhereUniqueWithoutVatNatureInput | Prisma.TaxRuleUpsertWithWhereUniqueWithoutVatNatureInput[]
+  createMany?: Prisma.TaxRuleCreateManyVatNatureInputEnvelope
   set?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
   disconnect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
   delete?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
   connect?: Prisma.TaxRuleWhereUniqueInput | Prisma.TaxRuleWhereUniqueInput[]
-  update?: Prisma.TaxRuleUpdateWithWhereUniqueWithoutTaxRateInput | Prisma.TaxRuleUpdateWithWhereUniqueWithoutTaxRateInput[]
-  updateMany?: Prisma.TaxRuleUpdateManyWithWhereWithoutTaxRateInput | Prisma.TaxRuleUpdateManyWithWhereWithoutTaxRateInput[]
+  update?: Prisma.TaxRuleUpdateWithWhereUniqueWithoutVatNatureInput | Prisma.TaxRuleUpdateWithWhereUniqueWithoutVatNatureInput[]
+  updateMany?: Prisma.TaxRuleUpdateManyWithWhereWithoutVatNatureInput | Prisma.TaxRuleUpdateManyWithWhereWithoutVatNatureInput[]
   deleteMany?: Prisma.TaxRuleScalarWhereInput | Prisma.TaxRuleScalarWhereInput[]
 }
 
-export type TaxRuleCreateNestedOneWithoutTaxRuleTranslationsInput = {
-  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTaxRuleTranslationsInput, Prisma.TaxRuleUncheckedCreateWithoutTaxRuleTranslationsInput>
-  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTaxRuleTranslationsInput
+export type TaxRuleCreateNestedOneWithoutTranslationsInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTranslationsInput, Prisma.TaxRuleUncheckedCreateWithoutTranslationsInput>
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTranslationsInput
   connect?: Prisma.TaxRuleWhereUniqueInput
 }
 
-export type TaxRuleUpdateOneRequiredWithoutTaxRuleTranslationsNestedInput = {
-  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTaxRuleTranslationsInput, Prisma.TaxRuleUncheckedCreateWithoutTaxRuleTranslationsInput>
-  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTaxRuleTranslationsInput
-  upsert?: Prisma.TaxRuleUpsertWithoutTaxRuleTranslationsInput
+export type TaxRuleUpdateOneRequiredWithoutTranslationsNestedInput = {
+  create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutTranslationsInput, Prisma.TaxRuleUncheckedCreateWithoutTranslationsInput>
+  connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutTranslationsInput
+  upsert?: Prisma.TaxRuleUpsertWithoutTranslationsInput
   connect?: Prisma.TaxRuleWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TaxRuleUpdateToOneWithWhereWithoutTaxRuleTranslationsInput, Prisma.TaxRuleUpdateWithoutTaxRuleTranslationsInput>, Prisma.TaxRuleUncheckedUpdateWithoutTaxRuleTranslationsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TaxRuleUpdateToOneWithWhereWithoutTranslationsInput, Prisma.TaxRuleUpdateWithoutTranslationsInput>, Prisma.TaxRuleUncheckedUpdateWithoutTranslationsInput>
 }
 
 export type TaxRuleCreateWithoutCustomersInput = {
   code: string
   name: string
   description?: string | null
-  operationType: string
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  taxRate: Prisma.TaxRateCreateNestedOneWithoutRulesInput
-  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
+  vatNature?: Prisma.VatNatureCreateNestedOneWithoutTaxRulesInput
+  country?: Prisma.CountryCreateNestedOneWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutTaxRuleInput
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
 }
 
 export type TaxRuleUncheckedCreateWithoutCustomersInput = {
@@ -611,14 +1068,31 @@ export type TaxRuleUncheckedCreateWithoutCustomersInput = {
   code: string
   name: string
   description?: string | null
-  operationType: string
-  taxRateId: number
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutTaxRuleInput
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
 }
 
 export type TaxRuleCreateOrConnectWithoutCustomersInput = {
@@ -641,14 +1115,31 @@ export type TaxRuleUpdateWithoutCustomersInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  taxRate?: Prisma.TaxRateUpdateOneRequiredWithoutRulesNestedInput
-  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
+  vatNature?: Prisma.VatNatureUpdateOneWithoutTaxRulesNestedInput
+  country?: Prisma.CountryUpdateOneRequiredWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUpdateManyWithoutTaxRuleNestedInput
   documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
 }
 
 export type TaxRuleUncheckedUpdateWithoutCustomersInput = {
@@ -656,28 +1147,321 @@ export type TaxRuleUncheckedUpdateWithoutCustomersInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
-  taxRateId?: Prisma.IntFieldUpdateOperationsInput | number
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutTaxRuleNestedInput
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
+}
+
+export type TaxRuleCreateWithoutSuppliersInput = {
+  code: string
+  name: string
+  description?: string | null
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
+  active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vatNature?: Prisma.VatNatureCreateNestedOneWithoutTaxRulesInput
+  country?: Prisma.CountryCreateNestedOneWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutCustomerTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
+}
+
+export type TaxRuleUncheckedCreateWithoutSuppliersInput = {
+  id?: number
+  code: string
+  name: string
+  description?: string | null
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
+  active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  translations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCustomerTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
+}
+
+export type TaxRuleCreateOrConnectWithoutSuppliersInput = {
+  where: Prisma.TaxRuleWhereUniqueInput
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutSuppliersInput, Prisma.TaxRuleUncheckedCreateWithoutSuppliersInput>
+}
+
+export type TaxRuleUpsertWithoutSuppliersInput = {
+  update: Prisma.XOR<Prisma.TaxRuleUpdateWithoutSuppliersInput, Prisma.TaxRuleUncheckedUpdateWithoutSuppliersInput>
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutSuppliersInput, Prisma.TaxRuleUncheckedCreateWithoutSuppliersInput>
+  where?: Prisma.TaxRuleWhereInput
+}
+
+export type TaxRuleUpdateToOneWithWhereWithoutSuppliersInput = {
+  where?: Prisma.TaxRuleWhereInput
+  data: Prisma.XOR<Prisma.TaxRuleUpdateWithoutSuppliersInput, Prisma.TaxRuleUncheckedUpdateWithoutSuppliersInput>
+}
+
+export type TaxRuleUpdateWithoutSuppliersInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vatNature?: Prisma.VatNatureUpdateOneWithoutTaxRulesNestedInput
+  country?: Prisma.CountryUpdateOneRequiredWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutCustomerTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
+}
+
+export type TaxRuleUncheckedUpdateWithoutSuppliersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  translations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutCustomerTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
+}
+
+export type TaxRuleCreateWithoutCountryInput = {
+  code: string
+  name: string
+  description?: string | null
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
+  active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vatNature?: Prisma.VatNatureCreateNestedOneWithoutTaxRulesInput
+  translations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutCustomerTaxRuleInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
+}
+
+export type TaxRuleUncheckedCreateWithoutCountryInput = {
+  id?: number
+  code: string
+  name: string
+  description?: string | null
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
+  active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  translations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCustomerTaxRuleInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
+}
+
+export type TaxRuleCreateOrConnectWithoutCountryInput = {
+  where: Prisma.TaxRuleWhereUniqueInput
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutCountryInput, Prisma.TaxRuleUncheckedCreateWithoutCountryInput>
+}
+
+export type TaxRuleCreateManyCountryInputEnvelope = {
+  data: Prisma.TaxRuleCreateManyCountryInput | Prisma.TaxRuleCreateManyCountryInput[]
+  skipDuplicates?: boolean
+}
+
+export type TaxRuleUpsertWithWhereUniqueWithoutCountryInput = {
+  where: Prisma.TaxRuleWhereUniqueInput
+  update: Prisma.XOR<Prisma.TaxRuleUpdateWithoutCountryInput, Prisma.TaxRuleUncheckedUpdateWithoutCountryInput>
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutCountryInput, Prisma.TaxRuleUncheckedCreateWithoutCountryInput>
+}
+
+export type TaxRuleUpdateWithWhereUniqueWithoutCountryInput = {
+  where: Prisma.TaxRuleWhereUniqueInput
+  data: Prisma.XOR<Prisma.TaxRuleUpdateWithoutCountryInput, Prisma.TaxRuleUncheckedUpdateWithoutCountryInput>
+}
+
+export type TaxRuleUpdateManyWithWhereWithoutCountryInput = {
+  where: Prisma.TaxRuleScalarWhereInput
+  data: Prisma.XOR<Prisma.TaxRuleUpdateManyMutationInput, Prisma.TaxRuleUncheckedUpdateManyWithoutCountryInput>
+}
+
+export type TaxRuleScalarWhereInput = {
+  AND?: Prisma.TaxRuleScalarWhereInput | Prisma.TaxRuleScalarWhereInput[]
+  OR?: Prisma.TaxRuleScalarWhereInput[]
+  NOT?: Prisma.TaxRuleScalarWhereInput | Prisma.TaxRuleScalarWhereInput[]
+  id?: Prisma.IntFilter<"TaxRule"> | number
+  code?: Prisma.StringFilter<"TaxRule"> | string
+  name?: Prisma.StringFilter<"TaxRule"> | string
+  description?: Prisma.StringNullableFilter<"TaxRule"> | string | null
+  rate?: Prisma.DecimalFilter<"TaxRule"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.IntNullableFilter<"TaxRule"> | number | null
+  normativeReference?: Prisma.StringNullableFilter<"TaxRule"> | string | null
+  countryCode?: Prisma.StringFilter<"TaxRule"> | string
+  applicableFor?: Prisma.StringFilter<"TaxRule"> | string
+  productCategory?: Prisma.StringNullableFilter<"TaxRule"> | string | null
+  customerType?: Prisma.StringNullableFilter<"TaxRule"> | string | null
+  isSplitPayment?: Prisma.BoolFilter<"TaxRule"> | boolean
+  deductibilityPercent?: Prisma.DecimalFilter<"TaxRule"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFilter<"TaxRule"> | boolean
+  validFrom?: Prisma.DateTimeFilter<"TaxRule"> | Date | string
+  validTo?: Prisma.DateTimeNullableFilter<"TaxRule"> | Date | string | null
+  active?: Prisma.BoolFilter<"TaxRule"> | boolean
+  isDefault?: Prisma.BoolFilter<"TaxRule"> | boolean
+  displayOrder?: Prisma.IntFilter<"TaxRule"> | number
+  color?: Prisma.StringNullableFilter<"TaxRule"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"TaxRule"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"TaxRule"> | Date | string
 }
 
 export type TaxRuleCreateWithoutDocumentLinesInput = {
   code: string
   name: string
   description?: string | null
-  operationType: string
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  taxRate: Prisma.TaxRateCreateNestedOneWithoutRulesInput
-  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
+  vatNature?: Prisma.VatNatureCreateNestedOneWithoutTaxRulesInput
+  country?: Prisma.CountryCreateNestedOneWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCustomerTaxRuleInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
 }
 
 export type TaxRuleUncheckedCreateWithoutDocumentLinesInput = {
@@ -685,14 +1469,31 @@ export type TaxRuleUncheckedCreateWithoutDocumentLinesInput = {
   code: string
   name: string
   description?: string | null
-  operationType: string
-  taxRateId: number
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCustomerTaxRuleInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
 }
 
 export type TaxRuleCreateOrConnectWithoutDocumentLinesInput = {
@@ -715,14 +1516,31 @@ export type TaxRuleUpdateWithoutDocumentLinesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  taxRate?: Prisma.TaxRateUpdateOneRequiredWithoutRulesNestedInput
-  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
+  vatNature?: Prisma.VatNatureUpdateOneWithoutTaxRulesNestedInput
+  country?: Prisma.CountryUpdateOneRequiredWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCustomerTaxRuleNestedInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
 }
 
 export type TaxRuleUncheckedUpdateWithoutDocumentLinesInput = {
@@ -730,28 +1548,204 @@ export type TaxRuleUncheckedUpdateWithoutDocumentLinesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
-  taxRateId?: Prisma.IntFieldUpdateOperationsInput | number
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCustomerTaxRuleNestedInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
+}
+
+export type TaxRuleCreateWithoutPriceListItemsInput = {
+  code: string
+  name: string
+  description?: string | null
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
+  active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vatNature?: Prisma.VatNatureCreateNestedOneWithoutTaxRulesInput
+  country?: Prisma.CountryCreateNestedOneWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutCustomerTaxRuleInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
+}
+
+export type TaxRuleUncheckedCreateWithoutPriceListItemsInput = {
+  id?: number
+  code: string
+  name: string
+  description?: string | null
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
+  active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  translations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCustomerTaxRuleInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
+}
+
+export type TaxRuleCreateOrConnectWithoutPriceListItemsInput = {
+  where: Prisma.TaxRuleWhereUniqueInput
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutPriceListItemsInput, Prisma.TaxRuleUncheckedCreateWithoutPriceListItemsInput>
+}
+
+export type TaxRuleUpsertWithoutPriceListItemsInput = {
+  update: Prisma.XOR<Prisma.TaxRuleUpdateWithoutPriceListItemsInput, Prisma.TaxRuleUncheckedUpdateWithoutPriceListItemsInput>
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutPriceListItemsInput, Prisma.TaxRuleUncheckedCreateWithoutPriceListItemsInput>
+  where?: Prisma.TaxRuleWhereInput
+}
+
+export type TaxRuleUpdateToOneWithWhereWithoutPriceListItemsInput = {
+  where?: Prisma.TaxRuleWhereInput
+  data: Prisma.XOR<Prisma.TaxRuleUpdateWithoutPriceListItemsInput, Prisma.TaxRuleUncheckedUpdateWithoutPriceListItemsInput>
+}
+
+export type TaxRuleUpdateWithoutPriceListItemsInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vatNature?: Prisma.VatNatureUpdateOneWithoutTaxRulesNestedInput
+  country?: Prisma.CountryUpdateOneRequiredWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutCustomerTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
+}
+
+export type TaxRuleUncheckedUpdateWithoutPriceListItemsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  translations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutCustomerTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
 }
 
 export type TaxRuleCreateWithoutProductsInput = {
   code: string
   name: string
   description?: string | null
-  operationType: string
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  taxRate: Prisma.TaxRateCreateNestedOneWithoutRulesInput
-  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  vatNature?: Prisma.VatNatureCreateNestedOneWithoutTaxRulesInput
+  country?: Prisma.CountryCreateNestedOneWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCustomerTaxRuleInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
 }
 
 export type TaxRuleUncheckedCreateWithoutProductsInput = {
@@ -759,14 +1753,31 @@ export type TaxRuleUncheckedCreateWithoutProductsInput = {
   code: string
   name: string
   description?: string | null
-  operationType: string
-  taxRateId: number
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCustomerTaxRuleInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
 }
 
 export type TaxRuleCreateOrConnectWithoutProductsInput = {
@@ -789,14 +1800,31 @@ export type TaxRuleUpdateWithoutProductsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  taxRate?: Prisma.TaxRateUpdateOneRequiredWithoutRulesNestedInput
-  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  vatNature?: Prisma.VatNatureUpdateOneWithoutTaxRulesNestedInput
+  country?: Prisma.CountryUpdateOneRequiredWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCustomerTaxRuleNestedInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
 }
 
 export type TaxRuleUncheckedUpdateWithoutProductsInput = {
@@ -804,207 +1832,766 @@ export type TaxRuleUncheckedUpdateWithoutProductsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
-  taxRateId?: Prisma.IntFieldUpdateOperationsInput | number
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCustomerTaxRuleNestedInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
 }
 
-export type TaxRuleCreateWithoutTaxRateInput = {
+export type TaxRuleCreateWithoutTenantsSalesInput = {
   code: string
   name: string
   description?: string | null
-  operationType: string
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
-  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  vatNature?: Prisma.VatNatureCreateNestedOneWithoutTaxRulesInput
+  country?: Prisma.CountryCreateNestedOneWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCustomerTaxRuleInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
 }
 
-export type TaxRuleUncheckedCreateWithoutTaxRateInput = {
+export type TaxRuleUncheckedCreateWithoutTenantsSalesInput = {
   id?: number
   code: string
   name: string
   description?: string | null
-  operationType: string
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
-  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCustomerTaxRuleInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
 }
 
-export type TaxRuleCreateOrConnectWithoutTaxRateInput = {
+export type TaxRuleCreateOrConnectWithoutTenantsSalesInput = {
   where: Prisma.TaxRuleWhereUniqueInput
-  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutTaxRateInput, Prisma.TaxRuleUncheckedCreateWithoutTaxRateInput>
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutTenantsSalesInput, Prisma.TaxRuleUncheckedCreateWithoutTenantsSalesInput>
 }
 
-export type TaxRuleCreateManyTaxRateInputEnvelope = {
-  data: Prisma.TaxRuleCreateManyTaxRateInput | Prisma.TaxRuleCreateManyTaxRateInput[]
+export type TaxRuleCreateWithoutTenantsPurchasesInput = {
+  code: string
+  name: string
+  description?: string | null
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
+  active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vatNature?: Prisma.VatNatureCreateNestedOneWithoutTaxRulesInput
+  country?: Prisma.CountryCreateNestedOneWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutCustomerTaxRuleInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
+}
+
+export type TaxRuleUncheckedCreateWithoutTenantsPurchasesInput = {
+  id?: number
+  code: string
+  name: string
+  description?: string | null
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
+  active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  translations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCustomerTaxRuleInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
+}
+
+export type TaxRuleCreateOrConnectWithoutTenantsPurchasesInput = {
+  where: Prisma.TaxRuleWhereUniqueInput
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutTenantsPurchasesInput, Prisma.TaxRuleUncheckedCreateWithoutTenantsPurchasesInput>
+}
+
+export type TaxRuleUpsertWithoutTenantsSalesInput = {
+  update: Prisma.XOR<Prisma.TaxRuleUpdateWithoutTenantsSalesInput, Prisma.TaxRuleUncheckedUpdateWithoutTenantsSalesInput>
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutTenantsSalesInput, Prisma.TaxRuleUncheckedCreateWithoutTenantsSalesInput>
+  where?: Prisma.TaxRuleWhereInput
+}
+
+export type TaxRuleUpdateToOneWithWhereWithoutTenantsSalesInput = {
+  where?: Prisma.TaxRuleWhereInput
+  data: Prisma.XOR<Prisma.TaxRuleUpdateWithoutTenantsSalesInput, Prisma.TaxRuleUncheckedUpdateWithoutTenantsSalesInput>
+}
+
+export type TaxRuleUpdateWithoutTenantsSalesInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vatNature?: Prisma.VatNatureUpdateOneWithoutTaxRulesNestedInput
+  country?: Prisma.CountryUpdateOneRequiredWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutCustomerTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
+}
+
+export type TaxRuleUncheckedUpdateWithoutTenantsSalesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  translations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutCustomerTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
+}
+
+export type TaxRuleUpsertWithoutTenantsPurchasesInput = {
+  update: Prisma.XOR<Prisma.TaxRuleUpdateWithoutTenantsPurchasesInput, Prisma.TaxRuleUncheckedUpdateWithoutTenantsPurchasesInput>
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutTenantsPurchasesInput, Prisma.TaxRuleUncheckedCreateWithoutTenantsPurchasesInput>
+  where?: Prisma.TaxRuleWhereInput
+}
+
+export type TaxRuleUpdateToOneWithWhereWithoutTenantsPurchasesInput = {
+  where?: Prisma.TaxRuleWhereInput
+  data: Prisma.XOR<Prisma.TaxRuleUpdateWithoutTenantsPurchasesInput, Prisma.TaxRuleUncheckedUpdateWithoutTenantsPurchasesInput>
+}
+
+export type TaxRuleUpdateWithoutTenantsPurchasesInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vatNature?: Prisma.VatNatureUpdateOneWithoutTaxRulesNestedInput
+  country?: Prisma.CountryUpdateOneRequiredWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutCustomerTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
+}
+
+export type TaxRuleUncheckedUpdateWithoutTenantsPurchasesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  translations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutCustomerTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
+}
+
+export type TaxRuleCreateWithoutVatNatureInput = {
+  code: string
+  name: string
+  description?: string | null
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
+  active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  country?: Prisma.CountryCreateNestedOneWithoutTaxRuleInput
+  translations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutTaxRuleInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutCustomerTaxRuleInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
+}
+
+export type TaxRuleUncheckedCreateWithoutVatNatureInput = {
+  id?: number
+  code: string
+  name: string
+  description?: string | null
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
+  active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  translations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutTaxRuleInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCustomerTaxRuleInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
+}
+
+export type TaxRuleCreateOrConnectWithoutVatNatureInput = {
+  where: Prisma.TaxRuleWhereUniqueInput
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutVatNatureInput, Prisma.TaxRuleUncheckedCreateWithoutVatNatureInput>
+}
+
+export type TaxRuleCreateManyVatNatureInputEnvelope = {
+  data: Prisma.TaxRuleCreateManyVatNatureInput | Prisma.TaxRuleCreateManyVatNatureInput[]
   skipDuplicates?: boolean
 }
 
-export type TaxRuleUpsertWithWhereUniqueWithoutTaxRateInput = {
+export type TaxRuleUpsertWithWhereUniqueWithoutVatNatureInput = {
   where: Prisma.TaxRuleWhereUniqueInput
-  update: Prisma.XOR<Prisma.TaxRuleUpdateWithoutTaxRateInput, Prisma.TaxRuleUncheckedUpdateWithoutTaxRateInput>
-  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutTaxRateInput, Prisma.TaxRuleUncheckedCreateWithoutTaxRateInput>
+  update: Prisma.XOR<Prisma.TaxRuleUpdateWithoutVatNatureInput, Prisma.TaxRuleUncheckedUpdateWithoutVatNatureInput>
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutVatNatureInput, Prisma.TaxRuleUncheckedCreateWithoutVatNatureInput>
 }
 
-export type TaxRuleUpdateWithWhereUniqueWithoutTaxRateInput = {
+export type TaxRuleUpdateWithWhereUniqueWithoutVatNatureInput = {
   where: Prisma.TaxRuleWhereUniqueInput
-  data: Prisma.XOR<Prisma.TaxRuleUpdateWithoutTaxRateInput, Prisma.TaxRuleUncheckedUpdateWithoutTaxRateInput>
+  data: Prisma.XOR<Prisma.TaxRuleUpdateWithoutVatNatureInput, Prisma.TaxRuleUncheckedUpdateWithoutVatNatureInput>
 }
 
-export type TaxRuleUpdateManyWithWhereWithoutTaxRateInput = {
+export type TaxRuleUpdateManyWithWhereWithoutVatNatureInput = {
   where: Prisma.TaxRuleScalarWhereInput
-  data: Prisma.XOR<Prisma.TaxRuleUpdateManyMutationInput, Prisma.TaxRuleUncheckedUpdateManyWithoutTaxRateInput>
+  data: Prisma.XOR<Prisma.TaxRuleUpdateManyMutationInput, Prisma.TaxRuleUncheckedUpdateManyWithoutVatNatureInput>
 }
 
-export type TaxRuleScalarWhereInput = {
-  AND?: Prisma.TaxRuleScalarWhereInput | Prisma.TaxRuleScalarWhereInput[]
-  OR?: Prisma.TaxRuleScalarWhereInput[]
-  NOT?: Prisma.TaxRuleScalarWhereInput | Prisma.TaxRuleScalarWhereInput[]
-  id?: Prisma.IntFilter<"TaxRule"> | number
-  code?: Prisma.StringFilter<"TaxRule"> | string
-  name?: Prisma.StringFilter<"TaxRule"> | string
-  description?: Prisma.StringNullableFilter<"TaxRule"> | string | null
-  operationType?: Prisma.StringFilter<"TaxRule"> | string
-  taxRateId?: Prisma.IntFilter<"TaxRule"> | number
-  active?: Prisma.BoolFilter<"TaxRule"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"TaxRule"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"TaxRule"> | Date | string
-}
-
-export type TaxRuleCreateWithoutTaxRuleTranslationsInput = {
+export type TaxRuleCreateWithoutTranslationsInput = {
   code: string
   name: string
   description?: string | null
-  operationType: string
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  taxRate: Prisma.TaxRateCreateNestedOneWithoutRulesInput
-  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
-  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  vatNature?: Prisma.VatNatureCreateNestedOneWithoutTaxRulesInput
+  country?: Prisma.CountryCreateNestedOneWithoutTaxRuleInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCustomerTaxRuleInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductCreateNestedManyWithoutDefaultTaxRuleInput
 }
 
-export type TaxRuleUncheckedCreateWithoutTaxRuleTranslationsInput = {
+export type TaxRuleUncheckedCreateWithoutTranslationsInput = {
   id?: number
   code: string
   name: string
   description?: string | null
-  operationType: string
-  taxRateId: number
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
-  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCustomerTaxRuleInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutSupplierTaxRuleInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultSalesTaxRuleInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutDefaultPurchasesTaxRuleInput
+  priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutTaxRuleInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutTaxRuleInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutDefaultTaxRuleInput
 }
 
-export type TaxRuleCreateOrConnectWithoutTaxRuleTranslationsInput = {
+export type TaxRuleCreateOrConnectWithoutTranslationsInput = {
   where: Prisma.TaxRuleWhereUniqueInput
-  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutTaxRuleTranslationsInput, Prisma.TaxRuleUncheckedCreateWithoutTaxRuleTranslationsInput>
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutTranslationsInput, Prisma.TaxRuleUncheckedCreateWithoutTranslationsInput>
 }
 
-export type TaxRuleUpsertWithoutTaxRuleTranslationsInput = {
-  update: Prisma.XOR<Prisma.TaxRuleUpdateWithoutTaxRuleTranslationsInput, Prisma.TaxRuleUncheckedUpdateWithoutTaxRuleTranslationsInput>
-  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutTaxRuleTranslationsInput, Prisma.TaxRuleUncheckedCreateWithoutTaxRuleTranslationsInput>
+export type TaxRuleUpsertWithoutTranslationsInput = {
+  update: Prisma.XOR<Prisma.TaxRuleUpdateWithoutTranslationsInput, Prisma.TaxRuleUncheckedUpdateWithoutTranslationsInput>
+  create: Prisma.XOR<Prisma.TaxRuleCreateWithoutTranslationsInput, Prisma.TaxRuleUncheckedCreateWithoutTranslationsInput>
   where?: Prisma.TaxRuleWhereInput
 }
 
-export type TaxRuleUpdateToOneWithWhereWithoutTaxRuleTranslationsInput = {
+export type TaxRuleUpdateToOneWithWhereWithoutTranslationsInput = {
   where?: Prisma.TaxRuleWhereInput
-  data: Prisma.XOR<Prisma.TaxRuleUpdateWithoutTaxRuleTranslationsInput, Prisma.TaxRuleUncheckedUpdateWithoutTaxRuleTranslationsInput>
+  data: Prisma.XOR<Prisma.TaxRuleUpdateWithoutTranslationsInput, Prisma.TaxRuleUncheckedUpdateWithoutTranslationsInput>
 }
 
-export type TaxRuleUpdateWithoutTaxRuleTranslationsInput = {
+export type TaxRuleUpdateWithoutTranslationsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  taxRate?: Prisma.TaxRateUpdateOneRequiredWithoutRulesNestedInput
-  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
-  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  vatNature?: Prisma.VatNatureUpdateOneWithoutTaxRulesNestedInput
+  country?: Prisma.CountryUpdateOneRequiredWithoutTaxRuleNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCustomerTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
 }
 
-export type TaxRuleUncheckedUpdateWithoutTaxRuleTranslationsInput = {
+export type TaxRuleUncheckedUpdateWithoutTranslationsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
-  taxRateId?: Prisma.IntFieldUpdateOperationsInput | number
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
-  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCustomerTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
 }
 
-export type TaxRuleCreateManyTaxRateInput = {
+export type TaxRuleCreateManyCountryInput = {
   id?: number
   code: string
   name: string
   description?: string | null
-  operationType: string
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: number | null
+  normativeReference?: string | null
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
-export type TaxRuleUpdateWithoutTaxRateInput = {
+export type TaxRuleUpdateWithoutCountryInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
-  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  vatNature?: Prisma.VatNatureUpdateOneWithoutTaxRulesNestedInput
+  translations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCustomerTaxRuleNestedInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
 }
 
-export type TaxRuleUncheckedUpdateWithoutTaxRateInput = {
+export type TaxRuleUncheckedUpdateWithoutCountryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
-  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCustomerTaxRuleNestedInput
-  taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
 }
 
-export type TaxRuleUncheckedUpdateManyWithoutTaxRateInput = {
+export type TaxRuleUncheckedUpdateManyWithoutCountryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  operationType?: Prisma.StringFieldUpdateOperationsInput | string
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatNatureId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type TaxRuleCreateManyVatNatureInput = {
+  id?: number
+  code: string
+  name: string
+  description?: string | null
+  rate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: string | null
+  countryCode?: string
+  applicableFor?: string
+  productCategory?: string | null
+  customerType?: string | null
+  isSplitPayment?: boolean
+  deductibilityPercent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: boolean
+  validFrom?: Date | string
+  validTo?: Date | string | null
+  active?: boolean
+  isDefault?: boolean
+  displayOrder?: number
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type TaxRuleUpdateWithoutVatNatureInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  country?: Prisma.CountryUpdateOneRequiredWithoutTaxRuleNestedInput
+  translations?: Prisma.TaxRuleTranslationUpdateManyWithoutTaxRuleNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutCustomerTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUpdateManyWithoutDefaultTaxRuleNestedInput
+}
+
+export type TaxRuleUncheckedUpdateWithoutVatNatureInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  translations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutTaxRuleNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutCustomerTaxRuleNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutSupplierTaxRuleNestedInput
+  tenantsSales?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleNestedInput
+  tenantsPurchases?: Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleNestedInput
+  priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutTaxRuleNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutTaxRuleNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutDefaultTaxRuleNestedInput
+}
+
+export type TaxRuleUncheckedUpdateManyWithoutVatNatureInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  normativeReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  applicableFor?: Prisma.StringFieldUpdateOperationsInput | string
+  productCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSplitPayment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deductibilityPercent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  vatDeductible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1015,17 +2602,25 @@ export type TaxRuleUncheckedUpdateManyWithoutTaxRateInput = {
  */
 
 export type TaxRuleCountOutputType = {
-  products: number
-  documentLines: number
+  translations: number
   customers: number
-  taxRuleTranslations: number
+  suppliers: number
+  tenantsSales: number
+  tenantsPurchases: number
+  priceListItems: number
+  documentLines: number
+  products: number
 }
 
 export type TaxRuleCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  products?: boolean | TaxRuleCountOutputTypeCountProductsArgs
-  documentLines?: boolean | TaxRuleCountOutputTypeCountDocumentLinesArgs
+  translations?: boolean | TaxRuleCountOutputTypeCountTranslationsArgs
   customers?: boolean | TaxRuleCountOutputTypeCountCustomersArgs
-  taxRuleTranslations?: boolean | TaxRuleCountOutputTypeCountTaxRuleTranslationsArgs
+  suppliers?: boolean | TaxRuleCountOutputTypeCountSuppliersArgs
+  tenantsSales?: boolean | TaxRuleCountOutputTypeCountTenantsSalesArgs
+  tenantsPurchases?: boolean | TaxRuleCountOutputTypeCountTenantsPurchasesArgs
+  priceListItems?: boolean | TaxRuleCountOutputTypeCountPriceListItemsArgs
+  documentLines?: boolean | TaxRuleCountOutputTypeCountDocumentLinesArgs
+  products?: boolean | TaxRuleCountOutputTypeCountProductsArgs
 }
 
 /**
@@ -1041,15 +2636,8 @@ export type TaxRuleCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
 /**
  * TaxRuleCountOutputType without action
  */
-export type TaxRuleCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProductWhereInput
-}
-
-/**
- * TaxRuleCountOutputType without action
- */
-export type TaxRuleCountOutputTypeCountDocumentLinesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.DocumentLineWhereInput
+export type TaxRuleCountOutputTypeCountTranslationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TaxRuleTranslationWhereInput
 }
 
 /**
@@ -1062,8 +2650,43 @@ export type TaxRuleCountOutputTypeCountCustomersArgs<ExtArgs extends runtime.Typ
 /**
  * TaxRuleCountOutputType without action
  */
-export type TaxRuleCountOutputTypeCountTaxRuleTranslationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TaxRuleTranslationWhereInput
+export type TaxRuleCountOutputTypeCountSuppliersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupplierWhereInput
+}
+
+/**
+ * TaxRuleCountOutputType without action
+ */
+export type TaxRuleCountOutputTypeCountTenantsSalesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TenantSettingsWhereInput
+}
+
+/**
+ * TaxRuleCountOutputType without action
+ */
+export type TaxRuleCountOutputTypeCountTenantsPurchasesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TenantSettingsWhereInput
+}
+
+/**
+ * TaxRuleCountOutputType without action
+ */
+export type TaxRuleCountOutputTypeCountPriceListItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PriceListItemWhereInput
+}
+
+/**
+ * TaxRuleCountOutputType without action
+ */
+export type TaxRuleCountOutputTypeCountDocumentLinesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentLineWhereInput
+}
+
+/**
+ * TaxRuleCountOutputType without action
+ */
+export type TaxRuleCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductWhereInput
 }
 
 
@@ -1072,16 +2695,34 @@ export type TaxRuleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   code?: boolean
   name?: boolean
   description?: boolean
-  operationType?: boolean
-  taxRateId?: boolean
+  rate?: boolean
+  vatNatureId?: boolean
+  normativeReference?: boolean
+  countryCode?: boolean
+  applicableFor?: boolean
+  productCategory?: boolean
+  customerType?: boolean
+  isSplitPayment?: boolean
+  deductibilityPercent?: boolean
+  vatDeductible?: boolean
+  validFrom?: boolean
+  validTo?: boolean
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: boolean
+  color?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  taxRate?: boolean | Prisma.TaxRateDefaultArgs<ExtArgs>
-  products?: boolean | Prisma.TaxRule$productsArgs<ExtArgs>
-  documentLines?: boolean | Prisma.TaxRule$documentLinesArgs<ExtArgs>
+  vatNature?: boolean | Prisma.TaxRule$vatNatureArgs<ExtArgs>
+  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
+  translations?: boolean | Prisma.TaxRule$translationsArgs<ExtArgs>
   customers?: boolean | Prisma.TaxRule$customersArgs<ExtArgs>
-  taxRuleTranslations?: boolean | Prisma.TaxRule$taxRuleTranslationsArgs<ExtArgs>
+  suppliers?: boolean | Prisma.TaxRule$suppliersArgs<ExtArgs>
+  tenantsSales?: boolean | Prisma.TaxRule$tenantsSalesArgs<ExtArgs>
+  tenantsPurchases?: boolean | Prisma.TaxRule$tenantsPurchasesArgs<ExtArgs>
+  priceListItems?: boolean | Prisma.TaxRule$priceListItemsArgs<ExtArgs>
+  documentLines?: boolean | Prisma.TaxRule$documentLinesArgs<ExtArgs>
+  products?: boolean | Prisma.TaxRule$productsArgs<ExtArgs>
   _count?: boolean | Prisma.TaxRuleCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["taxRule"]>
 
@@ -1090,12 +2731,26 @@ export type TaxRuleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   code?: boolean
   name?: boolean
   description?: boolean
-  operationType?: boolean
-  taxRateId?: boolean
+  rate?: boolean
+  vatNatureId?: boolean
+  normativeReference?: boolean
+  countryCode?: boolean
+  applicableFor?: boolean
+  productCategory?: boolean
+  customerType?: boolean
+  isSplitPayment?: boolean
+  deductibilityPercent?: boolean
+  vatDeductible?: boolean
+  validFrom?: boolean
+  validTo?: boolean
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: boolean
+  color?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  taxRate?: boolean | Prisma.TaxRateDefaultArgs<ExtArgs>
+  vatNature?: boolean | Prisma.TaxRule$vatNatureArgs<ExtArgs>
+  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["taxRule"]>
 
 export type TaxRuleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1103,12 +2758,26 @@ export type TaxRuleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   code?: boolean
   name?: boolean
   description?: boolean
-  operationType?: boolean
-  taxRateId?: boolean
+  rate?: boolean
+  vatNatureId?: boolean
+  normativeReference?: boolean
+  countryCode?: boolean
+  applicableFor?: boolean
+  productCategory?: boolean
+  customerType?: boolean
+  isSplitPayment?: boolean
+  deductibilityPercent?: boolean
+  vatDeductible?: boolean
+  validFrom?: boolean
+  validTo?: boolean
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: boolean
+  color?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  taxRate?: boolean | Prisma.TaxRateDefaultArgs<ExtArgs>
+  vatNature?: boolean | Prisma.TaxRule$vatNatureArgs<ExtArgs>
+  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["taxRule"]>
 
 export type TaxRuleSelectScalar = {
@@ -1116,46 +2785,84 @@ export type TaxRuleSelectScalar = {
   code?: boolean
   name?: boolean
   description?: boolean
-  operationType?: boolean
-  taxRateId?: boolean
+  rate?: boolean
+  vatNatureId?: boolean
+  normativeReference?: boolean
+  countryCode?: boolean
+  applicableFor?: boolean
+  productCategory?: boolean
+  customerType?: boolean
+  isSplitPayment?: boolean
+  deductibilityPercent?: boolean
+  vatDeductible?: boolean
+  validFrom?: boolean
+  validTo?: boolean
   active?: boolean
+  isDefault?: boolean
+  displayOrder?: boolean
+  color?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TaxRuleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "description" | "operationType" | "taxRateId" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["taxRule"]>
+export type TaxRuleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "description" | "rate" | "vatNatureId" | "normativeReference" | "countryCode" | "applicableFor" | "productCategory" | "customerType" | "isSplitPayment" | "deductibilityPercent" | "vatDeductible" | "validFrom" | "validTo" | "active" | "isDefault" | "displayOrder" | "color" | "createdAt" | "updatedAt", ExtArgs["result"]["taxRule"]>
 export type TaxRuleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  taxRate?: boolean | Prisma.TaxRateDefaultArgs<ExtArgs>
-  products?: boolean | Prisma.TaxRule$productsArgs<ExtArgs>
-  documentLines?: boolean | Prisma.TaxRule$documentLinesArgs<ExtArgs>
+  vatNature?: boolean | Prisma.TaxRule$vatNatureArgs<ExtArgs>
+  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
+  translations?: boolean | Prisma.TaxRule$translationsArgs<ExtArgs>
   customers?: boolean | Prisma.TaxRule$customersArgs<ExtArgs>
-  taxRuleTranslations?: boolean | Prisma.TaxRule$taxRuleTranslationsArgs<ExtArgs>
+  suppliers?: boolean | Prisma.TaxRule$suppliersArgs<ExtArgs>
+  tenantsSales?: boolean | Prisma.TaxRule$tenantsSalesArgs<ExtArgs>
+  tenantsPurchases?: boolean | Prisma.TaxRule$tenantsPurchasesArgs<ExtArgs>
+  priceListItems?: boolean | Prisma.TaxRule$priceListItemsArgs<ExtArgs>
+  documentLines?: boolean | Prisma.TaxRule$documentLinesArgs<ExtArgs>
+  products?: boolean | Prisma.TaxRule$productsArgs<ExtArgs>
   _count?: boolean | Prisma.TaxRuleCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TaxRuleIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  taxRate?: boolean | Prisma.TaxRateDefaultArgs<ExtArgs>
+  vatNature?: boolean | Prisma.TaxRule$vatNatureArgs<ExtArgs>
+  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
 }
 export type TaxRuleIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  taxRate?: boolean | Prisma.TaxRateDefaultArgs<ExtArgs>
+  vatNature?: boolean | Prisma.TaxRule$vatNatureArgs<ExtArgs>
+  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
 }
 
 export type $TaxRulePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "TaxRule"
   objects: {
-    taxRate: Prisma.$TaxRatePayload<ExtArgs>
-    products: Prisma.$ProductPayload<ExtArgs>[]
-    documentLines: Prisma.$DocumentLinePayload<ExtArgs>[]
+    vatNature: Prisma.$VatNaturePayload<ExtArgs> | null
+    country: Prisma.$CountryPayload<ExtArgs>
+    translations: Prisma.$TaxRuleTranslationPayload<ExtArgs>[]
     customers: Prisma.$CustomerPayload<ExtArgs>[]
-    taxRuleTranslations: Prisma.$TaxRuleTranslationPayload<ExtArgs>[]
+    suppliers: Prisma.$SupplierPayload<ExtArgs>[]
+    tenantsSales: Prisma.$TenantSettingsPayload<ExtArgs>[]
+    tenantsPurchases: Prisma.$TenantSettingsPayload<ExtArgs>[]
+    priceListItems: Prisma.$PriceListItemPayload<ExtArgs>[]
+    documentLines: Prisma.$DocumentLinePayload<ExtArgs>[]
+    products: Prisma.$ProductPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     code: string
     name: string
     description: string | null
-    operationType: string
-    taxRateId: number
+    rate: runtime.Decimal
+    vatNatureId: number | null
+    normativeReference: string | null
+    countryCode: string
+    applicableFor: string
+    productCategory: string | null
+    customerType: string | null
+    isSplitPayment: boolean
+    deductibilityPercent: runtime.Decimal
+    vatDeductible: boolean
+    validFrom: Date
+    validTo: Date | null
     active: boolean
+    isDefault: boolean
+    displayOrder: number
+    color: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["taxRule"]>
@@ -1552,11 +3259,16 @@ readonly fields: TaxRuleFieldRefs;
  */
 export interface Prisma__TaxRuleClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  taxRate<T extends Prisma.TaxRateDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRateDefaultArgs<ExtArgs>>): Prisma.Prisma__TaxRateClient<runtime.Types.Result.GetResult<Prisma.$TaxRatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  products<T extends Prisma.TaxRule$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  documentLines<T extends Prisma.TaxRule$documentLinesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$documentLinesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentLinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  vatNature<T extends Prisma.TaxRule$vatNatureArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$vatNatureArgs<ExtArgs>>): Prisma.Prisma__VatNatureClient<runtime.Types.Result.GetResult<Prisma.$VatNaturePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  country<T extends Prisma.CountryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CountryDefaultArgs<ExtArgs>>): Prisma.Prisma__CountryClient<runtime.Types.Result.GetResult<Prisma.$CountryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  translations<T extends Prisma.TaxRule$translationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$translationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaxRuleTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customers<T extends Prisma.TaxRule$customersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$customersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  taxRuleTranslations<T extends Prisma.TaxRule$taxRuleTranslationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$taxRuleTranslationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaxRuleTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  suppliers<T extends Prisma.TaxRule$suppliersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$suppliersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tenantsSales<T extends Prisma.TaxRule$tenantsSalesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$tenantsSalesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TenantSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tenantsPurchases<T extends Prisma.TaxRule$tenantsPurchasesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$tenantsPurchasesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TenantSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  priceListItems<T extends Prisma.TaxRule$priceListItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$priceListItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PriceListItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  documentLines<T extends Prisma.TaxRule$documentLinesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$documentLinesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentLinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  products<T extends Prisma.TaxRule$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRule$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1590,9 +3302,22 @@ export interface TaxRuleFieldRefs {
   readonly code: Prisma.FieldRef<"TaxRule", 'String'>
   readonly name: Prisma.FieldRef<"TaxRule", 'String'>
   readonly description: Prisma.FieldRef<"TaxRule", 'String'>
-  readonly operationType: Prisma.FieldRef<"TaxRule", 'String'>
-  readonly taxRateId: Prisma.FieldRef<"TaxRule", 'Int'>
+  readonly rate: Prisma.FieldRef<"TaxRule", 'Decimal'>
+  readonly vatNatureId: Prisma.FieldRef<"TaxRule", 'Int'>
+  readonly normativeReference: Prisma.FieldRef<"TaxRule", 'String'>
+  readonly countryCode: Prisma.FieldRef<"TaxRule", 'String'>
+  readonly applicableFor: Prisma.FieldRef<"TaxRule", 'String'>
+  readonly productCategory: Prisma.FieldRef<"TaxRule", 'String'>
+  readonly customerType: Prisma.FieldRef<"TaxRule", 'String'>
+  readonly isSplitPayment: Prisma.FieldRef<"TaxRule", 'Boolean'>
+  readonly deductibilityPercent: Prisma.FieldRef<"TaxRule", 'Decimal'>
+  readonly vatDeductible: Prisma.FieldRef<"TaxRule", 'Boolean'>
+  readonly validFrom: Prisma.FieldRef<"TaxRule", 'DateTime'>
+  readonly validTo: Prisma.FieldRef<"TaxRule", 'DateTime'>
   readonly active: Prisma.FieldRef<"TaxRule", 'Boolean'>
+  readonly isDefault: Prisma.FieldRef<"TaxRule", 'Boolean'>
+  readonly displayOrder: Prisma.FieldRef<"TaxRule", 'Int'>
+  readonly color: Prisma.FieldRef<"TaxRule", 'String'>
   readonly createdAt: Prisma.FieldRef<"TaxRule", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"TaxRule", 'DateTime'>
 }
@@ -1991,51 +3716,46 @@ export type TaxRuleDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * TaxRule.products
+ * TaxRule.vatNature
  */
-export type TaxRule$productsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type TaxRule$vatNatureArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Product
+   * Select specific fields to fetch from the VatNature
    */
-  select?: Prisma.ProductSelect<ExtArgs> | null
+  select?: Prisma.VatNatureSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Product
+   * Omit specific fields from the VatNature
    */
-  omit?: Prisma.ProductOmit<ExtArgs> | null
+  omit?: Prisma.VatNatureOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ProductInclude<ExtArgs> | null
-  where?: Prisma.ProductWhereInput
-  orderBy?: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[]
-  cursor?: Prisma.ProductWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProductScalarFieldEnum | Prisma.ProductScalarFieldEnum[]
+  include?: Prisma.VatNatureInclude<ExtArgs> | null
+  where?: Prisma.VatNatureWhereInput
 }
 
 /**
- * TaxRule.documentLines
+ * TaxRule.translations
  */
-export type TaxRule$documentLinesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type TaxRule$translationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the DocumentLine
+   * Select specific fields to fetch from the TaxRuleTranslation
    */
-  select?: Prisma.DocumentLineSelect<ExtArgs> | null
+  select?: Prisma.TaxRuleTranslationSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the DocumentLine
+   * Omit specific fields from the TaxRuleTranslation
    */
-  omit?: Prisma.DocumentLineOmit<ExtArgs> | null
+  omit?: Prisma.TaxRuleTranslationOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.DocumentLineInclude<ExtArgs> | null
-  where?: Prisma.DocumentLineWhereInput
-  orderBy?: Prisma.DocumentLineOrderByWithRelationInput | Prisma.DocumentLineOrderByWithRelationInput[]
-  cursor?: Prisma.DocumentLineWhereUniqueInput
+  include?: Prisma.TaxRuleTranslationInclude<ExtArgs> | null
+  where?: Prisma.TaxRuleTranslationWhereInput
+  orderBy?: Prisma.TaxRuleTranslationOrderByWithRelationInput | Prisma.TaxRuleTranslationOrderByWithRelationInput[]
+  cursor?: Prisma.TaxRuleTranslationWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.DocumentLineScalarFieldEnum | Prisma.DocumentLineScalarFieldEnum[]
+  distinct?: Prisma.TaxRuleTranslationScalarFieldEnum | Prisma.TaxRuleTranslationScalarFieldEnum[]
 }
 
 /**
@@ -2063,27 +3783,147 @@ export type TaxRule$customersArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * TaxRule.taxRuleTranslations
+ * TaxRule.suppliers
  */
-export type TaxRule$taxRuleTranslationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type TaxRule$suppliersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the TaxRuleTranslation
+   * Select specific fields to fetch from the Supplier
    */
-  select?: Prisma.TaxRuleTranslationSelect<ExtArgs> | null
+  select?: Prisma.SupplierSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the TaxRuleTranslation
+   * Omit specific fields from the Supplier
    */
-  omit?: Prisma.TaxRuleTranslationOmit<ExtArgs> | null
+  omit?: Prisma.SupplierOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.TaxRuleTranslationInclude<ExtArgs> | null
-  where?: Prisma.TaxRuleTranslationWhereInput
-  orderBy?: Prisma.TaxRuleTranslationOrderByWithRelationInput | Prisma.TaxRuleTranslationOrderByWithRelationInput[]
-  cursor?: Prisma.TaxRuleTranslationWhereUniqueInput
+  include?: Prisma.SupplierInclude<ExtArgs> | null
+  where?: Prisma.SupplierWhereInput
+  orderBy?: Prisma.SupplierOrderByWithRelationInput | Prisma.SupplierOrderByWithRelationInput[]
+  cursor?: Prisma.SupplierWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.TaxRuleTranslationScalarFieldEnum | Prisma.TaxRuleTranslationScalarFieldEnum[]
+  distinct?: Prisma.SupplierScalarFieldEnum | Prisma.SupplierScalarFieldEnum[]
+}
+
+/**
+ * TaxRule.tenantsSales
+ */
+export type TaxRule$tenantsSalesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TenantSettings
+   */
+  select?: Prisma.TenantSettingsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TenantSettings
+   */
+  omit?: Prisma.TenantSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantSettingsInclude<ExtArgs> | null
+  where?: Prisma.TenantSettingsWhereInput
+  orderBy?: Prisma.TenantSettingsOrderByWithRelationInput | Prisma.TenantSettingsOrderByWithRelationInput[]
+  cursor?: Prisma.TenantSettingsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TenantSettingsScalarFieldEnum | Prisma.TenantSettingsScalarFieldEnum[]
+}
+
+/**
+ * TaxRule.tenantsPurchases
+ */
+export type TaxRule$tenantsPurchasesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TenantSettings
+   */
+  select?: Prisma.TenantSettingsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TenantSettings
+   */
+  omit?: Prisma.TenantSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantSettingsInclude<ExtArgs> | null
+  where?: Prisma.TenantSettingsWhereInput
+  orderBy?: Prisma.TenantSettingsOrderByWithRelationInput | Prisma.TenantSettingsOrderByWithRelationInput[]
+  cursor?: Prisma.TenantSettingsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TenantSettingsScalarFieldEnum | Prisma.TenantSettingsScalarFieldEnum[]
+}
+
+/**
+ * TaxRule.priceListItems
+ */
+export type TaxRule$priceListItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PriceListItem
+   */
+  select?: Prisma.PriceListItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PriceListItem
+   */
+  omit?: Prisma.PriceListItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PriceListItemInclude<ExtArgs> | null
+  where?: Prisma.PriceListItemWhereInput
+  orderBy?: Prisma.PriceListItemOrderByWithRelationInput | Prisma.PriceListItemOrderByWithRelationInput[]
+  cursor?: Prisma.PriceListItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PriceListItemScalarFieldEnum | Prisma.PriceListItemScalarFieldEnum[]
+}
+
+/**
+ * TaxRule.documentLines
+ */
+export type TaxRule$documentLinesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentLine
+   */
+  select?: Prisma.DocumentLineSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DocumentLine
+   */
+  omit?: Prisma.DocumentLineOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentLineInclude<ExtArgs> | null
+  where?: Prisma.DocumentLineWhereInput
+  orderBy?: Prisma.DocumentLineOrderByWithRelationInput | Prisma.DocumentLineOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentLineWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DocumentLineScalarFieldEnum | Prisma.DocumentLineScalarFieldEnum[]
+}
+
+/**
+ * TaxRule.products
+ */
+export type TaxRule$productsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Product
+   */
+  select?: Prisma.ProductSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Product
+   */
+  omit?: Prisma.ProductOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductInclude<ExtArgs> | null
+  where?: Prisma.ProductWhereInput
+  orderBy?: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[]
+  cursor?: Prisma.ProductWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductScalarFieldEnum | Prisma.ProductScalarFieldEnum[]
 }
 
 /**

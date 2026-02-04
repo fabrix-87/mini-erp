@@ -28,7 +28,6 @@ export type AggregateCompany = {
 
 export type CompanyAvgAggregateOutputType = {
   id: number | null
-  legalAddressId: number | null
   totalOrders: number | null
   totalRevenue: runtime.Decimal | null
   assignedUserId: number | null
@@ -36,7 +35,6 @@ export type CompanyAvgAggregateOutputType = {
 
 export type CompanySumAggregateOutputType = {
   id: number | null
-  legalAddressId: number | null
   totalOrders: number | null
   totalRevenue: runtime.Decimal | null
   assignedUserId: number | null
@@ -57,7 +55,9 @@ export type CompanyMinAggregateOutputType = {
   eoriNumber: string | null
   vatId: string | null
   countryCode: string | null
-  legalAddressId: number | null
+  taxRegime: string | null
+  vatExempt: boolean | null
+  vatExemptReason: string | null
   mainEmail: string | null
   mainPhone: string | null
   createdAt: Date | null
@@ -83,7 +83,9 @@ export type CompanyMaxAggregateOutputType = {
   eoriNumber: string | null
   vatId: string | null
   countryCode: string | null
-  legalAddressId: number | null
+  taxRegime: string | null
+  vatExempt: boolean | null
+  vatExemptReason: string | null
   mainEmail: string | null
   mainPhone: string | null
   createdAt: Date | null
@@ -109,7 +111,9 @@ export type CompanyCountAggregateOutputType = {
   eoriNumber: number
   vatId: number
   countryCode: number
-  legalAddressId: number
+  taxRegime: number
+  vatExempt: number
+  vatExemptReason: number
   mainEmail: number
   mainPhone: number
   createdAt: number
@@ -126,7 +130,6 @@ export type CompanyCountAggregateOutputType = {
 
 export type CompanyAvgAggregateInputType = {
   id?: true
-  legalAddressId?: true
   totalOrders?: true
   totalRevenue?: true
   assignedUserId?: true
@@ -134,7 +137,6 @@ export type CompanyAvgAggregateInputType = {
 
 export type CompanySumAggregateInputType = {
   id?: true
-  legalAddressId?: true
   totalOrders?: true
   totalRevenue?: true
   assignedUserId?: true
@@ -155,7 +157,9 @@ export type CompanyMinAggregateInputType = {
   eoriNumber?: true
   vatId?: true
   countryCode?: true
-  legalAddressId?: true
+  taxRegime?: true
+  vatExempt?: true
+  vatExemptReason?: true
   mainEmail?: true
   mainPhone?: true
   createdAt?: true
@@ -181,7 +185,9 @@ export type CompanyMaxAggregateInputType = {
   eoriNumber?: true
   vatId?: true
   countryCode?: true
-  legalAddressId?: true
+  taxRegime?: true
+  vatExempt?: true
+  vatExemptReason?: true
   mainEmail?: true
   mainPhone?: true
   createdAt?: true
@@ -207,7 +213,9 @@ export type CompanyCountAggregateInputType = {
   eoriNumber?: true
   vatId?: true
   countryCode?: true
-  legalAddressId?: true
+  taxRegime?: true
+  vatExempt?: true
+  vatExemptReason?: true
   mainEmail?: true
   mainPhone?: true
   createdAt?: true
@@ -322,7 +330,9 @@ export type CompanyGroupByOutputType = {
   eoriNumber: string | null
   vatId: string | null
   countryCode: string
-  legalAddressId: number | null
+  taxRegime: string | null
+  vatExempt: boolean
+  vatExemptReason: string | null
   mainEmail: string | null
   mainPhone: string | null
   createdAt: Date
@@ -373,7 +383,9 @@ export type CompanyWhereInput = {
   eoriNumber?: Prisma.StringNullableFilter<"Company"> | string | null
   vatId?: Prisma.StringNullableFilter<"Company"> | string | null
   countryCode?: Prisma.StringFilter<"Company"> | string
-  legalAddressId?: Prisma.IntNullableFilter<"Company"> | number | null
+  taxRegime?: Prisma.StringNullableFilter<"Company"> | string | null
+  vatExempt?: Prisma.BoolFilter<"Company"> | boolean
+  vatExemptReason?: Prisma.StringNullableFilter<"Company"> | string | null
   mainEmail?: Prisma.StringNullableFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableFilter<"Company"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
@@ -385,7 +397,6 @@ export type CompanyWhereInput = {
   customFields?: Prisma.JsonNullableFilter<"Company">
   openingHours?: Prisma.JsonNullableFilter<"Company">
   country?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
-  legalAddress?: Prisma.XOR<Prisma.CompanyAddressNullableScalarRelationFilter, Prisma.CompanyAddressWhereInput> | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   activities?: Prisma.ActivityListRelationFilter
   addresses?: Prisma.CompanyAddressListRelationFilter
@@ -411,7 +422,9 @@ export type CompanyOrderByWithRelationInput = {
   eoriNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   vatId?: Prisma.SortOrderInput | Prisma.SortOrder
   countryCode?: Prisma.SortOrder
-  legalAddressId?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxRegime?: Prisma.SortOrderInput | Prisma.SortOrder
+  vatExempt?: Prisma.SortOrder
+  vatExemptReason?: Prisma.SortOrderInput | Prisma.SortOrder
   mainEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   mainPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -423,7 +436,6 @@ export type CompanyOrderByWithRelationInput = {
   customFields?: Prisma.SortOrderInput | Prisma.SortOrder
   openingHours?: Prisma.SortOrderInput | Prisma.SortOrder
   country?: Prisma.CountryOrderByWithRelationInput
-  legalAddress?: Prisma.CompanyAddressOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   activities?: Prisma.ActivityOrderByRelationAggregateInput
   addresses?: Prisma.CompanyAddressOrderByRelationAggregateInput
@@ -437,7 +449,6 @@ export type CompanyOrderByWithRelationInput = {
 export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   id?: number
   code?: string
-  legalAddressId?: number
   AND?: Prisma.CompanyWhereInput | Prisma.CompanyWhereInput[]
   OR?: Prisma.CompanyWhereInput[]
   NOT?: Prisma.CompanyWhereInput | Prisma.CompanyWhereInput[]
@@ -453,6 +464,9 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   eoriNumber?: Prisma.StringNullableFilter<"Company"> | string | null
   vatId?: Prisma.StringNullableFilter<"Company"> | string | null
   countryCode?: Prisma.StringFilter<"Company"> | string
+  taxRegime?: Prisma.StringNullableFilter<"Company"> | string | null
+  vatExempt?: Prisma.BoolFilter<"Company"> | boolean
+  vatExemptReason?: Prisma.StringNullableFilter<"Company"> | string | null
   mainEmail?: Prisma.StringNullableFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableFilter<"Company"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
@@ -464,7 +478,6 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   customFields?: Prisma.JsonNullableFilter<"Company">
   openingHours?: Prisma.JsonNullableFilter<"Company">
   country?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
-  legalAddress?: Prisma.XOR<Prisma.CompanyAddressNullableScalarRelationFilter, Prisma.CompanyAddressWhereInput> | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   activities?: Prisma.ActivityListRelationFilter
   addresses?: Prisma.CompanyAddressListRelationFilter
@@ -473,7 +486,7 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   suppliers?: Prisma.SupplierListRelationFilter
   documents?: Prisma.DocumentListRelationFilter
   notes?: Prisma.CompanyNoteListRelationFilter
-}, "id" | "code" | "legalAddressId">
+}, "id" | "code">
 
 export type CompanyOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -490,7 +503,9 @@ export type CompanyOrderByWithAggregationInput = {
   eoriNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   vatId?: Prisma.SortOrderInput | Prisma.SortOrder
   countryCode?: Prisma.SortOrder
-  legalAddressId?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxRegime?: Prisma.SortOrderInput | Prisma.SortOrder
+  vatExempt?: Prisma.SortOrder
+  vatExemptReason?: Prisma.SortOrderInput | Prisma.SortOrder
   mainEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   mainPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -526,7 +541,9 @@ export type CompanyScalarWhereWithAggregatesInput = {
   eoriNumber?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   vatId?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   countryCode?: Prisma.StringWithAggregatesFilter<"Company"> | string
-  legalAddressId?: Prisma.IntNullableWithAggregatesFilter<"Company"> | number | null
+  taxRegime?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
+  vatExempt?: Prisma.BoolWithAggregatesFilter<"Company"> | boolean
+  vatExemptReason?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   mainEmail?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Company"> | Date | string
@@ -552,6 +569,9 @@ export type CompanyCreateInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -562,7 +582,6 @@ export type CompanyCreateInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
-  legalAddress?: Prisma.CompanyAddressCreateNestedOneWithoutCompanyForLegalInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
@@ -588,7 +607,9 @@ export type CompanyUncheckedCreateInput = {
   eoriNumber?: string | null
   vatId?: string | null
   countryCode?: string
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -621,6 +642,9 @@ export type CompanyUpdateInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -631,7 +655,6 @@ export type CompanyUpdateInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
-  legalAddress?: Prisma.CompanyAddressUpdateOneWithoutCompanyForLegalNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
@@ -657,7 +680,9 @@ export type CompanyUncheckedUpdateInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -692,7 +717,9 @@ export type CompanyCreateManyInput = {
   eoriNumber?: string | null
   vatId?: string | null
   countryCode?: string
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -718,6 +745,9 @@ export type CompanyUpdateManyMutationInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -744,7 +774,9 @@ export type CompanyUncheckedUpdateManyInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -777,7 +809,9 @@ export type CompanyCountOrderByAggregateInput = {
   eoriNumber?: Prisma.SortOrder
   vatId?: Prisma.SortOrder
   countryCode?: Prisma.SortOrder
-  legalAddressId?: Prisma.SortOrder
+  taxRegime?: Prisma.SortOrder
+  vatExempt?: Prisma.SortOrder
+  vatExemptReason?: Prisma.SortOrder
   mainEmail?: Prisma.SortOrder
   mainPhone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -792,7 +826,6 @@ export type CompanyCountOrderByAggregateInput = {
 
 export type CompanyAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  legalAddressId?: Prisma.SortOrder
   totalOrders?: Prisma.SortOrder
   totalRevenue?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
@@ -813,7 +846,9 @@ export type CompanyMaxOrderByAggregateInput = {
   eoriNumber?: Prisma.SortOrder
   vatId?: Prisma.SortOrder
   countryCode?: Prisma.SortOrder
-  legalAddressId?: Prisma.SortOrder
+  taxRegime?: Prisma.SortOrder
+  vatExempt?: Prisma.SortOrder
+  vatExemptReason?: Prisma.SortOrder
   mainEmail?: Prisma.SortOrder
   mainPhone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -839,7 +874,9 @@ export type CompanyMinOrderByAggregateInput = {
   eoriNumber?: Prisma.SortOrder
   vatId?: Prisma.SortOrder
   countryCode?: Prisma.SortOrder
-  legalAddressId?: Prisma.SortOrder
+  taxRegime?: Prisma.SortOrder
+  vatExempt?: Prisma.SortOrder
+  vatExemptReason?: Prisma.SortOrder
   mainEmail?: Prisma.SortOrder
   mainPhone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -852,7 +889,6 @@ export type CompanyMinOrderByAggregateInput = {
 
 export type CompanySumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  legalAddressId?: Prisma.SortOrder
   totalOrders?: Prisma.SortOrder
   totalRevenue?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
@@ -939,44 +975,12 @@ export type CompanyCreateNestedOneWithoutAddressesInput = {
   connect?: Prisma.CompanyWhereUniqueInput
 }
 
-export type CompanyCreateNestedOneWithoutLegalAddressInput = {
-  create?: Prisma.XOR<Prisma.CompanyCreateWithoutLegalAddressInput, Prisma.CompanyUncheckedCreateWithoutLegalAddressInput>
-  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutLegalAddressInput
-  connect?: Prisma.CompanyWhereUniqueInput
-}
-
-export type CompanyUncheckedCreateNestedOneWithoutLegalAddressInput = {
-  create?: Prisma.XOR<Prisma.CompanyCreateWithoutLegalAddressInput, Prisma.CompanyUncheckedCreateWithoutLegalAddressInput>
-  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutLegalAddressInput
-  connect?: Prisma.CompanyWhereUniqueInput
-}
-
 export type CompanyUpdateOneRequiredWithoutAddressesNestedInput = {
   create?: Prisma.XOR<Prisma.CompanyCreateWithoutAddressesInput, Prisma.CompanyUncheckedCreateWithoutAddressesInput>
   connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutAddressesInput
   upsert?: Prisma.CompanyUpsertWithoutAddressesInput
   connect?: Prisma.CompanyWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutAddressesInput, Prisma.CompanyUpdateWithoutAddressesInput>, Prisma.CompanyUncheckedUpdateWithoutAddressesInput>
-}
-
-export type CompanyUpdateOneWithoutLegalAddressNestedInput = {
-  create?: Prisma.XOR<Prisma.CompanyCreateWithoutLegalAddressInput, Prisma.CompanyUncheckedCreateWithoutLegalAddressInput>
-  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutLegalAddressInput
-  upsert?: Prisma.CompanyUpsertWithoutLegalAddressInput
-  disconnect?: Prisma.CompanyWhereInput | boolean
-  delete?: Prisma.CompanyWhereInput | boolean
-  connect?: Prisma.CompanyWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutLegalAddressInput, Prisma.CompanyUpdateWithoutLegalAddressInput>, Prisma.CompanyUncheckedUpdateWithoutLegalAddressInput>
-}
-
-export type CompanyUncheckedUpdateOneWithoutLegalAddressNestedInput = {
-  create?: Prisma.XOR<Prisma.CompanyCreateWithoutLegalAddressInput, Prisma.CompanyUncheckedCreateWithoutLegalAddressInput>
-  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutLegalAddressInput
-  upsert?: Prisma.CompanyUpsertWithoutLegalAddressInput
-  disconnect?: Prisma.CompanyWhereInput | boolean
-  delete?: Prisma.CompanyWhereInput | boolean
-  connect?: Prisma.CompanyWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutLegalAddressInput, Prisma.CompanyUpdateWithoutLegalAddressInput>, Prisma.CompanyUncheckedUpdateWithoutLegalAddressInput>
 }
 
 export type CompanyCreateNestedOneWithoutContactsInput = {
@@ -1118,6 +1122,9 @@ export type CompanyCreateWithoutActivitiesInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1128,7 +1135,6 @@ export type CompanyCreateWithoutActivitiesInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
-  legalAddress?: Prisma.CompanyAddressCreateNestedOneWithoutCompanyForLegalInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
@@ -1153,7 +1159,9 @@ export type CompanyUncheckedCreateWithoutActivitiesInput = {
   eoriNumber?: string | null
   vatId?: string | null
   countryCode?: string
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1201,6 +1209,9 @@ export type CompanyUpdateWithoutActivitiesInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1211,7 +1222,6 @@ export type CompanyUpdateWithoutActivitiesInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
-  legalAddress?: Prisma.CompanyAddressUpdateOneWithoutCompanyForLegalNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
@@ -1236,7 +1246,9 @@ export type CompanyUncheckedUpdateWithoutActivitiesInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1268,6 +1280,9 @@ export type CompanyCreateWithoutCustomersInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1278,7 +1293,6 @@ export type CompanyCreateWithoutCustomersInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
-  legalAddress?: Prisma.CompanyAddressCreateNestedOneWithoutCompanyForLegalInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
@@ -1303,7 +1317,9 @@ export type CompanyUncheckedCreateWithoutCustomersInput = {
   eoriNumber?: string | null
   vatId?: string | null
   countryCode?: string
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1351,6 +1367,9 @@ export type CompanyUpdateWithoutCustomersInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1361,7 +1380,6 @@ export type CompanyUpdateWithoutCustomersInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
-  legalAddress?: Prisma.CompanyAddressUpdateOneWithoutCompanyForLegalNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
@@ -1386,7 +1404,9 @@ export type CompanyUncheckedUpdateWithoutCustomersInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1418,6 +1438,9 @@ export type CompanyCreateWithoutSuppliersInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1428,7 +1451,6 @@ export type CompanyCreateWithoutSuppliersInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
-  legalAddress?: Prisma.CompanyAddressCreateNestedOneWithoutCompanyForLegalInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
@@ -1453,7 +1475,9 @@ export type CompanyUncheckedCreateWithoutSuppliersInput = {
   eoriNumber?: string | null
   vatId?: string | null
   countryCode?: string
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1501,6 +1525,9 @@ export type CompanyUpdateWithoutSuppliersInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1511,7 +1538,6 @@ export type CompanyUpdateWithoutSuppliersInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
-  legalAddress?: Prisma.CompanyAddressUpdateOneWithoutCompanyForLegalNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
@@ -1536,7 +1562,9 @@ export type CompanyUncheckedUpdateWithoutSuppliersInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1568,6 +1596,9 @@ export type CompanyCreateWithoutAddressesInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1578,7 +1609,6 @@ export type CompanyCreateWithoutAddressesInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
-  legalAddress?: Prisma.CompanyAddressCreateNestedOneWithoutCompanyForLegalInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
@@ -1603,7 +1633,9 @@ export type CompanyUncheckedCreateWithoutAddressesInput = {
   eoriNumber?: string | null
   vatId?: string | null
   countryCode?: string
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1625,78 +1657,6 @@ export type CompanyUncheckedCreateWithoutAddressesInput = {
 export type CompanyCreateOrConnectWithoutAddressesInput = {
   where: Prisma.CompanyWhereUniqueInput
   create: Prisma.XOR<Prisma.CompanyCreateWithoutAddressesInput, Prisma.CompanyUncheckedCreateWithoutAddressesInput>
-}
-
-export type CompanyCreateWithoutLegalAddressInput = {
-  code: string
-  companyName: string
-  tradeName?: string | null
-  legalForm?: string | null
-  status?: $Enums.CompanyStatus
-  entityType?: $Enums.CompanyTypeEntity
-  vatNumber?: string | null
-  taxCode?: string | null
-  sdiCode?: string | null
-  pec?: string | null
-  eoriNumber?: string | null
-  vatId?: string | null
-  mainEmail?: string | null
-  mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  firstOrderDate?: Date | string | null
-  totalOrders?: number
-  totalRevenue?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
-  user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
-  addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
-  contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
-  customers?: Prisma.CustomerCreateNestedManyWithoutCompanyInput
-  suppliers?: Prisma.SupplierCreateNestedManyWithoutCompanyInput
-  documents?: Prisma.DocumentCreateNestedManyWithoutCompanyInput
-  notes?: Prisma.CompanyNoteCreateNestedManyWithoutCompanyInput
-}
-
-export type CompanyUncheckedCreateWithoutLegalAddressInput = {
-  id?: number
-  code: string
-  companyName: string
-  tradeName?: string | null
-  legalForm?: string | null
-  status?: $Enums.CompanyStatus
-  entityType?: $Enums.CompanyTypeEntity
-  vatNumber?: string | null
-  taxCode?: string | null
-  sdiCode?: string | null
-  pec?: string | null
-  eoriNumber?: string | null
-  vatId?: string | null
-  countryCode?: string
-  mainEmail?: string | null
-  mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  firstOrderDate?: Date | string | null
-  totalOrders?: number
-  totalRevenue?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  assignedUserId?: number | null
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
-  addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
-  contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutCompanyInput
-  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
-  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutCompanyInput
-  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutCompanyInput
-  notes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutCompanyInput
-}
-
-export type CompanyCreateOrConnectWithoutLegalAddressInput = {
-  where: Prisma.CompanyWhereUniqueInput
-  create: Prisma.XOR<Prisma.CompanyCreateWithoutLegalAddressInput, Prisma.CompanyUncheckedCreateWithoutLegalAddressInput>
 }
 
 export type CompanyUpsertWithoutAddressesInput = {
@@ -1723,6 +1683,9 @@ export type CompanyUpdateWithoutAddressesInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1733,7 +1696,6 @@ export type CompanyUpdateWithoutAddressesInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
-  legalAddress?: Prisma.CompanyAddressUpdateOneWithoutCompanyForLegalNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
@@ -1758,7 +1720,9 @@ export type CompanyUncheckedUpdateWithoutAddressesInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1770,84 +1734,6 @@ export type CompanyUncheckedUpdateWithoutAddressesInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
-  contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
-  customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
-  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
-  documents?: Prisma.DocumentUncheckedUpdateManyWithoutCompanyNestedInput
-  notes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutCompanyNestedInput
-}
-
-export type CompanyUpsertWithoutLegalAddressInput = {
-  update: Prisma.XOR<Prisma.CompanyUpdateWithoutLegalAddressInput, Prisma.CompanyUncheckedUpdateWithoutLegalAddressInput>
-  create: Prisma.XOR<Prisma.CompanyCreateWithoutLegalAddressInput, Prisma.CompanyUncheckedCreateWithoutLegalAddressInput>
-  where?: Prisma.CompanyWhereInput
-}
-
-export type CompanyUpdateToOneWithWhereWithoutLegalAddressInput = {
-  where?: Prisma.CompanyWhereInput
-  data: Prisma.XOR<Prisma.CompanyUpdateWithoutLegalAddressInput, Prisma.CompanyUncheckedUpdateWithoutLegalAddressInput>
-}
-
-export type CompanyUpdateWithoutLegalAddressInput = {
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  tradeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  legalForm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumCompanyStatusFieldUpdateOperationsInput | $Enums.CompanyStatus
-  entityType?: Prisma.EnumCompanyTypeEntityFieldUpdateOperationsInput | $Enums.CompanyTypeEntity
-  vatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  firstOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
-  totalRevenue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
-  user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
-  addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
-  contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
-  customers?: Prisma.CustomerUpdateManyWithoutCompanyNestedInput
-  suppliers?: Prisma.SupplierUpdateManyWithoutCompanyNestedInput
-  documents?: Prisma.DocumentUpdateManyWithoutCompanyNestedInput
-  notes?: Prisma.CompanyNoteUpdateManyWithoutCompanyNestedInput
-}
-
-export type CompanyUncheckedUpdateWithoutLegalAddressInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  tradeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  legalForm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumCompanyStatusFieldUpdateOperationsInput | $Enums.CompanyStatus
-  entityType?: Prisma.EnumCompanyTypeEntityFieldUpdateOperationsInput | $Enums.CompanyTypeEntity
-  vatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  firstOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
-  totalRevenue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
-  addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1868,6 +1754,9 @@ export type CompanyCreateWithoutContactsInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1878,7 +1767,6 @@ export type CompanyCreateWithoutContactsInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
-  legalAddress?: Prisma.CompanyAddressCreateNestedOneWithoutCompanyForLegalInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
@@ -1903,7 +1791,9 @@ export type CompanyUncheckedCreateWithoutContactsInput = {
   eoriNumber?: string | null
   vatId?: string | null
   countryCode?: string
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1951,6 +1841,9 @@ export type CompanyUpdateWithoutContactsInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1961,7 +1854,6 @@ export type CompanyUpdateWithoutContactsInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
-  legalAddress?: Prisma.CompanyAddressUpdateOneWithoutCompanyForLegalNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
@@ -1986,7 +1878,9 @@ export type CompanyUncheckedUpdateWithoutContactsInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2018,6 +1912,9 @@ export type CompanyCreateWithoutNotesInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2028,7 +1925,6 @@ export type CompanyCreateWithoutNotesInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
-  legalAddress?: Prisma.CompanyAddressCreateNestedOneWithoutCompanyForLegalInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
@@ -2053,7 +1949,9 @@ export type CompanyUncheckedCreateWithoutNotesInput = {
   eoriNumber?: string | null
   vatId?: string | null
   countryCode?: string
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2101,6 +1999,9 @@ export type CompanyUpdateWithoutNotesInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2111,7 +2012,6 @@ export type CompanyUpdateWithoutNotesInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
-  legalAddress?: Prisma.CompanyAddressUpdateOneWithoutCompanyForLegalNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
@@ -2136,7 +2036,9 @@ export type CompanyUncheckedUpdateWithoutNotesInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2168,6 +2070,9 @@ export type CompanyCreateWithoutCountryInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2177,7 +2082,6 @@ export type CompanyCreateWithoutCountryInput = {
   totalRevenue?: runtime.Decimal | runtime.DecimalJsLike | number | string
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  legalAddress?: Prisma.CompanyAddressCreateNestedOneWithoutCompanyForLegalInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
@@ -2202,7 +2106,9 @@ export type CompanyUncheckedCreateWithoutCountryInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2266,7 +2172,9 @@ export type CompanyScalarWhereInput = {
   eoriNumber?: Prisma.StringNullableFilter<"Company"> | string | null
   vatId?: Prisma.StringNullableFilter<"Company"> | string | null
   countryCode?: Prisma.StringFilter<"Company"> | string
-  legalAddressId?: Prisma.IntNullableFilter<"Company"> | number | null
+  taxRegime?: Prisma.StringNullableFilter<"Company"> | string | null
+  vatExempt?: Prisma.BoolFilter<"Company"> | boolean
+  vatExemptReason?: Prisma.StringNullableFilter<"Company"> | string | null
   mainEmail?: Prisma.StringNullableFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableFilter<"Company"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
@@ -2292,6 +2200,9 @@ export type CompanyCreateWithoutDocumentsInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2302,7 +2213,6 @@ export type CompanyCreateWithoutDocumentsInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
-  legalAddress?: Prisma.CompanyAddressCreateNestedOneWithoutCompanyForLegalInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
@@ -2327,7 +2237,9 @@ export type CompanyUncheckedCreateWithoutDocumentsInput = {
   eoriNumber?: string | null
   vatId?: string | null
   countryCode?: string
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2375,6 +2287,9 @@ export type CompanyUpdateWithoutDocumentsInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2385,7 +2300,6 @@ export type CompanyUpdateWithoutDocumentsInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
-  legalAddress?: Prisma.CompanyAddressUpdateOneWithoutCompanyForLegalNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
@@ -2410,7 +2324,9 @@ export type CompanyUncheckedUpdateWithoutDocumentsInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2442,6 +2358,9 @@ export type CompanyCreateWithoutUserInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2452,7 +2371,6 @@ export type CompanyCreateWithoutUserInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
-  legalAddress?: Prisma.CompanyAddressCreateNestedOneWithoutCompanyForLegalInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
@@ -2477,7 +2395,9 @@ export type CompanyUncheckedCreateWithoutUserInput = {
   eoriNumber?: string | null
   vatId?: string | null
   countryCode?: string
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2536,7 +2456,9 @@ export type CompanyCreateManyCountryInput = {
   pec?: string | null
   eoriNumber?: string | null
   vatId?: string | null
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2562,6 +2484,9 @@ export type CompanyUpdateWithoutCountryInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2571,7 +2496,6 @@ export type CompanyUpdateWithoutCountryInput = {
   totalRevenue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  legalAddress?: Prisma.CompanyAddressUpdateOneWithoutCompanyForLegalNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
@@ -2596,7 +2520,9 @@ export type CompanyUncheckedUpdateWithoutCountryInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2630,7 +2556,9 @@ export type CompanyUncheckedUpdateManyWithoutCountryInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2658,7 +2586,9 @@ export type CompanyCreateManyUserInput = {
   eoriNumber?: string | null
   vatId?: string | null
   countryCode?: string
-  legalAddressId?: number | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2683,6 +2613,9 @@ export type CompanyUpdateWithoutUserInput = {
   pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2693,7 +2626,6 @@ export type CompanyUpdateWithoutUserInput = {
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
-  legalAddress?: Prisma.CompanyAddressUpdateOneWithoutCompanyForLegalNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
@@ -2718,7 +2650,9 @@ export type CompanyUncheckedUpdateWithoutUserInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2752,7 +2686,9 @@ export type CompanyUncheckedUpdateManyWithoutUserInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
-  legalAddressId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2864,7 +2800,9 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   eoriNumber?: boolean
   vatId?: boolean
   countryCode?: boolean
-  legalAddressId?: boolean
+  taxRegime?: boolean
+  vatExempt?: boolean
+  vatExemptReason?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
   createdAt?: boolean
@@ -2876,7 +2814,6 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   customFields?: boolean
   openingHours?: boolean
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
-  legalAddress?: boolean | Prisma.Company$legalAddressArgs<ExtArgs>
   user?: boolean | Prisma.Company$userArgs<ExtArgs>
   activities?: boolean | Prisma.Company$activitiesArgs<ExtArgs>
   addresses?: boolean | Prisma.Company$addressesArgs<ExtArgs>
@@ -2903,7 +2840,9 @@ export type CompanySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   eoriNumber?: boolean
   vatId?: boolean
   countryCode?: boolean
-  legalAddressId?: boolean
+  taxRegime?: boolean
+  vatExempt?: boolean
+  vatExemptReason?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
   createdAt?: boolean
@@ -2915,7 +2854,6 @@ export type CompanySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   customFields?: boolean
   openingHours?: boolean
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
-  legalAddress?: boolean | Prisma.Company$legalAddressArgs<ExtArgs>
   user?: boolean | Prisma.Company$userArgs<ExtArgs>
 }, ExtArgs["result"]["company"]>
 
@@ -2934,7 +2872,9 @@ export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   eoriNumber?: boolean
   vatId?: boolean
   countryCode?: boolean
-  legalAddressId?: boolean
+  taxRegime?: boolean
+  vatExempt?: boolean
+  vatExemptReason?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
   createdAt?: boolean
@@ -2946,7 +2886,6 @@ export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   customFields?: boolean
   openingHours?: boolean
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
-  legalAddress?: boolean | Prisma.Company$legalAddressArgs<ExtArgs>
   user?: boolean | Prisma.Company$userArgs<ExtArgs>
 }, ExtArgs["result"]["company"]>
 
@@ -2965,7 +2904,9 @@ export type CompanySelectScalar = {
   eoriNumber?: boolean
   vatId?: boolean
   countryCode?: boolean
-  legalAddressId?: boolean
+  taxRegime?: boolean
+  vatExempt?: boolean
+  vatExemptReason?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
   createdAt?: boolean
@@ -2978,10 +2919,9 @@ export type CompanySelectScalar = {
   openingHours?: boolean
 }
 
-export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "companyName" | "tradeName" | "legalForm" | "status" | "entityType" | "vatNumber" | "taxCode" | "sdiCode" | "pec" | "eoriNumber" | "vatId" | "countryCode" | "legalAddressId" | "mainEmail" | "mainPhone" | "createdAt" | "updatedAt" | "firstOrderDate" | "totalOrders" | "totalRevenue" | "assignedUserId" | "customFields" | "openingHours", ExtArgs["result"]["company"]>
+export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "companyName" | "tradeName" | "legalForm" | "status" | "entityType" | "vatNumber" | "taxCode" | "sdiCode" | "pec" | "eoriNumber" | "vatId" | "countryCode" | "taxRegime" | "vatExempt" | "vatExemptReason" | "mainEmail" | "mainPhone" | "createdAt" | "updatedAt" | "firstOrderDate" | "totalOrders" | "totalRevenue" | "assignedUserId" | "customFields" | "openingHours", ExtArgs["result"]["company"]>
 export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
-  legalAddress?: boolean | Prisma.Company$legalAddressArgs<ExtArgs>
   user?: boolean | Prisma.Company$userArgs<ExtArgs>
   activities?: boolean | Prisma.Company$activitiesArgs<ExtArgs>
   addresses?: boolean | Prisma.Company$addressesArgs<ExtArgs>
@@ -2994,12 +2934,10 @@ export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
 }
 export type CompanyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
-  legalAddress?: boolean | Prisma.Company$legalAddressArgs<ExtArgs>
   user?: boolean | Prisma.Company$userArgs<ExtArgs>
 }
 export type CompanyIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
-  legalAddress?: boolean | Prisma.Company$legalAddressArgs<ExtArgs>
   user?: boolean | Prisma.Company$userArgs<ExtArgs>
 }
 
@@ -3007,7 +2945,6 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Company"
   objects: {
     country: Prisma.$CountryPayload<ExtArgs>
-    legalAddress: Prisma.$CompanyAddressPayload<ExtArgs> | null
     user: Prisma.$UserPayload<ExtArgs> | null
     activities: Prisma.$ActivityPayload<ExtArgs>[]
     addresses: Prisma.$CompanyAddressPayload<ExtArgs>[]
@@ -3032,7 +2969,9 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     eoriNumber: string | null
     vatId: string | null
     countryCode: string
-    legalAddressId: number | null
+    taxRegime: string | null
+    vatExempt: boolean
+    vatExemptReason: string | null
     mainEmail: string | null
     mainPhone: string | null
     createdAt: Date
@@ -3438,7 +3377,6 @@ readonly fields: CompanyFieldRefs;
 export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   country<T extends Prisma.CountryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CountryDefaultArgs<ExtArgs>>): Prisma.Prisma__CountryClient<runtime.Types.Result.GetResult<Prisma.$CountryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  legalAddress<T extends Prisma.Company$legalAddressArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$legalAddressArgs<ExtArgs>>): Prisma.Prisma__CompanyAddressClient<runtime.Types.Result.GetResult<Prisma.$CompanyAddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.Company$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   activities<T extends Prisma.Company$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   addresses<T extends Prisma.Company$addressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanyAddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3490,7 +3428,9 @@ export interface CompanyFieldRefs {
   readonly eoriNumber: Prisma.FieldRef<"Company", 'String'>
   readonly vatId: Prisma.FieldRef<"Company", 'String'>
   readonly countryCode: Prisma.FieldRef<"Company", 'String'>
-  readonly legalAddressId: Prisma.FieldRef<"Company", 'Int'>
+  readonly taxRegime: Prisma.FieldRef<"Company", 'String'>
+  readonly vatExempt: Prisma.FieldRef<"Company", 'Boolean'>
+  readonly vatExemptReason: Prisma.FieldRef<"Company", 'String'>
   readonly mainEmail: Prisma.FieldRef<"Company", 'String'>
   readonly mainPhone: Prisma.FieldRef<"Company", 'String'>
   readonly createdAt: Prisma.FieldRef<"Company", 'DateTime'>
@@ -3894,25 +3834,6 @@ export type CompanyDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Companies to delete.
    */
   limit?: number
-}
-
-/**
- * Company.legalAddress
- */
-export type Company$legalAddressArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the CompanyAddress
-   */
-  select?: Prisma.CompanyAddressSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the CompanyAddress
-   */
-  omit?: Prisma.CompanyAddressOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.CompanyAddressInclude<ExtArgs> | null
-  where?: Prisma.CompanyAddressWhereInput
 }
 
 /**

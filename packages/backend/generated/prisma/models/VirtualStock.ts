@@ -31,6 +31,8 @@ export type VirtualStockAvgAggregateOutputType = {
   productVariantId: number | null
   warehouseId: number | null
   quantity: number | null
+  leadTimeDays: number | null
+  supplierPrice: runtime.Decimal | null
 }
 
 export type VirtualStockSumAggregateOutputType = {
@@ -38,6 +40,8 @@ export type VirtualStockSumAggregateOutputType = {
   productVariantId: number | null
   warehouseId: number | null
   quantity: number | null
+  leadTimeDays: number | null
+  supplierPrice: runtime.Decimal | null
 }
 
 export type VirtualStockMinAggregateOutputType = {
@@ -47,6 +51,13 @@ export type VirtualStockMinAggregateOutputType = {
   quantity: number | null
   updatedAt: Date | null
   source: string | null
+  lastSyncAt: Date | null
+  syncStatus: $Enums.VirtualSyncStatus | null
+  syncError: string | null
+  expectedAvailableDate: Date | null
+  leadTimeDays: number | null
+  supplierPrice: runtime.Decimal | null
+  supplierCurrencyCode: string | null
 }
 
 export type VirtualStockMaxAggregateOutputType = {
@@ -56,6 +67,13 @@ export type VirtualStockMaxAggregateOutputType = {
   quantity: number | null
   updatedAt: Date | null
   source: string | null
+  lastSyncAt: Date | null
+  syncStatus: $Enums.VirtualSyncStatus | null
+  syncError: string | null
+  expectedAvailableDate: Date | null
+  leadTimeDays: number | null
+  supplierPrice: runtime.Decimal | null
+  supplierCurrencyCode: string | null
 }
 
 export type VirtualStockCountAggregateOutputType = {
@@ -65,6 +83,13 @@ export type VirtualStockCountAggregateOutputType = {
   quantity: number
   updatedAt: number
   source: number
+  lastSyncAt: number
+  syncStatus: number
+  syncError: number
+  expectedAvailableDate: number
+  leadTimeDays: number
+  supplierPrice: number
+  supplierCurrencyCode: number
   _all: number
 }
 
@@ -74,6 +99,8 @@ export type VirtualStockAvgAggregateInputType = {
   productVariantId?: true
   warehouseId?: true
   quantity?: true
+  leadTimeDays?: true
+  supplierPrice?: true
 }
 
 export type VirtualStockSumAggregateInputType = {
@@ -81,6 +108,8 @@ export type VirtualStockSumAggregateInputType = {
   productVariantId?: true
   warehouseId?: true
   quantity?: true
+  leadTimeDays?: true
+  supplierPrice?: true
 }
 
 export type VirtualStockMinAggregateInputType = {
@@ -90,6 +119,13 @@ export type VirtualStockMinAggregateInputType = {
   quantity?: true
   updatedAt?: true
   source?: true
+  lastSyncAt?: true
+  syncStatus?: true
+  syncError?: true
+  expectedAvailableDate?: true
+  leadTimeDays?: true
+  supplierPrice?: true
+  supplierCurrencyCode?: true
 }
 
 export type VirtualStockMaxAggregateInputType = {
@@ -99,6 +135,13 @@ export type VirtualStockMaxAggregateInputType = {
   quantity?: true
   updatedAt?: true
   source?: true
+  lastSyncAt?: true
+  syncStatus?: true
+  syncError?: true
+  expectedAvailableDate?: true
+  leadTimeDays?: true
+  supplierPrice?: true
+  supplierCurrencyCode?: true
 }
 
 export type VirtualStockCountAggregateInputType = {
@@ -108,6 +151,13 @@ export type VirtualStockCountAggregateInputType = {
   quantity?: true
   updatedAt?: true
   source?: true
+  lastSyncAt?: true
+  syncStatus?: true
+  syncError?: true
+  expectedAvailableDate?: true
+  leadTimeDays?: true
+  supplierPrice?: true
+  supplierCurrencyCode?: true
   _all?: true
 }
 
@@ -204,6 +254,13 @@ export type VirtualStockGroupByOutputType = {
   quantity: number
   updatedAt: Date
   source: string | null
+  lastSyncAt: Date | null
+  syncStatus: $Enums.VirtualSyncStatus
+  syncError: string | null
+  expectedAvailableDate: Date | null
+  leadTimeDays: number
+  supplierPrice: runtime.Decimal | null
+  supplierCurrencyCode: string | null
   _count: VirtualStockCountAggregateOutputType | null
   _avg: VirtualStockAvgAggregateOutputType | null
   _sum: VirtualStockSumAggregateOutputType | null
@@ -236,8 +293,16 @@ export type VirtualStockWhereInput = {
   quantity?: Prisma.IntFilter<"VirtualStock"> | number
   updatedAt?: Prisma.DateTimeFilter<"VirtualStock"> | Date | string
   source?: Prisma.StringNullableFilter<"VirtualStock"> | string | null
+  lastSyncAt?: Prisma.DateTimeNullableFilter<"VirtualStock"> | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFilter<"VirtualStock"> | $Enums.VirtualSyncStatus
+  syncError?: Prisma.StringNullableFilter<"VirtualStock"> | string | null
+  expectedAvailableDate?: Prisma.DateTimeNullableFilter<"VirtualStock"> | Date | string | null
+  leadTimeDays?: Prisma.IntFilter<"VirtualStock"> | number
+  supplierPrice?: Prisma.DecimalNullableFilter<"VirtualStock"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: Prisma.StringNullableFilter<"VirtualStock"> | string | null
   productVariant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
   warehouse?: Prisma.XOR<Prisma.WarehouseScalarRelationFilter, Prisma.WarehouseWhereInput>
+  supplierCurrency?: Prisma.XOR<Prisma.CurrencyNullableScalarRelationFilter, Prisma.CurrencyWhereInput> | null
 }
 
 export type VirtualStockOrderByWithRelationInput = {
@@ -247,8 +312,16 @@ export type VirtualStockOrderByWithRelationInput = {
   quantity?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   source?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  syncStatus?: Prisma.SortOrder
+  syncError?: Prisma.SortOrderInput | Prisma.SortOrder
+  expectedAvailableDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadTimeDays?: Prisma.SortOrder
+  supplierPrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  supplierCurrencyCode?: Prisma.SortOrderInput | Prisma.SortOrder
   productVariant?: Prisma.ProductVariantOrderByWithRelationInput
   warehouse?: Prisma.WarehouseOrderByWithRelationInput
+  supplierCurrency?: Prisma.CurrencyOrderByWithRelationInput
 }
 
 export type VirtualStockWhereUniqueInput = Prisma.AtLeast<{
@@ -262,8 +335,16 @@ export type VirtualStockWhereUniqueInput = Prisma.AtLeast<{
   quantity?: Prisma.IntFilter<"VirtualStock"> | number
   updatedAt?: Prisma.DateTimeFilter<"VirtualStock"> | Date | string
   source?: Prisma.StringNullableFilter<"VirtualStock"> | string | null
+  lastSyncAt?: Prisma.DateTimeNullableFilter<"VirtualStock"> | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFilter<"VirtualStock"> | $Enums.VirtualSyncStatus
+  syncError?: Prisma.StringNullableFilter<"VirtualStock"> | string | null
+  expectedAvailableDate?: Prisma.DateTimeNullableFilter<"VirtualStock"> | Date | string | null
+  leadTimeDays?: Prisma.IntFilter<"VirtualStock"> | number
+  supplierPrice?: Prisma.DecimalNullableFilter<"VirtualStock"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: Prisma.StringNullableFilter<"VirtualStock"> | string | null
   productVariant?: Prisma.XOR<Prisma.ProductVariantScalarRelationFilter, Prisma.ProductVariantWhereInput>
   warehouse?: Prisma.XOR<Prisma.WarehouseScalarRelationFilter, Prisma.WarehouseWhereInput>
+  supplierCurrency?: Prisma.XOR<Prisma.CurrencyNullableScalarRelationFilter, Prisma.CurrencyWhereInput> | null
 }, "id" | "productVariantId_warehouseId">
 
 export type VirtualStockOrderByWithAggregationInput = {
@@ -273,6 +354,13 @@ export type VirtualStockOrderByWithAggregationInput = {
   quantity?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   source?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  syncStatus?: Prisma.SortOrder
+  syncError?: Prisma.SortOrderInput | Prisma.SortOrder
+  expectedAvailableDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadTimeDays?: Prisma.SortOrder
+  supplierPrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  supplierCurrencyCode?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.VirtualStockCountOrderByAggregateInput
   _avg?: Prisma.VirtualStockAvgOrderByAggregateInput
   _max?: Prisma.VirtualStockMaxOrderByAggregateInput
@@ -290,14 +378,28 @@ export type VirtualStockScalarWhereWithAggregatesInput = {
   quantity?: Prisma.IntWithAggregatesFilter<"VirtualStock"> | number
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"VirtualStock"> | Date | string
   source?: Prisma.StringNullableWithAggregatesFilter<"VirtualStock"> | string | null
+  lastSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"VirtualStock"> | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusWithAggregatesFilter<"VirtualStock"> | $Enums.VirtualSyncStatus
+  syncError?: Prisma.StringNullableWithAggregatesFilter<"VirtualStock"> | string | null
+  expectedAvailableDate?: Prisma.DateTimeNullableWithAggregatesFilter<"VirtualStock"> | Date | string | null
+  leadTimeDays?: Prisma.IntWithAggregatesFilter<"VirtualStock"> | number
+  supplierPrice?: Prisma.DecimalNullableWithAggregatesFilter<"VirtualStock"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: Prisma.StringNullableWithAggregatesFilter<"VirtualStock"> | string | null
 }
 
 export type VirtualStockCreateInput = {
   quantity: number
   updatedAt?: Date | string
   source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   productVariant: Prisma.ProductVariantCreateNestedOneWithoutVirtualStockInput
   warehouse: Prisma.WarehouseCreateNestedOneWithoutVirtualStocksInput
+  supplierCurrency?: Prisma.CurrencyCreateNestedOneWithoutVirtualStocksInput
 }
 
 export type VirtualStockUncheckedCreateInput = {
@@ -307,14 +409,28 @@ export type VirtualStockUncheckedCreateInput = {
   quantity: number
   updatedAt?: Date | string
   source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: string | null
 }
 
 export type VirtualStockUpdateInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   productVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutVirtualStockNestedInput
   warehouse?: Prisma.WarehouseUpdateOneRequiredWithoutVirtualStocksNestedInput
+  supplierCurrency?: Prisma.CurrencyUpdateOneWithoutVirtualStocksNestedInput
 }
 
 export type VirtualStockUncheckedUpdateInput = {
@@ -324,6 +440,13 @@ export type VirtualStockUncheckedUpdateInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type VirtualStockCreateManyInput = {
@@ -333,12 +456,25 @@ export type VirtualStockCreateManyInput = {
   quantity: number
   updatedAt?: Date | string
   source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: string | null
 }
 
 export type VirtualStockUpdateManyMutationInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type VirtualStockUncheckedUpdateManyInput = {
@@ -348,6 +484,13 @@ export type VirtualStockUncheckedUpdateManyInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type VirtualStockListRelationFilter = {
@@ -372,6 +515,13 @@ export type VirtualStockCountOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   source?: Prisma.SortOrder
+  lastSyncAt?: Prisma.SortOrder
+  syncStatus?: Prisma.SortOrder
+  syncError?: Prisma.SortOrder
+  expectedAvailableDate?: Prisma.SortOrder
+  leadTimeDays?: Prisma.SortOrder
+  supplierPrice?: Prisma.SortOrder
+  supplierCurrencyCode?: Prisma.SortOrder
 }
 
 export type VirtualStockAvgOrderByAggregateInput = {
@@ -379,6 +529,8 @@ export type VirtualStockAvgOrderByAggregateInput = {
   productVariantId?: Prisma.SortOrder
   warehouseId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  leadTimeDays?: Prisma.SortOrder
+  supplierPrice?: Prisma.SortOrder
 }
 
 export type VirtualStockMaxOrderByAggregateInput = {
@@ -388,6 +540,13 @@ export type VirtualStockMaxOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   source?: Prisma.SortOrder
+  lastSyncAt?: Prisma.SortOrder
+  syncStatus?: Prisma.SortOrder
+  syncError?: Prisma.SortOrder
+  expectedAvailableDate?: Prisma.SortOrder
+  leadTimeDays?: Prisma.SortOrder
+  supplierPrice?: Prisma.SortOrder
+  supplierCurrencyCode?: Prisma.SortOrder
 }
 
 export type VirtualStockMinOrderByAggregateInput = {
@@ -397,6 +556,13 @@ export type VirtualStockMinOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   source?: Prisma.SortOrder
+  lastSyncAt?: Prisma.SortOrder
+  syncStatus?: Prisma.SortOrder
+  syncError?: Prisma.SortOrder
+  expectedAvailableDate?: Prisma.SortOrder
+  leadTimeDays?: Prisma.SortOrder
+  supplierPrice?: Prisma.SortOrder
+  supplierCurrencyCode?: Prisma.SortOrder
 }
 
 export type VirtualStockSumOrderByAggregateInput = {
@@ -404,6 +570,50 @@ export type VirtualStockSumOrderByAggregateInput = {
   productVariantId?: Prisma.SortOrder
   warehouseId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  leadTimeDays?: Prisma.SortOrder
+  supplierPrice?: Prisma.SortOrder
+}
+
+export type VirtualStockCreateNestedManyWithoutSupplierCurrencyInput = {
+  create?: Prisma.XOR<Prisma.VirtualStockCreateWithoutSupplierCurrencyInput, Prisma.VirtualStockUncheckedCreateWithoutSupplierCurrencyInput> | Prisma.VirtualStockCreateWithoutSupplierCurrencyInput[] | Prisma.VirtualStockUncheckedCreateWithoutSupplierCurrencyInput[]
+  connectOrCreate?: Prisma.VirtualStockCreateOrConnectWithoutSupplierCurrencyInput | Prisma.VirtualStockCreateOrConnectWithoutSupplierCurrencyInput[]
+  createMany?: Prisma.VirtualStockCreateManySupplierCurrencyInputEnvelope
+  connect?: Prisma.VirtualStockWhereUniqueInput | Prisma.VirtualStockWhereUniqueInput[]
+}
+
+export type VirtualStockUncheckedCreateNestedManyWithoutSupplierCurrencyInput = {
+  create?: Prisma.XOR<Prisma.VirtualStockCreateWithoutSupplierCurrencyInput, Prisma.VirtualStockUncheckedCreateWithoutSupplierCurrencyInput> | Prisma.VirtualStockCreateWithoutSupplierCurrencyInput[] | Prisma.VirtualStockUncheckedCreateWithoutSupplierCurrencyInput[]
+  connectOrCreate?: Prisma.VirtualStockCreateOrConnectWithoutSupplierCurrencyInput | Prisma.VirtualStockCreateOrConnectWithoutSupplierCurrencyInput[]
+  createMany?: Prisma.VirtualStockCreateManySupplierCurrencyInputEnvelope
+  connect?: Prisma.VirtualStockWhereUniqueInput | Prisma.VirtualStockWhereUniqueInput[]
+}
+
+export type VirtualStockUpdateManyWithoutSupplierCurrencyNestedInput = {
+  create?: Prisma.XOR<Prisma.VirtualStockCreateWithoutSupplierCurrencyInput, Prisma.VirtualStockUncheckedCreateWithoutSupplierCurrencyInput> | Prisma.VirtualStockCreateWithoutSupplierCurrencyInput[] | Prisma.VirtualStockUncheckedCreateWithoutSupplierCurrencyInput[]
+  connectOrCreate?: Prisma.VirtualStockCreateOrConnectWithoutSupplierCurrencyInput | Prisma.VirtualStockCreateOrConnectWithoutSupplierCurrencyInput[]
+  upsert?: Prisma.VirtualStockUpsertWithWhereUniqueWithoutSupplierCurrencyInput | Prisma.VirtualStockUpsertWithWhereUniqueWithoutSupplierCurrencyInput[]
+  createMany?: Prisma.VirtualStockCreateManySupplierCurrencyInputEnvelope
+  set?: Prisma.VirtualStockWhereUniqueInput | Prisma.VirtualStockWhereUniqueInput[]
+  disconnect?: Prisma.VirtualStockWhereUniqueInput | Prisma.VirtualStockWhereUniqueInput[]
+  delete?: Prisma.VirtualStockWhereUniqueInput | Prisma.VirtualStockWhereUniqueInput[]
+  connect?: Prisma.VirtualStockWhereUniqueInput | Prisma.VirtualStockWhereUniqueInput[]
+  update?: Prisma.VirtualStockUpdateWithWhereUniqueWithoutSupplierCurrencyInput | Prisma.VirtualStockUpdateWithWhereUniqueWithoutSupplierCurrencyInput[]
+  updateMany?: Prisma.VirtualStockUpdateManyWithWhereWithoutSupplierCurrencyInput | Prisma.VirtualStockUpdateManyWithWhereWithoutSupplierCurrencyInput[]
+  deleteMany?: Prisma.VirtualStockScalarWhereInput | Prisma.VirtualStockScalarWhereInput[]
+}
+
+export type VirtualStockUncheckedUpdateManyWithoutSupplierCurrencyNestedInput = {
+  create?: Prisma.XOR<Prisma.VirtualStockCreateWithoutSupplierCurrencyInput, Prisma.VirtualStockUncheckedCreateWithoutSupplierCurrencyInput> | Prisma.VirtualStockCreateWithoutSupplierCurrencyInput[] | Prisma.VirtualStockUncheckedCreateWithoutSupplierCurrencyInput[]
+  connectOrCreate?: Prisma.VirtualStockCreateOrConnectWithoutSupplierCurrencyInput | Prisma.VirtualStockCreateOrConnectWithoutSupplierCurrencyInput[]
+  upsert?: Prisma.VirtualStockUpsertWithWhereUniqueWithoutSupplierCurrencyInput | Prisma.VirtualStockUpsertWithWhereUniqueWithoutSupplierCurrencyInput[]
+  createMany?: Prisma.VirtualStockCreateManySupplierCurrencyInputEnvelope
+  set?: Prisma.VirtualStockWhereUniqueInput | Prisma.VirtualStockWhereUniqueInput[]
+  disconnect?: Prisma.VirtualStockWhereUniqueInput | Prisma.VirtualStockWhereUniqueInput[]
+  delete?: Prisma.VirtualStockWhereUniqueInput | Prisma.VirtualStockWhereUniqueInput[]
+  connect?: Prisma.VirtualStockWhereUniqueInput | Prisma.VirtualStockWhereUniqueInput[]
+  update?: Prisma.VirtualStockUpdateWithWhereUniqueWithoutSupplierCurrencyInput | Prisma.VirtualStockUpdateWithWhereUniqueWithoutSupplierCurrencyInput[]
+  updateMany?: Prisma.VirtualStockUpdateManyWithWhereWithoutSupplierCurrencyInput | Prisma.VirtualStockUpdateManyWithWhereWithoutSupplierCurrencyInput[]
+  deleteMany?: Prisma.VirtualStockScalarWhereInput | Prisma.VirtualStockScalarWhereInput[]
 }
 
 export type VirtualStockCreateNestedManyWithoutProductVariantInput = {
@@ -490,11 +700,96 @@ export type VirtualStockUncheckedUpdateManyWithoutWarehouseNestedInput = {
   deleteMany?: Prisma.VirtualStockScalarWhereInput | Prisma.VirtualStockScalarWhereInput[]
 }
 
+export type EnumVirtualSyncStatusFieldUpdateOperationsInput = {
+  set?: $Enums.VirtualSyncStatus
+}
+
+export type VirtualStockCreateWithoutSupplierCurrencyInput = {
+  quantity: number
+  updatedAt?: Date | string
+  source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  productVariant: Prisma.ProductVariantCreateNestedOneWithoutVirtualStockInput
+  warehouse: Prisma.WarehouseCreateNestedOneWithoutVirtualStocksInput
+}
+
+export type VirtualStockUncheckedCreateWithoutSupplierCurrencyInput = {
+  id?: number
+  productVariantId: number
+  warehouseId: number
+  quantity: number
+  updatedAt?: Date | string
+  source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type VirtualStockCreateOrConnectWithoutSupplierCurrencyInput = {
+  where: Prisma.VirtualStockWhereUniqueInput
+  create: Prisma.XOR<Prisma.VirtualStockCreateWithoutSupplierCurrencyInput, Prisma.VirtualStockUncheckedCreateWithoutSupplierCurrencyInput>
+}
+
+export type VirtualStockCreateManySupplierCurrencyInputEnvelope = {
+  data: Prisma.VirtualStockCreateManySupplierCurrencyInput | Prisma.VirtualStockCreateManySupplierCurrencyInput[]
+  skipDuplicates?: boolean
+}
+
+export type VirtualStockUpsertWithWhereUniqueWithoutSupplierCurrencyInput = {
+  where: Prisma.VirtualStockWhereUniqueInput
+  update: Prisma.XOR<Prisma.VirtualStockUpdateWithoutSupplierCurrencyInput, Prisma.VirtualStockUncheckedUpdateWithoutSupplierCurrencyInput>
+  create: Prisma.XOR<Prisma.VirtualStockCreateWithoutSupplierCurrencyInput, Prisma.VirtualStockUncheckedCreateWithoutSupplierCurrencyInput>
+}
+
+export type VirtualStockUpdateWithWhereUniqueWithoutSupplierCurrencyInput = {
+  where: Prisma.VirtualStockWhereUniqueInput
+  data: Prisma.XOR<Prisma.VirtualStockUpdateWithoutSupplierCurrencyInput, Prisma.VirtualStockUncheckedUpdateWithoutSupplierCurrencyInput>
+}
+
+export type VirtualStockUpdateManyWithWhereWithoutSupplierCurrencyInput = {
+  where: Prisma.VirtualStockScalarWhereInput
+  data: Prisma.XOR<Prisma.VirtualStockUpdateManyMutationInput, Prisma.VirtualStockUncheckedUpdateManyWithoutSupplierCurrencyInput>
+}
+
+export type VirtualStockScalarWhereInput = {
+  AND?: Prisma.VirtualStockScalarWhereInput | Prisma.VirtualStockScalarWhereInput[]
+  OR?: Prisma.VirtualStockScalarWhereInput[]
+  NOT?: Prisma.VirtualStockScalarWhereInput | Prisma.VirtualStockScalarWhereInput[]
+  id?: Prisma.IntFilter<"VirtualStock"> | number
+  productVariantId?: Prisma.IntFilter<"VirtualStock"> | number
+  warehouseId?: Prisma.IntFilter<"VirtualStock"> | number
+  quantity?: Prisma.IntFilter<"VirtualStock"> | number
+  updatedAt?: Prisma.DateTimeFilter<"VirtualStock"> | Date | string
+  source?: Prisma.StringNullableFilter<"VirtualStock"> | string | null
+  lastSyncAt?: Prisma.DateTimeNullableFilter<"VirtualStock"> | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFilter<"VirtualStock"> | $Enums.VirtualSyncStatus
+  syncError?: Prisma.StringNullableFilter<"VirtualStock"> | string | null
+  expectedAvailableDate?: Prisma.DateTimeNullableFilter<"VirtualStock"> | Date | string | null
+  leadTimeDays?: Prisma.IntFilter<"VirtualStock"> | number
+  supplierPrice?: Prisma.DecimalNullableFilter<"VirtualStock"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: Prisma.StringNullableFilter<"VirtualStock"> | string | null
+}
+
 export type VirtualStockCreateWithoutProductVariantInput = {
   quantity: number
   updatedAt?: Date | string
   source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouse: Prisma.WarehouseCreateNestedOneWithoutVirtualStocksInput
+  supplierCurrency?: Prisma.CurrencyCreateNestedOneWithoutVirtualStocksInput
 }
 
 export type VirtualStockUncheckedCreateWithoutProductVariantInput = {
@@ -503,6 +798,13 @@ export type VirtualStockUncheckedCreateWithoutProductVariantInput = {
   quantity: number
   updatedAt?: Date | string
   source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: string | null
 }
 
 export type VirtualStockCreateOrConnectWithoutProductVariantInput = {
@@ -531,23 +833,18 @@ export type VirtualStockUpdateManyWithWhereWithoutProductVariantInput = {
   data: Prisma.XOR<Prisma.VirtualStockUpdateManyMutationInput, Prisma.VirtualStockUncheckedUpdateManyWithoutProductVariantInput>
 }
 
-export type VirtualStockScalarWhereInput = {
-  AND?: Prisma.VirtualStockScalarWhereInput | Prisma.VirtualStockScalarWhereInput[]
-  OR?: Prisma.VirtualStockScalarWhereInput[]
-  NOT?: Prisma.VirtualStockScalarWhereInput | Prisma.VirtualStockScalarWhereInput[]
-  id?: Prisma.IntFilter<"VirtualStock"> | number
-  productVariantId?: Prisma.IntFilter<"VirtualStock"> | number
-  warehouseId?: Prisma.IntFilter<"VirtualStock"> | number
-  quantity?: Prisma.IntFilter<"VirtualStock"> | number
-  updatedAt?: Prisma.DateTimeFilter<"VirtualStock"> | Date | string
-  source?: Prisma.StringNullableFilter<"VirtualStock"> | string | null
-}
-
 export type VirtualStockCreateWithoutWarehouseInput = {
   quantity: number
   updatedAt?: Date | string
   source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   productVariant: Prisma.ProductVariantCreateNestedOneWithoutVirtualStockInput
+  supplierCurrency?: Prisma.CurrencyCreateNestedOneWithoutVirtualStocksInput
 }
 
 export type VirtualStockUncheckedCreateWithoutWarehouseInput = {
@@ -556,6 +853,13 @@ export type VirtualStockUncheckedCreateWithoutWarehouseInput = {
   quantity: number
   updatedAt?: Date | string
   source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: string | null
 }
 
 export type VirtualStockCreateOrConnectWithoutWarehouseInput = {
@@ -584,19 +888,92 @@ export type VirtualStockUpdateManyWithWhereWithoutWarehouseInput = {
   data: Prisma.XOR<Prisma.VirtualStockUpdateManyMutationInput, Prisma.VirtualStockUncheckedUpdateManyWithoutWarehouseInput>
 }
 
+export type VirtualStockCreateManySupplierCurrencyInput = {
+  id?: number
+  productVariantId: number
+  warehouseId: number
+  quantity: number
+  updatedAt?: Date | string
+  source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type VirtualStockUpdateWithoutSupplierCurrencyInput = {
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  productVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutVirtualStockNestedInput
+  warehouse?: Prisma.WarehouseUpdateOneRequiredWithoutVirtualStocksNestedInput
+}
+
+export type VirtualStockUncheckedUpdateWithoutSupplierCurrencyInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
+  warehouseId?: Prisma.IntFieldUpdateOperationsInput | number
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type VirtualStockUncheckedUpdateManyWithoutSupplierCurrencyInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  productVariantId?: Prisma.IntFieldUpdateOperationsInput | number
+  warehouseId?: Prisma.IntFieldUpdateOperationsInput | number
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
 export type VirtualStockCreateManyProductVariantInput = {
   id?: number
   warehouseId: number
   quantity: number
   updatedAt?: Date | string
   source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: string | null
 }
 
 export type VirtualStockUpdateWithoutProductVariantInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   warehouse?: Prisma.WarehouseUpdateOneRequiredWithoutVirtualStocksNestedInput
+  supplierCurrency?: Prisma.CurrencyUpdateOneWithoutVirtualStocksNestedInput
 }
 
 export type VirtualStockUncheckedUpdateWithoutProductVariantInput = {
@@ -605,6 +982,13 @@ export type VirtualStockUncheckedUpdateWithoutProductVariantInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type VirtualStockUncheckedUpdateManyWithoutProductVariantInput = {
@@ -613,6 +997,13 @@ export type VirtualStockUncheckedUpdateManyWithoutProductVariantInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type VirtualStockCreateManyWarehouseInput = {
@@ -621,13 +1012,27 @@ export type VirtualStockCreateManyWarehouseInput = {
   quantity: number
   updatedAt?: Date | string
   source?: string | null
+  lastSyncAt?: Date | string | null
+  syncStatus?: $Enums.VirtualSyncStatus
+  syncError?: string | null
+  expectedAvailableDate?: Date | string | null
+  leadTimeDays?: number
+  supplierPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: string | null
 }
 
 export type VirtualStockUpdateWithoutWarehouseInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   productVariant?: Prisma.ProductVariantUpdateOneRequiredWithoutVirtualStockNestedInput
+  supplierCurrency?: Prisma.CurrencyUpdateOneWithoutVirtualStocksNestedInput
 }
 
 export type VirtualStockUncheckedUpdateWithoutWarehouseInput = {
@@ -636,6 +1041,13 @@ export type VirtualStockUncheckedUpdateWithoutWarehouseInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type VirtualStockUncheckedUpdateManyWithoutWarehouseInput = {
@@ -644,6 +1056,13 @@ export type VirtualStockUncheckedUpdateManyWithoutWarehouseInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  syncStatus?: Prisma.EnumVirtualSyncStatusFieldUpdateOperationsInput | $Enums.VirtualSyncStatus
+  syncError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  expectedAvailableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leadTimeDays?: Prisma.IntFieldUpdateOperationsInput | number
+  supplierPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  supplierCurrencyCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -655,8 +1074,16 @@ export type VirtualStockSelect<ExtArgs extends runtime.Types.Extensions.Internal
   quantity?: boolean
   updatedAt?: boolean
   source?: boolean
+  lastSyncAt?: boolean
+  syncStatus?: boolean
+  syncError?: boolean
+  expectedAvailableDate?: boolean
+  leadTimeDays?: boolean
+  supplierPrice?: boolean
+  supplierCurrencyCode?: boolean
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
   warehouse?: boolean | Prisma.WarehouseDefaultArgs<ExtArgs>
+  supplierCurrency?: boolean | Prisma.VirtualStock$supplierCurrencyArgs<ExtArgs>
 }, ExtArgs["result"]["virtualStock"]>
 
 export type VirtualStockSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -666,8 +1093,16 @@ export type VirtualStockSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   quantity?: boolean
   updatedAt?: boolean
   source?: boolean
+  lastSyncAt?: boolean
+  syncStatus?: boolean
+  syncError?: boolean
+  expectedAvailableDate?: boolean
+  leadTimeDays?: boolean
+  supplierPrice?: boolean
+  supplierCurrencyCode?: boolean
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
   warehouse?: boolean | Prisma.WarehouseDefaultArgs<ExtArgs>
+  supplierCurrency?: boolean | Prisma.VirtualStock$supplierCurrencyArgs<ExtArgs>
 }, ExtArgs["result"]["virtualStock"]>
 
 export type VirtualStockSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -677,8 +1112,16 @@ export type VirtualStockSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   quantity?: boolean
   updatedAt?: boolean
   source?: boolean
+  lastSyncAt?: boolean
+  syncStatus?: boolean
+  syncError?: boolean
+  expectedAvailableDate?: boolean
+  leadTimeDays?: boolean
+  supplierPrice?: boolean
+  supplierCurrencyCode?: boolean
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
   warehouse?: boolean | Prisma.WarehouseDefaultArgs<ExtArgs>
+  supplierCurrency?: boolean | Prisma.VirtualStock$supplierCurrencyArgs<ExtArgs>
 }, ExtArgs["result"]["virtualStock"]>
 
 export type VirtualStockSelectScalar = {
@@ -688,20 +1131,30 @@ export type VirtualStockSelectScalar = {
   quantity?: boolean
   updatedAt?: boolean
   source?: boolean
+  lastSyncAt?: boolean
+  syncStatus?: boolean
+  syncError?: boolean
+  expectedAvailableDate?: boolean
+  leadTimeDays?: boolean
+  supplierPrice?: boolean
+  supplierCurrencyCode?: boolean
 }
 
-export type VirtualStockOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productVariantId" | "warehouseId" | "quantity" | "updatedAt" | "source", ExtArgs["result"]["virtualStock"]>
+export type VirtualStockOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productVariantId" | "warehouseId" | "quantity" | "updatedAt" | "source" | "lastSyncAt" | "syncStatus" | "syncError" | "expectedAvailableDate" | "leadTimeDays" | "supplierPrice" | "supplierCurrencyCode", ExtArgs["result"]["virtualStock"]>
 export type VirtualStockInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
   warehouse?: boolean | Prisma.WarehouseDefaultArgs<ExtArgs>
+  supplierCurrency?: boolean | Prisma.VirtualStock$supplierCurrencyArgs<ExtArgs>
 }
 export type VirtualStockIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
   warehouse?: boolean | Prisma.WarehouseDefaultArgs<ExtArgs>
+  supplierCurrency?: boolean | Prisma.VirtualStock$supplierCurrencyArgs<ExtArgs>
 }
 export type VirtualStockIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   productVariant?: boolean | Prisma.ProductVariantDefaultArgs<ExtArgs>
   warehouse?: boolean | Prisma.WarehouseDefaultArgs<ExtArgs>
+  supplierCurrency?: boolean | Prisma.VirtualStock$supplierCurrencyArgs<ExtArgs>
 }
 
 export type $VirtualStockPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -709,6 +1162,7 @@ export type $VirtualStockPayload<ExtArgs extends runtime.Types.Extensions.Intern
   objects: {
     productVariant: Prisma.$ProductVariantPayload<ExtArgs>
     warehouse: Prisma.$WarehousePayload<ExtArgs>
+    supplierCurrency: Prisma.$CurrencyPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -717,6 +1171,13 @@ export type $VirtualStockPayload<ExtArgs extends runtime.Types.Extensions.Intern
     quantity: number
     updatedAt: Date
     source: string | null
+    lastSyncAt: Date | null
+    syncStatus: $Enums.VirtualSyncStatus
+    syncError: string | null
+    expectedAvailableDate: Date | null
+    leadTimeDays: number
+    supplierPrice: runtime.Decimal | null
+    supplierCurrencyCode: string | null
   }, ExtArgs["result"]["virtualStock"]>
   composites: {}
 }
@@ -1113,6 +1574,7 @@ export interface Prisma__VirtualStockClient<T, Null = never, ExtArgs extends run
   readonly [Symbol.toStringTag]: "PrismaPromise"
   productVariant<T extends Prisma.ProductVariantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariantDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductVariantClient<runtime.Types.Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   warehouse<T extends Prisma.WarehouseDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WarehouseDefaultArgs<ExtArgs>>): Prisma.Prisma__WarehouseClient<runtime.Types.Result.GetResult<Prisma.$WarehousePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  supplierCurrency<T extends Prisma.VirtualStock$supplierCurrencyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VirtualStock$supplierCurrencyArgs<ExtArgs>>): Prisma.Prisma__CurrencyClient<runtime.Types.Result.GetResult<Prisma.$CurrencyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1148,6 +1610,13 @@ export interface VirtualStockFieldRefs {
   readonly quantity: Prisma.FieldRef<"VirtualStock", 'Int'>
   readonly updatedAt: Prisma.FieldRef<"VirtualStock", 'DateTime'>
   readonly source: Prisma.FieldRef<"VirtualStock", 'String'>
+  readonly lastSyncAt: Prisma.FieldRef<"VirtualStock", 'DateTime'>
+  readonly syncStatus: Prisma.FieldRef<"VirtualStock", 'VirtualSyncStatus'>
+  readonly syncError: Prisma.FieldRef<"VirtualStock", 'String'>
+  readonly expectedAvailableDate: Prisma.FieldRef<"VirtualStock", 'DateTime'>
+  readonly leadTimeDays: Prisma.FieldRef<"VirtualStock", 'Int'>
+  readonly supplierPrice: Prisma.FieldRef<"VirtualStock", 'Decimal'>
+  readonly supplierCurrencyCode: Prisma.FieldRef<"VirtualStock", 'String'>
 }
     
 
@@ -1541,6 +2010,25 @@ export type VirtualStockDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many VirtualStocks to delete.
    */
   limit?: number
+}
+
+/**
+ * VirtualStock.supplierCurrency
+ */
+export type VirtualStock$supplierCurrencyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Currency
+   */
+  select?: Prisma.CurrencySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Currency
+   */
+  omit?: Prisma.CurrencyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CurrencyInclude<ExtArgs> | null
+  where?: Prisma.CurrencyWhereInput
 }
 
 /**

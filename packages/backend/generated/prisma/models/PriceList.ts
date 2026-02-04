@@ -42,7 +42,7 @@ export type PriceListMinAggregateOutputType = {
   id: number | null
   code: string | null
   name: string | null
-  currency: string | null
+  currencyCode: string | null
   type: $Enums.PriceListType | null
   validFrom: Date | null
   validTo: Date | null
@@ -59,7 +59,7 @@ export type PriceListMaxAggregateOutputType = {
   id: number | null
   code: string | null
   name: string | null
-  currency: string | null
+  currencyCode: string | null
   type: $Enums.PriceListType | null
   validFrom: Date | null
   validTo: Date | null
@@ -76,7 +76,7 @@ export type PriceListCountAggregateOutputType = {
   id: number
   code: number
   name: number
-  currency: number
+  currencyCode: number
   type: number
   validFrom: number
   validTo: number
@@ -107,7 +107,7 @@ export type PriceListMinAggregateInputType = {
   id?: true
   code?: true
   name?: true
-  currency?: true
+  currencyCode?: true
   type?: true
   validFrom?: true
   validTo?: true
@@ -124,7 +124,7 @@ export type PriceListMaxAggregateInputType = {
   id?: true
   code?: true
   name?: true
-  currency?: true
+  currencyCode?: true
   type?: true
   validFrom?: true
   validTo?: true
@@ -141,7 +141,7 @@ export type PriceListCountAggregateInputType = {
   id?: true
   code?: true
   name?: true
-  currency?: true
+  currencyCode?: true
   type?: true
   validFrom?: true
   validTo?: true
@@ -245,7 +245,7 @@ export type PriceListGroupByOutputType = {
   id: number
   code: string
   name: string
-  currency: string
+  currencyCode: string
   type: $Enums.PriceListType
   validFrom: Date | null
   validTo: Date | null
@@ -285,7 +285,7 @@ export type PriceListWhereInput = {
   id?: Prisma.IntFilter<"PriceList"> | number
   code?: Prisma.StringFilter<"PriceList"> | string
   name?: Prisma.StringFilter<"PriceList"> | string
-  currency?: Prisma.StringFilter<"PriceList"> | string
+  currencyCode?: Prisma.StringFilter<"PriceList"> | string
   type?: Prisma.EnumPriceListTypeFilter<"PriceList"> | $Enums.PriceListType
   validFrom?: Prisma.DateTimeNullableFilter<"PriceList"> | Date | string | null
   validTo?: Prisma.DateTimeNullableFilter<"PriceList"> | Date | string | null
@@ -296,6 +296,7 @@ export type PriceListWhereInput = {
   roundingMethod?: Prisma.StringNullableFilter<"PriceList"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PriceList"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PriceList"> | Date | string
+  currency?: Prisma.XOR<Prisma.CurrencyScalarRelationFilter, Prisma.CurrencyWhereInput>
   parentList?: Prisma.XOR<Prisma.PriceListNullableScalarRelationFilter, Prisma.PriceListWhereInput> | null
   childrenLists?: Prisma.PriceListListRelationFilter
   items?: Prisma.PriceListItemListRelationFilter
@@ -306,7 +307,7 @@ export type PriceListOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  currency?: Prisma.SortOrder
+  currencyCode?: Prisma.SortOrder
   type?: Prisma.SortOrder
   validFrom?: Prisma.SortOrderInput | Prisma.SortOrder
   validTo?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -317,6 +318,7 @@ export type PriceListOrderByWithRelationInput = {
   roundingMethod?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  currency?: Prisma.CurrencyOrderByWithRelationInput
   parentList?: Prisma.PriceListOrderByWithRelationInput
   childrenLists?: Prisma.PriceListOrderByRelationAggregateInput
   items?: Prisma.PriceListItemOrderByRelationAggregateInput
@@ -330,7 +332,7 @@ export type PriceListWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.PriceListWhereInput[]
   NOT?: Prisma.PriceListWhereInput | Prisma.PriceListWhereInput[]
   name?: Prisma.StringFilter<"PriceList"> | string
-  currency?: Prisma.StringFilter<"PriceList"> | string
+  currencyCode?: Prisma.StringFilter<"PriceList"> | string
   type?: Prisma.EnumPriceListTypeFilter<"PriceList"> | $Enums.PriceListType
   validFrom?: Prisma.DateTimeNullableFilter<"PriceList"> | Date | string | null
   validTo?: Prisma.DateTimeNullableFilter<"PriceList"> | Date | string | null
@@ -341,6 +343,7 @@ export type PriceListWhereUniqueInput = Prisma.AtLeast<{
   roundingMethod?: Prisma.StringNullableFilter<"PriceList"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PriceList"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PriceList"> | Date | string
+  currency?: Prisma.XOR<Prisma.CurrencyScalarRelationFilter, Prisma.CurrencyWhereInput>
   parentList?: Prisma.XOR<Prisma.PriceListNullableScalarRelationFilter, Prisma.PriceListWhereInput> | null
   childrenLists?: Prisma.PriceListListRelationFilter
   items?: Prisma.PriceListItemListRelationFilter
@@ -351,7 +354,7 @@ export type PriceListOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  currency?: Prisma.SortOrder
+  currencyCode?: Prisma.SortOrder
   type?: Prisma.SortOrder
   validFrom?: Prisma.SortOrderInput | Prisma.SortOrder
   validTo?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -376,7 +379,7 @@ export type PriceListScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"PriceList"> | number
   code?: Prisma.StringWithAggregatesFilter<"PriceList"> | string
   name?: Prisma.StringWithAggregatesFilter<"PriceList"> | string
-  currency?: Prisma.StringWithAggregatesFilter<"PriceList"> | string
+  currencyCode?: Prisma.StringWithAggregatesFilter<"PriceList"> | string
   type?: Prisma.EnumPriceListTypeWithAggregatesFilter<"PriceList"> | $Enums.PriceListType
   validFrom?: Prisma.DateTimeNullableWithAggregatesFilter<"PriceList"> | Date | string | null
   validTo?: Prisma.DateTimeNullableWithAggregatesFilter<"PriceList"> | Date | string | null
@@ -392,7 +395,6 @@ export type PriceListScalarWhereWithAggregatesInput = {
 export type PriceListCreateInput = {
   code: string
   name: string
-  currency?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -402,6 +404,7 @@ export type PriceListCreateInput = {
   roundingMethod?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  currency?: Prisma.CurrencyCreateNestedOneWithoutPriceListsInput
   parentList?: Prisma.PriceListCreateNestedOneWithoutChildrenListsInput
   childrenLists?: Prisma.PriceListCreateNestedManyWithoutParentListInput
   items?: Prisma.PriceListItemCreateNestedManyWithoutPriceListInput
@@ -412,7 +415,7 @@ export type PriceListUncheckedCreateInput = {
   id?: number
   code: string
   name: string
-  currency?: string
+  currencyCode?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -431,7 +434,6 @@ export type PriceListUncheckedCreateInput = {
 export type PriceListUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -441,6 +443,7 @@ export type PriceListUpdateInput = {
   roundingMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutPriceListsNestedInput
   parentList?: Prisma.PriceListUpdateOneWithoutChildrenListsNestedInput
   childrenLists?: Prisma.PriceListUpdateManyWithoutParentListNestedInput
   items?: Prisma.PriceListItemUpdateManyWithoutPriceListNestedInput
@@ -451,7 +454,7 @@ export type PriceListUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -471,7 +474,7 @@ export type PriceListCreateManyInput = {
   id?: number
   code: string
   name: string
-  currency?: string
+  currencyCode?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -487,7 +490,6 @@ export type PriceListCreateManyInput = {
 export type PriceListUpdateManyMutationInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -503,7 +505,7 @@ export type PriceListUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -535,7 +537,7 @@ export type PriceListCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  currency?: Prisma.SortOrder
+  currencyCode?: Prisma.SortOrder
   type?: Prisma.SortOrder
   validFrom?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
@@ -558,7 +560,7 @@ export type PriceListMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  currency?: Prisma.SortOrder
+  currencyCode?: Prisma.SortOrder
   type?: Prisma.SortOrder
   validFrom?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
@@ -575,7 +577,7 @@ export type PriceListMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  currency?: Prisma.SortOrder
+  currencyCode?: Prisma.SortOrder
   type?: Prisma.SortOrder
   validFrom?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
@@ -613,6 +615,48 @@ export type PriceListUpdateOneWithoutCustomersNestedInput = {
   delete?: Prisma.PriceListWhereInput | boolean
   connect?: Prisma.PriceListWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.PriceListUpdateToOneWithWhereWithoutCustomersInput, Prisma.PriceListUpdateWithoutCustomersInput>, Prisma.PriceListUncheckedUpdateWithoutCustomersInput>
+}
+
+export type PriceListCreateNestedManyWithoutCurrencyInput = {
+  create?: Prisma.XOR<Prisma.PriceListCreateWithoutCurrencyInput, Prisma.PriceListUncheckedCreateWithoutCurrencyInput> | Prisma.PriceListCreateWithoutCurrencyInput[] | Prisma.PriceListUncheckedCreateWithoutCurrencyInput[]
+  connectOrCreate?: Prisma.PriceListCreateOrConnectWithoutCurrencyInput | Prisma.PriceListCreateOrConnectWithoutCurrencyInput[]
+  createMany?: Prisma.PriceListCreateManyCurrencyInputEnvelope
+  connect?: Prisma.PriceListWhereUniqueInput | Prisma.PriceListWhereUniqueInput[]
+}
+
+export type PriceListUncheckedCreateNestedManyWithoutCurrencyInput = {
+  create?: Prisma.XOR<Prisma.PriceListCreateWithoutCurrencyInput, Prisma.PriceListUncheckedCreateWithoutCurrencyInput> | Prisma.PriceListCreateWithoutCurrencyInput[] | Prisma.PriceListUncheckedCreateWithoutCurrencyInput[]
+  connectOrCreate?: Prisma.PriceListCreateOrConnectWithoutCurrencyInput | Prisma.PriceListCreateOrConnectWithoutCurrencyInput[]
+  createMany?: Prisma.PriceListCreateManyCurrencyInputEnvelope
+  connect?: Prisma.PriceListWhereUniqueInput | Prisma.PriceListWhereUniqueInput[]
+}
+
+export type PriceListUpdateManyWithoutCurrencyNestedInput = {
+  create?: Prisma.XOR<Prisma.PriceListCreateWithoutCurrencyInput, Prisma.PriceListUncheckedCreateWithoutCurrencyInput> | Prisma.PriceListCreateWithoutCurrencyInput[] | Prisma.PriceListUncheckedCreateWithoutCurrencyInput[]
+  connectOrCreate?: Prisma.PriceListCreateOrConnectWithoutCurrencyInput | Prisma.PriceListCreateOrConnectWithoutCurrencyInput[]
+  upsert?: Prisma.PriceListUpsertWithWhereUniqueWithoutCurrencyInput | Prisma.PriceListUpsertWithWhereUniqueWithoutCurrencyInput[]
+  createMany?: Prisma.PriceListCreateManyCurrencyInputEnvelope
+  set?: Prisma.PriceListWhereUniqueInput | Prisma.PriceListWhereUniqueInput[]
+  disconnect?: Prisma.PriceListWhereUniqueInput | Prisma.PriceListWhereUniqueInput[]
+  delete?: Prisma.PriceListWhereUniqueInput | Prisma.PriceListWhereUniqueInput[]
+  connect?: Prisma.PriceListWhereUniqueInput | Prisma.PriceListWhereUniqueInput[]
+  update?: Prisma.PriceListUpdateWithWhereUniqueWithoutCurrencyInput | Prisma.PriceListUpdateWithWhereUniqueWithoutCurrencyInput[]
+  updateMany?: Prisma.PriceListUpdateManyWithWhereWithoutCurrencyInput | Prisma.PriceListUpdateManyWithWhereWithoutCurrencyInput[]
+  deleteMany?: Prisma.PriceListScalarWhereInput | Prisma.PriceListScalarWhereInput[]
+}
+
+export type PriceListUncheckedUpdateManyWithoutCurrencyNestedInput = {
+  create?: Prisma.XOR<Prisma.PriceListCreateWithoutCurrencyInput, Prisma.PriceListUncheckedCreateWithoutCurrencyInput> | Prisma.PriceListCreateWithoutCurrencyInput[] | Prisma.PriceListUncheckedCreateWithoutCurrencyInput[]
+  connectOrCreate?: Prisma.PriceListCreateOrConnectWithoutCurrencyInput | Prisma.PriceListCreateOrConnectWithoutCurrencyInput[]
+  upsert?: Prisma.PriceListUpsertWithWhereUniqueWithoutCurrencyInput | Prisma.PriceListUpsertWithWhereUniqueWithoutCurrencyInput[]
+  createMany?: Prisma.PriceListCreateManyCurrencyInputEnvelope
+  set?: Prisma.PriceListWhereUniqueInput | Prisma.PriceListWhereUniqueInput[]
+  disconnect?: Prisma.PriceListWhereUniqueInput | Prisma.PriceListWhereUniqueInput[]
+  delete?: Prisma.PriceListWhereUniqueInput | Prisma.PriceListWhereUniqueInput[]
+  connect?: Prisma.PriceListWhereUniqueInput | Prisma.PriceListWhereUniqueInput[]
+  update?: Prisma.PriceListUpdateWithWhereUniqueWithoutCurrencyInput | Prisma.PriceListUpdateWithWhereUniqueWithoutCurrencyInput[]
+  updateMany?: Prisma.PriceListUpdateManyWithWhereWithoutCurrencyInput | Prisma.PriceListUpdateManyWithWhereWithoutCurrencyInput[]
+  deleteMany?: Prisma.PriceListScalarWhereInput | Prisma.PriceListScalarWhereInput[]
 }
 
 export type PriceListCreateNestedOneWithoutChildrenListsInput = {
@@ -698,7 +742,6 @@ export type PriceListUpdateOneRequiredWithoutItemsNestedInput = {
 export type PriceListCreateWithoutCustomersInput = {
   code: string
   name: string
-  currency?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -708,6 +751,7 @@ export type PriceListCreateWithoutCustomersInput = {
   roundingMethod?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  currency?: Prisma.CurrencyCreateNestedOneWithoutPriceListsInput
   parentList?: Prisma.PriceListCreateNestedOneWithoutChildrenListsInput
   childrenLists?: Prisma.PriceListCreateNestedManyWithoutParentListInput
   items?: Prisma.PriceListItemCreateNestedManyWithoutPriceListInput
@@ -717,7 +761,7 @@ export type PriceListUncheckedCreateWithoutCustomersInput = {
   id?: number
   code: string
   name: string
-  currency?: string
+  currencyCode?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -751,7 +795,6 @@ export type PriceListUpdateToOneWithWhereWithoutCustomersInput = {
 export type PriceListUpdateWithoutCustomersInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -761,6 +804,7 @@ export type PriceListUpdateWithoutCustomersInput = {
   roundingMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutPriceListsNestedInput
   parentList?: Prisma.PriceListUpdateOneWithoutChildrenListsNestedInput
   childrenLists?: Prisma.PriceListUpdateManyWithoutParentListNestedInput
   items?: Prisma.PriceListItemUpdateManyWithoutPriceListNestedInput
@@ -770,7 +814,7 @@ export type PriceListUncheckedUpdateWithoutCustomersInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -785,10 +829,9 @@ export type PriceListUncheckedUpdateWithoutCustomersInput = {
   items?: Prisma.PriceListItemUncheckedUpdateManyWithoutPriceListNestedInput
 }
 
-export type PriceListCreateWithoutChildrenListsInput = {
+export type PriceListCreateWithoutCurrencyInput = {
   code: string
   name: string
-  currency?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -799,6 +842,90 @@ export type PriceListCreateWithoutChildrenListsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   parentList?: Prisma.PriceListCreateNestedOneWithoutChildrenListsInput
+  childrenLists?: Prisma.PriceListCreateNestedManyWithoutParentListInput
+  items?: Prisma.PriceListItemCreateNestedManyWithoutPriceListInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutDefaultPriceListInput
+}
+
+export type PriceListUncheckedCreateWithoutCurrencyInput = {
+  id?: number
+  code: string
+  name: string
+  type?: $Enums.PriceListType
+  validFrom?: Date | string | null
+  validTo?: Date | string | null
+  active?: boolean
+  parentListId?: number | null
+  strategy?: $Enums.PriceListStrategy
+  strategyValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  roundingMethod?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  childrenLists?: Prisma.PriceListUncheckedCreateNestedManyWithoutParentListInput
+  items?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutPriceListInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDefaultPriceListInput
+}
+
+export type PriceListCreateOrConnectWithoutCurrencyInput = {
+  where: Prisma.PriceListWhereUniqueInput
+  create: Prisma.XOR<Prisma.PriceListCreateWithoutCurrencyInput, Prisma.PriceListUncheckedCreateWithoutCurrencyInput>
+}
+
+export type PriceListCreateManyCurrencyInputEnvelope = {
+  data: Prisma.PriceListCreateManyCurrencyInput | Prisma.PriceListCreateManyCurrencyInput[]
+  skipDuplicates?: boolean
+}
+
+export type PriceListUpsertWithWhereUniqueWithoutCurrencyInput = {
+  where: Prisma.PriceListWhereUniqueInput
+  update: Prisma.XOR<Prisma.PriceListUpdateWithoutCurrencyInput, Prisma.PriceListUncheckedUpdateWithoutCurrencyInput>
+  create: Prisma.XOR<Prisma.PriceListCreateWithoutCurrencyInput, Prisma.PriceListUncheckedCreateWithoutCurrencyInput>
+}
+
+export type PriceListUpdateWithWhereUniqueWithoutCurrencyInput = {
+  where: Prisma.PriceListWhereUniqueInput
+  data: Prisma.XOR<Prisma.PriceListUpdateWithoutCurrencyInput, Prisma.PriceListUncheckedUpdateWithoutCurrencyInput>
+}
+
+export type PriceListUpdateManyWithWhereWithoutCurrencyInput = {
+  where: Prisma.PriceListScalarWhereInput
+  data: Prisma.XOR<Prisma.PriceListUpdateManyMutationInput, Prisma.PriceListUncheckedUpdateManyWithoutCurrencyInput>
+}
+
+export type PriceListScalarWhereInput = {
+  AND?: Prisma.PriceListScalarWhereInput | Prisma.PriceListScalarWhereInput[]
+  OR?: Prisma.PriceListScalarWhereInput[]
+  NOT?: Prisma.PriceListScalarWhereInput | Prisma.PriceListScalarWhereInput[]
+  id?: Prisma.IntFilter<"PriceList"> | number
+  code?: Prisma.StringFilter<"PriceList"> | string
+  name?: Prisma.StringFilter<"PriceList"> | string
+  currencyCode?: Prisma.StringFilter<"PriceList"> | string
+  type?: Prisma.EnumPriceListTypeFilter<"PriceList"> | $Enums.PriceListType
+  validFrom?: Prisma.DateTimeNullableFilter<"PriceList"> | Date | string | null
+  validTo?: Prisma.DateTimeNullableFilter<"PriceList"> | Date | string | null
+  active?: Prisma.BoolFilter<"PriceList"> | boolean
+  parentListId?: Prisma.IntNullableFilter<"PriceList"> | number | null
+  strategy?: Prisma.EnumPriceListStrategyFilter<"PriceList"> | $Enums.PriceListStrategy
+  strategyValue?: Prisma.DecimalFilter<"PriceList"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  roundingMethod?: Prisma.StringNullableFilter<"PriceList"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"PriceList"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"PriceList"> | Date | string
+}
+
+export type PriceListCreateWithoutChildrenListsInput = {
+  code: string
+  name: string
+  type?: $Enums.PriceListType
+  validFrom?: Date | string | null
+  validTo?: Date | string | null
+  active?: boolean
+  strategy?: $Enums.PriceListStrategy
+  strategyValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  roundingMethod?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  currency?: Prisma.CurrencyCreateNestedOneWithoutPriceListsInput
+  parentList?: Prisma.PriceListCreateNestedOneWithoutChildrenListsInput
   items?: Prisma.PriceListItemCreateNestedManyWithoutPriceListInput
   customers?: Prisma.CustomerCreateNestedManyWithoutDefaultPriceListInput
 }
@@ -807,7 +934,7 @@ export type PriceListUncheckedCreateWithoutChildrenListsInput = {
   id?: number
   code: string
   name: string
-  currency?: string
+  currencyCode?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -830,7 +957,6 @@ export type PriceListCreateOrConnectWithoutChildrenListsInput = {
 export type PriceListCreateWithoutParentListInput = {
   code: string
   name: string
-  currency?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -840,6 +966,7 @@ export type PriceListCreateWithoutParentListInput = {
   roundingMethod?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  currency?: Prisma.CurrencyCreateNestedOneWithoutPriceListsInput
   childrenLists?: Prisma.PriceListCreateNestedManyWithoutParentListInput
   items?: Prisma.PriceListItemCreateNestedManyWithoutPriceListInput
   customers?: Prisma.CustomerCreateNestedManyWithoutDefaultPriceListInput
@@ -849,7 +976,7 @@ export type PriceListUncheckedCreateWithoutParentListInput = {
   id?: number
   code: string
   name: string
-  currency?: string
+  currencyCode?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -888,7 +1015,6 @@ export type PriceListUpdateToOneWithWhereWithoutChildrenListsInput = {
 export type PriceListUpdateWithoutChildrenListsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -898,6 +1024,7 @@ export type PriceListUpdateWithoutChildrenListsInput = {
   roundingMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutPriceListsNestedInput
   parentList?: Prisma.PriceListUpdateOneWithoutChildrenListsNestedInput
   items?: Prisma.PriceListItemUpdateManyWithoutPriceListNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutDefaultPriceListNestedInput
@@ -907,7 +1034,7 @@ export type PriceListUncheckedUpdateWithoutChildrenListsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -938,30 +1065,9 @@ export type PriceListUpdateManyWithWhereWithoutParentListInput = {
   data: Prisma.XOR<Prisma.PriceListUpdateManyMutationInput, Prisma.PriceListUncheckedUpdateManyWithoutParentListInput>
 }
 
-export type PriceListScalarWhereInput = {
-  AND?: Prisma.PriceListScalarWhereInput | Prisma.PriceListScalarWhereInput[]
-  OR?: Prisma.PriceListScalarWhereInput[]
-  NOT?: Prisma.PriceListScalarWhereInput | Prisma.PriceListScalarWhereInput[]
-  id?: Prisma.IntFilter<"PriceList"> | number
-  code?: Prisma.StringFilter<"PriceList"> | string
-  name?: Prisma.StringFilter<"PriceList"> | string
-  currency?: Prisma.StringFilter<"PriceList"> | string
-  type?: Prisma.EnumPriceListTypeFilter<"PriceList"> | $Enums.PriceListType
-  validFrom?: Prisma.DateTimeNullableFilter<"PriceList"> | Date | string | null
-  validTo?: Prisma.DateTimeNullableFilter<"PriceList"> | Date | string | null
-  active?: Prisma.BoolFilter<"PriceList"> | boolean
-  parentListId?: Prisma.IntNullableFilter<"PriceList"> | number | null
-  strategy?: Prisma.EnumPriceListStrategyFilter<"PriceList"> | $Enums.PriceListStrategy
-  strategyValue?: Prisma.DecimalFilter<"PriceList"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  roundingMethod?: Prisma.StringNullableFilter<"PriceList"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"PriceList"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"PriceList"> | Date | string
-}
-
 export type PriceListCreateWithoutItemsInput = {
   code: string
   name: string
-  currency?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -971,6 +1077,7 @@ export type PriceListCreateWithoutItemsInput = {
   roundingMethod?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  currency?: Prisma.CurrencyCreateNestedOneWithoutPriceListsInput
   parentList?: Prisma.PriceListCreateNestedOneWithoutChildrenListsInput
   childrenLists?: Prisma.PriceListCreateNestedManyWithoutParentListInput
   customers?: Prisma.CustomerCreateNestedManyWithoutDefaultPriceListInput
@@ -980,7 +1087,7 @@ export type PriceListUncheckedCreateWithoutItemsInput = {
   id?: number
   code: string
   name: string
-  currency?: string
+  currencyCode?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -1014,7 +1121,6 @@ export type PriceListUpdateToOneWithWhereWithoutItemsInput = {
 export type PriceListUpdateWithoutItemsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1024,6 +1130,7 @@ export type PriceListUpdateWithoutItemsInput = {
   roundingMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutPriceListsNestedInput
   parentList?: Prisma.PriceListUpdateOneWithoutChildrenListsNestedInput
   childrenLists?: Prisma.PriceListUpdateManyWithoutParentListNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutDefaultPriceListNestedInput
@@ -1033,7 +1140,7 @@ export type PriceListUncheckedUpdateWithoutItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1048,11 +1155,80 @@ export type PriceListUncheckedUpdateWithoutItemsInput = {
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutDefaultPriceListNestedInput
 }
 
+export type PriceListCreateManyCurrencyInput = {
+  id?: number
+  code: string
+  name: string
+  type?: $Enums.PriceListType
+  validFrom?: Date | string | null
+  validTo?: Date | string | null
+  active?: boolean
+  parentListId?: number | null
+  strategy?: $Enums.PriceListStrategy
+  strategyValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  roundingMethod?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PriceListUpdateWithoutCurrencyInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
+  validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  strategy?: Prisma.EnumPriceListStrategyFieldUpdateOperationsInput | $Enums.PriceListStrategy
+  strategyValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  roundingMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parentList?: Prisma.PriceListUpdateOneWithoutChildrenListsNestedInput
+  childrenLists?: Prisma.PriceListUpdateManyWithoutParentListNestedInput
+  items?: Prisma.PriceListItemUpdateManyWithoutPriceListNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutDefaultPriceListNestedInput
+}
+
+export type PriceListUncheckedUpdateWithoutCurrencyInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
+  validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  parentListId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  strategy?: Prisma.EnumPriceListStrategyFieldUpdateOperationsInput | $Enums.PriceListStrategy
+  strategyValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  roundingMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  childrenLists?: Prisma.PriceListUncheckedUpdateManyWithoutParentListNestedInput
+  items?: Prisma.PriceListItemUncheckedUpdateManyWithoutPriceListNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutDefaultPriceListNestedInput
+}
+
+export type PriceListUncheckedUpdateManyWithoutCurrencyInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
+  validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  parentListId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  strategy?: Prisma.EnumPriceListStrategyFieldUpdateOperationsInput | $Enums.PriceListStrategy
+  strategyValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  roundingMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type PriceListCreateManyParentListInput = {
   id?: number
   code: string
   name: string
-  currency?: string
+  currencyCode?: string
   type?: $Enums.PriceListType
   validFrom?: Date | string | null
   validTo?: Date | string | null
@@ -1067,7 +1243,6 @@ export type PriceListCreateManyParentListInput = {
 export type PriceListUpdateWithoutParentListInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1077,6 +1252,7 @@ export type PriceListUpdateWithoutParentListInput = {
   roundingMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  currency?: Prisma.CurrencyUpdateOneRequiredWithoutPriceListsNestedInput
   childrenLists?: Prisma.PriceListUpdateManyWithoutParentListNestedInput
   items?: Prisma.PriceListItemUpdateManyWithoutPriceListNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutDefaultPriceListNestedInput
@@ -1086,7 +1262,7 @@ export type PriceListUncheckedUpdateWithoutParentListInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1105,7 +1281,7 @@ export type PriceListUncheckedUpdateManyWithoutParentListInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPriceListTypeFieldUpdateOperationsInput | $Enums.PriceListType
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1170,7 +1346,7 @@ export type PriceListSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   id?: boolean
   code?: boolean
   name?: boolean
-  currency?: boolean
+  currencyCode?: boolean
   type?: boolean
   validFrom?: boolean
   validTo?: boolean
@@ -1181,6 +1357,7 @@ export type PriceListSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   roundingMethod?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   parentList?: boolean | Prisma.PriceList$parentListArgs<ExtArgs>
   childrenLists?: boolean | Prisma.PriceList$childrenListsArgs<ExtArgs>
   items?: boolean | Prisma.PriceList$itemsArgs<ExtArgs>
@@ -1192,7 +1369,7 @@ export type PriceListSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   id?: boolean
   code?: boolean
   name?: boolean
-  currency?: boolean
+  currencyCode?: boolean
   type?: boolean
   validFrom?: boolean
   validTo?: boolean
@@ -1203,6 +1380,7 @@ export type PriceListSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   roundingMethod?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   parentList?: boolean | Prisma.PriceList$parentListArgs<ExtArgs>
 }, ExtArgs["result"]["priceList"]>
 
@@ -1210,7 +1388,7 @@ export type PriceListSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   id?: boolean
   code?: boolean
   name?: boolean
-  currency?: boolean
+  currencyCode?: boolean
   type?: boolean
   validFrom?: boolean
   validTo?: boolean
@@ -1221,6 +1399,7 @@ export type PriceListSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   roundingMethod?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   parentList?: boolean | Prisma.PriceList$parentListArgs<ExtArgs>
 }, ExtArgs["result"]["priceList"]>
 
@@ -1228,7 +1407,7 @@ export type PriceListSelectScalar = {
   id?: boolean
   code?: boolean
   name?: boolean
-  currency?: boolean
+  currencyCode?: boolean
   type?: boolean
   validFrom?: boolean
   validTo?: boolean
@@ -1241,8 +1420,9 @@ export type PriceListSelectScalar = {
   updatedAt?: boolean
 }
 
-export type PriceListOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "currency" | "type" | "validFrom" | "validTo" | "active" | "parentListId" | "strategy" | "strategyValue" | "roundingMethod" | "createdAt" | "updatedAt", ExtArgs["result"]["priceList"]>
+export type PriceListOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "currencyCode" | "type" | "validFrom" | "validTo" | "active" | "parentListId" | "strategy" | "strategyValue" | "roundingMethod" | "createdAt" | "updatedAt", ExtArgs["result"]["priceList"]>
 export type PriceListInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   parentList?: boolean | Prisma.PriceList$parentListArgs<ExtArgs>
   childrenLists?: boolean | Prisma.PriceList$childrenListsArgs<ExtArgs>
   items?: boolean | Prisma.PriceList$itemsArgs<ExtArgs>
@@ -1250,15 +1430,18 @@ export type PriceListInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   _count?: boolean | Prisma.PriceListCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PriceListIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   parentList?: boolean | Prisma.PriceList$parentListArgs<ExtArgs>
 }
 export type PriceListIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  currency?: boolean | Prisma.CurrencyDefaultArgs<ExtArgs>
   parentList?: boolean | Prisma.PriceList$parentListArgs<ExtArgs>
 }
 
 export type $PriceListPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PriceList"
   objects: {
+    currency: Prisma.$CurrencyPayload<ExtArgs>
     parentList: Prisma.$PriceListPayload<ExtArgs> | null
     childrenLists: Prisma.$PriceListPayload<ExtArgs>[]
     items: Prisma.$PriceListItemPayload<ExtArgs>[]
@@ -1268,7 +1451,7 @@ export type $PriceListPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     id: number
     code: string
     name: string
-    currency: string
+    currencyCode: string
     type: $Enums.PriceListType
     validFrom: Date | null
     validTo: Date | null
@@ -1673,6 +1856,7 @@ readonly fields: PriceListFieldRefs;
  */
 export interface Prisma__PriceListClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  currency<T extends Prisma.CurrencyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CurrencyDefaultArgs<ExtArgs>>): Prisma.Prisma__CurrencyClient<runtime.Types.Result.GetResult<Prisma.$CurrencyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   parentList<T extends Prisma.PriceList$parentListArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PriceList$parentListArgs<ExtArgs>>): Prisma.Prisma__PriceListClient<runtime.Types.Result.GetResult<Prisma.$PriceListPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   childrenLists<T extends Prisma.PriceList$childrenListsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PriceList$childrenListsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PriceListPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   items<T extends Prisma.PriceList$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PriceList$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PriceListItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1709,7 +1893,7 @@ export interface PriceListFieldRefs {
   readonly id: Prisma.FieldRef<"PriceList", 'Int'>
   readonly code: Prisma.FieldRef<"PriceList", 'String'>
   readonly name: Prisma.FieldRef<"PriceList", 'String'>
-  readonly currency: Prisma.FieldRef<"PriceList", 'String'>
+  readonly currencyCode: Prisma.FieldRef<"PriceList", 'String'>
   readonly type: Prisma.FieldRef<"PriceList", 'PriceListType'>
   readonly validFrom: Prisma.FieldRef<"PriceList", 'DateTime'>
   readonly validTo: Prisma.FieldRef<"PriceList", 'DateTime'>

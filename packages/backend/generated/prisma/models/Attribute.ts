@@ -43,7 +43,9 @@ export type AttributeMinAggregateOutputType = {
   attributeGroupId: number | null
   code: string | null
   colorHex: string | null
+  colorHex2: string | null
   colorPms: string | null
+  colorPms2: string | null
   imageUrl: string | null
   position: number | null
   createdAt: Date | null
@@ -55,7 +57,9 @@ export type AttributeMaxAggregateOutputType = {
   attributeGroupId: number | null
   code: string | null
   colorHex: string | null
+  colorHex2: string | null
   colorPms: string | null
+  colorPms2: string | null
   imageUrl: string | null
   position: number | null
   createdAt: Date | null
@@ -67,7 +71,9 @@ export type AttributeCountAggregateOutputType = {
   attributeGroupId: number
   code: number
   colorHex: number
+  colorHex2: number
   colorPms: number
+  colorPms2: number
   imageUrl: number
   position: number
   createdAt: number
@@ -93,7 +99,9 @@ export type AttributeMinAggregateInputType = {
   attributeGroupId?: true
   code?: true
   colorHex?: true
+  colorHex2?: true
   colorPms?: true
+  colorPms2?: true
   imageUrl?: true
   position?: true
   createdAt?: true
@@ -105,7 +113,9 @@ export type AttributeMaxAggregateInputType = {
   attributeGroupId?: true
   code?: true
   colorHex?: true
+  colorHex2?: true
   colorPms?: true
+  colorPms2?: true
   imageUrl?: true
   position?: true
   createdAt?: true
@@ -117,7 +127,9 @@ export type AttributeCountAggregateInputType = {
   attributeGroupId?: true
   code?: true
   colorHex?: true
+  colorHex2?: true
   colorPms?: true
+  colorPms2?: true
   imageUrl?: true
   position?: true
   createdAt?: true
@@ -216,7 +228,9 @@ export type AttributeGroupByOutputType = {
   attributeGroupId: number
   code: string
   colorHex: string | null
+  colorHex2: string | null
   colorPms: string | null
+  colorPms2: string | null
   imageUrl: string | null
   position: number
   createdAt: Date
@@ -251,7 +265,9 @@ export type AttributeWhereInput = {
   attributeGroupId?: Prisma.IntFilter<"Attribute"> | number
   code?: Prisma.StringFilter<"Attribute"> | string
   colorHex?: Prisma.StringNullableFilter<"Attribute"> | string | null
+  colorHex2?: Prisma.StringNullableFilter<"Attribute"> | string | null
   colorPms?: Prisma.StringNullableFilter<"Attribute"> | string | null
+  colorPms2?: Prisma.StringNullableFilter<"Attribute"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Attribute"> | string | null
   position?: Prisma.IntFilter<"Attribute"> | number
   createdAt?: Prisma.DateTimeFilter<"Attribute"> | Date | string
@@ -266,7 +282,9 @@ export type AttributeOrderByWithRelationInput = {
   attributeGroupId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   colorHex?: Prisma.SortOrderInput | Prisma.SortOrder
+  colorHex2?: Prisma.SortOrderInput | Prisma.SortOrder
   colorPms?: Prisma.SortOrderInput | Prisma.SortOrder
+  colorPms2?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -285,7 +303,9 @@ export type AttributeWhereUniqueInput = Prisma.AtLeast<{
   attributeGroupId?: Prisma.IntFilter<"Attribute"> | number
   code?: Prisma.StringFilter<"Attribute"> | string
   colorHex?: Prisma.StringNullableFilter<"Attribute"> | string | null
+  colorHex2?: Prisma.StringNullableFilter<"Attribute"> | string | null
   colorPms?: Prisma.StringNullableFilter<"Attribute"> | string | null
+  colorPms2?: Prisma.StringNullableFilter<"Attribute"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Attribute"> | string | null
   position?: Prisma.IntFilter<"Attribute"> | number
   createdAt?: Prisma.DateTimeFilter<"Attribute"> | Date | string
@@ -300,7 +320,9 @@ export type AttributeOrderByWithAggregationInput = {
   attributeGroupId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   colorHex?: Prisma.SortOrderInput | Prisma.SortOrder
+  colorHex2?: Prisma.SortOrderInput | Prisma.SortOrder
   colorPms?: Prisma.SortOrderInput | Prisma.SortOrder
+  colorPms2?: Prisma.SortOrderInput | Prisma.SortOrder
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -320,7 +342,9 @@ export type AttributeScalarWhereWithAggregatesInput = {
   attributeGroupId?: Prisma.IntWithAggregatesFilter<"Attribute"> | number
   code?: Prisma.StringWithAggregatesFilter<"Attribute"> | string
   colorHex?: Prisma.StringNullableWithAggregatesFilter<"Attribute"> | string | null
+  colorHex2?: Prisma.StringNullableWithAggregatesFilter<"Attribute"> | string | null
   colorPms?: Prisma.StringNullableWithAggregatesFilter<"Attribute"> | string | null
+  colorPms2?: Prisma.StringNullableWithAggregatesFilter<"Attribute"> | string | null
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Attribute"> | string | null
   position?: Prisma.IntWithAggregatesFilter<"Attribute"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Attribute"> | Date | string
@@ -330,7 +354,9 @@ export type AttributeScalarWhereWithAggregatesInput = {
 export type AttributeCreateInput = {
   code: string
   colorHex?: string | null
+  colorHex2?: string | null
   colorPms?: string | null
+  colorPms2?: string | null
   imageUrl?: string | null
   position?: number
   createdAt?: Date | string
@@ -345,7 +371,9 @@ export type AttributeUncheckedCreateInput = {
   attributeGroupId: number
   code: string
   colorHex?: string | null
+  colorHex2?: string | null
   colorPms?: string | null
+  colorPms2?: string | null
   imageUrl?: string | null
   position?: number
   createdAt?: Date | string
@@ -357,7 +385,9 @@ export type AttributeUncheckedCreateInput = {
 export type AttributeUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorHex2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   colorPms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPms2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -372,7 +402,9 @@ export type AttributeUncheckedUpdateInput = {
   attributeGroupId?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorHex2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   colorPms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPms2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -386,7 +418,9 @@ export type AttributeCreateManyInput = {
   attributeGroupId: number
   code: string
   colorHex?: string | null
+  colorHex2?: string | null
   colorPms?: string | null
+  colorPms2?: string | null
   imageUrl?: string | null
   position?: number
   createdAt?: Date | string
@@ -396,7 +430,9 @@ export type AttributeCreateManyInput = {
 export type AttributeUpdateManyMutationInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorHex2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   colorPms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPms2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -408,7 +444,9 @@ export type AttributeUncheckedUpdateManyInput = {
   attributeGroupId?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorHex2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   colorPms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPms2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -435,7 +473,9 @@ export type AttributeCountOrderByAggregateInput = {
   attributeGroupId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   colorHex?: Prisma.SortOrder
+  colorHex2?: Prisma.SortOrder
   colorPms?: Prisma.SortOrder
+  colorPms2?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -453,7 +493,9 @@ export type AttributeMaxOrderByAggregateInput = {
   attributeGroupId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   colorHex?: Prisma.SortOrder
+  colorHex2?: Prisma.SortOrder
   colorPms?: Prisma.SortOrder
+  colorPms2?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -465,7 +507,9 @@ export type AttributeMinOrderByAggregateInput = {
   attributeGroupId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   colorHex?: Prisma.SortOrder
+  colorHex2?: Prisma.SortOrder
   colorPms?: Prisma.SortOrder
+  colorPms2?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
   position?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -556,7 +600,9 @@ export type AttributeUpdateOneRequiredWithoutVariantsNestedInput = {
 export type AttributeCreateWithoutAttributeGroupInput = {
   code: string
   colorHex?: string | null
+  colorHex2?: string | null
   colorPms?: string | null
+  colorPms2?: string | null
   imageUrl?: string | null
   position?: number
   createdAt?: Date | string
@@ -569,7 +615,9 @@ export type AttributeUncheckedCreateWithoutAttributeGroupInput = {
   id?: number
   code: string
   colorHex?: string | null
+  colorHex2?: string | null
   colorPms?: string | null
+  colorPms2?: string | null
   imageUrl?: string | null
   position?: number
   createdAt?: Date | string
@@ -612,7 +660,9 @@ export type AttributeScalarWhereInput = {
   attributeGroupId?: Prisma.IntFilter<"Attribute"> | number
   code?: Prisma.StringFilter<"Attribute"> | string
   colorHex?: Prisma.StringNullableFilter<"Attribute"> | string | null
+  colorHex2?: Prisma.StringNullableFilter<"Attribute"> | string | null
   colorPms?: Prisma.StringNullableFilter<"Attribute"> | string | null
+  colorPms2?: Prisma.StringNullableFilter<"Attribute"> | string | null
   imageUrl?: Prisma.StringNullableFilter<"Attribute"> | string | null
   position?: Prisma.IntFilter<"Attribute"> | number
   createdAt?: Prisma.DateTimeFilter<"Attribute"> | Date | string
@@ -622,7 +672,9 @@ export type AttributeScalarWhereInput = {
 export type AttributeCreateWithoutTranslationsInput = {
   code: string
   colorHex?: string | null
+  colorHex2?: string | null
   colorPms?: string | null
+  colorPms2?: string | null
   imageUrl?: string | null
   position?: number
   createdAt?: Date | string
@@ -636,7 +688,9 @@ export type AttributeUncheckedCreateWithoutTranslationsInput = {
   attributeGroupId: number
   code: string
   colorHex?: string | null
+  colorHex2?: string | null
   colorPms?: string | null
+  colorPms2?: string | null
   imageUrl?: string | null
   position?: number
   createdAt?: Date | string
@@ -663,7 +717,9 @@ export type AttributeUpdateToOneWithWhereWithoutTranslationsInput = {
 export type AttributeUpdateWithoutTranslationsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorHex2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   colorPms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPms2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -677,7 +733,9 @@ export type AttributeUncheckedUpdateWithoutTranslationsInput = {
   attributeGroupId?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorHex2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   colorPms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPms2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -688,7 +746,9 @@ export type AttributeUncheckedUpdateWithoutTranslationsInput = {
 export type AttributeCreateWithoutVariantsInput = {
   code: string
   colorHex?: string | null
+  colorHex2?: string | null
   colorPms?: string | null
+  colorPms2?: string | null
   imageUrl?: string | null
   position?: number
   createdAt?: Date | string
@@ -702,7 +762,9 @@ export type AttributeUncheckedCreateWithoutVariantsInput = {
   attributeGroupId: number
   code: string
   colorHex?: string | null
+  colorHex2?: string | null
   colorPms?: string | null
+  colorPms2?: string | null
   imageUrl?: string | null
   position?: number
   createdAt?: Date | string
@@ -729,7 +791,9 @@ export type AttributeUpdateToOneWithWhereWithoutVariantsInput = {
 export type AttributeUpdateWithoutVariantsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorHex2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   colorPms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPms2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -743,7 +807,9 @@ export type AttributeUncheckedUpdateWithoutVariantsInput = {
   attributeGroupId?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorHex2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   colorPms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPms2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -755,7 +821,9 @@ export type AttributeCreateManyAttributeGroupInput = {
   id?: number
   code: string
   colorHex?: string | null
+  colorHex2?: string | null
   colorPms?: string | null
+  colorPms2?: string | null
   imageUrl?: string | null
   position?: number
   createdAt?: Date | string
@@ -765,7 +833,9 @@ export type AttributeCreateManyAttributeGroupInput = {
 export type AttributeUpdateWithoutAttributeGroupInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorHex2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   colorPms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPms2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -778,7 +848,9 @@ export type AttributeUncheckedUpdateWithoutAttributeGroupInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorHex2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   colorPms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPms2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -791,7 +863,9 @@ export type AttributeUncheckedUpdateManyWithoutAttributeGroupInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
   colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorHex2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   colorPms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  colorPms2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -843,7 +917,9 @@ export type AttributeSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   attributeGroupId?: boolean
   code?: boolean
   colorHex?: boolean
+  colorHex2?: boolean
   colorPms?: boolean
+  colorPms2?: boolean
   imageUrl?: boolean
   position?: boolean
   createdAt?: boolean
@@ -859,7 +935,9 @@ export type AttributeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   attributeGroupId?: boolean
   code?: boolean
   colorHex?: boolean
+  colorHex2?: boolean
   colorPms?: boolean
+  colorPms2?: boolean
   imageUrl?: boolean
   position?: boolean
   createdAt?: boolean
@@ -872,7 +950,9 @@ export type AttributeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   attributeGroupId?: boolean
   code?: boolean
   colorHex?: boolean
+  colorHex2?: boolean
   colorPms?: boolean
+  colorPms2?: boolean
   imageUrl?: boolean
   position?: boolean
   createdAt?: boolean
@@ -885,14 +965,16 @@ export type AttributeSelectScalar = {
   attributeGroupId?: boolean
   code?: boolean
   colorHex?: boolean
+  colorHex2?: boolean
   colorPms?: boolean
+  colorPms2?: boolean
   imageUrl?: boolean
   position?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AttributeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "attributeGroupId" | "code" | "colorHex" | "colorPms" | "imageUrl" | "position" | "createdAt" | "updatedAt", ExtArgs["result"]["attribute"]>
+export type AttributeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "attributeGroupId" | "code" | "colorHex" | "colorHex2" | "colorPms" | "colorPms2" | "imageUrl" | "position" | "createdAt" | "updatedAt", ExtArgs["result"]["attribute"]>
 export type AttributeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attributeGroup?: boolean | Prisma.AttributeGroupDefaultArgs<ExtArgs>
   translations?: boolean | Prisma.Attribute$translationsArgs<ExtArgs>
@@ -918,7 +1000,9 @@ export type $AttributePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     attributeGroupId: number
     code: string
     colorHex: string | null
+    colorHex2: string | null
     colorPms: string | null
+    colorPms2: string | null
     imageUrl: string | null
     position: number
     createdAt: Date
@@ -1353,7 +1437,9 @@ export interface AttributeFieldRefs {
   readonly attributeGroupId: Prisma.FieldRef<"Attribute", 'Int'>
   readonly code: Prisma.FieldRef<"Attribute", 'String'>
   readonly colorHex: Prisma.FieldRef<"Attribute", 'String'>
+  readonly colorHex2: Prisma.FieldRef<"Attribute", 'String'>
   readonly colorPms: Prisma.FieldRef<"Attribute", 'String'>
+  readonly colorPms2: Prisma.FieldRef<"Attribute", 'String'>
   readonly imageUrl: Prisma.FieldRef<"Attribute", 'String'>
   readonly position: Prisma.FieldRef<"Attribute", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Attribute", 'DateTime'>

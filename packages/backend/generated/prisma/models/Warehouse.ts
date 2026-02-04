@@ -218,6 +218,8 @@ export type WarehouseWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Warehouse"> | Date | string
   stockMovements?: Prisma.StockMovementListRelationFilter
   virtualStocks?: Prisma.VirtualStockListRelationFilter
+  documentLines?: Prisma.DocumentLineListRelationFilter
+  stockReservations?: Prisma.StockReservationListRelationFilter
   document?: Prisma.DocumentListRelationFilter
 }
 
@@ -229,6 +231,8 @@ export type WarehouseOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   stockMovements?: Prisma.StockMovementOrderByRelationAggregateInput
   virtualStocks?: Prisma.VirtualStockOrderByRelationAggregateInput
+  documentLines?: Prisma.DocumentLineOrderByRelationAggregateInput
+  stockReservations?: Prisma.StockReservationOrderByRelationAggregateInput
   document?: Prisma.DocumentOrderByRelationAggregateInput
 }
 
@@ -243,6 +247,8 @@ export type WarehouseWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Warehouse"> | Date | string
   stockMovements?: Prisma.StockMovementListRelationFilter
   virtualStocks?: Prisma.VirtualStockListRelationFilter
+  documentLines?: Prisma.DocumentLineListRelationFilter
+  stockReservations?: Prisma.StockReservationListRelationFilter
   document?: Prisma.DocumentListRelationFilter
 }, "id">
 
@@ -277,6 +283,8 @@ export type WarehouseCreateInput = {
   createdAt?: Date | string
   stockMovements?: Prisma.StockMovementCreateNestedManyWithoutWarehouseInput
   virtualStocks?: Prisma.VirtualStockCreateNestedManyWithoutWarehouseInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutWarehouseInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutWarehouseInput
   document?: Prisma.DocumentCreateNestedManyWithoutWarehouseInput
 }
 
@@ -288,6 +296,8 @@ export type WarehouseUncheckedCreateInput = {
   createdAt?: Date | string
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutWarehouseInput
   virtualStocks?: Prisma.VirtualStockUncheckedCreateNestedManyWithoutWarehouseInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutWarehouseInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutWarehouseInput
   document?: Prisma.DocumentUncheckedCreateNestedManyWithoutWarehouseInput
 }
 
@@ -298,6 +308,8 @@ export type WarehouseUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stockMovements?: Prisma.StockMovementUpdateManyWithoutWarehouseNestedInput
   virtualStocks?: Prisma.VirtualStockUpdateManyWithoutWarehouseNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutWarehouseNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutWarehouseNestedInput
   document?: Prisma.DocumentUpdateManyWithoutWarehouseNestedInput
 }
 
@@ -309,6 +321,8 @@ export type WarehouseUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutWarehouseNestedInput
   virtualStocks?: Prisma.VirtualStockUncheckedUpdateManyWithoutWarehouseNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutWarehouseNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutWarehouseNestedInput
   document?: Prisma.DocumentUncheckedUpdateManyWithoutWarehouseNestedInput
 }
 
@@ -393,6 +407,22 @@ export type WarehouseUpdateOneWithoutDocumentNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WarehouseUpdateToOneWithWhereWithoutDocumentInput, Prisma.WarehouseUpdateWithoutDocumentInput>, Prisma.WarehouseUncheckedUpdateWithoutDocumentInput>
 }
 
+export type WarehouseCreateNestedOneWithoutDocumentLinesInput = {
+  create?: Prisma.XOR<Prisma.WarehouseCreateWithoutDocumentLinesInput, Prisma.WarehouseUncheckedCreateWithoutDocumentLinesInput>
+  connectOrCreate?: Prisma.WarehouseCreateOrConnectWithoutDocumentLinesInput
+  connect?: Prisma.WarehouseWhereUniqueInput
+}
+
+export type WarehouseUpdateOneWithoutDocumentLinesNestedInput = {
+  create?: Prisma.XOR<Prisma.WarehouseCreateWithoutDocumentLinesInput, Prisma.WarehouseUncheckedCreateWithoutDocumentLinesInput>
+  connectOrCreate?: Prisma.WarehouseCreateOrConnectWithoutDocumentLinesInput
+  upsert?: Prisma.WarehouseUpsertWithoutDocumentLinesInput
+  disconnect?: Prisma.WarehouseWhereInput | boolean
+  delete?: Prisma.WarehouseWhereInput | boolean
+  connect?: Prisma.WarehouseWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WarehouseUpdateToOneWithWhereWithoutDocumentLinesInput, Prisma.WarehouseUpdateWithoutDocumentLinesInput>, Prisma.WarehouseUncheckedUpdateWithoutDocumentLinesInput>
+}
+
 export type EnumWarehouseTypeFieldUpdateOperationsInput = {
   set?: $Enums.WarehouseType
 }
@@ -425,6 +455,20 @@ export type WarehouseUpdateOneRequiredWithoutVirtualStocksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.WarehouseUpdateToOneWithWhereWithoutVirtualStocksInput, Prisma.WarehouseUpdateWithoutVirtualStocksInput>, Prisma.WarehouseUncheckedUpdateWithoutVirtualStocksInput>
 }
 
+export type WarehouseCreateNestedOneWithoutStockReservationsInput = {
+  create?: Prisma.XOR<Prisma.WarehouseCreateWithoutStockReservationsInput, Prisma.WarehouseUncheckedCreateWithoutStockReservationsInput>
+  connectOrCreate?: Prisma.WarehouseCreateOrConnectWithoutStockReservationsInput
+  connect?: Prisma.WarehouseWhereUniqueInput
+}
+
+export type WarehouseUpdateOneRequiredWithoutStockReservationsNestedInput = {
+  create?: Prisma.XOR<Prisma.WarehouseCreateWithoutStockReservationsInput, Prisma.WarehouseUncheckedCreateWithoutStockReservationsInput>
+  connectOrCreate?: Prisma.WarehouseCreateOrConnectWithoutStockReservationsInput
+  upsert?: Prisma.WarehouseUpsertWithoutStockReservationsInput
+  connect?: Prisma.WarehouseWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WarehouseUpdateToOneWithWhereWithoutStockReservationsInput, Prisma.WarehouseUpdateWithoutStockReservationsInput>, Prisma.WarehouseUncheckedUpdateWithoutStockReservationsInput>
+}
+
 export type WarehouseCreateWithoutDocumentInput = {
   name: string
   location?: string | null
@@ -432,6 +476,8 @@ export type WarehouseCreateWithoutDocumentInput = {
   createdAt?: Date | string
   stockMovements?: Prisma.StockMovementCreateNestedManyWithoutWarehouseInput
   virtualStocks?: Prisma.VirtualStockCreateNestedManyWithoutWarehouseInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutWarehouseInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutWarehouseInput
 }
 
 export type WarehouseUncheckedCreateWithoutDocumentInput = {
@@ -442,6 +488,8 @@ export type WarehouseUncheckedCreateWithoutDocumentInput = {
   createdAt?: Date | string
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutWarehouseInput
   virtualStocks?: Prisma.VirtualStockUncheckedCreateNestedManyWithoutWarehouseInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutWarehouseInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutWarehouseInput
 }
 
 export type WarehouseCreateOrConnectWithoutDocumentInput = {
@@ -467,6 +515,8 @@ export type WarehouseUpdateWithoutDocumentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stockMovements?: Prisma.StockMovementUpdateManyWithoutWarehouseNestedInput
   virtualStocks?: Prisma.VirtualStockUpdateManyWithoutWarehouseNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutWarehouseNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutWarehouseNestedInput
 }
 
 export type WarehouseUncheckedUpdateWithoutDocumentInput = {
@@ -477,6 +527,70 @@ export type WarehouseUncheckedUpdateWithoutDocumentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutWarehouseNestedInput
   virtualStocks?: Prisma.VirtualStockUncheckedUpdateManyWithoutWarehouseNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutWarehouseNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutWarehouseNestedInput
+}
+
+export type WarehouseCreateWithoutDocumentLinesInput = {
+  name: string
+  location?: string | null
+  type?: $Enums.WarehouseType
+  createdAt?: Date | string
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutWarehouseInput
+  virtualStocks?: Prisma.VirtualStockCreateNestedManyWithoutWarehouseInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutWarehouseInput
+  document?: Prisma.DocumentCreateNestedManyWithoutWarehouseInput
+}
+
+export type WarehouseUncheckedCreateWithoutDocumentLinesInput = {
+  id?: number
+  name: string
+  location?: string | null
+  type?: $Enums.WarehouseType
+  createdAt?: Date | string
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutWarehouseInput
+  virtualStocks?: Prisma.VirtualStockUncheckedCreateNestedManyWithoutWarehouseInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutWarehouseInput
+  document?: Prisma.DocumentUncheckedCreateNestedManyWithoutWarehouseInput
+}
+
+export type WarehouseCreateOrConnectWithoutDocumentLinesInput = {
+  where: Prisma.WarehouseWhereUniqueInput
+  create: Prisma.XOR<Prisma.WarehouseCreateWithoutDocumentLinesInput, Prisma.WarehouseUncheckedCreateWithoutDocumentLinesInput>
+}
+
+export type WarehouseUpsertWithoutDocumentLinesInput = {
+  update: Prisma.XOR<Prisma.WarehouseUpdateWithoutDocumentLinesInput, Prisma.WarehouseUncheckedUpdateWithoutDocumentLinesInput>
+  create: Prisma.XOR<Prisma.WarehouseCreateWithoutDocumentLinesInput, Prisma.WarehouseUncheckedCreateWithoutDocumentLinesInput>
+  where?: Prisma.WarehouseWhereInput
+}
+
+export type WarehouseUpdateToOneWithWhereWithoutDocumentLinesInput = {
+  where?: Prisma.WarehouseWhereInput
+  data: Prisma.XOR<Prisma.WarehouseUpdateWithoutDocumentLinesInput, Prisma.WarehouseUncheckedUpdateWithoutDocumentLinesInput>
+}
+
+export type WarehouseUpdateWithoutDocumentLinesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutWarehouseNestedInput
+  virtualStocks?: Prisma.VirtualStockUpdateManyWithoutWarehouseNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutWarehouseNestedInput
+  document?: Prisma.DocumentUpdateManyWithoutWarehouseNestedInput
+}
+
+export type WarehouseUncheckedUpdateWithoutDocumentLinesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutWarehouseNestedInput
+  virtualStocks?: Prisma.VirtualStockUncheckedUpdateManyWithoutWarehouseNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutWarehouseNestedInput
+  document?: Prisma.DocumentUncheckedUpdateManyWithoutWarehouseNestedInput
 }
 
 export type WarehouseCreateWithoutStockMovementsInput = {
@@ -485,6 +599,8 @@ export type WarehouseCreateWithoutStockMovementsInput = {
   type?: $Enums.WarehouseType
   createdAt?: Date | string
   virtualStocks?: Prisma.VirtualStockCreateNestedManyWithoutWarehouseInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutWarehouseInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutWarehouseInput
   document?: Prisma.DocumentCreateNestedManyWithoutWarehouseInput
 }
 
@@ -495,6 +611,8 @@ export type WarehouseUncheckedCreateWithoutStockMovementsInput = {
   type?: $Enums.WarehouseType
   createdAt?: Date | string
   virtualStocks?: Prisma.VirtualStockUncheckedCreateNestedManyWithoutWarehouseInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutWarehouseInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutWarehouseInput
   document?: Prisma.DocumentUncheckedCreateNestedManyWithoutWarehouseInput
 }
 
@@ -520,6 +638,8 @@ export type WarehouseUpdateWithoutStockMovementsInput = {
   type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   virtualStocks?: Prisma.VirtualStockUpdateManyWithoutWarehouseNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutWarehouseNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutWarehouseNestedInput
   document?: Prisma.DocumentUpdateManyWithoutWarehouseNestedInput
 }
 
@@ -530,6 +650,8 @@ export type WarehouseUncheckedUpdateWithoutStockMovementsInput = {
   type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   virtualStocks?: Prisma.VirtualStockUncheckedUpdateManyWithoutWarehouseNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutWarehouseNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutWarehouseNestedInput
   document?: Prisma.DocumentUncheckedUpdateManyWithoutWarehouseNestedInput
 }
 
@@ -539,6 +661,8 @@ export type WarehouseCreateWithoutVirtualStocksInput = {
   type?: $Enums.WarehouseType
   createdAt?: Date | string
   stockMovements?: Prisma.StockMovementCreateNestedManyWithoutWarehouseInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutWarehouseInput
+  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutWarehouseInput
   document?: Prisma.DocumentCreateNestedManyWithoutWarehouseInput
 }
 
@@ -549,6 +673,8 @@ export type WarehouseUncheckedCreateWithoutVirtualStocksInput = {
   type?: $Enums.WarehouseType
   createdAt?: Date | string
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutWarehouseInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutWarehouseInput
+  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutWarehouseInput
   document?: Prisma.DocumentUncheckedCreateNestedManyWithoutWarehouseInput
 }
 
@@ -574,6 +700,8 @@ export type WarehouseUpdateWithoutVirtualStocksInput = {
   type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stockMovements?: Prisma.StockMovementUpdateManyWithoutWarehouseNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutWarehouseNestedInput
+  stockReservations?: Prisma.StockReservationUpdateManyWithoutWarehouseNestedInput
   document?: Prisma.DocumentUpdateManyWithoutWarehouseNestedInput
 }
 
@@ -584,6 +712,70 @@ export type WarehouseUncheckedUpdateWithoutVirtualStocksInput = {
   type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutWarehouseNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutWarehouseNestedInput
+  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutWarehouseNestedInput
+  document?: Prisma.DocumentUncheckedUpdateManyWithoutWarehouseNestedInput
+}
+
+export type WarehouseCreateWithoutStockReservationsInput = {
+  name: string
+  location?: string | null
+  type?: $Enums.WarehouseType
+  createdAt?: Date | string
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutWarehouseInput
+  virtualStocks?: Prisma.VirtualStockCreateNestedManyWithoutWarehouseInput
+  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutWarehouseInput
+  document?: Prisma.DocumentCreateNestedManyWithoutWarehouseInput
+}
+
+export type WarehouseUncheckedCreateWithoutStockReservationsInput = {
+  id?: number
+  name: string
+  location?: string | null
+  type?: $Enums.WarehouseType
+  createdAt?: Date | string
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutWarehouseInput
+  virtualStocks?: Prisma.VirtualStockUncheckedCreateNestedManyWithoutWarehouseInput
+  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutWarehouseInput
+  document?: Prisma.DocumentUncheckedCreateNestedManyWithoutWarehouseInput
+}
+
+export type WarehouseCreateOrConnectWithoutStockReservationsInput = {
+  where: Prisma.WarehouseWhereUniqueInput
+  create: Prisma.XOR<Prisma.WarehouseCreateWithoutStockReservationsInput, Prisma.WarehouseUncheckedCreateWithoutStockReservationsInput>
+}
+
+export type WarehouseUpsertWithoutStockReservationsInput = {
+  update: Prisma.XOR<Prisma.WarehouseUpdateWithoutStockReservationsInput, Prisma.WarehouseUncheckedUpdateWithoutStockReservationsInput>
+  create: Prisma.XOR<Prisma.WarehouseCreateWithoutStockReservationsInput, Prisma.WarehouseUncheckedCreateWithoutStockReservationsInput>
+  where?: Prisma.WarehouseWhereInput
+}
+
+export type WarehouseUpdateToOneWithWhereWithoutStockReservationsInput = {
+  where?: Prisma.WarehouseWhereInput
+  data: Prisma.XOR<Prisma.WarehouseUpdateWithoutStockReservationsInput, Prisma.WarehouseUncheckedUpdateWithoutStockReservationsInput>
+}
+
+export type WarehouseUpdateWithoutStockReservationsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutWarehouseNestedInput
+  virtualStocks?: Prisma.VirtualStockUpdateManyWithoutWarehouseNestedInput
+  documentLines?: Prisma.DocumentLineUpdateManyWithoutWarehouseNestedInput
+  document?: Prisma.DocumentUpdateManyWithoutWarehouseNestedInput
+}
+
+export type WarehouseUncheckedUpdateWithoutStockReservationsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumWarehouseTypeFieldUpdateOperationsInput | $Enums.WarehouseType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutWarehouseNestedInput
+  virtualStocks?: Prisma.VirtualStockUncheckedUpdateManyWithoutWarehouseNestedInput
+  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutWarehouseNestedInput
   document?: Prisma.DocumentUncheckedUpdateManyWithoutWarehouseNestedInput
 }
 
@@ -595,12 +787,16 @@ export type WarehouseUncheckedUpdateWithoutVirtualStocksInput = {
 export type WarehouseCountOutputType = {
   stockMovements: number
   virtualStocks: number
+  documentLines: number
+  stockReservations: number
   document: number
 }
 
 export type WarehouseCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stockMovements?: boolean | WarehouseCountOutputTypeCountStockMovementsArgs
   virtualStocks?: boolean | WarehouseCountOutputTypeCountVirtualStocksArgs
+  documentLines?: boolean | WarehouseCountOutputTypeCountDocumentLinesArgs
+  stockReservations?: boolean | WarehouseCountOutputTypeCountStockReservationsArgs
   document?: boolean | WarehouseCountOutputTypeCountDocumentArgs
 }
 
@@ -631,6 +827,20 @@ export type WarehouseCountOutputTypeCountVirtualStocksArgs<ExtArgs extends runti
 /**
  * WarehouseCountOutputType without action
  */
+export type WarehouseCountOutputTypeCountDocumentLinesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentLineWhereInput
+}
+
+/**
+ * WarehouseCountOutputType without action
+ */
+export type WarehouseCountOutputTypeCountStockReservationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StockReservationWhereInput
+}
+
+/**
+ * WarehouseCountOutputType without action
+ */
 export type WarehouseCountOutputTypeCountDocumentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.DocumentWhereInput
 }
@@ -644,6 +854,8 @@ export type WarehouseSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   createdAt?: boolean
   stockMovements?: boolean | Prisma.Warehouse$stockMovementsArgs<ExtArgs>
   virtualStocks?: boolean | Prisma.Warehouse$virtualStocksArgs<ExtArgs>
+  documentLines?: boolean | Prisma.Warehouse$documentLinesArgs<ExtArgs>
+  stockReservations?: boolean | Prisma.Warehouse$stockReservationsArgs<ExtArgs>
   document?: boolean | Prisma.Warehouse$documentArgs<ExtArgs>
   _count?: boolean | Prisma.WarehouseCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["warehouse"]>
@@ -676,6 +888,8 @@ export type WarehouseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type WarehouseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stockMovements?: boolean | Prisma.Warehouse$stockMovementsArgs<ExtArgs>
   virtualStocks?: boolean | Prisma.Warehouse$virtualStocksArgs<ExtArgs>
+  documentLines?: boolean | Prisma.Warehouse$documentLinesArgs<ExtArgs>
+  stockReservations?: boolean | Prisma.Warehouse$stockReservationsArgs<ExtArgs>
   document?: boolean | Prisma.Warehouse$documentArgs<ExtArgs>
   _count?: boolean | Prisma.WarehouseCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -687,6 +901,8 @@ export type $WarehousePayload<ExtArgs extends runtime.Types.Extensions.InternalA
   objects: {
     stockMovements: Prisma.$StockMovementPayload<ExtArgs>[]
     virtualStocks: Prisma.$VirtualStockPayload<ExtArgs>[]
+    documentLines: Prisma.$DocumentLinePayload<ExtArgs>[]
+    stockReservations: Prisma.$StockReservationPayload<ExtArgs>[]
     document: Prisma.$DocumentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1091,6 +1307,8 @@ export interface Prisma__WarehouseClient<T, Null = never, ExtArgs extends runtim
   readonly [Symbol.toStringTag]: "PrismaPromise"
   stockMovements<T extends Prisma.Warehouse$stockMovementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Warehouse$stockMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   virtualStocks<T extends Prisma.Warehouse$virtualStocksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Warehouse$virtualStocksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VirtualStockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  documentLines<T extends Prisma.Warehouse$documentLinesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Warehouse$documentLinesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentLinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  stockReservations<T extends Prisma.Warehouse$stockReservationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Warehouse$stockReservationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   document<T extends Prisma.Warehouse$documentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Warehouse$documentArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1559,6 +1777,54 @@ export type Warehouse$virtualStocksArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.VirtualStockScalarFieldEnum | Prisma.VirtualStockScalarFieldEnum[]
+}
+
+/**
+ * Warehouse.documentLines
+ */
+export type Warehouse$documentLinesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentLine
+   */
+  select?: Prisma.DocumentLineSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DocumentLine
+   */
+  omit?: Prisma.DocumentLineOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentLineInclude<ExtArgs> | null
+  where?: Prisma.DocumentLineWhereInput
+  orderBy?: Prisma.DocumentLineOrderByWithRelationInput | Prisma.DocumentLineOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentLineWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DocumentLineScalarFieldEnum | Prisma.DocumentLineScalarFieldEnum[]
+}
+
+/**
+ * Warehouse.stockReservations
+ */
+export type Warehouse$stockReservationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StockReservation
+   */
+  select?: Prisma.StockReservationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StockReservation
+   */
+  omit?: Prisma.StockReservationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StockReservationInclude<ExtArgs> | null
+  where?: Prisma.StockReservationWhereInput
+  orderBy?: Prisma.StockReservationOrderByWithRelationInput | Prisma.StockReservationOrderByWithRelationInput[]
+  cursor?: Prisma.StockReservationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StockReservationScalarFieldEnum | Prisma.StockReservationScalarFieldEnum[]
 }
 
 /**

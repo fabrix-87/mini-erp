@@ -6,7 +6,7 @@ model Language {
 
   // Relazioni
   usersPreferred       User[]                @relation("UserPreferredLanguage")
-  productTranslations  ProductTranslation[]
+  productTranslations  ProductVariantTranslation[]
   categoryTranslations CategoryTranslation[]
   paymentMethodTranslations PaymentMethodTranslation[]
   taxRuleTranslations TaxRuleTranslation[]
@@ -15,6 +15,7 @@ model Language {
   vatNatureTranslations VatNatureTranslation[]
   tenant TenantSettings[]
   countries Country[]
+  currencyTranslations CurrencyTranslation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

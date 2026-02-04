@@ -90,7 +90,7 @@ model TaxRule {
   description String? @db.Text
   
   // === ALIQUOTA IVA ===
-  rate Decimal @db.Decimal(5, 2) // 0.00, 4.00, 5.00, 10.00, 22.00
+  rate Decimal @db.Decimal(5, 2) @default(0) // 0.00, 4.00, 5.00, 10.00, 22.00
   
   // === NATURA IVA (obbligatoria se rate = 0) ===
   vatNatureId        Int?

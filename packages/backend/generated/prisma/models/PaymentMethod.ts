@@ -231,6 +231,7 @@ export type PaymentMethodWhereInput = {
   translations?: Prisma.PaymentMethodTranslationListRelationFilter
   customers?: Prisma.CustomerListRelationFilter
   documents?: Prisma.DocumentListRelationFilter
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentListRelationFilter
   details?: Prisma.PaymentTermDetailListRelationFilter
 }
 
@@ -244,6 +245,7 @@ export type PaymentMethodOrderByWithRelationInput = {
   translations?: Prisma.PaymentMethodTranslationOrderByRelationAggregateInput
   customers?: Prisma.CustomerOrderByRelationAggregateInput
   documents?: Prisma.DocumentOrderByRelationAggregateInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentOrderByRelationAggregateInput
   details?: Prisma.PaymentTermDetailOrderByRelationAggregateInput
 }
 
@@ -260,6 +262,7 @@ export type PaymentMethodWhereUniqueInput = Prisma.AtLeast<{
   translations?: Prisma.PaymentMethodTranslationListRelationFilter
   customers?: Prisma.CustomerListRelationFilter
   documents?: Prisma.DocumentListRelationFilter
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentListRelationFilter
   details?: Prisma.PaymentTermDetailListRelationFilter
 }, "id" | "code">
 
@@ -298,6 +301,7 @@ export type PaymentMethodCreateInput = {
   translations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutPaymentMethodInput
   customers?: Prisma.CustomerCreateNestedManyWithoutPaymentMethodInput
   documents?: Prisma.DocumentCreateNestedManyWithoutPaymentMethodRelInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutPaymentMethodInput
   details?: Prisma.PaymentTermDetailCreateNestedManyWithoutPaymentMethodInput
 }
 
@@ -311,6 +315,7 @@ export type PaymentMethodUncheckedCreateInput = {
   translations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutPaymentMethodInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutPaymentMethodInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutPaymentMethodRelInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutPaymentMethodInput
   details?: Prisma.PaymentTermDetailUncheckedCreateNestedManyWithoutPaymentMethodInput
 }
 
@@ -323,6 +328,7 @@ export type PaymentMethodUpdateInput = {
   translations?: Prisma.PaymentMethodTranslationUpdateManyWithoutPaymentMethodNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutPaymentMethodNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutPaymentMethodRelNestedInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutPaymentMethodNestedInput
   details?: Prisma.PaymentTermDetailUpdateManyWithoutPaymentMethodNestedInput
 }
 
@@ -336,6 +342,7 @@ export type PaymentMethodUncheckedUpdateInput = {
   translations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutPaymentMethodNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutPaymentMethodNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutPaymentMethodRelNestedInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutPaymentMethodNestedInput
   details?: Prisma.PaymentTermDetailUncheckedUpdateManyWithoutPaymentMethodNestedInput
 }
 
@@ -444,6 +451,22 @@ export type PaymentMethodUpdateOneWithoutDocumentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PaymentMethodUpdateToOneWithWhereWithoutDocumentsInput, Prisma.PaymentMethodUpdateWithoutDocumentsInput>, Prisma.PaymentMethodUncheckedUpdateWithoutDocumentsInput>
 }
 
+export type PaymentMethodCreateNestedOneWithoutDocumentPaymentInstallmentsInput = {
+  create?: Prisma.XOR<Prisma.PaymentMethodCreateWithoutDocumentPaymentInstallmentsInput, Prisma.PaymentMethodUncheckedCreateWithoutDocumentPaymentInstallmentsInput>
+  connectOrCreate?: Prisma.PaymentMethodCreateOrConnectWithoutDocumentPaymentInstallmentsInput
+  connect?: Prisma.PaymentMethodWhereUniqueInput
+}
+
+export type PaymentMethodUpdateOneWithoutDocumentPaymentInstallmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.PaymentMethodCreateWithoutDocumentPaymentInstallmentsInput, Prisma.PaymentMethodUncheckedCreateWithoutDocumentPaymentInstallmentsInput>
+  connectOrCreate?: Prisma.PaymentMethodCreateOrConnectWithoutDocumentPaymentInstallmentsInput
+  upsert?: Prisma.PaymentMethodUpsertWithoutDocumentPaymentInstallmentsInput
+  disconnect?: Prisma.PaymentMethodWhereInput | boolean
+  delete?: Prisma.PaymentMethodWhereInput | boolean
+  connect?: Prisma.PaymentMethodWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PaymentMethodUpdateToOneWithWhereWithoutDocumentPaymentInstallmentsInput, Prisma.PaymentMethodUpdateWithoutDocumentPaymentInstallmentsInput>, Prisma.PaymentMethodUncheckedUpdateWithoutDocumentPaymentInstallmentsInput>
+}
+
 export type PaymentMethodCreateNestedOneWithoutDetailsInput = {
   create?: Prisma.XOR<Prisma.PaymentMethodCreateWithoutDetailsInput, Prisma.PaymentMethodUncheckedCreateWithoutDetailsInput>
   connectOrCreate?: Prisma.PaymentMethodCreateOrConnectWithoutDetailsInput
@@ -480,6 +503,7 @@ export type PaymentMethodCreateWithoutCustomersInput = {
   updatedAt?: Date | string
   translations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutPaymentMethodInput
   documents?: Prisma.DocumentCreateNestedManyWithoutPaymentMethodRelInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutPaymentMethodInput
   details?: Prisma.PaymentTermDetailCreateNestedManyWithoutPaymentMethodInput
 }
 
@@ -492,6 +516,7 @@ export type PaymentMethodUncheckedCreateWithoutCustomersInput = {
   updatedAt?: Date | string
   translations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutPaymentMethodInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutPaymentMethodRelInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutPaymentMethodInput
   details?: Prisma.PaymentTermDetailUncheckedCreateNestedManyWithoutPaymentMethodInput
 }
 
@@ -519,6 +544,7 @@ export type PaymentMethodUpdateWithoutCustomersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   translations?: Prisma.PaymentMethodTranslationUpdateManyWithoutPaymentMethodNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutPaymentMethodRelNestedInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutPaymentMethodNestedInput
   details?: Prisma.PaymentTermDetailUpdateManyWithoutPaymentMethodNestedInput
 }
 
@@ -531,6 +557,7 @@ export type PaymentMethodUncheckedUpdateWithoutCustomersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   translations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutPaymentMethodNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutPaymentMethodRelNestedInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutPaymentMethodNestedInput
   details?: Prisma.PaymentTermDetailUncheckedUpdateManyWithoutPaymentMethodNestedInput
 }
 
@@ -542,6 +569,7 @@ export type PaymentMethodCreateWithoutDocumentsInput = {
   updatedAt?: Date | string
   translations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutPaymentMethodInput
   customers?: Prisma.CustomerCreateNestedManyWithoutPaymentMethodInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutPaymentMethodInput
   details?: Prisma.PaymentTermDetailCreateNestedManyWithoutPaymentMethodInput
 }
 
@@ -554,6 +582,7 @@ export type PaymentMethodUncheckedCreateWithoutDocumentsInput = {
   updatedAt?: Date | string
   translations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutPaymentMethodInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutPaymentMethodInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutPaymentMethodInput
   details?: Prisma.PaymentTermDetailUncheckedCreateNestedManyWithoutPaymentMethodInput
 }
 
@@ -581,6 +610,7 @@ export type PaymentMethodUpdateWithoutDocumentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   translations?: Prisma.PaymentMethodTranslationUpdateManyWithoutPaymentMethodNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutPaymentMethodNestedInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutPaymentMethodNestedInput
   details?: Prisma.PaymentTermDetailUpdateManyWithoutPaymentMethodNestedInput
 }
 
@@ -593,6 +623,73 @@ export type PaymentMethodUncheckedUpdateWithoutDocumentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   translations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutPaymentMethodNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutPaymentMethodNestedInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutPaymentMethodNestedInput
+  details?: Prisma.PaymentTermDetailUncheckedUpdateManyWithoutPaymentMethodNestedInput
+}
+
+export type PaymentMethodCreateWithoutDocumentPaymentInstallmentsInput = {
+  code: string
+  active?: boolean
+  position?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  translations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutPaymentMethodInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutPaymentMethodInput
+  documents?: Prisma.DocumentCreateNestedManyWithoutPaymentMethodRelInput
+  details?: Prisma.PaymentTermDetailCreateNestedManyWithoutPaymentMethodInput
+}
+
+export type PaymentMethodUncheckedCreateWithoutDocumentPaymentInstallmentsInput = {
+  id?: number
+  code: string
+  active?: boolean
+  position?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  translations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutPaymentMethodInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutPaymentMethodInput
+  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutPaymentMethodRelInput
+  details?: Prisma.PaymentTermDetailUncheckedCreateNestedManyWithoutPaymentMethodInput
+}
+
+export type PaymentMethodCreateOrConnectWithoutDocumentPaymentInstallmentsInput = {
+  where: Prisma.PaymentMethodWhereUniqueInput
+  create: Prisma.XOR<Prisma.PaymentMethodCreateWithoutDocumentPaymentInstallmentsInput, Prisma.PaymentMethodUncheckedCreateWithoutDocumentPaymentInstallmentsInput>
+}
+
+export type PaymentMethodUpsertWithoutDocumentPaymentInstallmentsInput = {
+  update: Prisma.XOR<Prisma.PaymentMethodUpdateWithoutDocumentPaymentInstallmentsInput, Prisma.PaymentMethodUncheckedUpdateWithoutDocumentPaymentInstallmentsInput>
+  create: Prisma.XOR<Prisma.PaymentMethodCreateWithoutDocumentPaymentInstallmentsInput, Prisma.PaymentMethodUncheckedCreateWithoutDocumentPaymentInstallmentsInput>
+  where?: Prisma.PaymentMethodWhereInput
+}
+
+export type PaymentMethodUpdateToOneWithWhereWithoutDocumentPaymentInstallmentsInput = {
+  where?: Prisma.PaymentMethodWhereInput
+  data: Prisma.XOR<Prisma.PaymentMethodUpdateWithoutDocumentPaymentInstallmentsInput, Prisma.PaymentMethodUncheckedUpdateWithoutDocumentPaymentInstallmentsInput>
+}
+
+export type PaymentMethodUpdateWithoutDocumentPaymentInstallmentsInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  translations?: Prisma.PaymentMethodTranslationUpdateManyWithoutPaymentMethodNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutPaymentMethodNestedInput
+  documents?: Prisma.DocumentUpdateManyWithoutPaymentMethodRelNestedInput
+  details?: Prisma.PaymentTermDetailUpdateManyWithoutPaymentMethodNestedInput
+}
+
+export type PaymentMethodUncheckedUpdateWithoutDocumentPaymentInstallmentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  translations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutPaymentMethodNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutPaymentMethodNestedInput
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutPaymentMethodRelNestedInput
   details?: Prisma.PaymentTermDetailUncheckedUpdateManyWithoutPaymentMethodNestedInput
 }
 
@@ -605,6 +702,7 @@ export type PaymentMethodCreateWithoutDetailsInput = {
   translations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutPaymentMethodInput
   customers?: Prisma.CustomerCreateNestedManyWithoutPaymentMethodInput
   documents?: Prisma.DocumentCreateNestedManyWithoutPaymentMethodRelInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutPaymentMethodInput
 }
 
 export type PaymentMethodUncheckedCreateWithoutDetailsInput = {
@@ -617,6 +715,7 @@ export type PaymentMethodUncheckedCreateWithoutDetailsInput = {
   translations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutPaymentMethodInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutPaymentMethodInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutPaymentMethodRelInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutPaymentMethodInput
 }
 
 export type PaymentMethodCreateOrConnectWithoutDetailsInput = {
@@ -644,6 +743,7 @@ export type PaymentMethodUpdateWithoutDetailsInput = {
   translations?: Prisma.PaymentMethodTranslationUpdateManyWithoutPaymentMethodNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutPaymentMethodNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutPaymentMethodRelNestedInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutPaymentMethodNestedInput
 }
 
 export type PaymentMethodUncheckedUpdateWithoutDetailsInput = {
@@ -656,6 +756,7 @@ export type PaymentMethodUncheckedUpdateWithoutDetailsInput = {
   translations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutPaymentMethodNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutPaymentMethodNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutPaymentMethodRelNestedInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutPaymentMethodNestedInput
 }
 
 export type PaymentMethodCreateWithoutTranslationsInput = {
@@ -666,6 +767,7 @@ export type PaymentMethodCreateWithoutTranslationsInput = {
   updatedAt?: Date | string
   customers?: Prisma.CustomerCreateNestedManyWithoutPaymentMethodInput
   documents?: Prisma.DocumentCreateNestedManyWithoutPaymentMethodRelInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentCreateNestedManyWithoutPaymentMethodInput
   details?: Prisma.PaymentTermDetailCreateNestedManyWithoutPaymentMethodInput
 }
 
@@ -678,6 +780,7 @@ export type PaymentMethodUncheckedCreateWithoutTranslationsInput = {
   updatedAt?: Date | string
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutPaymentMethodInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutPaymentMethodRelInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUncheckedCreateNestedManyWithoutPaymentMethodInput
   details?: Prisma.PaymentTermDetailUncheckedCreateNestedManyWithoutPaymentMethodInput
 }
 
@@ -705,6 +808,7 @@ export type PaymentMethodUpdateWithoutTranslationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customers?: Prisma.CustomerUpdateManyWithoutPaymentMethodNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutPaymentMethodRelNestedInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUpdateManyWithoutPaymentMethodNestedInput
   details?: Prisma.PaymentTermDetailUpdateManyWithoutPaymentMethodNestedInput
 }
 
@@ -717,6 +821,7 @@ export type PaymentMethodUncheckedUpdateWithoutTranslationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutPaymentMethodNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutPaymentMethodRelNestedInput
+  documentPaymentInstallments?: Prisma.DocumentPaymentInstallmentUncheckedUpdateManyWithoutPaymentMethodNestedInput
   details?: Prisma.PaymentTermDetailUncheckedUpdateManyWithoutPaymentMethodNestedInput
 }
 
@@ -729,6 +834,7 @@ export type PaymentMethodCountOutputType = {
   translations: number
   customers: number
   documents: number
+  documentPaymentInstallments: number
   details: number
 }
 
@@ -736,6 +842,7 @@ export type PaymentMethodCountOutputTypeSelect<ExtArgs extends runtime.Types.Ext
   translations?: boolean | PaymentMethodCountOutputTypeCountTranslationsArgs
   customers?: boolean | PaymentMethodCountOutputTypeCountCustomersArgs
   documents?: boolean | PaymentMethodCountOutputTypeCountDocumentsArgs
+  documentPaymentInstallments?: boolean | PaymentMethodCountOutputTypeCountDocumentPaymentInstallmentsArgs
   details?: boolean | PaymentMethodCountOutputTypeCountDetailsArgs
 }
 
@@ -773,6 +880,13 @@ export type PaymentMethodCountOutputTypeCountDocumentsArgs<ExtArgs extends runti
 /**
  * PaymentMethodCountOutputType without action
  */
+export type PaymentMethodCountOutputTypeCountDocumentPaymentInstallmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentPaymentInstallmentWhereInput
+}
+
+/**
+ * PaymentMethodCountOutputType without action
+ */
 export type PaymentMethodCountOutputTypeCountDetailsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PaymentTermDetailWhereInput
 }
@@ -788,6 +902,7 @@ export type PaymentMethodSelect<ExtArgs extends runtime.Types.Extensions.Interna
   translations?: boolean | Prisma.PaymentMethod$translationsArgs<ExtArgs>
   customers?: boolean | Prisma.PaymentMethod$customersArgs<ExtArgs>
   documents?: boolean | Prisma.PaymentMethod$documentsArgs<ExtArgs>
+  documentPaymentInstallments?: boolean | Prisma.PaymentMethod$documentPaymentInstallmentsArgs<ExtArgs>
   details?: boolean | Prisma.PaymentMethod$detailsArgs<ExtArgs>
   _count?: boolean | Prisma.PaymentMethodCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["paymentMethod"]>
@@ -824,6 +939,7 @@ export type PaymentMethodInclude<ExtArgs extends runtime.Types.Extensions.Intern
   translations?: boolean | Prisma.PaymentMethod$translationsArgs<ExtArgs>
   customers?: boolean | Prisma.PaymentMethod$customersArgs<ExtArgs>
   documents?: boolean | Prisma.PaymentMethod$documentsArgs<ExtArgs>
+  documentPaymentInstallments?: boolean | Prisma.PaymentMethod$documentPaymentInstallmentsArgs<ExtArgs>
   details?: boolean | Prisma.PaymentMethod$detailsArgs<ExtArgs>
   _count?: boolean | Prisma.PaymentMethodCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -836,6 +952,7 @@ export type $PaymentMethodPayload<ExtArgs extends runtime.Types.Extensions.Inter
     translations: Prisma.$PaymentMethodTranslationPayload<ExtArgs>[]
     customers: Prisma.$CustomerPayload<ExtArgs>[]
     documents: Prisma.$DocumentPayload<ExtArgs>[]
+    documentPaymentInstallments: Prisma.$DocumentPaymentInstallmentPayload<ExtArgs>[]
     details: Prisma.$PaymentTermDetailPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1242,6 +1359,7 @@ export interface Prisma__PaymentMethodClient<T, Null = never, ExtArgs extends ru
   translations<T extends Prisma.PaymentMethod$translationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentMethod$translationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentMethodTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customers<T extends Prisma.PaymentMethod$customersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentMethod$customersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   documents<T extends Prisma.PaymentMethod$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentMethod$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  documentPaymentInstallments<T extends Prisma.PaymentMethod$documentPaymentInstallmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentMethod$documentPaymentInstallmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPaymentInstallmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   details<T extends Prisma.PaymentMethod$detailsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentMethod$detailsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentTermDetailPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1735,6 +1853,30 @@ export type PaymentMethod$documentsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.DocumentScalarFieldEnum | Prisma.DocumentScalarFieldEnum[]
+}
+
+/**
+ * PaymentMethod.documentPaymentInstallments
+ */
+export type PaymentMethod$documentPaymentInstallmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentPaymentInstallment
+   */
+  select?: Prisma.DocumentPaymentInstallmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DocumentPaymentInstallment
+   */
+  omit?: Prisma.DocumentPaymentInstallmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DocumentPaymentInstallmentInclude<ExtArgs> | null
+  where?: Prisma.DocumentPaymentInstallmentWhereInput
+  orderBy?: Prisma.DocumentPaymentInstallmentOrderByWithRelationInput | Prisma.DocumentPaymentInstallmentOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentPaymentInstallmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DocumentPaymentInstallmentScalarFieldEnum | Prisma.DocumentPaymentInstallmentScalarFieldEnum[]
 }
 
 /**

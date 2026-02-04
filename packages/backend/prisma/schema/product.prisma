@@ -7,6 +7,13 @@ enum ProductType {
     STANDARD
     PACK
     VIRTUAL
+    SERVICE
+}
+
+enum ProductStatus {
+    DRAFT
+    ACTIVE
+    ARCHIVED
 }
 
 // Enum per la Condizione del Prodotto
@@ -17,9 +24,10 @@ enum ProductCondition {
 }
 
 model Product {
-    id   Int         @id @default(autoincrement())
+    id     Int           @id @default(autoincrement())
     // Uso di Enum per 'type'
-    type ProductType @default(STANDARD) // simple, pack, virtual
+    type   ProductType   @default(STANDARD) // simple, pack, virtual
+    status ProductStatus @default(DRAFT)
 
     reference String @unique @db.VarChar(64) // Riferimento interno
 
@@ -66,16 +74,15 @@ model Product {
     // Media
     coverThumbnailUrl String? @db.VarChar(500)
 
-    translations  ProductTranslation[]
     variants      ProductVariant[]
     images        ProductImage[]
     categories    ProductCategory[] // Relazione many-to-many
     documentLines DocumentLine[]
 
     // soft delete per mantenere storico
-    deletedAt DateTime? // NULL = attivo, NOT NULL = cancellato
-    deletedBy Int? // User ID che ha cancellato
-    deletedByUser User? @relation("DeletedBy", fields: [deletedBy], references: [id])
+    deletedAt     DateTime? // NULL = attivo, NOT NULL = cancellato
+    deletedBy     Int? // User ID che ha cancellato
+    deletedByUser User?     @relation("DeletedBy", fields: [deletedBy], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -86,10 +93,10 @@ model Product {
     @@index([deletedAt])
 }
 
-model ProductTranslation {
-    id        Int     @id @default(autoincrement())
-    productId Int
-    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+model ProductVariantTranslation {
+    id               Int            @id @default(autoincrement())
+    productVariantId Int
+    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
 
     languageId Int
     language   Language @relation(fields: [languageId], references: [id])
@@ -115,8 +122,8 @@ model ProductTranslation {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@unique([productId, languageId])
-    @@index([productId])
+    @@unique([productVariantId, languageId])
+    @@index([productVariantId])
     @@index([languageId])
     @@index([linkRewrite])
 }
@@ -171,19 +178,20 @@ model ProductVariant {
     metadata Json?
 
     // RELAZIONI
-    attributes     ProductVariantAttribute[]
-    stockMovement  StockMovement[]
+    attributes        ProductVariantAttribute[]
+    stockMovement     StockMovement[]
     stockReservations StockReservation[]
-    stockBatchs    StockBatch[]
-    virtualStock   VirtualStock[]
-    documentLines  DocumentLine[]
-    priceListItems PriceListItem[]
-    images         ProductImage[]
+    stockBatchs       StockBatch[]
+    virtualStock      VirtualStock[]
+    documentLines     DocumentLine[]
+    priceListItems    PriceListItem[]
+    images            ProductImage[]
+    translations      ProductVariantTranslation[]
 
     // soft delete per mantenere storico
-    deletedAt DateTime? // NULL = attivo, NOT NULL = cancellato
-    deletedBy Int? // User ID che ha cancellato
-    deletedByUser User? @relation("DeletedBy", fields: [deletedBy], references: [id])
+    deletedAt     DateTime? // NULL = attivo, NOT NULL = cancellato
+    deletedBy     Int? // User ID che ha cancellato
+    deletedByUser User?     @relation("DeletedBy", fields: [deletedBy], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
