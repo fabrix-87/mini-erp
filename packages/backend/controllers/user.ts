@@ -30,10 +30,15 @@ import {
   rotateRefreshToken,
   invalidateUserPermissionsCache,
   destroyAllUserSessions,
+  calculateLockUntil,
 } from "../helpers/user";
 import authConfig from "../config/auth";
-import { formatPaginatedResponse } from "../utils/response";
-import { LoginInput, UserIdInput, UserQueryInput } from '@mini-erp/shared/types';
+import { formatPaginatedResponse, sendSuccess } from "../utils/response";
+import {
+  LoginInput,
+  UserIdInput,
+  UserQueryInput,
+} from "@mini-erp/shared/types";
 import { redisClient } from "@/config/redis";
 
 // ============================================================================
@@ -109,7 +114,7 @@ export const register = asyncHandler(
         details: newUser.details,
       },
     });
-  }
+  },
 );
 
 /**
@@ -151,6 +156,16 @@ export const login = asyncHandler(
       throw new UnauthorizedError("Credenziali non valide");
     }
 
+    // Verifica account non bloccato
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      const minutesLeft = Math.ceil(
+        (user.lockedUntil.getTime() - Date.now()) / 60000,
+      );
+      throw new UnauthorizedError(
+        `Account temporaneamente bloccato. Riprova tra ${minutesLeft} minuti.`,
+      );
+    }
+
     // Verifica se l'utente è attivo
     if (!user.active) {
       throw new UnauthorizedError("Account disabilitato");
@@ -158,9 +173,36 @@ export const login = asyncHandler(
 
     // Verifica password
     const isPasswordValid = await bcrypt.compare(password, user.password);
+
     if (!isPasswordValid) {
+      // Incrementa tentativi falliti
+      const newFailedAttempts = user.failedLoginAttempts + 1;
+      const updateData: any = {
+        failedLoginAttempts: newFailedAttempts,
+        lastFailedLoginAt: new Date(),
+      };
+
+      // Blocca dopo 5 tentativi
+      if (newFailedAttempts >= 5) {
+        updateData.lockedUntil = calculateLockUntil(newFailedAttempts);
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: updateData,
+      });
+
       throw new UnauthorizedError("Credenziali non valide");
     }
+
+    // Login riuscito: reset tentativi falliti
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+      },
+    });
 
     // Aggiorna lastLogin
     if (user.details) {
@@ -171,7 +213,7 @@ export const login = asyncHandler(
     }
 
     // 1. Genera fingerprint dal browser o da Next.js header
-    const fingerprint = extractFingerprint(req);  
+    const fingerprint = extractFingerprint(req);
 
     // 2. Genera token con jti
     const userPayload: UserPayload = {
@@ -195,16 +237,15 @@ export const login = asyncHandler(
         loginAt: new Date(),
         lastActivity: new Date(),
       },
-      tokens.refreshTokenId!
+      tokens.refreshTokenId!,
     );
 
     // 4. Imposta cookie HttpOnly sicuri
     setTokenCookies(res, tokens);
 
-    res.json({
-      status: "success",
-      message: "Login effettuato con successo",
-      data: {
+    sendSuccess(
+      res,
+      {
         user: {
           id: user.id,
           username: user.username,
@@ -217,8 +258,11 @@ export const login = asyncHandler(
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
       },
-    });
-  }
+      {
+        message: "Login effettuato con successo",
+      },
+    );
+  },
 );
 
 /**
@@ -226,30 +270,32 @@ export const login = asyncHandler(
  * @route   POST /api/users/logout
  * @access  Private (require authenticateToken)
  */
-export const logout = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
-  const userId = req.user!.userId;
-  const jti = (req.user as any).jti;
+export const logout = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const userId = req.user!.userId;
+    const jti = (req.user as any).jti;
 
-  if (!jti) {
-    throw new BadRequestError("JTI mancante nel token");
-  }
+    if (!jti) {
+      throw new BadRequestError("JTI mancante nel token");
+    }
 
-  // Calcola TTL per blacklist (tempo rimanente alla scadenza del token)
-  const exp = (req.user as any).exp;
-  const now = Math.floor(Date.now() / 1000);
-  const ttl = Math.max(exp - now, 60); // Minimo 60s
+    // Calcola TTL per blacklist (tempo rimanente alla scadenza del token)
+    const exp = (req.user as any).exp;
+    const now = Math.floor(Date.now() / 1000);
+    const ttl = Math.max(exp - now, 60); // Minimo 60s
 
-  // Distruggi sessione Redis (atomico: MULTI/EXEC)
-  await destroySession(userId, jti, ttl);
+    // Distruggi sessione Redis (atomico: MULTI/EXEC)
+    await destroySession(userId, jti, ttl);
 
-  // Rimuovi cookie
-  clearTokenCookies(res);
+    // Rimuovi cookie
+    clearTokenCookies(res);
 
-  res.json({
-    status: "success",
-    message: "Logout effettuato con successo",
-  });
-});
+    res.json({
+      status: "success",
+      message: "Logout effettuato con successo",
+    });
+  },
+);
 
 /**
  * @desc    Refresh access token con token rotation
@@ -261,7 +307,7 @@ export const refreshToken = asyncHandler(
     // Il token viene letto dal cookie, non dal body
     const token = req.cookies.refreshToken;
 
-    console.debug(token)
+    console.debug(token);
 
     if (!token) {
       throw new UnauthorizedError("Refresh token mancante");
@@ -299,7 +345,7 @@ export const refreshToken = asyncHandler(
       clearTokenCookies(res);
 
       throw new UnauthorizedError(
-        "Fingerprint mismatch - dispositivo non riconosciuto. Effettua nuovamente il login."
+        "Fingerprint mismatch - dispositivo non riconosciuto. Effettua nuovamente il login.",
       );
     }
 
@@ -358,14 +404,14 @@ export const refreshToken = asyncHandler(
 
     const newTokens = generateTokenPair(
       userPayload,
-      tokenFingerprint || currentFingerprint
+      tokenFingerprint || currentFingerprint,
     );
 
     // 6. RUOTA refresh token in Redis (atomico)
     await rotateRefreshToken(
       user.id,
       decoded.jti, // vecchio
-      newTokens.refreshTokenId! // nuovo
+      newTokens.refreshTokenId!, // nuovo
     );
 
     // 7. Aggiorna sessione
@@ -380,7 +426,7 @@ export const refreshToken = asyncHandler(
         loginAt: new Date(),
         lastActivity: new Date(),
       },
-      newTokens.refreshTokenId!
+      newTokens.refreshTokenId!,
     );
 
     // 8. Imposta nuovi cookie
@@ -402,7 +448,7 @@ export const refreshToken = asyncHandler(
         refreshToken: newTokens.refreshToken,
       },
     });
-  }
+  },
 );
 
 /**
@@ -420,33 +466,55 @@ export const forgotPassword = asyncHandler(
 
     // Non rivelare se l'email esiste per sicurezza
     if (!user) {
-      res.json({
-        status: "success",
-        message: "Se l'email esiste, riceverai le istruzioni per il reset",
-      });
+      sendSuccess(
+        res,
+        {},
+        {
+          message: "Se l'email esiste, riceverai le istruzioni per il reset",
+        },
+      );
       return;
+    }
+
+    if (
+      user.passwordResetAttempts >= 3 &&
+      user.lastPasswordResetAt &&
+      user.lastPasswordResetAt > new Date(Date.now() - 60 * 60 * 1000)
+    ) {
+      throw new BadRequestError(
+        "Troppi tentativi di reset. Riprova tra 1 ora.",
+      );
     }
 
     // Genera token di reset
     const { token, hashedToken, expiresAt } = generateResetToken();
 
-    // TODO: Salva hashedToken e expiresAt nel database (aggiungere campi al modello User)
-    // await prisma.user.update({
-    //   where: { id: user.id },
-    //   data: {
-    //     resetPasswordToken: hashedToken,
-    //     resetPasswordExpires: expiresAt,
-    //   },
-    // });
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetPasswordToken: hashedToken,
+        resetPasswordExpires: expiresAt,
+        passwordResetAttempts: {
+          increment: 1,
+        },
+        lastPasswordResetAt: new Date(),
+      },
+    });
 
     // TODO: Invia email con il token
-    // await sendResetPasswordEmail(user.email, token);
+    // const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    // await sendResetPasswordEmail(user.email, resetUrl);
 
-    res.json({
-      status: "success",
-      message: "Se l'email esiste, riceverai le istruzioni per il reset",
-    });
-  }
+    console.log(`🔑 Reset token for ${user.email}: ${token}`); // Solo per dev!
+
+    sendSuccess(
+      res,
+      {},
+      {
+        message: "Se l'email esiste, riceverai le istruzioni per il reset",
+      },
+    );
+  },
 );
 
 /**
@@ -461,36 +529,44 @@ export const resetPassword = asyncHandler(
     // Hash del token ricevuto
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-    // TODO: Trova utente con token valido
-    // const user = await prisma.user.findFirst({
-    //   where: {
-    //     resetPasswordToken: hashedToken,
-    //     resetPasswordExpires: { gt: new Date() },
-    //   },
-    // });
+    // Trova utente con token valido
+    const user = await prisma.user.findFirst({
+      where: {
+        resetPasswordToken: hashedToken,
+        resetPasswordExpires: { gt: new Date() },
+      },
+    });
 
-    // if (!user) {
-    //   throw new BadRequestError('Token non valido o scaduto');
-    // }
+    if (!user) {
+      throw new BadRequestError("Token non valido o scaduto");
+    }
 
     // Hash nuova password
     const hashedPassword = await bcrypt.hash(newPassword, 12);
 
-    // TODO: Aggiorna password e rimuovi token
-    // await prisma.user.update({
-    //   where: { id: user.id },
-    //   data: {
-    //     password: hashedPassword,
-    //     resetPasswordToken: null,
-    //     resetPasswordExpires: null,
-    //   },
-    // });
-
-    res.json({
-      status: "success",
-      message: "Password reimpostata con successo",
+    // Aggiorna password e rimuovi token
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+        passwordResetAttempts: 0, // Reset counter
+        lastPasswordChangeAt: new Date(),
+        // Forza logout invalidando tutte le sessioni
+      },
     });
-  }
+
+    await destroyAllUserSessions(user.id);
+
+    sendSuccess(
+      res,
+      {},
+      {
+        message: "Password reimpostata con successo",
+      },
+    );
+  },
 );
 
 /**
@@ -502,17 +578,40 @@ export const verifyEmail = asyncHandler(
   async (req: ValidatedRequest, res: Response) => {
     const { token } = req.validatedParams;
 
-    // TODO: Implementa logica di verifica email
-    // const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-    // const user = await prisma.user.findFirst({
-    //   where: { emailVerificationToken: hashedToken },
-    // });
+    // Hash del token
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-    res.json({
-      status: "success",
-      message: "Email verificata con successo",
+    // Trova utente con token valido
+    const user = await prisma.user.findFirst({
+      where: {
+        emailVerificationToken: hashedToken,
+        emailVerificationExpires: { gt: new Date() },
+      },
     });
-  }
+
+    if (!user) {
+      throw new BadRequestError("Token di verifica non valido o scaduto");
+    }
+
+    // Marca email come verificata
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerified: true,
+        emailVerificationToken: null,
+        emailVerificationExpires: null,
+        emailVerifiedAt: new Date(),
+      },
+    });
+
+    sendSuccess(
+      res,
+      {},
+      {
+        message: "Email verificata con successo",
+      },
+    );
+  },
 );
 
 // ============================================================================
@@ -524,52 +623,54 @@ export const verifyEmail = asyncHandler(
  * @route   GET /api/users/me
  * @access  Private
  */
-export const getMe = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
-  const userId = req.user!.userId;
+export const getMe = asyncHandler(
+  async (req: AuthenticatedValidatedRequest, res: Response) => {
+    const userId = req.user!.userId;
 
-  if (!userId) {
-    throw new NotFoundError("ID utente non trovato");
-  }
+    if (!userId) {
+      throw new NotFoundError("ID utente non trovato");
+    }
 
-  // Chiave cache per l'utente
-  const cacheKey = `user:profile:${userId}`;
+    // Chiave cache per l'utente
+    const cacheKey = `user:profile:${userId}`;
 
-  // Tenta di recuperare dalla cache
-  const cached = await redisClient.get(cacheKey);
-  
-  if (cached) {
-    const userData = JSON.parse(cached);
+    // Tenta di recuperare dalla cache
+    const cached = await redisClient.get(cacheKey);
+
+    if (cached) {
+      const userData = JSON.parse(cached);
+      res.json({
+        status: "success",
+        data: userData,
+        cached: true, // Optional: per debug
+      });
+      return;
+    }
+
+    // Se non in cache, recupera dal database
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: getUserSelection(),
+    });
+
+    if (!user) {
+      throw new NotFoundError("Utente non trovato");
+    }
+
+    const userData = {
+      ...user,
+      roles: formatUserRoles(user.roles),
+    };
+
+    // Salva in cache (TTL: 1 ora = 3600 secondi)
+    await redisClient.setEx(cacheKey, 3600, JSON.stringify(userData));
+
     res.json({
       status: "success",
       data: userData,
-      cached: true, // Optional: per debug
     });
-    return;
-  }
-
-  // Se non in cache, recupera dal database
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: getUserSelection(),
-  });
-
-  if (!user) {
-    throw new NotFoundError("Utente non trovato");
-  }
-
-  const userData = {
-    ...user,
-    roles: formatUserRoles(user.roles),
-  };
-
-  // Salva in cache (TTL: 1 ora = 3600 secondi)
-  await redisClient.setEx(cacheKey, 3600, JSON.stringify(userData));
-
-  res.json({
-    status: "success",
-    data: userData,
-  });
-});
+  },
+);
 
 /**
  * @desc    Aggiorna profilo utente corrente
@@ -579,10 +680,11 @@ export const getMe = asyncHandler(async (req: AuthenticatedValidatedRequest, res
 export const updateProfile = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     // Usa validatedBody (dati già validati)
-    const { username, email, preferredLanguageId, details } = req.validatedBody!
+    const { username, email, preferredLanguageId, details } =
+      req.validatedBody!;
 
     // Prendi userId dall'utente autenticato o dai params (admin)
-    const {id: userId} = req.validatedParams as UserIdInput
+    const { id: userId } = req.validatedParams as UserIdInput;
 
     // Prepara dati da aggiornare per User
     const userDataToUpdate: any = {};
@@ -654,7 +756,7 @@ export const updateProfile = asyncHandler(
       message: "Profilo aggiornato con successo",
       data: userData,
     });
-  }
+  },
 );
 
 /**
@@ -667,7 +769,7 @@ export const updateDetails = asyncHandler(
     const updateData = req.validatedBody!;
 
     // Prendi userId dall'utente autenticato o dai params (admin)
-    const {id: userId} = req.validatedParams as UserIdInput
+    const { id: userId } = req.validatedParams as UserIdInput;
 
     // Upsert dettagli
     await prisma.userDetails.upsert({
@@ -702,7 +804,7 @@ export const updateDetails = asyncHandler(
       message: "Dettagli aggiornati con successo",
       data: userData,
     });
-  }
+  },
 );
 
 /**
@@ -727,7 +829,7 @@ export const changePassword = asyncHandler(
     // Verifica password corrente
     const isPasswordValid = await bcrypt.compare(
       currentPassword,
-      user.password
+      user.password,
     );
     if (!isPasswordValid) {
       throw new UnauthorizedError("Password corrente non valida");
@@ -754,7 +856,7 @@ export const changePassword = asyncHandler(
       message:
         "Password modificata con successo. Effettua nuovamente il login.",
     });
-  }
+  },
 );
 
 // ============================================================================
@@ -820,13 +922,8 @@ export const getAllUsers = asyncHandler(
       roles: formatUserRoles(user.roles),
     }));
 
-    res.json(formatPaginatedResponse(
-      usersFormatted,
-      total,
-      page,
-      limit
-    ))
-  }
+    res.json(formatPaginatedResponse(usersFormatted, total, page, limit));
+  },
 );
 
 /**
@@ -836,7 +933,7 @@ export const getAllUsers = asyncHandler(
  */
 export const getUserById = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams as UserIdInput
+    const { id } = req.validatedParams as UserIdInput;
 
     const user = await prisma.user.findUnique({
       where: { id },
@@ -854,7 +951,7 @@ export const getUserById = asyncHandler(
         roles: formatUserRoles(user.roles),
       },
     });
-  }
+  },
 );
 
 /**
@@ -911,7 +1008,7 @@ export const createUser = asyncHandler(
         roles: formatUserRoles(newUser.roles),
       },
     });
-  }
+  },
 );
 
 /**
@@ -921,7 +1018,7 @@ export const createUser = asyncHandler(
  */
 export const updateRole = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id: userId } = req.validatedParams as UserIdInput
+    const { id: userId } = req.validatedParams as UserIdInput;
     const { roleIds } = req.validatedBody!;
 
     // Verifica esistenza utente
@@ -960,7 +1057,7 @@ export const updateRole = asyncHandler(
         roles: formatUserRoles(updatedUser.roles),
       },
     });
-  }
+  },
 );
 
 /**
@@ -970,7 +1067,7 @@ export const updateRole = asyncHandler(
  */
 export const toggleUserActive = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id: userId } = req.validatedParams as UserIdInput
+    const { id: userId } = req.validatedParams as UserIdInput;
     const { active } = req.validatedBody!;
 
     // Verifica esistenza utente
@@ -1003,7 +1100,7 @@ export const toggleUserActive = asyncHandler(
         active: updatedUser.active,
       },
     });
-  }
+  },
 );
 
 /**
@@ -1013,7 +1110,7 @@ export const toggleUserActive = asyncHandler(
  */
 export const deleteUser = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id: userId } = req.validatedParams as UserIdInput
+    const { id: userId } = req.validatedParams as UserIdInput;
 
     // Verifica esistenza utente
     const user = await prisma.user.findUnique({
@@ -1038,5 +1135,5 @@ export const deleteUser = asyncHandler(
       status: "success",
       data: null,
     });
-  }
+  },
 );

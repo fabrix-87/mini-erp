@@ -1,11 +1,8 @@
 @import 'tailwindcss';
 @import './app.css';
-
 @import './layouts/container.css' layer(utilities);
 @import './layouts/sidebar.css' layer(utilities);
 @import './layouts/header.css' layer(utilities);
-@import './theme/default-colors.css' layer(utilities);
-@import './theme/dark-colors.css' layer(utilities);
 @import './override/reboot.css' layer(utilities);
 @import "tw-animate-css";
 
@@ -17,11 +14,11 @@ main {
 }
 
 @theme {
-  
+
   --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
-  
   --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  --shadow-btn-shadow: box-shadow: rgba(0, 0, 0, 0.05) 0 9px 17.5px;
+  --shadow-md: 0 1px 4px rgba(133, 146, 173, 0.2);
+  --shadow-btn-shadow: 0 9px 17.5px rgba(0, 0, 0, 0.05);
 
   --radius-sm: 4px;
   --radius-md: 7px;
@@ -35,135 +32,8 @@ main {
   --padding-15: 15px;
   --padding-30: 30px;
 
-  --margin-30: 30px;
-
-  --color-cyan-500: var(--color-primary);
-  --color-cyan-600: var(--color-primary);
-  --color-cyan-700: var(--color-primary);
-
-  --color-primary: var(--color-primary);
-  --color-secondary: var(--color-secondary);
-  --color-info: var(--color-info);
-  --color-success: var(--color-success);
-  --color-warning: var(--color-warning);
-  --color-error: var(--color-error);
-  --color-lightprimary: var(--color-lightprimary);
-  --color-lightsecondary: var(--color-lightsecondary);
-  --color-lightsuccess: var(--color-lightsuccess);
-  --color-lighterror: var(--color-lighterror);
-  --color-lightinfo: var(--color-lightinfo);
-  --color-lightwarning: var(--color-lightwarning);
-  --color-border: var(--color-border);
-  --color-bordergray: var(--color-bordergray);
-  --color-lightgray: var(--color-lightgray);
-  --color-muted: var(--color-muted);
-  --color-darkmuted: var(--color-darkmuted);
-  --color-bodytext: var(--color-bodytext);
-  --color-dark: var(--color-dark);
-  --color-link: var(--color-link);
-  --color-darklink: var(--color-darklink);
-  --color-darkborder: var(--color-darkborder);
-  --color-primaryemphasis: var(--color-primary-emphasis);
-  --color-secondaryemphasis: var(--color-secondary-emphasis);
-  --color-warningemphasis: var(--color-warning-emphasis);
-  --color-erroremphasis: var(--color-error-emphasis);
-  --color-successemphasis: var(--color-success-emphasis);
-  --color-infoemphasis: var(--color-info-emphasis);
-  --color-charcoal: var(--color-charcoal);
-  --color-defaultBorder: var(--color-defaultBorder);
-  --color-slateGray: var(--color-slateGray);
-  --color-breadcrumbColor: var(--color-breadcrumbColor);
+  --margin-30: 30px;  
 }
-
-@layer base {
-
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
-}
-
-@utility form-control {
-  & input {
-    @apply border rounded-md border-defaultBorder bg-transparent ring-transparent dark:ring-transparent dark:bg-transparent w-full text-sm;
-  }
-
-  & input:focus {
-    @apply shadow-none dark:shadow-none ring-transparent dark:ring-transparent;
-  }
-
-  & input:focus {
-    @apply border-primary dark:border-primary outline-hidden shadow-none ring-offset-0 ring-transparent;
-  }
-}
-
-@utility form-control-textarea {
-  @apply rounded-md border border-defaultBorder bg-transparent dark:bg-transparent w-full text-sm p-4;
-
-  &:focus {
-    @apply border-primary dark:border-primary outline-hidden shadow-none ring-offset-0 ring-transparent;
-  }
-}
-
-@utility card-title {
-  @apply text-lg font-semibold text-dark dark:text-white;
-}
-
-@utility border-ld {
-  @apply border-defaultBorder;
-}
-
-@utility bg-hover {
-  @apply hover:bg-lightprimary dark:hover:bg-lightprimary;
-}
-
-@layer utilities {
-  .left-part {
-    @apply p-6 border-e border-defaultBorder;
-  }
-}
-
-@layer components {
-  body {
-    @apply text-sm overflow-x-hidden dark:bg-background;
-  }
-
-  body {
-    @apply text-link dark:text-darklink;
-  }
-
-  /*heading text color*/
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply text-dark dark:text-white font-semibold;
-  }
-
-  input::placeholder {
-    @apply text-darklink dark:text-darklink
-  }
-
-  button {
-    @apply cursor-pointer!;
-  }
-
-  #fileUpload input {
-    @apply flex items-center gap-4 p-3;
-  }
-
-  .sales-overview select{
-    @apply pr-9!;
-  }
-
-}
-
-/*---break---*/
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -201,10 +71,151 @@ main {
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* custom colors */
+  --color-cyan-500: var(--primary);
+  --color-cyan-600: var(--primary);
+  --color-cyan-700: var(--primary);
+  
+  --color-info: var(--info);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-dark: var(--dark);
+  --color-bodytext: var(--bodytext);
+  --color-lightprimary: var(--lightprimary);
+  --color-lightsecondary: var(--lightsecondary);
+  --color-lightsuccess: var(--lightsuccess);
+  --color-lighterror: var(--lighterror);
+  --color-lightinfo: var(--lightinfo);
+  --color-lightwarning: var(--lightwarning);
+  --color-primaryemphasis: var(--primary-emphasis);
+  --color-secondaryemphasis: var(--secondary-emphasis);
+  --color-warningemphasis: var(--warning-emphasis);
+  --color-erroremphasis: var(--error-emphasis);
+  --color-successemphasis: var(--success-emphasis);
+  --color-infoemphasis: var(--info-emphasis);
 }
 
+:root {
+  --radius: 10px;
+  --background: var(--white);
+  --foreground: var(--dark);
+  --card: var(--white);
+  --card-foreground: var(--link);
+  --popover: var(--white);
+  --popover-foreground: var(--link);
+  --primary: #5d87ff;
+  --primary-foreground: var(--white);
+  --secondary: #49beff;
+  --secondary-foreground: var(--white);
+  --muted: #f5f5f5;
+  --muted-foreground: #5a6a85bf;
+  --accent: var(--lightprimary);
+  --accent-foreground: var(--primary);
+  --destructive: var(--error);
+  --destructive-foreground: var(--white);
+  --border: #dfe5ef;
+  --input: #e5e7eb;
+  --ring: var(--lightprimary);
+  --chart-1: var(--primary);
+  --chart-2: var(--secondary);
+  --chart-3: var(--success);
+  --chart-4: var(--warning);
+  --chart-5: var(--error);
+  --sidebar: var(--white);
+  --sidebar-foreground: #2a3547;
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--white);
+  --sidebar-accent: var(--lightprimary);
+  --sidebar-accent-foreground: var(--primary);
+  --sidebar-border: var(--border);
+  --sidebar-ring: #a1a1a1;
 
-/*---break---*/
+  /* CUSTOM COLORS */
+  --info: #8754ec;
+  --success: #13deb9;
+  --warning: #f6b51e;
+  --error: #ef4444;
+  --white: #ffffff;
+  --dark: #1c2536;
+  --bodytext: #5a6a85bf;
+
+  /* Light Variants */
+  --lightprimary: color-mix(in oklab, var(--primary) 12%, transparent);
+  --lightsecondary: color-mix(in oklab, var(--secondary) 12%, transparent);
+  --lightsuccess: color-mix(in oklab, var(--success) 12%, transparent);
+  --lightwarning: color-mix(in oklab, var(--warning) 12%, transparent);
+  --lighterror: color-mix(in oklab, var(--error) 12%, transparent);
+  --lightinfo: color-mix(in oklab, var(--info) 12%, transparent);
+
+  /* Emphasis Variants */
+  --primary-emphasis: color-mix(in oklab, var(--primary) 80%, black);
+  --secondary-emphasis: color-mix(in oklab, var(--secondary) 80%, black);
+  --success-emphasis: color-mix(in oklab, var(--success) 80%, black);
+  --warning-emphasis: color-mix(in oklab, var(--warning) 80%, black);
+  --error-emphasis: color-mix(in oklab, var(--error) 80%, black);
+  --info-emphasis: color-mix(in oklab, var(--info) 80%, black);  
+}
+
+.dark {
+  --background: var(--dark);
+  --foreground: var(--white);
+  --card: var(--dark);
+  --card-foreground: var(--white);
+  --popover: #333f55;
+  --popover-foreground: var(--white);
+  --primary: #5d87ff;
+  --primary-foreground: var(--white);
+  --secondary: #49beff;
+  --secondary-foreground: var(--white);
+  --muted: #2a3851;
+  --muted-foreground: #7c8fac;
+  --accent: var(--accent);
+  --accent-foreground: var(--accent-foreground);
+  --destructive: var(--error);
+  --border: #333f55;
+  --input: var(--border);
+  --ring: var(--lightprimary);
+  --chart-1: var(--primary);
+  --chart-2: var(--secondary);
+  --chart-3: var(--success);
+  --chart-4: var(--warning);
+  --chart-5: var(--error);
+  --sidebar: var(--dark);
+  --sidebar-foreground: #7c8fac;
+  --sidebar-primary: var(--sidebar-primary);
+  --sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --sidebar-accent: var(--sidebar-accent);
+  --sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --sidebar-border: var(--sidebar-border);
+  --sidebar-ring: var(--sidebar-ring);
+
+  /* CUSTOM COLORS */
+  --info: #8754ec;
+  --success: #13deb9;
+  --warning: #f6b51e;
+  --error: #ef4444;
+  --white: #ffffff;
+  --dark: #1c2536;
+  --bodytext: #5a6a85bf;
+
+  /* Light Variants */
+  --lightprimary: color-mix(in oklab, var(--primary) 20%, transparent);
+  --lightsecondary: color-mix(in oklab, var(--secondary) 20%, transparent);
+  --lightsuccess: color-mix(in oklab, var(--success) 20%, transparent);
+  --lightwarning: color-mix(in oklab, var(--warning) 20%, transparent);
+  --lighterror: color-mix(in oklab, var(--error) 20%, transparent);
+  --lightinfo: color-mix(in oklab, var(--info) 20%, transparent);
+
+  /* Emphasis Variants */
+  --primary-emphasis: color-mix(in oklab, var(--primary) 80%, black);
+  --secondary-emphasis: color-mix(in oklab, var(--secondary) 80%, black);
+  --success-emphasis: color-mix(in oklab, var(--success) 80%, black);
+  --warning-emphasis: color-mix(in oklab, var(--warning) 80%, black);
+  --error-emphasis: color-mix(in oklab, var(--error) 80%, black);
+  --info-emphasis: color-mix(in oklab, var(--info) 80%, black);
+}
 
 @layer base {
   * {
@@ -215,13 +226,101 @@ main {
   }
 }
 
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility form-control {
+  & input {
+    @apply border rounded-md border-border bg-transparent ring-transparent dark:ring-transparent dark:bg-transparent w-full text-sm;
+  }
+
+  & input:focus {
+    @apply shadow-none dark:shadow-none ring-transparent dark:ring-transparent;
+  }
+
+  & input:focus {
+    @apply border-primary dark:border-primary outline-hidden shadow-none ring-offset-0 ring-transparent;
+  }
+}
+
+@utility form-control-textarea {
+  @apply rounded-md border border-border bg-transparent dark:bg-transparent w-full text-sm p-4;
+
+  &:focus {
+    @apply border-primary dark:border-primary outline-hidden shadow-none ring-offset-0 ring-transparent;
+  }
+}
+
+@utility card-title {
+  @apply text-lg font-semibold text-foreground;
+}
+
+@utility border-ld {
+  @apply border-border;
+}
+
+@utility bg-hover {
+  @apply hover:bg-lightprimary;
+}
+
+@layer utilities {
+  .left-part {
+    @apply p-6 border-e border-border;
+  }
+}
+
+@layer components {
+  body {
+    @apply text-sm overflow-x-hidden;
+  }
+
+
+  /*heading text color*/
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-foreground font-semibold;
+  }
+
+  input::placeholder {
+    @apply text-muted-foreground;
+  }
+
+  button {
+    @apply !cursor-pointer;
+  }
+
+  #fileUpload input {
+    @apply flex items-center gap-4 p-3;
+  }
+
+  .sales-overview select{
+    @apply pr-9!;
+  }
+
+}
+
 input[type="time"]::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
 }
 
+/* Hide in Firefox */
+input[type="time"] {
+  -moz-appearance: textfield;
+}
+
 [data-testid="flowbite-drawer"] {
   will-change: transform;
   -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
 }

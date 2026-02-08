@@ -1,7 +1,15 @@
 // app/layout.tsx
-import "./globals.css";
+import "./css/globals.css";
+import { DM_Sans } from 'next/font/google'
 import { Providers } from "./providers";
 import type { Metadata } from "next";
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-dm-sans',
+})
+
 
 export const metadata: Metadata = {
   title: "MyERP - Gestionale Aziendale",
@@ -14,8 +22,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="it" suppressHydrationWarning>
-      <body>
+    <html lang='en' suppressHydrationWarning>
+      <head>
+        <link rel='icon' href='/favicon.svg' type='image/svg+xml' />
+        <meta name="theme-color" content="#5d87ff" />
+      </head>
+      <body className={`${dmSans.className}`}>
         <Providers>
           {children}
         </Providers>

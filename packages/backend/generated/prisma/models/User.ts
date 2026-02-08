@@ -28,11 +28,17 @@ export type AggregateUser = {
 
 export type UserAvgAggregateOutputType = {
   id: number | null
+  passwordResetAttempts: number | null
+  passwordChangedBy: number | null
+  failedLoginAttempts: number | null
   preferredLanguageId: number | null
 }
 
 export type UserSumAggregateOutputType = {
   id: number | null
+  passwordResetAttempts: number | null
+  passwordChangedBy: number | null
+  failedLoginAttempts: number | null
   preferredLanguageId: number | null
 }
 
@@ -44,8 +50,21 @@ export type UserMinAggregateOutputType = {
   active: boolean | null
   emailVerified: boolean | null
   emailVerificationToken: string | null
+  emailVerificationExpires: Date | null
+  emailVerifiedAt: Date | null
   resetPasswordToken: string | null
   resetPasswordExpires: Date | null
+  passwordResetAttempts: number | null
+  lastPasswordResetAt: Date | null
+  twoFactorEnabled: boolean | null
+  twoFactorSecret: string | null
+  lastPasswordChangeAt: Date | null
+  passwordChangedBy: number | null
+  failedLoginAttempts: number | null
+  lastFailedLoginAt: Date | null
+  lockedUntil: Date | null
+  consentGivenAt: Date | null
+  dataRetentionExpiresAt: Date | null
   preferredLanguageId: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -59,8 +78,21 @@ export type UserMaxAggregateOutputType = {
   active: boolean | null
   emailVerified: boolean | null
   emailVerificationToken: string | null
+  emailVerificationExpires: Date | null
+  emailVerifiedAt: Date | null
   resetPasswordToken: string | null
   resetPasswordExpires: Date | null
+  passwordResetAttempts: number | null
+  lastPasswordResetAt: Date | null
+  twoFactorEnabled: boolean | null
+  twoFactorSecret: string | null
+  lastPasswordChangeAt: Date | null
+  passwordChangedBy: number | null
+  failedLoginAttempts: number | null
+  lastFailedLoginAt: Date | null
+  lockedUntil: Date | null
+  consentGivenAt: Date | null
+  dataRetentionExpiresAt: Date | null
   preferredLanguageId: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -74,8 +106,22 @@ export type UserCountAggregateOutputType = {
   active: number
   emailVerified: number
   emailVerificationToken: number
+  emailVerificationExpires: number
+  emailVerifiedAt: number
   resetPasswordToken: number
   resetPasswordExpires: number
+  passwordResetAttempts: number
+  lastPasswordResetAt: number
+  twoFactorEnabled: number
+  twoFactorSecret: number
+  twoFactorBackupCodes: number
+  lastPasswordChangeAt: number
+  passwordChangedBy: number
+  failedLoginAttempts: number
+  lastFailedLoginAt: number
+  lockedUntil: number
+  consentGivenAt: number
+  dataRetentionExpiresAt: number
   preferredLanguageId: number
   createdAt: number
   updatedAt: number
@@ -85,11 +131,17 @@ export type UserCountAggregateOutputType = {
 
 export type UserAvgAggregateInputType = {
   id?: true
+  passwordResetAttempts?: true
+  passwordChangedBy?: true
+  failedLoginAttempts?: true
   preferredLanguageId?: true
 }
 
 export type UserSumAggregateInputType = {
   id?: true
+  passwordResetAttempts?: true
+  passwordChangedBy?: true
+  failedLoginAttempts?: true
   preferredLanguageId?: true
 }
 
@@ -101,8 +153,21 @@ export type UserMinAggregateInputType = {
   active?: true
   emailVerified?: true
   emailVerificationToken?: true
+  emailVerificationExpires?: true
+  emailVerifiedAt?: true
   resetPasswordToken?: true
   resetPasswordExpires?: true
+  passwordResetAttempts?: true
+  lastPasswordResetAt?: true
+  twoFactorEnabled?: true
+  twoFactorSecret?: true
+  lastPasswordChangeAt?: true
+  passwordChangedBy?: true
+  failedLoginAttempts?: true
+  lastFailedLoginAt?: true
+  lockedUntil?: true
+  consentGivenAt?: true
+  dataRetentionExpiresAt?: true
   preferredLanguageId?: true
   createdAt?: true
   updatedAt?: true
@@ -116,8 +181,21 @@ export type UserMaxAggregateInputType = {
   active?: true
   emailVerified?: true
   emailVerificationToken?: true
+  emailVerificationExpires?: true
+  emailVerifiedAt?: true
   resetPasswordToken?: true
   resetPasswordExpires?: true
+  passwordResetAttempts?: true
+  lastPasswordResetAt?: true
+  twoFactorEnabled?: true
+  twoFactorSecret?: true
+  lastPasswordChangeAt?: true
+  passwordChangedBy?: true
+  failedLoginAttempts?: true
+  lastFailedLoginAt?: true
+  lockedUntil?: true
+  consentGivenAt?: true
+  dataRetentionExpiresAt?: true
   preferredLanguageId?: true
   createdAt?: true
   updatedAt?: true
@@ -131,8 +209,22 @@ export type UserCountAggregateInputType = {
   active?: true
   emailVerified?: true
   emailVerificationToken?: true
+  emailVerificationExpires?: true
+  emailVerifiedAt?: true
   resetPasswordToken?: true
   resetPasswordExpires?: true
+  passwordResetAttempts?: true
+  lastPasswordResetAt?: true
+  twoFactorEnabled?: true
+  twoFactorSecret?: true
+  twoFactorBackupCodes?: true
+  lastPasswordChangeAt?: true
+  passwordChangedBy?: true
+  failedLoginAttempts?: true
+  lastFailedLoginAt?: true
+  lockedUntil?: true
+  consentGivenAt?: true
+  dataRetentionExpiresAt?: true
   preferredLanguageId?: true
   createdAt?: true
   updatedAt?: true
@@ -233,8 +325,22 @@ export type UserGroupByOutputType = {
   active: boolean
   emailVerified: boolean
   emailVerificationToken: string | null
+  emailVerificationExpires: Date | null
+  emailVerifiedAt: Date | null
   resetPasswordToken: string | null
   resetPasswordExpires: Date | null
+  passwordResetAttempts: number
+  lastPasswordResetAt: Date | null
+  twoFactorEnabled: boolean
+  twoFactorSecret: string | null
+  twoFactorBackupCodes: runtime.JsonValue | null
+  lastPasswordChangeAt: Date | null
+  passwordChangedBy: number | null
+  failedLoginAttempts: number
+  lastFailedLoginAt: Date | null
+  lockedUntil: Date | null
+  consentGivenAt: Date | null
+  dataRetentionExpiresAt: Date | null
   preferredLanguageId: number | null
   createdAt: Date
   updatedAt: Date
@@ -271,8 +377,22 @@ export type UserWhereInput = {
   active?: Prisma.BoolFilter<"User"> | boolean
   emailVerified?: Prisma.BoolFilter<"User"> | boolean
   emailVerificationToken?: Prisma.StringNullableFilter<"User"> | string | null
+  emailVerificationExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   resetPasswordToken?: Prisma.StringNullableFilter<"User"> | string | null
   resetPasswordExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  passwordResetAttempts?: Prisma.IntFilter<"User"> | number
+  lastPasswordResetAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFilter<"User"> | boolean
+  twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
+  twoFactorBackupCodes?: Prisma.JsonNullableFilter<"User">
+  lastPasswordChangeAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  passwordChangedBy?: Prisma.IntNullableFilter<"User"> | number | null
+  failedLoginAttempts?: Prisma.IntFilter<"User"> | number
+  lastFailedLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  consentGivenAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  dataRetentionExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   preferredLanguageId?: Prisma.IntNullableFilter<"User"> | number | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -307,8 +427,22 @@ export type UserOrderByWithRelationInput = {
   active?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   emailVerificationToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  emailVerificationExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   resetPasswordToken?: Prisma.SortOrderInput | Prisma.SortOrder
   resetPasswordExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordResetAttempts?: Prisma.SortOrder
+  lastPasswordResetAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorBackupCodes?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastPasswordChangeAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordChangedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
+  lastFailedLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
+  consentGivenAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  dataRetentionExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   preferredLanguageId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -347,7 +481,21 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   password?: Prisma.StringFilter<"User"> | string
   active?: Prisma.BoolFilter<"User"> | boolean
   emailVerified?: Prisma.BoolFilter<"User"> | boolean
+  emailVerificationExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   resetPasswordExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  passwordResetAttempts?: Prisma.IntFilter<"User"> | number
+  lastPasswordResetAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFilter<"User"> | boolean
+  twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
+  twoFactorBackupCodes?: Prisma.JsonNullableFilter<"User">
+  lastPasswordChangeAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  passwordChangedBy?: Prisma.IntNullableFilter<"User"> | number | null
+  failedLoginAttempts?: Prisma.IntFilter<"User"> | number
+  lastFailedLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  consentGivenAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  dataRetentionExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   preferredLanguageId?: Prisma.IntNullableFilter<"User"> | number | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -382,8 +530,22 @@ export type UserOrderByWithAggregationInput = {
   active?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   emailVerificationToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  emailVerificationExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   resetPasswordToken?: Prisma.SortOrderInput | Prisma.SortOrder
   resetPasswordExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordResetAttempts?: Prisma.SortOrder
+  lastPasswordResetAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorBackupCodes?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastPasswordChangeAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordChangedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
+  lastFailedLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
+  consentGivenAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  dataRetentionExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   preferredLanguageId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -405,8 +567,22 @@ export type UserScalarWhereWithAggregatesInput = {
   active?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   emailVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   emailVerificationToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  emailVerificationExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  emailVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   resetPasswordToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   resetPasswordExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  passwordResetAttempts?: Prisma.IntWithAggregatesFilter<"User"> | number
+  lastPasswordResetAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  twoFactorEnabled?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  twoFactorSecret?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  twoFactorBackupCodes?: Prisma.JsonNullableWithAggregatesFilter<"User">
+  lastPasswordChangeAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  passwordChangedBy?: Prisma.IntNullableWithAggregatesFilter<"User"> | number | null
+  failedLoginAttempts?: Prisma.IntWithAggregatesFilter<"User"> | number
+  lastFailedLoginAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  lockedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  consentGivenAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  dataRetentionExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   preferredLanguageId?: Prisma.IntNullableWithAggregatesFilter<"User"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -419,8 +595,22 @@ export type UserCreateInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -454,8 +644,22 @@ export type UserUncheckedCreateInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -488,8 +692,22 @@ export type UserUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -523,8 +741,22 @@ export type UserUncheckedUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -558,8 +790,22 @@ export type UserCreateManyInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -572,8 +818,22 @@ export type UserUpdateManyMutationInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -586,8 +846,22 @@ export type UserUncheckedUpdateManyInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -621,8 +895,22 @@ export type UserCountOrderByAggregateInput = {
   active?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   emailVerificationToken?: Prisma.SortOrder
+  emailVerificationExpires?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   resetPasswordToken?: Prisma.SortOrder
   resetPasswordExpires?: Prisma.SortOrder
+  passwordResetAttempts?: Prisma.SortOrder
+  lastPasswordResetAt?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
+  twoFactorBackupCodes?: Prisma.SortOrder
+  lastPasswordChangeAt?: Prisma.SortOrder
+  passwordChangedBy?: Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
+  lastFailedLoginAt?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
+  consentGivenAt?: Prisma.SortOrder
+  dataRetentionExpiresAt?: Prisma.SortOrder
   preferredLanguageId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -630,6 +918,9 @@ export type UserCountOrderByAggregateInput = {
 
 export type UserAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  passwordResetAttempts?: Prisma.SortOrder
+  passwordChangedBy?: Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
   preferredLanguageId?: Prisma.SortOrder
 }
 
@@ -641,8 +932,21 @@ export type UserMaxOrderByAggregateInput = {
   active?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   emailVerificationToken?: Prisma.SortOrder
+  emailVerificationExpires?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   resetPasswordToken?: Prisma.SortOrder
   resetPasswordExpires?: Prisma.SortOrder
+  passwordResetAttempts?: Prisma.SortOrder
+  lastPasswordResetAt?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
+  lastPasswordChangeAt?: Prisma.SortOrder
+  passwordChangedBy?: Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
+  lastFailedLoginAt?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
+  consentGivenAt?: Prisma.SortOrder
+  dataRetentionExpiresAt?: Prisma.SortOrder
   preferredLanguageId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -656,8 +960,21 @@ export type UserMinOrderByAggregateInput = {
   active?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   emailVerificationToken?: Prisma.SortOrder
+  emailVerificationExpires?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   resetPasswordToken?: Prisma.SortOrder
   resetPasswordExpires?: Prisma.SortOrder
+  passwordResetAttempts?: Prisma.SortOrder
+  lastPasswordResetAt?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
+  lastPasswordChangeAt?: Prisma.SortOrder
+  passwordChangedBy?: Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
+  lastFailedLoginAt?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
+  consentGivenAt?: Prisma.SortOrder
+  dataRetentionExpiresAt?: Prisma.SortOrder
   preferredLanguageId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -665,6 +982,9 @@ export type UserMinOrderByAggregateInput = {
 
 export type UserSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  passwordResetAttempts?: Prisma.SortOrder
+  passwordChangedBy?: Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
   preferredLanguageId?: Prisma.SortOrder
 }
 
@@ -1047,8 +1367,22 @@ export type UserCreateWithoutActivitiesAssignedInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -1081,8 +1415,22 @@ export type UserUncheckedCreateWithoutActivitiesAssignedInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1119,8 +1467,22 @@ export type UserCreateWithoutActivitiesCreatedInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -1153,8 +1515,22 @@ export type UserUncheckedCreateWithoutActivitiesCreatedInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1202,8 +1578,22 @@ export type UserUpdateWithoutActivitiesAssignedInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -1236,8 +1626,22 @@ export type UserUncheckedUpdateWithoutActivitiesAssignedInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1280,8 +1684,22 @@ export type UserUpdateWithoutActivitiesCreatedInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -1314,8 +1732,22 @@ export type UserUncheckedUpdateWithoutActivitiesCreatedInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1347,8 +1779,22 @@ export type UserCreateWithoutActivityParticipantsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -1381,8 +1827,22 @@ export type UserUncheckedCreateWithoutActivityParticipantsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1430,8 +1890,22 @@ export type UserUpdateWithoutActivityParticipantsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -1464,8 +1938,22 @@ export type UserUncheckedUpdateWithoutActivityParticipantsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1497,8 +1985,22 @@ export type UserCreateWithoutAssignedCompaniesInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -1531,8 +2033,22 @@ export type UserUncheckedCreateWithoutAssignedCompaniesInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1580,8 +2096,22 @@ export type UserUpdateWithoutAssignedCompaniesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -1614,8 +2144,22 @@ export type UserUncheckedUpdateWithoutAssignedCompaniesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1647,8 +2191,22 @@ export type UserCreateWithoutDeletedCustomersInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -1681,8 +2239,22 @@ export type UserUncheckedCreateWithoutDeletedCustomersInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1730,8 +2302,22 @@ export type UserUpdateWithoutDeletedCustomersInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -1764,8 +2350,22 @@ export type UserUncheckedUpdateWithoutDeletedCustomersInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1797,8 +2397,22 @@ export type UserCreateWithoutDeletedSuppliersInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -1831,8 +2445,22 @@ export type UserUncheckedCreateWithoutDeletedSuppliersInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1880,8 +2508,22 @@ export type UserUpdateWithoutDeletedSuppliersInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -1914,8 +2556,22 @@ export type UserUncheckedUpdateWithoutDeletedSuppliersInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1947,8 +2603,22 @@ export type UserCreateWithoutCompanyNotesInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -1981,8 +2651,22 @@ export type UserUncheckedCreateWithoutCompanyNotesInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2030,8 +2714,22 @@ export type UserUpdateWithoutCompanyNotesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -2064,8 +2762,22 @@ export type UserUncheckedUpdateWithoutCompanyNotesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2097,8 +2809,22 @@ export type UserCreateWithoutCreatedDocumentsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -2131,8 +2857,22 @@ export type UserUncheckedCreateWithoutCreatedDocumentsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2169,8 +2909,22 @@ export type UserCreateWithoutAssignedDocumentsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -2203,8 +2957,22 @@ export type UserUncheckedCreateWithoutAssignedDocumentsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2241,8 +3009,22 @@ export type UserCreateWithoutDeletedDocumentsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -2275,8 +3057,22 @@ export type UserUncheckedCreateWithoutDeletedDocumentsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2324,8 +3120,22 @@ export type UserUpdateWithoutCreatedDocumentsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -2358,8 +3168,22 @@ export type UserUncheckedUpdateWithoutCreatedDocumentsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2402,8 +3226,22 @@ export type UserUpdateWithoutAssignedDocumentsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -2436,8 +3274,22 @@ export type UserUncheckedUpdateWithoutAssignedDocumentsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2480,8 +3332,22 @@ export type UserUpdateWithoutDeletedDocumentsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -2514,8 +3380,22 @@ export type UserUncheckedUpdateWithoutDeletedDocumentsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2547,8 +3427,22 @@ export type UserCreateWithoutPreferredLanguageInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -2581,8 +3475,22 @@ export type UserUncheckedCreateWithoutPreferredLanguageInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -2644,8 +3552,22 @@ export type UserScalarWhereInput = {
   active?: Prisma.BoolFilter<"User"> | boolean
   emailVerified?: Prisma.BoolFilter<"User"> | boolean
   emailVerificationToken?: Prisma.StringNullableFilter<"User"> | string | null
+  emailVerificationExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   resetPasswordToken?: Prisma.StringNullableFilter<"User"> | string | null
   resetPasswordExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  passwordResetAttempts?: Prisma.IntFilter<"User"> | number
+  lastPasswordResetAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFilter<"User"> | boolean
+  twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
+  twoFactorBackupCodes?: Prisma.JsonNullableFilter<"User">
+  lastPasswordChangeAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  passwordChangedBy?: Prisma.IntNullableFilter<"User"> | number | null
+  failedLoginAttempts?: Prisma.IntFilter<"User"> | number
+  lastFailedLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  consentGivenAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  dataRetentionExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   preferredLanguageId?: Prisma.IntNullableFilter<"User"> | number | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -2658,8 +3580,22 @@ export type UserCreateWithoutAssignedLeadsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -2692,8 +3628,22 @@ export type UserUncheckedCreateWithoutAssignedLeadsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2730,8 +3680,22 @@ export type UserCreateWithoutConvertedLeadsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -2764,8 +3728,22 @@ export type UserUncheckedCreateWithoutConvertedLeadsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2813,8 +3791,22 @@ export type UserUpdateWithoutAssignedLeadsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -2847,8 +3839,22 @@ export type UserUncheckedUpdateWithoutAssignedLeadsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2891,8 +3897,22 @@ export type UserUpdateWithoutConvertedLeadsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -2925,8 +3945,22 @@ export type UserUncheckedUpdateWithoutConvertedLeadsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2958,8 +3992,22 @@ export type UserCreateWithoutCreatedOpportunitiesInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -2992,8 +4040,22 @@ export type UserUncheckedCreateWithoutCreatedOpportunitiesInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3030,8 +4092,22 @@ export type UserCreateWithoutAssignedOpportunitiesInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -3064,8 +4140,22 @@ export type UserUncheckedCreateWithoutAssignedOpportunitiesInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3113,8 +4203,22 @@ export type UserUpdateWithoutCreatedOpportunitiesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -3147,8 +4251,22 @@ export type UserUncheckedUpdateWithoutCreatedOpportunitiesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3191,8 +4309,22 @@ export type UserUpdateWithoutAssignedOpportunitiesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -3225,8 +4357,22 @@ export type UserUncheckedUpdateWithoutAssignedOpportunitiesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3258,8 +4404,22 @@ export type UserCreateWithoutDeletedProductsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -3292,8 +4452,22 @@ export type UserUncheckedCreateWithoutDeletedProductsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3341,8 +4515,22 @@ export type UserUpdateWithoutDeletedProductsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -3375,8 +4563,22 @@ export type UserUncheckedUpdateWithoutDeletedProductsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3408,8 +4610,22 @@ export type UserCreateWithoutDeletedProductVariantsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -3442,8 +4658,22 @@ export type UserUncheckedCreateWithoutDeletedProductVariantsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3491,8 +4721,22 @@ export type UserUpdateWithoutDeletedProductVariantsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -3525,8 +4769,22 @@ export type UserUncheckedUpdateWithoutDeletedProductVariantsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3558,8 +4816,22 @@ export type UserCreateWithoutRolesInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
@@ -3592,8 +4864,22 @@ export type UserUncheckedCreateWithoutRolesInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3646,8 +4932,22 @@ export type UserCreateWithoutAuditLogsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -3680,8 +4980,22 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3729,8 +5043,22 @@ export type UserUpdateWithoutAuditLogsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -3763,8 +5091,22 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3796,8 +5138,22 @@ export type UserCreateWithoutDetailsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -3830,8 +5186,22 @@ export type UserUncheckedCreateWithoutDetailsInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3879,8 +5249,22 @@ export type UserUpdateWithoutDetailsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -3913,8 +5297,22 @@ export type UserUncheckedUpdateWithoutDetailsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3946,8 +5344,22 @@ export type UserCreateWithoutStockMovementInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
@@ -3980,8 +5392,22 @@ export type UserUncheckedCreateWithoutStockMovementInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   preferredLanguageId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -4029,8 +5455,22 @@ export type UserUpdateWithoutStockMovementInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -4063,8 +5503,22 @@ export type UserUncheckedUpdateWithoutStockMovementInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4097,8 +5551,22 @@ export type UserCreateManyPreferredLanguageInput = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
   resetPasswordToken?: string | null
   resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -4110,8 +5578,22 @@ export type UserUpdateWithoutPreferredLanguageInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
@@ -4144,8 +5626,22 @@ export type UserUncheckedUpdateWithoutPreferredLanguageInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -4178,8 +5674,22 @@ export type UserUncheckedUpdateManyWithoutPreferredLanguageInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -4191,8 +5701,22 @@ export type UserUpdateWithoutRolesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
@@ -4225,8 +5749,22 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4259,8 +5797,22 @@ export type UserUncheckedUpdateManyWithoutRolesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4467,8 +6019,22 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: boolean
+  emailVerificationExpires?: boolean
+  emailVerifiedAt?: boolean
   resetPasswordToken?: boolean
   resetPasswordExpires?: boolean
+  passwordResetAttempts?: boolean
+  lastPasswordResetAt?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
+  twoFactorBackupCodes?: boolean
+  lastPasswordChangeAt?: boolean
+  passwordChangedBy?: boolean
+  failedLoginAttempts?: boolean
+  lastFailedLoginAt?: boolean
+  lockedUntil?: boolean
+  consentGivenAt?: boolean
+  dataRetentionExpiresAt?: boolean
   preferredLanguageId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -4504,8 +6070,22 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: boolean
+  emailVerificationExpires?: boolean
+  emailVerifiedAt?: boolean
   resetPasswordToken?: boolean
   resetPasswordExpires?: boolean
+  passwordResetAttempts?: boolean
+  lastPasswordResetAt?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
+  twoFactorBackupCodes?: boolean
+  lastPasswordChangeAt?: boolean
+  passwordChangedBy?: boolean
+  failedLoginAttempts?: boolean
+  lastFailedLoginAt?: boolean
+  lockedUntil?: boolean
+  consentGivenAt?: boolean
+  dataRetentionExpiresAt?: boolean
   preferredLanguageId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -4520,8 +6100,22 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: boolean
+  emailVerificationExpires?: boolean
+  emailVerifiedAt?: boolean
   resetPasswordToken?: boolean
   resetPasswordExpires?: boolean
+  passwordResetAttempts?: boolean
+  lastPasswordResetAt?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
+  twoFactorBackupCodes?: boolean
+  lastPasswordChangeAt?: boolean
+  passwordChangedBy?: boolean
+  failedLoginAttempts?: boolean
+  lastFailedLoginAt?: boolean
+  lockedUntil?: boolean
+  consentGivenAt?: boolean
+  dataRetentionExpiresAt?: boolean
   preferredLanguageId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -4536,14 +6130,28 @@ export type UserSelectScalar = {
   active?: boolean
   emailVerified?: boolean
   emailVerificationToken?: boolean
+  emailVerificationExpires?: boolean
+  emailVerifiedAt?: boolean
   resetPasswordToken?: boolean
   resetPasswordExpires?: boolean
+  passwordResetAttempts?: boolean
+  lastPasswordResetAt?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
+  twoFactorBackupCodes?: boolean
+  lastPasswordChangeAt?: boolean
+  passwordChangedBy?: boolean
+  failedLoginAttempts?: boolean
+  lastFailedLoginAt?: boolean
+  lockedUntil?: boolean
+  consentGivenAt?: boolean
+  dataRetentionExpiresAt?: boolean
   preferredLanguageId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "active" | "emailVerified" | "emailVerificationToken" | "resetPasswordToken" | "resetPasswordExpires" | "preferredLanguageId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "active" | "emailVerified" | "emailVerificationToken" | "emailVerificationExpires" | "emailVerifiedAt" | "resetPasswordToken" | "resetPasswordExpires" | "passwordResetAttempts" | "lastPasswordResetAt" | "twoFactorEnabled" | "twoFactorSecret" | "twoFactorBackupCodes" | "lastPasswordChangeAt" | "passwordChangedBy" | "failedLoginAttempts" | "lastFailedLoginAt" | "lockedUntil" | "consentGivenAt" | "dataRetentionExpiresAt" | "preferredLanguageId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
   preferredLanguage?: boolean | Prisma.User$preferredLanguageArgs<ExtArgs>
@@ -4608,8 +6216,22 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     active: boolean
     emailVerified: boolean
     emailVerificationToken: string | null
+    emailVerificationExpires: Date | null
+    emailVerifiedAt: Date | null
     resetPasswordToken: string | null
     resetPasswordExpires: Date | null
+    passwordResetAttempts: number
+    lastPasswordResetAt: Date | null
+    twoFactorEnabled: boolean
+    twoFactorSecret: string | null
+    twoFactorBackupCodes: runtime.JsonValue | null
+    lastPasswordChangeAt: Date | null
+    passwordChangedBy: number | null
+    failedLoginAttempts: number
+    lastFailedLoginAt: Date | null
+    lockedUntil: Date | null
+    consentGivenAt: Date | null
+    dataRetentionExpiresAt: Date | null
     preferredLanguageId: number | null
     createdAt: Date
     updatedAt: Date
@@ -5064,8 +6686,22 @@ export interface UserFieldRefs {
   readonly active: Prisma.FieldRef<"User", 'Boolean'>
   readonly emailVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly emailVerificationToken: Prisma.FieldRef<"User", 'String'>
+  readonly emailVerificationExpires: Prisma.FieldRef<"User", 'DateTime'>
+  readonly emailVerifiedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly resetPasswordToken: Prisma.FieldRef<"User", 'String'>
   readonly resetPasswordExpires: Prisma.FieldRef<"User", 'DateTime'>
+  readonly passwordResetAttempts: Prisma.FieldRef<"User", 'Int'>
+  readonly lastPasswordResetAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly twoFactorEnabled: Prisma.FieldRef<"User", 'Boolean'>
+  readonly twoFactorSecret: Prisma.FieldRef<"User", 'String'>
+  readonly twoFactorBackupCodes: Prisma.FieldRef<"User", 'Json'>
+  readonly lastPasswordChangeAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly passwordChangedBy: Prisma.FieldRef<"User", 'Int'>
+  readonly failedLoginAttempts: Prisma.FieldRef<"User", 'Int'>
+  readonly lastFailedLoginAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly lockedUntil: Prisma.FieldRef<"User", 'DateTime'>
+  readonly consentGivenAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly dataRetentionExpiresAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly preferredLanguageId: Prisma.FieldRef<"User", 'Int'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>

@@ -1,17 +1,38 @@
 model User {
   id       Int     @id @default(autoincrement())
-  username String  @unique @db.VarChar(50) // Limita la lunghezza per coerenza
-  email    String  @unique @db.VarChar(255) // Standard per le email
-  password String  @db.VarChar(255) // Assicurati di usare un hash forte
+  username String  @unique @db.VarChar(50)
+  email    String  @unique @db.VarChar(255)
+  password String  @db.VarChar(255) // bcrypt hash
   active   Boolean @default(true)
 
-  // Email verification
-  emailVerified          Boolean @default(false)
-  emailVerificationToken String? @unique @db.VarChar(255)
+  // === EMAIL VERIFICATION ===
+  emailVerified            Boolean   @default(false)
+  emailVerificationToken   String?   @unique @db.Char(64) // SHA-256 hash
+  emailVerificationExpires DateTime?
+  emailVerifiedAt          DateTime? // timestamp verifica
 
-  // Password reset
-  resetPasswordToken   String?   @unique @db.VarChar(255)
-  resetPasswordExpires DateTime?
+  // === PASSWORD RESET ===
+  resetPasswordToken    String?   @unique @db.Char(64) // Char(64) per SHA-256
+  resetPasswordExpires  DateTime?
+  passwordResetAttempts Int       @default(0) // rate limiting
+  lastPasswordResetAt   DateTime? // audit trail
+
+  // === TWO-FACTOR AUTHENTICATION (2FA) ===
+  twoFactorEnabled     Boolean @default(false)
+  twoFactorSecret      String? @db.VarChar(255) // TOTP secret
+  twoFactorBackupCodes Json? // backup codes array
+
+  // === SECURITY & AUDIT ===
+  lastPasswordChangeAt DateTime? // traccia ultimo cambio password
+  passwordChangedBy    Int? // admin che ha cambiato password
+
+  failedLoginAttempts Int       @default(0) // rate limiting login
+  lastFailedLoginAt   DateTime?
+  lockedUntil         DateTime? // account temporaneamente bloccato
+
+  // === GDPR & PRIVACY ===
+  consentGivenAt         DateTime? // consenso privacy
+  dataRetentionExpiresAt DateTime? // scadenza dati GDPR
 
   roles Role[] @relation("UserRoles")
 
@@ -19,7 +40,7 @@ model User {
   preferredLanguageId Int?
   preferredLanguage   Language? @relation("UserPreferredLanguage", fields: [preferredLanguageId], references: [id])
 
-  // Relazioni
+  // Relazioni (le tue esistenti)
   createdDocuments      Document[]            @relation("CreatedBy")
   assignedDocuments     Document[]            @relation("AssignedTo")
   createdOpportunities  Opportunity[]         @relation("CreatedBy")
@@ -38,10 +59,7 @@ model User {
   deletedCustomers       Customer[]       @relation("DeletedBy")
   deletedSuppliers       Supplier[]       @relation("DeletedBy")
 
-  // Lead assegnate a questo utente
-  assignedLeads Lead[] @relation("LeadAssignedUser")
-
-  // Lead convertite da questo utente
+  assignedLeads  Lead[] @relation("LeadAssignedUser")
   convertedLeads Lead[] @relation("LeadConvertedBy")
 
   details UserDetails?
@@ -49,29 +67,22 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Gli indici sugli ID delle Foreign Key vengono aggiunti automaticamente, ma puoi specificare
-  // indici aggiuntivi per performance di ricerca comune.
   @@index([email])
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-  PREFER_NOT_TO_SAY
+  @@index([emailVerificationToken])
+  @@index([resetPasswordToken])
+  @@index([lockedUntil]) // per query account bloccati
 }
 
 model UserDetails {
   id Int @id @default(autoincrement())
 
-  // Relazione 1-to-1 con User
-  userId Int  @unique // @unique è fondamentale per la relazione 1-to-1
+  userId Int  @unique
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   firstName String @db.VarChar(100)
   lastName  String @db.VarChar(100)
 
-  profilePicture String? @db.VarChar(500) // URL della foto
+  profilePicture String? @db.VarChar(500)
 
   // Contatti e Indirizzo
   phone   String? @db.VarChar(20)
@@ -79,16 +90,14 @@ model UserDetails {
   city    String? @db.VarChar(100)
   state   String? @db.VarChar(100)
   zipCode String? @db.VarChar(20)
-  country String? @default("IT") @db.Char(2) // ISO code a 2 lettere (IT, US, DE)
+  country String? @default("IT") @db.Char(2)
 
   // Dati personali
   dateOfBirth DateTime? @db.Date
+  gender      Gender    @default(PREFER_NOT_TO_SAY)
+  bio         String?   @db.Text
 
-  gender Gender @default(PREFER_NOT_TO_SAY)
-
-  bio String? @db.Text
-
-  lastLogin DateTime? // Può essere aggiornato ad ogni login
+  lastLogin DateTime?
   active    Boolean   @default(true)
 
   createdAt DateTime @default(now())
@@ -96,4 +105,11 @@ model UserDetails {
 
   @@index([firstName])
   @@index([lastName])
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
 }

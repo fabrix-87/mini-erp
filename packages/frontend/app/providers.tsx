@@ -35,7 +35,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider
-        attribute="data-theme"
+        attribute="class"
         defaultTheme="system"
         enableSystem
         storageKey="theme"
