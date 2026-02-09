@@ -2,9 +2,9 @@ import { Response } from "express";
 import asyncHandler from "../middleware/async-handler";
 import { AuthenticatedValidatedRequest } from "../types/validate";
 import { Prisma } from "../generated/prisma/client";
-import { CountryCodeInput, CountryQueryInput } from "../validators/country";
 import { prisma } from "../config/prisma-client";
 import { formatPaginatedResponse } from "../utils/response";
+import { CountryCodeParam, CountryQueryInput } from "@mini-erp/shared";
 
 
 /**
@@ -58,7 +58,7 @@ export const getAllCountries = asyncHandler(
 
 export const getCountryByCode = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { code } = req.validatedParams as CountryCodeInput;
+    const { code } = req.validatedParams as CountryCodeParam;
 
     const country = await prisma.country.findUnique({
       where: { code },

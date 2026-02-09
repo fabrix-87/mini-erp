@@ -341,7 +341,7 @@ export type UserGroupByOutputType = {
   lockedUntil: Date | null
   consentGivenAt: Date | null
   dataRetentionExpiresAt: Date | null
-  preferredLanguageId: number | null
+  preferredLanguageId: number
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -393,11 +393,11 @@ export type UserWhereInput = {
   lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   consentGivenAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   dataRetentionExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
-  preferredLanguageId?: Prisma.IntNullableFilter<"User"> | number | null
+  preferredLanguageId?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   roles?: Prisma.RoleListRelationFilter
-  preferredLanguage?: Prisma.XOR<Prisma.LanguageNullableScalarRelationFilter, Prisma.LanguageWhereInput> | null
+  preferredLanguage?: Prisma.XOR<Prisma.LanguageScalarRelationFilter, Prisma.LanguageWhereInput>
   createdDocuments?: Prisma.DocumentListRelationFilter
   assignedDocuments?: Prisma.DocumentListRelationFilter
   createdOpportunities?: Prisma.OpportunityListRelationFilter
@@ -443,7 +443,7 @@ export type UserOrderByWithRelationInput = {
   lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   consentGivenAt?: Prisma.SortOrderInput | Prisma.SortOrder
   dataRetentionExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  preferredLanguageId?: Prisma.SortOrderInput | Prisma.SortOrder
+  preferredLanguageId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   roles?: Prisma.RoleOrderByRelationAggregateInput
@@ -496,11 +496,11 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   consentGivenAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   dataRetentionExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
-  preferredLanguageId?: Prisma.IntNullableFilter<"User"> | number | null
+  preferredLanguageId?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   roles?: Prisma.RoleListRelationFilter
-  preferredLanguage?: Prisma.XOR<Prisma.LanguageNullableScalarRelationFilter, Prisma.LanguageWhereInput> | null
+  preferredLanguage?: Prisma.XOR<Prisma.LanguageScalarRelationFilter, Prisma.LanguageWhereInput>
   createdDocuments?: Prisma.DocumentListRelationFilter
   assignedDocuments?: Prisma.DocumentListRelationFilter
   createdOpportunities?: Prisma.OpportunityListRelationFilter
@@ -546,7 +546,7 @@ export type UserOrderByWithAggregationInput = {
   lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   consentGivenAt?: Prisma.SortOrderInput | Prisma.SortOrder
   dataRetentionExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  preferredLanguageId?: Prisma.SortOrderInput | Prisma.SortOrder
+  preferredLanguageId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -583,7 +583,7 @@ export type UserScalarWhereWithAggregatesInput = {
   lockedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   consentGivenAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   dataRetentionExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
-  preferredLanguageId?: Prisma.IntNullableWithAggregatesFilter<"User"> | number | null
+  preferredLanguageId?: Prisma.IntWithAggregatesFilter<"User"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -660,7 +660,7 @@ export type UserUncheckedCreateInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -711,7 +711,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -757,7 +757,7 @@ export type UserUncheckedUpdateInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -806,7 +806,7 @@ export type UserCreateManyInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -862,7 +862,7 @@ export type UserUncheckedUpdateManyInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1431,7 +1431,7 @@ export type UserUncheckedCreateWithoutActivitiesAssignedInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -1531,7 +1531,7 @@ export type UserUncheckedCreateWithoutActivitiesCreatedInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -1597,7 +1597,7 @@ export type UserUpdateWithoutActivitiesAssignedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -1642,7 +1642,7 @@ export type UserUncheckedUpdateWithoutActivitiesAssignedInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -1703,7 +1703,7 @@ export type UserUpdateWithoutActivitiesCreatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -1748,7 +1748,7 @@ export type UserUncheckedUpdateWithoutActivitiesCreatedInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -1843,7 +1843,7 @@ export type UserUncheckedCreateWithoutActivityParticipantsInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -1909,7 +1909,7 @@ export type UserUpdateWithoutActivityParticipantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -1954,7 +1954,7 @@ export type UserUncheckedUpdateWithoutActivityParticipantsInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -2049,7 +2049,7 @@ export type UserUncheckedCreateWithoutAssignedCompaniesInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -2115,7 +2115,7 @@ export type UserUpdateWithoutAssignedCompaniesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -2160,7 +2160,7 @@ export type UserUncheckedUpdateWithoutAssignedCompaniesInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -2255,7 +2255,7 @@ export type UserUncheckedCreateWithoutDeletedCustomersInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -2321,7 +2321,7 @@ export type UserUpdateWithoutDeletedCustomersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -2366,7 +2366,7 @@ export type UserUncheckedUpdateWithoutDeletedCustomersInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -2461,7 +2461,7 @@ export type UserUncheckedCreateWithoutDeletedSuppliersInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -2527,7 +2527,7 @@ export type UserUpdateWithoutDeletedSuppliersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -2572,7 +2572,7 @@ export type UserUncheckedUpdateWithoutDeletedSuppliersInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -2667,7 +2667,7 @@ export type UserUncheckedCreateWithoutCompanyNotesInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -2733,7 +2733,7 @@ export type UserUpdateWithoutCompanyNotesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -2778,7 +2778,7 @@ export type UserUncheckedUpdateWithoutCompanyNotesInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -2873,7 +2873,7 @@ export type UserUncheckedCreateWithoutCreatedDocumentsInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -2973,7 +2973,7 @@ export type UserUncheckedCreateWithoutAssignedDocumentsInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -3073,7 +3073,7 @@ export type UserUncheckedCreateWithoutDeletedDocumentsInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -3139,7 +3139,7 @@ export type UserUpdateWithoutCreatedDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
   assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
@@ -3184,7 +3184,7 @@ export type UserUncheckedUpdateWithoutCreatedDocumentsInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -3245,7 +3245,7 @@ export type UserUpdateWithoutAssignedDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
   assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
@@ -3290,7 +3290,7 @@ export type UserUncheckedUpdateWithoutAssignedDocumentsInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -3351,7 +3351,7 @@ export type UserUpdateWithoutDeletedDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -3396,7 +3396,7 @@ export type UserUncheckedUpdateWithoutDeletedDocumentsInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -3568,7 +3568,7 @@ export type UserScalarWhereInput = {
   lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   consentGivenAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   dataRetentionExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
-  preferredLanguageId?: Prisma.IntNullableFilter<"User"> | number | null
+  preferredLanguageId?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
 }
@@ -3644,7 +3644,7 @@ export type UserUncheckedCreateWithoutAssignedLeadsInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -3744,7 +3744,7 @@ export type UserUncheckedCreateWithoutConvertedLeadsInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -3810,7 +3810,7 @@ export type UserUpdateWithoutAssignedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -3855,7 +3855,7 @@ export type UserUncheckedUpdateWithoutAssignedLeadsInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -3916,7 +3916,7 @@ export type UserUpdateWithoutConvertedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -3961,7 +3961,7 @@ export type UserUncheckedUpdateWithoutConvertedLeadsInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -4056,7 +4056,7 @@ export type UserUncheckedCreateWithoutCreatedOpportunitiesInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -4156,7 +4156,7 @@ export type UserUncheckedCreateWithoutAssignedOpportunitiesInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -4222,7 +4222,7 @@ export type UserUpdateWithoutCreatedOpportunitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
@@ -4267,7 +4267,7 @@ export type UserUncheckedUpdateWithoutCreatedOpportunitiesInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -4328,7 +4328,7 @@ export type UserUpdateWithoutAssignedOpportunitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -4373,7 +4373,7 @@ export type UserUncheckedUpdateWithoutAssignedOpportunitiesInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -4468,7 +4468,7 @@ export type UserUncheckedCreateWithoutDeletedProductsInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -4534,7 +4534,7 @@ export type UserUpdateWithoutDeletedProductsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -4579,7 +4579,7 @@ export type UserUncheckedUpdateWithoutDeletedProductsInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -4674,7 +4674,7 @@ export type UserUncheckedCreateWithoutDeletedProductVariantsInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -4740,7 +4740,7 @@ export type UserUpdateWithoutDeletedProductVariantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -4785,7 +4785,7 @@ export type UserUncheckedUpdateWithoutDeletedProductVariantsInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -4880,7 +4880,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
@@ -4996,7 +4996,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -5062,7 +5062,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -5107,7 +5107,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -5202,7 +5202,7 @@ export type UserUncheckedCreateWithoutDetailsInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -5268,7 +5268,7 @@ export type UserUpdateWithoutDetailsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -5313,7 +5313,7 @@ export type UserUncheckedUpdateWithoutDetailsInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -5408,7 +5408,7 @@ export type UserUncheckedCreateWithoutStockMovementInput = {
   lockedUntil?: Date | string | null
   consentGivenAt?: Date | string | null
   dataRetentionExpiresAt?: Date | string | null
-  preferredLanguageId?: number | null
+  preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
@@ -5474,7 +5474,7 @@ export type UserUpdateWithoutStockMovementInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -5519,7 +5519,7 @@ export type UserUncheckedUpdateWithoutStockMovementInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
@@ -5719,7 +5719,7 @@ export type UserUpdateWithoutRolesInput = {
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  preferredLanguage?: Prisma.LanguageUpdateOneWithoutUsersPreferredNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -5765,7 +5765,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -5813,7 +5813,7 @@ export type UserUncheckedUpdateManyWithoutRolesInput = {
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  preferredLanguageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -6039,7 +6039,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
-  preferredLanguage?: boolean | Prisma.User$preferredLanguageArgs<ExtArgs>
+  preferredLanguage?: boolean | Prisma.LanguageDefaultArgs<ExtArgs>
   createdDocuments?: boolean | Prisma.User$createdDocumentsArgs<ExtArgs>
   assignedDocuments?: boolean | Prisma.User$assignedDocumentsArgs<ExtArgs>
   createdOpportunities?: boolean | Prisma.User$createdOpportunitiesArgs<ExtArgs>
@@ -6089,7 +6089,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   preferredLanguageId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  preferredLanguage?: boolean | Prisma.User$preferredLanguageArgs<ExtArgs>
+  preferredLanguage?: boolean | Prisma.LanguageDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -6119,7 +6119,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   preferredLanguageId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  preferredLanguage?: boolean | Prisma.User$preferredLanguageArgs<ExtArgs>
+  preferredLanguage?: boolean | Prisma.LanguageDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -6154,7 +6154,7 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "active" | "emailVerified" | "emailVerificationToken" | "emailVerificationExpires" | "emailVerifiedAt" | "resetPasswordToken" | "resetPasswordExpires" | "passwordResetAttempts" | "lastPasswordResetAt" | "twoFactorEnabled" | "twoFactorSecret" | "twoFactorBackupCodes" | "lastPasswordChangeAt" | "passwordChangedBy" | "failedLoginAttempts" | "lastFailedLoginAt" | "lockedUntil" | "consentGivenAt" | "dataRetentionExpiresAt" | "preferredLanguageId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
-  preferredLanguage?: boolean | Prisma.User$preferredLanguageArgs<ExtArgs>
+  preferredLanguage?: boolean | Prisma.LanguageDefaultArgs<ExtArgs>
   createdDocuments?: boolean | Prisma.User$createdDocumentsArgs<ExtArgs>
   assignedDocuments?: boolean | Prisma.User$assignedDocumentsArgs<ExtArgs>
   createdOpportunities?: boolean | Prisma.User$createdOpportunitiesArgs<ExtArgs>
@@ -6177,17 +6177,17 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  preferredLanguage?: boolean | Prisma.User$preferredLanguageArgs<ExtArgs>
+  preferredLanguage?: boolean | Prisma.LanguageDefaultArgs<ExtArgs>
 }
 export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  preferredLanguage?: boolean | Prisma.User$preferredLanguageArgs<ExtArgs>
+  preferredLanguage?: boolean | Prisma.LanguageDefaultArgs<ExtArgs>
 }
 
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
     roles: Prisma.$RolePayload<ExtArgs>[]
-    preferredLanguage: Prisma.$LanguagePayload<ExtArgs> | null
+    preferredLanguage: Prisma.$LanguagePayload<ExtArgs>
     createdDocuments: Prisma.$DocumentPayload<ExtArgs>[]
     assignedDocuments: Prisma.$DocumentPayload<ExtArgs>[]
     createdOpportunities: Prisma.$OpportunityPayload<ExtArgs>[]
@@ -6232,7 +6232,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     lockedUntil: Date | null
     consentGivenAt: Date | null
     dataRetentionExpiresAt: Date | null
-    preferredLanguageId: number | null
+    preferredLanguageId: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -6630,7 +6630,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   roles<T extends Prisma.User$rolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  preferredLanguage<T extends Prisma.User$preferredLanguageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$preferredLanguageArgs<ExtArgs>>): Prisma.Prisma__LanguageClient<runtime.Types.Result.GetResult<Prisma.$LanguagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  preferredLanguage<T extends Prisma.LanguageDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LanguageDefaultArgs<ExtArgs>>): Prisma.Prisma__LanguageClient<runtime.Types.Result.GetResult<Prisma.$LanguagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   createdDocuments<T extends Prisma.User$createdDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignedDocuments<T extends Prisma.User$assignedDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdOpportunities<T extends Prisma.User$createdOpportunitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdOpportunitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -7122,25 +7122,6 @@ export type User$rolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   distinct?: Prisma.RoleScalarFieldEnum | Prisma.RoleScalarFieldEnum[]
-}
-
-/**
- * User.preferredLanguage
- */
-export type User$preferredLanguageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Language
-   */
-  select?: Prisma.LanguageSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Language
-   */
-  omit?: Prisma.LanguageOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.LanguageInclude<ExtArgs> | null
-  where?: Prisma.LanguageWhereInput
 }
 
 /**

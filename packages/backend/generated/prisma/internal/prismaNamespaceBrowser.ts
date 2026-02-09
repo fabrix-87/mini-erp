@@ -459,8 +459,6 @@ export type CountryScalarFieldEnum = (typeof CountryScalarFieldEnum)[keyof typeo
 export const CurrencyScalarFieldEnum = {
   id: 'id',
   code: 'code',
-  name: 'name',
-  namePlural: 'namePlural',
   symbol: 'symbol',
   symbolNative: 'symbolNative',
   decimalDigits: 'decimalDigits',

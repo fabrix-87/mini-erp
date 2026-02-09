@@ -1,17 +1,15 @@
 import z from "zod";
 import { limitSchema, pageSchema } from "../utils";
+import { CountryCodeBaseSchema, CurrencyCodeBaseSchema } from "./base";
 
-/**
- * Schema base per Code Country
- */
-export const CountryCodeBaseSchema = z
-    .string()
-    .length(2, "Il country code deve essere di 2 caratteri")
-    .regex(
-      /^[A-Z]{2}$/,
-      "Il country code deve contenere solo lettere maiuscole"
-    )
-    .trim()
+export const ContinentsEnum = z.enum([
+  "Africa",
+  "Asia",
+  "Europe",
+  "North America",
+  "South America",
+  "Oceania",
+]);
 
 /**
  * Schema per Code Country
@@ -27,6 +25,12 @@ export const CountrySchema = z.object({
   code: CountryCodeBaseSchema,
   name: z.string(),
   isEu: z.boolean(),
+  iso3: z.string().max(3),
+  numericCode: z.string().max(3),
+  phoneCode: z.string().max(4),
+  continent: ContinentsEnum,
+  active: z.boolean().default(true),
+  currencyCode: CurrencyCodeBaseSchema,
 });
 
 /**

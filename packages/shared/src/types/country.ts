@@ -2,7 +2,7 @@
 // TYPE EXPORTS
 // ============================================================================
 
-import z from "zod";
+import { z } from "zod";
 import {
   CountryCodeSchema,
   CountryQuerySchema,
@@ -14,5 +14,7 @@ export type Country = z.infer<typeof CountrySchema> & {
   languages?: Language[];
 };
 
+// Query type
 export type CountryQueryInput = z.infer<typeof CountryQuerySchema>;
-export type CountryCodeInput = z.infer<typeof CountryCodeSchema>;
+// Param type
+export type CountryCodeParam = z.infer<typeof CountryCodeSchema>;

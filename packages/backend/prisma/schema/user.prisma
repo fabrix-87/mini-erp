@@ -37,8 +37,8 @@ model User {
   roles Role[] @relation("UserRoles")
 
   // Preferenze lingua
-  preferredLanguageId Int?
-  preferredLanguage   Language? @relation("UserPreferredLanguage", fields: [preferredLanguageId], references: [id])
+  preferredLanguageId Int      @default(1)
+  preferredLanguage   Language @relation("UserPreferredLanguage", fields: [preferredLanguageId], references: [id])
 
   // Relazioni (le tue esistenti)
   createdDocuments      Document[]            @relation("CreatedBy")

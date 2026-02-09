@@ -1,5 +1,7 @@
 // types/user.ts
+import { UserPayload } from "@mini-erp/shared";
 import { Request } from "express";
+export { UserPayload } from "@mini-erp/shared";
 
 // ============================================================================
 // JWT & Token Types
@@ -12,22 +14,6 @@ export interface TokenPair {
   refreshTokenId?: string; // JWT ID per refresh token
 }
 
-export interface UserPayload {
-  userId: number;
-  email: string;
-  username: string;
-  roles: Array<{
-    id: number;
-    code: string;
-    name: string;
-  }>;
-  fingerprint?: string; // Browser fingerprint
-  jti?: string;        // JWT ID
-  iat?: number;        // Issued at
-  exp?: number;        // Expires at
-  iss?: string;        // Issuer
-  aud?: string;        // Audience
-}
 
 export interface AuthRequest extends Request {
   user?: UserPayload;

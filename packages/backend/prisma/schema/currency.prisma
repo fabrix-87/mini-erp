@@ -7,8 +7,6 @@ model Currency {
   code String @unique @db.Char(3) // ISO 4217: EUR, USD, CHF, GBP, JPY
 
   // Identificazione
-  name         String @db.VarChar(100) // "Euro", "US Dollar", "Swiss Franc"
-  namePlural   String @db.VarChar(100) // "euros", "US dollars", "Swiss francs"
   symbol       String @db.VarChar(10)  // "€", "$", "CHF", "£", "¥"
   symbolNative String @db.VarChar(10)  // Simbolo nella locale nativa
 

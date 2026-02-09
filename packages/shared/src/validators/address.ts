@@ -3,8 +3,9 @@
 // ============================================================================
 
 import z from "zod";
-import { CountryCodeBaseSchema } from "./country";
+
 import { createIdSchema, InputJsonValueSchema, PhoneSchema } from "../utils";
+import { CountryCodeBaseSchema } from "./base";
 
 export const AddressTypeSchema = z.enum([
   "LEGAL",

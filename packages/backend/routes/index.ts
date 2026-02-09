@@ -16,6 +16,7 @@ import taxesRouter from "./tax";
 import usersRouter from "./user";
 import companiesRouter from "./company";
 import countryRouter from "./country";
+import currencyRouter from "./currency";
 
 const apiRouter = Router();
 
@@ -35,5 +36,6 @@ apiRouter.use("/suppliers", suppliersRouter);
 apiRouter.use("/taxes", taxesRouter);
 apiRouter.use("/users", usersRouter);
 apiRouter.use("/countries", countryRouter);
+apiRouter.use("/currencies", currencyRouter);
 
 export default apiRouter;

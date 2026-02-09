@@ -48,3 +48,21 @@ export interface ApiErrorResponse {
     message: string;
   }>;
 }
+
+export interface UserPayload {
+  userId: number;
+  email: string;
+  username: string;
+  preferredLanguageId: number;
+  roles: Array<{
+    id: number;
+    code: string;
+    name: string;
+  }>;
+  fingerprint?: string; // Browser fingerprint
+  jti?: string;        // JWT ID
+  iat?: number;        // Issued at
+  exp?: number;        // Expires at
+  iss?: string;        // Issuer
+  aud?: string;        // Audience
+}

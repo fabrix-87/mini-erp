@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { UserRoleSchema } from "./role";
 import { UserIdSchema } from "./base";
-import { dateStringSchema, emailSchema, PhoneSchema } from "../utils";
+import { createIdSchema, dateStringSchema, emailSchema, PhoneSchema, positiveNumbersSchema } from "../utils";
 
 // ============================================================================
 // ENUMS
@@ -46,7 +46,7 @@ export const UserBaseSchema = z.object({
   email: emailSchema(),
   password: PasswordSchema,
   active: z.boolean().default(true),
-  preferredLanguageId: z.number().int().positive().optional().nullable(),
+  preferredLanguageId: createIdSchema('Language ID obbligatorio'),
 });
 
 // ============================================================================

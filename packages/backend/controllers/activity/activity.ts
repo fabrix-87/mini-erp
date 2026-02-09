@@ -195,7 +195,6 @@ export const getActivityById = async (
         company: {
           include: {
             country: true,
-            legalAddress: true,
           },
         },
         customer: {

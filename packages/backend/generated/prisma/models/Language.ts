@@ -637,12 +637,10 @@ export type LanguageCreateNestedOneWithoutUsersPreferredInput = {
   connect?: Prisma.LanguageWhereUniqueInput
 }
 
-export type LanguageUpdateOneWithoutUsersPreferredNestedInput = {
+export type LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput = {
   create?: Prisma.XOR<Prisma.LanguageCreateWithoutUsersPreferredInput, Prisma.LanguageUncheckedCreateWithoutUsersPreferredInput>
   connectOrCreate?: Prisma.LanguageCreateOrConnectWithoutUsersPreferredInput
   upsert?: Prisma.LanguageUpsertWithoutUsersPreferredInput
-  disconnect?: Prisma.LanguageWhereInput | boolean
-  delete?: Prisma.LanguageWhereInput | boolean
   connect?: Prisma.LanguageWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.LanguageUpdateToOneWithWhereWithoutUsersPreferredInput, Prisma.LanguageUpdateWithoutUsersPreferredInput>, Prisma.LanguageUncheckedUpdateWithoutUsersPreferredInput>
 }

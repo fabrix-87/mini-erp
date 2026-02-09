@@ -220,6 +220,7 @@ export const login = asyncHandler(
       userId: user.id,
       email: user.email,
       username: user.username,
+      preferredLanguageId: user.preferredLanguageId,
       roles: formatUserRoles(user.roles),
     };
 
@@ -251,6 +252,7 @@ export const login = asyncHandler(
           username: user.username,
           email: user.email,
           roles: formatUserRoles(user.roles),
+          preferredLanguageId: user.preferredLanguageId,
           details: user.details,
         },
         // Opzionale: ritorna exp per frontend
@@ -399,6 +401,7 @@ export const refreshToken = asyncHandler(
       userId: user.id,
       email: user.email,
       username: user.username,
+      preferredLanguageId: user.preferredLanguageId,
       roles: formatUserRoles(user.roles),
     };
 

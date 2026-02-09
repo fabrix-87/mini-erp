@@ -45,8 +45,6 @@ export type CurrencySumAggregateOutputType = {
 export type CurrencyMinAggregateOutputType = {
   id: number | null
   code: string | null
-  name: string | null
-  namePlural: string | null
   symbol: string | null
   symbolNative: string | null
   decimalDigits: number | null
@@ -68,8 +66,6 @@ export type CurrencyMinAggregateOutputType = {
 export type CurrencyMaxAggregateOutputType = {
   id: number | null
   code: string | null
-  name: string | null
-  namePlural: string | null
   symbol: string | null
   symbolNative: string | null
   decimalDigits: number | null
@@ -91,8 +87,6 @@ export type CurrencyMaxAggregateOutputType = {
 export type CurrencyCountAggregateOutputType = {
   id: number
   code: number
-  name: number
-  namePlural: number
   symbol: number
   symbolNative: number
   decimalDigits: number
@@ -132,8 +126,6 @@ export type CurrencySumAggregateInputType = {
 export type CurrencyMinAggregateInputType = {
   id?: true
   code?: true
-  name?: true
-  namePlural?: true
   symbol?: true
   symbolNative?: true
   decimalDigits?: true
@@ -155,8 +147,6 @@ export type CurrencyMinAggregateInputType = {
 export type CurrencyMaxAggregateInputType = {
   id?: true
   code?: true
-  name?: true
-  namePlural?: true
   symbol?: true
   symbolNative?: true
   decimalDigits?: true
@@ -178,8 +168,6 @@ export type CurrencyMaxAggregateInputType = {
 export type CurrencyCountAggregateInputType = {
   id?: true
   code?: true
-  name?: true
-  namePlural?: true
   symbol?: true
   symbolNative?: true
   decimalDigits?: true
@@ -288,8 +276,6 @@ export type CurrencyGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type CurrencyGroupByOutputType = {
   id: number
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits: number
@@ -334,8 +320,6 @@ export type CurrencyWhereInput = {
   NOT?: Prisma.CurrencyWhereInput | Prisma.CurrencyWhereInput[]
   id?: Prisma.IntFilter<"Currency"> | number
   code?: Prisma.StringFilter<"Currency"> | string
-  name?: Prisma.StringFilter<"Currency"> | string
-  namePlural?: Prisma.StringFilter<"Currency"> | string
   symbol?: Prisma.StringFilter<"Currency"> | string
   symbolNative?: Prisma.StringFilter<"Currency"> | string
   decimalDigits?: Prisma.IntFilter<"Currency"> | number
@@ -363,8 +347,6 @@ export type CurrencyWhereInput = {
 export type CurrencyOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  namePlural?: Prisma.SortOrder
   symbol?: Prisma.SortOrder
   symbolNative?: Prisma.SortOrder
   decimalDigits?: Prisma.SortOrder
@@ -395,8 +377,6 @@ export type CurrencyWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.CurrencyWhereInput | Prisma.CurrencyWhereInput[]
   OR?: Prisma.CurrencyWhereInput[]
   NOT?: Prisma.CurrencyWhereInput | Prisma.CurrencyWhereInput[]
-  name?: Prisma.StringFilter<"Currency"> | string
-  namePlural?: Prisma.StringFilter<"Currency"> | string
   symbol?: Prisma.StringFilter<"Currency"> | string
   symbolNative?: Prisma.StringFilter<"Currency"> | string
   decimalDigits?: Prisma.IntFilter<"Currency"> | number
@@ -424,8 +404,6 @@ export type CurrencyWhereUniqueInput = Prisma.AtLeast<{
 export type CurrencyOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  namePlural?: Prisma.SortOrder
   symbol?: Prisma.SortOrder
   symbolNative?: Prisma.SortOrder
   decimalDigits?: Prisma.SortOrder
@@ -455,8 +433,6 @@ export type CurrencyScalarWhereWithAggregatesInput = {
   NOT?: Prisma.CurrencyScalarWhereWithAggregatesInput | Prisma.CurrencyScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Currency"> | number
   code?: Prisma.StringWithAggregatesFilter<"Currency"> | string
-  name?: Prisma.StringWithAggregatesFilter<"Currency"> | string
-  namePlural?: Prisma.StringWithAggregatesFilter<"Currency"> | string
   symbol?: Prisma.StringWithAggregatesFilter<"Currency"> | string
   symbolNative?: Prisma.StringWithAggregatesFilter<"Currency"> | string
   decimalDigits?: Prisma.IntWithAggregatesFilter<"Currency"> | number
@@ -477,8 +453,6 @@ export type CurrencyScalarWhereWithAggregatesInput = {
 
 export type CurrencyCreateInput = {
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -506,8 +480,6 @@ export type CurrencyCreateInput = {
 export type CurrencyUncheckedCreateInput = {
   id?: number
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -534,8 +506,6 @@ export type CurrencyUncheckedCreateInput = {
 
 export type CurrencyUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -563,8 +533,6 @@ export type CurrencyUpdateInput = {
 export type CurrencyUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -592,8 +560,6 @@ export type CurrencyUncheckedUpdateInput = {
 export type CurrencyCreateManyInput = {
   id?: number
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -614,8 +580,6 @@ export type CurrencyCreateManyInput = {
 
 export type CurrencyUpdateManyMutationInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -637,8 +601,6 @@ export type CurrencyUpdateManyMutationInput = {
 export type CurrencyUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -665,8 +627,6 @@ export type CurrencyScalarRelationFilter = {
 export type CurrencyCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  namePlural?: Prisma.SortOrder
   symbol?: Prisma.SortOrder
   symbolNative?: Prisma.SortOrder
   decimalDigits?: Prisma.SortOrder
@@ -696,8 +656,6 @@ export type CurrencyAvgOrderByAggregateInput = {
 export type CurrencyMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  namePlural?: Prisma.SortOrder
   symbol?: Prisma.SortOrder
   symbolNative?: Prisma.SortOrder
   decimalDigits?: Prisma.SortOrder
@@ -719,8 +677,6 @@ export type CurrencyMaxOrderByAggregateInput = {
 export type CurrencyMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  namePlural?: Prisma.SortOrder
   symbol?: Prisma.SortOrder
   symbolNative?: Prisma.SortOrder
   decimalDigits?: Prisma.SortOrder
@@ -840,8 +796,6 @@ export type CurrencyUpdateOneWithoutVirtualStocksNestedInput = {
 
 export type CurrencyCreateWithoutCountriesInput = {
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -868,8 +822,6 @@ export type CurrencyCreateWithoutCountriesInput = {
 export type CurrencyUncheckedCreateWithoutCountriesInput = {
   id?: number
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -911,8 +863,6 @@ export type CurrencyUpdateToOneWithWhereWithoutCountriesInput = {
 
 export type CurrencyUpdateWithoutCountriesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -939,8 +889,6 @@ export type CurrencyUpdateWithoutCountriesInput = {
 export type CurrencyUncheckedUpdateWithoutCountriesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -966,8 +914,6 @@ export type CurrencyUncheckedUpdateWithoutCountriesInput = {
 
 export type CurrencyCreateWithoutExchangeRateHistoryInput = {
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -994,8 +940,6 @@ export type CurrencyCreateWithoutExchangeRateHistoryInput = {
 export type CurrencyUncheckedCreateWithoutExchangeRateHistoryInput = {
   id?: number
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -1037,8 +981,6 @@ export type CurrencyUpdateToOneWithWhereWithoutExchangeRateHistoryInput = {
 
 export type CurrencyUpdateWithoutExchangeRateHistoryInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1065,8 +1007,6 @@ export type CurrencyUpdateWithoutExchangeRateHistoryInput = {
 export type CurrencyUncheckedUpdateWithoutExchangeRateHistoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1092,8 +1032,6 @@ export type CurrencyUncheckedUpdateWithoutExchangeRateHistoryInput = {
 
 export type CurrencyCreateWithoutTranslationsInput = {
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -1120,8 +1058,6 @@ export type CurrencyCreateWithoutTranslationsInput = {
 export type CurrencyUncheckedCreateWithoutTranslationsInput = {
   id?: number
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -1163,8 +1099,6 @@ export type CurrencyUpdateToOneWithWhereWithoutTranslationsInput = {
 
 export type CurrencyUpdateWithoutTranslationsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1191,8 +1125,6 @@ export type CurrencyUpdateWithoutTranslationsInput = {
 export type CurrencyUncheckedUpdateWithoutTranslationsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1218,8 +1150,6 @@ export type CurrencyUncheckedUpdateWithoutTranslationsInput = {
 
 export type CurrencyCreateWithoutDocumentsInput = {
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -1246,8 +1176,6 @@ export type CurrencyCreateWithoutDocumentsInput = {
 export type CurrencyUncheckedCreateWithoutDocumentsInput = {
   id?: number
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -1289,8 +1217,6 @@ export type CurrencyUpdateToOneWithWhereWithoutDocumentsInput = {
 
 export type CurrencyUpdateWithoutDocumentsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1317,8 +1243,6 @@ export type CurrencyUpdateWithoutDocumentsInput = {
 export type CurrencyUncheckedUpdateWithoutDocumentsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1344,8 +1268,6 @@ export type CurrencyUncheckedUpdateWithoutDocumentsInput = {
 
 export type CurrencyCreateWithoutPriceListsInput = {
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -1372,8 +1294,6 @@ export type CurrencyCreateWithoutPriceListsInput = {
 export type CurrencyUncheckedCreateWithoutPriceListsInput = {
   id?: number
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -1415,8 +1335,6 @@ export type CurrencyUpdateToOneWithWhereWithoutPriceListsInput = {
 
 export type CurrencyUpdateWithoutPriceListsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1443,8 +1361,6 @@ export type CurrencyUpdateWithoutPriceListsInput = {
 export type CurrencyUncheckedUpdateWithoutPriceListsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1470,8 +1386,6 @@ export type CurrencyUncheckedUpdateWithoutPriceListsInput = {
 
 export type CurrencyCreateWithoutVirtualStocksInput = {
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -1498,8 +1412,6 @@ export type CurrencyCreateWithoutVirtualStocksInput = {
 export type CurrencyUncheckedCreateWithoutVirtualStocksInput = {
   id?: number
   code: string
-  name: string
-  namePlural: string
   symbol: string
   symbolNative: string
   decimalDigits?: number
@@ -1541,8 +1453,6 @@ export type CurrencyUpdateToOneWithWhereWithoutVirtualStocksInput = {
 
 export type CurrencyUpdateWithoutVirtualStocksInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1569,8 +1479,6 @@ export type CurrencyUpdateWithoutVirtualStocksInput = {
 export type CurrencyUncheckedUpdateWithoutVirtualStocksInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  namePlural?: Prisma.StringFieldUpdateOperationsInput | string
   symbol?: Prisma.StringFieldUpdateOperationsInput | string
   symbolNative?: Prisma.StringFieldUpdateOperationsInput | string
   decimalDigits?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1673,8 +1581,6 @@ export type CurrencyCountOutputTypeCountTranslationsArgs<ExtArgs extends runtime
 export type CurrencySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   code?: boolean
-  name?: boolean
-  namePlural?: boolean
   symbol?: boolean
   symbolNative?: boolean
   decimalDigits?: boolean
@@ -1703,8 +1609,6 @@ export type CurrencySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type CurrencySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   code?: boolean
-  name?: boolean
-  namePlural?: boolean
   symbol?: boolean
   symbolNative?: boolean
   decimalDigits?: boolean
@@ -1726,8 +1630,6 @@ export type CurrencySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type CurrencySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   code?: boolean
-  name?: boolean
-  namePlural?: boolean
   symbol?: boolean
   symbolNative?: boolean
   decimalDigits?: boolean
@@ -1749,8 +1651,6 @@ export type CurrencySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type CurrencySelectScalar = {
   id?: boolean
   code?: boolean
-  name?: boolean
-  namePlural?: boolean
   symbol?: boolean
   symbolNative?: boolean
   decimalDigits?: boolean
@@ -1769,7 +1669,7 @@ export type CurrencySelectScalar = {
   updatedAt?: boolean
 }
 
-export type CurrencyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "namePlural" | "symbol" | "symbolNative" | "decimalDigits" | "rounding" | "symbolPosition" | "decimalSeparator" | "thousandSeparator" | "isBaseCurrency" | "exchangeRate" | "exchangeRateUpdated" | "exchangeRateSource" | "active" | "priority" | "countryCode" | "createdAt" | "updatedAt", ExtArgs["result"]["currency"]>
+export type CurrencyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "symbol" | "symbolNative" | "decimalDigits" | "rounding" | "symbolPosition" | "decimalSeparator" | "thousandSeparator" | "isBaseCurrency" | "exchangeRate" | "exchangeRateUpdated" | "exchangeRateSource" | "active" | "priority" | "countryCode" | "createdAt" | "updatedAt", ExtArgs["result"]["currency"]>
 export type CurrencyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   countries?: boolean | Prisma.Currency$countriesArgs<ExtArgs>
   documents?: boolean | Prisma.Currency$documentsArgs<ExtArgs>
@@ -1795,8 +1695,6 @@ export type $CurrencyPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     code: string
-    name: string
-    namePlural: string
     symbol: string
     symbolNative: string
     decimalDigits: number
@@ -2244,8 +2142,6 @@ export interface Prisma__CurrencyClient<T, Null = never, ExtArgs extends runtime
 export interface CurrencyFieldRefs {
   readonly id: Prisma.FieldRef<"Currency", 'Int'>
   readonly code: Prisma.FieldRef<"Currency", 'String'>
-  readonly name: Prisma.FieldRef<"Currency", 'String'>
-  readonly namePlural: Prisma.FieldRef<"Currency", 'String'>
   readonly symbol: Prisma.FieldRef<"Currency", 'String'>
   readonly symbolNative: Prisma.FieldRef<"Currency", 'String'>
   readonly decimalDigits: Prisma.FieldRef<"Currency", 'Int'>
