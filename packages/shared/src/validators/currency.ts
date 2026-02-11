@@ -5,6 +5,7 @@ import {
   limitSchema,
   pageSchema,
   positiveNumbersSchema,
+  QueryBooleanSchema,
 } from "../utils";
 import { CountryCodeBaseSchema, CurrencyCodeBaseSchema } from "./base";
 
@@ -52,4 +53,5 @@ export const CurrencyQuerySchema = z.object({
     search: z.string().optional().nullable(),
     page: pageSchema,
     limit: limitSchema,
+    active: QueryBooleanSchema
 })

@@ -22,7 +22,5 @@ model Country {
 
   taxRule TaxRule[]
 
-  tenant TenantSettings[]
-
   languages Language[]
 }

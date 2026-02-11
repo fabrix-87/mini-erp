@@ -221,7 +221,6 @@ export type CountryWhereInput = {
   documentShippingCountry?: Prisma.DocumentListRelationFilter
   leads?: Prisma.LeadListRelationFilter
   taxRule?: Prisma.TaxRuleListRelationFilter
-  tenant?: Prisma.TenantSettingsListRelationFilter
   languages?: Prisma.LanguageListRelationFilter
 }
 
@@ -242,7 +241,6 @@ export type CountryOrderByWithRelationInput = {
   documentShippingCountry?: Prisma.DocumentOrderByRelationAggregateInput
   leads?: Prisma.LeadOrderByRelationAggregateInput
   taxRule?: Prisma.TaxRuleOrderByRelationAggregateInput
-  tenant?: Prisma.TenantSettingsOrderByRelationAggregateInput
   languages?: Prisma.LanguageOrderByRelationAggregateInput
 }
 
@@ -266,7 +264,6 @@ export type CountryWhereUniqueInput = Prisma.AtLeast<{
   documentShippingCountry?: Prisma.DocumentListRelationFilter
   leads?: Prisma.LeadListRelationFilter
   taxRule?: Prisma.TaxRuleListRelationFilter
-  tenant?: Prisma.TenantSettingsListRelationFilter
   languages?: Prisma.LanguageListRelationFilter
 }, "code">
 
@@ -316,7 +313,6 @@ export type CountryCreateInput = {
   documentShippingCountry?: Prisma.DocumentCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageCreateNestedManyWithoutCountriesInput
 }
 
@@ -336,7 +332,6 @@ export type CountryUncheckedCreateInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleUncheckedCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageUncheckedCreateNestedManyWithoutCountriesInput
 }
 
@@ -356,7 +351,6 @@ export type CountryUpdateInput = {
   documentShippingCountry?: Prisma.DocumentUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUpdateManyWithoutCountriesNestedInput
 }
 
@@ -376,7 +370,6 @@ export type CountryUncheckedUpdateInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUncheckedUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUncheckedUpdateManyWithoutCountriesNestedInput
 }
 
@@ -623,20 +616,6 @@ export type CountryUpdateOneRequiredWithoutLeadsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CountryUpdateToOneWithWhereWithoutLeadsInput, Prisma.CountryUpdateWithoutLeadsInput>, Prisma.CountryUncheckedUpdateWithoutLeadsInput>
 }
 
-export type CountryCreateNestedOneWithoutTenantInput = {
-  create?: Prisma.XOR<Prisma.CountryCreateWithoutTenantInput, Prisma.CountryUncheckedCreateWithoutTenantInput>
-  connectOrCreate?: Prisma.CountryCreateOrConnectWithoutTenantInput
-  connect?: Prisma.CountryWhereUniqueInput
-}
-
-export type CountryUpdateOneRequiredWithoutTenantNestedInput = {
-  create?: Prisma.XOR<Prisma.CountryCreateWithoutTenantInput, Prisma.CountryUncheckedCreateWithoutTenantInput>
-  connectOrCreate?: Prisma.CountryCreateOrConnectWithoutTenantInput
-  upsert?: Prisma.CountryUpsertWithoutTenantInput
-  connect?: Prisma.CountryWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CountryUpdateToOneWithWhereWithoutTenantInput, Prisma.CountryUpdateWithoutTenantInput>, Prisma.CountryUncheckedUpdateWithoutTenantInput>
-}
-
 export type CountryCreateNestedOneWithoutTaxRuleInput = {
   create?: Prisma.XOR<Prisma.CountryCreateWithoutTaxRuleInput, Prisma.CountryUncheckedCreateWithoutTaxRuleInput>
   connectOrCreate?: Prisma.CountryCreateOrConnectWithoutTaxRuleInput
@@ -666,7 +645,6 @@ export type CountryCreateWithoutCompaniesInput = {
   documentShippingCountry?: Prisma.DocumentCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageCreateNestedManyWithoutCountriesInput
 }
 
@@ -685,7 +663,6 @@ export type CountryUncheckedCreateWithoutCompaniesInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleUncheckedCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageUncheckedCreateNestedManyWithoutCountriesInput
 }
 
@@ -720,7 +697,6 @@ export type CountryUpdateWithoutCompaniesInput = {
   documentShippingCountry?: Prisma.DocumentUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUpdateManyWithoutCountriesNestedInput
 }
 
@@ -739,7 +715,6 @@ export type CountryUncheckedUpdateWithoutCompaniesInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUncheckedUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUncheckedUpdateManyWithoutCountriesNestedInput
 }
 
@@ -758,7 +733,6 @@ export type CountryCreateWithoutCompanyAddressesInput = {
   documentShippingCountry?: Prisma.DocumentCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageCreateNestedManyWithoutCountriesInput
 }
 
@@ -777,7 +751,6 @@ export type CountryUncheckedCreateWithoutCompanyAddressesInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleUncheckedCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageUncheckedCreateNestedManyWithoutCountriesInput
 }
 
@@ -812,7 +785,6 @@ export type CountryUpdateWithoutCompanyAddressesInput = {
   documentShippingCountry?: Prisma.DocumentUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUpdateManyWithoutCountriesNestedInput
 }
 
@@ -831,7 +803,6 @@ export type CountryUncheckedUpdateWithoutCompanyAddressesInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUncheckedUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUncheckedUpdateManyWithoutCountriesNestedInput
 }
 
@@ -850,7 +821,6 @@ export type CountryCreateWithoutCurrencyInput = {
   documentShippingCountry?: Prisma.DocumentCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageCreateNestedManyWithoutCountriesInput
 }
 
@@ -869,7 +839,6 @@ export type CountryUncheckedCreateWithoutCurrencyInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleUncheckedCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageUncheckedCreateNestedManyWithoutCountriesInput
 }
 
@@ -929,7 +898,6 @@ export type CountryCreateWithoutDocumentCountryInput = {
   documentShippingCountry?: Prisma.DocumentCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageCreateNestedManyWithoutCountriesInput
 }
 
@@ -948,7 +916,6 @@ export type CountryUncheckedCreateWithoutDocumentCountryInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleUncheckedCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageUncheckedCreateNestedManyWithoutCountriesInput
 }
 
@@ -972,7 +939,6 @@ export type CountryCreateWithoutDocumentShippingCountryInput = {
   documentCountry?: Prisma.DocumentCreateNestedManyWithoutCustomerCountryInput
   leads?: Prisma.LeadCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageCreateNestedManyWithoutCountriesInput
 }
 
@@ -991,7 +957,6 @@ export type CountryUncheckedCreateWithoutDocumentShippingCountryInput = {
   documentCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerCountryInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleUncheckedCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageUncheckedCreateNestedManyWithoutCountriesInput
 }
 
@@ -1026,7 +991,6 @@ export type CountryUpdateWithoutDocumentCountryInput = {
   documentShippingCountry?: Prisma.DocumentUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUpdateManyWithoutCountriesNestedInput
 }
 
@@ -1045,7 +1009,6 @@ export type CountryUncheckedUpdateWithoutDocumentCountryInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUncheckedUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUncheckedUpdateManyWithoutCountriesNestedInput
 }
 
@@ -1075,7 +1038,6 @@ export type CountryUpdateWithoutDocumentShippingCountryInput = {
   documentCountry?: Prisma.DocumentUpdateManyWithoutCustomerCountryNestedInput
   leads?: Prisma.LeadUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUpdateManyWithoutCountriesNestedInput
 }
 
@@ -1094,7 +1056,6 @@ export type CountryUncheckedUpdateWithoutDocumentShippingCountryInput = {
   documentCountry?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerCountryNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUncheckedUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUncheckedUpdateManyWithoutCountriesNestedInput
 }
 
@@ -1114,7 +1075,6 @@ export type CountryCreateWithoutLanguagesInput = {
   documentShippingCountry?: Prisma.DocumentCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsCreateNestedManyWithoutCountryInput
 }
 
 export type CountryUncheckedCreateWithoutLanguagesInput = {
@@ -1133,7 +1093,6 @@ export type CountryUncheckedCreateWithoutLanguagesInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCountryInput
   taxRule?: Prisma.TaxRuleUncheckedCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCountryInput
 }
 
 export type CountryCreateOrConnectWithoutLanguagesInput = {
@@ -1172,7 +1131,6 @@ export type CountryCreateWithoutLeadsInput = {
   documentCountry?: Prisma.DocumentCreateNestedManyWithoutCustomerCountryInput
   documentShippingCountry?: Prisma.DocumentCreateNestedManyWithoutShippingCountryInput
   taxRule?: Prisma.TaxRuleCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageCreateNestedManyWithoutCountriesInput
 }
 
@@ -1191,7 +1149,6 @@ export type CountryUncheckedCreateWithoutLeadsInput = {
   documentCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerCountryInput
   documentShippingCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutShippingCountryInput
   taxRule?: Prisma.TaxRuleUncheckedCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageUncheckedCreateNestedManyWithoutCountriesInput
 }
 
@@ -1226,7 +1183,6 @@ export type CountryUpdateWithoutLeadsInput = {
   documentCountry?: Prisma.DocumentUpdateManyWithoutCustomerCountryNestedInput
   documentShippingCountry?: Prisma.DocumentUpdateManyWithoutShippingCountryNestedInput
   taxRule?: Prisma.TaxRuleUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUpdateManyWithoutCountriesNestedInput
 }
 
@@ -1244,99 +1200,6 @@ export type CountryUncheckedUpdateWithoutLeadsInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutCountryNestedInput
   documentCountry?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerCountryNestedInput
   documentShippingCountry?: Prisma.DocumentUncheckedUpdateManyWithoutShippingCountryNestedInput
-  taxRule?: Prisma.TaxRuleUncheckedUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCountryNestedInput
-  languages?: Prisma.LanguageUncheckedUpdateManyWithoutCountriesNestedInput
-}
-
-export type CountryCreateWithoutTenantInput = {
-  code: string
-  name: string
-  isEU?: boolean
-  iso3: string
-  numericCode: string
-  phoneCode: string
-  continent: string
-  active: boolean
-  currency?: Prisma.CurrencyCreateNestedOneWithoutCountriesInput
-  companyAddresses?: Prisma.CompanyAddressCreateNestedManyWithoutCountryInput
-  companies?: Prisma.CompanyCreateNestedManyWithoutCountryInput
-  documentCountry?: Prisma.DocumentCreateNestedManyWithoutCustomerCountryInput
-  documentShippingCountry?: Prisma.DocumentCreateNestedManyWithoutShippingCountryInput
-  leads?: Prisma.LeadCreateNestedManyWithoutCountryInput
-  taxRule?: Prisma.TaxRuleCreateNestedManyWithoutCountryInput
-  languages?: Prisma.LanguageCreateNestedManyWithoutCountriesInput
-}
-
-export type CountryUncheckedCreateWithoutTenantInput = {
-  code: string
-  name: string
-  isEU?: boolean
-  iso3: string
-  numericCode: string
-  phoneCode: string
-  continent: string
-  active: boolean
-  currencyCode?: string
-  companyAddresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCountryInput
-  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutCountryInput
-  documentCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerCountryInput
-  documentShippingCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutShippingCountryInput
-  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCountryInput
-  taxRule?: Prisma.TaxRuleUncheckedCreateNestedManyWithoutCountryInput
-  languages?: Prisma.LanguageUncheckedCreateNestedManyWithoutCountriesInput
-}
-
-export type CountryCreateOrConnectWithoutTenantInput = {
-  where: Prisma.CountryWhereUniqueInput
-  create: Prisma.XOR<Prisma.CountryCreateWithoutTenantInput, Prisma.CountryUncheckedCreateWithoutTenantInput>
-}
-
-export type CountryUpsertWithoutTenantInput = {
-  update: Prisma.XOR<Prisma.CountryUpdateWithoutTenantInput, Prisma.CountryUncheckedUpdateWithoutTenantInput>
-  create: Prisma.XOR<Prisma.CountryCreateWithoutTenantInput, Prisma.CountryUncheckedCreateWithoutTenantInput>
-  where?: Prisma.CountryWhereInput
-}
-
-export type CountryUpdateToOneWithWhereWithoutTenantInput = {
-  where?: Prisma.CountryWhereInput
-  data: Prisma.XOR<Prisma.CountryUpdateWithoutTenantInput, Prisma.CountryUncheckedUpdateWithoutTenantInput>
-}
-
-export type CountryUpdateWithoutTenantInput = {
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  isEU?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  iso3?: Prisma.StringFieldUpdateOperationsInput | string
-  numericCode?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneCode?: Prisma.StringFieldUpdateOperationsInput | string
-  continent?: Prisma.StringFieldUpdateOperationsInput | string
-  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  currency?: Prisma.CurrencyUpdateOneRequiredWithoutCountriesNestedInput
-  companyAddresses?: Prisma.CompanyAddressUpdateManyWithoutCountryNestedInput
-  companies?: Prisma.CompanyUpdateManyWithoutCountryNestedInput
-  documentCountry?: Prisma.DocumentUpdateManyWithoutCustomerCountryNestedInput
-  documentShippingCountry?: Prisma.DocumentUpdateManyWithoutShippingCountryNestedInput
-  leads?: Prisma.LeadUpdateManyWithoutCountryNestedInput
-  taxRule?: Prisma.TaxRuleUpdateManyWithoutCountryNestedInput
-  languages?: Prisma.LanguageUpdateManyWithoutCountriesNestedInput
-}
-
-export type CountryUncheckedUpdateWithoutTenantInput = {
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  isEU?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  iso3?: Prisma.StringFieldUpdateOperationsInput | string
-  numericCode?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneCode?: Prisma.StringFieldUpdateOperationsInput | string
-  continent?: Prisma.StringFieldUpdateOperationsInput | string
-  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
-  companyAddresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCountryNestedInput
-  companies?: Prisma.CompanyUncheckedUpdateManyWithoutCountryNestedInput
-  documentCountry?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerCountryNestedInput
-  documentShippingCountry?: Prisma.DocumentUncheckedUpdateManyWithoutShippingCountryNestedInput
-  leads?: Prisma.LeadUncheckedUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUncheckedUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUncheckedUpdateManyWithoutCountriesNestedInput
 }
@@ -1356,7 +1219,6 @@ export type CountryCreateWithoutTaxRuleInput = {
   documentCountry?: Prisma.DocumentCreateNestedManyWithoutCustomerCountryInput
   documentShippingCountry?: Prisma.DocumentCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageCreateNestedManyWithoutCountriesInput
 }
 
@@ -1375,7 +1237,6 @@ export type CountryUncheckedCreateWithoutTaxRuleInput = {
   documentCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerCountryInput
   documentShippingCountry?: Prisma.DocumentUncheckedCreateNestedManyWithoutShippingCountryInput
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCountryInput
-  tenant?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCountryInput
   languages?: Prisma.LanguageUncheckedCreateNestedManyWithoutCountriesInput
 }
 
@@ -1410,7 +1271,6 @@ export type CountryUpdateWithoutTaxRuleInput = {
   documentCountry?: Prisma.DocumentUpdateManyWithoutCustomerCountryNestedInput
   documentShippingCountry?: Prisma.DocumentUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUpdateManyWithoutCountriesNestedInput
 }
 
@@ -1429,7 +1289,6 @@ export type CountryUncheckedUpdateWithoutTaxRuleInput = {
   documentCountry?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerCountryNestedInput
   documentShippingCountry?: Prisma.DocumentUncheckedUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUncheckedUpdateManyWithoutCountriesNestedInput
 }
 
@@ -1459,7 +1318,6 @@ export type CountryUpdateWithoutCurrencyInput = {
   documentShippingCountry?: Prisma.DocumentUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUpdateManyWithoutCountriesNestedInput
 }
 
@@ -1478,7 +1336,6 @@ export type CountryUncheckedUpdateWithoutCurrencyInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUncheckedUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCountryNestedInput
   languages?: Prisma.LanguageUncheckedUpdateManyWithoutCountriesNestedInput
 }
 
@@ -1509,7 +1366,6 @@ export type CountryUpdateWithoutLanguagesInput = {
   documentShippingCountry?: Prisma.DocumentUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUpdateManyWithoutCountryNestedInput
 }
 
 export type CountryUncheckedUpdateWithoutLanguagesInput = {
@@ -1528,7 +1384,6 @@ export type CountryUncheckedUpdateWithoutLanguagesInput = {
   documentShippingCountry?: Prisma.DocumentUncheckedUpdateManyWithoutShippingCountryNestedInput
   leads?: Prisma.LeadUncheckedUpdateManyWithoutCountryNestedInput
   taxRule?: Prisma.TaxRuleUncheckedUpdateManyWithoutCountryNestedInput
-  tenant?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCountryNestedInput
 }
 
 export type CountryUncheckedUpdateManyWithoutLanguagesInput = {
@@ -1555,7 +1410,6 @@ export type CountryCountOutputType = {
   documentShippingCountry: number
   leads: number
   taxRule: number
-  tenant: number
   languages: number
 }
 
@@ -1566,7 +1420,6 @@ export type CountryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   documentShippingCountry?: boolean | CountryCountOutputTypeCountDocumentShippingCountryArgs
   leads?: boolean | CountryCountOutputTypeCountLeadsArgs
   taxRule?: boolean | CountryCountOutputTypeCountTaxRuleArgs
-  tenant?: boolean | CountryCountOutputTypeCountTenantArgs
   languages?: boolean | CountryCountOutputTypeCountLanguagesArgs
 }
 
@@ -1625,13 +1478,6 @@ export type CountryCountOutputTypeCountTaxRuleArgs<ExtArgs extends runtime.Types
 /**
  * CountryCountOutputType without action
  */
-export type CountryCountOutputTypeCountTenantArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TenantSettingsWhereInput
-}
-
-/**
- * CountryCountOutputType without action
- */
 export type CountryCountOutputTypeCountLanguagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.LanguageWhereInput
 }
@@ -1654,7 +1500,6 @@ export type CountrySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   documentShippingCountry?: boolean | Prisma.Country$documentShippingCountryArgs<ExtArgs>
   leads?: boolean | Prisma.Country$leadsArgs<ExtArgs>
   taxRule?: boolean | Prisma.Country$taxRuleArgs<ExtArgs>
-  tenant?: boolean | Prisma.Country$tenantArgs<ExtArgs>
   languages?: boolean | Prisma.Country$languagesArgs<ExtArgs>
   _count?: boolean | Prisma.CountryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["country"]>
@@ -1706,7 +1551,6 @@ export type CountryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   documentShippingCountry?: boolean | Prisma.Country$documentShippingCountryArgs<ExtArgs>
   leads?: boolean | Prisma.Country$leadsArgs<ExtArgs>
   taxRule?: boolean | Prisma.Country$taxRuleArgs<ExtArgs>
-  tenant?: boolean | Prisma.Country$tenantArgs<ExtArgs>
   languages?: boolean | Prisma.Country$languagesArgs<ExtArgs>
   _count?: boolean | Prisma.CountryCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1727,7 +1571,6 @@ export type $CountryPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     documentShippingCountry: Prisma.$DocumentPayload<ExtArgs>[]
     leads: Prisma.$LeadPayload<ExtArgs>[]
     taxRule: Prisma.$TaxRulePayload<ExtArgs>[]
-    tenant: Prisma.$TenantSettingsPayload<ExtArgs>[]
     languages: Prisma.$LanguagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -2141,7 +1984,6 @@ export interface Prisma__CountryClient<T, Null = never, ExtArgs extends runtime.
   documentShippingCountry<T extends Prisma.Country$documentShippingCountryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Country$documentShippingCountryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leads<T extends Prisma.Country$leadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Country$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   taxRule<T extends Prisma.Country$taxRuleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Country$taxRuleArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaxRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  tenant<T extends Prisma.Country$tenantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Country$tenantArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TenantSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   languages<T extends Prisma.Country$languagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Country$languagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LanguagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2718,30 +2560,6 @@ export type Country$taxRuleArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.TaxRuleScalarFieldEnum | Prisma.TaxRuleScalarFieldEnum[]
-}
-
-/**
- * Country.tenant
- */
-export type Country$tenantArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the TenantSettings
-   */
-  select?: Prisma.TenantSettingsSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the TenantSettings
-   */
-  omit?: Prisma.TenantSettingsOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TenantSettingsInclude<ExtArgs> | null
-  where?: Prisma.TenantSettingsWhereInput
-  orderBy?: Prisma.TenantSettingsOrderByWithRelationInput | Prisma.TenantSettingsOrderByWithRelationInput[]
-  cursor?: Prisma.TenantSettingsWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.TenantSettingsScalarFieldEnum | Prisma.TenantSettingsScalarFieldEnum[]
 }
 
 /**

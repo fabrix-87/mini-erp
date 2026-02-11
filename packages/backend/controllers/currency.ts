@@ -2,87 +2,103 @@ import { prisma } from "@/config/prisma-client";
 import { Prisma } from "@/generated/prisma/client";
 import asyncHandler from "@/middleware/async-handler";
 import { AuthenticatedValidatedRequest } from "@/types/validate";
-import { sendSuccess } from "@/utils/response";
-import { CurrencyQueryInput } from "@mini-erp/shared";
-import { Response } from "express";
+import {
+  Currency,
+  CurrencyQueryInput,
+  PaginatedResponse,
+} from "@mini-erp/shared";
+import { formatPaginatedResponse } from "@/utils/response";
+import { buildCacheKey, getCache, setCache } from "@/utils/cache";
 
 /**
  * @desc    Lista tutte le valute con filtri
  * @route   GET /api/currencies
  * @access  Private/Admin
  */
-export const getAllCurrencies = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response) => {
+export const getAllCurrencies = asyncHandler<AuthenticatedValidatedRequest>(
+  async (req, res) => {
     const {
       limit = 100,
       page = 1,
       search,
+      active,
     } = req.validatedQuery as CurrencyQueryInput;
 
-    const languageId = req.user!.preferredLanguageId;
+    const languageId = req.user?.preferredLanguageId;
 
-    const where: any[] = [
-      { active: true }, // Solo valute attive
-    ];
+    if (!languageId) {
+      throw new Error("User language not defined");
+    }
 
-    if (search) {
-      where.push({
+    const safeLimit = Math.min(limit, 200);
+    const safePage = Math.max(page, 1);
+
+    const where: Prisma.CurrencyWhereInput = {
+      ...(active !== undefined && { active }),
+      ...(search && {
         OR: [
-          {
-            code: { contains: search, mode: "insensitive" },
-          },
-          {
-            symbol: { contains: search, mode: "insensitive" },
-          },
+          { code: { contains: search, mode: "insensitive" } },
+          { symbol: { contains: search, mode: "insensitive" } },
           {
             translations: {
               some: {
-                AND: [
-                  { languageId },
-                  {
-                    OR: [
-                      {
-                        name: {
-                          contains: search,
-                          mode: "insensitive",
-                        },
-                      },
-                      {
-                        namePlural: {
-                          contains: search,
-                          mode: "insensitive",
-                        },
-                      },
-                    ],
-                  },
+                languageId,
+                OR: [
+                  { name: { contains: search, mode: "insensitive" } },
+                  { namePlural: { contains: search, mode: "insensitive" } },
                 ],
               },
             },
           },
         ],
-      });
-    }
+      }),
+    };
 
-    const currencies = await prisma.currency.findMany({
-      where: {
-        AND: where,
-      },
-      skip: (page - 1) * limit,
-      take: limit,
-      orderBy: { priority: "asc" },
-      include: {
-        translations: {
-          select: {
-            name: true,
-            namePlural: true,
-          },
-          where: {
-            languageId: languageId,
-          },
-        },
-      },
+    const cacheKey = buildCacheKey("currencies", {
+      where,
+      safePage,
+      safeLimit,
+      languageId,
     });
 
-    sendSuccess(res, currencies);
+    // Try cache
+    const cached = await getCache<PaginatedResponse<Currency>>(cacheKey);
+
+    if (cached) {
+      res.json(cached);
+      return;
+    }
+
+    // Query parallele
+    const [currencies, total] = await prisma.$transaction([
+      prisma.currency.findMany({
+        where,
+        skip: (safePage - 1) * safeLimit,
+        take: safeLimit,
+        orderBy: { priority: "asc" },
+        include: {
+          translations: {
+            where: { languageId },
+            select: {
+              name: true,
+              namePlural: true,
+            },
+          },
+        },
+      }),
+      prisma.currency.count({ where }),
+    ]);
+
+    const response = formatPaginatedResponse(
+      currencies,
+      total,
+      safePage,
+      safeLimit,
+    );
+
+    // Cache 10 minuti (valute sono semi-statiche)
+    await setCache(cacheKey, response, { ttl: 600 });
+
+    res.json(response);
   },
 );

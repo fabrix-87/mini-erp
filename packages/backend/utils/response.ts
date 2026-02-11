@@ -19,21 +19,24 @@ export const formatPaginatedResponse = <T>(
   limit: number,
   message?: string,
   errors?: ValidationError[],
-): PaginatedResponse<T> => ({
-  status: "success",
-  data,
-  message,
-  results: data.length,
-  errors,
-  pagination: {
-    currentPage: page,
-    itemsPerPage: limit,
-    totalItems: total,
-    totalPages: Math.ceil(total / limit),
-    hasNextPage: page * limit < total,
-    hasPrevPage: page > 1,
-  },
-});
+): PaginatedResponse<T> => {
+  const totalPages = limit > 0 ? Math.ceil(total / limit) : 0;
+  return {
+    status: "success",
+    data,
+    message,
+    results: data.length,
+    errors,
+    pagination: {
+      currentPage: page,
+      itemsPerPage: limit,
+      totalItems: total,
+      totalPages,
+      hasNextPage: page * limit < totalPages,
+      hasPrevPage: page > 1,
+    },
+  };
+};
 
 /**
  * Invia risposta di successo
@@ -51,9 +54,9 @@ export const sendSuccess = <T>(
   const response: ApiResponse<T> = {
     status: "success",
     data,
-    message: options?.message,
-    results: options?.results,
-    pagination: options?.pagination,
+    ...(options?.message && { message: options.message }),
+    ...(options?.results !== undefined && { results: options.results }),
+    ...(options?.pagination && { pagination: options.pagination }),
   };
 
   return res.status(options?.statusCode ?? 200).json(response);
@@ -161,13 +164,10 @@ export const sendNoContent = (res: Response) => {
  */
 export const sendDeleted = (
   res: Response,
-  message: string = "Risorsa eliminata con successo",
+  message = "Risorsa eliminata con successo",
 ) => {
-  const response: ApiResponse<null> = {
-    status: "success",
-    data: null,
+  return sendSuccess(res, null, {
+    statusCode: 200,
     message,
-  };
-
-  return res.status(200).json(response);
+  });
 };

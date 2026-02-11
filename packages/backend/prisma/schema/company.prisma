@@ -122,9 +122,11 @@ model Company {
 
     // Indirizzi
     addresses CompanyAddress[] @relation("CompanyAddresses")
+
     contacts  Contact[]
     customers Customer[]
     suppliers Supplier[]
+    tenants TenantSettings[] @relation("TenantCompany")
 
     // Documenti
     documents Document[]

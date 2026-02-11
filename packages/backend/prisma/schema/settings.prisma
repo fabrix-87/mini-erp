@@ -8,44 +8,35 @@ model TenantSettings {
   // Se multi-tenant
   tenantCode String? @unique @db.VarChar(20)
   
-  // Dati fiscali della MIA azienda
-  companyName    String  @db.VarChar(255)
-  vatNumber      String  @db.VarChar(20)
-  taxCode        String  @db.VarChar(20)
-  sdiCode        String? @db.VarChar(7)
-  pec            String? @db.VarChar(255)
-  fiscalAddress  String? @db.Text
+  // Riferimento alla Company che rappresenta il tenant
+  companyId Int? @unique
+  company   Company? @relation("TenantCompany", fields: [companyId], references: [id])
   
-  countryCode String @default("IT") @db.Char(2)
-  country     Country @relation(fields: [countryCode], references: [code])
+  // RIMUOVI: companyName, vatNumber, taxCode, sdiCode, pec, fiscalAddress, countryCode
+  // Questi dati ora vengono presi da Company
   
   // === REGIME FISCALE DELLA MIA AZIENDA ===
-  
-  // Regime fiscale (es. "Forfettario L.190/2014")
   taxRegime String? @db.VarChar(50)
   
-  // Regola fiscale DEFAULT per TUTTE le mie VENDITE
-  // Es. se sono forfettario → sempre IT-N2.2-FORFETTARIO
   defaultSalesTaxRuleId Int?
   defaultSalesTaxRule   TaxRule? @relation("TenantDefaultSalesTaxRule", fields: [defaultSalesTaxRuleId], references: [id])
   
-  // Regola fiscale DEFAULT per TUTTI i miei ACQUISTI
-  // (più raro, ma può servire)
   defaultPurchasesTaxRuleId Int?
   defaultPurchasesTaxRule   TaxRule? @relation("TenantDefaultPurchasesTaxRule", fields: [defaultPurchasesTaxRuleId], references: [id])
   
-  // Altre configurazioni
+  // Configurazioni
   defaultCurrency       String  @default("EUR") @db.Char(3)
   defaultLanguageId     Int?
   defaultLanguage       Language? @relation(fields: [defaultLanguageId], references: [id])
   
   // Configurazioni fatturazione elettronica
-  sdiTransmissionFormat String? @db.VarChar(10) // "FPR12", "FPA12"
+  sdiTransmissionFormat String? @db.VarChar(10)
   sdiCertificatePath    String? @db.VarChar(500)
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
+  @@index([companyId])
   @@index([defaultSalesTaxRuleId])
   @@index([defaultPurchasesTaxRuleId])
 }

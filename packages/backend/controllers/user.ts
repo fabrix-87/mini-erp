@@ -668,10 +668,7 @@ export const getMe = asyncHandler(
     // Salva in cache (TTL: 1 ora = 3600 secondi)
     await redisClient.setEx(cacheKey, 3600, JSON.stringify(userData));
 
-    res.json({
-      status: "success",
-      data: userData,
-    });
+    sendSuccess(res, userData);
   },
 );
 

@@ -14,9 +14,12 @@ import AppError, {
   UnauthorizedError,
   InternalServerError,
   TooManyRequestsError,
-  ValidationError,
 } from "../utils/app-error";
 import logger from "../config/logger";
+import { ApiErrorResponse } from "@mini-erp/shared";
+import { sendError } from "@/utils/response";
+import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import { MulterError } from "multer";
 
 // =========================================================================
 // HELPER PER GESTIONE ERRORI SPECIFICI
@@ -31,46 +34,52 @@ const handlePrismaError = (err: PrismaClientKnownRequestError): AppError => {
       const target =
         (err.meta?.target as string[])?.join(", ") || "campo univoco";
       return new ConflictError(
-        `Il valore fornito per '${target}' è già in uso.`
+        `Il valore fornito per '${target}' è già in uso.`,
       );
     }
     case "P2025":
       return new NotFoundError("Record non trovato nel database.");
-    
+
     case "P2003": {
       const field = err.meta?.field_name || "campo";
       return new BadRequestError(
-        `Operazione fallita: riferimento a '${field}' non valido o inesistente.`
+        `Operazione fallita: riferimento a '${field}' non valido o inesistente.`,
       );
     }
     case "P2000": {
       const field = err.meta?.column_name || "campo";
       return new BadRequestError(
-        `Il valore fornito per '${field}' è troppo lungo.`
+        `Il valore fornito per '${field}' è troppo lungo.`,
       );
     }
     case "P2001":
       return new NotFoundError(
-        "Il record ricercato non esiste nella relazione specificata."
+        "Il record ricercato non esiste nella relazione specificata.",
       );
-    
+
     case "P2011":
-      return new BadRequestError("Vincolo di null violato su un campo obbligatorio.");
-    
+      return new BadRequestError(
+        "Vincolo di null violato su un campo obbligatorio.",
+      );
+
     case "P2012":
       return new BadRequestError("Valore mancante per un campo obbligatorio.");
-    
+
     case "P2014":
       return new BadRequestError(
-        "La modifica violerebbe una relazione richiesta tra modelli."
+        "La modifica violerebbe una relazione richiesta tra modelli.",
       );
-    
+
     case "P2021":
-      return new InternalServerError("La tabella specificata non esiste nel database.");
-    
+      return new InternalServerError(
+        "La tabella specificata non esiste nel database.",
+      );
+
     case "P2022":
-      return new InternalServerError("La colonna specificata non esiste nel database.");
-    
+      return new InternalServerError(
+        "La colonna specificata non esiste nel database.",
+      );
+
     default:
       logger.error("Prisma Error non gestito", {
         code: err.code,
@@ -79,7 +88,7 @@ const handlePrismaError = (err: PrismaClientKnownRequestError): AppError => {
         clientVersion: err.clientVersion,
       });
       return new InternalServerError(
-        "Errore del database. Il team tecnico è stato notificato."
+        "Errore del database. Il team tecnico è stato notificato.",
       );
   }
 };
@@ -88,14 +97,14 @@ const handlePrismaError = (err: PrismaClientKnownRequestError): AppError => {
  * Gestisce errori di inizializzazione Prisma
  */
 const handlePrismaInitializationError = (
-  err: PrismaClientInitializationError
+  err: PrismaClientInitializationError,
 ): AppError => {
   logger.error("Prisma Initialization Error", {
     message: err.message,
     errorCode: err.errorCode,
   });
   return new InternalServerError(
-    "Impossibile connettersi al database. Riprova più tardi."
+    "Impossibile connettersi al database. Riprova più tardi.",
   );
 };
 
@@ -113,10 +122,17 @@ const handleJWTExpiredError = (): AppError =>
  */
 const sanitizeRequestInfo = (req: Request) => {
   const body = { ...req.body };
-  const sensitiveFields = ["password", "token", "apiKey", "secret", "creditCard", "passwordConfirm"];
-  
-  sensitiveFields.forEach(field => {
-    if (body[field]) {
+  const sensitiveFields = [
+    "password",
+    "token",
+    "apiKey",
+    "secret",
+    "creditCard",
+    "passwordConfirm",
+  ];
+
+  sensitiveFields.forEach((field) => {
+    if (field in body) {
       body[field] = "[REDACTED]";
     }
   });
@@ -180,7 +196,7 @@ const sendErrorDev = (err: AppError, req: Request, res: Response) => {
 
 const sendErrorProd = (err: AppError, res: Response) => {
   if (err.isOperational) {
-    const response: Record<string, any> = {
+    const response: ApiErrorResponse = {
       status: err.status,
       message: err.message,
     };
@@ -204,9 +220,10 @@ const sendErrorProd = (err: AppError, res: Response) => {
     });
 
     // Risposta generica sicura per il client
-    res.status(500).json({
-      status: "error",
-      message: "Si è verificato un errore interno. Il team tecnico è stato notificato.",
+    sendError(res, {
+      statusCode: 500,
+      message:
+        "Si è verificato un errore interno. Il team tecnico è stato notificato.",
     });
   }
 };
@@ -216,10 +233,10 @@ const sendErrorProd = (err: AppError, res: Response) => {
 // =========================================================================
 
 export const errorHandler = (
-  err: any,
+  err: unknown,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   // Evita di processare se la risposta è già stata inviata
   if (res.headersSent) {
@@ -236,44 +253,39 @@ export const errorHandler = (
     error = handlePrismaError(err);
   } else if (err instanceof PrismaClientValidationError) {
     error = new BadRequestError(
-      "Dati non validi: verifica i campi inviati e riprova."
+      "Dati non validi: verifica i campi inviati e riprova.",
     );
     logger.warn("Prisma Validation Error", { originalError: err.message });
   } else if (err instanceof PrismaClientInitializationError) {
     error = handlePrismaInitializationError(err);
-  } else if (err.name === "JsonWebTokenError") {
+  } else if (err instanceof JsonWebTokenError) {
     error = handleJWTError();
-  } else if (err.name === "TokenExpiredError") {
+  } else if (err instanceof TokenExpiredError) {
     error = handleJWTExpiredError();
   } else if (err instanceof SyntaxError && "body" in err) {
-    error = new BadRequestError(
-      "Formato JSON non valido nel corpo della richiesta."
-    );
-  } else if (err.name === "MulterError") {
+    error = new BadRequestError("Formato JSON non valido nel corpo della richiesta.");
+  } else if (err instanceof MulterError) {
     if (err.code === "LIMIT_FILE_SIZE") {
-      error = new BadRequestError(
-        "Il file caricato supera la dimensione massima consentita."
-      );
+      error = new BadRequestError("Il file caricato supera la dimensione massima consentita.");
     } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
       error = new BadRequestError("Campo file non previsto nella richiesta.");
     } else {
-      error = new BadRequestError(
-        `Errore durante il caricamento del file: ${err.message}`
-      );
+      error = new BadRequestError(`Errore durante il caricamento del file: ${err.message}`);
     }
   } else if (err instanceof AppError) {
     // Se è già un AppError (incluse tutte le sottoclassi), usalo direttamente
     error = err;
   } else {
-    // Fallback: crea un nuovo AppError preservando le informazioni originali
-    const statusCode =
-      typeof err.statusCode === "number" && err.statusCode >= 400 && err.statusCode < 600
-        ? err.statusCode
-        : 500;
-    const message = err.message || "Errore sconosciuto";
-    const isOperational = statusCode < 500; // 4xx = operazionale, 5xx = non operazionale
+    let message = "Errore sconosciuto";
 
-    error = new AppError(message, statusCode, isOperational, [], err);
+    if (err instanceof AppError) {
+      error = err;
+    } else if (err instanceof Error) {
+      message = err.message;
+      error = new AppError(message, 500, false, undefined, err);
+    } else {
+      error = new AppError(message, 500, false);
+    }
   }
 
   // Gestione header Retry-After per rate limiting
@@ -318,7 +330,7 @@ export const errorHandler = (
 export const notFoundHandler = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   next(new NotFoundError(`La route ${req.originalUrl} non esiste`));
 };

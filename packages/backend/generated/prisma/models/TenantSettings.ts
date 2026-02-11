@@ -28,6 +28,7 @@ export type AggregateTenantSettings = {
 
 export type TenantSettingsAvgAggregateOutputType = {
   id: number | null
+  companyId: number | null
   defaultSalesTaxRuleId: number | null
   defaultPurchasesTaxRuleId: number | null
   defaultLanguageId: number | null
@@ -35,6 +36,7 @@ export type TenantSettingsAvgAggregateOutputType = {
 
 export type TenantSettingsSumAggregateOutputType = {
   id: number | null
+  companyId: number | null
   defaultSalesTaxRuleId: number | null
   defaultPurchasesTaxRuleId: number | null
   defaultLanguageId: number | null
@@ -43,13 +45,7 @@ export type TenantSettingsSumAggregateOutputType = {
 export type TenantSettingsMinAggregateOutputType = {
   id: number | null
   tenantCode: string | null
-  companyName: string | null
-  vatNumber: string | null
-  taxCode: string | null
-  sdiCode: string | null
-  pec: string | null
-  fiscalAddress: string | null
-  countryCode: string | null
+  companyId: number | null
   taxRegime: string | null
   defaultSalesTaxRuleId: number | null
   defaultPurchasesTaxRuleId: number | null
@@ -64,13 +60,7 @@ export type TenantSettingsMinAggregateOutputType = {
 export type TenantSettingsMaxAggregateOutputType = {
   id: number | null
   tenantCode: string | null
-  companyName: string | null
-  vatNumber: string | null
-  taxCode: string | null
-  sdiCode: string | null
-  pec: string | null
-  fiscalAddress: string | null
-  countryCode: string | null
+  companyId: number | null
   taxRegime: string | null
   defaultSalesTaxRuleId: number | null
   defaultPurchasesTaxRuleId: number | null
@@ -85,13 +75,7 @@ export type TenantSettingsMaxAggregateOutputType = {
 export type TenantSettingsCountAggregateOutputType = {
   id: number
   tenantCode: number
-  companyName: number
-  vatNumber: number
-  taxCode: number
-  sdiCode: number
-  pec: number
-  fiscalAddress: number
-  countryCode: number
+  companyId: number
   taxRegime: number
   defaultSalesTaxRuleId: number
   defaultPurchasesTaxRuleId: number
@@ -107,6 +91,7 @@ export type TenantSettingsCountAggregateOutputType = {
 
 export type TenantSettingsAvgAggregateInputType = {
   id?: true
+  companyId?: true
   defaultSalesTaxRuleId?: true
   defaultPurchasesTaxRuleId?: true
   defaultLanguageId?: true
@@ -114,6 +99,7 @@ export type TenantSettingsAvgAggregateInputType = {
 
 export type TenantSettingsSumAggregateInputType = {
   id?: true
+  companyId?: true
   defaultSalesTaxRuleId?: true
   defaultPurchasesTaxRuleId?: true
   defaultLanguageId?: true
@@ -122,13 +108,7 @@ export type TenantSettingsSumAggregateInputType = {
 export type TenantSettingsMinAggregateInputType = {
   id?: true
   tenantCode?: true
-  companyName?: true
-  vatNumber?: true
-  taxCode?: true
-  sdiCode?: true
-  pec?: true
-  fiscalAddress?: true
-  countryCode?: true
+  companyId?: true
   taxRegime?: true
   defaultSalesTaxRuleId?: true
   defaultPurchasesTaxRuleId?: true
@@ -143,13 +123,7 @@ export type TenantSettingsMinAggregateInputType = {
 export type TenantSettingsMaxAggregateInputType = {
   id?: true
   tenantCode?: true
-  companyName?: true
-  vatNumber?: true
-  taxCode?: true
-  sdiCode?: true
-  pec?: true
-  fiscalAddress?: true
-  countryCode?: true
+  companyId?: true
   taxRegime?: true
   defaultSalesTaxRuleId?: true
   defaultPurchasesTaxRuleId?: true
@@ -164,13 +138,7 @@ export type TenantSettingsMaxAggregateInputType = {
 export type TenantSettingsCountAggregateInputType = {
   id?: true
   tenantCode?: true
-  companyName?: true
-  vatNumber?: true
-  taxCode?: true
-  sdiCode?: true
-  pec?: true
-  fiscalAddress?: true
-  countryCode?: true
+  companyId?: true
   taxRegime?: true
   defaultSalesTaxRuleId?: true
   defaultPurchasesTaxRuleId?: true
@@ -272,13 +240,7 @@ export type TenantSettingsGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 export type TenantSettingsGroupByOutputType = {
   id: number
   tenantCode: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode: string | null
-  pec: string | null
-  fiscalAddress: string | null
-  countryCode: string
+  companyId: number | null
   taxRegime: string | null
   defaultSalesTaxRuleId: number | null
   defaultPurchasesTaxRuleId: number | null
@@ -316,13 +278,7 @@ export type TenantSettingsWhereInput = {
   NOT?: Prisma.TenantSettingsWhereInput | Prisma.TenantSettingsWhereInput[]
   id?: Prisma.IntFilter<"TenantSettings"> | number
   tenantCode?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
-  companyName?: Prisma.StringFilter<"TenantSettings"> | string
-  vatNumber?: Prisma.StringFilter<"TenantSettings"> | string
-  taxCode?: Prisma.StringFilter<"TenantSettings"> | string
-  sdiCode?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
-  pec?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
-  fiscalAddress?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
-  countryCode?: Prisma.StringFilter<"TenantSettings"> | string
+  companyId?: Prisma.IntNullableFilter<"TenantSettings"> | number | null
   taxRegime?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
   defaultSalesTaxRuleId?: Prisma.IntNullableFilter<"TenantSettings"> | number | null
   defaultPurchasesTaxRuleId?: Prisma.IntNullableFilter<"TenantSettings"> | number | null
@@ -332,7 +288,7 @@ export type TenantSettingsWhereInput = {
   sdiCertificatePath?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
   createdAt?: Prisma.DateTimeFilter<"TenantSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TenantSettings"> | Date | string
-  country?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
+  company?: Prisma.XOR<Prisma.CompanyNullableScalarRelationFilter, Prisma.CompanyWhereInput> | null
   defaultSalesTaxRule?: Prisma.XOR<Prisma.TaxRuleNullableScalarRelationFilter, Prisma.TaxRuleWhereInput> | null
   defaultPurchasesTaxRule?: Prisma.XOR<Prisma.TaxRuleNullableScalarRelationFilter, Prisma.TaxRuleWhereInput> | null
   defaultLanguage?: Prisma.XOR<Prisma.LanguageNullableScalarRelationFilter, Prisma.LanguageWhereInput> | null
@@ -341,13 +297,7 @@ export type TenantSettingsWhereInput = {
 export type TenantSettingsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   tenantCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  companyName?: Prisma.SortOrder
-  vatNumber?: Prisma.SortOrder
-  taxCode?: Prisma.SortOrder
-  sdiCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  pec?: Prisma.SortOrderInput | Prisma.SortOrder
-  fiscalAddress?: Prisma.SortOrderInput | Prisma.SortOrder
-  countryCode?: Prisma.SortOrder
+  companyId?: Prisma.SortOrderInput | Prisma.SortOrder
   taxRegime?: Prisma.SortOrderInput | Prisma.SortOrder
   defaultSalesTaxRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
   defaultPurchasesTaxRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -357,7 +307,7 @@ export type TenantSettingsOrderByWithRelationInput = {
   sdiCertificatePath?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  country?: Prisma.CountryOrderByWithRelationInput
+  company?: Prisma.CompanyOrderByWithRelationInput
   defaultSalesTaxRule?: Prisma.TaxRuleOrderByWithRelationInput
   defaultPurchasesTaxRule?: Prisma.TaxRuleOrderByWithRelationInput
   defaultLanguage?: Prisma.LanguageOrderByWithRelationInput
@@ -366,16 +316,10 @@ export type TenantSettingsOrderByWithRelationInput = {
 export type TenantSettingsWhereUniqueInput = Prisma.AtLeast<{
   id?: number
   tenantCode?: string
+  companyId?: number
   AND?: Prisma.TenantSettingsWhereInput | Prisma.TenantSettingsWhereInput[]
   OR?: Prisma.TenantSettingsWhereInput[]
   NOT?: Prisma.TenantSettingsWhereInput | Prisma.TenantSettingsWhereInput[]
-  companyName?: Prisma.StringFilter<"TenantSettings"> | string
-  vatNumber?: Prisma.StringFilter<"TenantSettings"> | string
-  taxCode?: Prisma.StringFilter<"TenantSettings"> | string
-  sdiCode?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
-  pec?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
-  fiscalAddress?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
-  countryCode?: Prisma.StringFilter<"TenantSettings"> | string
   taxRegime?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
   defaultSalesTaxRuleId?: Prisma.IntNullableFilter<"TenantSettings"> | number | null
   defaultPurchasesTaxRuleId?: Prisma.IntNullableFilter<"TenantSettings"> | number | null
@@ -385,22 +329,16 @@ export type TenantSettingsWhereUniqueInput = Prisma.AtLeast<{
   sdiCertificatePath?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
   createdAt?: Prisma.DateTimeFilter<"TenantSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TenantSettings"> | Date | string
-  country?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
+  company?: Prisma.XOR<Prisma.CompanyNullableScalarRelationFilter, Prisma.CompanyWhereInput> | null
   defaultSalesTaxRule?: Prisma.XOR<Prisma.TaxRuleNullableScalarRelationFilter, Prisma.TaxRuleWhereInput> | null
   defaultPurchasesTaxRule?: Prisma.XOR<Prisma.TaxRuleNullableScalarRelationFilter, Prisma.TaxRuleWhereInput> | null
   defaultLanguage?: Prisma.XOR<Prisma.LanguageNullableScalarRelationFilter, Prisma.LanguageWhereInput> | null
-}, "id" | "tenantCode">
+}, "id" | "tenantCode" | "companyId">
 
 export type TenantSettingsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   tenantCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  companyName?: Prisma.SortOrder
-  vatNumber?: Prisma.SortOrder
-  taxCode?: Prisma.SortOrder
-  sdiCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  pec?: Prisma.SortOrderInput | Prisma.SortOrder
-  fiscalAddress?: Prisma.SortOrderInput | Prisma.SortOrder
-  countryCode?: Prisma.SortOrder
+  companyId?: Prisma.SortOrderInput | Prisma.SortOrder
   taxRegime?: Prisma.SortOrderInput | Prisma.SortOrder
   defaultSalesTaxRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
   defaultPurchasesTaxRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -423,13 +361,7 @@ export type TenantSettingsScalarWhereWithAggregatesInput = {
   NOT?: Prisma.TenantSettingsScalarWhereWithAggregatesInput | Prisma.TenantSettingsScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"TenantSettings"> | number
   tenantCode?: Prisma.StringNullableWithAggregatesFilter<"TenantSettings"> | string | null
-  companyName?: Prisma.StringWithAggregatesFilter<"TenantSettings"> | string
-  vatNumber?: Prisma.StringWithAggregatesFilter<"TenantSettings"> | string
-  taxCode?: Prisma.StringWithAggregatesFilter<"TenantSettings"> | string
-  sdiCode?: Prisma.StringNullableWithAggregatesFilter<"TenantSettings"> | string | null
-  pec?: Prisma.StringNullableWithAggregatesFilter<"TenantSettings"> | string | null
-  fiscalAddress?: Prisma.StringNullableWithAggregatesFilter<"TenantSettings"> | string | null
-  countryCode?: Prisma.StringWithAggregatesFilter<"TenantSettings"> | string
+  companyId?: Prisma.IntNullableWithAggregatesFilter<"TenantSettings"> | number | null
   taxRegime?: Prisma.StringNullableWithAggregatesFilter<"TenantSettings"> | string | null
   defaultSalesTaxRuleId?: Prisma.IntNullableWithAggregatesFilter<"TenantSettings"> | number | null
   defaultPurchasesTaxRuleId?: Prisma.IntNullableWithAggregatesFilter<"TenantSettings"> | number | null
@@ -443,19 +375,13 @@ export type TenantSettingsScalarWhereWithAggregatesInput = {
 
 export type TenantSettingsCreateInput = {
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
   taxRegime?: string | null
   defaultCurrency?: string
   sdiTransmissionFormat?: string | null
   sdiCertificatePath?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  country?: Prisma.CountryCreateNestedOneWithoutTenantInput
+  company?: Prisma.CompanyCreateNestedOneWithoutTenantsInput
   defaultSalesTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutTenantsSalesInput
   defaultPurchasesTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutTenantsPurchasesInput
   defaultLanguage?: Prisma.LanguageCreateNestedOneWithoutTenantInput
@@ -464,13 +390,7 @@ export type TenantSettingsCreateInput = {
 export type TenantSettingsUncheckedCreateInput = {
   id?: number
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
-  countryCode?: string
+  companyId?: number | null
   taxRegime?: string | null
   defaultSalesTaxRuleId?: number | null
   defaultPurchasesTaxRuleId?: number | null
@@ -484,19 +404,13 @@ export type TenantSettingsUncheckedCreateInput = {
 
 export type TenantSettingsUpdateInput = {
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   sdiTransmissionFormat?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sdiCertificatePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  country?: Prisma.CountryUpdateOneRequiredWithoutTenantNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutTenantsNestedInput
   defaultSalesTaxRule?: Prisma.TaxRuleUpdateOneWithoutTenantsSalesNestedInput
   defaultPurchasesTaxRule?: Prisma.TaxRuleUpdateOneWithoutTenantsPurchasesNestedInput
   defaultLanguage?: Prisma.LanguageUpdateOneWithoutTenantNestedInput
@@ -505,13 +419,7 @@ export type TenantSettingsUpdateInput = {
 export type TenantSettingsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultSalesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   defaultPurchasesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -526,13 +434,7 @@ export type TenantSettingsUncheckedUpdateInput = {
 export type TenantSettingsCreateManyInput = {
   id?: number
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
-  countryCode?: string
+  companyId?: number | null
   taxRegime?: string | null
   defaultSalesTaxRuleId?: number | null
   defaultPurchasesTaxRuleId?: number | null
@@ -546,12 +448,6 @@ export type TenantSettingsCreateManyInput = {
 
 export type TenantSettingsUpdateManyMutationInput = {
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   sdiTransmissionFormat?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -563,13 +459,7 @@ export type TenantSettingsUpdateManyMutationInput = {
 export type TenantSettingsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultSalesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   defaultPurchasesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -594,13 +484,7 @@ export type TenantSettingsOrderByRelationAggregateInput = {
 export type TenantSettingsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantCode?: Prisma.SortOrder
-  companyName?: Prisma.SortOrder
-  vatNumber?: Prisma.SortOrder
-  taxCode?: Prisma.SortOrder
-  sdiCode?: Prisma.SortOrder
-  pec?: Prisma.SortOrder
-  fiscalAddress?: Prisma.SortOrder
-  countryCode?: Prisma.SortOrder
+  companyId?: Prisma.SortOrder
   taxRegime?: Prisma.SortOrder
   defaultSalesTaxRuleId?: Prisma.SortOrder
   defaultPurchasesTaxRuleId?: Prisma.SortOrder
@@ -614,6 +498,7 @@ export type TenantSettingsCountOrderByAggregateInput = {
 
 export type TenantSettingsAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  companyId?: Prisma.SortOrder
   defaultSalesTaxRuleId?: Prisma.SortOrder
   defaultPurchasesTaxRuleId?: Prisma.SortOrder
   defaultLanguageId?: Prisma.SortOrder
@@ -622,13 +507,7 @@ export type TenantSettingsAvgOrderByAggregateInput = {
 export type TenantSettingsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantCode?: Prisma.SortOrder
-  companyName?: Prisma.SortOrder
-  vatNumber?: Prisma.SortOrder
-  taxCode?: Prisma.SortOrder
-  sdiCode?: Prisma.SortOrder
-  pec?: Prisma.SortOrder
-  fiscalAddress?: Prisma.SortOrder
-  countryCode?: Prisma.SortOrder
+  companyId?: Prisma.SortOrder
   taxRegime?: Prisma.SortOrder
   defaultSalesTaxRuleId?: Prisma.SortOrder
   defaultPurchasesTaxRuleId?: Prisma.SortOrder
@@ -643,13 +522,7 @@ export type TenantSettingsMaxOrderByAggregateInput = {
 export type TenantSettingsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantCode?: Prisma.SortOrder
-  companyName?: Prisma.SortOrder
-  vatNumber?: Prisma.SortOrder
-  taxCode?: Prisma.SortOrder
-  sdiCode?: Prisma.SortOrder
-  pec?: Prisma.SortOrder
-  fiscalAddress?: Prisma.SortOrder
-  countryCode?: Prisma.SortOrder
+  companyId?: Prisma.SortOrder
   taxRegime?: Prisma.SortOrder
   defaultSalesTaxRuleId?: Prisma.SortOrder
   defaultPurchasesTaxRuleId?: Prisma.SortOrder
@@ -663,50 +536,51 @@ export type TenantSettingsMinOrderByAggregateInput = {
 
 export type TenantSettingsSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  companyId?: Prisma.SortOrder
   defaultSalesTaxRuleId?: Prisma.SortOrder
   defaultPurchasesTaxRuleId?: Prisma.SortOrder
   defaultLanguageId?: Prisma.SortOrder
 }
 
-export type TenantSettingsCreateNestedManyWithoutCountryInput = {
-  create?: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCountryInput, Prisma.TenantSettingsUncheckedCreateWithoutCountryInput> | Prisma.TenantSettingsCreateWithoutCountryInput[] | Prisma.TenantSettingsUncheckedCreateWithoutCountryInput[]
-  connectOrCreate?: Prisma.TenantSettingsCreateOrConnectWithoutCountryInput | Prisma.TenantSettingsCreateOrConnectWithoutCountryInput[]
-  createMany?: Prisma.TenantSettingsCreateManyCountryInputEnvelope
+export type TenantSettingsCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCompanyInput, Prisma.TenantSettingsUncheckedCreateWithoutCompanyInput> | Prisma.TenantSettingsCreateWithoutCompanyInput[] | Prisma.TenantSettingsUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.TenantSettingsCreateOrConnectWithoutCompanyInput | Prisma.TenantSettingsCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.TenantSettingsCreateManyCompanyInputEnvelope
   connect?: Prisma.TenantSettingsWhereUniqueInput | Prisma.TenantSettingsWhereUniqueInput[]
 }
 
-export type TenantSettingsUncheckedCreateNestedManyWithoutCountryInput = {
-  create?: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCountryInput, Prisma.TenantSettingsUncheckedCreateWithoutCountryInput> | Prisma.TenantSettingsCreateWithoutCountryInput[] | Prisma.TenantSettingsUncheckedCreateWithoutCountryInput[]
-  connectOrCreate?: Prisma.TenantSettingsCreateOrConnectWithoutCountryInput | Prisma.TenantSettingsCreateOrConnectWithoutCountryInput[]
-  createMany?: Prisma.TenantSettingsCreateManyCountryInputEnvelope
+export type TenantSettingsUncheckedCreateNestedManyWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCompanyInput, Prisma.TenantSettingsUncheckedCreateWithoutCompanyInput> | Prisma.TenantSettingsCreateWithoutCompanyInput[] | Prisma.TenantSettingsUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.TenantSettingsCreateOrConnectWithoutCompanyInput | Prisma.TenantSettingsCreateOrConnectWithoutCompanyInput[]
+  createMany?: Prisma.TenantSettingsCreateManyCompanyInputEnvelope
   connect?: Prisma.TenantSettingsWhereUniqueInput | Prisma.TenantSettingsWhereUniqueInput[]
 }
 
-export type TenantSettingsUpdateManyWithoutCountryNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCountryInput, Prisma.TenantSettingsUncheckedCreateWithoutCountryInput> | Prisma.TenantSettingsCreateWithoutCountryInput[] | Prisma.TenantSettingsUncheckedCreateWithoutCountryInput[]
-  connectOrCreate?: Prisma.TenantSettingsCreateOrConnectWithoutCountryInput | Prisma.TenantSettingsCreateOrConnectWithoutCountryInput[]
-  upsert?: Prisma.TenantSettingsUpsertWithWhereUniqueWithoutCountryInput | Prisma.TenantSettingsUpsertWithWhereUniqueWithoutCountryInput[]
-  createMany?: Prisma.TenantSettingsCreateManyCountryInputEnvelope
+export type TenantSettingsUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCompanyInput, Prisma.TenantSettingsUncheckedCreateWithoutCompanyInput> | Prisma.TenantSettingsCreateWithoutCompanyInput[] | Prisma.TenantSettingsUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.TenantSettingsCreateOrConnectWithoutCompanyInput | Prisma.TenantSettingsCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.TenantSettingsUpsertWithWhereUniqueWithoutCompanyInput | Prisma.TenantSettingsUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.TenantSettingsCreateManyCompanyInputEnvelope
   set?: Prisma.TenantSettingsWhereUniqueInput | Prisma.TenantSettingsWhereUniqueInput[]
   disconnect?: Prisma.TenantSettingsWhereUniqueInput | Prisma.TenantSettingsWhereUniqueInput[]
   delete?: Prisma.TenantSettingsWhereUniqueInput | Prisma.TenantSettingsWhereUniqueInput[]
   connect?: Prisma.TenantSettingsWhereUniqueInput | Prisma.TenantSettingsWhereUniqueInput[]
-  update?: Prisma.TenantSettingsUpdateWithWhereUniqueWithoutCountryInput | Prisma.TenantSettingsUpdateWithWhereUniqueWithoutCountryInput[]
-  updateMany?: Prisma.TenantSettingsUpdateManyWithWhereWithoutCountryInput | Prisma.TenantSettingsUpdateManyWithWhereWithoutCountryInput[]
+  update?: Prisma.TenantSettingsUpdateWithWhereUniqueWithoutCompanyInput | Prisma.TenantSettingsUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.TenantSettingsUpdateManyWithWhereWithoutCompanyInput | Prisma.TenantSettingsUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.TenantSettingsScalarWhereInput | Prisma.TenantSettingsScalarWhereInput[]
 }
 
-export type TenantSettingsUncheckedUpdateManyWithoutCountryNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCountryInput, Prisma.TenantSettingsUncheckedCreateWithoutCountryInput> | Prisma.TenantSettingsCreateWithoutCountryInput[] | Prisma.TenantSettingsUncheckedCreateWithoutCountryInput[]
-  connectOrCreate?: Prisma.TenantSettingsCreateOrConnectWithoutCountryInput | Prisma.TenantSettingsCreateOrConnectWithoutCountryInput[]
-  upsert?: Prisma.TenantSettingsUpsertWithWhereUniqueWithoutCountryInput | Prisma.TenantSettingsUpsertWithWhereUniqueWithoutCountryInput[]
-  createMany?: Prisma.TenantSettingsCreateManyCountryInputEnvelope
+export type TenantSettingsUncheckedUpdateManyWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCompanyInput, Prisma.TenantSettingsUncheckedCreateWithoutCompanyInput> | Prisma.TenantSettingsCreateWithoutCompanyInput[] | Prisma.TenantSettingsUncheckedCreateWithoutCompanyInput[]
+  connectOrCreate?: Prisma.TenantSettingsCreateOrConnectWithoutCompanyInput | Prisma.TenantSettingsCreateOrConnectWithoutCompanyInput[]
+  upsert?: Prisma.TenantSettingsUpsertWithWhereUniqueWithoutCompanyInput | Prisma.TenantSettingsUpsertWithWhereUniqueWithoutCompanyInput[]
+  createMany?: Prisma.TenantSettingsCreateManyCompanyInputEnvelope
   set?: Prisma.TenantSettingsWhereUniqueInput | Prisma.TenantSettingsWhereUniqueInput[]
   disconnect?: Prisma.TenantSettingsWhereUniqueInput | Prisma.TenantSettingsWhereUniqueInput[]
   delete?: Prisma.TenantSettingsWhereUniqueInput | Prisma.TenantSettingsWhereUniqueInput[]
   connect?: Prisma.TenantSettingsWhereUniqueInput | Prisma.TenantSettingsWhereUniqueInput[]
-  update?: Prisma.TenantSettingsUpdateWithWhereUniqueWithoutCountryInput | Prisma.TenantSettingsUpdateWithWhereUniqueWithoutCountryInput[]
-  updateMany?: Prisma.TenantSettingsUpdateManyWithWhereWithoutCountryInput | Prisma.TenantSettingsUpdateManyWithWhereWithoutCountryInput[]
+  update?: Prisma.TenantSettingsUpdateWithWhereUniqueWithoutCompanyInput | Prisma.TenantSettingsUpdateWithWhereUniqueWithoutCompanyInput[]
+  updateMany?: Prisma.TenantSettingsUpdateManyWithWhereWithoutCompanyInput | Prisma.TenantSettingsUpdateManyWithWhereWithoutCompanyInput[]
   deleteMany?: Prisma.TenantSettingsScalarWhereInput | Prisma.TenantSettingsScalarWhereInput[]
 }
 
@@ -836,14 +710,8 @@ export type TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleNeste
   deleteMany?: Prisma.TenantSettingsScalarWhereInput | Prisma.TenantSettingsScalarWhereInput[]
 }
 
-export type TenantSettingsCreateWithoutCountryInput = {
+export type TenantSettingsCreateWithoutCompanyInput = {
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
   taxRegime?: string | null
   defaultCurrency?: string
   sdiTransmissionFormat?: string | null
@@ -855,15 +723,9 @@ export type TenantSettingsCreateWithoutCountryInput = {
   defaultLanguage?: Prisma.LanguageCreateNestedOneWithoutTenantInput
 }
 
-export type TenantSettingsUncheckedCreateWithoutCountryInput = {
+export type TenantSettingsUncheckedCreateWithoutCompanyInput = {
   id?: number
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
   taxRegime?: string | null
   defaultSalesTaxRuleId?: number | null
   defaultPurchasesTaxRuleId?: number | null
@@ -875,30 +737,30 @@ export type TenantSettingsUncheckedCreateWithoutCountryInput = {
   updatedAt?: Date | string
 }
 
-export type TenantSettingsCreateOrConnectWithoutCountryInput = {
+export type TenantSettingsCreateOrConnectWithoutCompanyInput = {
   where: Prisma.TenantSettingsWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCountryInput, Prisma.TenantSettingsUncheckedCreateWithoutCountryInput>
+  create: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCompanyInput, Prisma.TenantSettingsUncheckedCreateWithoutCompanyInput>
 }
 
-export type TenantSettingsCreateManyCountryInputEnvelope = {
-  data: Prisma.TenantSettingsCreateManyCountryInput | Prisma.TenantSettingsCreateManyCountryInput[]
+export type TenantSettingsCreateManyCompanyInputEnvelope = {
+  data: Prisma.TenantSettingsCreateManyCompanyInput | Prisma.TenantSettingsCreateManyCompanyInput[]
   skipDuplicates?: boolean
 }
 
-export type TenantSettingsUpsertWithWhereUniqueWithoutCountryInput = {
+export type TenantSettingsUpsertWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.TenantSettingsWhereUniqueInput
-  update: Prisma.XOR<Prisma.TenantSettingsUpdateWithoutCountryInput, Prisma.TenantSettingsUncheckedUpdateWithoutCountryInput>
-  create: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCountryInput, Prisma.TenantSettingsUncheckedCreateWithoutCountryInput>
+  update: Prisma.XOR<Prisma.TenantSettingsUpdateWithoutCompanyInput, Prisma.TenantSettingsUncheckedUpdateWithoutCompanyInput>
+  create: Prisma.XOR<Prisma.TenantSettingsCreateWithoutCompanyInput, Prisma.TenantSettingsUncheckedCreateWithoutCompanyInput>
 }
 
-export type TenantSettingsUpdateWithWhereUniqueWithoutCountryInput = {
+export type TenantSettingsUpdateWithWhereUniqueWithoutCompanyInput = {
   where: Prisma.TenantSettingsWhereUniqueInput
-  data: Prisma.XOR<Prisma.TenantSettingsUpdateWithoutCountryInput, Prisma.TenantSettingsUncheckedUpdateWithoutCountryInput>
+  data: Prisma.XOR<Prisma.TenantSettingsUpdateWithoutCompanyInput, Prisma.TenantSettingsUncheckedUpdateWithoutCompanyInput>
 }
 
-export type TenantSettingsUpdateManyWithWhereWithoutCountryInput = {
+export type TenantSettingsUpdateManyWithWhereWithoutCompanyInput = {
   where: Prisma.TenantSettingsScalarWhereInput
-  data: Prisma.XOR<Prisma.TenantSettingsUpdateManyMutationInput, Prisma.TenantSettingsUncheckedUpdateManyWithoutCountryInput>
+  data: Prisma.XOR<Prisma.TenantSettingsUpdateManyMutationInput, Prisma.TenantSettingsUncheckedUpdateManyWithoutCompanyInput>
 }
 
 export type TenantSettingsScalarWhereInput = {
@@ -907,13 +769,7 @@ export type TenantSettingsScalarWhereInput = {
   NOT?: Prisma.TenantSettingsScalarWhereInput | Prisma.TenantSettingsScalarWhereInput[]
   id?: Prisma.IntFilter<"TenantSettings"> | number
   tenantCode?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
-  companyName?: Prisma.StringFilter<"TenantSettings"> | string
-  vatNumber?: Prisma.StringFilter<"TenantSettings"> | string
-  taxCode?: Prisma.StringFilter<"TenantSettings"> | string
-  sdiCode?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
-  pec?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
-  fiscalAddress?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
-  countryCode?: Prisma.StringFilter<"TenantSettings"> | string
+  companyId?: Prisma.IntNullableFilter<"TenantSettings"> | number | null
   taxRegime?: Prisma.StringNullableFilter<"TenantSettings"> | string | null
   defaultSalesTaxRuleId?: Prisma.IntNullableFilter<"TenantSettings"> | number | null
   defaultPurchasesTaxRuleId?: Prisma.IntNullableFilter<"TenantSettings"> | number | null
@@ -927,19 +783,13 @@ export type TenantSettingsScalarWhereInput = {
 
 export type TenantSettingsCreateWithoutDefaultLanguageInput = {
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
   taxRegime?: string | null
   defaultCurrency?: string
   sdiTransmissionFormat?: string | null
   sdiCertificatePath?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  country?: Prisma.CountryCreateNestedOneWithoutTenantInput
+  company?: Prisma.CompanyCreateNestedOneWithoutTenantsInput
   defaultSalesTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutTenantsSalesInput
   defaultPurchasesTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutTenantsPurchasesInput
 }
@@ -947,13 +797,7 @@ export type TenantSettingsCreateWithoutDefaultLanguageInput = {
 export type TenantSettingsUncheckedCreateWithoutDefaultLanguageInput = {
   id?: number
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
-  countryCode?: string
+  companyId?: number | null
   taxRegime?: string | null
   defaultSalesTaxRuleId?: number | null
   defaultPurchasesTaxRuleId?: number | null
@@ -992,19 +836,13 @@ export type TenantSettingsUpdateManyWithWhereWithoutDefaultLanguageInput = {
 
 export type TenantSettingsCreateWithoutDefaultSalesTaxRuleInput = {
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
   taxRegime?: string | null
   defaultCurrency?: string
   sdiTransmissionFormat?: string | null
   sdiCertificatePath?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  country?: Prisma.CountryCreateNestedOneWithoutTenantInput
+  company?: Prisma.CompanyCreateNestedOneWithoutTenantsInput
   defaultPurchasesTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutTenantsPurchasesInput
   defaultLanguage?: Prisma.LanguageCreateNestedOneWithoutTenantInput
 }
@@ -1012,13 +850,7 @@ export type TenantSettingsCreateWithoutDefaultSalesTaxRuleInput = {
 export type TenantSettingsUncheckedCreateWithoutDefaultSalesTaxRuleInput = {
   id?: number
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
-  countryCode?: string
+  companyId?: number | null
   taxRegime?: string | null
   defaultPurchasesTaxRuleId?: number | null
   defaultCurrency?: string
@@ -1041,19 +873,13 @@ export type TenantSettingsCreateManyDefaultSalesTaxRuleInputEnvelope = {
 
 export type TenantSettingsCreateWithoutDefaultPurchasesTaxRuleInput = {
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
   taxRegime?: string | null
   defaultCurrency?: string
   sdiTransmissionFormat?: string | null
   sdiCertificatePath?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  country?: Prisma.CountryCreateNestedOneWithoutTenantInput
+  company?: Prisma.CompanyCreateNestedOneWithoutTenantsInput
   defaultSalesTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutTenantsSalesInput
   defaultLanguage?: Prisma.LanguageCreateNestedOneWithoutTenantInput
 }
@@ -1061,13 +887,7 @@ export type TenantSettingsCreateWithoutDefaultPurchasesTaxRuleInput = {
 export type TenantSettingsUncheckedCreateWithoutDefaultPurchasesTaxRuleInput = {
   id?: number
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
-  countryCode?: string
+  companyId?: number | null
   taxRegime?: string | null
   defaultSalesTaxRuleId?: number | null
   defaultCurrency?: string
@@ -1120,15 +940,9 @@ export type TenantSettingsUpdateManyWithWhereWithoutDefaultPurchasesTaxRuleInput
   data: Prisma.XOR<Prisma.TenantSettingsUpdateManyMutationInput, Prisma.TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleInput>
 }
 
-export type TenantSettingsCreateManyCountryInput = {
+export type TenantSettingsCreateManyCompanyInput = {
   id?: number
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
   taxRegime?: string | null
   defaultSalesTaxRuleId?: number | null
   defaultPurchasesTaxRuleId?: number | null
@@ -1140,14 +954,8 @@ export type TenantSettingsCreateManyCountryInput = {
   updatedAt?: Date | string
 }
 
-export type TenantSettingsUpdateWithoutCountryInput = {
+export type TenantSettingsUpdateWithoutCompanyInput = {
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   sdiTransmissionFormat?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1159,15 +967,9 @@ export type TenantSettingsUpdateWithoutCountryInput = {
   defaultLanguage?: Prisma.LanguageUpdateOneWithoutTenantNestedInput
 }
 
-export type TenantSettingsUncheckedUpdateWithoutCountryInput = {
+export type TenantSettingsUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultSalesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   defaultPurchasesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1179,15 +981,9 @@ export type TenantSettingsUncheckedUpdateWithoutCountryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type TenantSettingsUncheckedUpdateManyWithoutCountryInput = {
+export type TenantSettingsUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultSalesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   defaultPurchasesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1202,13 +998,7 @@ export type TenantSettingsUncheckedUpdateManyWithoutCountryInput = {
 export type TenantSettingsCreateManyDefaultLanguageInput = {
   id?: number
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
-  countryCode?: string
+  companyId?: number | null
   taxRegime?: string | null
   defaultSalesTaxRuleId?: number | null
   defaultPurchasesTaxRuleId?: number | null
@@ -1221,19 +1011,13 @@ export type TenantSettingsCreateManyDefaultLanguageInput = {
 
 export type TenantSettingsUpdateWithoutDefaultLanguageInput = {
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   sdiTransmissionFormat?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sdiCertificatePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  country?: Prisma.CountryUpdateOneRequiredWithoutTenantNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutTenantsNestedInput
   defaultSalesTaxRule?: Prisma.TaxRuleUpdateOneWithoutTenantsSalesNestedInput
   defaultPurchasesTaxRule?: Prisma.TaxRuleUpdateOneWithoutTenantsPurchasesNestedInput
 }
@@ -1241,13 +1025,7 @@ export type TenantSettingsUpdateWithoutDefaultLanguageInput = {
 export type TenantSettingsUncheckedUpdateWithoutDefaultLanguageInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultSalesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   defaultPurchasesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1261,13 +1039,7 @@ export type TenantSettingsUncheckedUpdateWithoutDefaultLanguageInput = {
 export type TenantSettingsUncheckedUpdateManyWithoutDefaultLanguageInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultSalesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   defaultPurchasesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1281,13 +1053,7 @@ export type TenantSettingsUncheckedUpdateManyWithoutDefaultLanguageInput = {
 export type TenantSettingsCreateManyDefaultSalesTaxRuleInput = {
   id?: number
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
-  countryCode?: string
+  companyId?: number | null
   taxRegime?: string | null
   defaultPurchasesTaxRuleId?: number | null
   defaultCurrency?: string
@@ -1301,13 +1067,7 @@ export type TenantSettingsCreateManyDefaultSalesTaxRuleInput = {
 export type TenantSettingsCreateManyDefaultPurchasesTaxRuleInput = {
   id?: number
   tenantCode?: string | null
-  companyName: string
-  vatNumber: string
-  taxCode: string
-  sdiCode?: string | null
-  pec?: string | null
-  fiscalAddress?: string | null
-  countryCode?: string
+  companyId?: number | null
   taxRegime?: string | null
   defaultSalesTaxRuleId?: number | null
   defaultCurrency?: string
@@ -1320,19 +1080,13 @@ export type TenantSettingsCreateManyDefaultPurchasesTaxRuleInput = {
 
 export type TenantSettingsUpdateWithoutDefaultSalesTaxRuleInput = {
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   sdiTransmissionFormat?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sdiCertificatePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  country?: Prisma.CountryUpdateOneRequiredWithoutTenantNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutTenantsNestedInput
   defaultPurchasesTaxRule?: Prisma.TaxRuleUpdateOneWithoutTenantsPurchasesNestedInput
   defaultLanguage?: Prisma.LanguageUpdateOneWithoutTenantNestedInput
 }
@@ -1340,13 +1094,7 @@ export type TenantSettingsUpdateWithoutDefaultSalesTaxRuleInput = {
 export type TenantSettingsUncheckedUpdateWithoutDefaultSalesTaxRuleInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultPurchasesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   defaultCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1360,13 +1108,7 @@ export type TenantSettingsUncheckedUpdateWithoutDefaultSalesTaxRuleInput = {
 export type TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultPurchasesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   defaultCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1379,19 +1121,13 @@ export type TenantSettingsUncheckedUpdateManyWithoutDefaultSalesTaxRuleInput = {
 
 export type TenantSettingsUpdateWithoutDefaultPurchasesTaxRuleInput = {
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultCurrency?: Prisma.StringFieldUpdateOperationsInput | string
   sdiTransmissionFormat?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sdiCertificatePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  country?: Prisma.CountryUpdateOneRequiredWithoutTenantNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutTenantsNestedInput
   defaultSalesTaxRule?: Prisma.TaxRuleUpdateOneWithoutTenantsSalesNestedInput
   defaultLanguage?: Prisma.LanguageUpdateOneWithoutTenantNestedInput
 }
@@ -1399,13 +1135,7 @@ export type TenantSettingsUpdateWithoutDefaultPurchasesTaxRuleInput = {
 export type TenantSettingsUncheckedUpdateWithoutDefaultPurchasesTaxRuleInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultSalesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   defaultCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1419,13 +1149,7 @@ export type TenantSettingsUncheckedUpdateWithoutDefaultPurchasesTaxRuleInput = {
 export type TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tenantCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  companyName?: Prisma.StringFieldUpdateOperationsInput | string
-  vatNumber?: Prisma.StringFieldUpdateOperationsInput | string
-  taxCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fiscalAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultSalesTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   defaultCurrency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1441,13 +1165,7 @@ export type TenantSettingsUncheckedUpdateManyWithoutDefaultPurchasesTaxRuleInput
 export type TenantSettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantCode?: boolean
-  companyName?: boolean
-  vatNumber?: boolean
-  taxCode?: boolean
-  sdiCode?: boolean
-  pec?: boolean
-  fiscalAddress?: boolean
-  countryCode?: boolean
+  companyId?: boolean
   taxRegime?: boolean
   defaultSalesTaxRuleId?: boolean
   defaultPurchasesTaxRuleId?: boolean
@@ -1457,7 +1175,7 @@ export type TenantSettingsSelect<ExtArgs extends runtime.Types.Extensions.Intern
   sdiCertificatePath?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.TenantSettings$companyArgs<ExtArgs>
   defaultSalesTaxRule?: boolean | Prisma.TenantSettings$defaultSalesTaxRuleArgs<ExtArgs>
   defaultPurchasesTaxRule?: boolean | Prisma.TenantSettings$defaultPurchasesTaxRuleArgs<ExtArgs>
   defaultLanguage?: boolean | Prisma.TenantSettings$defaultLanguageArgs<ExtArgs>
@@ -1466,13 +1184,7 @@ export type TenantSettingsSelect<ExtArgs extends runtime.Types.Extensions.Intern
 export type TenantSettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantCode?: boolean
-  companyName?: boolean
-  vatNumber?: boolean
-  taxCode?: boolean
-  sdiCode?: boolean
-  pec?: boolean
-  fiscalAddress?: boolean
-  countryCode?: boolean
+  companyId?: boolean
   taxRegime?: boolean
   defaultSalesTaxRuleId?: boolean
   defaultPurchasesTaxRuleId?: boolean
@@ -1482,7 +1194,7 @@ export type TenantSettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   sdiCertificatePath?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.TenantSettings$companyArgs<ExtArgs>
   defaultSalesTaxRule?: boolean | Prisma.TenantSettings$defaultSalesTaxRuleArgs<ExtArgs>
   defaultPurchasesTaxRule?: boolean | Prisma.TenantSettings$defaultPurchasesTaxRuleArgs<ExtArgs>
   defaultLanguage?: boolean | Prisma.TenantSettings$defaultLanguageArgs<ExtArgs>
@@ -1491,13 +1203,7 @@ export type TenantSettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Type
 export type TenantSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantCode?: boolean
-  companyName?: boolean
-  vatNumber?: boolean
-  taxCode?: boolean
-  sdiCode?: boolean
-  pec?: boolean
-  fiscalAddress?: boolean
-  countryCode?: boolean
+  companyId?: boolean
   taxRegime?: boolean
   defaultSalesTaxRuleId?: boolean
   defaultPurchasesTaxRuleId?: boolean
@@ -1507,7 +1213,7 @@ export type TenantSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   sdiCertificatePath?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.TenantSettings$companyArgs<ExtArgs>
   defaultSalesTaxRule?: boolean | Prisma.TenantSettings$defaultSalesTaxRuleArgs<ExtArgs>
   defaultPurchasesTaxRule?: boolean | Prisma.TenantSettings$defaultPurchasesTaxRuleArgs<ExtArgs>
   defaultLanguage?: boolean | Prisma.TenantSettings$defaultLanguageArgs<ExtArgs>
@@ -1516,13 +1222,7 @@ export type TenantSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
 export type TenantSettingsSelectScalar = {
   id?: boolean
   tenantCode?: boolean
-  companyName?: boolean
-  vatNumber?: boolean
-  taxCode?: boolean
-  sdiCode?: boolean
-  pec?: boolean
-  fiscalAddress?: boolean
-  countryCode?: boolean
+  companyId?: boolean
   taxRegime?: boolean
   defaultSalesTaxRuleId?: boolean
   defaultPurchasesTaxRuleId?: boolean
@@ -1534,21 +1234,21 @@ export type TenantSettingsSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TenantSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantCode" | "companyName" | "vatNumber" | "taxCode" | "sdiCode" | "pec" | "fiscalAddress" | "countryCode" | "taxRegime" | "defaultSalesTaxRuleId" | "defaultPurchasesTaxRuleId" | "defaultCurrency" | "defaultLanguageId" | "sdiTransmissionFormat" | "sdiCertificatePath" | "createdAt" | "updatedAt", ExtArgs["result"]["tenantSettings"]>
+export type TenantSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantCode" | "companyId" | "taxRegime" | "defaultSalesTaxRuleId" | "defaultPurchasesTaxRuleId" | "defaultCurrency" | "defaultLanguageId" | "sdiTransmissionFormat" | "sdiCertificatePath" | "createdAt" | "updatedAt", ExtArgs["result"]["tenantSettings"]>
 export type TenantSettingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.TenantSettings$companyArgs<ExtArgs>
   defaultSalesTaxRule?: boolean | Prisma.TenantSettings$defaultSalesTaxRuleArgs<ExtArgs>
   defaultPurchasesTaxRule?: boolean | Prisma.TenantSettings$defaultPurchasesTaxRuleArgs<ExtArgs>
   defaultLanguage?: boolean | Prisma.TenantSettings$defaultLanguageArgs<ExtArgs>
 }
 export type TenantSettingsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.TenantSettings$companyArgs<ExtArgs>
   defaultSalesTaxRule?: boolean | Prisma.TenantSettings$defaultSalesTaxRuleArgs<ExtArgs>
   defaultPurchasesTaxRule?: boolean | Prisma.TenantSettings$defaultPurchasesTaxRuleArgs<ExtArgs>
   defaultLanguage?: boolean | Prisma.TenantSettings$defaultLanguageArgs<ExtArgs>
 }
 export type TenantSettingsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
+  company?: boolean | Prisma.TenantSettings$companyArgs<ExtArgs>
   defaultSalesTaxRule?: boolean | Prisma.TenantSettings$defaultSalesTaxRuleArgs<ExtArgs>
   defaultPurchasesTaxRule?: boolean | Prisma.TenantSettings$defaultPurchasesTaxRuleArgs<ExtArgs>
   defaultLanguage?: boolean | Prisma.TenantSettings$defaultLanguageArgs<ExtArgs>
@@ -1557,7 +1257,7 @@ export type TenantSettingsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Typ
 export type $TenantSettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "TenantSettings"
   objects: {
-    country: Prisma.$CountryPayload<ExtArgs>
+    company: Prisma.$CompanyPayload<ExtArgs> | null
     defaultSalesTaxRule: Prisma.$TaxRulePayload<ExtArgs> | null
     defaultPurchasesTaxRule: Prisma.$TaxRulePayload<ExtArgs> | null
     defaultLanguage: Prisma.$LanguagePayload<ExtArgs> | null
@@ -1565,13 +1265,7 @@ export type $TenantSettingsPayload<ExtArgs extends runtime.Types.Extensions.Inte
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     tenantCode: string | null
-    companyName: string
-    vatNumber: string
-    taxCode: string
-    sdiCode: string | null
-    pec: string | null
-    fiscalAddress: string | null
-    countryCode: string
+    companyId: number | null
     taxRegime: string | null
     defaultSalesTaxRuleId: number | null
     defaultPurchasesTaxRuleId: number | null
@@ -1975,7 +1669,7 @@ readonly fields: TenantSettingsFieldRefs;
  */
 export interface Prisma__TenantSettingsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  country<T extends Prisma.CountryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CountryDefaultArgs<ExtArgs>>): Prisma.Prisma__CountryClient<runtime.Types.Result.GetResult<Prisma.$CountryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  company<T extends Prisma.TenantSettings$companyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantSettings$companyArgs<ExtArgs>>): Prisma.Prisma__CompanyClient<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   defaultSalesTaxRule<T extends Prisma.TenantSettings$defaultSalesTaxRuleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantSettings$defaultSalesTaxRuleArgs<ExtArgs>>): Prisma.Prisma__TaxRuleClient<runtime.Types.Result.GetResult<Prisma.$TaxRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   defaultPurchasesTaxRule<T extends Prisma.TenantSettings$defaultPurchasesTaxRuleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantSettings$defaultPurchasesTaxRuleArgs<ExtArgs>>): Prisma.Prisma__TaxRuleClient<runtime.Types.Result.GetResult<Prisma.$TaxRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   defaultLanguage<T extends Prisma.TenantSettings$defaultLanguageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantSettings$defaultLanguageArgs<ExtArgs>>): Prisma.Prisma__LanguageClient<runtime.Types.Result.GetResult<Prisma.$LanguagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -2010,13 +1704,7 @@ export interface Prisma__TenantSettingsClient<T, Null = never, ExtArgs extends r
 export interface TenantSettingsFieldRefs {
   readonly id: Prisma.FieldRef<"TenantSettings", 'Int'>
   readonly tenantCode: Prisma.FieldRef<"TenantSettings", 'String'>
-  readonly companyName: Prisma.FieldRef<"TenantSettings", 'String'>
-  readonly vatNumber: Prisma.FieldRef<"TenantSettings", 'String'>
-  readonly taxCode: Prisma.FieldRef<"TenantSettings", 'String'>
-  readonly sdiCode: Prisma.FieldRef<"TenantSettings", 'String'>
-  readonly pec: Prisma.FieldRef<"TenantSettings", 'String'>
-  readonly fiscalAddress: Prisma.FieldRef<"TenantSettings", 'String'>
-  readonly countryCode: Prisma.FieldRef<"TenantSettings", 'String'>
+  readonly companyId: Prisma.FieldRef<"TenantSettings", 'Int'>
   readonly taxRegime: Prisma.FieldRef<"TenantSettings", 'String'>
   readonly defaultSalesTaxRuleId: Prisma.FieldRef<"TenantSettings", 'Int'>
   readonly defaultPurchasesTaxRuleId: Prisma.FieldRef<"TenantSettings", 'Int'>
@@ -2419,6 +2107,25 @@ export type TenantSettingsDeleteManyArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many TenantSettings to delete.
    */
   limit?: number
+}
+
+/**
+ * TenantSettings.company
+ */
+export type TenantSettings$companyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Company
+   */
+  select?: Prisma.CompanySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Company
+   */
+  omit?: Prisma.CompanyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CompanyInclude<ExtArgs> | null
+  where?: Prisma.CompanyWhereInput
 }
 
 /**

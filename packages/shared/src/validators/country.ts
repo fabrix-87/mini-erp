@@ -1,5 +1,5 @@
 import z from "zod";
-import { limitSchema, pageSchema } from "../utils";
+import { limitSchema, pageSchema, QueryBooleanSchema } from "../utils";
 import { CountryCodeBaseSchema, CurrencyCodeBaseSchema } from "./base";
 
 export const ContinentsEnum = z.enum([
@@ -40,5 +40,5 @@ export const CountryQuerySchema = z.object({
   page: pageSchema,
   limit: limitSchema,
   search: z.string().optional(),
-  isEU: z.enum(["true", "false"]).optional(),
+  isEU: QueryBooleanSchema
 });

@@ -403,6 +403,7 @@ export type CompanyWhereInput = {
   contacts?: Prisma.ContactListRelationFilter
   customers?: Prisma.CustomerListRelationFilter
   suppliers?: Prisma.SupplierListRelationFilter
+  tenants?: Prisma.TenantSettingsListRelationFilter
   documents?: Prisma.DocumentListRelationFilter
   notes?: Prisma.CompanyNoteListRelationFilter
 }
@@ -442,6 +443,7 @@ export type CompanyOrderByWithRelationInput = {
   contacts?: Prisma.ContactOrderByRelationAggregateInput
   customers?: Prisma.CustomerOrderByRelationAggregateInput
   suppliers?: Prisma.SupplierOrderByRelationAggregateInput
+  tenants?: Prisma.TenantSettingsOrderByRelationAggregateInput
   documents?: Prisma.DocumentOrderByRelationAggregateInput
   notes?: Prisma.CompanyNoteOrderByRelationAggregateInput
 }
@@ -484,6 +486,7 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   contacts?: Prisma.ContactListRelationFilter
   customers?: Prisma.CustomerListRelationFilter
   suppliers?: Prisma.SupplierListRelationFilter
+  tenants?: Prisma.TenantSettingsListRelationFilter
   documents?: Prisma.DocumentListRelationFilter
   notes?: Prisma.CompanyNoteListRelationFilter
 }, "id" | "code">
@@ -588,6 +591,7 @@ export type CompanyCreateInput = {
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteCreateNestedManyWithoutCompanyInput
 }
@@ -625,6 +629,7 @@ export type CompanyUncheckedCreateInput = {
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -661,6 +666,7 @@ export type CompanyUpdateInput = {
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUpdateManyWithoutCompanyNestedInput
 }
@@ -698,6 +704,7 @@ export type CompanyUncheckedUpdateInput = {
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1067,6 +1074,22 @@ export type CompanyUpdateOneRequiredWithoutDocumentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutDocumentsInput, Prisma.CompanyUpdateWithoutDocumentsInput>, Prisma.CompanyUncheckedUpdateWithoutDocumentsInput>
 }
 
+export type CompanyCreateNestedOneWithoutTenantsInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutTenantsInput, Prisma.CompanyUncheckedCreateWithoutTenantsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutTenantsInput
+  connect?: Prisma.CompanyWhereUniqueInput
+}
+
+export type CompanyUpdateOneWithoutTenantsNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutTenantsInput, Prisma.CompanyUncheckedCreateWithoutTenantsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutTenantsInput
+  upsert?: Prisma.CompanyUpsertWithoutTenantsInput
+  disconnect?: Prisma.CompanyWhereInput | boolean
+  delete?: Prisma.CompanyWhereInput | boolean
+  connect?: Prisma.CompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutTenantsInput, Prisma.CompanyUpdateWithoutTenantsInput>, Prisma.CompanyUncheckedUpdateWithoutTenantsInput>
+}
+
 export type CompanyCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.CompanyCreateWithoutUserInput, Prisma.CompanyUncheckedCreateWithoutUserInput> | Prisma.CompanyCreateWithoutUserInput[] | Prisma.CompanyUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutUserInput | Prisma.CompanyCreateOrConnectWithoutUserInput[]
@@ -1140,6 +1163,7 @@ export type CompanyCreateWithoutActivitiesInput = {
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteCreateNestedManyWithoutCompanyInput
 }
@@ -1176,6 +1200,7 @@ export type CompanyUncheckedCreateWithoutActivitiesInput = {
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1227,6 +1252,7 @@ export type CompanyUpdateWithoutActivitiesInput = {
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUpdateManyWithoutCompanyNestedInput
 }
@@ -1263,6 +1289,7 @@ export type CompanyUncheckedUpdateWithoutActivitiesInput = {
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1298,6 +1325,7 @@ export type CompanyCreateWithoutCustomersInput = {
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteCreateNestedManyWithoutCompanyInput
 }
@@ -1334,6 +1362,7 @@ export type CompanyUncheckedCreateWithoutCustomersInput = {
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1385,6 +1414,7 @@ export type CompanyUpdateWithoutCustomersInput = {
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUpdateManyWithoutCompanyNestedInput
 }
@@ -1421,6 +1451,7 @@ export type CompanyUncheckedUpdateWithoutCustomersInput = {
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1456,6 +1487,7 @@ export type CompanyCreateWithoutSuppliersInput = {
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteCreateNestedManyWithoutCompanyInput
 }
@@ -1492,6 +1524,7 @@ export type CompanyUncheckedCreateWithoutSuppliersInput = {
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1543,6 +1576,7 @@ export type CompanyUpdateWithoutSuppliersInput = {
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUpdateManyWithoutCompanyNestedInput
 }
@@ -1579,6 +1613,7 @@ export type CompanyUncheckedUpdateWithoutSuppliersInput = {
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1614,6 +1649,7 @@ export type CompanyCreateWithoutAddressesInput = {
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteCreateNestedManyWithoutCompanyInput
 }
@@ -1650,6 +1686,7 @@ export type CompanyUncheckedCreateWithoutAddressesInput = {
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1701,6 +1738,7 @@ export type CompanyUpdateWithoutAddressesInput = {
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUpdateManyWithoutCompanyNestedInput
 }
@@ -1737,6 +1775,7 @@ export type CompanyUncheckedUpdateWithoutAddressesInput = {
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1772,6 +1811,7 @@ export type CompanyCreateWithoutContactsInput = {
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteCreateNestedManyWithoutCompanyInput
 }
@@ -1808,6 +1848,7 @@ export type CompanyUncheckedCreateWithoutContactsInput = {
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -1859,6 +1900,7 @@ export type CompanyUpdateWithoutContactsInput = {
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUpdateManyWithoutCompanyNestedInput
 }
@@ -1895,6 +1937,7 @@ export type CompanyUncheckedUpdateWithoutContactsInput = {
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -1931,6 +1974,7 @@ export type CompanyCreateWithoutNotesInput = {
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentCreateNestedManyWithoutCompanyInput
 }
 
@@ -1967,6 +2011,7 @@ export type CompanyUncheckedCreateWithoutNotesInput = {
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -2018,6 +2063,7 @@ export type CompanyUpdateWithoutNotesInput = {
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutCompanyNestedInput
 }
 
@@ -2054,6 +2100,7 @@ export type CompanyUncheckedUpdateWithoutNotesInput = {
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -2088,6 +2135,7 @@ export type CompanyCreateWithoutCountryInput = {
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteCreateNestedManyWithoutCompanyInput
 }
@@ -2124,6 +2172,7 @@ export type CompanyUncheckedCreateWithoutCountryInput = {
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -2219,6 +2268,7 @@ export type CompanyCreateWithoutDocumentsInput = {
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteCreateNestedManyWithoutCompanyInput
 }
 
@@ -2255,6 +2305,7 @@ export type CompanyUncheckedCreateWithoutDocumentsInput = {
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutCompanyInput
 }
 
@@ -2306,6 +2357,7 @@ export type CompanyUpdateWithoutDocumentsInput = {
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUpdateManyWithoutCompanyNestedInput
 }
 
@@ -2342,6 +2394,169 @@ export type CompanyUncheckedUpdateWithoutDocumentsInput = {
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCompanyNestedInput
+  notes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyCreateWithoutTenantsInput = {
+  code: string
+  companyName: string
+  tradeName?: string | null
+  legalForm?: string | null
+  status?: $Enums.CompanyStatus
+  entityType?: $Enums.CompanyTypeEntity
+  vatNumber?: string | null
+  taxCode?: string | null
+  sdiCode?: string | null
+  pec?: string | null
+  eoriNumber?: string | null
+  vatId?: string | null
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
+  mainEmail?: string | null
+  mainPhone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  firstOrderDate?: Date | string | null
+  totalOrders?: number
+  totalRevenue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
+  user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
+  activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
+  addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
+  contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutCompanyInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutCompanyInput
+  documents?: Prisma.DocumentCreateNestedManyWithoutCompanyInput
+  notes?: Prisma.CompanyNoteCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyUncheckedCreateWithoutTenantsInput = {
+  id?: number
+  code: string
+  companyName: string
+  tradeName?: string | null
+  legalForm?: string | null
+  status?: $Enums.CompanyStatus
+  entityType?: $Enums.CompanyTypeEntity
+  vatNumber?: string | null
+  taxCode?: string | null
+  sdiCode?: string | null
+  pec?: string | null
+  eoriNumber?: string | null
+  vatId?: string | null
+  countryCode?: string
+  taxRegime?: string | null
+  vatExempt?: boolean
+  vatExemptReason?: string | null
+  mainEmail?: string | null
+  mainPhone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  firstOrderDate?: Date | string | null
+  totalOrders?: number
+  totalRevenue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  assignedUserId?: number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
+  addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
+  contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutCompanyInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutCompanyInput
+  documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutCompanyInput
+  notes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyCreateOrConnectWithoutTenantsInput = {
+  where: Prisma.CompanyWhereUniqueInput
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutTenantsInput, Prisma.CompanyUncheckedCreateWithoutTenantsInput>
+}
+
+export type CompanyUpsertWithoutTenantsInput = {
+  update: Prisma.XOR<Prisma.CompanyUpdateWithoutTenantsInput, Prisma.CompanyUncheckedUpdateWithoutTenantsInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutTenantsInput, Prisma.CompanyUncheckedCreateWithoutTenantsInput>
+  where?: Prisma.CompanyWhereInput
+}
+
+export type CompanyUpdateToOneWithWhereWithoutTenantsInput = {
+  where?: Prisma.CompanyWhereInput
+  data: Prisma.XOR<Prisma.CompanyUpdateWithoutTenantsInput, Prisma.CompanyUncheckedUpdateWithoutTenantsInput>
+}
+
+export type CompanyUpdateWithoutTenantsInput = {
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  legalForm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumCompanyStatusFieldUpdateOperationsInput | $Enums.CompanyStatus
+  entityType?: Prisma.EnumCompanyTypeEntityFieldUpdateOperationsInput | $Enums.CompanyTypeEntity
+  vatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  firstOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalRevenue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
+  user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
+  activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
+  addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
+  contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutCompanyNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutCompanyNestedInput
+  documents?: Prisma.DocumentUpdateManyWithoutCompanyNestedInput
+  notes?: Prisma.CompanyNoteUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyUncheckedUpdateWithoutTenantsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  tradeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  legalForm?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumCompanyStatusFieldUpdateOperationsInput | $Enums.CompanyStatus
+  entityType?: Prisma.EnumCompanyTypeEntityFieldUpdateOperationsInput | $Enums.CompanyTypeEntity
+  vatNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sdiCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pec?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryCode?: Prisma.StringFieldUpdateOperationsInput | string
+  taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  firstOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalRevenue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  openingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
+  addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
+  contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
@@ -2376,6 +2591,7 @@ export type CompanyCreateWithoutUserInput = {
   contacts?: Prisma.ContactCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteCreateNestedManyWithoutCompanyInput
 }
@@ -2412,6 +2628,7 @@ export type CompanyUncheckedCreateWithoutUserInput = {
   contacts?: Prisma.ContactUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutCompanyInput
+  tenants?: Prisma.TenantSettingsUncheckedCreateNestedManyWithoutCompanyInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutCompanyInput
   notes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutCompanyInput
 }
@@ -2502,6 +2719,7 @@ export type CompanyUpdateWithoutCountryInput = {
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUpdateManyWithoutCompanyNestedInput
 }
@@ -2538,6 +2756,7 @@ export type CompanyUncheckedUpdateWithoutCountryInput = {
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -2631,6 +2850,7 @@ export type CompanyUpdateWithoutUserInput = {
   contacts?: Prisma.ContactUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUpdateManyWithoutCompanyNestedInput
 }
@@ -2667,6 +2887,7 @@ export type CompanyUncheckedUpdateWithoutUserInput = {
   contacts?: Prisma.ContactUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutCompanyNestedInput
+  tenants?: Prisma.TenantSettingsUncheckedUpdateManyWithoutCompanyNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutCompanyNestedInput
   notes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutCompanyNestedInput
 }
@@ -2711,6 +2932,7 @@ export type CompanyCountOutputType = {
   contacts: number
   customers: number
   suppliers: number
+  tenants: number
   documents: number
   notes: number
 }
@@ -2721,6 +2943,7 @@ export type CompanyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   contacts?: boolean | CompanyCountOutputTypeCountContactsArgs
   customers?: boolean | CompanyCountOutputTypeCountCustomersArgs
   suppliers?: boolean | CompanyCountOutputTypeCountSuppliersArgs
+  tenants?: boolean | CompanyCountOutputTypeCountTenantsArgs
   documents?: boolean | CompanyCountOutputTypeCountDocumentsArgs
   notes?: boolean | CompanyCountOutputTypeCountNotesArgs
 }
@@ -2773,6 +2996,13 @@ export type CompanyCountOutputTypeCountSuppliersArgs<ExtArgs extends runtime.Typ
 /**
  * CompanyCountOutputType without action
  */
+export type CompanyCountOutputTypeCountTenantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TenantSettingsWhereInput
+}
+
+/**
+ * CompanyCountOutputType without action
+ */
 export type CompanyCountOutputTypeCountDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.DocumentWhereInput
 }
@@ -2820,6 +3050,7 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   contacts?: boolean | Prisma.Company$contactsArgs<ExtArgs>
   customers?: boolean | Prisma.Company$customersArgs<ExtArgs>
   suppliers?: boolean | Prisma.Company$suppliersArgs<ExtArgs>
+  tenants?: boolean | Prisma.Company$tenantsArgs<ExtArgs>
   documents?: boolean | Prisma.Company$documentsArgs<ExtArgs>
   notes?: boolean | Prisma.Company$notesArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
@@ -2928,6 +3159,7 @@ export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   contacts?: boolean | Prisma.Company$contactsArgs<ExtArgs>
   customers?: boolean | Prisma.Company$customersArgs<ExtArgs>
   suppliers?: boolean | Prisma.Company$suppliersArgs<ExtArgs>
+  tenants?: boolean | Prisma.Company$tenantsArgs<ExtArgs>
   documents?: boolean | Prisma.Company$documentsArgs<ExtArgs>
   notes?: boolean | Prisma.Company$notesArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
@@ -2951,6 +3183,7 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     contacts: Prisma.$ContactPayload<ExtArgs>[]
     customers: Prisma.$CustomerPayload<ExtArgs>[]
     suppliers: Prisma.$SupplierPayload<ExtArgs>[]
+    tenants: Prisma.$TenantSettingsPayload<ExtArgs>[]
     documents: Prisma.$DocumentPayload<ExtArgs>[]
     notes: Prisma.$CompanyNotePayload<ExtArgs>[]
   }
@@ -3383,6 +3616,7 @@ export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends runtime.
   contacts<T extends Prisma.Company$contactsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$contactsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customers<T extends Prisma.Company$customersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$customersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   suppliers<T extends Prisma.Company$suppliersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$suppliersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tenants<T extends Prisma.Company$tenantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$tenantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TenantSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   documents<T extends Prisma.Company$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notes<T extends Prisma.Company$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanyNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -3973,6 +4207,30 @@ export type Company$suppliersArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.SupplierScalarFieldEnum | Prisma.SupplierScalarFieldEnum[]
+}
+
+/**
+ * Company.tenants
+ */
+export type Company$tenantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TenantSettings
+   */
+  select?: Prisma.TenantSettingsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TenantSettings
+   */
+  omit?: Prisma.TenantSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantSettingsInclude<ExtArgs> | null
+  where?: Prisma.TenantSettingsWhereInput
+  orderBy?: Prisma.TenantSettingsOrderByWithRelationInput | Prisma.TenantSettingsOrderByWithRelationInput[]
+  cursor?: Prisma.TenantSettingsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TenantSettingsScalarFieldEnum | Prisma.TenantSettingsScalarFieldEnum[]
 }
 
 /**
