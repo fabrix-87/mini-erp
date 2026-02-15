@@ -2,21 +2,63 @@
 // TYPE EXPORTS
 // ============================================================================
 
-import z from "zod";
+import { z } from "zod";
 import {
-  AssignPermissionsSchema,
-  CreatePermissionSchema,
-  CreateRoleSchema,
-  PermissionQuerySchema,
-  RoleQuerySchema,
-  UpdatePermissionSchema,
-  UpdateRoleSchema,
-} from "../validators/role";
+  assignPermissionsSchema,
+  createPermissionSchema,
+  createRoleSchema,
+  permissionIdParamSchema,
+  permissionQuerySchema,
+  roleIdParamSchema,
+  roleQuerySchema,
+  updatePermissionSchema,
+  updateRoleSchema,
+} from "../validators";
 
-export type CreateRoleInput = z.infer<typeof CreateRoleSchema>;
-export type UpdateRoleInput = z.infer<typeof UpdateRoleSchema>;
-export type AssignPermissionsInput = z.infer<typeof AssignPermissionsSchema>;
-export type CreatePermissionInput = z.infer<typeof CreatePermissionSchema>;
-export type UpdatePermissionInput = z.infer<typeof UpdatePermissionSchema>;
-export type RoleQueryInput = z.infer<typeof RoleQuerySchema>;
-export type PermissionQueryInput = z.infer<typeof PermissionQuerySchema>;
+// ============================================================================
+// ENTITY TYPES
+// ============================================================================
+
+/**
+ * Role entity
+ */
+export type Role = {
+  id: number;
+  code: string;
+  name: string;
+  description?: string;
+  isDefault: boolean;
+  permissions?: Permission[];
+};
+
+/**
+ * Permission entity
+ */
+export type Permission = {
+  id: number;
+  code: string;
+  resource: string;
+  action: string;
+  description?: string;
+};
+
+// ============================================================================
+// INPUT TYPES (using z.infer)
+// ============================================================================
+export type CreateRoleInput = z.infer<typeof createRoleSchema>;
+export type UpdateRoleInput = z.infer<typeof updateRoleSchema>;
+export type AssignPermissionsInput = z.infer<typeof assignPermissionsSchema>;
+export type CreatePermissionInput = z.infer<typeof createPermissionSchema>;
+export type UpdatePermissionInput = z.infer<typeof updatePermissionSchema>;
+
+// ============================================================================
+// QUERY TYPES (using z.infer)
+// ============================================================================
+export type RoleQueryInput = z.infer<typeof roleQuerySchema>;
+export type PermissionQueryInput = z.infer<typeof permissionQuerySchema>;
+
+// ============================================================================
+// PARAM TYPES (using z.infer)
+// ============================================================================
+export type RoleIdParam = z.infer<typeof roleIdParamSchema>;
+export type PermissionIdParam = z.infer<typeof permissionIdParamSchema>;

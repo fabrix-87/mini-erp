@@ -6,13 +6,20 @@ import Decimal from "decimal.js";
 import { inputJsonValueSchema } from "./base";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import { queryBooleanSchema } from "./query/params";
+import { urlSchema } from "./primitives";
 
 // ============================================================================
 // ENUMS
 // ============================================================================
 
-export const productTypeSchema = z.enum(["STANDARD", "PACK", "VIRTUAL"]);
+export const productTypeSchema = z.enum([
+  "STANDARD",
+  "PACK",
+  "VIRTUAL",
+  "SERVICE",
+]);
 export const productConditionSchema = z.enum(["NEW", "USED", "REFURBISHED"]);
+export const productStatusSchema = z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]);
 
 // ============================================================================
 // PRODUCT VARIANT SCHEMAS
@@ -104,6 +111,7 @@ export const productVariantIdSchema = z.object({
 export const createProductSchema = z
   .object({
     type: productTypeSchema.default("STANDARD"),
+    status: productStatusSchema.default("DRAFT"),
     reference: z
       .string()
       .min(1, "Il riferimento è obbligatorio")
@@ -174,24 +182,16 @@ export const productIdSchema = z.object({
   id: createIdSchema("ID prodotto non valido"),
 });
 
-/**
- * Schema per la validazione dell'ID prodotto con ID lingua
- */
-export const productIdLanguageSchema = z.object({
-  id: createIdSchema("ID prodotto non valido"),
-  languageId: createIdSchema("ID lingua non valido"),
-});
-
 // ============================================================================
-// PRODUCT TRANSLATION SCHEMAS
+// PRODUCT VARIANT TRANSLATION SCHEMAS
 // ============================================================================
 
 /**
- * Schema per la creazione di una ProductTranslation
+ * Schema per la creazione di una ProductVariantTranslation
  */
-export const createProductTranslationSchema = z
+export const createProductVariantTranslationSchema = z
   .object({
-    productId: createIdSchema("ID prodotto obbligatorio"),
+    productVariantId: createIdSchema("ID variante prodotto obbligatorio"),
     languageId: createIdSchema("ID lingua obbligatorio"),
 
     name: z
@@ -218,12 +218,13 @@ export const createProductTranslationSchema = z
   .strict();
 
 /**
- * Schema per l'aggiornamento di una ProductTranslation
+ * Schema per l'aggiornamento di una ProductVariantTranslation
  */
-export const updateProductTranslationSchema = createProductTranslationSchema
-  .omit({ productId: true, languageId: true })
-  .partial()
-  .strict();
+export const updateProductVariantTranslationSchema =
+  createProductVariantTranslationSchema
+    .omit({ productVariantId: true, languageId: true })
+    .partial()
+    .strict();
 
 // ============================================================================
 // PRODUCT IMAGE SCHEMAS
@@ -235,8 +236,9 @@ export const updateProductTranslationSchema = createProductTranslationSchema
 export const createProductImageSchema = z
   .object({
     productId: createIdSchema("ID prodotto obbligatorio"),
+    variantId: createIdSchema("ID variante").optional().nullable(),
 
-    imageUrl: z.url("URL non valido"),
+    imageUrl: urlSchema(),
     imageType: z.string().max(20).default("extra"),
     position: z.number().int().default(0),
     isCover: z.boolean().default(false),

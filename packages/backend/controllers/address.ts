@@ -12,7 +12,7 @@ import {
 
 import asyncHandler from "@/middleware/async-handler";
 import {
-  AddressIdInput,
+  AddressIdParam,
   AddressQueryInput,
   CreateAddressInput,
   UpdateAddressInput,
@@ -34,7 +34,7 @@ export const getAllAddresses = asyncHandler(
 
 export const getAddressById = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams as AddressIdInput;
+    const { id } = req.validatedParams as AddressIdParam;
     const address = await prisma.companyAddress.findUnique({
       where: { id },
       include: getAddressInclude(),
@@ -115,7 +115,7 @@ export const createAddress = asyncHandler(
 
 export const updateAddress = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams as AddressIdInput;
+    const { id } = req.validatedParams as AddressIdParam;
     const data = req.validatedBody as UpdateAddressInput;
 
     const existing = await prisma.companyAddress.findUnique({
@@ -151,7 +151,7 @@ export const updateAddress = asyncHandler(
 
 export const setPrimaryAddress = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as AddressIdInput;
+    const { id } = req.validatedParams as AddressIdParam;
 
     const address = await prisma.companyAddress.findUnique({
       where: { id },
@@ -178,7 +178,7 @@ export const setPrimaryAddress = asyncHandler(
 
 export const deleteAddress = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams as AddressIdInput;
+    const { id } = req.validatedParams as AddressIdParam;
     const address = await prisma.companyAddress.findUnique({
       where: { id },
     });

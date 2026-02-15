@@ -1,32 +1,33 @@
 import { z } from "zod";
 import {
-  CreateManufacturerSchema,
-  CreateProductCategorySchema,
-  CreateProductImageSchema,
-  CreateProductSchema,
-  CreateProductTranslationSchema,
-  CreateProductVariantSchema,
-  ManufacturerIdSchema,
-  ProductCategoryIdSchema,
-  ProductIdLanguageSchema,
-  ProductIdSchema,
-  ProductImageIdSchema,
-  ProductQuerySchema,
-  ProductVariantIdSchema,
-  UpdateManufacturerSchema,
-  UpdateProductCategorySchema,
-  UpdateProductImageSchema,
-  UpdateProductSchema,
-  UpdateProductTranslationSchema,
-  UpdateProductVariantSchema,
+  createManufacturerSchema,
+  createProductCategorySchema,
+  createProductImageSchema,
+  createProductSchema,
+  createProductVariantSchema,
+  createProductVariantTranslationSchema,
+  manufacturerIdSchema,
+  productCategoryIdSchema,
+  productIdSchema,
+  productImageIdSchema,
+  productQuerySchema,
+  productVariantIdSchema,
+  updateManufacturerSchema,
+  updateProductCategorySchema,
+  updateProductImageSchema,
+  updateProductSchema,
+  updateProductVariantSchema,
+  updateProductVariantTranslationSchema, 
 } from "../validators/product";
-import { ProductCondition, ProductType } from "../constants";
+import { ProductCondition, ProductType, ProductStatus } from "../constants";
 import { Supplier } from "./supplier";
 import { Manufacturer } from "./manufacturer";
 import { Attribute, AttributeGroup } from "./attribute";
 import { Category } from "./category";
 import { Language } from "./language";
 import { StockMovement, VirtualStock } from "./warehouse";
+
+
 
 // ============================================================================
 // TYPE EXPORTS
@@ -36,6 +37,7 @@ import { StockMovement, VirtualStock } from "./warehouse";
 export type Product = {
   id: number;
   type: ProductType;
+  status: ProductStatus;
   reference: string;
 
   // Stati
@@ -78,36 +80,12 @@ export type Product = {
   coverThumbnailUrl?: string;
 
   // Dettagli del Prodotto
-  translations: ProductTranslation[]; // Contiene 'name', 'description', 'shortDescription'
   variants: ProductVariant[];
   images: ProductImage[];
   categories: Category[];
 
   createdAt: Date;
   updatedAt: Date;
-};
-
-export type ProductTranslation = {
-  id: number;
-  productId: number;
-  languageId: number;
-  language: Language;
-  name: string;
-  description?: string;
-  shortDescription?: string;
-  tags?: string;
-  // SEO
-  metaTitle?: string;
-  metaDescription?: string | null;
-  metaKeywords?: string;
-  linkRewrite?: string;
-
-  // Etichette disponibilità
-  availableNowLabel: string;
-  availableLaterLabel: string;
-
-  deliveryTimeInStockNote?: string;
-  deliveryTimeOutOfStockNote?: string;
 };
 
 export type ProductVariant = {
@@ -137,10 +115,10 @@ export type ProductVariant = {
   unitPriceRatio: number;
 
   // Dimensioni Fisiche
-  weight: number;
-  width: number;
-  height: number;
-  depth: number;
+  weight: number | null;
+  width: number | null;
+  height: number | null;
+  depth: number | null;
 
   // Codice Nomenclatura Combinata (NC8) per la variante specifica
   commodityCode?: string;
@@ -155,56 +133,85 @@ export type ProductVariant = {
   metadata?: string; // È una stringa JSON
 
   // Relazioni
+  translations: ProductVariantTranslation[]; 
   attributes: Attribute[];
   stockMovement: StockMovement[];
   virtualStock: VirtualStock[];
   images: ProductImage[];
 };
 
+export type ProductVariantTranslation = {
+  id: number;
+  productVariantId: number;
+  languageId: number;
+  language: Language;
+  name: string;
+  description?: string;
+  shortDescription?: string;
+  tags?: string;
+  // SEO
+  metaTitle?: string;
+  metaDescription?: string | null;
+  metaKeywords?: string;
+  linkRewrite?: string;
+  // Etichette disponibilità
+  availableNowLabel: string;
+  availableLaterLabel: string;
+  deliveryTimeInStockNote?: string;
+  deliveryTimeOutOfStockNote?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export interface ProductImage {
   id: number;
   productId: number;
-  variantId: number;
+  variantId: number | null; 
   imageUrl: string;
   imageType: "main" | "extra" | string;
   position: number;
   isCover: boolean;
-  altText: string | null;
+  altText: Record<string, any> | null; 
+  width: number | null;
+  height: number | null; 
+  fileSize: number | null; 
+  mimeType: string | null; 
+  createdAt: Date; 
+  updatedAt: Date; 
 }
 
 // Type Input
-export type CreateProductInput = z.infer<typeof CreateProductSchema>;
-export type UpdateProductInput = z.infer<typeof UpdateProductSchema>;
+export type CreateProductInput = z.infer<typeof createProductSchema>;
+export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 export type CreateProductVariantInput = z.infer<
-  typeof CreateProductVariantSchema
+  typeof createProductVariantSchema
 >;
 export type UpdateProductVariantInput = z.infer<
-  typeof UpdateProductVariantSchema
+  typeof updateProductVariantSchema
 >;
-export type CreateProductTranslationInput = z.infer<
-  typeof CreateProductTranslationSchema
+export type CreateProductVariantTranslationInput = z.infer<
+  typeof createProductVariantTranslationSchema
 >;
-export type UpdateProductTranslationInput = z.infer<
-  typeof UpdateProductTranslationSchema
+export type UpdateProductVariantTranslationInput = z.infer<
+  typeof updateProductVariantTranslationSchema
 >;
-export type CreateProductImageInput = z.infer<typeof CreateProductImageSchema>;
-export type UpdateProductImageInput = z.infer<typeof UpdateProductImageSchema>;
+export type CreateProductImageInput = z.infer<typeof createProductImageSchema>;
+export type UpdateProductImageInput = z.infer<typeof updateProductImageSchema>;
 export type CreateProductCategoryInput = z.infer<
-  typeof CreateProductCategorySchema
+  typeof createProductCategorySchema
 >;
 export type UpdateProductCategoryInput = z.infer<
-  typeof UpdateProductCategorySchema
+  typeof updateProductCategorySchema
 >;
-export type CreateManufacturerInput = z.infer<typeof CreateManufacturerSchema>;
-export type UpdateManufacturerInput = z.infer<typeof UpdateManufacturerSchema>;
+export type CreateManufacturerInput = z.infer<typeof createManufacturerSchema>;
+export type UpdateManufacturerInput = z.infer<typeof updateManufacturerSchema>;
 
 // Type Param
-export type ProductIdParam = z.infer<typeof ProductIdSchema>;
-export type ProductVariantIdParam = z.infer<typeof ProductVariantIdSchema>;
-export type ProductImageIdParam = z.infer<typeof ProductImageIdSchema>;
-export type ManufacturerIdParam = z.infer<typeof ManufacturerIdSchema>;
-export type ProductIdLanguageIdParam = z.infer<typeof ProductIdLanguageSchema>;
-export type ProductCategoryIdParam = z.infer<typeof ProductCategoryIdSchema>;
+export type ProductIdParam = z.infer<typeof productIdSchema>;
+export type ProductVariantIdParam = z.infer<typeof productVariantIdSchema>;
+export type ProductImageIdParam = z.infer<typeof productImageIdSchema>;
+export type ManufacturerIdParam = z.infer<typeof manufacturerIdSchema>;
+export type ProductCategoryIdParam = z.infer<typeof productCategoryIdSchema>;
 
 // Type Query
-export type ProductQueryInput = z.infer<typeof ProductQuerySchema>;
+export type ProductQueryInput = z.infer<typeof productQuerySchema>;

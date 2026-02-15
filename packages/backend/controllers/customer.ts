@@ -10,7 +10,7 @@ import { calculateCustomerStats, validateFiscalData } from "../utils/company";
 import { formatPaginatedResponse } from "../utils/response";
 import { AuthenticatedValidatedRequest } from "@/types/validate";
 import {
-  CustomerIdInput,
+  CustomerIdParam,
   CustomerQueryInput,
   UpdateCustomerCompanyInput,
   UpdateCustomerInput,
@@ -61,7 +61,7 @@ export const getAllCustomers = asyncHandler(
  */
 export const getCustomerById = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as CustomerIdInput;
+    const { id } = req.validatedParams as CustomerIdParam;
 
     const customer = await prisma.customer.findUnique({
       where: { id },
@@ -213,7 +213,7 @@ export const createCustomer = asyncHandler(
  */
 export const updateCustomer = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as CustomerIdInput;
+    const { id } = req.validatedParams as CustomerIdParam;
     const data = req.validatedBody as UpdateCustomerInput;
 
     const existing = await prisma.customer.findUnique({
@@ -263,7 +263,7 @@ export const updateCustomer = asyncHandler(
  */
 export const updateCustomerCompany = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as CustomerIdInput;
+    const { id } = req.validatedParams as CustomerIdParam;
     const companyData = req.validatedBody as UpdateCustomerCompanyInput;
 
     const customer = await prisma.customer.findUnique({
@@ -338,61 +338,13 @@ export const updateCustomerCompany = asyncHandler(
 );
 
 /**
- * @desc    Aggiorna lead status
- * @route   PATCH /api/customers/:id/lead-status
- * @access  Private (customer:update)
- */
-export const updateLeadStatus = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as CustomerIdInput;
-    const { leadStatus, notes } = req.validatedBody;
-
-    const customer = await prisma.customer.findUnique({
-      where: { id },
-    });
-
-    if (!customer) {
-      res.status(404).json({
-        success: false,
-        message: "Customer non trovato",
-      });
-      return;
-    }
-
-    const updatedCustomer = await prisma.customer.update({
-      where: { id },
-      data: { leadStatus },
-      include: getCustomerInclude(false),
-    });
-
-    // Se fornite note, creiamole
-    if (notes) {
-      await prisma.companyNote.create({
-        data: {
-          companyId: customer.companyId,
-          title: `Lead Status cambiato: ${customer.leadStatus} → ${leadStatus}`,
-          content: notes,
-          authorId: (req as any).user.id, // Assume req.user from auth middleware
-        },
-      });
-    }
-
-    res.json({
-      success: true,
-      message: "Lead status aggiornato",
-      data: updatedCustomer,
-    });
-  },
-);
-
-/**
  * @desc    Ottieni statistiche customer
  * @route   GET /api/customers/:id/stats
  * @access  Private (customer:read)
  */
 export const getCustomerStats = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as CustomerIdInput;
+    const { id } = req.validatedParams as CustomerIdParam;
 
     const customer = await prisma.customer.findUnique({
       where: { id },
@@ -506,7 +458,7 @@ export const getCustomerStats = asyncHandler(
  */
 export const deleteCustomer = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as CustomerIdInput;
+    const { id } = req.validatedParams as CustomerIdParam;
 
     const customer = await prisma.customer.findUnique({
       where: { id },

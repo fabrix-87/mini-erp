@@ -52,6 +52,7 @@ model User {
   companyNotes          CompanyNote[]
   stockMovement         StockMovement[]
   auditLogs             AuditLog[]
+  SecurityEvents        SecurityEvent[]
 
   deletedDocuments       Document[]       @relation("DeletedBy")
   deletedProducts        Product[]        @relation("DeletedBy")

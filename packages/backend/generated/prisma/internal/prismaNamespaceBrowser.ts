@@ -59,6 +59,8 @@ export const ModelName = {
   Attribute: 'Attribute',
   AttributeTranslation: 'AttributeTranslation',
   ProductVariantAttribute: 'ProductVariantAttribute',
+  AuditLog: 'AuditLog',
+  SecurityEvent: 'SecurityEvent',
   Category: 'Category',
   CategoryTranslation: 'CategoryTranslation',
   Company: 'Company',
@@ -97,7 +99,6 @@ export const ModelName = {
   Role: 'Role',
   Permission: 'Permission',
   RolePermission: 'RolePermission',
-  AuditLog: 'AuditLog',
   TenantSettings: 'TenantSettings',
   VatNature: 'VatNature',
   VatNatureTranslation: 'VatNatureTranslation',
@@ -262,6 +263,57 @@ export const ProductVariantAttributeScalarFieldEnum = {
 } as const
 
 export type ProductVariantAttributeScalarFieldEnum = (typeof ProductVariantAttributeScalarFieldEnum)[keyof typeof ProductVariantAttributeScalarFieldEnum]
+
+
+export const AuditLogScalarFieldEnum = {
+  id: 'id',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  entityName: 'entityName',
+  action: 'action',
+  severity: 'severity',
+  userId: 'userId',
+  username: 'username',
+  changes: 'changes',
+  description: 'description',
+  metadata: 'metadata',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  requestId: 'requestId',
+  sessionId: 'sessionId',
+  endpoint: 'endpoint',
+  method: 'method',
+  isCritical: 'isCritical',
+  retentionExpires: 'retentionExpires',
+  relatedEntityType: 'relatedEntityType',
+  relatedEntityId: 'relatedEntityId',
+  businessContext: 'businessContext',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+export const SecurityEventScalarFieldEnum = {
+  id: 'id',
+  eventType: 'eventType',
+  severity: 'severity',
+  userId: 'userId',
+  username: 'username',
+  email: 'email',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  location: 'location',
+  description: 'description',
+  details: 'details',
+  actionTaken: 'actionTaken',
+  resolved: 'resolved',
+  resolvedAt: 'resolvedAt',
+  resolvedBy: 'resolvedBy',
+  createdAt: 'createdAt'
+} as const
+
+export type SecurityEventScalarFieldEnum = (typeof SecurityEventScalarFieldEnum)[keyof typeof SecurityEventScalarFieldEnum]
 
 
 export const CategoryScalarFieldEnum = {
@@ -1095,20 +1147,6 @@ export const RolePermissionScalarFieldEnum = {
 } as const
 
 export type RolePermissionScalarFieldEnum = (typeof RolePermissionScalarFieldEnum)[keyof typeof RolePermissionScalarFieldEnum]
-
-
-export const AuditLogScalarFieldEnum = {
-  id: 'id',
-  entityType: 'entityType',
-  entityId: 'entityId',
-  action: 'action',
-  userId: 'userId',
-  changes: 'changes',
-  metadata: 'metadata',
-  createdAt: 'createdAt'
-} as const
-
-export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
 
 
 export const TenantSettingsScalarFieldEnum = {

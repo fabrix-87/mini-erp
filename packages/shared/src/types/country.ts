@@ -4,17 +4,17 @@
 
 import { z } from "zod";
 import {
-  CountryCodeSchema,
-  CountryQuerySchema,
-  CountrySchema,
+  countryCodeSchema,
+  countryQuerySchema,
+  countrySchema,
 } from "../validators";
 import { Language } from "./language";
 
-export type Country = z.infer<typeof CountrySchema> & {
+export type Country = z.infer<typeof countrySchema> & {
   languages?: Language[];
 };
 
 // Query type
-export type CountryQueryInput = z.infer<typeof CountryQuerySchema>;
+export type CountryQueryInput = z.infer<typeof countryQuerySchema>;
 // Param type
-export type CountryCodeParam = z.infer<typeof CountryCodeSchema>;
+export type CountryCodeParam = z.infer<typeof countryCodeSchema>;

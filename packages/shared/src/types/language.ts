@@ -1,7 +1,7 @@
 import z from "zod";
-import { LanguageSchema } from "../validators/language";
+import { languageSchema } from "../validators/language";
 
-export type Language = z.infer<typeof LanguageSchema> & {
+export type Language = z.infer<typeof languageSchema> & {
     createdAt: Date,
     updatedAt: Date
 }

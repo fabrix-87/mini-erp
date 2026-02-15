@@ -2,7 +2,7 @@
 // CUSTOMER SCHEMAS (Extended from Base)
 // ============================================================================
 
-import z from "zod";
+import { z } from "zod";
 
 import {
   baseCompanySchema,
@@ -36,16 +36,6 @@ export const customerSegmentSchema = z.enum([
   "STANDARD",
 ]);
 
-export const leadStatusSchema = z.enum([
-  "NEW",
-  "CONTACTED",
-  "QUALIFIED",
-  "PROPOSAL",
-  "NEGOTIATION",
-  "CLOSED_WON",
-  "CLOSED_LOST",
-]);
-
 export const creditCheckStatusSchema = z.enum([
   "PENDING",
   "APPROVED",
@@ -73,7 +63,6 @@ export const createCustomerSchema = z
     // ===== Dati CRM Specifici Customer =====
     priority: customerPrioritySchema.default("MEDIUM"),
     segment: customerSegmentSchema.default("STANDARD"),
-    leadStatus: leadStatusSchema.default("NEW"),
     size: customerSizeSchema.default("SMALL"),
     type: customerTypeSchema.default("LEAD"),
     creditStatus: creditCheckStatusSchema.default("PENDING"),
@@ -104,7 +93,6 @@ export const updateCustomerSchema = z
     type: customerTypeSchema.optional(),
     priority: customerPrioritySchema.optional(),
     segment: customerSegmentSchema.optional(),
-    leadStatus: leadStatusSchema.optional(),
     size: customerSizeSchema.optional(),
     creditStatus: creditCheckStatusSchema.optional(),
 
@@ -131,20 +119,6 @@ export const updateCustomerSchema = z
 export const updateCustomerCompanySchema = updateCompanySchema;
 
 /**
- * Schema per aggiornamento Lead Status con note
- */
-export const updateLeadStatusSchema = z
-  .object({
-    leadStatus: leadStatusSchema,
-    notes: z
-      .string()
-      .max(1000, "Note non possono superare 1000 caratteri")
-      .optional()
-      .nullable(),
-  })
-  .strict();
-
-/**
  * Schema per Query Parameters Customer
  * Estende CompanyQueryBaseSchema con filtri CRM
  */
@@ -153,7 +127,6 @@ export const customerQuerySchema = companyQueryBaseSchema.extend({
   type: customerTypeSchema.optional(),
   priority: customerPrioritySchema.optional(),
   segment: customerSegmentSchema.optional(),
-  leadStatus: leadStatusSchema.optional(),
   creditStatus: creditCheckStatusSchema.optional(),
   size: customerSizeSchema.optional(),
 

@@ -80,6 +80,16 @@ export type AttributeTranslation = Prisma.AttributeTranslationModel
  */
 export type ProductVariantAttribute = Prisma.ProductVariantAttributeModel
 /**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model SecurityEvent
+ * 
+ */
+export type SecurityEvent = Prisma.SecurityEventModel
+/**
  * Model Category
  * 
  */
@@ -269,11 +279,6 @@ export type Permission = Prisma.PermissionModel
  * 
  */
 export type RolePermission = Prisma.RolePermissionModel
-/**
- * Model AuditLog
- * 
- */
-export type AuditLog = Prisma.AuditLogModel
 /**
  * Model TenantSettings
  * 

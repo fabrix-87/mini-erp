@@ -3,7 +3,7 @@ import { prisma } from "../config/prisma-client";
 import { Prisma } from "../generated/prisma/client";
 import { AuthenticatedValidatedRequest } from "@/types/validate";
 import asyncHandler from "@/middleware/async-handler";
-import { CalculateDueDatesInput, CreatePaymentMethodInput, PaymentMethodIdInput, PaymentQueryInput, TogglePaymentStatusInput, UpdatePaymentMethodInput, UpdatePaymentTermDetailsInput } from "@mini-erp/shared";
+import { CalculateDueDatesInput, CreatePaymentMethodInput, PaymentMethodIdParam, PaymentQueryInput, TogglePaymentStatusInput, UpdatePaymentMethodInput, UpdatePaymentTermDetailsInput } from "@mini-erp/shared";
 import { formatPaginatedResponse } from "@/utils/response";
 
 // ============================================================================
@@ -70,7 +70,7 @@ export const getAllPaymentMethods = asyncHandler(
  */
 export const getPaymentMethodById = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as PaymentMethodIdInput;
+    const { id } = req.validatedParams as PaymentMethodIdParam;
 
     const paymentMethod = await prisma.paymentMethod.findUnique({
       where: { id },
@@ -243,7 +243,7 @@ export const createPaymentMethod = asyncHandler(
  */
 export const updatePaymentMethod = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as PaymentMethodIdInput;
+    const { id } = req.validatedParams as PaymentMethodIdParam;
     const { code, active, position, translations } = req.validatedBody as UpdatePaymentMethodInput;
 
     const existingPaymentMethod = await prisma.paymentMethod.findUnique({
@@ -324,7 +324,7 @@ export const updatePaymentMethod = asyncHandler(
  */
 export const updatePaymentTermDetails = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as PaymentMethodIdInput;
+    const { id } = req.validatedParams as PaymentMethodIdParam;
     const { details } = req.validatedBody as UpdatePaymentTermDetailsInput;
 
     const paymentMethod = await prisma.paymentMethod.findUnique({
@@ -399,7 +399,7 @@ export const updatePaymentTermDetails = asyncHandler(
  */
 export const togglePaymentMethodActive = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as PaymentMethodIdInput;
+    const { id } = req.validatedParams as PaymentMethodIdParam;
     const { active } = req.validatedBody as TogglePaymentStatusInput;
 
     const paymentMethod = await prisma.paymentMethod.findUnique({
@@ -437,7 +437,7 @@ export const togglePaymentMethodActive = asyncHandler(
  */
 export const deletePaymentMethod = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as PaymentMethodIdInput;
+    const { id } = req.validatedParams as PaymentMethodIdParam;
 
     const paymentMethod = await prisma.paymentMethod.findUnique({
       where: { id },
@@ -488,7 +488,7 @@ export const deletePaymentMethod = asyncHandler(
  */
 export const calculateDueDates = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as PaymentMethodIdInput;
+    const { id } = req.validatedParams as PaymentMethodIdParam;
     const { invoiceDate, totalAmount } = req.validatedBody as CalculateDueDatesInput;
 
     const paymentMethod = await prisma.paymentMethod.findUnique({

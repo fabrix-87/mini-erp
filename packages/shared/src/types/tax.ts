@@ -19,19 +19,11 @@ import {
   vatNatureTranslationIdParamSchema,
   taxRuleTranslationIdParamSchema,
   toggleTaxStatusSchema,
-  vatNatureCategorySchema,
-  taxRuleApplicabilitySchema,
 } from "../validators/tax";
 import type { Language } from "./language";
 import type { Country } from "./country";
 import Decimal from "decimal.js";
-
-// ============================================================================
-// ENUM TYPES
-// ============================================================================
-
-export type VatNatureCategory = z.infer<typeof vatNatureCategorySchema>;
-export type TaxRuleApplicability = z.infer<typeof taxRuleApplicabilitySchema>;
+import { TaxRuleApplicability } from "../constants/tax";
 
 // ============================================================================
 // ENTITY TYPES

@@ -72,6 +72,39 @@ export const AttributeDisplayType = {
 export type AttributeDisplayType = (typeof AttributeDisplayType)[keyof typeof AttributeDisplayType]
 
 
+export const AuditAction = {
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  DELETE: 'DELETE',
+  VIEW: 'VIEW',
+  EXPORT: 'EXPORT',
+  APPROVE: 'APPROVE',
+  REJECT: 'REJECT',
+  LOCK: 'LOCK',
+  UNLOCK: 'UNLOCK',
+  ARCHIVE: 'ARCHIVE',
+  RESTORE: 'RESTORE',
+  SEND: 'SEND',
+  RECEIVE: 'RECEIVE',
+  LOGIN: 'LOGIN',
+  LOGOUT: 'LOGOUT',
+  PASSWORD_CHANGE: 'PASSWORD_CHANGE',
+  PERMISSION_CHANGE: 'PERMISSION_CHANGE'
+} as const
+
+export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
+
+
+export const AuditSeverity = {
+  INFO: 'INFO',
+  WARNING: 'WARNING',
+  ERROR: 'ERROR',
+  CRITICAL: 'CRITICAL'
+} as const
+
+export type AuditSeverity = (typeof AuditSeverity)[keyof typeof AuditSeverity]
+
+
 export const CustomerType = {
   PROSPECT: 'PROSPECT',
   CUSTOMER: 'CUSTOMER',

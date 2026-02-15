@@ -6,14 +6,20 @@ import { inputJsonValueSchema, userIdSchema } from "./base";
 import Decimal from "decimal.js";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import {
+  queryBooleanSchema,
+  queryNumberSchema,
   queryPercentageSchema,
   queryPositiveNumberSchema,
 } from "./query/params";
+import { createDecimalSchema } from "./primitives";
 
 // ============================================================================
 // ENUMS
 // ============================================================================
 
+/**
+ * Opportunity Status enum
+ */
 export const opportunityStatusSchema = z.enum([
   "OPEN",
   "WON",
@@ -22,6 +28,9 @@ export const opportunityStatusSchema = z.enum([
   "CLOSED",
 ]);
 
+/**
+ * Sales Stage enum
+ */
 export const salesStageSchema = z.enum([
   "LEAD_QUALIFICATION",
   "PROSPECTING",
@@ -29,6 +38,20 @@ export const salesStageSchema = z.enum([
   "PROPOSAL_SENT",
   "NEGOTIATION",
   "COMMITMENT",
+]);
+
+/**
+ * Opportunity Source enum
+ */
+export const opportunitySourceSchema = z.enum([
+  "LEAD",
+  "CUSTOMER",
+  "INBOUND",
+  "OUTBOUND",
+  "REFERRAL",
+  "PARTNER",
+  "EVENT",
+  "OTHER",
 ]);
 
 export const opportunitySortFieldSchema = z.enum([
@@ -42,8 +65,50 @@ export const opportunitySortFieldSchema = z.enum([
 ]);
 
 // ============================================================================
+// DECIMAL HELPERS
+// ============================================================================
+
+/**
+ * Schema for opportunity value (15, 2)
+ */
+const opportunityValueSchema = createDecimalSchema(2, {
+  positiveOnly: true,
+  min: 0,
+});
+
+/**
+ * Schema for probability (0-100)
+ */
+const probabilitySchema = z
+  .number()
+  .int("Probabilità deve essere un intero")
+  .min(0, "Probabilità minima è 0")
+  .max(100, "Probabilità massima è 100")
+  .default(0);
+
+// ============================================================================
 // OPPORTUNITY SCHEMAS
 // ============================================================================
+
+/**
+ * Schema for Opportunity ID
+ */
+export const opportunityIdSchema = createIdSchema("ID Opportunity non valido");
+
+/**
+ * Schema for proposed product item
+ */
+export const proposedProductSchema = z
+  .object({
+    productId: createIdSchema("Product ID non valido"),
+    productName: z.string().optional(),
+    quantity: createDecimalSchema(2, { positiveOnly: true, min: 0 }),
+    price: createDecimalSchema(2, { positiveOnly: true, min: 0 }),
+    discount: createDecimalSchema(2, { min: 0, max: 100, defaultValue: 0 }),
+    total: createDecimalSchema(2, { positiveOnly: true }).optional(),
+    notes: z.string().max(500).optional().nullable(),
+  })
+  .strict();
 
 /**
  * Schema per la creazione di un'opportunità
@@ -55,72 +120,133 @@ export const createOpportunitySchema = z
       .min(1, "Titolo è obbligatorio")
       .max(255, "Titolo non può superare 255 caratteri")
       .trim(),
-    description: z.string().trim().optional(),
+    description: z.string().max(5000).optional().nullable(),
+    // Relations
+    leadId: createIdSchema("Lead ID non valido").optional().nullable(),
     customerId: createIdSchema("Customer ID non valido"),
-    status: opportunityStatusSchema.optional().default("OPEN"),
-    stage: salesStageSchema.optional().default("LEAD_QUALIFICATION"),
-    estimatedValue: positiveNumbersSchema.nullable(),
-    probability: percentageSchema.optional().default(new Decimal(0)),
+    source: opportunitySourceSchema.default("OTHER"),
+    // Status and stage
+    status: opportunityStatusSchema.default("OPEN"),
+    stage: salesStageSchema.default("LEAD_QUALIFICATION"),
+    // Financial metrics
+    estimatedValue: opportunityValueSchema.optional().nullable(),
+    probability: probabilitySchema,
+    // Calculated field (can be provided or auto-calculated)
+    weightedValue: opportunityValueSchema.optional(),
+    // Timing
     expectedCloseDate: isoDateSchema(),
+    // Assignment
     assignedUserId: userIdSchema.optional().nullable(),
+    // Products/Services
+    proposedProducts: z
+      .array(proposedProductSchema)
+      .optional()
+      .nullable()
+      .default([]),
+
+    // Notes
     notes: z.string().trim().optional(),
     customFields: inputJsonValueSchema.optional().nullable(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (data) => {
+      // If estimatedValue is provided and probability is set, calculate weightedValue
+      if (data.estimatedValue && !data.weightedValue) {
+        // This will be handled in the service layer
+        return true;
+      }
+      return true;
+    },
+    {
+      message: "Weighted value calcolato automaticamente",
+    },
+  );
 
 /**
- * Schema per l'aggiornamento di un'opportunità
+ * Schema for updating an Opportunity
  */
 export const updateOpportunitySchema = createOpportunitySchema
-  .omit({
-    customerId: true,
-  })
-  .extend({
-    closedDate: isoDateSchema(),
-    closedReasonId: createIdSchema("ClosedReason ID non valido").optional(),
-    closedNotes: z.string().trim().optional(),
-  })
+  .omit({ customerId: true, leadId: true })
+  .partial()
   .strict();
 
 /**
- * Schema per cambio stage/status
+ * Schema for updating Opportunity stage
  */
-export const updateStageSchema = z
+export const updateOpportunityStageSchema = z
   .object({
     stage: salesStageSchema,
-    probability: percentageSchema.optional(),
+    probability: probabilitySchema.optional(),
+    notes: z.string().max(1000).optional().nullable(),
   })
   .strict();
 
 /**
- * Schema per chiusura opportunità (WON)
+ * Schema for updating Opportunity status
  */
-export const closeOpportunityWonSchema = z
+export const updateOpportunityStatusSchema = z
   .object({
-    closedDate: isoDateSchema(),
-    closedNotes: z.string().trim().optional(),
-  })
-  .strict();
-
-/**
- * Schema per chiusura opportunità (LOST)
- */
-export const closeOpportunityLostSchema = z
-  .object({
+    status: opportunityStatusSchema,
     closedReasonId: createIdSchema("Closed Reason ID non valido")
       .optional()
       .nullable(),
-    closedDate: isoDateSchema(),
-    closedNotes: z.string().trim().optional(),
+    closedNotes: z.string().max(1000).optional().nullable(),
+    actualValue: opportunityValueSchema.optional().nullable(),
+  })
+  .strict()
+  .refine(
+    (data) => {
+      // If status is WON or LOST, closedReasonId is required
+      if (
+        (data.status === "WON" || data.status === "LOST") &&
+        !data.closedReasonId
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Motivo chiusura obbligatorio per opportunità vinte o perse",
+      path: ["closedReasonId"],
+    },
+  )
+  .refine(
+    (data) => {
+      // If status is WON, actualValue should be provided
+      if (data.status === "WON" && !data.actualValue) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Valore effettivo obbligatorio per opportunità vinte",
+      path: ["actualValue"],
+    },
+  );
+
+/**
+ * Schema for winning an Opportunity
+ */
+export const winOpportunitySchema = z
+  .object({
+    actualValue: opportunityValueSchema,
+    closedReasonId: createIdSchema("Closed Reason ID non valido"),
+    closedNotes: z.string().max(1000).optional().nullable(),
+    closedDate: isoDateSchema().optional(),
   })
   .strict();
 
 /**
- * Schema per ID opportunità nei parametri
+ * Schema for losing an Opportunity
  */
-export const opportunityIdSchema = z.object({
-  id: createIdSchema("ID opportunità non valido"),
-});
+export const loseOpportunitySchema = z
+  .object({
+    closedReasonId: createIdSchema("Closed Reason ID non valido"),
+    closedNotes: z.string().max(1000).optional().nullable(),
+    closedDate: isoDateSchema().optional(),
+  })
+  .strict();
 
 /**
  * Schema per Customer ID nei parametri
@@ -130,66 +256,168 @@ export const customerIdParamSchema = z.object({
 });
 
 /**
- * Schema per query di ricerca opportunità
+ * Schema for bulk assigning Opportunities
  */
-export const opportunityQuerySchema = z
+export const bulkAssignOpportunitiesSchema = z
   .object({
-    page: pageSchema,
-    limit: limitSchema,
-    search: z
+    opportunityIds: z
+      .array(opportunityIdSchema)
+      .min(1, "Seleziona almeno un'opportunità"),
+    assignedUserId: createIdSchema("User ID non valido"),
+  })
+  .strict();
+
+/**
+ * Schema for bulk stage update
+ */
+export const bulkUpdateStageSchema = z
+  .object({
+    opportunityIds: z
+      .array(opportunityIdSchema)
+      .min(1, "Seleziona almeno un'opportunità"),
+    stage: salesStageSchema,
+    probability: probabilitySchema.optional(),
+  })
+  .strict();
+
+// ============================================================================
+// CLOSED REASON SCHEMAS
+// ============================================================================
+
+/**
+ * Schema for Closed Reason ID
+ */
+export const closedReasonIdSchema = createIdSchema(
+  "ID Closed Reason non valido",
+);
+
+/**
+ * Schema for creating a Closed Reason
+ */
+export const createClosedReasonSchema = z
+  .object({
+    code: z
       .string()
+      .min(1, "Codice obbligatorio")
+      .max(50, "Codice max 50 caratteri")
       .trim()
-      .min(2, "Ricerca deve contenere almeno 2 caratteri")
-      .optional(),
-    customerId: createIdSchema("Customer ID non valido").optional(),
-    assignedUserId: createIdSchema("Assigned User ID non valido").optional(),
-    status: opportunityStatusSchema.optional(),
-    stage: salesStageSchema.optional(),
+      .toUpperCase(),
 
-    minValue: queryPositiveNumberSchema("Valore minimo deve essere >= 0"),
-    maxValue: queryPositiveNumberSchema("Valore massimo deve essere >= 0"),
-    minProbability: queryPercentageSchema(
-      "Probabilità minima deve essere tra 0 e 100",
-    ),
-    maxProbability: queryPercentageSchema(
-      "Probabilità massima deve essere tra 0 e 100",
-    ),
-    expectedCloseDateFrom: isoDateSchema(),
-    expectedCloseDateTo: isoDateSchema(),
+    description: z
+      .string()
+      .min(1, "Descrizione obbligatoria")
+      .max(255, "Descrizione max 255 caratteri")
+      .trim(),
 
-    sortBy: opportunitySortFieldSchema.optional().default("createdAt"),
+    isWon: z.boolean(),
 
-    sortOrder: sortOrderSchema,
+    active: z.boolean().default(true),
+
+    displayOrder: z.number().int().nonnegative().default(0),
   })
   .strict();
 
 /**
- * Schema per assegnazione utente
+ * Schema for updating a Closed Reason
  */
-export const assignUserSchema = z
-  .object({
-    assignedUserId: createIdSchema("Assigned User ID non valido"),
-  })
+export const updateClosedReasonSchema = createClosedReasonSchema
+  .omit({ code: true })
+  .partial()
   .strict();
 
+// ============================================================================
+// QUERY SCHEMAS
+// ============================================================================
+
 /**
- * Schema per query di ricerca opportunità per status
+ * Schema for Opportunity queries
  */
-export const opportunityQueryByStatusSchema = z.object({
+export const opportunityQuerySchema = z.object({
+  page: pageSchema,
+  limit: limitSchema,
+  search: z.string().optional(),
   status: opportunityStatusSchema.optional(),
+  stage: salesStageSchema.optional(),
+  source: opportunitySourceSchema.optional(),
+  customerId: createIdSchema("Customer ID non valido").optional(),
+  leadId: createIdSchema("Lead ID non valido").optional(),
+  assignedUserId: createIdSchema("User ID non valido").optional(),
+  createdByUserId: createIdSchema("User ID non valido").optional(),
+  minValue: queryNumberSchema("Valore non valido")
+    .pipe(z.number().nonnegative().optional())
+    .optional(),
+  maxValue: queryNumberSchema("Valore non valido")
+    .pipe(z.number().nonnegative().optional())
+    .optional(),
+  minProbability: queryNumberSchema("Probabilità non valida")
+    .pipe(z.number().int().min(0).max(100).optional())
+    .optional(),
+  maxProbability: queryNumberSchema("Probabilità non valida")
+    .pipe(z.number().int().min(0).max(100).optional())
+    .optional(),
+  expectedCloseFrom: isoDateSchema(),
+  expectedCloseTo: isoDateSchema(),
+  closedFrom: isoDateSchema(),
+  closedTo: isoDateSchema(),
+  isStagnant: queryBooleanSchema, // Opportunities that haven't progressed
+  hasActivities: queryBooleanSchema,
+  sortBy: z
+    .enum([
+      "id",
+      "title",
+      "status",
+      "stage",
+      "estimatedValue",
+      "weightedValue",
+      "probability",
+      "expectedCloseDate",
+      "closedDate",
+      "createdAt",
+      "lastActivityDate",
+    ])
+    .default("createdAt"),
+  sortOrder: sortOrderSchema,
 });
 
 /**
- * Schema per creazione ClosedReason
+ * Schema for Closed Reason queries
  */
-export const createClosedReason = z.object({
-  code: z.string().trim().max(50).optional().nullable(),
-  description: z.string().trim().optional().nullable(),
+export const closedReasonQuerySchema = z.object({
+  isWon: z.boolean().optional(),
+  active: z.boolean().optional(),
+  sortBy: z.enum(["id", "code", "displayOrder", "createdAt"]).default("displayOrder"),
+  sortOrder: sortOrderSchema,
+});
+
+// ============================================================================
+// PARAM SCHEMAS
+// ============================================================================
+
+export const opportunityIdParamSchema = z.object({
+  id: opportunityIdSchema,
+});
+
+export const closedReasonIdParamSchema = z.object({
+  id: closedReasonIdSchema,
 });
 
 /**
- * Schema per modifica ClosedReason
+ * Schema for Opportunity statistics filters
  */
-export const updateClosedReason = createClosedReason.omit({
-  code: true,
+export const opportunityStatsSchema = z.object({
+  assignedUserId: createIdSchema("User ID non valido").optional(),
+  customerId: createIdSchema("Customer ID non valido").optional(),
+  dateFrom: isoDateSchema(),
+  dateTo: isoDateSchema(),
+  source: opportunitySourceSchema.optional(),
+});
+
+/**
+ * Schema for sales funnel analysis
+ */
+export const salesFunnelAnalysisSchema = z.object({
+  assignedUserId: createIdSchema("User ID non valido").optional(),
+  dateFrom: isoDateSchema(),
+  dateTo: isoDateSchema(),
+  groupBy: z.enum(["stage", "source", "assignedUser", "month"]).default("stage"),
 });

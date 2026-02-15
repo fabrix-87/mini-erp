@@ -1,4 +1,4 @@
 import { z } from "zod";
-import { ContinentsEnum } from "../validators";
+import { continentsEnum } from "../validators";
 
-export type continents = z.infer<typeof ContinentsEnum>;
+export type continents = z.infer<typeof continentsEnum>;

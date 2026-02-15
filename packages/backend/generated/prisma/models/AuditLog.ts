@@ -29,19 +29,36 @@ export type AggregateAuditLog = {
 export type AuditLogAvgAggregateOutputType = {
   entityId: number | null
   userId: number | null
+  relatedEntityId: number | null
 }
 
 export type AuditLogSumAggregateOutputType = {
   entityId: number | null
   userId: number | null
+  relatedEntityId: number | null
 }
 
 export type AuditLogMinAggregateOutputType = {
   id: string | null
   entityType: string | null
   entityId: number | null
-  action: string | null
+  entityName: string | null
+  action: $Enums.AuditAction | null
+  severity: $Enums.AuditSeverity | null
   userId: number | null
+  username: string | null
+  description: string | null
+  ipAddress: string | null
+  userAgent: string | null
+  requestId: string | null
+  sessionId: string | null
+  endpoint: string | null
+  method: string | null
+  isCritical: boolean | null
+  retentionExpires: Date | null
+  relatedEntityType: string | null
+  relatedEntityId: number | null
+  businessContext: string | null
   createdAt: Date | null
 }
 
@@ -49,8 +66,23 @@ export type AuditLogMaxAggregateOutputType = {
   id: string | null
   entityType: string | null
   entityId: number | null
-  action: string | null
+  entityName: string | null
+  action: $Enums.AuditAction | null
+  severity: $Enums.AuditSeverity | null
   userId: number | null
+  username: string | null
+  description: string | null
+  ipAddress: string | null
+  userAgent: string | null
+  requestId: string | null
+  sessionId: string | null
+  endpoint: string | null
+  method: string | null
+  isCritical: boolean | null
+  retentionExpires: Date | null
+  relatedEntityType: string | null
+  relatedEntityId: number | null
+  businessContext: string | null
   createdAt: Date | null
 }
 
@@ -58,10 +90,25 @@ export type AuditLogCountAggregateOutputType = {
   id: number
   entityType: number
   entityId: number
+  entityName: number
   action: number
+  severity: number
   userId: number
+  username: number
   changes: number
+  description: number
   metadata: number
+  ipAddress: number
+  userAgent: number
+  requestId: number
+  sessionId: number
+  endpoint: number
+  method: number
+  isCritical: number
+  retentionExpires: number
+  relatedEntityType: number
+  relatedEntityId: number
+  businessContext: number
   createdAt: number
   _all: number
 }
@@ -70,19 +117,36 @@ export type AuditLogCountAggregateOutputType = {
 export type AuditLogAvgAggregateInputType = {
   entityId?: true
   userId?: true
+  relatedEntityId?: true
 }
 
 export type AuditLogSumAggregateInputType = {
   entityId?: true
   userId?: true
+  relatedEntityId?: true
 }
 
 export type AuditLogMinAggregateInputType = {
   id?: true
   entityType?: true
   entityId?: true
+  entityName?: true
   action?: true
+  severity?: true
   userId?: true
+  username?: true
+  description?: true
+  ipAddress?: true
+  userAgent?: true
+  requestId?: true
+  sessionId?: true
+  endpoint?: true
+  method?: true
+  isCritical?: true
+  retentionExpires?: true
+  relatedEntityType?: true
+  relatedEntityId?: true
+  businessContext?: true
   createdAt?: true
 }
 
@@ -90,8 +154,23 @@ export type AuditLogMaxAggregateInputType = {
   id?: true
   entityType?: true
   entityId?: true
+  entityName?: true
   action?: true
+  severity?: true
   userId?: true
+  username?: true
+  description?: true
+  ipAddress?: true
+  userAgent?: true
+  requestId?: true
+  sessionId?: true
+  endpoint?: true
+  method?: true
+  isCritical?: true
+  retentionExpires?: true
+  relatedEntityType?: true
+  relatedEntityId?: true
+  businessContext?: true
   createdAt?: true
 }
 
@@ -99,10 +178,25 @@ export type AuditLogCountAggregateInputType = {
   id?: true
   entityType?: true
   entityId?: true
+  entityName?: true
   action?: true
+  severity?: true
   userId?: true
+  username?: true
   changes?: true
+  description?: true
   metadata?: true
+  ipAddress?: true
+  userAgent?: true
+  requestId?: true
+  sessionId?: true
+  endpoint?: true
+  method?: true
+  isCritical?: true
+  retentionExpires?: true
+  relatedEntityType?: true
+  relatedEntityId?: true
+  businessContext?: true
   createdAt?: true
   _all?: true
 }
@@ -197,10 +291,25 @@ export type AuditLogGroupByOutputType = {
   id: string
   entityType: string
   entityId: number
-  action: string
+  entityName: string | null
+  action: $Enums.AuditAction
+  severity: $Enums.AuditSeverity
   userId: number | null
+  username: string
   changes: runtime.JsonValue
+  description: string | null
   metadata: runtime.JsonValue | null
+  ipAddress: string | null
+  userAgent: string | null
+  requestId: string | null
+  sessionId: string | null
+  endpoint: string | null
+  method: string | null
+  isCritical: boolean
+  retentionExpires: Date | null
+  relatedEntityType: string | null
+  relatedEntityId: number | null
+  businessContext: string | null
   createdAt: Date
   _count: AuditLogCountAggregateOutputType | null
   _avg: AuditLogAvgAggregateOutputType | null
@@ -231,10 +340,25 @@ export type AuditLogWhereInput = {
   id?: Prisma.StringFilter<"AuditLog"> | string
   entityType?: Prisma.StringFilter<"AuditLog"> | string
   entityId?: Prisma.IntFilter<"AuditLog"> | number
-  action?: Prisma.StringFilter<"AuditLog"> | string
+  entityName?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  action?: Prisma.EnumAuditActionFilter<"AuditLog"> | $Enums.AuditAction
+  severity?: Prisma.EnumAuditSeverityFilter<"AuditLog"> | $Enums.AuditSeverity
   userId?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  username?: Prisma.StringFilter<"AuditLog"> | string
   changes?: Prisma.JsonFilter<"AuditLog">
+  description?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   metadata?: Prisma.JsonNullableFilter<"AuditLog">
+  ipAddress?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  userAgent?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  requestId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  sessionId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  endpoint?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  method?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  isCritical?: Prisma.BoolFilter<"AuditLog"> | boolean
+  retentionExpires?: Prisma.DateTimeNullableFilter<"AuditLog"> | Date | string | null
+  relatedEntityType?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  relatedEntityId?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  businessContext?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
@@ -243,10 +367,25 @@ export type AuditLogOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
+  entityName?: Prisma.SortOrderInput | Prisma.SortOrder
   action?: Prisma.SortOrder
+  severity?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
+  username?: Prisma.SortOrder
   changes?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
+  ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  userAgent?: Prisma.SortOrderInput | Prisma.SortOrder
+  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  endpoint?: Prisma.SortOrderInput | Prisma.SortOrder
+  method?: Prisma.SortOrderInput | Prisma.SortOrder
+  isCritical?: Prisma.SortOrder
+  retentionExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  relatedEntityType?: Prisma.SortOrderInput | Prisma.SortOrder
+  relatedEntityId?: Prisma.SortOrderInput | Prisma.SortOrder
+  businessContext?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
@@ -258,10 +397,25 @@ export type AuditLogWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.AuditLogWhereInput | Prisma.AuditLogWhereInput[]
   entityType?: Prisma.StringFilter<"AuditLog"> | string
   entityId?: Prisma.IntFilter<"AuditLog"> | number
-  action?: Prisma.StringFilter<"AuditLog"> | string
+  entityName?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  action?: Prisma.EnumAuditActionFilter<"AuditLog"> | $Enums.AuditAction
+  severity?: Prisma.EnumAuditSeverityFilter<"AuditLog"> | $Enums.AuditSeverity
   userId?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  username?: Prisma.StringFilter<"AuditLog"> | string
   changes?: Prisma.JsonFilter<"AuditLog">
+  description?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   metadata?: Prisma.JsonNullableFilter<"AuditLog">
+  ipAddress?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  userAgent?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  requestId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  sessionId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  endpoint?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  method?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  isCritical?: Prisma.BoolFilter<"AuditLog"> | boolean
+  retentionExpires?: Prisma.DateTimeNullableFilter<"AuditLog"> | Date | string | null
+  relatedEntityType?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  relatedEntityId?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  businessContext?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id">
@@ -270,10 +424,25 @@ export type AuditLogOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
+  entityName?: Prisma.SortOrderInput | Prisma.SortOrder
   action?: Prisma.SortOrder
+  severity?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
+  username?: Prisma.SortOrder
   changes?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
+  ipAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  userAgent?: Prisma.SortOrderInput | Prisma.SortOrder
+  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  endpoint?: Prisma.SortOrderInput | Prisma.SortOrder
+  method?: Prisma.SortOrderInput | Prisma.SortOrder
+  isCritical?: Prisma.SortOrder
+  retentionExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  relatedEntityType?: Prisma.SortOrderInput | Prisma.SortOrder
+  relatedEntityId?: Prisma.SortOrderInput | Prisma.SortOrder
+  businessContext?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.AuditLogCountOrderByAggregateInput
   _avg?: Prisma.AuditLogAvgOrderByAggregateInput
@@ -289,10 +458,25 @@ export type AuditLogScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
   entityType?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
   entityId?: Prisma.IntWithAggregatesFilter<"AuditLog"> | number
-  action?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
+  entityName?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  action?: Prisma.EnumAuditActionWithAggregatesFilter<"AuditLog"> | $Enums.AuditAction
+  severity?: Prisma.EnumAuditSeverityWithAggregatesFilter<"AuditLog"> | $Enums.AuditSeverity
   userId?: Prisma.IntNullableWithAggregatesFilter<"AuditLog"> | number | null
+  username?: Prisma.StringWithAggregatesFilter<"AuditLog"> | string
   changes?: Prisma.JsonWithAggregatesFilter<"AuditLog">
+  description?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
   metadata?: Prisma.JsonNullableWithAggregatesFilter<"AuditLog">
+  ipAddress?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  userAgent?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  requestId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  sessionId?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  endpoint?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  method?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  isCritical?: Prisma.BoolWithAggregatesFilter<"AuditLog"> | boolean
+  retentionExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"AuditLog"> | Date | string | null
+  relatedEntityType?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
+  relatedEntityId?: Prisma.IntNullableWithAggregatesFilter<"AuditLog"> | number | null
+  businessContext?: Prisma.StringNullableWithAggregatesFilter<"AuditLog"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
 }
 
@@ -300,9 +484,24 @@ export type AuditLogCreateInput = {
   id?: string
   entityType: string
   entityId: number
-  action: string
+  entityName?: string | null
+  action: $Enums.AuditAction
+  severity?: $Enums.AuditSeverity
+  username: string
   changes: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: string | null
+  userAgent?: string | null
+  requestId?: string | null
+  sessionId?: string | null
+  endpoint?: string | null
+  method?: string | null
+  isCritical?: boolean
+  retentionExpires?: Date | string | null
+  relatedEntityType?: string | null
+  relatedEntityId?: number | null
+  businessContext?: string | null
   createdAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutAuditLogsInput
 }
@@ -311,10 +510,25 @@ export type AuditLogUncheckedCreateInput = {
   id?: string
   entityType: string
   entityId: number
-  action: string
+  entityName?: string | null
+  action: $Enums.AuditAction
+  severity?: $Enums.AuditSeverity
   userId?: number | null
+  username: string
   changes: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: string | null
+  userAgent?: string | null
+  requestId?: string | null
+  sessionId?: string | null
+  endpoint?: string | null
+  method?: string | null
+  isCritical?: boolean
+  retentionExpires?: Date | string | null
+  relatedEntityType?: string | null
+  relatedEntityId?: number | null
+  businessContext?: string | null
   createdAt?: Date | string
 }
 
@@ -322,9 +536,24 @@ export type AuditLogUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.IntFieldUpdateOperationsInput | number
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  entityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+  severity?: Prisma.EnumAuditSeverityFieldUpdateOperationsInput | $Enums.AuditSeverity
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   changes?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endpoint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  method?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isCritical?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  retentionExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  relatedEntityType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedEntityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessContext?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutAuditLogsNestedInput
 }
@@ -333,10 +562,25 @@ export type AuditLogUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.IntFieldUpdateOperationsInput | number
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  entityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+  severity?: Prisma.EnumAuditSeverityFieldUpdateOperationsInput | $Enums.AuditSeverity
   userId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   changes?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endpoint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  method?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isCritical?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  retentionExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  relatedEntityType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedEntityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessContext?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -344,10 +588,25 @@ export type AuditLogCreateManyInput = {
   id?: string
   entityType: string
   entityId: number
-  action: string
+  entityName?: string | null
+  action: $Enums.AuditAction
+  severity?: $Enums.AuditSeverity
   userId?: number | null
+  username: string
   changes: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: string | null
+  userAgent?: string | null
+  requestId?: string | null
+  sessionId?: string | null
+  endpoint?: string | null
+  method?: string | null
+  isCritical?: boolean
+  retentionExpires?: Date | string | null
+  relatedEntityType?: string | null
+  relatedEntityId?: number | null
+  businessContext?: string | null
   createdAt?: Date | string
 }
 
@@ -355,9 +614,24 @@ export type AuditLogUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.IntFieldUpdateOperationsInput | number
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  entityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+  severity?: Prisma.EnumAuditSeverityFieldUpdateOperationsInput | $Enums.AuditSeverity
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   changes?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endpoint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  method?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isCritical?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  retentionExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  relatedEntityType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedEntityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessContext?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -365,10 +639,25 @@ export type AuditLogUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.IntFieldUpdateOperationsInput | number
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  entityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+  severity?: Prisma.EnumAuditSeverityFieldUpdateOperationsInput | $Enums.AuditSeverity
   userId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   changes?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endpoint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  method?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isCritical?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  retentionExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  relatedEntityType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedEntityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessContext?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -376,24 +665,55 @@ export type AuditLogCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
+  entityName?: Prisma.SortOrder
   action?: Prisma.SortOrder
+  severity?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  username?: Prisma.SortOrder
   changes?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
+  ipAddress?: Prisma.SortOrder
+  userAgent?: Prisma.SortOrder
+  requestId?: Prisma.SortOrder
+  sessionId?: Prisma.SortOrder
+  endpoint?: Prisma.SortOrder
+  method?: Prisma.SortOrder
+  isCritical?: Prisma.SortOrder
+  retentionExpires?: Prisma.SortOrder
+  relatedEntityType?: Prisma.SortOrder
+  relatedEntityId?: Prisma.SortOrder
+  businessContext?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type AuditLogAvgOrderByAggregateInput = {
   entityId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  relatedEntityId?: Prisma.SortOrder
 }
 
 export type AuditLogMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
+  entityName?: Prisma.SortOrder
   action?: Prisma.SortOrder
+  severity?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  ipAddress?: Prisma.SortOrder
+  userAgent?: Prisma.SortOrder
+  requestId?: Prisma.SortOrder
+  sessionId?: Prisma.SortOrder
+  endpoint?: Prisma.SortOrder
+  method?: Prisma.SortOrder
+  isCritical?: Prisma.SortOrder
+  retentionExpires?: Prisma.SortOrder
+  relatedEntityType?: Prisma.SortOrder
+  relatedEntityId?: Prisma.SortOrder
+  businessContext?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -401,14 +721,30 @@ export type AuditLogMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
+  entityName?: Prisma.SortOrder
   action?: Prisma.SortOrder
+  severity?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  ipAddress?: Prisma.SortOrder
+  userAgent?: Prisma.SortOrder
+  requestId?: Prisma.SortOrder
+  sessionId?: Prisma.SortOrder
+  endpoint?: Prisma.SortOrder
+  method?: Prisma.SortOrder
+  isCritical?: Prisma.SortOrder
+  retentionExpires?: Prisma.SortOrder
+  relatedEntityType?: Prisma.SortOrder
+  relatedEntityId?: Prisma.SortOrder
+  businessContext?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type AuditLogSumOrderByAggregateInput = {
   entityId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  relatedEntityId?: Prisma.SortOrder
 }
 
 export type AuditLogListRelationFilter = {
@@ -419,6 +755,14 @@ export type AuditLogListRelationFilter = {
 
 export type AuditLogOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type EnumAuditActionFieldUpdateOperationsInput = {
+  set?: $Enums.AuditAction
+}
+
+export type EnumAuditSeverityFieldUpdateOperationsInput = {
+  set?: $Enums.AuditSeverity
 }
 
 export type AuditLogCreateNestedManyWithoutUserInput = {
@@ -467,9 +811,24 @@ export type AuditLogCreateWithoutUserInput = {
   id?: string
   entityType: string
   entityId: number
-  action: string
+  entityName?: string | null
+  action: $Enums.AuditAction
+  severity?: $Enums.AuditSeverity
+  username: string
   changes: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: string | null
+  userAgent?: string | null
+  requestId?: string | null
+  sessionId?: string | null
+  endpoint?: string | null
+  method?: string | null
+  isCritical?: boolean
+  retentionExpires?: Date | string | null
+  relatedEntityType?: string | null
+  relatedEntityId?: number | null
+  businessContext?: string | null
   createdAt?: Date | string
 }
 
@@ -477,9 +836,24 @@ export type AuditLogUncheckedCreateWithoutUserInput = {
   id?: string
   entityType: string
   entityId: number
-  action: string
+  entityName?: string | null
+  action: $Enums.AuditAction
+  severity?: $Enums.AuditSeverity
+  username: string
   changes: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: string | null
+  userAgent?: string | null
+  requestId?: string | null
+  sessionId?: string | null
+  endpoint?: string | null
+  method?: string | null
+  isCritical?: boolean
+  retentionExpires?: Date | string | null
+  relatedEntityType?: string | null
+  relatedEntityId?: number | null
+  businessContext?: string | null
   createdAt?: Date | string
 }
 
@@ -516,10 +890,25 @@ export type AuditLogScalarWhereInput = {
   id?: Prisma.StringFilter<"AuditLog"> | string
   entityType?: Prisma.StringFilter<"AuditLog"> | string
   entityId?: Prisma.IntFilter<"AuditLog"> | number
-  action?: Prisma.StringFilter<"AuditLog"> | string
+  entityName?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  action?: Prisma.EnumAuditActionFilter<"AuditLog"> | $Enums.AuditAction
+  severity?: Prisma.EnumAuditSeverityFilter<"AuditLog"> | $Enums.AuditSeverity
   userId?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  username?: Prisma.StringFilter<"AuditLog"> | string
   changes?: Prisma.JsonFilter<"AuditLog">
+  description?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   metadata?: Prisma.JsonNullableFilter<"AuditLog">
+  ipAddress?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  userAgent?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  requestId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  sessionId?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  endpoint?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  method?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  isCritical?: Prisma.BoolFilter<"AuditLog"> | boolean
+  retentionExpires?: Prisma.DateTimeNullableFilter<"AuditLog"> | Date | string | null
+  relatedEntityType?: Prisma.StringNullableFilter<"AuditLog"> | string | null
+  relatedEntityId?: Prisma.IntNullableFilter<"AuditLog"> | number | null
+  businessContext?: Prisma.StringNullableFilter<"AuditLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AuditLog"> | Date | string
 }
 
@@ -527,9 +916,24 @@ export type AuditLogCreateManyUserInput = {
   id?: string
   entityType: string
   entityId: number
-  action: string
+  entityName?: string | null
+  action: $Enums.AuditAction
+  severity?: $Enums.AuditSeverity
+  username: string
   changes: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: string | null
+  userAgent?: string | null
+  requestId?: string | null
+  sessionId?: string | null
+  endpoint?: string | null
+  method?: string | null
+  isCritical?: boolean
+  retentionExpires?: Date | string | null
+  relatedEntityType?: string | null
+  relatedEntityId?: number | null
+  businessContext?: string | null
   createdAt?: Date | string
 }
 
@@ -537,9 +941,24 @@ export type AuditLogUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.IntFieldUpdateOperationsInput | number
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  entityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+  severity?: Prisma.EnumAuditSeverityFieldUpdateOperationsInput | $Enums.AuditSeverity
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   changes?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endpoint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  method?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isCritical?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  retentionExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  relatedEntityType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedEntityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessContext?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -547,9 +966,24 @@ export type AuditLogUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.IntFieldUpdateOperationsInput | number
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  entityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+  severity?: Prisma.EnumAuditSeverityFieldUpdateOperationsInput | $Enums.AuditSeverity
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   changes?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endpoint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  method?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isCritical?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  retentionExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  relatedEntityType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedEntityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessContext?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -557,9 +991,24 @@ export type AuditLogUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.IntFieldUpdateOperationsInput | number
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  entityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  action?: Prisma.EnumAuditActionFieldUpdateOperationsInput | $Enums.AuditAction
+  severity?: Prisma.EnumAuditSeverityFieldUpdateOperationsInput | $Enums.AuditSeverity
+  username?: Prisma.StringFieldUpdateOperationsInput | string
   changes?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  ipAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  endpoint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  method?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isCritical?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  retentionExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  relatedEntityType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedEntityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessContext?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -569,10 +1018,25 @@ export type AuditLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   id?: boolean
   entityType?: boolean
   entityId?: boolean
+  entityName?: boolean
   action?: boolean
+  severity?: boolean
   userId?: boolean
+  username?: boolean
   changes?: boolean
+  description?: boolean
   metadata?: boolean
+  ipAddress?: boolean
+  userAgent?: boolean
+  requestId?: boolean
+  sessionId?: boolean
+  endpoint?: boolean
+  method?: boolean
+  isCritical?: boolean
+  retentionExpires?: boolean
+  relatedEntityType?: boolean
+  relatedEntityId?: boolean
+  businessContext?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }, ExtArgs["result"]["auditLog"]>
@@ -581,10 +1045,25 @@ export type AuditLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   id?: boolean
   entityType?: boolean
   entityId?: boolean
+  entityName?: boolean
   action?: boolean
+  severity?: boolean
   userId?: boolean
+  username?: boolean
   changes?: boolean
+  description?: boolean
   metadata?: boolean
+  ipAddress?: boolean
+  userAgent?: boolean
+  requestId?: boolean
+  sessionId?: boolean
+  endpoint?: boolean
+  method?: boolean
+  isCritical?: boolean
+  retentionExpires?: boolean
+  relatedEntityType?: boolean
+  relatedEntityId?: boolean
+  businessContext?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }, ExtArgs["result"]["auditLog"]>
@@ -593,10 +1072,25 @@ export type AuditLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   id?: boolean
   entityType?: boolean
   entityId?: boolean
+  entityName?: boolean
   action?: boolean
+  severity?: boolean
   userId?: boolean
+  username?: boolean
   changes?: boolean
+  description?: boolean
   metadata?: boolean
+  ipAddress?: boolean
+  userAgent?: boolean
+  requestId?: boolean
+  sessionId?: boolean
+  endpoint?: boolean
+  method?: boolean
+  isCritical?: boolean
+  retentionExpires?: boolean
+  relatedEntityType?: boolean
+  relatedEntityId?: boolean
+  businessContext?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }, ExtArgs["result"]["auditLog"]>
@@ -605,14 +1099,29 @@ export type AuditLogSelectScalar = {
   id?: boolean
   entityType?: boolean
   entityId?: boolean
+  entityName?: boolean
   action?: boolean
+  severity?: boolean
   userId?: boolean
+  username?: boolean
   changes?: boolean
+  description?: boolean
   metadata?: boolean
+  ipAddress?: boolean
+  userAgent?: boolean
+  requestId?: boolean
+  sessionId?: boolean
+  endpoint?: boolean
+  method?: boolean
+  isCritical?: boolean
+  retentionExpires?: boolean
+  relatedEntityType?: boolean
+  relatedEntityId?: boolean
+  businessContext?: boolean
   createdAt?: boolean
 }
 
-export type AuditLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "entityType" | "entityId" | "action" | "userId" | "changes" | "metadata" | "createdAt", ExtArgs["result"]["auditLog"]>
+export type AuditLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "entityType" | "entityId" | "entityName" | "action" | "severity" | "userId" | "username" | "changes" | "description" | "metadata" | "ipAddress" | "userAgent" | "requestId" | "sessionId" | "endpoint" | "method" | "isCritical" | "retentionExpires" | "relatedEntityType" | "relatedEntityId" | "businessContext" | "createdAt", ExtArgs["result"]["auditLog"]>
 export type AuditLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.AuditLog$userArgs<ExtArgs>
 }
@@ -632,10 +1141,25 @@ export type $AuditLogPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     id: string
     entityType: string
     entityId: number
-    action: string
+    entityName: string | null
+    action: $Enums.AuditAction
+    severity: $Enums.AuditSeverity
     userId: number | null
+    username: string
     changes: runtime.JsonValue
+    description: string | null
     metadata: runtime.JsonValue | null
+    ipAddress: string | null
+    userAgent: string | null
+    requestId: string | null
+    sessionId: string | null
+    endpoint: string | null
+    method: string | null
+    isCritical: boolean
+    retentionExpires: Date | null
+    relatedEntityType: string | null
+    relatedEntityId: number | null
+    businessContext: string | null
     createdAt: Date
   }, ExtArgs["result"]["auditLog"]>
   composites: {}
@@ -1064,10 +1588,25 @@ export interface AuditLogFieldRefs {
   readonly id: Prisma.FieldRef<"AuditLog", 'String'>
   readonly entityType: Prisma.FieldRef<"AuditLog", 'String'>
   readonly entityId: Prisma.FieldRef<"AuditLog", 'Int'>
-  readonly action: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly entityName: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly action: Prisma.FieldRef<"AuditLog", 'AuditAction'>
+  readonly severity: Prisma.FieldRef<"AuditLog", 'AuditSeverity'>
   readonly userId: Prisma.FieldRef<"AuditLog", 'Int'>
+  readonly username: Prisma.FieldRef<"AuditLog", 'String'>
   readonly changes: Prisma.FieldRef<"AuditLog", 'Json'>
+  readonly description: Prisma.FieldRef<"AuditLog", 'String'>
   readonly metadata: Prisma.FieldRef<"AuditLog", 'Json'>
+  readonly ipAddress: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly userAgent: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly requestId: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly sessionId: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly endpoint: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly method: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly isCritical: Prisma.FieldRef<"AuditLog", 'Boolean'>
+  readonly retentionExpires: Prisma.FieldRef<"AuditLog", 'DateTime'>
+  readonly relatedEntityType: Prisma.FieldRef<"AuditLog", 'String'>
+  readonly relatedEntityId: Prisma.FieldRef<"AuditLog", 'Int'>
+  readonly businessContext: Prisma.FieldRef<"AuditLog", 'String'>
   readonly createdAt: Prisma.FieldRef<"AuditLog", 'DateTime'>
 }
     

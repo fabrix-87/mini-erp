@@ -1,16 +1,18 @@
-import z from "zod";
+import { z } from "zod";
 import {
-  CreditCheckStatusSchema,
-  CustomerPrioritySchema,
-  CustomerSegmentSchema,
-  CustomerSizeSchema,
-  CustomerTypeSchema,
-  LeadStatusSchema,
+  creditCheckStatusSchema,
+  customerPrioritySchema,
+  customerSegmentSchema,
+  customerSizeSchema,
+  customerTypeSchema,  
 } from "../validators";
 
-export type CustomerType = z.infer<typeof CustomerTypeSchema>;
-export type CustomerPriority = z.infer<typeof CustomerPrioritySchema>;
-export type CustomerSegment = z.infer<typeof CustomerSegmentSchema>;
-export type LeadStatus = z.infer<typeof LeadStatusSchema>;
-export type CreditCheckStatus = z.infer<typeof CreditCheckStatusSchema>;
-export type CustomerSize = z.infer<typeof CustomerSizeSchema>;
+// ============================================================================
+// ENUM TYPES
+// ============================================================================
+
+export type CustomerType = z.infer<typeof customerTypeSchema>;
+export type CustomerPriority = z.infer<typeof customerPrioritySchema>;
+export type CustomerSegment = z.infer<typeof customerSegmentSchema>;
+export type CreditCheckStatus = z.infer<typeof creditCheckStatusSchema>;
+export type CustomerSize = z.infer<typeof customerSizeSchema>;

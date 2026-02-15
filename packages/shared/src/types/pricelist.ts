@@ -3,58 +3,73 @@
 // ============================================================================
 
 import { z } from "zod";
-import {
-  BulkImportBodySchema,
-  BulkPriceListIdParamSchema,
-  CalculatePriceBodySchema,
-  CreatePriceListItemSchema,
-  CreatePriceListSchema,
-  PriceListIdParamSchema,
-  PriceListItemIdParamSchema,
-  PriceListItemQuerySchema,
-  PriceListQuerySchema,
-  UpdatePriceListItemSchema,
-  UpdatePriceListSchema,
-} from "../validators";
 import { Customer } from "./customer";
+import {
+  bulkImportBodySchema,
+  bulkPriceListIdParamSchema,
+  calculatePriceBodySchema,
+  createPriceListItemSchema,
+  createPriceListSchema,
+  priceListIdParamSchema,
+  priceListItemIdParamSchema,
+  priceListItemQuerySchema,
+  priceListQuerySchema,
+  updatePriceListItemSchema,
+  updatePriceListSchema,
+} from "../validators";
 
-// Entity Types
+// ============================================================================
+// ENTITY TYPES
+// ============================================================================
+
+/**
+ * PriceList entity
+ */
 export type PriceList = CreatePriceListItemInput & {
-    id: number;
-    parentList?: PriceList[];
-    customers?: Customer[];
-    items?: PriceListItem[];
+  id: number;
+  parentList?: PriceList[];
+  customers?: Customer[];
+  items?: PriceListItem[];
 
-    createdAt: Date;
-    updatedAt: Date;
-}
+  createdAt: Date;
+  updatedAt: Date;
+};
 
+/**
+ * PriceListItem entity
+ */
 export type PriceListItem = CreatePriceListItemInput & {
-    id: number;
-    PriceList: PriceList;
-    variant?: any;      // TODO PRODUCT
+  id: number;
+  PriceList: PriceList;
+  variant?: any; // TODO PRODUCT
 
-    createdAt: Date;
-    updatedAt: Date;
-}
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-// Input Types
-export type CreatePriceListInput = z.infer<typeof CreatePriceListSchema>;
-export type UpdatePriceListInput = z.infer<typeof UpdatePriceListSchema>;
+// ============================================================================
+// INPUT TYPES (using z.infer)
+// ============================================================================
+export type CreatePriceListInput = z.infer<typeof createPriceListSchema>;
+export type UpdatePriceListInput = z.infer<typeof updatePriceListSchema>;
 export type CreatePriceListItemInput = z.infer<
-  typeof CreatePriceListItemSchema
+  typeof createPriceListItemSchema
 >;
 export type UpdatePriceListItemInput = z.infer<
-  typeof UpdatePriceListItemSchema
+  typeof updatePriceListItemSchema
 >;
-export type BulkImportInput = z.infer<typeof BulkImportBodySchema>;
-export type CalculatePriceInput = z.infer<typeof CalculatePriceBodySchema>;
+export type BulkImportInput = z.infer<typeof bulkImportBodySchema>;
+export type CalculatePriceInput = z.infer<typeof calculatePriceBodySchema>;
 
-// Query Types
-export type PriceListQueryInput = z.infer<typeof PriceListQuerySchema>;
-export type PriceListItemQueryInput = z.infer<typeof PriceListItemQuerySchema>;
+// ============================================================================
+// QUERY TYPES (using z.infer)
+// ============================================================================
+export type PriceListQueryInput = z.infer<typeof priceListQuerySchema>;
+export type PriceListItemQueryInput = z.infer<typeof priceListItemQuerySchema>;
 
-// Param Types
-export type PriceListIdParam = z.infer<typeof PriceListIdParamSchema>
-export type PriceListItemIdParam = z.infer<typeof PriceListItemIdParamSchema>
-export type BulkPriceListIdParam = z.infer<typeof BulkPriceListIdParamSchema>
+// ============================================================================
+// PARAM TYPES (using z.infer)
+// ============================================================================
+export type PriceListIdParam = z.infer<typeof priceListIdParamSchema>;
+export type PriceListItemIdParam = z.infer<typeof priceListItemIdParamSchema>;
+export type BulkPriceListIdParam = z.infer<typeof bulkPriceListIdParamSchema>;

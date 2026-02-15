@@ -1,10 +1,9 @@
 // packages/shared/src/validators/role.ts
-import {z} from "zod";
+import { z } from "zod";
 import { createIdSchema } from "./primitives/id";
 import { queryBooleanSchema } from "./query/params";
 import { sortOrderSchema } from "./query/pagination";
 import { userIdSchema } from "./base";
-
 
 // ============================================================================
 // BASE SCHEMAS
@@ -30,7 +29,7 @@ export const permissionIdSchema = createIdSchema("ID permesso non valido");
 /**
  * Schema per validare ID permesso nei params
  */
-export const PermissionIdParamSchema = z.object({
+export const permissionIdParamSchema = z.object({
   id: permissionIdSchema,
 });
 
@@ -44,7 +43,7 @@ export const roleCodeSchema = z
   .toUpperCase()
   .regex(
     /^[A-Z0-9_]+$/,
-    "Il codice può contenere solo lettere maiuscole, numeri e underscore"
+    "Il codice può contenere solo lettere maiuscole, numeri e underscore",
   );
 
 /**
@@ -137,7 +136,7 @@ const permissionCodeSchema = z
   .toLowerCase()
   .regex(
     /^[a-z0-9_:]+$/,
-    "Il codice può contenere solo lettere minuscole, numeri, underscore e due punti"
+    "Il codice può contenere solo lettere minuscole, numeri, underscore e due punti",
   )
   .refine(
     (code) => {
@@ -147,7 +146,7 @@ const permissionCodeSchema = z
     {
       message:
         "Il codice deve seguire il formato resource:action (es. product:read)",
-    }
+    },
   );
 
 /**
@@ -209,9 +208,7 @@ export const permissionQuerySchema = z.object({
 export const assignRolesToUserSchema = z
   .object({
     userId: userIdSchema,
-    roleIds: z
-      .array(roleIdSchema)
-      .min(1, "Almeno un ruolo è richiesto"),
+    roleIds: z.array(roleIdSchema).min(1, "Almeno un ruolo è richiesto"),
   })
   .strict();
 
@@ -229,10 +226,12 @@ export const checkPermissionSchema = z
 // FRONTEND SCHEMAS
 // ============================================================================
 
-export const userRoleSchema = createRoleSchema.extend({
-  id: roleIdSchema,
-}).omit({
-  description: true,
-  isDefault: true,
-  permissionIds: true,
-});
+export const userRoleSchema = createRoleSchema
+  .extend({
+    id: roleIdSchema,
+  })
+  .omit({
+    description: true,
+    isDefault: true,
+    permissionIds: true,
+  });

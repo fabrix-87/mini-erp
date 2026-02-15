@@ -5,11 +5,11 @@ import { createDecimalSchema } from "./primitives/decimal";
 import { limitSchema, pageSchema } from "./query/pagination";
 import { queryBooleanSchema } from "./query/params";
 
-export const CurrencyCodeSchema = z.object({
+export const currencyCodeSchema = z.object({
   code: currencyCodeBaseSchema,
 });
 
-export const CreateCurrencySchema = z.object({
+export const createCurrencySchema = z.object({
   code: currencyCodeBaseSchema,
 
   // Identificazione
@@ -41,14 +41,14 @@ export const CreateCurrencySchema = z.object({
   countryCode: countryCodeBaseSchema.optional(),
 });
 
-export const CurrencyTranslationSchema = z.object({
+export const currencyTranslationSchema = z.object({
   currencyId: createIdSchema("CurrencyId obbligatorio"),
   languageId: createIdSchema("LanguageId obbligatorio"),
   name: z.string("Nome valuta obbligatorio").max(100),
   namePlural: z.string("Nome plurale valuta obbligatorio").max(100),
 });
 
-export const CurrencyQuerySchema = z.object({
+export const currencyQuerySchema = z.object({
   search: z.string().optional().nullable(),
   page: pageSchema,
   limit: limitSchema,

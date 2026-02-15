@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { ContactSortFieldSchema } from "../validators";
+import { contactSortFieldSchema } from "../validators";
 
 /**
  * Campi ordinabili per Contact
  */
-export type ContactSortField = z.infer<typeof ContactSortFieldSchema>;
+export type ContactSortField = z.infer<typeof contactSortFieldSchema>;

@@ -1,9 +1,20 @@
 // packages/shared/src/validators/user.ts
 import { z } from "zod";
-import { createIdSchema, dateStringSchema, emailSchema, phoneSchema } from "./primitives";
-import { userIdSchema } from "./base";
+import {
+  createIdSchema,
+  dateStringSchema,
+  emailSchema,
+  phoneSchema,
+  urlSchema,
+} from "./primitives";
+import { countryCodeBaseSchema, userIdSchema } from "./base";
 import { roleIdSchema, userRoleSchema } from "./role";
-import { limitSchema, pageSchema, queryBooleanSchema, sortOrderSchema } from "./query";
+import {
+  limitSchema,
+  pageSchema,
+  queryBooleanSchema,
+  sortOrderSchema,
+} from "./query";
 
 // ============================================================================
 // ENUMS
@@ -27,7 +38,7 @@ export const usernameSchema = z
   .max(50, "Username troppo lungo")
   .regex(
     /^[a-zA-Z0-9_]+$/,
-    "Username può contenere solo lettere, numeri e underscore"
+    "Username può contenere solo lettere, numeri e underscore",
   );
 
 export const passwordSchema = z
@@ -36,7 +47,7 @@ export const passwordSchema = z
   .max(255, "Password troppo lunga")
   .regex(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-    "Password deve contenere maiuscola, minuscola e numero"
+    "Password deve contenere maiuscola, minuscola e numero",
   );
 
 /**
@@ -47,7 +58,7 @@ export const userBaseSchema = z.object({
   email: emailSchema(),
   password: passwordSchema,
   active: z.boolean().default(true),
-  preferredLanguageId: createIdSchema('Language ID obbligatorio'),
+  preferredLanguageId: createIdSchema("Language ID obbligatorio"),
 });
 
 // ============================================================================
@@ -57,7 +68,7 @@ export const userBaseSchema = z.object({
 export const userDetailsSchema = z.object({
   firstName: z.string().max(100, "Nome troppo lungo").optional(),
   lastName: z.string().max(100, "Cognome troppo lungo").optional(),
-  profilePicture: z.url("URL non valido").optional().nullable(),
+  profilePicture: urlSchema(),
   phone: phoneSchema,
 
   // Address
@@ -66,7 +77,7 @@ export const userDetailsSchema = z.object({
   state: z.string().max(100, "Provincia troppo lungo").optional().nullable(),
   zipCode: z.string().max(20, "CAP troppo lungo").optional().nullable(),
   // TODO: Modificare il campo country con CountryCode ed associarlo alla tabella Country
-  country: z.string().max(100, "Paese troppo lungo").optional().nullable(),
+  country: countryCodeBaseSchema.optional().nullable(),
 
   // Personal
   dateOfBirth: dateStringSchema({
@@ -83,7 +94,6 @@ export const userDetailsSchema = z.object({
   }),
   gender: genderSchema.default("PREFER_NOT_TO_SAY"),
   bio: z.string().max(1000, "Biografia troppo lunga").optional().nullable(),
-  lastLogin: dateStringSchema({max: new Date()}).default(new Date())
 });
 
 // ============================================================================
@@ -91,13 +101,15 @@ export const userDetailsSchema = z.object({
 // ============================================================================
 
 // Estendi lo schema con i campi aggiuntivi
-export const userSchema = userBaseSchema.extend({
-  id: userIdSchema,
-  roles: z.array(userRoleSchema).optional(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  details: userDetailsSchema.optional(),
-}).omit({ password: true }); // Rimuovi password dal type pubblico
+export const userSchema = userBaseSchema
+  .extend({
+    id: userIdSchema,
+    roles: z.array(userRoleSchema).optional(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+    details: userDetailsSchema.optional(),
+  })
+  .omit({ password: true }); // Rimuovi password dal type pubblico
 
 // ============================================================================
 // FORM SCHEMAS (Frontend)
@@ -150,6 +162,15 @@ export const userIdAsUserIdParamSchema = z.object({
 export const loginSchema = z.object({
   email: emailSchema(),
   password: z.string().min(1, "Password obbligatoria"),
+  twoFactorCode: z.string().length(6).optional(), // TOTP code
+});
+
+/**
+ * Schema per login con 2FA
+ */
+export const twoFactorLoginSchema = z.object({
+  token: z.string().min(1, "Token obbligatorio"), // Temporary token from first login step
+  code: z.string().length(6, "Codice 2FA deve essere 6 cifre"),
 });
 
 /**
@@ -173,6 +194,53 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
+/**
+ * Schema per verifica email
+ */
+export const verifyEmailSchema = z.object({
+  token: z.string().length(64, "Token non valido"),
+});
+
+/**
+ * Schema per reinvio email di verifica
+ */
+export const resendVerificationEmailSchema = z.object({
+  email: emailSchema(),
+});
+
+// ============================================================================
+// TWO-FACTOR AUTHENTICATION SCHEMAS
+// ============================================================================
+
+/**
+ * Schema per abilitare 2FA
+ */
+export const enableTwoFactorSchema = z.object({
+  password: z.string().min(1, "Password obbligatoria per verifica"),
+});
+
+/**
+ * Schema per confermare attivazione 2FA
+ */
+export const confirmTwoFactorSchema = z.object({
+  code: z.string().length(6, "Codice deve essere 6 cifre"),
+});
+
+/**
+ * Schema per disabilitare 2FA
+ */
+export const disableTwoFactorSchema = z.object({
+  password: z.string().min(1, "Password obbligatoria per verifica"),
+  code: z.string().length(6, "Codice 2FA obbligatorio"),
+});
+
+/**
+ * Schema per rigenerare backup codes
+ */
+export const regenerateBackupCodesSchema = z.object({
+  password: z.string().min(1, "Password obbligatoria per verifica"),
+});
+
 // ============================================================================
 // CREATION SCHEMAS
 // ============================================================================
@@ -181,7 +249,7 @@ export const resetPasswordSchema = z
  * Schema per la creazione di un nuovo utente
  */
 export const createUserSchema = userBaseSchema.extend({
-  details: userDetailsSchema,
+  details: userDetailsSchema.partial(),
   roleIds: z
     .array(roleIdSchema)
     .min(1, "Deve essere assegnato almeno un ruolo")
@@ -191,11 +259,12 @@ export const createUserSchema = userBaseSchema.extend({
 /**
  * Schema semplificato per registrazione pubblica
  */
-export const registerUserSchema = userBaseSchema.pick({
-  username: true,
-  email: true,
-  password: true,
-})
+export const registerUserSchema = userBaseSchema
+  .pick({
+    username: true,
+    email: true,
+    password: true,
+  })
   .extend({
     confirmPassword: z.string(),
     details: userDetailsSchema.pick({
@@ -219,7 +288,9 @@ export const updateUserProfileSchema = z.object({
   username: userBaseSchema.shape.username.optional(),
   email: userBaseSchema.shape.email.optional(),
   active: z.boolean().optional(),
-  preferredLanguageId: z.number().int().positive().optional().nullable(),
+  preferredLanguageId: createIdSchema("Language ID non valido")
+    .optional()
+    .nullable(),
   details: userDetailsSchema.partial().optional(),
 });
 
@@ -243,7 +314,7 @@ export const changePasswordSchema = z
     {
       message: "Le password non corrispondono",
       path: ["confirmPassword"],
-    }
+    },
   );
 
 /**
@@ -258,8 +329,15 @@ export const updateUserRolesSchema = z.object({
 /**
  * Schema per attivare/disattivare un utente
  */
-export const yoggleUserStatusSchema = z.object({
+export const toggleUserStatusSchema = z.object({
   active: z.boolean(),
+});
+
+/**
+ * Schema per sbloccare utente
+ */
+export const unlockUserSchema = z.object({
+  reason: z.string().max(500).optional().nullable(),
 });
 
 // ============================================================================
@@ -274,7 +352,39 @@ export const userQuerySchema = z.object({
   limit: limitSchema,
   search: z.string().optional(),
   active: queryBooleanSchema,
-  roleId: createIdSchema('RoleId non valido').optional(),
-  sortBy: z.enum(["createdAt", "username", "email"]).default("createdAt"),
+  emailVerified: queryBooleanSchema,
+  twoFactorEnabled: queryBooleanSchema,
+  locked: queryBooleanSchema, // Users with lockedUntil > now
+  roleId: createIdSchema("RoleId non valido").optional(),
+  sortBy: z
+    .enum(["createdAt", "username", "email", "lastLogin"])
+    .default("createdAt"),
   sortOrder: sortOrderSchema,
+});
+
+// ============================================================================
+// SECURITY SCHEMAS
+// ============================================================================
+
+/**
+ * Schema per consent GDPR
+ */
+export const updateConsentSchema = z.object({
+  consentGiven: z.boolean(),
+});
+
+/**
+ * Schema per richiedere download dati GDPR
+ */
+export const requestDataExportSchema = z.object({
+  includeRelatedData: z.boolean().default(true),
+  format: z.enum(["json", "csv"]).default("json"),
+});
+
+/**
+ * Schema per richiedere cancellazione account (GDPR)
+ */
+export const requestAccountDeletionSchema = z.object({
+  password: z.string().min(1, "Password obbligatoria per conferma"),
+  reason: z.string().max(500).optional().nullable(),
 });

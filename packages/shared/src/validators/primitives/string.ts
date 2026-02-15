@@ -23,8 +23,8 @@ export const phoneSchema = z
 /**
  * Schema per URL (Zod v4)
  */
-export const urlSchema = (required = false) => {
-  const baseSchema = z.url("URL non valido");
+export const urlSchema = (required = false, max = 500) => {
+  const baseSchema = z.url("URL non valido").max(max, `URL max ${max} caratteri`);
 
   return required ? baseSchema : baseSchema.optional().nullable();
 };

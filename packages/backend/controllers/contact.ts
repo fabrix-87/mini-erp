@@ -5,7 +5,7 @@ import asyncHandler from "../middleware/async-handler";
 import { AuthenticatedValidatedRequest } from "../types/validate";
 import {
   CheckMailInput,
-  CompanyIdAsCompanyIdInput,
+  CompanyIdAsCompanyIdParam,
   ContactIdInput,
   ContactQueryInput,
   CreateContactInput,
@@ -64,7 +64,7 @@ export const getAllContacts = asyncHandler(
     ]);
 
     res.json(formatPaginatedResponse(contacts, totalCount, page, limit));
-  }
+  },
 );
 
 export const getContactById = asyncHandler(
@@ -79,7 +79,7 @@ export const getContactById = asyncHandler(
       return;
     }
     res.json({ success: true, data: contact });
-  }
+  },
 );
 
 export const createContact = asyncHandler(
@@ -116,7 +116,7 @@ export const createContact = asyncHandler(
     res
       .status(201)
       .json({ success: true, message: "Contatto creato", data: contact });
-  }
+  },
 );
 
 export const updateContact = asyncHandler(
@@ -144,7 +144,7 @@ export const updateContact = asyncHandler(
       data,
     });
     res.json({ success: true, message: "Contatto aggiornato", data: contact });
-  }
+  },
 );
 
 export const toggleContactActive = asyncHandler(
@@ -160,7 +160,7 @@ export const toggleContactActive = asyncHandler(
       message: `Contatto ${active ? "attivato" : "disattivato"}`,
       data: contact,
     });
-  }
+  },
 );
 
 export const setPrimaryContact = asyncHandler(
@@ -190,7 +190,7 @@ export const setPrimaryContact = asyncHandler(
       message: "Contatto primario impostato",
       data: updated,
     });
-  }
+  },
 );
 
 export const deleteContact = asyncHandler(
@@ -216,7 +216,7 @@ export const deleteContact = asyncHandler(
 
     await prisma.contact.delete({ where: { id } });
     res.json({ success: true, message: "Contatto eliminato" });
-  }
+  },
 );
 
 export const checkEmail = asyncHandler(
@@ -240,12 +240,12 @@ export const checkEmail = asyncHandler(
       });
     }
     return;
-  }
+  },
 );
 
 export const getContactsByCompany = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { companyId } = req.validatedParams as CompanyIdAsCompanyIdInput;
+    const { companyId } = req.validatedParams as CompanyIdAsCompanyIdParam;
 
     // Verifica che la company esista
     const company = await prisma.company.findUnique({
@@ -282,12 +282,12 @@ export const getContactsByCompany = asyncHandler(
       data: Contacts,
       message: "Contatti recuperati con successo",
     });
-  }
+  },
 );
 
 export const getPrimaryContactByCompany = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { companyId } = req.validatedParams as CompanyIdAsCompanyIdInput;
+    const { companyId } = req.validatedParams as CompanyIdAsCompanyIdParam;
 
     // Verifica che la company esista
     const company = await prisma.company.findUnique({
@@ -333,5 +333,5 @@ export const getPrimaryContactByCompany = asyncHandler(
       data: primaryContact,
       message: "Contatto primario recuperato con successo",
     });
-  }
+  },
 );

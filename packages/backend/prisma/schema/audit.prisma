@@ -1,0 +1,138 @@
+// ============================================================================
+// AUDIT LOG & COMPLIANCE
+// ============================================================================
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  VIEW        // Per log accessi a dati sensibili
+  EXPORT      // Per log export dati
+  APPROVE     // Per workflow approval
+  REJECT      // Per workflow rejection
+  LOCK        // Lock/unlock
+  UNLOCK
+  ARCHIVE     // Archive/restore
+  RESTORE
+  SEND        // Per documenti inviati
+  RECEIVE     // Per documenti ricevuti
+  LOGIN       // Login/logout eventi
+  LOGOUT
+  PASSWORD_CHANGE
+  PERMISSION_CHANGE
+}
+
+enum AuditSeverity {
+  INFO        // Azioni normali
+  WARNING     // Azioni che richiedono attenzione
+  ERROR       // Errori di sistema
+  CRITICAL    // Violazioni di sicurezza, tentativi non autorizzati
+}
+
+// Log modifiche per compliance
+model AuditLog {
+  id String @id @default(uuid())
+
+  // === ENTITY INFORMATION ===
+  entityType String @db.VarChar(50) // "Product", "Document", "Customer"
+  entityId   Int // ID dell'entità modificata
+  entityName String? @db.VarChar(255) // Nome/descrizione dell'entità per facilità di lettura
+
+  // === ACTION ===
+  action   AuditAction
+  severity AuditSeverity @default(INFO)
+
+  // === USER INFORMATION ===
+  userId   Int?
+  user     User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  username String @db.VarChar(50) // Snapshot dello username (anche se user viene cancellato)
+
+  // === CHANGE DETAILS ===
+  // Struttura: {field: {old: x, new: y}}
+  changes Json
+
+  // Descrizione human-readable dell'azione
+  description String? @db.Text
+
+  // === METADATA ===
+  // IP address, user agent, session ID, etc.
+  metadata Json?
+
+  // Request context
+  ipAddress  String? @db.VarChar(45) // IPv6 max length
+  userAgent  String? @db.VarChar(500)
+  requestId  String? @db.VarChar(100) // Per tracciare request distribuite
+  sessionId  String? @db.VarChar(100)
+
+  // API/Route information
+  endpoint  String? @db.VarChar(255) // API endpoint chiamato
+  method    String? @db.VarChar(10) // HTTP method (GET, POST, etc.)
+  
+  // === COMPLIANCE & RETENTION ===
+  // Per GDPR/compliance - indica se questo log è critico e non può essere cancellato
+  isCritical       Boolean  @default(false)
+  retentionExpires DateTime? // Quando può essere cancellato per policy di retention
+
+  // === CONTEXT ===
+  // Per azioni che coinvolgono più entità correlate
+  relatedEntityType String? @db.VarChar(50)
+  relatedEntityId   Int?
+
+  // Business context
+  businessContext String? @db.VarChar(100) // Es. "Invoice #2024-001", "Order #12345"
+
+  // === TIMESTAMP ===
+  createdAt DateTime @default(now())
+
+  // === INDICES ===
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([username])
+  @@index([action])
+  @@index([severity])
+  @@index([createdAt])
+  @@index([ipAddress])
+  @@index([retentionExpires])
+  @@index([entityType, entityId, action]) // Composite per query specifiche
+  @@index([userId, createdAt]) // Per user activity timeline
+}
+
+// ============================================================================
+// SECURITY EVENTS (Estensione opzionale per eventi di sicurezza)
+// ============================================================================
+
+model SecurityEvent {
+  id String @id @default(uuid())
+
+  eventType String @db.VarChar(50) // "failed_login", "suspicious_activity", "unauthorized_access"
+  severity  AuditSeverity @default(WARNING)
+
+  userId   Int?
+  user     User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  username String? @db.VarChar(50)
+  email    String? @db.VarChar(255)
+
+  ipAddress   String  @db.VarChar(45)
+  userAgent   String? @db.VarChar(500)
+  location    String? @db.VarChar(255) // Geolocation (city, country)
+  
+  description String  @db.Text
+  details     Json? // Dettagli aggiuntivi dell'evento
+
+  // Azione intrapresa
+  actionTaken String? @db.VarChar(100) // "blocked", "alerted", "logged"
+  
+  // Se è stato risolto/gestito
+  resolved   Boolean   @default(false)
+  resolvedAt DateTime?
+  resolvedBy Int?
+
+  createdAt DateTime @default(now())
+
+  @@index([eventType])
+  @@index([userId])
+  @@index([ipAddress])
+  @@index([severity])
+  @@index([resolved])
+  @@index([createdAt])
+}

@@ -1,10 +1,14 @@
 import { z } from "zod";
 import {
-  OpportunitySortFieldSchema,
-  OpportunityStatusSchema,
-  SalesStageSchema,
+  opportunitySourceSchema,
+  opportunityStatusSchema,
+  salesStageSchema,
 } from "../validators";
 
-export type OpportunityStatus = z.infer<typeof OpportunityStatusSchema>;
-export type SalesStage = z.infer<typeof SalesStageSchema>;
-export type OpportunitySortField = z.infer<typeof OpportunitySortFieldSchema>;
+// ============================================================================
+// ENUM TYPES
+// ============================================================================
+
+export type OpportunityStatus = z.infer<typeof opportunityStatusSchema>;
+export type SalesStage = z.infer<typeof salesStageSchema>;
+export type OpportunitySource = z.infer<typeof opportunitySourceSchema>;

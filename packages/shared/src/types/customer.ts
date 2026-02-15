@@ -2,69 +2,164 @@
 // TYPE EXPORTS
 // ============================================================================
 
-import z from "zod";
+import {z} from "zod";
 import { Company } from "./company";
 import {
-  CreateCustomerSchema,
-  CustomerIdSchema,
-  CustomerQuerySchema,
-  UpdateCustomerCompanySchema,
-  UpdateCustomerSchema,
-  UpdateLeadStatusSchema,
-} from "../validators";
+  createCustomerSchema,
+  updateCustomerSchema,
+  updateCustomerCompanySchema,
+  customerQuerySchema,
+  customerIdSchema,
+} from "../validators/customer";
 import { Document } from "./document";
 import { Opportunity } from "./opportunity";
 import { Activity } from "./activity";
 import { TaxRule } from "./tax";
 import {
+  CreditCheckStatus,
+  CustomerPriority,
   CustomerSegment,
   CustomerType,
-  LeadStatus,
 } from "../constants/customer";
 import { PriceList } from "./pricelist";
 import { PaymentMethod } from "./payment";
+import Decimal from "decimal.js";
+import { User } from "./user";
+import { Lead } from "./lead";
 
-// Entity Types
-export type Customer = Omit<z.infer<typeof CreateCustomerSchema>, "company"> & {
+// ============================================================================
+// ENTITY TYPES
+// ============================================================================
+
+/**
+ * Customer entity
+ */
+export type Customer = Omit<CreateCustomerInput, "company"> & {
   id: number;
   companyId: number;
   company: Company;
   // Dati Commerciali
-  defaultPriceList?: PriceList;
-  customerTaxRule?: TaxRule;
-  paymentMethod?: PaymentMethod; 
-  // Tracking/Reportistica
-  firstSaleDate?: Date;
-  lastSaleDate?: Date;
-  totalSales: number;
-  totalRevenue: number;
-  // Relazioni a documenti di Vendita
+  defaultPriceList?: PriceList | null;
+  customerTaxRule?: TaxRule | null;
+  paymentMethod?: PaymentMethod | null;
+  // Relazioni a documenti e attività di Vendita
   documentsOut: Document[];
   opportunities: Opportunity[];
   activities: Activity[];
 
+  convertedFromLead?: Lead | null;
+  deletedBy?: number | null;
+  deletedByUser?: User | null;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
+  // Tracking fields from schema
+  firstSaleDate: Date | null;
+  lastSaleDate: Date | null;
+  totalSales: number;
+  totalRevenue: Decimal;
+  customerSince: Date | null;
+  lastInteractionAt: Date | null;
+  averageOrderValue: Decimal;
+  lifetimeValue: Decimal;
+  churnRisk: number;
+  healthScore: number;
+  npsScore: number | null;
+  satisfactionRate: Decimal | null;
+  lastSurveyDate: Date | null;
 };
 
-// Stats type
-export type CustomerStats = {
-  total: number;
-  byType: Record<CustomerType, number>;
-  bySegment: Record<CustomerSegment, number>;
-  byLeadStatus: Record<LeadStatus, number>;
-  totalRevenue: number;
-  avgOrderValue: number;
-};
+// ============================================================================
+// INPUT TYPES (using z.infer)
+// ============================================================================
 
-// Input Types
-export type CreateCustomerInput = z.infer<typeof CreateCustomerSchema>;
-export type UpdateCustomerInput = z.infer<typeof UpdateCustomerSchema>;
+export type CreateCustomerInput = z.infer<typeof createCustomerSchema>;
+export type UpdateCustomerInput = z.infer<typeof updateCustomerSchema>;
 export type UpdateCustomerCompanyInput = z.infer<
-  typeof UpdateCustomerCompanySchema
+  typeof updateCustomerCompanySchema
 >;
-export type UpdateLeadStatusInput = z.infer<typeof UpdateLeadStatusSchema>;
-// Query Types
-export type CustomerQueryInput = z.infer<typeof CustomerQuerySchema>;
-// Param Types
-export type CustomerIdInput = z.infer<typeof CustomerIdSchema>;
+
+// ============================================================================
+// QUERY TYPES (using z.infer)
+// ============================================================================
+
+export type CustomerQueryInput = z.infer<typeof customerQuerySchema>;
+
+// ============================================================================
+// PARAM TYPES (using z.infer)
+// ============================================================================
+
+export type CustomerIdParam = z.infer<typeof customerIdSchema>;
+
+// ============================================================================
+// UTILITY TYPES
+// ============================================================================
+
+/**
+ * Customer with company details
+ */
+export type CustomerWithCompany = Customer & {
+  company: Company;
+};
+
+/**
+ * Simplified customer for list views
+ */
+export type CustomerListItem = {
+  id: number;
+  companyId: number;
+  companyName: string;
+  tradeName: string | null;
+  type: CustomerType;
+  priority: CustomerPriority;
+  segment: CustomerSegment;
+  creditStatus: CreditCheckStatus;
+  totalSales: number;
+  totalRevenue: Decimal;
+  lastSaleDate: Date | null;
+  healthScore: number;
+  countryCode: string;
+};
+
+/**
+ * Customer statistics
+ */
+export interface CustomerStats {
+  totalCustomers: number;
+  activeCustomers: number;
+  newThisMonth: number;
+  totalRevenue: Decimal;
+  averageOrderValue: Decimal;
+  averageLifetimeValue: Decimal;
+  bySegment: Record<CustomerSegment, number>;
+  byPriority: Record<CustomerPriority, number>;
+  churnRate: number;
+}
+
+/**
+ * Customer health metrics
+ */
+export interface CustomerHealthMetrics {
+  customerId: number;
+  healthScore: number;
+  churnRisk: number;
+  lastInteractionDays: number;
+  daysSinceLastOrder: number;
+  orderFrequency: number;
+  averageOrderValue: Decimal;
+  totalRevenue: Decimal;
+  npsScore: number | null;
+  satisfactionRate: Decimal | null;
+}
+
+/**
+ * Customer conversion funnel
+ */
+export interface CustomerConversionFunnel {
+  leads: number;
+  prospects: number;
+  customers: number;
+  partners: number;
+  conversionRate: number;
+  averageConversionTime: number; // days
+}

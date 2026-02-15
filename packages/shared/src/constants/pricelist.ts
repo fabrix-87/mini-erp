@@ -1,10 +1,10 @@
 import { z } from "zod";
 import {
-  PriceListStrategySchema,
-  PriceListTypeSchema,
-  RoundingMethodSchema,
+  priceListStrategySchema,
+  priceListTypeSchema,
+  roundingMethodSchema,
 } from "../validators";
 
-export type PriceListType = z.infer<typeof PriceListTypeSchema>;
-export type PriceListStrategy = z.infer<typeof PriceListStrategySchema>;
-export type RoundingMethod = z.infer<typeof RoundingMethodSchema>;
+export type PriceListType = z.infer<typeof priceListTypeSchema>;
+export type PriceListStrategy = z.infer<typeof priceListStrategySchema>;
+export type RoundingMethod = z.infer<typeof roundingMethodSchema>;

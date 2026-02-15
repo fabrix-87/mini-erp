@@ -41,7 +41,7 @@ export type Activity = z.infer<typeof createActivitySchema> & {
   opportunity?: Opportunity;
   assignedUser: User;
   createdBy: User;
-  partecipants?: ActivityPartecipant[];
+  partecipants?: ActivityParticipant[];
   followUpActivity: Activity;
   followedUpBy: Activity[];
   createdAt: Date;
@@ -51,7 +51,7 @@ export type Activity = z.infer<typeof createActivitySchema> & {
 /**
  * Type ActivityPartecipant
  */
-export type ActivityPartecipant = z.infer<
+export type ActivityParticipant = z.infer<
   typeof createActivityParticipantSchema
 > & {
   id: number;
