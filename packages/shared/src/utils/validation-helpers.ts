@@ -1,4 +1,5 @@
 // packages/shared/src/utils/validation-helpers.ts
+import Decimal from "decimal.js";
 import { z } from "zod";
 
 /**
@@ -81,56 +82,66 @@ export const emailSchema = (message?: string) => {
 /**
  * Schema factory per numeri decimali con precisione configurabile
  * @param precision - Numero di decimali consentiti (default: 2)
- * @param options - Opzioni di validazione
+ * @param options - DecimalSchemaOptions - Opzioni di validazione
  */
+type DecimalSchemaOptions = {
+  min?: Decimal.Value;
+  max?: Decimal.Value;
+  positiveOnly?: boolean;
+  error?: string;
+  rounding?: Decimal.Rounding; // modalità arrotondamento
+  messages?: {
+    invalid?: string;
+    positive?: string;
+    min?: string;
+    max?: string;
+  };
+};
+
 export const createDecimalSchema = (
   precision: number = 2,
-  options?: {
-    min?: number;
-    max?: number;
-    positiveOnly?: boolean;
-    error?: string;
-  },
+  options?: DecimalSchemaOptions,
 ) => {
-  const regex = new RegExp(`^-?\\d+(\\.\\d{1,${precision}})?$`);
+  if (precision < 0 || !Number.isInteger(precision)) {
+    throw new Error("Precision deve essere un intero non negativo");
+  }
 
   return z
-    .union([
-      z
-        .string()
-        .regex(
-          regex,
-          options?.error ?? `Formato non valido (max ${precision} decimali)`,
-        ),
-      z.number(),
-    ])
-    .transform((val) => {
-      const num = typeof val === "string" ? parseFloat(val) : val;
-      // Arrotonda alla precisione specificata
-      const factor = Math.pow(10, precision);
-      return Math.round(num * factor) / factor;
+    .preprocess(
+      (val) => {
+        if (val === null || val === undefined || val === "") {
+          return undefined;
+        }
+        try {
+          return new Decimal(val as Decimal.Value);
+        } catch {
+          return val;
+        }
+      },
+      z.instanceof(Decimal, {
+        message: options?.messages?.invalid ?? "Valore decimale non valido",
+      }),
+    )
+    .transform((val) =>
+      val.toDecimalPlaces(
+        precision,
+        options?.rounding ?? Decimal.ROUND_HALF_UP,
+      ),
+    )
+    .refine((val) => !options?.positiveOnly || !val.isNegative(), {
+      message: options?.messages?.positive ?? "Il valore deve essere positivo",
+    })
+    .refine((val) => options?.min === undefined || !val.lessThan(options.min), {
+      message:
+        options?.messages?.min ??
+        `Il valore deve essere almeno ${options?.min}`,
     })
     .refine(
-      (val) => {
-        if (options?.positiveOnly && val < 0) return false;
-        if (options?.min !== undefined && val < options.min) return false;
-        if (options?.max !== undefined && val > options.max) return false;
-        return true;
-      },
+      (val) => options?.max === undefined || !val.greaterThan(options.max),
       {
-        message: options?.positiveOnly
-          ? "Il valore deve essere positivo"
-          : (options?.error ?? "Valore non valido"),
-      },
-    )
-    .refine(
-      (val) => {
-        // Verifica che non ci siano più decimali della precisione specificata
-        const factor = Math.pow(10, precision);
-        return (val * factor) % 1 < Number.EPSILON;
-      },
-      {
-        message: `Massimo ${precision} decimali consentiti`,
+        message:
+          options?.messages?.max ??
+          `Il valore non può superare ${options?.max}`,
       },
     );
 };
@@ -264,10 +275,10 @@ export const CreditLimitSchema = createDecimalSchema(2, {
 /**
  * Schema per percentuale (0-100)
  */
-export const PercentageSchema = z
-  .number()
-  .min(0, "La percentuale non può essere negativa")
-  .max(100, "La percentuale non può superare 100");
+export const PercentageSchema = createDecimalSchema(2, {
+  min: 0,
+  max: 100,
+});
 
 /**
  * Schema per direzione Ordinamento (asc, desc)
@@ -313,9 +324,12 @@ export const QueryBooleanSchema = z
 /**
  * Helper base per numeri da query string
  */
-export const queryNumberSchema = (errorMessage: string = "Valore numerico non valido") =>
+export const queryNumberSchema = (
+  errorMessage: string = "Valore numerico non valido",
+) =>
   z.preprocess(
-    (val) => (val === "" || val === null || val === undefined ? undefined : val),
+    (val) =>
+      val === "" || val === null || val === undefined ? undefined : val,
     z
       .unknown()
       .transform((val) => (val !== undefined ? Number(val) : undefined))
@@ -328,10 +342,11 @@ export const queryNumberSchema = (errorMessage: string = "Valore numerico non va
  * Helper per numeri positivi da query string
  */
 export const queryPositiveNumberSchema = (errorMessage?: string) =>
-  queryNumberSchema(errorMessage ?? "Valore deve essere un numero valido")
-    .refine((val) => val === undefined || val >= 0, {
-      message: errorMessage ?? "Valore deve essere >= 0",
-    });
+  queryNumberSchema(
+    errorMessage ?? "Valore deve essere un numero valido",
+  ).refine((val) => val === undefined || val >= 0, {
+    message: errorMessage ?? "Valore deve essere >= 0",
+  });
 
 /**
  * Helper per percentuali da query string (0-100)
@@ -346,9 +361,14 @@ export const queryPercentageSchema = (errorMessage?: string) =>
 /**
  * Helper per range di numeri da query string
  */
-export const queryNumberRangeSchema = (min: number, max: number, errorMessage?: string) =>
-  queryNumberSchema(errorMessage ?? "Valore non valido")
-    .refine((val) => val === undefined || (val >= min && val <= max), {
+export const queryNumberRangeSchema = (
+  min: number,
+  max: number,
+  errorMessage?: string,
+) =>
+  queryNumberSchema(errorMessage ?? "Valore non valido").refine(
+    (val) => val === undefined || (val >= min && val <= max),
+    {
       message: errorMessage ?? `Valore deve essere tra ${min} e ${max}`,
-    });
-
+    },
+  );

@@ -17,6 +17,7 @@ import {
   UpdateTaxRuleTranslationSchema,
 } from "../validators";
 import { Language } from "./language";
+import { Money } from "./currency";
 
 // Entity Types
 export type TaxRate = CreateTaxRateInput & {
@@ -44,6 +45,20 @@ export type TaxRuleTranslation = {
 
     createdAt: Date;
     updatedAt: Date;
+}
+
+// services interfaces
+export interface TaxCalculationInput {
+  netAmount: Money;
+  taxRule: TaxRule;
+}
+
+export interface TaxCalculationResult {
+  netAmount: Money;
+  taxRate: Money;
+  taxAmount: Money;
+  grossAmount: Money;
+  vatNatureCode: string | null;
 }
 
 // Input Types

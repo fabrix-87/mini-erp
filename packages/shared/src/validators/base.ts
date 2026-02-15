@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { createIdSchema } from "../utils";
+import { createDecimalSchema, createIdSchema } from "../utils";
+import Decimal from "decimal.js";
 
 /**
  * Schema per validare ID utente
@@ -23,3 +24,11 @@ export const CountryCodeBaseSchema = z
   .length(2, "Il country code deve essere di 2 caratteri")
   .regex(/^[A-Z]{2}$/, "Il country code deve contenere solo lettere maiuscole")
   .trim();
+
+/**
+ * Schema base per importi
+ */
+export const CurrencySchema = createDecimalSchema(2, {
+  positiveOnly: true,
+  min: 0,
+});

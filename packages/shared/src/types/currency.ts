@@ -6,6 +6,7 @@ import {
   CurrencyTranslationSchema,
 } from "../validators/currency";
 import { Country } from "./country";
+import Decimal from "decimal.js";
 
 // Entities types
 export type Currency = z.infer<typeof CreateCurrencySchema> & {
@@ -23,6 +24,8 @@ export type ExchangeRateHistory = {
   date: Date;
   source: string;
 };
+
+export type Money = Decimal;
 
 export type CurrencyTranslation = z.infer<typeof CurrencyTranslationSchema>;
 

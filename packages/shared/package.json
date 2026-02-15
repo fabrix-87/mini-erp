@@ -31,12 +31,13 @@
     }
   },
   "scripts": {
-    "build": "tsc",  
+    "build": "tsc",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "decimal.js": "^10.6.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
