@@ -1,5 +1,23 @@
 // packages/shared/src/validators/index.ts
-export * from './base';
+// Primitives
+export * from "./primitives/decimal";
+export * from "./primitives/id";
+export * from "./primitives/date";
+export * from "./primitives/string";
+export * from "./primitives/identifier";
+
+// Business
+export * from "./business/currency";
+export * from "./business/italian-codes";
+
+// Query
+export * from "./query/pagination";
+export * from "./query/params";
+
+// Base
+export * from "./base";
+
+// Models
 export * from './user';
 export * from './activity';
 export * from './role';

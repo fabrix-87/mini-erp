@@ -1,13 +1,14 @@
+import { z } from "zod";
+import { createIdSchema } from "./primitives/id";
+import { countryCodeBaseSchema, inputJsonValueSchema } from "./base";
+import { phoneSchema } from "./primitives/string";
+import { queryBooleanSchema } from "./query/params";
+
 // ============================================================================
 // ADDRESS ENUMS
 // ============================================================================
 
-import z from "zod";
-
-import { createIdSchema, InputJsonValueSchema, PhoneSchema } from "../utils";
-import { CountryCodeBaseSchema } from "./base";
-
-export const AddressTypeSchema = z.enum([
+export const addressTypeSchema = z.enum([
   "LEGAL",
   "BILLING",
   "SHIPPING",
@@ -23,10 +24,10 @@ export const AddressTypeSchema = z.enum([
 /**
  * Schema per la creazione di un Address
  */
-export const CreateAddressSchema = z
+export const createAddressSchema = z
   .object({
     companyId: createIdSchema("Company ID non valido"),
-    addressType: AddressTypeSchema.default("LEGAL"),
+    addressType: addressTypeSchema.default("LEGAL"),
     address: z
       .string()
       .min(1, "Indirizzo è obbligatorio")
@@ -47,7 +48,7 @@ export const CreateAddressSchema = z
       .min(1, "CAP è obbligatorio")
       .max(20, "CAP non può superare 20 caratteri")
       .trim(),
-    countryCode: CountryCodeBaseSchema,
+    countryCode: countryCodeBaseSchema,
     latitude: z
       .number()
       .min(-90, "Latitudine deve essere tra -90 e 90")
@@ -60,9 +61,9 @@ export const CreateAddressSchema = z
       .max(180, "Longitudine deve essere tra -180 e 180")
       .optional()
       .nullable(),
-    phone: PhoneSchema,
+    phone: phoneSchema,
     isPrimary: z.boolean().default(false),
-    openingHours: InputJsonValueSchema.optional().nullable(),
+    openingHours: inputJsonValueSchema.optional().nullable(),
     notes: z
       .string()
       .max(500, "Note non possono superare 500 caratteri")
@@ -74,36 +75,34 @@ export const CreateAddressSchema = z
 /**
  * Schema per l'aggiornamento di un Address
  */
-export const UpdateAddressSchema = CreateAddressSchema.omit({ companyId: true })
+export const updateAddressSchema = createAddressSchema.omit({ companyId: true })
   .partial()
   .strict();
 
 /**
  * Schema per ID Address
  */
-export const AddressIdSchema = z.object({
+export const addressIdSchema = z.object({
   id: createIdSchema("ID indirizzo non valido"),
 });
 
 /**
  * Schema per Query Parameters Address
  */
-export const AddressQuerySchema = z.object({
-  companyId: createIdSchema("Company ID non valido"),  
-  addressType: AddressTypeSchema.optional(),  
-  countryCode: CountryCodeBaseSchema,  
-  isPrimary: z.enum(['true', 'false'])
-    .optional()
-    .transform(val => val === 'true' ? true : val === 'false' ? false : undefined),  
-  provinceCode: z.string()
-    .length(2)
-    .optional(),  
+export const addressQuerySchema = z.object({
+  companyId: createIdSchema("Company ID non valido"),
+  addressType: addressTypeSchema.optional(),
+  countryCode: countryCodeBaseSchema,
+  isPrimary: queryBooleanSchema,
+  provinceCode: z.string().length(2).optional(),
   city: z.string().optional(),
 });
 
 /**
  * Schema per impostare Primary Address
  */
-export const SetPrimaryAddressSchema = z.object({
-  isPrimary: z.boolean(),
-}).strict();
+export const setPrimaryAddressSchema = z
+  .object({
+    isPrimary: z.boolean(),
+  })
+  .strict();

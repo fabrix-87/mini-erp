@@ -1,21 +1,20 @@
 import { z } from "zod";
+import { createIdSchema, positiveNumbersSchema } from "./primitives/id";
+import { percentageSchema } from "./business/currency";
+import { isoDateSchema } from "./primitives/date";
+import { inputJsonValueSchema, userIdSchema } from "./base";
+import Decimal from "decimal.js";
+import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import {
-  createIdSchema,
-  InputJsonValueSchema,
-  isoDateSchema,
-  limitSchema,
-  pageSchema,
-  PercentageSchema,
   queryPercentageSchema,
   queryPositiveNumberSchema,
-  sortOrderSchema,
-} from "../utils";
+} from "./query/params";
 
 // ============================================================================
 // ENUMS
 // ============================================================================
 
-export const OpportunityStatusSchema = z.enum([
+export const opportunityStatusSchema = z.enum([
   "OPEN",
   "WON",
   "LOST",
@@ -23,7 +22,7 @@ export const OpportunityStatusSchema = z.enum([
   "CLOSED",
 ]);
 
-export const SalesStageSchema = z.enum([
+export const salesStageSchema = z.enum([
   "LEAD_QUALIFICATION",
   "PROSPECTING",
   "NEEDS_ANALYSIS",
@@ -32,7 +31,7 @@ export const SalesStageSchema = z.enum([
   "COMMITMENT",
 ]);
 
-export const OpportunitySortFieldSchema = z.enum([
+export const opportunitySortFieldSchema = z.enum([
   "title",
   "estimatedValue",
   "weightedValue",
@@ -49,7 +48,7 @@ export const OpportunitySortFieldSchema = z.enum([
 /**
  * Schema per la creazione di un'opportunità
  */
-export const CreateOpportunitySchema = z
+export const createOpportunitySchema = z
   .object({
     title: z
       .string()
@@ -58,27 +57,24 @@ export const CreateOpportunitySchema = z
       .trim(),
     description: z.string().trim().optional(),
     customerId: createIdSchema("Customer ID non valido"),
-    status: OpportunityStatusSchema.optional().default("OPEN"),
-    stage: SalesStageSchema.optional().default("LEAD_QUALIFICATION"),
-    estimatedValue: z
-      .number()
-      .nonnegative("Valore stimato deve essere >= 0")
-      .optional()
-      .nullable(),
-    probability: PercentageSchema.optional().default(0),
+    status: opportunityStatusSchema.optional().default("OPEN"),
+    stage: salesStageSchema.optional().default("LEAD_QUALIFICATION"),
+    estimatedValue: positiveNumbersSchema.nullable(),
+    probability: percentageSchema.optional().default(new Decimal(0)),
     expectedCloseDate: isoDateSchema(),
-    assignedUserId: createIdSchema("User ID non valido").optional().nullable(),
+    assignedUserId: userIdSchema.optional().nullable(),
     notes: z.string().trim().optional(),
-    customFields: InputJsonValueSchema.optional().nullable(),
+    customFields: inputJsonValueSchema.optional().nullable(),
   })
   .strict();
 
 /**
  * Schema per l'aggiornamento di un'opportunità
  */
-export const UpdateOpportunitySchema = CreateOpportunitySchema.omit({
-  customerId: true,
-})
+export const updateOpportunitySchema = createOpportunitySchema
+  .omit({
+    customerId: true,
+  })
   .extend({
     closedDate: isoDateSchema(),
     closedReasonId: createIdSchema("ClosedReason ID non valido").optional(),
@@ -89,17 +85,17 @@ export const UpdateOpportunitySchema = CreateOpportunitySchema.omit({
 /**
  * Schema per cambio stage/status
  */
-export const UpdateStageSchema = z
+export const updateStageSchema = z
   .object({
-    stage: SalesStageSchema,
-    probability: PercentageSchema.optional(),
+    stage: salesStageSchema,
+    probability: percentageSchema.optional(),
   })
   .strict();
 
 /**
  * Schema per chiusura opportunità (WON)
  */
-export const CloseOpportunityWonSchema = z
+export const closeOpportunityWonSchema = z
   .object({
     closedDate: isoDateSchema(),
     closedNotes: z.string().trim().optional(),
@@ -109,7 +105,7 @@ export const CloseOpportunityWonSchema = z
 /**
  * Schema per chiusura opportunità (LOST)
  */
-export const CloseOpportunityLostSchema = z
+export const closeOpportunityLostSchema = z
   .object({
     closedReasonId: createIdSchema("Closed Reason ID non valido")
       .optional()
@@ -122,21 +118,21 @@ export const CloseOpportunityLostSchema = z
 /**
  * Schema per ID opportunità nei parametri
  */
-export const OpportunityIdSchema = z.object({
+export const opportunityIdSchema = z.object({
   id: createIdSchema("ID opportunità non valido"),
 });
 
 /**
  * Schema per Customer ID nei parametri
  */
-export const CustomerIdParamSchema = z.object({
+export const customerIdParamSchema = z.object({
   customerId: createIdSchema("Customer ID non valido"),
 });
 
 /**
  * Schema per query di ricerca opportunità
  */
-export const OpportunityQuerySchema = z
+export const opportunityQuerySchema = z
   .object({
     page: pageSchema,
     limit: limitSchema,
@@ -147,8 +143,8 @@ export const OpportunityQuerySchema = z
       .optional(),
     customerId: createIdSchema("Customer ID non valido").optional(),
     assignedUserId: createIdSchema("Assigned User ID non valido").optional(),
-    status: OpportunityStatusSchema.optional(),
-    stage: SalesStageSchema.optional(),
+    status: opportunityStatusSchema.optional(),
+    stage: salesStageSchema.optional(),
 
     minValue: queryPositiveNumberSchema("Valore minimo deve essere >= 0"),
     maxValue: queryPositiveNumberSchema("Valore massimo deve essere >= 0"),
@@ -161,7 +157,7 @@ export const OpportunityQuerySchema = z
     expectedCloseDateFrom: isoDateSchema(),
     expectedCloseDateTo: isoDateSchema(),
 
-    sortBy: OpportunitySortFieldSchema.optional().default("createdAt"),
+    sortBy: opportunitySortFieldSchema.optional().default("createdAt"),
 
     sortOrder: sortOrderSchema,
   })
@@ -170,7 +166,7 @@ export const OpportunityQuerySchema = z
 /**
  * Schema per assegnazione utente
  */
-export const AssignUserSchema = z
+export const assignUserSchema = z
   .object({
     assignedUserId: createIdSchema("Assigned User ID non valido"),
   })
@@ -179,21 +175,21 @@ export const AssignUserSchema = z
 /**
  * Schema per query di ricerca opportunità per status
  */
-export const OpportunityQueryByStatusSchema = z.object({
-  status: OpportunityStatusSchema.optional(),
+export const opportunityQueryByStatusSchema = z.object({
+  status: opportunityStatusSchema.optional(),
 });
 
 /**
  * Schema per creazione ClosedReason
  */
-export const CreateClosedReason = z.object({
-    code: z.string().trim().max(50).optional().nullable(),
-    description: z.string().trim().optional().nullable(),
-})
+export const createClosedReason = z.object({
+  code: z.string().trim().max(50).optional().nullable(),
+  description: z.string().trim().optional().nullable(),
+});
 
 /**
  * Schema per modifica ClosedReason
  */
-export const UpdateClosedReason = CreateClosedReason.omit({
-    code: true,
-})
+export const updateClosedReason = createClosedReason.omit({
+  code: true,
+});

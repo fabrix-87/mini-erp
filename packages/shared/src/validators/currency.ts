@@ -1,20 +1,16 @@
 import { z } from "zod";
-import {
-  createDecimalSchema,
-  createIdSchema,
-  limitSchema,
-  pageSchema,
-  positiveNumbersSchema,
-  QueryBooleanSchema,
-} from "../utils";
-import { CountryCodeBaseSchema, CurrencyCodeBaseSchema } from "./base";
+import { countryCodeBaseSchema, currencyCodeBaseSchema } from "./base";
+import { createIdSchema, positiveNumbersSchema } from "./primitives/id";
+import { createDecimalSchema } from "./primitives/decimal";
+import { limitSchema, pageSchema } from "./query/pagination";
+import { queryBooleanSchema } from "./query/params";
 
 export const CurrencyCodeSchema = z.object({
-  code: CurrencyCodeBaseSchema,
+  code: currencyCodeBaseSchema,
 });
 
 export const CreateCurrencySchema = z.object({
-  code: CurrencyCodeBaseSchema,
+  code: currencyCodeBaseSchema,
 
   // Identificazione
   symbol: z.string("Simbolo valuta obbligatorio").max(10),
@@ -29,7 +25,10 @@ export const CreateCurrencySchema = z.object({
 
   // tasso di cambio (verso valuta base)
   isBaseCurrency: z.boolean().default(false), // vero solo per valuta base
-  exchangeRate: createDecimalSchema(6, { positiveOnly: true }).default(1.0),
+  exchangeRate: createDecimalSchema(6, {
+    positiveOnly: true,
+    defaultValue: 1.0,
+  }),
 
   // Provider tasso cambio
   exchangeRateSource: z.string().max(50).optional(),
@@ -39,7 +38,7 @@ export const CreateCurrencySchema = z.object({
 
   // Metadata
   priority: positiveNumbersSchema.default(0),
-  countryCode: CountryCodeBaseSchema.optional(),
+  countryCode: countryCodeBaseSchema.optional(),
 });
 
 export const CurrencyTranslationSchema = z.object({
@@ -50,8 +49,8 @@ export const CurrencyTranslationSchema = z.object({
 });
 
 export const CurrencyQuerySchema = z.object({
-    search: z.string().optional().nullable(),
-    page: pageSchema,
-    limit: limitSchema,
-    active: QueryBooleanSchema
-})
+  search: z.string().optional().nullable(),
+  page: pageSchema,
+  limit: limitSchema,
+  active: queryBooleanSchema,
+});

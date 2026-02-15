@@ -1,12 +1,17 @@
 import z from "zod";
-import { createIdSchema, emailSchema, isoDateSchema, limitSchema, pageSchema, positiveNumbersSchema, QueryBooleanSchema, sortOrderSchema } from "../utils";
-import { UserIdSchema } from "./base";
+
+import { userIdSchema } from "./base";
+import { isoDateSchema } from "./primitives/date";
+import { createIdSchema, positiveNumbersSchema } from "./primitives/id";
+import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
+import { queryBooleanSchema } from "./query/params";
+import { emailSchema } from "./primitives/string";
 
 // ============================================================================
 // ENUMS
 // ============================================================================
 
-export const ActivityTypeSchema = z.enum([
+export const activityTypeSchema = z.enum([
   "CALL",
   "EMAIL",
   "MEETING",
@@ -19,7 +24,7 @@ export const ActivityTypeSchema = z.enum([
   "OTHER",
 ]);
 
-export const ActivityStatusSchema = z.enum([
+export const activityStatusSchema = z.enum([
   "SCHEDULED",
   "IN_PROGRESS",
   "COMPLETED",
@@ -28,14 +33,14 @@ export const ActivityStatusSchema = z.enum([
   "NO_SHOW",
 ]);
 
-export const ActivityPrioritySchema = z.enum([
+export const activityPrioritySchema = z.enum([
   "LOW",
   "MEDIUM",
   "HIGH",
   "URGENT",
 ]);
 
-export const ActivityOutcomeSchema = z.enum([
+export const activityOutcomeSchema = z.enum([
   "SUCCESSFUL",
   "NO_ANSWER",
   "LEFT_MESSAGE",
@@ -47,7 +52,7 @@ export const ActivityOutcomeSchema = z.enum([
   "OTHER",
 ]);
 
-export const ParticipantStatusSchema = z.enum([
+export const participantStatusSchema = z.enum([
   "invited",
   "accepted",
   "declined",
@@ -56,7 +61,7 @@ export const ParticipantStatusSchema = z.enum([
   "no_show",
 ]);
 
-export const ParticipantRoleSchema = z.enum([
+export const participantRoleSchema = z.enum([
   "organizer",
   "required",
   "optional",
@@ -69,13 +74,13 @@ export const ParticipantRoleSchema = z.enum([
 /**
  * Schema per la creazione di una Activity
  */
-export const CreateActivitySchema = z
+export const createActivitySchema = z
   .object({
     // Tipo e priorità
-    type: ActivityTypeSchema,
-    status: ActivityStatusSchema.default("SCHEDULED"),
-    priority: ActivityPrioritySchema.default("MEDIUM"),
-    outcome: ActivityOutcomeSchema.optional().nullable(),
+    type: activityTypeSchema,
+    status: activityStatusSchema.default("SCHEDULED"),
+    priority: activityPrioritySchema.default("MEDIUM"),
+    outcome: activityOutcomeSchema.optional().nullable(),
 
     // Informazioni base
     subject: z
@@ -88,10 +93,10 @@ export const CreateActivitySchema = z
 
     // Date e durata
     scheduledStart: z.iso.datetime("Data inizio non valida"),
-    scheduledEnd: isoDateSchema({message: "Data fine non valida"}),
-    actualStart: isoDateSchema({message: "Data inizio effettiva non valida"}),
-    actualEnd: isoDateSchema({message: "Data fine effettiva non valida"}),
-    duration: isoDateSchema({message: "La durata deve essere positiva"}),
+    scheduledEnd: isoDateSchema({ message: "Data fine non valida" }),
+    actualStart: isoDateSchema({ message: "Data inizio effettiva non valida" }),
+    actualEnd: isoDateSchema({ message: "Data fine effettiva non valida" }),
+    duration: isoDateSchema({ message: "La durata deve essere positiva" }),
 
     // Promemoria
     reminderMinutes: positiveNumbersSchema,
@@ -104,7 +109,7 @@ export const CreateActivitySchema = z
     opportunityId: positiveNumbersSchema,
 
     // Utente assegnato (obbligatorio)
-    assignedUserId: z.number().int().positive("Utente assegnato obbligatorio"),
+    assignedUserId: userIdSchema,
 
     // Follow-up
     requiresFollowUp: z.boolean().default(false),
@@ -122,36 +127,40 @@ export const CreateActivitySchema = z
 /**
  * Schema per l'aggiornamento di una Activity
  */
-export const UpdateActivitySchema = CreateActivitySchema.omit({
-  assignedUserId: true,
-})
+export const updateActivitySchema = createActivitySchema
+  .omit({
+    assignedUserId: true,
+  })
   .partial()
   .strict();
 
 /**
  * Schema per la validazione dell'ID activity
  */
-export const ActivityIdSchema = z.object({
-  id: createIdSchema("Activity ID non valido"),
+const activityIdBaseSchema = createIdSchema("Activity ID non valido");
+
+export const activityIdSchema = z.object({
+  id: activityIdBaseSchema,
 });
-export const ActivityIdAsActivityIdSchema = z.object({
-  activityId: createIdSchema("Activity ID non valido"),
+
+export const activityIdAsActivityIdSchema = z.object({
+  activityId: activityIdBaseSchema,
 });
 
 /**
  * Schema per query parameters
  */
-export const ActivityQuerySchema = z
+export const activityQuerySchema = z
   .object({
     page: pageSchema,
     limit: limitSchema,
     search: z.string().optional(),
 
     // Filtri
-    type: ActivityTypeSchema.optional(),
-    status: ActivityStatusSchema.optional(),
-    priority: ActivityPrioritySchema.optional(),
-    outcome: ActivityOutcomeSchema.optional(),
+    type: activityTypeSchema.optional(),
+    status: activityStatusSchema.optional(),
+    priority: activityPrioritySchema.optional(),
+    outcome: activityOutcomeSchema.optional(),
 
     companyId: createIdSchema("CompanyId non valido").optional(),
     customerId: createIdSchema("CustomerId non valido").optional(),
@@ -159,13 +168,13 @@ export const ActivityQuerySchema = z
     assignedUserId: createIdSchema("Assigned User ID non valido").optional(),
 
     // Filtri data
-    startDate: isoDateSchema({message: "Data inizio non valida"}),
-    endDate: isoDateSchema({message: "Data fine non valida"}),
+    startDate: isoDateSchema({ message: "Data inizio non valida" }),
+    endDate: isoDateSchema({ message: "Data fine non valida" }),
 
     // Filtri speciali
-    overdue: QueryBooleanSchema,
-    requiresFollowUp: QueryBooleanSchema,
-    myActivities: QueryBooleanSchema, // Solo le mie attività
+    overdue: queryBooleanSchema,
+    requiresFollowUp: queryBooleanSchema,
+    myActivities: queryBooleanSchema, // Solo le mie attività
 
     sortBy: z.string().default("scheduledStart"),
     sortOrder: sortOrderSchema,
@@ -183,10 +192,10 @@ export const ActivityQuerySchema = z
 /**
  * Schema per aggiornare lo status
  */
-export const UpdateActivityStatusSchema = z
+export const updateActivityStatusSchema = z
   .object({
-    status: ActivityStatusSchema,
-    outcome: ActivityOutcomeSchema.optional().nullable(),
+    status: activityStatusSchema,
+    outcome: activityOutcomeSchema.optional().nullable(),
     result: z.string().optional().nullable(),
     actualStart: z.iso.datetime().optional().nullable(),
     actualEnd: z.iso.datetime().optional().nullable(),
@@ -196,9 +205,9 @@ export const UpdateActivityStatusSchema = z
 /**
  * Schema per completare un'attività
  */
-export const CompleteActivitySchema = z
+export const completeActivitySchema = z
   .object({
-    outcome: ActivityOutcomeSchema,
+    outcome: activityOutcomeSchema,
     result: z.string().optional().nullable(),
     requiresFollowUp: z.boolean().default(false),
     followUpDate: z.iso.datetime().optional().nullable(),
@@ -213,20 +222,20 @@ export const CompleteActivitySchema = z
 /**
  * Schema per aggiungere un partecipante
  */
-export const CreateActivityParticipantSchema = z
+export const createActivityParticipantSchema = z
   .object({
     activityId: createIdSchema("Activity ID non valido"),
 
     // Uno dei tre deve essere presente
-    userId: UserIdSchema.optional().nullable(),
+    userId: userIdSchema.optional().nullable(),
     contactId: createIdSchema("ID contatto non valido").optional().nullable(),
 
     // Per partecipanti esterni
     externalEmail: emailSchema().optional().nullable(),
     externalName: z.string().max(255).optional().nullable(),
 
-    status: ParticipantStatusSchema.default("invited"),
-    role: ParticipantRoleSchema.default("optional"),
+    status: participantStatusSchema.default("invited"),
+    role: participantRoleSchema.default("optional"),
     notes: z.string().optional().nullable(),
   })
   .strict()
@@ -239,16 +248,16 @@ export const CreateActivityParticipantSchema = z
       message:
         "Specificare almeno un partecipante (userId, contactId o externalEmail)",
       path: ["userId"],
-    }
+    },
   );
 
 /**
  * Schema per aggiornare un partecipante
  */
-export const UpdateActivityParticipantSchema = z
+export const updateActivityParticipantSchema = z
   .object({
-    status: ParticipantStatusSchema.optional(),
-    role: ParticipantRoleSchema.optional(),
+    status: participantStatusSchema.optional(),
+    role: participantRoleSchema.optional(),
     notes: z.string().optional().nullable(),
   })
   .strict();
@@ -256,7 +265,7 @@ export const UpdateActivityParticipantSchema = z
 /**
  * Schema per la validazione dell'ID participant
  */
-export const ActivityParticipantIdSchema = z.object({
+export const activityParticipantIdSchema = z.object({
   id: createIdSchema("ID partecipante non valido"),
 });
 
@@ -267,13 +276,13 @@ export const ActivityParticipantIdSchema = z.object({
 /**
  * Schema per la creazione di un Activity Template
  */
-export const CreateActivityTemplateSchema = z
+export const createActivityTemplateSchema = z
   .object({
     name: z.string().min(1, "Il nome è obbligatorio").max(255).trim(),
     description: z.string().optional().nullable(),
 
-    type: ActivityTypeSchema,
-    priority: ActivityPrioritySchema.default("MEDIUM"),
+    type: activityTypeSchema,
+    priority: activityPrioritySchema.default("MEDIUM"),
 
     defaultDuration: positiveNumbersSchema,
     defaultSubject: z.string().max(255).trim(),
@@ -287,24 +296,28 @@ export const CreateActivityTemplateSchema = z
 /**
  * Schema per l'aggiornamento di un Activity Template
  */
-export const UpdateActivityTemplateSchema =
-  CreateActivityTemplateSchema.partial().strict();
+export const updateActivityTemplateSchema = createActivityTemplateSchema
+  .partial()
+  .strict();
 
 /**
  * Schema per la validazione dell'ID template
  */
-export const ActivityTemplateIdSchema = z.object({
+export const activityTemplateIdSchema = z.object({
   id: createIdSchema("ID template non valido"),
 });
 
 /**
  * Schema per creare activity da template
  */
-export const CreateActivityFromTemplateSchema = z
+export const createActivityFromTemplateSchema = z
   .object({
-    templateId: z.number().int().positive("ID template obbligatorio"),
-    scheduledStart: z.iso.datetime("Data inizio obbligatoria"),
-    scheduledEnd: z.iso.datetime().optional().nullable(),
+    templateId: createIdSchema("ID template obbligatorio"),
+    scheduledStart: isoDateSchema({
+      required: true,
+      message: "Data inizio obbligatoria",
+    }),
+    scheduledEnd: isoDateSchema().optional().nullable(),
 
     // Override opzionali
     subject: z.string().max(255).optional().nullable(),
@@ -314,7 +327,7 @@ export const CreateActivityFromTemplateSchema = z
     companyId: positiveNumbersSchema,
     customerId: positiveNumbersSchema,
     opportunityId: positiveNumbersSchema,
-    assignedUserId: z.number().int().positive("Utente assegnato obbligatorio"),
+    assignedUserId: userIdSchema,
   })
   .strict()
   .refine(
@@ -324,16 +337,16 @@ export const CreateActivityFromTemplateSchema = z
     {
       message: "Almeno una relazione è obbligatoria",
       path: ["companyId"],
-    }
+    },
   );
 
 /**
  * Schema per le statistiche utente
  */
-export const ActivityStatsSchema = z.object({
+export const activityStatsSchema = z.object({
   startDate: isoDateSchema(),
   endDate: isoDateSchema(),
-  userId: UserIdSchema.optional()
+  userId: userIdSchema.optional(),
 });
 
 // ============================================================================
@@ -343,16 +356,16 @@ export const ActivityStatsSchema = z.object({
 /**
  * Schema per operazioni bulk
  */
-export const BulkActivityActionSchema = z
+export const bulkActivityActionSchema = z
   .object({
     activityIds: z
-      .array(z.number().int().positive())
+      .array(activityIdBaseSchema)
       .min(1, "Almeno un ID è obbligatorio"),
     action: z.enum(["complete", "cancel", "delete", "reassign"]),
 
     // Campi opzionali in base all'azione
-    assignedUserId: z.number().int().positive().optional(), // Per reassign
-    outcome: ActivityOutcomeSchema.optional(), // Per complete
+    assignedUserId: userIdSchema.optional(), // Per reassign
+    outcome: activityOutcomeSchema.optional(), // Per complete
     result: z.string().optional().nullable(), // Per complete
   })
   .strict();

@@ -3,14 +3,22 @@
 // ============================================================================
 
 import z from "zod";
-import { BaseCompanySchema, CompanyIdSchema, CompanyQueryBaseSchema, UpdateCompanySchema } from "./company";
-import { createIdSchema, CreditLimitSchema, positiveNumbersSchema } from "../utils";
+
+import {
+  baseCompanySchema,
+  companyIdSchema,
+  companyQueryBaseSchema,
+  updateCompanySchema,
+} from "./company";
+import { queryBooleanSchema } from "./query/params";
+import { createIdSchema } from "./primitives/id";
+import { creditLimitSchema } from "./business/currency";
 
 // ============================================================================
 // CUSTOMER-SPECIFIC ENUMS
 // ============================================================================
 
-export const CustomerTypeSchema = z.enum([
+export const customerTypeSchema = z.enum([
   "LEAD",
   "PROSPECT",
   "CUSTOMER",
@@ -18,9 +26,9 @@ export const CustomerTypeSchema = z.enum([
   "OTHER",
 ]);
 
-export const CustomerPrioritySchema = z.enum(["LOW", "MEDIUM", "HIGH"]);
+export const customerPrioritySchema = z.enum(["LOW", "MEDIUM", "HIGH"]);
 
-export const CustomerSegmentSchema = z.enum([
+export const customerSegmentSchema = z.enum([
   "VIP",
   "GOLD",
   "SILVER",
@@ -28,7 +36,7 @@ export const CustomerSegmentSchema = z.enum([
   "STANDARD",
 ]);
 
-export const LeadStatusSchema = z.enum([
+export const leadStatusSchema = z.enum([
   "NEW",
   "CONTACTED",
   "QUALIFIED",
@@ -38,14 +46,14 @@ export const LeadStatusSchema = z.enum([
   "CLOSED_LOST",
 ]);
 
-export const CreditCheckStatusSchema = z.enum([
+export const creditCheckStatusSchema = z.enum([
   "PENDING",
   "APPROVED",
   "REJECTED",
   "IN_PROGRESS",
 ]);
 
-export const CustomerSizeSchema = z.enum([
+export const customerSizeSchema = z.enum([
   "MICRO",
   "SMALL",
   "MEDIUM",
@@ -57,18 +65,18 @@ export const CustomerSizeSchema = z.enum([
  * Schema per la creazione di un Customer
  * Estende BaseCompanySchema con dati CRM specifici
  */
-export const CreateCustomerSchema = z
+export const createCustomerSchema = z
   .object({
     // Nested Company (usa il base schema)
-    company: BaseCompanySchema,
+    company: baseCompanySchema,
 
-    // ===== Dati CRM Specifici Customer =====    
-    priority: CustomerPrioritySchema.default("MEDIUM"),  
-    segment: CustomerSegmentSchema.default("STANDARD"),    
-    leadStatus: LeadStatusSchema.default("NEW"),    
-    size: CustomerSizeSchema.default("SMALL"),
-    type: CustomerTypeSchema.default("LEAD"),    
-    creditStatus: CreditCheckStatusSchema.default("PENDING"),
+    // ===== Dati CRM Specifici Customer =====
+    priority: customerPrioritySchema.default("MEDIUM"),
+    segment: customerSegmentSchema.default("STANDARD"),
+    leadStatus: leadStatusSchema.default("NEW"),
+    size: customerSizeSchema.default("SMALL"),
+    type: customerTypeSchema.default("LEAD"),
+    creditStatus: creditCheckStatusSchema.default("PENDING"),
 
     // ===== Dati Commerciali =====
     defaultPriceListId: createIdSchema("Price List ID non valido")
@@ -83,7 +91,7 @@ export const CreateCustomerSchema = z
       .optional()
       .nullable(),
 
-    creditLimit: CreditLimitSchema.optional().nullable(),
+    creditLimit: creditLimitSchema.optional().nullable(),
   })
   .strict();
 
@@ -91,22 +99,28 @@ export const CreateCustomerSchema = z
  * Schema per l'aggiornamento Customer
  * Solo dati CRM, NON modifica Company
  */
-export const UpdateCustomerSchema = z
+export const updateCustomerSchema = z
   .object({
-    type: CustomerTypeSchema.optional(),
-    priority: CustomerPrioritySchema.optional(),
-    segment: CustomerSegmentSchema.optional(),
-    leadStatus: LeadStatusSchema.optional(),
-    size: CustomerSizeSchema.optional(),
-    creditStatus: CreditCheckStatusSchema.optional(),
+    type: customerTypeSchema.optional(),
+    priority: customerPrioritySchema.optional(),
+    segment: customerSegmentSchema.optional(),
+    leadStatus: leadStatusSchema.optional(),
+    size: customerSizeSchema.optional(),
+    creditStatus: creditCheckStatusSchema.optional(),
 
-    defaultPriceListId: createIdSchema("Price List ID non valido").optional().nullable(),
+    defaultPriceListId: createIdSchema("Price List ID non valido")
+      .optional()
+      .nullable(),
 
-    customerTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
+    customerTaxRuleId: createIdSchema("Tax Rule ID non valido")
+      .optional()
+      .nullable(),
 
-    paymentMethodId: createIdSchema("Payment Method ID non valido").optional().nullable(),
+    paymentMethodId: createIdSchema("Payment Method ID non valido")
+      .optional()
+      .nullable(),
 
-    creditLimit: CreditLimitSchema.optional().nullable(),
+    creditLimit: creditLimitSchema.optional().nullable(),
   })
   .strict();
 
@@ -114,14 +128,14 @@ export const UpdateCustomerSchema = z
  * Schema per aggiornare solo la Company del Customer
  * Riusa UpdateCompanySchema dal base
  */
-export const UpdateCustomerCompanySchema = UpdateCompanySchema;
+export const updateCustomerCompanySchema = updateCompanySchema;
 
 /**
  * Schema per aggiornamento Lead Status con note
  */
-export const UpdateLeadStatusSchema = z
+export const updateLeadStatusSchema = z
   .object({
-    leadStatus: LeadStatusSchema,
+    leadStatus: leadStatusSchema,
     notes: z
       .string()
       .max(1000, "Note non possono superare 1000 caratteri")
@@ -134,23 +148,23 @@ export const UpdateLeadStatusSchema = z
  * Schema per Query Parameters Customer
  * Estende CompanyQueryBaseSchema con filtri CRM
  */
-export const CustomerQuerySchema = CompanyQueryBaseSchema.extend({
+export const customerQuerySchema = companyQueryBaseSchema.extend({
   // Filtri Customer-specific
-  type: CustomerTypeSchema.optional(),
-  priority: CustomerPrioritySchema.optional(),
-  segment: CustomerSegmentSchema.optional(),
-  leadStatus: LeadStatusSchema.optional(),
-  creditStatus: CreditCheckStatusSchema.optional(),
-  size: CustomerSizeSchema.optional(),
+  type: customerTypeSchema.optional(),
+  priority: customerPrioritySchema.optional(),
+  segment: customerSegmentSchema.optional(),
+  leadStatus: leadStatusSchema.optional(),
+  creditStatus: creditCheckStatusSchema.optional(),
+  size: customerSizeSchema.optional(),
 
   // Filtri relazioni
   priceListId: createIdSchema("PriceListId non valido").optional(),
 
-  hasOrders: z.enum(["true", "false"]).optional(),
-  hasOpportunities: z.enum(["true", "false"]).optional(),
+  hasOrders: queryBooleanSchema.optional(),
+  hasOpportunities: queryBooleanSchema.optional(),
 });
 
 /**
  * Schema per ID Customer (riusa CompanyIdSchema)
  */
-export const CustomerIdSchema = CompanyIdSchema;
+export const customerIdSchema = companyIdSchema;

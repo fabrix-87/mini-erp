@@ -3,21 +3,27 @@
 // ============================================================================
 
 import z from "zod";
-import { AddressIdSchema, AddressQuerySchema, AddressTypeSchema, CreateAddressSchema, UpdateAddressSchema } from "../validators";
+import {
+  addressIdSchema,
+  addressQuerySchema,
+  addressTypeSchema,
+  createAddressSchema,
+  updateAddressSchema,
+} from "../validators";
 
 // Tipi ENUM
-export type AddressType = z.infer<typeof AddressTypeSchema>
+export type AddressType = z.infer<typeof addressTypeSchema>;
 
 /**
  * Tipo Address
  */
-export type Address = z.infer<typeof CreateAddressSchema> & {
+export type Address = z.infer<typeof createAddressSchema> & {
   id: number;
   createdAt: string;
   updatedAt: string;
-}
+};
 
-export type CreateAddressInput = z.infer<typeof CreateAddressSchema>;
-export type UpdateAddressInput = z.infer<typeof UpdateAddressSchema>;
-export type AddressQueryInput = z.infer<typeof AddressQuerySchema>;
-export type AddressIdInput = z.infer<typeof AddressIdSchema>
+export type CreateAddressInput = z.infer<typeof createAddressSchema>;
+export type UpdateAddressInput = z.infer<typeof updateAddressSchema>;
+export type AddressQueryInput = z.infer<typeof addressQuerySchema>;
+export type AddressIdInput = z.infer<typeof addressIdSchema>;

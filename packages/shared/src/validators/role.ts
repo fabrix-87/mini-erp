@@ -1,7 +1,10 @@
 // packages/shared/src/validators/role.ts
-import z from "zod";
-import { UserIdSchema } from "./base";
-import { createIdSchema, sortOrderSchema } from "../utils";
+import {z} from "zod";
+import { createIdSchema } from "./primitives/id";
+import { queryBooleanSchema } from "./query/params";
+import { sortOrderSchema } from "./query/pagination";
+import { userIdSchema } from "./base";
+
 
 // ============================================================================
 // BASE SCHEMAS
@@ -10,34 +13,31 @@ import { createIdSchema, sortOrderSchema } from "../utils";
 /**
  * Schema per validare ID ruolo
  */
-export const RoleIdSchema = createIdSchema("ID ruolo non valido");
+export const roleIdSchema = createIdSchema("ID ruolo non valido");
 
 /**
  * Schema per validare ID ruolo nei params
  */
-export const RoleIdParamSchema = z.object({
-  id: RoleIdSchema,
+export const roleIdParamSchema = z.object({
+  id: roleIdSchema,
 });
 
 /**
  * Schema per validare ID permesso
  */
-export const PermissionIdSchema = z
-  .string()
-  .transform((val) => parseInt(val, 10))
-  .pipe(z.number().int().positive("ID permesso non valido"));
+export const permissionIdSchema = createIdSchema("ID permesso non valido");
 
 /**
  * Schema per validare ID permesso nei params
  */
 export const PermissionIdParamSchema = z.object({
-  id: PermissionIdSchema,
+  id: permissionIdSchema,
 });
 
 /**
  * Schema per validare code
  */
-export const RoleCodeSchema = z
+export const roleCodeSchema = z
   .string()
   .min(1, "Codice ruolo obbligatorio")
   .max(50, "Il codice non può superare 50 caratteri")
@@ -50,8 +50,8 @@ export const RoleCodeSchema = z
 /**
  * Schema per validare code nei params
  */
-export const RoleCodeParamSchema = z.object({
-  code: RoleCodeSchema,
+export const roleCodeParamSchema = z.object({
+  code: roleCodeSchema,
 });
 
 // ============================================================================
@@ -61,9 +61,9 @@ export const RoleCodeParamSchema = z.object({
 /**
  * Schema per la creazione di un nuovo Role
  */
-export const CreateRoleSchema = z
+export const createRoleSchema = z
   .object({
-    code: RoleCodeSchema,
+    code: roleCodeSchema,
     name: z
       .string()
       .min(1, "Il nome è obbligatorio")
@@ -76,16 +76,16 @@ export const CreateRoleSchema = z
       .nullable(),
     isDefault: z.boolean().default(false),
 
-    permissionIds: z.array(z.number().int().positive()).optional().default([]),
+    permissionIds: z.array(permissionIdSchema).optional().default([]),
   })
   .strict();
 
 /**
  * Schema per l'aggiornamento di un Role
  */
-export const UpdateRoleSchema = z
+export const updateRoleSchema = z
   .object({
-    code: RoleCodeSchema.optional(),
+    code: roleCodeSchema.optional(),
     name: z.string().min(1).max(100).trim().optional(),
     description: z.string().max(1000).optional().nullable(),
     isDefault: z.boolean().optional(),
@@ -95,10 +95,10 @@ export const UpdateRoleSchema = z
 /**
  * Schema per assegnare permessi a un ruolo
  */
-export const AssignPermissionsSchema = z
+export const assignPermissionsSchema = z
   .object({
     permissionIds: z
-      .array(z.number().int().positive())
+      .array(permissionIdSchema)
       .min(1, "Almeno un permesso è richiesto"),
   })
   .strict();
@@ -106,10 +106,10 @@ export const AssignPermissionsSchema = z
 /**
  * Schema per rimuovere permessi da un ruolo
  */
-export const RemovePermissionsSchema = z
+export const removePermissionsSchema = z
   .object({
     permissionIds: z
-      .array(z.number().int().positive())
+      .array(permissionIdSchema)
       .min(1, "Almeno un permesso è richiesto"),
   })
   .strict();
@@ -117,14 +117,10 @@ export const RemovePermissionsSchema = z
 /**
  * Schema per query filtri ruoli
  */
-export const RoleQuerySchema = z.object({
+export const roleQuerySchema = z.object({
   query: z.object({
     search: z.string().optional(),
-    isDefault: z
-      .string()
-      .transform((val) => val === "true")
-      .pipe(z.boolean())
-      .optional(),
+    isDefault: queryBooleanSchema,
     sortBy: z.enum(["createdAt", "name", "code"]).default("name"),
     sortOrder: sortOrderSchema,
   }),
@@ -134,7 +130,7 @@ export const RoleQuerySchema = z.object({
 // PERMISSION SCHEMAS
 // ============================================================================
 
-const PermissionCodeSchema = z
+const permissionCodeSchema = z
   .string()
   .min(3, "Il codice è obbligatorio")
   .max(100, "Il codice non può superare 100 caratteri")
@@ -157,9 +153,9 @@ const PermissionCodeSchema = z
 /**
  * Schema per la creazione di un nuovo Permission
  */
-export const CreatePermissionSchema = z
+export const createPermissionSchema = z
   .object({
-    code: PermissionCodeSchema,
+    code: permissionCodeSchema,
     resource: z
       .string()
       .min(1, "La risorsa è obbligatoria")
@@ -185,9 +181,9 @@ export const CreatePermissionSchema = z
 /**
  * Schema per l'aggiornamento di un Permission
  */
-export const UpdatePermissionSchema = z
+export const updatePermissionSchema = z
   .object({
-    code: PermissionCodeSchema.optional(),
+    code: permissionCodeSchema.optional(),
     resource: z.string().min(1).max(50).toLowerCase().trim().optional(),
     action: z.string().min(1).max(50).toLowerCase().trim().optional(),
     description: z.string().max(1000).optional().nullable(),
@@ -197,7 +193,7 @@ export const UpdatePermissionSchema = z
 /**
  * Schema per query filtri permessi
  */
-export const PermissionQuerySchema = z.object({
+export const permissionQuerySchema = z.object({
   search: z.string().optional(),
   resource: z.string().optional(),
   action: z.string().optional(),
@@ -210,11 +206,11 @@ export const PermissionQuerySchema = z.object({
 /**
  * Schema per assegnare ruoli a utenti
  */
-export const AssignRolesToUserSchema = z
+export const assignRolesToUserSchema = z
   .object({
-    userId: z.number().int().positive("ID utente non valido"),
+    userId: userIdSchema,
     roleIds: z
-      .array(z.number().int().positive())
+      .array(roleIdSchema)
       .min(1, "Almeno un ruolo è richiesto"),
   })
   .strict();
@@ -222,10 +218,10 @@ export const AssignRolesToUserSchema = z
 /**
  * Schema per verificare permessi
  */
-export const CheckPermissionSchema = z
+export const checkPermissionSchema = z
   .object({
-    userId: UserIdSchema,
-    permissionCode: PermissionCodeSchema,
+    userId: userIdSchema,
+    permissionCode: permissionCodeSchema,
   })
   .strict();
 
@@ -233,8 +229,8 @@ export const CheckPermissionSchema = z
 // FRONTEND SCHEMAS
 // ============================================================================
 
-export const UserRoleSchema = CreateRoleSchema.extend({
-  id: RoleIdSchema,
+export const userRoleSchema = createRoleSchema.extend({
+  id: roleIdSchema,
 }).omit({
   description: true,
   isDefault: true,

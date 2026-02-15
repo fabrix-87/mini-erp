@@ -2,61 +2,163 @@ import { z } from "zod";
 import {
   createDecimalSchema,
   createIdSchema,
-  QueryBooleanSchema,
-  sortOrderSchema,
-} from "../utils";
+  isoDateSchema,  
+} from "./primitives";
+import { countryCodeBaseSchema } from "./base";
+import { queryBooleanSchema, sortOrderSchema } from "./query";
+
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+/**
+ * VAT Nature Category enum
+ */
+export const vatNatureCategorySchema = z.enum([
+  "EXCLUDED",
+  "NOT_SUBJECT",
+  "NOT_TAXABLE",
+  "EXEMPT",
+  "MARGIN",
+  "REVERSE",
+  "EU_VAT",
+]);
+
+/**
+ * Tax Rule applicability enum
+ */
+export const taxRuleApplicabilitySchema = z.enum([
+  "sales",
+  "purchases",
+  "both",
+]);
 
 // ============================================================================
 // DECIMAL HELPERS
 // ============================================================================
 
 /**
- * Schema per Decimal(5, 2) - Tax Rate
+ * Schema for Tax Rate (0-100 with 2 decimals)
  */
-export const TaxRateSchema = createDecimalSchema(2, {
+export const taxRateSchema = createDecimalSchema(2, {
   positiveOnly: true,
   min: 0,
   max: 100,
-  error: "L'aliquota deve essere tra 0 e 100",
+  messages: {
+    min: "L'aliquota deve essere tra 0 e 100",
+    max: "L'aliquota deve essere tra 0 e 100",
+  },
+});
+
+/**
+ * Schema for deductibility percentage (0-100 with 2 decimals)
+ */
+export const deductibilityPercentSchema = createDecimalSchema(2, {
+  positiveOnly: true,
+  min: 0,
+  max: 100,
+  defaultValue: "100",
 });
 
 // ============================================================================
-// TAX RATE SCHEMAS
+// VAT NATURE SCHEMAS
 // ============================================================================
 
 /**
- * Schema per la creazione di una Tax Rate
+ * Schema for VAT Nature ID
  */
-export const CreateTaxRateSchema = z
+export const vatNatureIdSchema = createIdSchema("ID Natura IVA non valido");
+
+/**
+ * Schema for VAT Nature translation
+ */
+const vatNatureTranslationSchema = z
   .object({
-    rate: TaxRateSchema,
-    name: z
+    languageId: createIdSchema("ID lingua non valido"),
+    description: z
       .string()
-      .min(1, "Nome obbligatorio")
-      .max(50, "Nome max 50 caratteri")
+      .min(1, "Descrizione obbligatoria")
+      .max(500, "Descrizione max 500 caratteri")
       .trim(),
-    active: z.boolean().default(true),
+    notes: z.string().max(5000).optional().nullable(),
   })
   .strict();
 
 /**
- * Schema per l'aggiornamento di una Tax Rate
+ * Schema for creating a VAT Nature
  */
-export const UpdateTaxRateSchema = CreateTaxRateSchema.partial().strict();
+export const createVatNatureSchema = z
+  .object({
+    code: z
+      .string()
+      .min(1, "Codice obbligatorio")
+      .max(10, "Codice max 10 caratteri")
+      .regex(/^N[0-9](\.[0-9]+)?$/, "Formato codice non valido (es: N1, N2.1)")
+      .trim()
+      .toUpperCase(),
+
+    category: vatNatureCategorySchema,
+
+    description: z
+      .string()
+      .min(1, "Descrizione obbligatoria")
+      .max(500, "Descrizione max 500 caratteri")
+      .trim(),
+
+    extendedDescription: z.string().max(5000).optional().nullable(),
+
+    legalReference: z.string().max(255).optional().nullable(),
+
+    applicableToEntityTypes: z.string().max(10).optional().nullable(),
+
+    validForSales: z.boolean().default(true),
+
+    validForPurchases: z.boolean().default(false),
+
+    vatReturnLine: z.string().max(10).optional().nullable(),
+
+    requiresNormReference: z.boolean().default(false),
+
+    usageExamples: z.string().max(5000).optional().nullable(),
+
+    operationalNotes: z.string().max(5000).optional().nullable(),
+
+    active: z.boolean().default(true),
+
+    validFrom: isoDateSchema({ required: true }),
+
+    validTo: isoDateSchema(),
+
+    displayOrder: z.number().int().nonnegative().default(0),
+
+    replacedByCode: z.string().max(10).optional().nullable(),
+
+    translations: z.array(vatNatureTranslationSchema).optional().default([]),
+  })
+  .strict();
+
+/**
+ * Schema for updating a VAT Nature
+ */
+export const updateVatNatureSchema = createVatNatureSchema
+  .omit({ code: true })
+  .partial()
+  .strict();
 
 // ============================================================================
 // TAX RULE SCHEMAS
 // ============================================================================
 
 /**
- * Schema per l'ld di una Tax Rule
+ * Schema for Tax Rule ID
  */
-export const TaxRuleIdSchema = createIdSchema("Tax Rule  ID non valido");
+export const taxRuleIdSchema = createIdSchema("ID regola fiscale non valido");
 
 /**
- * Schema per una singola traduzione
+ * Schema for Tax Rule translation
  */
-const TaxRuleTranslationSchema = z
+const taxRuleTranslationSchema = z
   .object({
     languageId: createIdSchema("ID lingua non valido"),
     name: z
@@ -64,13 +166,14 @@ const TaxRuleTranslationSchema = z
       .min(1, "Nome traduzione obbligatorio")
       .max(255, "Nome traduzione max 255 caratteri")
       .trim(),
+    description: z.string().max(5000).optional().nullable(),
   })
   .strict();
 
 /**
- * Schema per la creazione di una Tax Rule
+ * Schema for creating a Tax Rule
  */
-export const CreateTaxRuleSchema = z
+export const createTaxRuleSchema = z
   .object({
     code: z
       .string()
@@ -78,89 +181,206 @@ export const CreateTaxRuleSchema = z
       .max(20, "Codice max 20 caratteri")
       .trim()
       .toUpperCase(),
+
     name: z
       .string()
       .min(1, "Nome obbligatorio")
       .max(255, "Nome max 255 caratteri")
       .trim(),
-    description: z.string().max(1000).optional().nullable(),
-    operationType: z
-      .string()
-      .min(1, "Tipo operazione obbligatorio")
-      .max(50, "Tipo operazione max 50 caratteri")
-      .trim(),
-    taxRateId: createIdSchema("ID Tax Rate non valido"),
+
+    description: z.string().max(5000).optional().nullable(),
+
+    rate: taxRateSchema,
+
+    vatNatureId: vatNatureIdSchema.optional().nullable(),
+
+    normativeReference: z.string().max(255).optional().nullable(),
+
+    countryCode: countryCodeBaseSchema.default("IT"),
+
+    applicableFor: taxRuleApplicabilitySchema.default("both"),
+
+    productCategory: z.string().max(50).optional().nullable(),
+
+    customerType: z.string().max(20).optional().nullable(),
+
+    isSplitPayment: z.boolean().default(false),
+
+    deductibilityPercent: deductibilityPercentSchema,
+
+    vatDeductible: z.boolean().default(true),
+
+    validFrom: isoDateSchema({ required: true }),
+
+    validTo: isoDateSchema(),
+
     active: z.boolean().default(true),
-    translations: z.array(TaxRuleTranslationSchema).optional().default([]),
+
+    isDefault: z.boolean().default(false),
+
+    displayOrder: z.number().int().nonnegative().default(0),
+
+    color: z
+      .string()
+      .regex(/^#[0-9A-F]{6}$/i, "Formato colore non valido (es: #FF0000)")
+      .optional()
+      .nullable(),
+
+    translations: z.array(taxRuleTranslationSchema).optional().default([]),
+  })
+  .strict()
+  .refine(
+    (data) => {
+      // If rate is 0, vatNatureId is required
+      if (data.rate.equals(0)) {
+        return !!data.vatNatureId;
+      }
+      return true;
+    },
+    {
+      message: "Natura IVA obbligatoria quando l'aliquota è 0",
+      path: ["vatNatureId"],
+    },
+  )
+  .refine(
+    (data) => {
+      // If rate > 0, vatNatureId should not be set
+      if (data.rate.greaterThan(0) && data.vatNatureId) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Natura IVA non necessaria quando l'aliquota è maggiore di 0",
+      path: ["vatNatureId"],
+    },
+  )
+  .refine(
+    (data) => {
+      // validTo must be after validFrom
+      if (data.validFrom && data.validTo) {
+        return new Date(data.validTo) > new Date(data.validFrom);
+      }
+      return true;
+    },
+    {
+      message: "La data di fine validità deve essere successiva alla data di inizio",
+      path: ["validTo"],
+    },
+  );
+
+/**
+ * Schema for updating a Tax Rule
+ */
+export const updateTaxRuleSchema = createTaxRuleSchema
+  .omit({ code: true })
+  .partial()
+  .strict()
+  .refine(
+    (data) => {
+      // If rate is provided and is 0, vatNatureId must be provided
+      if (data.rate !== undefined && data.rate.equals(0)) {
+        return data.vatNatureId !== undefined;
+      }
+      return true;
+    },
+    {
+      message: "Natura IVA obbligatoria quando l'aliquota è 0",
+      path: ["vatNatureId"],
+    },
+  );
+
+// ============================================================================
+// VAT NATURE TRANSLATION SCHEMAS
+// ============================================================================
+
+/**
+ * Schema for creating a VAT Nature translation
+ */
+export const createVatNatureTranslationSchema = z
+  .object({
+    vatNatureId: vatNatureIdSchema,
+    languageId: createIdSchema("ID lingua non valido"),
+    description: z
+      .string()
+      .min(1, "Descrizione obbligatoria")
+      .max(500, "Descrizione max 500 caratteri")
+      .trim(),
+    notes: z.string().max(5000).optional().nullable(),
   })
   .strict();
 
 /**
- * Schema per l'aggiornamento di una Tax Rule
+ * Schema for updating a VAT Nature translation
  */
-export const UpdateTaxRuleSchema = CreateTaxRuleSchema.partial().strict();
+export const updateVatNatureTranslationSchema =
+  createVatNatureTranslationSchema
+    .omit({ vatNatureId: true, languageId: true })
+    .partial()
+    .strict();
 
 // ============================================================================
 // TAX RULE TRANSLATION SCHEMAS
 // ============================================================================
 
 /**
- * Schema per la creazione di una singola traduzione
+ * Schema for creating a Tax Rule translation
  */
-export const CreateTaxRuleTranslationSchema = z
+export const createTaxRuleTranslationSchema = z
   .object({
-    taxRuleId: createIdSchema("ID Tax Rule non valido"),
+    taxRuleId: taxRuleIdSchema,
     languageId: createIdSchema("ID lingua non valido"),
     name: z
       .string()
       .min(1, "Nome traduzione obbligatorio")
       .max(255, "Nome traduzione max 255 caratteri")
       .trim(),
+    description: z.string().max(5000).optional().nullable(),
   })
   .strict();
 
 /**
- * Schema per l'aggiornamento di una traduzione
+ * Schema for updating a Tax Rule translation
  */
-export const UpdateTaxRuleTranslationSchema =
-  CreateTaxRuleTranslationSchema.omit({ taxRuleId: true, languageId: true })
-    .partial()
-    .strict();
+export const updateTaxRuleTranslationSchema = createTaxRuleTranslationSchema
+  .omit({ taxRuleId: true, languageId: true })
+  .partial()
+  .strict();
 
 // ============================================================================
 // QUERY SCHEMAS
 // ============================================================================
 
 /**
- * Schema per query Tax Rate
+ * Schema for VAT Nature queries
  */
-export const TaxRateQuerySchema = z.object({
-  active: QueryBooleanSchema,
-  minRate: createDecimalSchema(2, {
-    positiveOnly: true,
-    min: 0,
-    max: 100,
-  }).optional(),
-  maxRate: createDecimalSchema(2, {
-    positiveOnly: true,
-    min: 0,
-    max: 100,
-  }).optional(),
-  sortBy: z.enum(["rate", "name", "createdAt"]).default("rate"),
+export const vatNatureQuerySchema = z.object({
+  active: queryBooleanSchema,
+  category: vatNatureCategorySchema.optional(),
+  validForSales: queryBooleanSchema,
+  validForPurchases: queryBooleanSchema,
+  search: z.string().optional(),
+  sortBy: z
+    .enum(["code", "description", "category", "displayOrder", "createdAt"])
+    .default("displayOrder"),
   sortOrder: sortOrderSchema,
 });
 
 /**
- * Schema per query Tax Rule
+ * Schema for Tax Rule queries
  */
-export const TaxRuleQuerySchema = z.object({
-  active: QueryBooleanSchema,
-  operationType: z.string().optional(),
-  taxRateId: createIdSchema("ID Tax Rate non valido"),
+export const taxRuleQuerySchema = z.object({
+  active: queryBooleanSchema,
+  isDefault: queryBooleanSchema,
+  applicableFor: taxRuleApplicabilitySchema.optional(),
+  countryCode: countryCodeBaseSchema.optional(),
+  vatNatureId: vatNatureIdSchema.optional(),
+  minRate: taxRateSchema.optional(),
+  maxRate: taxRateSchema.optional(),
   search: z.string().optional(),
   sortBy: z
-    .enum(["code", "name", "operationType", "createdAt"])
-    .default("code"),
+    .enum(["code", "name", "rate", "countryCode", "displayOrder", "createdAt"])
+    .default("displayOrder"),
   sortOrder: sortOrderSchema,
 });
 
@@ -168,24 +388,29 @@ export const TaxRuleQuerySchema = z.object({
 // PARAM SCHEMAS
 // ============================================================================
 
-export const TaxRateIdParamSchema = z.object({
-  id: createIdSchema("ID Tax Rate non valido"),
+export const vatNatureIdParamSchema = z.object({
+  id: vatNatureIdSchema,
 });
 
-export const TaxRuleIdParamSchema = z.object({
-  id: createIdSchema("ID Tax Rule non valido"),
+export const taxRuleIdParamSchema = z.object({
+  id: taxRuleIdSchema,
 });
 
-export const TaxRuleTranslationIdParamSchema = z.object({
-  taxRuleId: createIdSchema("ID Tax Rule non valido"),
+export const vatNatureTranslationIdParamSchema = z.object({
+  vatNatureId: vatNatureIdSchema,
+  languageId: createIdSchema("ID lingua non valido"),
+});
+
+export const taxRuleTranslationIdParamSchema = z.object({
+  taxRuleId: taxRuleIdSchema,
   languageId: createIdSchema("ID lingua non valido"),
 });
 
 /**
- * Schema per toggle active status
+ * Schema for toggling active status
  */
-export const ToggleTaxStatusSchema = z
+export const toggleTaxStatusSchema = z
   .object({
-    active: z.boolean({ error: "Campo active obbligatorio" }),
+    active: z.boolean({ message: "Campo active obbligatorio" }),
   })
   .strict();

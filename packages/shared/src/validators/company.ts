@@ -1,52 +1,55 @@
-import z from "zod";
+import { z } from "zod";
+
 import {
-  createIdSchema,
-  emailSchema,
-  InputJsonValueSchema,
-  limitSchema,
-  pageSchema,
-  positiveNumbersSchema,
-  sortOrderSchema,
-} from "../utils";
-import { UserIdSchema } from "./base";
+  countryCodeBaseSchema,
+  inputJsonValueSchema,
+  userIdSchema,
+} from "./base";
+import { createIdSchema } from "./primitives/id";
+import {
+  eoriNumberSchema,
+  fiscalCodeSchema,
+  internationalVatIdSchema,
+  sdiCodeSchema,
+  vatNumberSchema,
+} from "./business/italian-codes";
+import { emailSchema, phoneSchema } from "./primitives/string";
+import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 
 // ============================================================================
 // ENUMS - Shared across all company types
 // ============================================================================
 
-export const CompanyStatusSchema = z.enum([
+export const companyStatusSchema = z.enum([
   "ACTIVE",
   "INACTIVE",
   "SUSPENDED",
   "ARCHIVED",
 ]);
-export const CompanyTypeEntitySchema = z.enum([
+export const companyTypeEntitySchema = z.enum([
   "JURIDICAL",
   "NATURAL",
   "FOREIGN",
 ]);
 
 /**
+ * Schema base ID Company
+ */
+const companyIdBaseSchema = createIdSchema("Company ID non valido");
+
+/**
  * Schema per ID Company come companyId
  */
-export const CompanyIdAsCompanyIdSchema = z.object({
-  companyId: createIdSchema("Company ID non valido"),
+export const companyIdAsCompanyIdSchema = z.object({
+  companyId: companyIdBaseSchema,
 });
 
 /**
  * Schema per ID Company
  */
-export const CompanyIdSchema = z.object({
-  id: createIdSchema("Company ID non valido"),
+export const companyIdSchema = z.object({
+  id: companyIdBaseSchema,
 });
-
-// ============================================================================
-// VALIDATION REGEX
-// ============================================================================
-
-export const italianVATRegex = /^\d{11}$/;
-export const italianTaxCodeRegex = /^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/;
-export const sdiCodeRegex = /^[A-Z0-9]{7}$/;
 
 // ============================================================================
 // BASE COMPANY SCHEMA (riutilizzabile)
@@ -55,7 +58,7 @@ export const sdiCodeRegex = /^[A-Z0-9]{7}$/;
 /**
  * Schema base per Company - usato per nested creation in Customer/Supplier
  */
-export const BaseCompanySchema = z
+export const baseCompanySchema = z
   .object({
     code: z
       .string()
@@ -82,125 +85,134 @@ export const BaseCompanySchema = z
       .optional()
       .nullable(),
 
-    status: CompanyStatusSchema.default("ACTIVE"),
-    entityType: CompanyTypeEntitySchema.default("JURIDICAL"),
+    status: companyStatusSchema.default("ACTIVE"),
+    entityType: companyTypeEntitySchema.default("JURIDICAL"),
 
     legalAddressId: createIdSchema("LegalAddressId non valido")
       .optional()
       .nullable(),
 
     // ===== Dati Fiscali ITALIANI =====
-    vatNumber: z
-      .string()
-      .max(20, "Partita IVA non può superare 20 caratteri")
-      .optional()
-      .nullable()
-      .refine((val) => !val || italianVATRegex.test(val), {
-        message: "Partita IVA non valida (deve essere 11 cifre numeriche)",
-      }),
-
-    taxCode: z
-      .string()
-      .max(20, "Codice Fiscale non può superare 20 caratteri")
-      .optional()
-      .nullable()
-      .refine((val) => !val || italianTaxCodeRegex.test(val), {
-        message: "Codice Fiscale non valido (formato: RSSMRA85M01H501Z)",
-      }),
-
-    sdiCode: z
-      .string()
-      .refine((val) => val === "" || val.length === 7, {
-        message: "Codice SDI deve essere esattamente 7 caratteri",
-      })
-      .refine((val) => val === "" || sdiCodeRegex.test(val), {
-        message: "Codice SDI non valido (7 caratteri alfanumerici)",
-      })
-      .transform((val) => (val === "" ? null : val))
-      .nullable()
-      .optional(),
-
-    pec: z
-      .string()
-      .transform((val) => (val.trim() === "" ? null : val.trim()))
-      .refine((val) => val === null || z.email().safeParse(val).success, {
-        message: "Indirizzo PEC non valido",
-      })
-      .refine((val) => val === null || val.length <= 255, {
-        message: "PEC non può superare 255 caratteri",
-      })
-      .nullable()
-      .optional(),
+    vatNumber: vatNumberSchema(),
+    taxCode: fiscalCodeSchema(),
+    sdiCode: sdiCodeSchema(),
+    pec: emailSchema().optional().nullable(),
 
     // ===== Dati Fiscali ESTERI =====
-    eoriNumber: z
-      .string()
-      .max(20, "EORI non può superare 20 caratteri")
-      .optional()
-      .nullable(),
+    vatId: internationalVatIdSchema(),
+    eoriNumber: eoriNumberSchema(),
 
-    vatId: z
-      .string()
-      .max(20, "VAT ID non può superare 20 caratteri")
-      .optional()
-      .nullable(),
+    taxRegime: z.string().max(20).optional().nullable(),
+    vatExempt: z.boolean().default(false),
+    vatExemptReason: z.string().max(100).optional().nullable(),
 
     // ===== Nazione =====
-    countryCode: z
-      .string()
-      .length(2, "Country code deve essere esattamente 2 caratteri (ISO)")
-      .default("IT"),
+    countryCode: countryCodeBaseSchema.default("IT"),
 
     // ===== Contatti Generali =====
     mainEmail: emailSchema().optional().nullable(),
 
-    mainPhone: z
-      .string()
-      .max(50, "Telefono non può superare 50 caratteri")
-      .optional()
-      .nullable(),
+    mainPhone: phoneSchema.optional().nullable(),
 
     // ===== Relazioni =====
-    assignedUserId: UserIdSchema.optional().nullable(),
+    assignedUserId: userIdSchema.optional().nullable(),
 
     // ===== Campi Custom =====
-    customFields: InputJsonValueSchema.optional().nullable(),
-    openingHours: InputJsonValueSchema.optional().nullable(),
+    customFields: inputJsonValueSchema.optional().nullable(),
+    openingHours: inputJsonValueSchema.optional().nullable(),
   })
+  .refine(
+    (data) => {
+      // Italian company validation
+      if (data.countryCode === "IT") {
+        if (data.entityType === "JURIDICAL") {
+          return !!data.vatNumber;
+        } else {
+          return !!data.taxCode;
+        }
+      }
+
+      // EU company validation
+      const euCountries = [
+        "AT",
+        "BE",
+        "BG",
+        "HR",
+        "CY",
+        "CZ",
+        "DE",
+        "DK",
+        "EE",
+        "EL",
+        "GR",
+        "ES",
+        "FI",
+        "FR",
+        "HU",
+        "IE",
+        "LT",
+        "LU",
+        "LV",
+        "MT",
+        "NL",
+        "PL",
+        "PT",
+        "RO",
+        "SE",
+        "SI",
+        "SK",
+      ];
+
+      if (euCountries.includes(data.countryCode)) {
+        return !!data.vatId;
+      }
+
+      // Extra-EU: VAT ID or EORI
+      return !!(data.vatId || data.eoriNumber);
+    },
+    {
+      message: "Dati fiscali obbligatori mancanti",
+      path: ["vatNumber"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.countryCode === "IT" && data.sdiCode === "0000000") {
+        return !!data.pec;
+      }
+      return true;
+    },
+    {
+      message: "PEC obbligatoria per SDI 0000000",
+      path: ["pec"],
+    },
+  )
   .strict();
 
 /**
  * Schema per Update Company (partial del base)
  */
-export const UpdateCompanySchema = BaseCompanySchema.partial().strict();
+export const updateCompanySchema = baseCompanySchema.partial().strict();
 
 /**
  * Schema per Query Parameters Company
  */
-export const CompanyQueryBaseSchema = z.object({
+export const companyQueryBaseSchema = z.object({
   page: pageSchema,
   limit: limitSchema,
   search: z.string().optional(),
-
-  status: CompanyStatusSchema.optional(),
-  entityType: CompanyTypeEntitySchema.optional(),
-
-  countryCode: z
-    .string()
-    .length(2, "Country code deve essere 2 caratteri")
-    .optional(),
-
-  assignedUserId: UserIdSchema.optional().nullable(),
-
+  status: companyStatusSchema.optional(),
+  entityType: companyTypeEntitySchema.optional(),
+  countryCode: countryCodeBaseSchema.optional(),
+  assignedUserId: userIdSchema.optional().nullable(),
   sortBy: z.string().optional().default("id"),
-
   sortOrder: sortOrderSchema,
 });
 
 /**
  * Schema per Creazione note
  */
-export const CreateCompanyNoteSchema = z.object({
+export const createCompanyNoteSchema = z.object({
   companyId: createIdSchema("Company ID necessario"),
   title: z.string().max(255),
   content: z.string(),
@@ -209,5 +221,5 @@ export const CreateCompanyNoteSchema = z.object({
 /**
  * Schema per Aggiornamento note
  */
-export const UpdateCompanyNoteSchema =
-  CreateCompanyNoteSchema.omit("companyId");
+export const updateCompanyNoteSchema =
+  createCompanyNoteSchema.omit("companyId");

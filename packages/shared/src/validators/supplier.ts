@@ -1,15 +1,13 @@
-import z from "zod";
+import {z} from "zod";
 import {
-  BaseCompanySchema,
-  CompanyIdSchema,
-  CompanyQueryBaseSchema,
-  UpdateCompanySchema,
+  baseCompanySchema,
+  companyIdSchema,
+  companyQueryBaseSchema,
+  updateCompanySchema,
 } from "./company";
-import {
-  CreditLimitSchema,
-  QueryBooleanSchema,
-  queryNumberSchema,
-} from "../utils";
+import { creditLimitSchema } from "./business/currency";
+import { queryBooleanSchema, queryNumberSchema } from "./query/params";
+
 
 // ============================================================================
 // SUPPLIER SCHEMAS (Extended from Base)
@@ -19,10 +17,10 @@ import {
  * Schema per la creazione di un Supplier
  * Estende BaseCompanySchema con dati Procurement specifici
  */
-export const CreateSupplierSchema = z
+export const createSupplierSchema = z
   .object({
     // Nested Company (usa il base schema)
-    company: BaseCompanySchema,
+    company: baseCompanySchema,
 
     // ===== Dati Procurement Specifici Supplier =====
     paymentTerms: z
@@ -31,7 +29,7 @@ export const CreateSupplierSchema = z
       .optional()
       .nullable(),
 
-    creditLimit: CreditLimitSchema.optional().nullable(),
+    creditLimit: creditLimitSchema.optional().nullable(),
 
     bankAccount: z
       .string()
@@ -63,11 +61,11 @@ export const CreateSupplierSchema = z
  * Schema per l'aggiornamento Supplier
  * Solo dati Procurement, NON modifica Company
  */
-export const UpdateSupplierSchema = z
+export const updateSupplierSchema = z
   .object({
     paymentTerms: z.string().max(100).optional().nullable(),
 
-    creditLimit: CreditLimitSchema.optional().nullable(),
+    creditLimit: creditLimitSchema.optional().nullable(),
 
     bankAccount: z.string().max(100).optional().nullable(),
 
@@ -83,12 +81,12 @@ export const UpdateSupplierSchema = z
  * Schema per aggiornare solo la Company del Supplier
  * Riusa UpdateCompanySchema dal base
  */
-export const UpdateSupplierCompanySchema = UpdateCompanySchema;
+export const updateSupplierCompanySchema = updateCompanySchema;
 
 /**
  * Schema per aggiornamento Rating con note
  */
-export const UpdateSupplierRatingSchema = z
+export const updateSupplierRatingSchema = z
   .object({
     rating: z
       .number()
@@ -108,7 +106,7 @@ export const UpdateSupplierRatingSchema = z
  * Schema per Query Parameters Supplier
  * Estende CompanyQueryBaseSchema con filtri Procurement
  */
-export const SupplierQuerySchema = CompanyQueryBaseSchema.extend({
+export const supplierQuerySchema = companyQueryBaseSchema.extend({
   // Filtri Supplier-specific
   minRating: queryNumberSchema("Rating deve essere tra 1 e 5").pipe(
     z.number().min(1).max(5).optional(),
@@ -116,8 +114,8 @@ export const SupplierQuerySchema = CompanyQueryBaseSchema.extend({
   maxRating: queryNumberSchema("Rating deve essere tra 1 e 5").pipe(
     z.number().min(1).max(5).optional(),
   ),
-  hasProducts: QueryBooleanSchema,
-  hasOrders: QueryBooleanSchema,
+  hasProducts: queryBooleanSchema,
+  hasOrders: queryBooleanSchema,
 
   minLeadTime: queryNumberSchema("Lead Time non valido").pipe(
     z.number().int().nonnegative().optional(),
@@ -132,4 +130,4 @@ export const SupplierQuerySchema = CompanyQueryBaseSchema.extend({
 /**
  * Schema per ID Supplier (riusa CompanyIdSchema)
  */
-export const SupplierIdSchema = CompanyIdSchema;
+export const supplierIdSchema = companyIdSchema;
