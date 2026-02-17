@@ -3,77 +3,64 @@ import {
   validateParams,
   validateQuery,
 } from "../middleware/validation";
-import { CreateTaxRateSchema, CreateTaxRuleSchema, CreateTaxRuleTranslationSchema, TaxRateIdParamSchema, TaxRateQuerySchema, TaxRuleIdParamSchema, TaxRuleQuerySchema, TaxRuleTranslationIdParamSchema, ToggleTaxStatusSchema, UpdateTaxRateSchema, UpdateTaxRuleSchema, UpdateTaxRuleTranslationSchema } from "@mini-erp/shared";
-
+import {
+  createTaxRuleSchema,
+  createTaxRuleTranslationSchema,
+  taxRuleIdParamSchema,
+  taxRuleQuerySchema,
+  taxRuleTranslationIdParamSchema,
+  toggleTaxStatusSchema,
+  updateTaxRuleSchema,
+  updateTaxRuleTranslationSchema,
+} from "@mini-erp/shared";
 
 // ============================================================================
 // VALIDATION MIDDLEWARE
 // ============================================================================
 
-// Tax Rate Validators
-export const validateCreateTaxRate = validateBody(
-  CreateTaxRateSchema,
-  "Tax Rate creation",
-);
-
-export const validateUpdateTaxRate = validateBody(
-  UpdateTaxRateSchema,
-  "Tax Rate update",
-);
-
-export const validateTaxRateId = validateParams(
-  TaxRateIdParamSchema,
-  "Tax Rate ID",
-);
-
-export const validateTaxRateQuery = validateQuery(
-  TaxRateQuerySchema,
-  "Tax Rate query",
-);
-
 export const validateToggleTaxRateStatus = validateBody(
-  ToggleTaxStatusSchema,
+  toggleTaxStatusSchema,
   "Toggle Tax Rate status",
 );
 
 // Tax Rule Validators
 export const validateCreateTaxRule = validateBody(
-  CreateTaxRuleSchema,
+  createTaxRuleSchema,
   "Tax Rule creation",
 );
 
 export const validateUpdateTaxRule = validateBody(
-  UpdateTaxRuleSchema,
+  updateTaxRuleSchema,
   "Tax Rule update",
 );
 
 export const validateTaxRuleId = validateParams(
-  TaxRuleIdParamSchema,
+  taxRuleIdParamSchema,
   "Tax Rule ID",
 );
 
 export const validateTaxRuleQuery = validateQuery(
-  TaxRuleQuerySchema,
+  taxRuleQuerySchema,
   "Tax Rule query",
 );
 
 export const validateToggleTaxRuleStatus = validateBody(
-  ToggleTaxStatusSchema,
+  toggleTaxStatusSchema,
   "Toggle Tax Rule status",
 );
 
 // Tax Rule Translation Validators
 export const validateCreateTaxRuleTranslation = validateBody(
-  CreateTaxRuleTranslationSchema,
+  createTaxRuleTranslationSchema,
   "Tax Rule Translation creation",
 );
 
 export const validateUpdateTaxRuleTranslation = validateBody(
-  UpdateTaxRuleTranslationSchema,
+  updateTaxRuleTranslationSchema,
   "Tax Rule Translation update",
 );
 
 export const validateTaxRuleTranslationId = validateParams(
-  TaxRuleTranslationIdParamSchema,
+  taxRuleTranslationIdParamSchema,
   "Tax Rule Translation ID",
 );

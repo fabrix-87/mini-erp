@@ -1,93 +1,92 @@
 import {
+  activityIdAsActivityIdSchema,
+  activityIdSchema,
+  activityParticipantIdSchema,
+  activityQuerySchema,
+  activityStatsSchema,
+  activityTemplateIdSchema,
+  completeActivitySchema,
+  createActivityFromTemplateSchema,
+  createActivitySchema,
+  createActivityTemplateSchema,
+  updateActivityParticipantSchema,
+  updateActivitySchema,
+  updateActivityStatusSchema,
+  updateActivityTemplateSchema,
+} from "@mini-erp/shared";
+import {
   validateBody,
   validateParams,
   validateQuery,
 } from "../middleware/validation";
-
-import {
-  ActivityIdAsActivityIdSchema,
-  ActivityIdSchema,
-  ActivityParticipantIdSchema,
-  ActivityQuerySchema,
-  ActivityStatsSchema,
-  ActivityTemplateIdSchema,
-  CompleteActivitySchema,
-  CreateActivityFromTemplateSchema,
-  CreateActivitySchema,
-  CreateActivityTemplateSchema,
-  UpdateActivityParticipantSchema,
-  UpdateActivitySchema,
-  UpdateActivityStatusSchema,
-  UpdateActivityTemplateSchema,
-} from "@mini-erp/shared/validators";
 
 // ============================================================================
 // MIDDLEWARE
 // ============================================================================
 
 export const validateActivityId = validateParams(
-  ActivityIdSchema,
-  "Activity ID"
+  activityIdSchema,
+  "Activity ID",
 );
 export const validateActivityIdAsActivityId = validateQuery(
-  ActivityIdAsActivityIdSchema,
-  "Activity query"
+  activityIdAsActivityIdSchema,
+  "Activity query",
 );
 export const validateActivityPartecipantId = validateQuery(
-  ActivityParticipantIdSchema,
-  "Activity query"
+  activityParticipantIdSchema,
+  "Activity query",
 );
 export const validateActivityTemplateId = validateQuery(
-  ActivityTemplateIdSchema,
-  "Activity query"
+  activityTemplateIdSchema,
+  "Activity query",
 );
 
 export const validateActivityStatsQuery = validateQuery(
-  ActivityStatsSchema,
-  "Activity stats"
+  activityStatsSchema,
+  "Activity stats",
 );
 
 export const validateCreateActivity = validateBody(
-  CreateActivitySchema,
-  "Activity creation"
+  createActivitySchema,
+  "Activity creation",
 );
 
 export const validateUpdateActivity = validateBody(
-  UpdateActivitySchema,
-  "Activity modification"
+  updateActivitySchema,
+  "Activity modification",
 );
 
 export const validateActivityQuery = validateQuery(
-  ActivityQuerySchema,
-  "Activity query"
+  activityQuerySchema,
+  "Activity query",
 );
 
 export const validateUpdateActivityStatus = validateBody(
-  UpdateActivityStatusSchema,
-  "Activity modification status"
+  updateActivityStatusSchema,
+  "Activity modification status",
 );
 
 export const validateCompleteActivityStatus = validateBody(
-  CompleteActivitySchema,
-  "Activity complete status"
+  completeActivitySchema,
+  "Activity complete status",
 );
 
 export const validateUpdateActivityPartecipant = validateBody(
-  UpdateActivityParticipantSchema,
-  "Participant update"
+  updateActivityParticipantSchema,
+  "Participant update",
 );
 
 export const validateCreateActivityTemplate = validateBody(
-  CreateActivityTemplateSchema,
-  "Template creation"
+  createActivityTemplateSchema,
+  "Template creation",
 );
 
 export const validateCreateActivityFromTemplate = validateBody(
-  CreateActivityFromTemplateSchema,
-  "Create activity from template"
+  createActivityFromTemplateSchema,
+  "Create activity from template",
 );
 
 export const validateUpdateActivityTemplate = validateBody(
-  UpdateActivityTemplateSchema,
-  "Template update"
+  updateActivityTemplateSchema,
+  "Template update",
 );

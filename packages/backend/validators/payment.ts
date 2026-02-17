@@ -4,17 +4,17 @@
 
 import { validateBody, validateParams } from "@/middleware/validation";
 import {
-  CalculateDueDatesSchema,
-  CreatePaymentMethodSchema,
-  PaymentMethodIdSchema,
-  PaymentQuerySchema,
-  TogglePaymentStatusSchema,
-  UpdatePaymentMethodSchema,
-  UpdatePaymentTermDetailsSchema,
+  calculateDueDatesSchema,
+  createPaymentMethodSchema,
+  paymentMethodIdSchema,
+  paymentQuerySchema,
+  togglePaymentStatusSchema,
+  updatePaymentMethodSchema,
+  updatePaymentTermDetailsSchema,
 } from "@mini-erp/shared/validators";
 
 export const validatePaymentQuery = validateParams(
-  PaymentQuerySchema,
+  paymentQuerySchema,
   "Payment query",
 );
 
@@ -22,7 +22,7 @@ export const validatePaymentQuery = validateParams(
  * Valida i dati per la creazione di un Payment Method
  */
 export const validateCreatePaymentMethod = validateBody(
-  CreatePaymentMethodSchema,
+  createPaymentMethodSchema,
   "Payment method creation",
 );
 
@@ -30,7 +30,7 @@ export const validateCreatePaymentMethod = validateBody(
  * Valida i dati per l'aggiornamento di un Payment Method
  */
 export const validateUpdatePaymentMethod = validateBody(
-  UpdatePaymentMethodSchema,
+  updatePaymentMethodSchema,
   "Payment method update",
 );
 
@@ -38,21 +38,21 @@ export const validateUpdatePaymentMethod = validateBody(
  * Valida i dati per aggiornamento Payment Term Details
  */
 export const validateUpdatePaymentTermDetails = validateBody(
-  UpdatePaymentTermDetailsSchema,
+  updatePaymentTermDetailsSchema,
   "Payment term details update",
 );
 
 export const validatePaymentMethodIdParam = validateParams(
-  PaymentMethodIdSchema,
+  paymentMethodIdSchema,
   "Payment Method ID",
 );
 
 export const validateTogglePaymentMethod = validateBody(
-  TogglePaymentStatusSchema,
+  togglePaymentStatusSchema,
   "Toggle status",
 );
 
 export const validateCalcolateDueDates = validateBody(
-  CalculateDueDatesSchema,
+  calculateDueDatesSchema,
   "Calculate due dates",
 );

@@ -1,9 +1,9 @@
 import {
-  AddressIdSchema,
-  AddressQuerySchema,
-  CreateAddressSchema,
-  SetPrimaryAddressSchema,
-  UpdateAddressSchema,
+  addressIdSchema,
+  addressQuerySchema,
+  createAddressSchema,
+  setPrimaryAddressSchema,
+  updateAddressSchema,
 } from "@mini-erp/shared/validators";
 import {
   validateBody,
@@ -16,23 +16,23 @@ import {
 // ============================================================================
 
 export const validateCreateAddress = validateBody(
-  CreateAddressSchema,
+  createAddressSchema,
   "Address creation",
 );
 
 export const validateUpdateAddress = validateBody(
-  UpdateAddressSchema,
+  updateAddressSchema,
   "Address update",
 );
 
-export const validateAddressId = validateParams(AddressIdSchema, "Address ID");
+export const validateAddressId = validateParams(addressIdSchema, "Address ID");
 
 export const validateAddressQuery = validateQuery(
-  AddressQuerySchema,
+  addressQuerySchema,
   "Address query",
 );
 
 export const validateSetPrimaryAddress = validateBody(
-  SetPrimaryAddressSchema,
+  setPrimaryAddressSchema,
   "Set primary address",
 );

@@ -4,19 +4,19 @@ import {
   validateQuery,
 } from "../middleware/validation";
 import {
-  AssignPermissionsSchema,
-  AssignRolesToUserSchema,
-  CheckPermissionSchema,
-  CreatePermissionSchema,
-  CreateRoleSchema,
-  PermissionIdParamSchema,
-  PermissionQuerySchema,
-  RemovePermissionsSchema,
-  RoleCodeParamSchema,
-  RoleIdParamSchema,
-  RoleQuerySchema,
-  UpdatePermissionSchema,
-  UpdateRoleSchema,
+  assignPermissionsSchema,
+  assignRolesToUserSchema,
+  checkPermissionSchema,
+  createPermissionSchema,
+  createRoleSchema,
+  permissionIdParamSchema,
+  permissionQuerySchema,
+  removePermissionsSchema,
+  roleCodeParamSchema,
+  roleIdParamSchema,
+  roleQuerySchema,
+  updatePermissionSchema,
+  updateRoleSchema,
 } from "@mini-erp/shared/validators/role";
 
 // ============================================================================
@@ -25,61 +25,61 @@ import {
 
 // ROLES
 export const validateCreateRole = validateBody(
-  CreateRoleSchema,
+  createRoleSchema,
   "Role creation"
 );
 
-export const validateUpdateRole = validateBody(UpdateRoleSchema, "Role update");
+export const validateUpdateRole = validateBody(updateRoleSchema, "Role update");
 
 export const validateRoleId = validateParams(
-  RoleIdParamSchema,
+  roleIdParamSchema,
   "Role ID validation"
 );
 
 export const validateRoleCode = validateParams(
-  RoleCodeParamSchema,
+  roleCodeParamSchema,
   "Role code validation"
 );
 
-export const validateRoleQuery = validateQuery(RoleQuerySchema, "Role query");
+export const validateRoleQuery = validateQuery(roleQuerySchema, "Role query");
 
 export const validateAssignPermissions = validateBody(
-  AssignPermissionsSchema,
+  assignPermissionsSchema,
   "Assign permissions"
 );
 
 export const validateRemovePermissions = validateBody(
-  RemovePermissionsSchema,
+  removePermissionsSchema,
   "Remove permissions"
 );
 
 // PERMISSIONS
 export const validateCreatePermission = validateBody(
-  CreatePermissionSchema,
+  createPermissionSchema,
   "Permission creation",
 );
 
 export const validateUpdatePermission = validateBody(
-  UpdatePermissionSchema,
+  updatePermissionSchema,
   "Permission update"
 );
 
 export const validatePermissionId = validateParams(
-  PermissionIdParamSchema,
+  permissionIdParamSchema,
   "Permission ID validation"
 );
 
 export const validatePermissionQuery = validateQuery(
-  PermissionQuerySchema,
+  permissionQuerySchema,
   "Permission query"
 );
 
 export const validateAssignRolesToUser = validateBody(
-  AssignRolesToUserSchema,
+  assignRolesToUserSchema,
   "Assign roles to user"  
 );
 
 export const validateCheckPermission = validateBody(
-  CheckPermissionSchema,
+  checkPermissionSchema,
   "Check permission",
 );

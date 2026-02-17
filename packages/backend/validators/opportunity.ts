@@ -1,14 +1,9 @@
 import {
-  AssignUserSchema,
-  CloseOpportunityLostSchema,
-  CloseOpportunityWonSchema,
-  CreateOpportunitySchema,
-  CustomerIdParamSchema,
-  OpportunityIdSchema,
-  OpportunityQueryByStatusSchema,
-  OpportunityQuerySchema,
-  UpdateOpportunitySchema,
-  UpdateStageSchema,
+  createOpportunitySchema,
+  customerIdParamSchema,
+  opportunityIdSchema,
+  opportunityQuerySchema,
+  updateOpportunitySchema,
 } from "@mini-erp/shared";
 import {
   validate,
@@ -21,51 +16,55 @@ import {
 // ============================================================================
 
 export const validateOpportunityQuery = validateBody(
-  OpportunityQuerySchema,
+  opportunityQuerySchema,
   "Opportunity query",
 );
 
 export const validateCustomerIdParam = validateParams(
-  CustomerIdParamSchema,
+  customerIdParamSchema,
   "Customer ID",
 );
 
+/*
 export const validateGetOpportunitiesByCustomer = validateParams(
-  OpportunityQueryByStatusSchema,
+  opportunityQueryByStatusSchema,
   "Opportunity query by status",
 );
+*/
 
 export const validateGetOpportunity = validateParams(
-  OpportunityIdSchema,
+  opportunityIdSchema,
   "Opportunity ID",
 );
 
 export const validateCreateOpportunity = validate(
-  CreateOpportunitySchema,
+  createOpportunitySchema,
   "Opportunity creation",
 );
 
 export const validateUpdateOpportunity = validateParams(
-  UpdateOpportunitySchema,
+  updateOpportunitySchema,
   "Opportunity update",
 );
 
+/*
 export const validateUpdateOpportunityStage = validate(
-  UpdateStageSchema,
+  updateStageSchema,
   "Stage update",
 );
 
 export const validateOpportunityWon = validate(
-  CloseOpportunityWonSchema,
+  closeOpportunityWonSchema,
   "Close won",
 );
 
 export const validateOpportunityLost = validate(
-  CloseOpportunityLostSchema,
+  closeOpportunityLostSchema,
   "Close lost",
 );
 
 export const validateOpportunityAssignUser = validate(
-  AssignUserSchema,
+  assignUserSchema,
   "Assign user",
 );
+*/

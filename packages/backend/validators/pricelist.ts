@@ -1,15 +1,15 @@
 import {
-  BulkImportBodySchema,
-  BulkPriceListIdParamSchema,
-  CalculatePriceBodySchema,
-  CreatePriceListItemSchema,
-  CreatePriceListSchema,
-  PriceListIdParamSchema,
-  PriceListItemIdParamSchema,
-  PriceListItemQuerySchema,
-  PriceListQuerySchema,
-  UpdatePriceListItemSchema,
-  UpdatePriceListSchema,
+  bulkImportBodySchema,
+  bulkPriceListIdParamSchema,
+  calculatePriceBodySchema,
+  createPriceListItemSchema,
+  createPriceListSchema,
+  priceListIdParamSchema,
+  priceListItemIdParamSchema,
+  priceListItemQuerySchema,
+  priceListQuerySchema,
+  updatePriceListItemSchema,
+  updatePriceListSchema,
 } from "@mini-erp/shared";
 import {
   validateBody,
@@ -22,56 +22,56 @@ import {
 // ============================================================================
 
 export const validateCreatePriceList = validateBody(
-  CreatePriceListSchema,
+  createPriceListSchema,
   "Price list creation",
 );
 
 export const validateUpdatePriceList = validateBody(
-  UpdatePriceListSchema,
+  updatePriceListSchema,
   "Price list update",
 );
 
 export const validateCreatePriceListItem = validateBody(
-  CreatePriceListItemSchema,
+  createPriceListItemSchema,
   "Price list item creation",
 );
 
 export const validateUpdatePriceListItem = validateBody(
-  UpdatePriceListItemSchema,
+  updatePriceListItemSchema,
   "Price list item update",
 );
 
 export const validateBulkImportItems = validateBody(
-  BulkImportBodySchema,
+  bulkImportBodySchema,
   "Bulk import items",
 );
 
 export const validateCalculatePrice = validateBody(
-  CalculatePriceBodySchema,
+  calculatePriceBodySchema,
   "Calculate price",
 );
 
 export const validatePriceListId = validateParams(
-  PriceListIdParamSchema,
+  priceListIdParamSchema,
   "Price List ID",
 );
 
 export const validatePriceListItemId = validateParams(
-  PriceListItemIdParamSchema,
+  priceListItemIdParamSchema,
   "Price List Item ID",
 );
 
 export const validateBulkPriceListId = validateParams(
-  BulkPriceListIdParamSchema,
+  bulkPriceListIdParamSchema,
   "Bulk Price List ID",
 );
 
 export const validatePriceListQuery = validateQuery(
-  PriceListQuerySchema,
+  priceListQuerySchema,
   "Price List query",
 );
 
 export const validatePriceListItemQuery = validateQuery(
-  PriceListItemQuerySchema,
+  priceListItemQuerySchema,
   "Price List Item query",
 );

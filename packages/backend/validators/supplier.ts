@@ -1,10 +1,10 @@
 import {
-  CreateSupplierSchema,
-  SupplierIdSchema,
-  SupplierQuerySchema,
-  UpdateSupplierCompanySchema,
-  UpdateSupplierRatingSchema,
-  UpdateSupplierSchema,
+  createSupplierSchema,
+  supplierIdSchema,
+  supplierQuerySchema,
+  updateSupplierCompanySchema,
+  updateSupplierRatingSchema,
+  updateSupplierSchema,
 } from "@mini-erp/shared/validators";
 
 import {
@@ -18,31 +18,31 @@ import {
 // ============================================================================
 
 export const validateCreateSupplier = validateBody(
-  CreateSupplierSchema,
+  createSupplierSchema,
   "Supplier creation",
 );
 
 export const validateUpdateSupplier = validateBody(
-  UpdateSupplierSchema,
+  updateSupplierSchema,
   "Supplier update",
 );
 
 export const validateUpdateSupplierCompany = validateBody(
-  UpdateSupplierCompanySchema,
+  updateSupplierCompanySchema,
   "Supplier company update",
 );
 
 export const validateUpdateSupplierRating = validateBody(
-  UpdateSupplierRatingSchema,
+  updateSupplierRatingSchema,
   "Supplier rating update",
 );
 
 export const validateSupplierId = validateParams(
-  SupplierIdSchema,
+  supplierIdSchema,
   "Supplier ID",
 );
 
 export const validateSupplierQuery = validateQuery(
-  SupplierQuerySchema,
+  supplierQuerySchema,
   "Supplier query",
 );

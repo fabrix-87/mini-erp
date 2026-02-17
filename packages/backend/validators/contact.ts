@@ -6,13 +6,13 @@ import {
 } from "../middleware/validation";
 
 import {
-  CheckEmailSchema,
-  CompanyIdAsCompanyIdSchema,
-  ContactIdSchema,
-  ContactQuerySchema,
-  CreateContactSchema,
-  ToggleContactActiveSchema,
-  UpdateContactSchema,
+  checkEmailSchema,
+  companyIdAsCompanyIdSchema,
+  contactIdSchema,
+  contactQuerySchema,
+  createContactSchema,
+  toggleContactActiveSchema,
+  updateContactSchema,
 } from "@mini-erp/shared/validators";
 
 // ============================================================================
@@ -24,29 +24,29 @@ import {
 // ============================================================================
 
 export const validateCreateContact = validateBody(
-  CreateContactSchema,
+  createContactSchema,
   "Contact creation"
 );
 
 export const validateUpdateContact = validateBody(
-  UpdateContactSchema,
+  updateContactSchema,
   "Contact update"
 );
 
-export const validateContactId = validateParams(ContactIdSchema, "Contact ID");
-export const validateCompanyId = validateParams(CompanyIdAsCompanyIdSchema, "Company ID");
+export const validateContactId = validateParams(contactIdSchema, "Contact ID");
+export const validateCompanyId = validateParams(companyIdAsCompanyIdSchema, "Company ID");
 
 export const validateContactQuery = validateQuery(
-  ContactQuerySchema,
+  contactQuerySchema,
   "Contact query"
 );
 
 export const validateCheckEmail = validateQuery(
-  CheckEmailSchema,
+  checkEmailSchema,
   "Contact check mail"
 );
 
 export const validateToggleContactActive = validateBody(
-  ToggleContactActiveSchema,
+  toggleContactActiveSchema,
   "Toggle contact active"
 );

@@ -1,16 +1,16 @@
 import { 
-  CreateUserSchema,
-  RegisterUserSchema,
-  UpdateUserProfileSchema,
-  UpdateUserDetailsSchema,
-  ChangePasswordSchema,
-  LoginSchema,
-  ForgotPasswordSchema,
-  ResetPasswordSchema,
-  UpdateUserRolesSchema,
-  ToggleUserStatusSchema,
-  UserIdParamSchema,
-  UserQuerySchema
+  createUserSchema,
+  registerUserSchema,
+  updateUserProfileSchema,
+  updateUserDetailsSchema,
+  changePasswordSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  updateUserRolesSchema,
+  toggleUserStatusSchema,
+  userIdParamSchema,
+  userQuerySchema
 } from '@mini-erp/shared/validators/user';
 
 
@@ -24,7 +24,7 @@ import { validateBody, validateParams, validateQuery } from "../middleware/valid
  * Middleware per la creazione di un utente (Admin)
  */
 export const validateCreateUser = validateBody(
-  CreateUserSchema,
+  createUserSchema,
   "User creation"
 );
 
@@ -32,20 +32,20 @@ export const validateCreateUser = validateBody(
  * Middleware per la registrazione pubblica
  */
 export const validateRegisterUser = validateBody(
-  RegisterUserSchema,
+  registerUserSchema,
   "User registration"
 );
 
 /**
  * Middleware per il login
  */
-export const validateLogin = validateBody(LoginSchema, "User login");
+export const validateLogin = validateBody(loginSchema, "User login");
 
 /**
  * Middleware per la richiesta di reset password
  */
 export const validateForgotPassword = validateBody(
-  ForgotPasswordSchema,
+  forgotPasswordSchema,
   "Forgot password"
 );
 
@@ -53,7 +53,7 @@ export const validateForgotPassword = validateBody(
  * Middleware per il reset password
  */
 export const validateResetPassword = validateBody(
-  ResetPasswordSchema,
+  resetPasswordSchema,
   "Reset password"
 );
 
@@ -61,7 +61,7 @@ export const validateResetPassword = validateBody(
  * Middleware per l'aggiornamento del profilo
  */
 export const validateUpdateUserProfile = validateBody(
-  UpdateUserProfileSchema,
+  updateUserProfileSchema,
   "User profile update"
 );
 
@@ -69,7 +69,7 @@ export const validateUpdateUserProfile = validateBody(
  * Middleware per l'aggiornamento dei dettagli
  */
 export const validateUpdateUserDetails = validateBody(
-  UpdateUserDetailsSchema,
+  updateUserDetailsSchema,
   "User details update"
 );
 
@@ -77,7 +77,7 @@ export const validateUpdateUserDetails = validateBody(
  * Middleware per il cambio password
  */
 export const validateChangePassword = validateBody(
-  ChangePasswordSchema,
+  changePasswordSchema,
   "Password change"
 );
 
@@ -85,7 +85,7 @@ export const validateChangePassword = validateBody(
  * Middleware per l'aggiornamento dei ruoli
  */
 export const validateUpdateUserRoles = validateBody(
-  UpdateUserRolesSchema,
+  updateUserRolesSchema,
   "User roles update"
 );
 
@@ -93,7 +93,7 @@ export const validateUpdateUserRoles = validateBody(
  * Middleware per attivare/disattivare utente
  */
 export const validateToggleUserStatus = validateBody(
-  ToggleUserStatusSchema,
+  toggleUserStatusSchema,
   "Toggle user status"
 );
 
@@ -101,11 +101,11 @@ export const validateToggleUserStatus = validateBody(
  * Middleware per la validazione dell'ID utente (params)
  */
 export const validateUserId = validateParams(
-  UserIdParamSchema,
+  userIdParamSchema,
   "User ID validation"
 );
 
 /**
  * Middleware per query di ricerca utenti
  */
-export const validateUserQuery = validateQuery(UserQuerySchema, "User query");
+export const validateUserQuery = validateQuery(userQuerySchema, "User query");

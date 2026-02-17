@@ -4,13 +4,12 @@ import {
   validateQuery,
 } from "../middleware/validation";
 import {
-  CreateCustomerSchema,
-  CustomerIdSchema,
-  CustomerQuerySchema,
-  PaymentMethodIdSchema,
-  UpdateCustomerCompanySchema,
-  UpdateCustomerSchema,
-  UpdateLeadStatusSchema,
+  createCustomerSchema,
+  customerIdSchema,
+  customerQuerySchema,
+  updateCustomerCompanySchema,
+  updateCustomerSchema,
+  updateLeadStatusSchema,
 } from "@mini-erp/shared/validators";
 
 // ============================================================================
@@ -18,31 +17,31 @@ import {
 // ============================================================================
 
 export const validateCreateCustomer = validateBody(
-  CreateCustomerSchema,
+  createCustomerSchema,
   "Customer creation",
 );
 
 export const validateUpdateCustomer = validateBody(
-  UpdateCustomerSchema,
+  updateCustomerSchema,
   "Customer update",
 );
 
 export const validateUpdateCustomerCompany = validateBody(
-  UpdateCustomerCompanySchema,
+  updateCustomerCompanySchema,
   "Customer company update",
 );
 
 export const validateUpdateLeadStatus = validateBody(
-  UpdateLeadStatusSchema,
+  updateLeadStatusSchema,
   "Lead status update",
 );
 
 export const validateCustomerId = validateParams(
-  CustomerIdSchema,
+  customerIdSchema,
   "Customer ID",
 );
 
 export const validateCustomerQuery = validateQuery(
-  CustomerQuerySchema, 
+  customerQuerySchema, 
   "Customer query"
 );

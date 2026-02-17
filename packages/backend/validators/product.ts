@@ -1,22 +1,21 @@
 import {
-  CreateManufacturerSchema,
-  CreateProductCategorySchema,
-  CreateProductImageSchema,
-  CreateProductSchema,
-  CreateProductTranslationSchema,
-  CreateProductVariantSchema,
-  ManufacturerIdSchema,
-  ProductCategoryIdSchema,
-  ProductIdLanguageSchema,
-  ProductIdSchema,
-  ProductImageIdSchema,
-  ProductQuerySchema,
-  ProductVariantIdSchema,
-  UpdateManufacturerSchema,
-  UpdateProductImageSchema,
-  UpdateProductSchema,
-  UpdateProductTranslationSchema,
-  UpdateProductVariantSchema,
+  createManufacturerSchema,
+  createProductCategorySchema,
+  createProductImageSchema,
+  createProductSchema,
+  createProductVariantSchema,
+  createProductVariantTranslationSchema,
+  manufacturerIdSchema,
+  productCategoryIdSchema,
+  productIdSchema,
+  productImageIdSchema,
+  productQuerySchema,
+  productVariantIdSchema,
+  updateManufacturerSchema,
+  updateProductImageSchema,
+  updateProductSchema,
+  updateProductVariantSchema,
+  updateProductVariantTranslationSchema,
 } from "@mini-erp/shared";
 import { validateBody, validateParams } from "../middleware/validation";
 
@@ -28,7 +27,7 @@ import { validateBody, validateParams } from "../middleware/validation";
  * Middleware per la creazione di un prodotto
  */
 export const validateCreateProduct = validateBody(
-  CreateProductSchema,
+  createProductSchema,
   "Product creation",
 );
 
@@ -36,7 +35,7 @@ export const validateCreateProduct = validateBody(
  * Middleware per l'aggiornamento di un prodotto
  */
 export const validateUpdateProduct = validateBody(
-  UpdateProductSchema,
+  updateProductSchema,
   "Product update",
 );
 
@@ -44,7 +43,7 @@ export const validateUpdateProduct = validateBody(
  * Middleware per la creazione di una variante
  */
 export const validateCreateVariant = validateBody(
-  CreateProductVariantSchema,
+  createProductVariantSchema,
   "Product variant creation",
 );
 
@@ -52,7 +51,7 @@ export const validateCreateVariant = validateBody(
  * Middleware per l'aggiornamento di una variante
  */
 export const validateUpdateVariant = validateBody(
-  UpdateProductVariantSchema,
+  updateProductVariantSchema,
   "Product variant update",
 );
 
@@ -60,31 +59,23 @@ export const validateUpdateVariant = validateBody(
  * Middleware per la validazione dell'ID prodotto (params)
  */
 export const validateProductId = validateParams(
-  ProductIdSchema,
+  productIdSchema,
   "Product ID validation",
-);
-
-/**
- * Middleware per la validazione dell'ID prodotto con ID lingua (params)
- */
-export const validateProductIdLanguageId = validateParams(
-  ProductIdLanguageSchema,
-  "Product/Language ID validation",
 );
 
 /**
  * Middleware per la validazione dell'ID variante (params)
  */
 export const validateVariantId = validateParams(
-  ProductVariantIdSchema,
+  productVariantIdSchema,
   "Product variant ID validation",
 );
 
 /**
  * Middleware per la creazione di una traduzione
  */
-export const validateCreateTranslation = validateBody(
-  CreateProductTranslationSchema,
+export const validateCreateVarianTranslation = validateBody(
+  createProductVariantTranslationSchema,
   "Product translation creation",
 );
 
@@ -92,7 +83,7 @@ export const validateCreateTranslation = validateBody(
  * Middleware per l'aggiornamento di una traduzione
  */
 export const validateUpdateTranslation = validateBody(
-  UpdateProductTranslationSchema,
+  updateProductVariantTranslationSchema,
   "Product translation update",
 );
 
@@ -100,7 +91,7 @@ export const validateUpdateTranslation = validateBody(
  * Middleware per la creazione di un'immagine
  */
 export const validateCreateImage = validateBody(
-  CreateProductImageSchema,
+  createProductImageSchema,
   "Product image creation",
 );
 
@@ -108,7 +99,7 @@ export const validateCreateImage = validateBody(
  * Middleware per la validazione dell'ID immagine (params)
  */
 export const validateProductImageId = validateParams(
-  ProductImageIdSchema,
+  productImageIdSchema,
   "Product Image ID validation",
 );
 
@@ -116,7 +107,7 @@ export const validateProductImageId = validateParams(
  * Middleware per l'aggiornamento di un'immagine
  */
 export const validateUpdateImage = validateBody(
-  UpdateProductImageSchema,
+  updateProductImageSchema,
   "Product image update",
 );
 
@@ -124,7 +115,7 @@ export const validateUpdateImage = validateBody(
  * Middleware per l'associazione Product-Category
  */
 export const validateCreateProductCategory = validateBody(
-  CreateProductCategorySchema,
+  createProductCategorySchema,
   "Product category association",
 );
 
@@ -132,7 +123,7 @@ export const validateCreateProductCategory = validateBody(
  * Middleware per l'associazione Product-Category
  */
 export const validatProductCategoryId = validateBody(
-  ProductCategoryIdSchema,
+  productCategoryIdSchema,
   "Product/Category ID",
 );
 
@@ -140,7 +131,7 @@ export const validatProductCategoryId = validateBody(
  * Middleware per la creazione di un manufacturer
  */
 export const validateCreateManufacturer = validateBody(
-  CreateManufacturerSchema,
+  createManufacturerSchema,
   "Manufacturer creation",
 );
 
@@ -148,7 +139,7 @@ export const validateCreateManufacturer = validateBody(
  * Middleware per l'aggiornamento di un manufacturer
  */
 export const validateUpdateManufacturer = validateBody(
-  UpdateManufacturerSchema,
+  updateManufacturerSchema,
   "Manufacturer update",
 );
 
@@ -156,7 +147,7 @@ export const validateUpdateManufacturer = validateBody(
  * Middleware per la validazione dell'ID di un manufacturer (params)
  */
 export const validateManufacturerId = validateParams(
-  ManufacturerIdSchema,
+  manufacturerIdSchema,
   "Product ID validation",
 );
 
@@ -164,6 +155,6 @@ export const validateManufacturerId = validateParams(
  * Middleware per i filtri e paginazione ricerca prodotti
  */
 export const validateProductQuery = validateBody(
-  ProductQuerySchema,
+  productQuerySchema,
   "Product Query"
 )
