@@ -8,9 +8,8 @@ import {
   customerIdSchema,
   customerQuerySchema,
   updateCustomerCompanySchema,
-  updateCustomerSchema,
-  updateLeadStatusSchema,
-} from "@mini-erp/shared/validators";
+  updateCustomerSchema,  
+} from "@mini-erp/shared/validators/customer";
 
 // ============================================================================
 // VALIDATION MIDDLEWARE EXPORTS
@@ -29,11 +28,6 @@ export const validateUpdateCustomer = validateBody(
 export const validateUpdateCustomerCompany = validateBody(
   updateCustomerCompanySchema,
   "Customer company update",
-);
-
-export const validateUpdateLeadStatus = validateBody(
-  updateLeadStatusSchema,
-  "Lead status update",
 );
 
 export const validateCustomerId = validateParams(

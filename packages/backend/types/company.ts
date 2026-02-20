@@ -2,6 +2,8 @@
 // TYPES & INTERFACES
 // ============================================================================
 
+import { ValidationError } from "@mini-erp/shared";
+
 export interface CompanyFilters {
   search?: string;
   status?: string;
@@ -33,5 +35,5 @@ export interface AddressFilters {
 // Interfacce di ritorno per le utility di validazione
 export interface ValidationResult {
   valid: boolean;
-  errors: string[];
+  errors: ValidationError[];
 }

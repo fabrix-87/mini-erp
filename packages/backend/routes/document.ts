@@ -1,5 +1,5 @@
-import express from 'express';
-import { authenticateToken, authorize } from '../middleware/auth';
+import express from "express";
+import { authenticateToken, authorize } from "../middleware/auth";
 import {
   // Document validators
   validateCreateDocument,
@@ -8,15 +8,27 @@ import {
   validateDocumentQuery,
   validateUpdateDocumentStatus,
   // Line validators
+  validateDocumentLineId,
   validateAddDocumentLine,
   validateUpdateDocumentLine,
-  validateDeleteDocumentLine,
   // Conversion validators
   validateConvertDocument,
   validateDuplicateDocument,
   // Calculation validators
   validateRecalculateDocument,
-} from '../validators/document';
+  // Params validators
+  validateDocumentCustomerIdParam,
+  validateDocumentSupplierIdParam,
+  // Installment validators
+  validateCreateDocumentInstallments,
+  validateDocumentInstallmentIdParam,
+  validateUpdateDocumentInstallments,
+  // Bulk validators
+  validateBulkUpdateDocumentsStatus,
+  validateBulkSendDocuments,
+  // Attachment validators
+  validateDocumentAttachmentIdParam,
+} from "../validators/document";
 import {
   // Documents CRUD
   getAllDocuments,
@@ -56,45 +68,35 @@ import {
   exportDocumentPDF,
   exportDocumentExcel,
   printDocument,
- 
   // Template
   createTemplateFromDocument,
   createDocumentFromTemplate,
-  
   // Batch operations
   bulkUpdateDocuments,
   bulkChangeStatus,
   bulkSendDocuments,
-  
   // Notifiche
   getExpiringDocuments,
   getOverdueInvoices,
-  
   // Report
   getSalesReport,
   getTopCustomersReport,
   getTopProductsReport,
-  
   // Stock movements
   generateStockMovements,
-  
   // Validazione fiscale
   validateFiscalData,
-  
   // Allegati
   uploadDocumentAttachment,
   getDocumentAttachments,
   deleteDocumentAttachment,
-  
   // Audit
   getDocumentHistory,
-  
   // Email
   sendDocumentByEmail,
-  
   // Export batch
   exportDocumentsBatch,
-} from '../controllers/document'
+} from "../controllers/document";
 
 const router = express.Router();
 
@@ -109,11 +111,11 @@ const router = express.Router();
  * @query   page, limit, search, documentType, status, customerId, supplierId, dateFrom, dateTo, sortBy, sortOrder
  */
 router.get(
-  '/',
+  "/",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
+  authorize(["document:read", "document:manage"]),
   validateDocumentQuery,
-  getAllDocuments
+  getAllDocuments,
 );
 
 /**
@@ -122,10 +124,10 @@ router.get(
  * @access  Private (document:read)
  */
 router.get(
-  '/statistics',
+  "/statistics",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
-  getDocumentStatistics
+  authorize(["document:read", "document:manage"]),
+  getDocumentStatistics,
 );
 
 /**
@@ -134,10 +136,10 @@ router.get(
  * @access  Private (document:read)
  */
 router.get(
-  '/quotes',
+  "/quotes",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
-  getQuotes
+  authorize(["document:read", "document:manage"]),
+  getQuotes,
 );
 
 /**
@@ -146,10 +148,10 @@ router.get(
  * @access  Private (document:read)
  */
 router.get(
-  '/orders',
+  "/orders",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
-  getOrders
+  authorize(["document:read", "document:manage"]),
+  getOrders,
 );
 
 /**
@@ -158,10 +160,10 @@ router.get(
  * @access  Private (document:read)
  */
 router.get(
-  '/invoices',
+  "/invoices",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
-  getInvoices
+  authorize(["document:read", "document:manage"]),
+  getInvoices,
 );
 
 /**
@@ -170,10 +172,10 @@ router.get(
  * @access  Private (document:read)
  */
 router.get(
-  '/delivery-notes',
+  "/delivery-notes",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
-  getDeliveryNotes
+  authorize(["document:read", "document:manage"]),
+  getDeliveryNotes,
 );
 
 /**
@@ -182,10 +184,11 @@ router.get(
  * @access  Private (document:read)
  */
 router.get(
-  '/customer/:customerId',
+  "/customer/:customerId",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
-  getDocumentsByCustomer
+  authorize(["document:read", "document:manage"]),
+  validateDocumentCustomerIdParam,
+  getDocumentsByCustomer,
 );
 
 /**
@@ -194,10 +197,11 @@ router.get(
  * @access  Private (document:read)
  */
 router.get(
-  '/supplier/:supplierId',
+  "/supplier/:supplierId",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
-  getDocumentsBySupplier
+  authorize(["document:read", "document:manage"]),
+  validateDocumentSupplierIdParam,
+  getDocumentsBySupplier,
 );
 
 /**
@@ -206,11 +210,12 @@ router.get(
  * @access  Private (document:read)
  */
 router.get(
-  '/:id',
+  "/:id",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
+  authorize(["document:read", "document:manage"]),
   validateDocumentId,
-  getDocumentById
+  validateDocumentQuery,
+  getDocumentById,
 );
 
 // ============================================================================
@@ -223,11 +228,11 @@ router.get(
  * @access  Private (document:create)
  */
 router.post(
-  '/',
+  "/",
   authenticateToken,
-  authorize(['document:create', 'document:manage']),
+  authorize(["document:create", "document:manage"]),
   validateCreateDocument,
-  createDocument
+  createDocument,
 );
 
 /**
@@ -236,11 +241,12 @@ router.post(
  * @access  Private (document:update)
  */
 router.put(
-  '/:id',
+  "/:id",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
+  authorize(["document:update", "document:manage"]),
+  validateDocumentId,
   validateUpdateDocument,
-  updateDocument
+  updateDocument,
 );
 
 /**
@@ -249,11 +255,11 @@ router.put(
  * @access  Private (document:delete)
  */
 router.delete(
-  '/:id',
+  "/:id",
   authenticateToken,
-  authorize(['document:delete', 'document:manage']),
+  authorize(["document:delete", "document:manage"]),
   validateDocumentId,
-  deleteDocument
+  deleteDocument,
 );
 
 // ============================================================================
@@ -266,11 +272,12 @@ router.delete(
  * @access  Private (document:update)
  */
 router.patch(
-  '/:id/status',
+  "/:id/status",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
+  authorize(["document:update", "document:manage"]),
+  validateDocumentId,
   validateUpdateDocumentStatus,
-  updateDocumentStatus
+  updateDocumentStatus,
 );
 
 /**
@@ -279,11 +286,11 @@ router.patch(
  * @access  Private (document:update)
  */
 router.post(
-  '/:id/send',
+  "/:id/send",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
+  authorize(["document:update", "document:manage"]),
   validateDocumentId,
-  sendDocument
+  sendDocument,
 );
 
 /**
@@ -292,11 +299,11 @@ router.post(
  * @access  Private (document:update)
  */
 router.post(
-  '/:id/approve',
+  "/:id/approve",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
+  authorize(["document:update", "document:manage"]),
   validateDocumentId,
-  approveDocument
+  approveDocument,
 );
 
 /**
@@ -305,11 +312,11 @@ router.post(
  * @access  Private (document:update)
  */
 router.post(
-  '/:id/reject',
+  "/:id/reject",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
+  authorize(["document:update", "document:manage"]),
   validateDocumentId,
-  rejectDocument
+  rejectDocument,
 );
 
 /**
@@ -318,11 +325,11 @@ router.post(
  * @access  Private (document:update)
  */
 router.post(
-  '/:id/void',
+  "/:id/void",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
+  authorize(["document:update", "document:manage"]),
   validateDocumentId,
-  voidDocument
+  voidDocument,
 );
 
 // ============================================================================
@@ -335,11 +342,11 @@ router.post(
  * @access  Private (document:read)
  */
 router.get(
-  '/:id/lines',
+  "/:id/lines",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
+  authorize(["document:read", "document:manage"]),
   validateDocumentId,
-  getDocumentLines
+  getDocumentLines,
 );
 
 /**
@@ -348,11 +355,12 @@ router.get(
  * @access  Private (document:update)
  */
 router.post(
-  '/:id/lines',
+  "/:id/lines",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
+  authorize(["document:update", "document:manage"]),
+  validateDocumentId,
   validateAddDocumentLine,
-  addDocumentLine
+  addDocumentLine,
 );
 
 /**
@@ -361,11 +369,13 @@ router.post(
  * @access  Private (document:update)
  */
 router.put(
-  '/:id/lines/:lineId',
+  "/:id/lines/:lineId",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
+  authorize(["document:update", "document:manage"]),
+  validateDocumentId,
+  validateDocumentLineId,
   validateUpdateDocumentLine,
-  updateDocumentLine
+  updateDocumentLine,
 );
 
 /**
@@ -374,11 +384,12 @@ router.put(
  * @access  Private (document:update)
  */
 router.delete(
-  '/:id/lines/:lineId',
+  "/:id/lines/:lineId",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
-  validateDeleteDocumentLine,
-  deleteDocumentLine
+  authorize(["document:update", "document:manage"]),
+  validateDocumentId,
+  validateDocumentLineId,
+  deleteDocumentLine,
 );
 
 // ============================================================================
@@ -391,11 +402,12 @@ router.delete(
  * @access  Private (document:create)
  */
 router.post(
-  '/:id/convert',
+  "/:id/convert",
   authenticateToken,
-  authorize(['document:create', 'document:manage']),
+  authorize(["document:create", "document:manage"]),
+  validateDocumentId,
   validateConvertDocument,
-  convertDocument
+  convertDocument,
 );
 
 /**
@@ -404,11 +416,12 @@ router.post(
  * @access  Private (document:create)
  */
 router.post(
-  '/:id/duplicate',
+  "/:id/duplicate",
   authenticateToken,
-  authorize(['document:create', 'document:manage']),
+  authorize(["document:create", "document:manage"]),
+  validateDocumentId,
   validateDuplicateDocument,
-  duplicateDocument
+  duplicateDocument,
 );
 
 // ============================================================================
@@ -421,11 +434,12 @@ router.post(
  * @access  Private (document:update)
  */
 router.post(
-  '/:id/recalculate',
+  "/:id/recalculate",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
+  authorize(["document:update", "document:manage"]),
+  validateDocumentId,
   validateRecalculateDocument,
-  recalculateDocument
+  recalculateDocument,
 );
 
 // ============================================================================
@@ -438,11 +452,12 @@ router.post(
  * @access  Private (document:read)
  */
 router.get(
-  '/:id/installments',
+  "/:id/installments",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
+  authorize(["document:read", "document:manage"]),
   validateDocumentId,
-  getDocumentInstallments
+  validateCreateDocumentInstallments,
+  getDocumentInstallments,
 );
 
 /**
@@ -451,10 +466,13 @@ router.get(
  * @access  Private (document:update)
  */
 router.put(
-  '/:id/installments/:installmentId',
+  "/:id/installments/:installmentId",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
-  updateInstallment
+  authorize(["document:update", "document:manage"]),
+  validateDocumentId,
+  validateDocumentInstallmentIdParam,
+  validateUpdateDocumentInstallments,
+  updateInstallment,
 );
 
 // ============================================================================
@@ -467,11 +485,11 @@ router.put(
  * @access  Private (document:read)
  */
 router.get(
-  '/:id/export/pdf',
+  "/:id/export/pdf",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
+  authorize(["document:read", "document:manage"]),
   validateDocumentId,
-  exportDocumentPDF
+  exportDocumentPDF,
 );
 
 /**
@@ -480,11 +498,11 @@ router.get(
  * @access  Private (document:read)
  */
 router.get(
-  '/:id/export/excel',
+  "/:id/export/excel",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
+  authorize(["document:read", "document:manage"]),
   validateDocumentId,
-  exportDocumentExcel
+  exportDocumentExcel,
 );
 
 /**
@@ -493,11 +511,11 @@ router.get(
  * @access  Private (document:read)
  */
 router.get(
-  '/:id/print',
+  "/:id/print",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
+  authorize(["document:read", "document:manage"]),
   validateDocumentId,
-  printDocument
+  printDocument,
 );
 
 // ============================================================================
@@ -510,11 +528,11 @@ router.get(
  * @access  Private (document:manage)
  */
 router.post(
-  '/:id/create-template',
+  "/:id/create-template",
   authenticateToken,
-  authorize(['document:manage']),
+  authorize(["document:manage"]),
   validateDocumentId,
-  createTemplateFromDocument
+  createTemplateFromDocument,
 );
 
 /**
@@ -523,10 +541,10 @@ router.post(
  * @access  Private (document:create)
  */
 router.post(
-  '/from-template',
+  "/from-template",
   authenticateToken,
-  authorize(['document:create', 'document:manage']),
-  createDocumentFromTemplate
+  authorize(["document:create", "document:manage"]),
+  createDocumentFromTemplate,
 );
 
 // ============================================================================
@@ -539,10 +557,10 @@ router.post(
  * @access  Private (document:update)
  */
 router.post(
-  '/bulk-update',
+  "/bulk-update",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
-  bulkUpdateDocuments
+  authorize(["document:update", "document:manage"]),
+  bulkUpdateDocuments,
 );
 
 /**
@@ -551,10 +569,11 @@ router.post(
  * @access  Private (document:update)
  */
 router.post(
-  '/bulk-change-status',
+  "/bulk-change-status",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
-  bulkChangeStatus
+  authorize(["document:update", "document:manage"]),
+  validateBulkUpdateDocumentsStatus,
+  bulkChangeStatus,
 );
 
 /**
@@ -563,10 +582,11 @@ router.post(
  * @access  Private (document:update)
  */
 router.post(
-  '/bulk-send',
+  "/bulk-send",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
-  bulkSendDocuments
+  authorize(["document:update", "document:manage"]),
+  validateBulkSendDocuments,
+  bulkSendDocuments,
 );
 
 // ============================================================================
@@ -580,10 +600,10 @@ router.post(
  * @query   days (default: 7)
  */
 router.get(
-  '/expiring',
+  "/expiring",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
-  getExpiringDocuments
+  authorize(["document:read", "document:manage"]),
+  getExpiringDocuments,
 );
 
 /**
@@ -592,10 +612,10 @@ router.get(
  * @access  Private (document:read)
  */
 router.get(
-  '/overdue',
+  "/overdue",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
-  getOverdueInvoices
+  authorize(["document:read", "document:manage"]),
+  getOverdueInvoices,
 );
 
 // ============================================================================
@@ -609,10 +629,10 @@ router.get(
  * @query   dateFrom, dateTo, groupBy (day/month/year)
  */
 router.get(
-  '/reports/sales',
+  "/reports/sales",
   authenticateToken,
-  authorize(['report:read', 'document:manage']),
-  getSalesReport
+  authorize(["report:read", "document:manage"]),
+  getSalesReport,
 );
 
 /**
@@ -622,10 +642,10 @@ router.get(
  * @query   limit, dateFrom, dateTo
  */
 router.get(
-  '/reports/top-customers',
+  "/reports/top-customers",
   authenticateToken,
-  authorize(['report:read', 'document:manage']),
-  getTopCustomersReport
+  authorize(["report:read", "document:manage"]),
+  getTopCustomersReport,
 );
 
 /**
@@ -635,10 +655,10 @@ router.get(
  * @query   limit, dateFrom, dateTo
  */
 router.get(
-  '/reports/top-products',
+  "/reports/top-products",
   authenticateToken,
-  authorize(['report:read', 'document:manage']),
-  getTopProductsReport
+  authorize(["report:read", "document:manage"]),
+  getTopProductsReport,
 );
 
 // ============================================================================
@@ -651,11 +671,11 @@ router.get(
  * @access  Private (warehouse:update)
  */
 router.post(
-  '/:id/generate-stock-movements',
+  "/:id/generate-stock-movements",
   authenticateToken,
-  authorize(['warehouse:update', 'document:manage']),
+  authorize(["warehouse:update", "document:manage"]),
   validateDocumentId,
-  generateStockMovements
+  generateStockMovements,
 );
 
 // ============================================================================
@@ -668,11 +688,11 @@ router.post(
  * @access  Private (document:read)
  */
 router.get(
-  '/:id/validate-fiscal',
+  "/:id/validate-fiscal",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
+  authorize(["document:read", "document:manage"]),
   validateDocumentId,
-  validateFiscalData
+  validateFiscalData,
 );
 
 // ============================================================================
@@ -685,12 +705,12 @@ router.get(
  * @access  Private (document:update)
  */
 router.post(
-  '/:id/attachments',
+  "/:id/attachments",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
+  authorize(["document:update", "document:manage"]),
   validateDocumentId,
   // TODO: Add multer middleware for file upload
-  uploadDocumentAttachment
+  uploadDocumentAttachment,
 );
 
 /**
@@ -699,11 +719,11 @@ router.post(
  * @access  Private (document:read)
  */
 router.get(
-  '/:id/attachments',
+  "/:id/attachments",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
+  authorize(["document:read", "document:manage"]),
   validateDocumentId,
-  getDocumentAttachments
+  getDocumentAttachments,
 );
 
 /**
@@ -712,10 +732,12 @@ router.get(
  * @access  Private (document:update)
  */
 router.delete(
-  '/:id/attachments/:attachmentId',
+  "/:id/attachments/:attachmentId",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
-  deleteDocumentAttachment
+  authorize(["document:update", "document:manage"]),
+  validateDocumentId,
+  validateDocumentAttachmentIdParam,
+  deleteDocumentAttachment,
 );
 
 // ============================================================================
@@ -728,11 +750,11 @@ router.delete(
  * @access  Private (document:read)
  */
 router.get(
-  '/:id/history',
+  "/:id/history",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
+  authorize(["document:read", "document:manage"]),
   validateDocumentId,
-  getDocumentHistory
+  getDocumentHistory,
 );
 
 // ============================================================================
@@ -745,11 +767,11 @@ router.get(
  * @access  Private (document:update)
  */
 router.post(
-  '/:id/send-email',
+  "/:id/send-email",
   authenticateToken,
-  authorize(['document:update', 'document:manage']),
+  authorize(["document:update", "document:manage"]),
   validateDocumentId,
-  sendDocumentByEmail
+  sendDocumentByEmail,
 );
 
 // ============================================================================
@@ -762,10 +784,10 @@ router.post(
  * @access  Private (document:read)
  */
 router.post(
-  '/export-batch',
+  "/export-batch",
   authenticateToken,
-  authorize(['document:read', 'document:manage']),
-  exportDocumentsBatch
+  authorize(["document:read", "document:manage"]),
+  exportDocumentsBatch,
 );
 
 // ============================================================================
@@ -774,15 +796,14 @@ router.post(
 
 /**
  * RIEPILOGO COMPLETO ENDPOINTS DOCUMENTI:
- * 
+ *
  * BASE (già implementati): 40 endpoints
  * - CRUD documenti
  * - Gestione status
  * - Righe e rate
  * - Conversioni
  * - Export base
- * 
- * ADVANCED (nuovi): 18 endpoints
+
  * - Template: 2
  * - Batch operations: 3
  * - Notifications: 2
@@ -793,7 +814,7 @@ router.post(
  * - Audit: 1
  * - Email: 1
  * - Batch export: 1
- * 
+ *
  * TOTALE: 58 ENDPOINTS
  */
 

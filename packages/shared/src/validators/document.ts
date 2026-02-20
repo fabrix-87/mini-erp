@@ -152,54 +152,41 @@ export const createDocumentLineSchema = z
     productVariantId: createIdSchema("Product Variant ID non valido")
       .optional()
       .nullable(),
-
     productId: createIdSchema("Product ID non valido").optional().nullable(),
 
     lineNumber: z.number().int().positive("Line number deve essere positivo"),
-
     lineType: documentLineTypeSchema.default(DOCUMENT_LINE_TYPES.PRODUCT),
-
     code: z.string().max(100).optional().nullable(),
 
     nameSystem: z
       .string()
       .min(1, "Nome sistema obbligatorio")
       .max(255, "Nome max 255 caratteri"),
-
     descriptionSystem: z.string().max(5000).optional().nullable(),
-
     nameCustomer: z.string().max(255).optional().nullable(),
-
     descriptionCustomer: z.string().max(5000).optional().nullable(),
 
     quantity: quantitySchema(1),
-
     unit: z.string().max(20, "Unità max 20 caratteri").default("pz"),
 
     unitPrice: priceSchema({ defaultValue: 0 }),
-
     unitCost: priceSchema({ defaultValue: 0 }),
 
     discountPercent: discountPercentSchema,
-
     discountAmount: moneySchema,
 
     lineTotal: moneySchema,
 
     taxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
-
     taxPercent: taxPercentSchema.default(new Decimal(22)),
-
     taxAmount: moneySchema,
 
     vatNatureCode: z.string().max(10).optional().nullable(),
-
     vatNormReference: z.string().max(255).optional().nullable(),
 
     lineTotalWithTax: moneySchema,
 
     notes: z.string().max(1000).optional().nullable(),
-
     customFields: inputJsonValueSchema.optional().nullable(),
 
     warehouseId: createIdSchema("Warehouse ID non valido")
@@ -209,15 +196,10 @@ export const createDocumentLineSchema = z
     parentLineId: documentLineIdSchema.optional().nullable(),
 
     isComponent: z.boolean().default(false),
-
     quantityInvoiced: quantitySchema(0),
-
     quantityDelivered: quantitySchema(0),
-
     quantityReturned: quantitySchema(0),
-
     originalUnitPrice: priceSchema().optional().nullable(),
-
     priceOverrideReason: z.string().max(500).optional().nullable(),
   })
   .strict();
@@ -236,15 +218,10 @@ export const installmentIdSchema = createIdSchema("ID Installment non valido");
 export const createInstallmentSchema = z
   .object({
     installmentNumber: z.number().int().positive().default(1),
-
     percentage: installmentPercentSchema,
-
     amount: moneySchema,
-
     dueDate: isoDateSchema(),
-
     notes: z.string().max(500).optional().nullable(),
-
     paymentMethodId: createIdSchema("Payment Method ID non valido")
       .optional()
       .nullable(),
@@ -493,11 +470,8 @@ export const updateDocumentSchema = createDocumentSchema
 export const updateDocumentStatusSchema = z
   .object({
     status: documentStatusSchema,
-
     statusCategory: documentStatusCategorySchema.optional(),
-
     reason: z.string().max(500).optional().nullable(),
-
     voidedReason: z.string().max(1000).optional().nullable(),
   })
   .strict()
@@ -542,32 +516,6 @@ export const sendDocumentSchema = z
     attachPdf: z.boolean().default(true),
 
     attachXml: z.boolean().default(false),
-  })
-  .strict();
-
-export const convertDocumentSchema = z
-  .object({
-    targetDocumentType: documentTypeSchema,
-
-    copyLines: z.boolean().default(true),
-
-    copyInstallments: z.boolean().default(true),
-
-    copyNotes: z.boolean().default(true),
-
-    documentDate: isoDateSchema().optional(),
-
-    notes: z.string().max(500).optional().nullable(),
-  })
-  .strict();
-
-export const cloneDocumentSchema = z
-  .object({
-    documentDate: isoDateSchema().default(() => new Date().toISOString()),
-
-    resetStatus: z.boolean().default(true),
-
-    notes: z.string().max(500).optional().nullable(),
   })
   .strict();
 
@@ -722,11 +670,23 @@ export const documentIdParamSchema = z.object({
 });
 
 export const documentLineIdParamSchema = z.object({
-  id: documentLineIdSchema,
+  lineId: documentLineIdSchema,
+});
+
+export const documentCustomerIdParamSchema = z.object({
+  customerId: createIdSchema("Customer ID non valido"),
+});
+
+export const documentSupplierIdParamSchema = z.object({
+  supplierId: createIdSchema("Supplier ID non valido"),
+});
+
+export const documentAttachmentIdParamSchema = z.object({
+  attachmentId: createIdSchema("Attachment ID non valido"),
 });
 
 export const installmentIdParamSchema = z.object({
-  id: installmentIdSchema,
+  installmentId: installmentIdSchema,
 });
 
 // ============================================================================
@@ -759,3 +719,51 @@ export const agingReportSchema = z.object({
   customerId: createIdSchema("Customer ID non valido").optional(),
   intervals: z.array(z.number().int().nonnegative()).default([30, 60, 90, 120]),
 });
+
+// ============================================================================
+// CALCULATION SCHEMAS
+// ============================================================================
+
+/**
+ * Schema per ricalcolare totali documento
+ */
+export const recalculateDocumentSchema = z
+  .object({
+    applyDiscount: z.boolean().default(true),
+    recalculateTax: z.boolean().default(true),
+  })
+  .strict();
+
+// ============================================================================
+// CONVERSION SCHEMAS
+// ============================================================================
+
+/**
+ * Schema per duplicare documento
+ */
+export const duplicateDocumentSchema = z
+  .object({
+    includeLines: z.boolean().default(true),
+    includeInstallments: z.boolean().default(false),
+    status: documentStatusSchema.default("DRAFT"),
+  })
+  .strict();
+
+export const convertDocumentSchema = z
+  .object({
+    targetDocumentType: documentTypeSchema,
+    copyLines: z.boolean().default(true),
+    copyInstallments: z.boolean().default(true),
+    copyNotes: z.boolean().default(true),
+    documentDate: isoDateSchema().optional(),
+    notes: z.string().max(500).optional().nullable(),
+  })
+  .strict();
+
+export const cloneDocumentSchema = z
+  .object({
+    documentDate: isoDateSchema().default(() => new Date().toISOString()),
+    resetStatus: z.boolean().default(true),
+    notes: z.string().max(500).optional().nullable(),
+  })
+  .strict();

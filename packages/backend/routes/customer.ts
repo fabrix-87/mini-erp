@@ -4,7 +4,6 @@ import {
   validateCreateCustomer,
   validateUpdateCustomer,
   validateUpdateCustomerCompany,
-  validateUpdateLeadStatus,
   validateCustomerId,
   validateCustomerQuery,
 } from '../validators/customer';
@@ -15,7 +14,6 @@ import {
   createCustomer,
   updateCustomer,
   updateCustomerCompany,
-  updateLeadStatus,
   getCustomerStats,
   deleteCustomer,
 } from '../controllers/customer';
@@ -92,20 +90,6 @@ router.put(
   validateCustomerId,
   validateUpdateCustomer,
   updateCustomer
-);
-
-/**
- * @route   PATCH /api/customers/:id/lead-status
- * @desc    Aggiorna lead status con note
- * @access  Private (customer:update)
- */
-router.patch(
-  '/:id/lead-status',
-  authenticateToken,
-  authorize(['customer:update', 'customer:manage']),
-  validateCustomerId,
-  validateUpdateLeadStatus,
-  updateLeadStatus
 );
 
 /**

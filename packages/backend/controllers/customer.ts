@@ -7,7 +7,14 @@ import {
 } from "../helpers/company";
 import { prisma } from "../config/prisma-client";
 import { calculateCustomerStats, validateFiscalData } from "../utils/company";
-import { formatPaginatedResponse } from "../utils/response";
+import {
+  formatPaginatedResponse,
+  sendCreated,
+  sendDeleted,
+  sendFail,
+  sendPaginatedResponse,
+  sendSuccess,
+} from "../utils/response";
 import { AuthenticatedValidatedRequest } from "@/types/validate";
 import {
   CustomerIdParam,
@@ -16,6 +23,7 @@ import {
   UpdateCustomerInput,
 } from "@mini-erp/shared";
 import asyncHandler from "@/middleware/async-handler";
+import { Prisma } from "@/generated/prisma/client";
 
 // ============================================================================
 // CUSTOMER CONTROLLERS
@@ -26,8 +34,8 @@ import asyncHandler from "@/middleware/async-handler";
  * @route   GET /api/customers
  * @access  Private (customer:read)
  */
-export const getAllCustomers = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+export const getAllCustomers = asyncHandler<AuthenticatedValidatedRequest>(
+  async (req, res) => {
     const {
       page = 1,
       limit = 10,
@@ -49,8 +57,7 @@ export const getAllCustomers = asyncHandler(
       }),
       prisma.customer.count({ where }),
     ]);
-
-    res.json(formatPaginatedResponse(customers, total, page, limit));
+    sendPaginatedResponse(res, customers, total, page, limit);
   },
 );
 
@@ -59,8 +66,8 @@ export const getAllCustomers = asyncHandler(
  * @route   GET /api/customers/:id
  * @access  Private (customer:read)
  */
-export const getCustomerById = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+export const getCustomerById = asyncHandler<AuthenticatedValidatedRequest>(
+  async (req, res) => {
     const { id } = req.validatedParams as CustomerIdParam;
 
     const customer = await prisma.customer.findUnique({
@@ -69,8 +76,7 @@ export const getCustomerById = asyncHandler(
     });
 
     if (!customer) {
-      res.status(404).json({
-        success: false,
+      sendFail(res, {
         message: "Customer non trovato",
       });
       return;
@@ -78,12 +84,9 @@ export const getCustomerById = asyncHandler(
 
     const stats = calculateCustomerStats(customer);
 
-    res.json({
-      success: true,
-      data: {
-        ...customer,
-        stats,
-      },
+    sendSuccess(res, {
+      ...customer,
+      stats,
     });
   },
 );
@@ -93,8 +96,8 @@ export const getCustomerById = asyncHandler(
  * @route   POST /api/customers
  * @access  Private (customer:create)
  */
-export const createCustomer = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+export const createCustomer = asyncHandler<AuthenticatedValidatedRequest>(
+  async (req, res) => {
     const { company: companyData, ...customerData } = req.validatedBody;
 
     // Genera codice company se non fornito
@@ -113,8 +116,7 @@ export const createCustomer = asyncHandler(
     });
 
     if (!fiscalValidation.valid) {
-      res.status(400).json({
-        success: false,
+      sendFail(res, {
         message: "Dati fiscali non validi",
         errors: fiscalValidation.errors,
       });
@@ -127,8 +129,7 @@ export const createCustomer = asyncHandler(
     });
 
     if (existingCode) {
-      res.status(400).json({
-        success: false,
+      sendFail(res, {
         message: "Codice company già esistente",
       });
       return;
@@ -140,8 +141,8 @@ export const createCustomer = asyncHandler(
     });
 
     if (!country) {
-      res.status(404).json({
-        success: false,
+      sendFail(res, {
+        statusCode: 404,
         message: "Paese non trovato",
       });
       return;
@@ -153,8 +154,8 @@ export const createCustomer = asyncHandler(
         where: { id: customerData.defaultPriceListId },
       });
       if (!priceList) {
-        res.status(404).json({
-          success: false,
+        sendFail(res, {
+          statusCode: 404,
           message: "Price List non trovato",
         });
         return;
@@ -166,8 +167,8 @@ export const createCustomer = asyncHandler(
         where: { id: customerData.customerTaxRuleId },
       });
       if (!taxRule) {
-        res.status(404).json({
-          success: false,
+        sendFail(res, {
+          statusCode: 404,
           message: "Tax Rule non trovato",
         });
         return;
@@ -179,8 +180,8 @@ export const createCustomer = asyncHandler(
         where: { id: customerData.paymentMethodId },
       });
       if (!paymentMethod) {
-        res.status(404).json({
-          success: false,
+        sendFail(res, {
+          statusCode: 404,
           message: "Payment Method non trovato",
         });
         return;
@@ -198,11 +199,7 @@ export const createCustomer = asyncHandler(
       include: getCustomerInclude(true),
     });
 
-    res.status(201).json({
-      success: true,
-      message: "Customer creato con successo",
-      data: customer,
-    });
+    sendCreated(res, customer, "Customer creato con successo");
   },
 );
 
@@ -211,8 +208,8 @@ export const createCustomer = asyncHandler(
  * @route   PUT /api/customers/:id
  * @access  Private (customer:update)
  */
-export const updateCustomer = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+export const updateCustomer = asyncHandler<AuthenticatedValidatedRequest>(
+  async (req, res) => {
     const { id } = req.validatedParams as CustomerIdParam;
     const data = req.validatedBody as UpdateCustomerInput;
 
@@ -221,8 +218,8 @@ export const updateCustomer = asyncHandler(
     });
 
     if (!existing) {
-      res.status(404).json({
-        success: false,
+      sendFail(res, {
+        statusCode: 404,
         message: "Customer non trovato",
       });
       return;
@@ -234,8 +231,8 @@ export const updateCustomer = asyncHandler(
         where: { id: data.defaultPriceListId },
       });
       if (!priceList) {
-        res.status(404).json({
-          success: false,
+        sendFail(res, {
+          statusCode: 404,
           message: "Price List non trovato",
         });
         return;
@@ -244,14 +241,12 @@ export const updateCustomer = asyncHandler(
 
     const customer = await prisma.customer.update({
       where: { id },
-      data,
+      data: data as Prisma.CustomerUncheckedUpdateInput,
       include: getCustomerInclude(true),
     });
 
-    res.json({
-      success: true,
+    sendSuccess(res, customer, {
       message: "Customer aggiornato con successo",
-      data: customer,
     });
   },
 );
@@ -261,8 +256,8 @@ export const updateCustomer = asyncHandler(
  * @route   PUT /api/customers/:id/company
  * @access  Private (customer:update)
  */
-export const updateCustomerCompany = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+export const updateCustomerCompany =
+  asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
     const { id } = req.validatedParams as CustomerIdParam;
     const companyData = req.validatedBody as UpdateCustomerCompanyInput;
 
@@ -272,8 +267,8 @@ export const updateCustomerCompany = asyncHandler(
     });
 
     if (!customer) {
-      res.status(404).json({
-        success: false,
+      sendFail(res, {
+        statusCode: 404,
         message: "Customer non trovato",
       });
       return;
@@ -310,8 +305,8 @@ export const updateCustomerCompany = asyncHandler(
       });
 
       if (!fiscalValidation.valid) {
-        res.status(400).json({
-          success: false,
+        sendFail(res, {
+          statusCode: 404,
           message: "Dati fiscali non validi",
           errors: fiscalValidation.errors,
         });
@@ -329,22 +324,20 @@ export const updateCustomerCompany = asyncHandler(
       include: getCustomerInclude(true),
     });
 
-    res.json({
-      success: true,
+    sendSuccess(res, updatedCustomer, {
       message: "Company aggiornata con successo",
-      data: updatedCustomer,
     });
-  },
-);
+  });
 
 /**
  * @desc    Ottieni statistiche customer
  * @route   GET /api/customers/:id/stats
  * @access  Private (customer:read)
  */
-export const getCustomerStats = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+export const getCustomerStats = asyncHandler<AuthenticatedValidatedRequest>(
+  async (req, res) => {
     const { id } = req.validatedParams as CustomerIdParam;
+    const { preferredLanguageId } = req.user!;
 
     const customer = await prisma.customer.findUnique({
       where: { id },
@@ -387,7 +380,7 @@ export const getCustomerStats = asyncHandler(
 
       // Prodotti più acquistati
       prisma.documentLine.groupBy({
-        by: ["productId"],
+        by: ["productId", "productVariantId"],
         where: {
           document: {
             customerId: customer.id,
@@ -418,16 +411,29 @@ export const getCustomerStats = asyncHandler(
           select: {
             id: true,
             reference: true,
-            translations: {
-              take: 1,
-              select: { name: true },
+            variants: {
+              where: { id: item.productVariantId! },
+              select: {
+                id: true,
+                translations: {
+                  where: {
+                    languageId: preferredLanguageId,
+                  },
+                  take: 1,
+                  select: {
+                    name: true,
+                  },
+                },
+              },
             },
           },
         });
 
         return {
           productId: item.productId,
-          productName: product?.translations[0]?.name || product?.reference,
+          variantId: item.productVariantId,
+          productName:
+            product?.variants[0]?.translations[0].name || product?.reference,
           totalQuantity: item._sum.quantity,
           orderCount: item._count.id,
         };
@@ -436,16 +442,13 @@ export const getCustomerStats = asyncHandler(
 
     const stats = calculateCustomerStats(customer);
 
-    res.json({
-      success: true,
-      data: {
-        summary: stats,
-        recentOrders,
-        topProducts: enrichedProducts,
-        totals: {
-          orders: customer._count.documentsOut,
-          opportunities: customer._count.opportunities,
-        },
+    sendSuccess(res, {
+      summary: stats,
+      recentOrders,
+      topProducts: enrichedProducts,
+      totals: {
+        orders: customer._count.documentsOut,
+        opportunities: customer._count.opportunities,
       },
     });
   },
@@ -456,8 +459,8 @@ export const getCustomerStats = asyncHandler(
  * @route   DELETE /api/customers/:id
  * @access  Private (customer:delete)
  */
-export const deleteCustomer = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
+export const deleteCustomer = asyncHandler<AuthenticatedValidatedRequest>(
+  async (req, res) => {
     const { id } = req.validatedParams as CustomerIdParam;
 
     const customer = await prisma.customer.findUnique({
@@ -473,8 +476,8 @@ export const deleteCustomer = asyncHandler(
     });
 
     if (!customer) {
-      res.status(404).json({
-        success: false,
+      sendFail(res, {
+        statusCode: 404,
         message: "Customer non trovato",
       });
       return;
@@ -484,13 +487,12 @@ export const deleteCustomer = asyncHandler(
       customer._count.documentsOut + customer._count.opportunities;
 
     if (totalRelations > 0) {
-      res.status(400).json({
-        success: false,
+      sendFail(res, {
         message: `Impossibile eliminare: Customer ha ${totalRelations} relazioni attive`,
-        details: {
-          documents: customer._count.documentsOut,
-          opportunities: customer._count.opportunities,
-        },
+        errors: [
+          { field: "documents", message: customer._count.documentsOut.toString() },
+          { field: "opportunities", message: customer._count.opportunities.toString() },
+        ],
       });
       return;
     }
@@ -500,9 +502,6 @@ export const deleteCustomer = asyncHandler(
       where: { id },
     });
 
-    res.json({
-      success: true,
-      message: "Customer eliminato con successo",
-    });
+    sendDeleted(res, "Customer eliminato con successo");
   },
 );
