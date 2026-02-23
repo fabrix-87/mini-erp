@@ -417,6 +417,7 @@ export type UserWhereInput = {
   deletedSuppliers?: Prisma.SupplierListRelationFilter
   assignedLeads?: Prisma.LeadListRelationFilter
   convertedLeads?: Prisma.LeadListRelationFilter
+  createdLeads?: Prisma.LeadListRelationFilter
   details?: Prisma.XOR<Prisma.UserDetailsNullableScalarRelationFilter, Prisma.UserDetailsWhereInput> | null
 }
 
@@ -468,6 +469,7 @@ export type UserOrderByWithRelationInput = {
   deletedSuppliers?: Prisma.SupplierOrderByRelationAggregateInput
   assignedLeads?: Prisma.LeadOrderByRelationAggregateInput
   convertedLeads?: Prisma.LeadOrderByRelationAggregateInput
+  createdLeads?: Prisma.LeadOrderByRelationAggregateInput
   details?: Prisma.UserDetailsOrderByWithRelationInput
 }
 
@@ -522,6 +524,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   deletedSuppliers?: Prisma.SupplierListRelationFilter
   assignedLeads?: Prisma.LeadListRelationFilter
   convertedLeads?: Prisma.LeadListRelationFilter
+  createdLeads?: Prisma.LeadListRelationFilter
   details?: Prisma.XOR<Prisma.UserDetailsNullableScalarRelationFilter, Prisma.UserDetailsWhereInput> | null
 }, "id" | "username" | "email" | "emailVerificationToken" | "resetPasswordToken">
 
@@ -637,6 +640,7 @@ export type UserCreateInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -687,6 +691,7 @@ export type UserUncheckedCreateInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -736,6 +741,7 @@ export type UserUpdateInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -786,6 +792,7 @@ export type UserUncheckedUpdateInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1221,6 +1228,12 @@ export type UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
+export type UserCreateNestedOneWithoutCreatedLeadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedLeadsInput, Prisma.UserUncheckedCreateWithoutCreatedLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedLeadsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
 export type UserCreateNestedOneWithoutAssignedLeadsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedLeadsInput, Prisma.UserUncheckedCreateWithoutAssignedLeadsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedLeadsInput
@@ -1231,6 +1244,16 @@ export type UserCreateNestedOneWithoutConvertedLeadsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutConvertedLeadsInput, Prisma.UserUncheckedCreateWithoutConvertedLeadsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutConvertedLeadsInput
   connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutCreatedLeadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedLeadsInput, Prisma.UserUncheckedCreateWithoutCreatedLeadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedLeadsInput
+  upsert?: Prisma.UserUpsertWithoutCreatedLeadsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedLeadsInput, Prisma.UserUpdateWithoutCreatedLeadsInput>, Prisma.UserUncheckedUpdateWithoutCreatedLeadsInput>
 }
 
 export type UserUpdateOneWithoutAssignedLeadsNestedInput = {
@@ -1428,6 +1451,7 @@ export type UserCreateWithoutActivitiesAssignedInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1477,6 +1501,7 @@ export type UserUncheckedCreateWithoutActivitiesAssignedInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1530,6 +1555,7 @@ export type UserCreateWithoutActivitiesCreatedInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1579,6 +1605,7 @@ export type UserUncheckedCreateWithoutActivitiesCreatedInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1643,6 +1670,7 @@ export type UserUpdateWithoutActivitiesAssignedInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -1692,6 +1720,7 @@ export type UserUncheckedUpdateWithoutActivitiesAssignedInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1751,6 +1780,7 @@ export type UserUpdateWithoutActivitiesCreatedInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -1800,6 +1830,7 @@ export type UserUncheckedUpdateWithoutActivitiesCreatedInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1848,6 +1879,7 @@ export type UserCreateWithoutActivityParticipantsInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -1897,6 +1929,7 @@ export type UserUncheckedCreateWithoutActivityParticipantsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1961,6 +1994,7 @@ export type UserUpdateWithoutActivityParticipantsInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -2010,6 +2044,7 @@ export type UserUncheckedUpdateWithoutActivityParticipantsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -2058,6 +2093,7 @@ export type UserCreateWithoutAuditLogsInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -2107,6 +2143,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -2171,6 +2208,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -2220,6 +2258,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -2268,6 +2307,7 @@ export type UserCreateWithoutSecurityEventsInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -2317,6 +2357,7 @@ export type UserUncheckedCreateWithoutSecurityEventsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -2381,6 +2422,7 @@ export type UserUpdateWithoutSecurityEventsInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -2430,6 +2472,7 @@ export type UserUncheckedUpdateWithoutSecurityEventsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -2478,6 +2521,7 @@ export type UserCreateWithoutAssignedCompaniesInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -2527,6 +2571,7 @@ export type UserUncheckedCreateWithoutAssignedCompaniesInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -2591,6 +2636,7 @@ export type UserUpdateWithoutAssignedCompaniesInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -2640,6 +2686,7 @@ export type UserUncheckedUpdateWithoutAssignedCompaniesInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -2688,6 +2735,7 @@ export type UserCreateWithoutDeletedCustomersInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -2737,6 +2785,7 @@ export type UserUncheckedCreateWithoutDeletedCustomersInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -2801,6 +2850,7 @@ export type UserUpdateWithoutDeletedCustomersInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -2850,6 +2900,7 @@ export type UserUncheckedUpdateWithoutDeletedCustomersInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -2898,6 +2949,7 @@ export type UserCreateWithoutDeletedSuppliersInput = {
   deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -2947,6 +2999,7 @@ export type UserUncheckedCreateWithoutDeletedSuppliersInput = {
   deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -3011,6 +3064,7 @@ export type UserUpdateWithoutDeletedSuppliersInput = {
   deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -3060,6 +3114,7 @@ export type UserUncheckedUpdateWithoutDeletedSuppliersInput = {
   deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -3108,6 +3163,7 @@ export type UserCreateWithoutCompanyNotesInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -3157,6 +3213,7 @@ export type UserUncheckedCreateWithoutCompanyNotesInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -3221,6 +3278,7 @@ export type UserUpdateWithoutCompanyNotesInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -3270,6 +3328,7 @@ export type UserUncheckedUpdateWithoutCompanyNotesInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -3318,6 +3377,7 @@ export type UserCreateWithoutCreatedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -3367,6 +3427,7 @@ export type UserUncheckedCreateWithoutCreatedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -3420,6 +3481,7 @@ export type UserCreateWithoutAssignedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -3469,6 +3531,7 @@ export type UserUncheckedCreateWithoutAssignedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -3522,6 +3585,7 @@ export type UserCreateWithoutDeletedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -3571,6 +3635,7 @@ export type UserUncheckedCreateWithoutDeletedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -3635,6 +3700,7 @@ export type UserUpdateWithoutCreatedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -3684,6 +3750,7 @@ export type UserUncheckedUpdateWithoutCreatedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -3743,6 +3810,7 @@ export type UserUpdateWithoutAssignedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -3792,6 +3860,7 @@ export type UserUncheckedUpdateWithoutAssignedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -3851,6 +3920,7 @@ export type UserUpdateWithoutDeletedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -3900,6 +3970,7 @@ export type UserUncheckedUpdateWithoutDeletedDocumentsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -3948,6 +4019,7 @@ export type UserCreateWithoutPreferredLanguageInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -3997,6 +4069,7 @@ export type UserUncheckedCreateWithoutPreferredLanguageInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -4058,6 +4131,110 @@ export type UserScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
 }
 
+export type UserCreateWithoutCreatedLeadsInput = {
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
+  createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  SecurityEvents?: Prisma.SecurityEventCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCreatedLeadsInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
+  preferredLanguageId?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  SecurityEvents?: Prisma.SecurityEventUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCreatedLeadsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedLeadsInput, Prisma.UserUncheckedCreateWithoutCreatedLeadsInput>
+}
+
 export type UserCreateWithoutAssignedLeadsInput = {
   username: string
   email: string
@@ -4103,6 +4280,7 @@ export type UserCreateWithoutAssignedLeadsInput = {
   deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -4152,6 +4330,7 @@ export type UserUncheckedCreateWithoutAssignedLeadsInput = {
   deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -4205,6 +4384,7 @@ export type UserCreateWithoutConvertedLeadsInput = {
   deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -4254,12 +4434,123 @@ export type UserUncheckedCreateWithoutConvertedLeadsInput = {
   deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutConvertedLeadsInput = {
   where: Prisma.UserWhereUniqueInput
   create: Prisma.XOR<Prisma.UserCreateWithoutConvertedLeadsInput, Prisma.UserUncheckedCreateWithoutConvertedLeadsInput>
+}
+
+export type UserUpsertWithoutCreatedLeadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedLeadsInput, Prisma.UserUncheckedUpdateWithoutCreatedLeadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedLeadsInput, Prisma.UserUncheckedCreateWithoutCreatedLeadsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedLeadsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedLeadsInput, Prisma.UserUncheckedUpdateWithoutCreatedLeadsInput>
+}
+
+export type UserUpdateWithoutCreatedLeadsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
+  createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  SecurityEvents?: Prisma.SecurityEventUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedLeadsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  SecurityEvents?: Prisma.SecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutAssignedLeadsInput = {
@@ -4318,6 +4609,7 @@ export type UserUpdateWithoutAssignedLeadsInput = {
   deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -4367,6 +4659,7 @@ export type UserUncheckedUpdateWithoutAssignedLeadsInput = {
   deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -4426,6 +4719,7 @@ export type UserUpdateWithoutConvertedLeadsInput = {
   deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -4475,6 +4769,7 @@ export type UserUncheckedUpdateWithoutConvertedLeadsInput = {
   deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -4523,6 +4818,7 @@ export type UserCreateWithoutCreatedOpportunitiesInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -4572,6 +4868,7 @@ export type UserUncheckedCreateWithoutCreatedOpportunitiesInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -4625,6 +4922,7 @@ export type UserCreateWithoutAssignedOpportunitiesInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -4674,6 +4972,7 @@ export type UserUncheckedCreateWithoutAssignedOpportunitiesInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -4738,6 +5037,7 @@ export type UserUpdateWithoutCreatedOpportunitiesInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -4787,6 +5087,7 @@ export type UserUncheckedUpdateWithoutCreatedOpportunitiesInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -4846,6 +5147,7 @@ export type UserUpdateWithoutAssignedOpportunitiesInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -4895,6 +5197,7 @@ export type UserUncheckedUpdateWithoutAssignedOpportunitiesInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -4943,6 +5246,7 @@ export type UserCreateWithoutDeletedProductsInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -4992,6 +5296,7 @@ export type UserUncheckedCreateWithoutDeletedProductsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -5056,6 +5361,7 @@ export type UserUpdateWithoutDeletedProductsInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -5105,6 +5411,7 @@ export type UserUncheckedUpdateWithoutDeletedProductsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -5153,6 +5460,7 @@ export type UserCreateWithoutDeletedProductVariantsInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -5202,6 +5510,7 @@ export type UserUncheckedCreateWithoutDeletedProductVariantsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -5266,6 +5575,7 @@ export type UserUpdateWithoutDeletedProductVariantsInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -5315,6 +5625,7 @@ export type UserUncheckedUpdateWithoutDeletedProductVariantsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -5363,6 +5674,7 @@ export type UserCreateWithoutRolesInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -5412,6 +5724,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -5482,6 +5795,7 @@ export type UserCreateWithoutDetailsInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutDetailsInput = {
@@ -5531,6 +5845,7 @@ export type UserUncheckedCreateWithoutDetailsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutDetailsInput = {
@@ -5595,6 +5910,7 @@ export type UserUpdateWithoutDetailsInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDetailsInput = {
@@ -5644,6 +5960,7 @@ export type UserUncheckedUpdateWithoutDetailsInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutStockMovementInput = {
@@ -5691,6 +6008,7 @@ export type UserCreateWithoutStockMovementInput = {
   deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
 }
 
@@ -5740,6 +6058,7 @@ export type UserUncheckedCreateWithoutStockMovementInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
   assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
   convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
   details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -5804,6 +6123,7 @@ export type UserUpdateWithoutStockMovementInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -5853,6 +6173,7 @@ export type UserUncheckedUpdateWithoutStockMovementInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -5929,6 +6250,7 @@ export type UserUpdateWithoutPreferredLanguageInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -5978,6 +6300,7 @@ export type UserUncheckedUpdateWithoutPreferredLanguageInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -6054,6 +6377,7 @@ export type UserUpdateWithoutRolesInput = {
   deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
 }
 
@@ -6103,6 +6427,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
   assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
   convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
   details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -6161,6 +6486,7 @@ export type UserCountOutputType = {
   deletedSuppliers: number
   assignedLeads: number
   convertedLeads: number
+  createdLeads: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -6184,6 +6510,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   deletedSuppliers?: boolean | UserCountOutputTypeCountDeletedSuppliersArgs
   assignedLeads?: boolean | UserCountOutputTypeCountAssignedLeadsArgs
   convertedLeads?: boolean | UserCountOutputTypeCountConvertedLeadsArgs
+  createdLeads?: boolean | UserCountOutputTypeCountCreatedLeadsArgs
 }
 
 /**
@@ -6336,6 +6663,13 @@ export type UserCountOutputTypeCountConvertedLeadsArgs<ExtArgs extends runtime.T
   where?: Prisma.LeadWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeadWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -6385,6 +6719,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   deletedSuppliers?: boolean | Prisma.User$deletedSuppliersArgs<ExtArgs>
   assignedLeads?: boolean | Prisma.User$assignedLeadsArgs<ExtArgs>
   convertedLeads?: boolean | Prisma.User$convertedLeadsArgs<ExtArgs>
+  createdLeads?: boolean | Prisma.User$createdLeadsArgs<ExtArgs>
   details?: boolean | Prisma.User$detailsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -6501,6 +6836,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   deletedSuppliers?: boolean | Prisma.User$deletedSuppliersArgs<ExtArgs>
   assignedLeads?: boolean | Prisma.User$assignedLeadsArgs<ExtArgs>
   convertedLeads?: boolean | Prisma.User$convertedLeadsArgs<ExtArgs>
+  createdLeads?: boolean | Prisma.User$createdLeadsArgs<ExtArgs>
   details?: boolean | Prisma.User$detailsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -6535,6 +6871,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     deletedSuppliers: Prisma.$SupplierPayload<ExtArgs>[]
     assignedLeads: Prisma.$LeadPayload<ExtArgs>[]
     convertedLeads: Prisma.$LeadPayload<ExtArgs>[]
+    createdLeads: Prisma.$LeadPayload<ExtArgs>[]
     details: Prisma.$UserDetailsPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -6979,6 +7316,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   deletedSuppliers<T extends Prisma.User$deletedSuppliersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deletedSuppliersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignedLeads<T extends Prisma.User$assignedLeadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedLeadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   convertedLeads<T extends Prisma.User$convertedLeadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$convertedLeadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdLeads<T extends Prisma.User$createdLeadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdLeadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   details<T extends Prisma.User$detailsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$detailsArgs<ExtArgs>>): Prisma.Prisma__UserDetailsClient<runtime.Types.Result.GetResult<Prisma.$UserDetailsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -7890,6 +8228,30 @@ export type User$assignedLeadsArgs<ExtArgs extends runtime.Types.Extensions.Inte
  * User.convertedLeads
  */
 export type User$convertedLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
+  orderBy?: Prisma.LeadOrderByWithRelationInput | Prisma.LeadOrderByWithRelationInput[]
+  cursor?: Prisma.LeadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeadScalarFieldEnum | Prisma.LeadScalarFieldEnum[]
+}
+
+/**
+ * User.createdLeads
+ */
+export type User$createdLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Lead
    */

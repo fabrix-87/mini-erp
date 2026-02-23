@@ -1,17 +1,24 @@
-import express from 'express';
-import { authenticateToken, authorize } from '../middleware/auth';
+import express from "express";
+import { authenticateToken, authorize } from "../middleware/auth";
 import {
+  validateOpportunityId,
+  validateCustomerIdParam,
+  validateClosedReasonId,
   validateOpportunityQuery,
-  validateGetOpportunitiesByCustomer,
+  validateOpportunityStats,
+  validateSalesFunnelQuery,
+  validateClosedReasonQuery,
   validateCreateOpportunity,
-  validateGetOpportunity,
   validateUpdateOpportunity,
   validateUpdateOpportunityStage,
-  validateOpportunityWon,
-  validateOpportunityLost,
-  validateOpportunityAssignUser,
-  validateCustomerIdParam,
-} from '../validators/opportunity';
+  validateUpdateOpportunityStatus,
+  validateWinOpportunity,
+  validateLoseOpportunity,
+  validateBulkAssignOpportunities,
+  validateBulkUpdateStage,
+  validateCreateClosedReason,
+  validateUpdateClosedReason,
+} from "../validators/opportunity";
 import {
   getAllOpportunities,
   getOpportunitiesByCustomer,
@@ -19,174 +26,277 @@ import {
   createOpportunity,
   updateOpportunity,
   updateStage,
+  updateOpportunityStatus,
   closeOpportunityWon,
   closeOpportunityLost,
   assignOpportunity,
+  bulkAssignOpportunities,
+  bulkUpdateStage,
   deleteOpportunity,
   getPipelineStats,
-} from '../controllers/opportunity';
+  getSalesFunnel,
+  getAllClosedReasons,
+  createClosedReason,
+  updateClosedReason,
+  deleteClosedReason,
+} from "../controllers/opportunity";
 
 const router = express.Router();
 
 // ============================================================================
-// OPPORTUNITY ROUTES (CRM / Lead Management)
+// STATS (before :id to avoid param conflicts)
 // ============================================================================
 
 /**
- * @route   GET /api/opportunities/stats/pipeline
- * @desc    Ottieni statistiche pipeline vendite
- * @access  Private (opportunity:read)
- * @query   assignedUserId
+ * @route  GET /api/opportunities/stats/pipeline
+ * @access Private (opportunity:read)
  */
 router.get(
-  '/stats/pipeline',
+  "/stats/pipeline",
   authenticateToken,
-  authorize(['opportunity:read', 'opportunity:manage']),
-  getPipelineStats
+  authorize(["opportunity:read", "opportunity:manage"]),
+  validateOpportunityStats,
+  getPipelineStats,
 );
 
 /**
- * @route   GET /api/opportunities
- * @desc    Ottieni tutte le opportunità con filtri e paginazione
- * @access  Private (opportunity:read)
- * @query   page, limit, search, customerId, assignedUserId, status, stage,
- *          minValue, maxValue, minProbability, maxProbability,
- *          expectedCloseDateFrom, expectedCloseDateTo, sortBy, sortOrder
+ * @route  GET /api/opportunities/stats/funnel
+ * @access Private (opportunity:read)
  */
 router.get(
-  '/',
+  "/stats/funnel",
   authenticateToken,
-  authorize(['opportunity:read', 'opportunity:manage']),
-  validateOpportunityQuery,
-  getAllOpportunities
+  authorize(["opportunity:read", "opportunity:manage"]),
+  validateSalesFunnelQuery,
+  getSalesFunnel,
 );
 
-/**
- * @route   GET /api/opportunities/customer/:customerId
- * @desc    Ottieni tutte le opportunità di un customer
- * @access  Private (opportunity:read)
- * @query   status
- */
-router.get(
-  '/customer/:customerId',
-  authenticateToken,
-  authorize(['opportunity:read', 'opportunity:manage']),
-  validateCustomerIdParam,
-  validateGetOpportunitiesByCustomer,
-  getOpportunitiesByCustomer
-);
+// ============================================================================
+// BULK OPERATIONS
+// ============================================================================
 
 /**
- * @route   GET /api/opportunities/:id
- * @desc    Ottieni dettagli di un'opportunità specifica
- * @access  Private (opportunity:read)
- */
-router.get(
-  '/:id',
-  authenticateToken,
-  authorize(['opportunity:read', 'opportunity:manage']),
-  validateGetOpportunity,
-  getOpportunityById
-);
-
-/**
- * @route   POST /api/opportunities
- * @desc    Crea nuova opportunità
- * @access  Private (opportunity:create)
+ * @route  POST /api/opportunities/bulk/assign
+ * @access Private (opportunity:update)
  */
 router.post(
-  '/',
+  "/bulk/assign",
   authenticateToken,
-  authorize(['opportunity:create', 'opportunity:manage']),
-  validateCreateOpportunity,
-  createOpportunity
+  authorize(["opportunity:update", "opportunity:manage"]),
+  validateBulkAssignOpportunities,
+  bulkAssignOpportunities,
 );
 
 /**
- * @route   PUT /api/opportunities/:id
- * @desc    Aggiorna opportunità esistente
- * @access  Private (opportunity:update)
+ * @route  POST /api/opportunities/bulk/stage
+ * @access Private (opportunity:update)
+ */
+router.post(
+  "/bulk/stage",
+  authenticateToken,
+  authorize(["opportunity:update", "opportunity:manage"]),
+  validateBulkUpdateStage,
+  bulkUpdateStage,
+);
+
+// ============================================================================
+// CLOSED REASONS
+// ============================================================================
+
+/**
+ * @route  GET /api/opportunities/closed-reasons
+ * @access Private (opportunity:read)
+ */
+router.get(
+  "/closed-reasons",
+  authenticateToken,
+  authorize(["opportunity:read", "opportunity:manage"]),
+  validateClosedReasonQuery,
+  getAllClosedReasons,
+);
+
+/**
+ * @route  POST /api/opportunities/closed-reasons
+ * @access Private (opportunity:manage)
+ */
+router.post(
+  "/closed-reasons",
+  authenticateToken,
+  authorize(["opportunity:manage"]),
+  validateCreateClosedReason,
+  createClosedReason,
+);
+
+/**
+ * @route  PUT /api/opportunities/closed-reasons/:id
+ * @access Private (opportunity:manage)
  */
 router.put(
-  '/:id',
+  "/closed-reasons/:id",
   authenticateToken,
-  authorize(['opportunity:update', 'opportunity:manage']),
-  validateGetOpportunity,
-  validateUpdateOpportunity,
-  updateOpportunity
+  authorize(["opportunity:manage"]),
+  validateClosedReasonId,
+  validateUpdateClosedReason,
+  updateClosedReason,
 );
 
 /**
- * @route   PATCH /api/opportunities/:id/stage
- * @desc    Aggiorna stage dell'opportunità (muovi nella pipeline)
- * @access  Private (opportunity:update)
- */
-router.patch(
-  '/:id/stage',
-  authenticateToken,
-  authorize(['opportunity:update', 'opportunity:manage']),
-  validateGetOpportunity,
-  validateUpdateOpportunityStage,
-  updateStage
-);
-
-/**
- * @route   PATCH /api/opportunities/:id/close-won
- * @desc    Chiudi opportunità come WON (vendita conclusa)
- * @access  Private (opportunity:update)
- */
-router.patch(
-  '/:id/close-won',
-  authenticateToken,
-  authorize(['opportunity:update', 'opportunity:manage']),
-  validateGetOpportunity,
-  validateOpportunityWon,
-  closeOpportunityWon
-);
-
-/**
- * @route   PATCH /api/opportunities/:id/close-lost
- * @desc    Chiudi opportunità come LOST (vendita persa)
- * @access  Private (opportunity:update)
- */
-router.patch(
-  '/:id/close-lost',
-  authenticateToken,
-  authorize(['opportunity:update', 'opportunity:manage']),
-  validateGetOpportunity,
-  validateOpportunityLost,
-  closeOpportunityLost
-);
-
-/**
- * @route   PATCH /api/opportunities/:id/assign
- * @desc    Assegna opportunità a un utente
- * @access  Private (opportunity:update)
- */
-router.patch(
-  '/:id/assign',
-  authenticateToken,
-  authorize(['opportunity:update', 'opportunity:manage']),
-  validateGetOpportunity,
-  validateOpportunityAssignUser,
-  assignOpportunity
-);
-
-/**
- * @route   DELETE /api/opportunities/:id
- * @desc    Elimina un'opportunità
- * @access  Private (opportunity:delete)
+ * @route  DELETE /api/opportunities/closed-reasons/:id
+ * @access Private (opportunity:manage)
  */
 router.delete(
-  '/:id',
+  "/closed-reasons/:id",
   authenticateToken,
-  authorize(['opportunity:delete', 'opportunity:manage']),
-  validateGetOpportunity,
-  deleteOpportunity
+  authorize(["opportunity:manage"]),
+  validateClosedReasonId,
+  deleteClosedReason,
 );
 
 // ============================================================================
-// EXPORT
+// CUSTOMER SUB-RESOURCE
 // ============================================================================
+
+/**
+ * @route  GET /api/opportunities/customer/:customerId
+ * @access Private (opportunity:read)
+ */
+router.get(
+  "/customer/:customerId",
+  authenticateToken,
+  authorize(["opportunity:read", "opportunity:manage"]),
+  validateCustomerIdParam,
+  validateOpportunityQuery,
+  getOpportunitiesByCustomer,
+);
+
+// ============================================================================
+// CRUD
+// ============================================================================
+
+/**
+ * @route  GET /api/opportunities
+ * @access Private (opportunity:read)
+ */
+router.get(
+  "/",
+  authenticateToken,
+  authorize(["opportunity:read", "opportunity:manage"]),
+  validateOpportunityQuery,
+  getAllOpportunities,
+);
+
+/**
+ * @route  POST /api/opportunities
+ * @access Private (opportunity:create)
+ */
+router.post(
+  "/",
+  authenticateToken,
+  authorize(["opportunity:create", "opportunity:manage"]),
+  validateCreateOpportunity,
+  createOpportunity,
+);
+
+/**
+ * @route  GET /api/opportunities/:id
+ * @access Private (opportunity:read)
+ */
+router.get(
+  "/:id",
+  authenticateToken,
+  authorize(["opportunity:read", "opportunity:manage"]),
+  validateOpportunityId,
+  getOpportunityById,
+);
+
+/**
+ * @route  PUT /api/opportunities/:id
+ * @access Private (opportunity:update)
+ */
+router.put(
+  "/:id",
+  authenticateToken,
+  authorize(["opportunity:update", "opportunity:manage"]),
+  validateOpportunityId,
+  validateUpdateOpportunity,
+  updateOpportunity,
+);
+
+/**
+ * @route  PATCH /api/opportunities/:id/stage
+ * @access Private (opportunity:update)
+ */
+router.patch(
+  "/:id/stage",
+  authenticateToken,
+  authorize(["opportunity:update", "opportunity:manage"]),
+  validateOpportunityId,
+  validateUpdateOpportunityStage,
+  updateStage,
+);
+
+/**
+ * @route  PATCH /api/opportunities/:id/status
+ * @access Private (opportunity:update)
+ */
+router.patch(
+  "/:id/status",
+  authenticateToken,
+  authorize(["opportunity:update", "opportunity:manage"]),
+  validateOpportunityId,
+  validateUpdateOpportunityStatus,
+  updateOpportunityStatus,
+);
+
+/**
+ * @route  PATCH /api/opportunities/:id/close-won
+ * @access Private (opportunity:update)
+ */
+router.patch(
+  "/:id/close-won",
+  authenticateToken,
+  authorize(["opportunity:update", "opportunity:manage"]),
+  validateOpportunityId,
+  validateWinOpportunity,
+  closeOpportunityWon,
+);
+
+/**
+ * @route  PATCH /api/opportunities/:id/close-lost
+ * @access Private (opportunity:update)
+ */
+router.patch(
+  "/:id/close-lost",
+  authenticateToken,
+  authorize(["opportunity:update", "opportunity:manage"]),
+  validateOpportunityId,
+  validateLoseOpportunity,
+  closeOpportunityLost,
+);
+
+/**
+ * @route  PATCH /api/opportunities/:id/assign
+ * @access Private (opportunity:update)
+ */
+router.patch(
+  "/:id/assign",
+  authenticateToken,
+  authorize(["opportunity:update", "opportunity:manage"]),
+  validateOpportunityId,
+  validateUpdateOpportunity,
+  assignOpportunity,
+);
+
+/**
+ * @route  DELETE /api/opportunities/:id
+ * @access Private (opportunity:delete)
+ */
+router.delete(
+  "/:id",
+  authenticateToken,
+  authorize(["opportunity:delete", "opportunity:manage"]),
+  validateOpportunityId,
+  deleteOpportunity,
+);
 
 export default router;

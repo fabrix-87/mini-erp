@@ -182,6 +182,13 @@ export const productIdSchema = z.object({
   id: createIdSchema("ID prodotto non valido"),
 });
 
+/**
+ * Schema per la validazione dell'ID prodotto come productId
+ */
+export const productIdAsProductIdSchema = z.object({
+  productId: createIdSchema("ID prodotto non valido"),
+});
+
 // ============================================================================
 // PRODUCT VARIANT TRANSLATION SCHEMAS
 // ============================================================================
@@ -238,12 +245,12 @@ export const createProductImageSchema = z
     productId: createIdSchema("ID prodotto obbligatorio"),
     variantId: createIdSchema("ID variante").optional().nullable(),
 
-    imageUrl: urlSchema(),
+    imageUrl: z.url("URL non valido"),
     imageType: z.string().max(20).default("extra"),
     position: z.number().int().default(0),
     isCover: z.boolean().default(false),
 
-    altText: z.any().optional().nullable(),
+    altText: inputJsonValueSchema.nullable().optional(),
 
     width: z.number().int().positive().optional().nullable(),
     height: z.number().int().positive().optional().nullable(),

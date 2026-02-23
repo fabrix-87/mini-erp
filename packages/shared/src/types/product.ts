@@ -8,6 +8,7 @@ import {
   createProductVariantTranslationSchema,
   manufacturerIdSchema,
   productCategoryIdSchema,
+  productIdAsProductIdSchema,
   productIdSchema,
   productImageIdSchema,
   productQuerySchema,
@@ -212,6 +213,7 @@ export type ProductVariantIdParam = z.infer<typeof productVariantIdSchema>;
 export type ProductImageIdParam = z.infer<typeof productImageIdSchema>;
 export type ManufacturerIdParam = z.infer<typeof manufacturerIdSchema>;
 export type ProductCategoryIdParam = z.infer<typeof productCategoryIdSchema>;
+export type ProductIdAsProductIdParam = z.infer<typeof productIdAsProductIdSchema>;
 
 // Type Query
 export type ProductQueryInput = z.infer<typeof productQuerySchema>;

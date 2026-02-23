@@ -11,6 +11,7 @@ export const getProductSelection = () => ({
   id: true,
   type: true,
   reference: true,
+  status: true,
   active: true,
   availableForOrder: true,
   showPrice: true,
@@ -48,6 +49,15 @@ export const getProductSelection = () => ({
       depth: true,
       isDefault: true,
       active: true,
+      translations: {
+        select: {
+          id: true,
+          languageId: true,
+          name: true,
+          description: true,
+          shortDescription: true,
+        },
+      },
       attributes: {
         include: {
           attribute: {
@@ -59,16 +69,7 @@ export const getProductSelection = () => ({
         },
       },
     },
-    orderBy: { position: 'asc' as const },
-  },
-  translations: {
-    select: {
-      id: true,
-      languageId: true,
-      name: true,
-      description: true,
-      shortDescription: true,
-    },
+    orderBy: { position: "asc" as const },
   },
   images: {
     select: {
@@ -78,7 +79,7 @@ export const getProductSelection = () => ({
       position: true,
       isCover: true,
     },
-    orderBy: { position: 'asc' as const },
+    orderBy: { position: "asc" as const },
   },
   categories: {
     select: {
@@ -90,6 +91,7 @@ export const getProductSelection = () => ({
     },
   },
 });
+
 
 /**
  * Genera automaticamente un variantCode se non fornito

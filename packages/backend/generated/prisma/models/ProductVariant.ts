@@ -496,7 +496,7 @@ export type ProductVariantWhereInput = {
   deletedBy?: Prisma.IntNullableFilter<"ProductVariant"> | number | null
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
-  product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
+  product?: Prisma.XOR<Prisma.ProductNullableScalarRelationFilter, Prisma.ProductWhereInput> | null
   commodity?: Prisma.XOR<Prisma.IntrastatCommodityCodeNullableScalarRelationFilter, Prisma.IntrastatCommodityCodeWhereInput> | null
   attributes?: Prisma.ProductVariantAttributeListRelationFilter
   stockMovement?: Prisma.StockMovementListRelationFilter
@@ -595,7 +595,7 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   deletedBy?: Prisma.IntNullableFilter<"ProductVariant"> | number | null
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
-  product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
+  product?: Prisma.XOR<Prisma.ProductNullableScalarRelationFilter, Prisma.ProductWhereInput> | null
   commodity?: Prisma.XOR<Prisma.IntrastatCommodityCodeNullableScalarRelationFilter, Prisma.IntrastatCommodityCodeWhereInput> | null
   attributes?: Prisma.ProductVariantAttributeListRelationFilter
   stockMovement?: Prisma.StockMovementListRelationFilter
@@ -719,7 +719,7 @@ export type ProductVariantCreateInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
   attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
   stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
@@ -808,7 +808,7 @@ export type ProductVariantUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
   attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
   stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
@@ -1421,7 +1421,7 @@ export type ProductVariantCreateWithoutAttributesInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
   stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
   stockReservations?: Prisma.StockReservationCreateNestedManyWithoutProductVariantInput
@@ -1524,7 +1524,7 @@ export type ProductVariantUpdateWithoutAttributesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
   stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
   stockReservations?: Prisma.StockReservationUpdateManyWithoutProductVariantNestedInput
@@ -1611,7 +1611,7 @@ export type ProductVariantCreateWithoutDocumentLinesInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
   attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
   stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
@@ -1714,7 +1714,7 @@ export type ProductVariantUpdateWithoutDocumentLinesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
   attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
   stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
@@ -1801,7 +1801,7 @@ export type ProductVariantCreateWithoutCommodityInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
   stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
   stockReservations?: Prisma.StockReservationCreateNestedManyWithoutProductVariantInput
@@ -1953,7 +1953,7 @@ export type ProductVariantCreateWithoutPriceListItemsInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
   attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
   stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
@@ -2056,7 +2056,7 @@ export type ProductVariantUpdateWithoutPriceListItemsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
   attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
   stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
@@ -2256,7 +2256,7 @@ export type ProductVariantCreateWithoutTranslationsInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
   attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
   stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
@@ -2359,7 +2359,7 @@ export type ProductVariantUpdateWithoutTranslationsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
   attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
   stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
@@ -2446,7 +2446,7 @@ export type ProductVariantCreateWithoutImagesInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
   attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
   stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
@@ -2549,7 +2549,7 @@ export type ProductVariantUpdateWithoutImagesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
   attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
   stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
@@ -2636,7 +2636,7 @@ export type ProductVariantCreateWithoutDeletedByUserInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
   attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
   stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
@@ -2749,7 +2749,7 @@ export type ProductVariantCreateWithoutStockMovementInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
   attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
   stockReservations?: Prisma.StockReservationCreateNestedManyWithoutProductVariantInput
@@ -2852,7 +2852,7 @@ export type ProductVariantUpdateWithoutStockMovementInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
   attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
   stockReservations?: Prisma.StockReservationUpdateManyWithoutProductVariantNestedInput
@@ -2939,7 +2939,7 @@ export type ProductVariantCreateWithoutVirtualStockInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
   attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
   stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
@@ -3042,7 +3042,7 @@ export type ProductVariantUpdateWithoutVirtualStockInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
   attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
   stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
@@ -3129,7 +3129,7 @@ export type ProductVariantCreateWithoutStockBatchsInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
   attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
   stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
@@ -3232,7 +3232,7 @@ export type ProductVariantUpdateWithoutStockBatchsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
   attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
   stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
@@ -3319,7 +3319,7 @@ export type ProductVariantCreateWithoutStockReservationsInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
   commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
   attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
   stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
@@ -3422,7 +3422,7 @@ export type ProductVariantUpdateWithoutStockReservationsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
   attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
   stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
@@ -3544,7 +3544,7 @@ export type ProductVariantUpdateWithoutCommodityInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
   stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
   stockReservations?: Prisma.StockReservationUpdateManyWithoutProductVariantNestedInput
@@ -3858,7 +3858,7 @@ export type ProductVariantUpdateWithoutDeletedByUserInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
   commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
   attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
   stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
@@ -4087,7 +4087,7 @@ export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.Intern
   deletedBy?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductVariant$productArgs<ExtArgs>
   commodity?: boolean | Prisma.ProductVariant$commodityArgs<ExtArgs>
   attributes?: boolean | Prisma.ProductVariant$attributesArgs<ExtArgs>
   stockMovement?: boolean | Prisma.ProductVariant$stockMovementArgs<ExtArgs>
@@ -4136,7 +4136,7 @@ export type ProductVariantSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   deletedBy?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductVariant$productArgs<ExtArgs>
   commodity?: boolean | Prisma.ProductVariant$commodityArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.ProductVariant$deletedByUserArgs<ExtArgs>
 }, ExtArgs["result"]["productVariant"]>
@@ -4175,7 +4175,7 @@ export type ProductVariantSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   deletedBy?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductVariant$productArgs<ExtArgs>
   commodity?: boolean | Prisma.ProductVariant$commodityArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.ProductVariant$deletedByUserArgs<ExtArgs>
 }, ExtArgs["result"]["productVariant"]>
@@ -4218,7 +4218,7 @@ export type ProductVariantSelectScalar = {
 
 export type ProductVariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "variantCode" | "sku" | "ean13" | "upc" | "isbn" | "mpn" | "quantity" | "minimalQuantity" | "lowStockThreshold" | "lowStockAlertEnabled" | "location" | "packStockType" | "outOfStockType" | "availableDate" | "price" | "wholesalePrice" | "unitPriceRatio" | "weight" | "width" | "height" | "depth" | "commodityCode" | "position" | "isDefault" | "active" | "availableForOrder" | "metadata" | "deletedAt" | "deletedBy" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
 export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductVariant$productArgs<ExtArgs>
   commodity?: boolean | Prisma.ProductVariant$commodityArgs<ExtArgs>
   attributes?: boolean | Prisma.ProductVariant$attributesArgs<ExtArgs>
   stockMovement?: boolean | Prisma.ProductVariant$stockMovementArgs<ExtArgs>
@@ -4233,12 +4233,12 @@ export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.Inter
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductVariantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductVariant$productArgs<ExtArgs>
   commodity?: boolean | Prisma.ProductVariant$commodityArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.ProductVariant$deletedByUserArgs<ExtArgs>
 }
 export type ProductVariantIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
+  product?: boolean | Prisma.ProductVariant$productArgs<ExtArgs>
   commodity?: boolean | Prisma.ProductVariant$commodityArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.ProductVariant$deletedByUserArgs<ExtArgs>
 }
@@ -4246,7 +4246,7 @@ export type ProductVariantIncludeUpdateManyAndReturn<ExtArgs extends runtime.Typ
 export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProductVariant"
   objects: {
-    product: Prisma.$ProductPayload<ExtArgs>
+    product: Prisma.$ProductPayload<ExtArgs> | null
     commodity: Prisma.$IntrastatCommodityCodePayload<ExtArgs> | null
     attributes: Prisma.$ProductVariantAttributePayload<ExtArgs>[]
     stockMovement: Prisma.$StockMovementPayload<ExtArgs>[]
@@ -4687,7 +4687,7 @@ readonly fields: ProductVariantFieldRefs;
  */
 export interface Prisma__ProductVariantClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  product<T extends Prisma.ProductVariant$productArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$productArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   commodity<T extends Prisma.ProductVariant$commodityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$commodityArgs<ExtArgs>>): Prisma.Prisma__IntrastatCommodityCodeClient<runtime.Types.Result.GetResult<Prisma.$IntrastatCommodityCodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   attributes<T extends Prisma.ProductVariant$attributesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$attributesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductVariantAttributePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   stockMovement<T extends Prisma.ProductVariant$stockMovementArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$stockMovementArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5154,6 +5154,25 @@ export type ProductVariantDeleteManyArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many ProductVariants to delete.
    */
   limit?: number
+}
+
+/**
+ * ProductVariant.product
+ */
+export type ProductVariant$productArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Product
+   */
+  select?: Prisma.ProductSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Product
+   */
+  omit?: Prisma.ProductOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductInclude<ExtArgs> | null
+  where?: Prisma.ProductWhereInput
 }
 
 /**

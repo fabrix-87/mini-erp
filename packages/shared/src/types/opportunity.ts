@@ -27,6 +27,7 @@ import {
   closedReasonIdParamSchema,
   opportunityStatsSchema,
   salesFunnelAnalysisSchema,
+  customerIdParamSchema,
 } from "../validators/opportunity";
 import { OpportunitySource, OpportunityStatus, SalesStage } from "../constants";
 
@@ -120,6 +121,7 @@ export type SalesFunnelAnalysisInput = z.infer<
 
 export type OpportunityIdParam = z.infer<typeof opportunityIdParamSchema>;
 export type ClosedReasonIdParam = z.infer<typeof closedReasonIdParamSchema>;
+export type OpportunityCustomerIdParam = z.infer<typeof customerIdParamSchema>;
 
 // ============================================================================
 // UTILITY TYPES

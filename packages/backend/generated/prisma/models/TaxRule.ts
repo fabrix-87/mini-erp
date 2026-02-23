@@ -728,11 +728,6 @@ export type TaxRuleOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type TaxRuleScalarRelationFilter = {
-  is?: Prisma.TaxRuleWhereInput
-  isNot?: Prisma.TaxRuleWhereInput
-}
-
 export type TaxRuleCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   code?: Prisma.SortOrder
@@ -822,6 +817,11 @@ export type TaxRuleSumOrderByAggregateInput = {
   vatNatureId?: Prisma.SortOrder
   deductibilityPercent?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
+}
+
+export type TaxRuleScalarRelationFilter = {
+  is?: Prisma.TaxRuleWhereInput
+  isNot?: Prisma.TaxRuleWhereInput
 }
 
 export type TaxRuleCreateNestedOneWithoutCustomersInput = {
@@ -936,10 +936,12 @@ export type TaxRuleCreateNestedOneWithoutProductsInput = {
   connect?: Prisma.TaxRuleWhereUniqueInput
 }
 
-export type TaxRuleUpdateOneRequiredWithoutProductsNestedInput = {
+export type TaxRuleUpdateOneWithoutProductsNestedInput = {
   create?: Prisma.XOR<Prisma.TaxRuleCreateWithoutProductsInput, Prisma.TaxRuleUncheckedCreateWithoutProductsInput>
   connectOrCreate?: Prisma.TaxRuleCreateOrConnectWithoutProductsInput
   upsert?: Prisma.TaxRuleUpsertWithoutProductsInput
+  disconnect?: Prisma.TaxRuleWhereInput | boolean
+  delete?: Prisma.TaxRuleWhereInput | boolean
   connect?: Prisma.TaxRuleWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.TaxRuleUpdateToOneWithWhereWithoutProductsInput, Prisma.TaxRuleUpdateWithoutProductsInput>, Prisma.TaxRuleUncheckedUpdateWithoutProductsInput>
 }

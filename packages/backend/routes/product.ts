@@ -19,6 +19,7 @@ import {
   validateProductQuery,
   validateProductIdLanguageId,
   validatProductCategoryId,
+  validateProductIdAsProductId,
 } from '../validators/product';
 import {
   // Products
@@ -241,6 +242,7 @@ router.delete(
   '/:productId/variants/:id',
   authenticateToken,
   authorize(['product:delete', 'product:manage']),
+  validateProductIdAsProductId,
   validateVariantId,
   deleteVariant
 );

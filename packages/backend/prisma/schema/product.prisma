@@ -46,7 +46,7 @@ model Product {
 
     // tassazione
     defaultTaxRuleId Int
-    defaultTaxRule   TaxRule @relation("ProductTaxRule", fields: [defaultTaxRuleId], references: [id])
+    defaultTaxRule   TaxRule? @relation("ProductTaxRule", fields: [defaultTaxRuleId], references: [id])
 
     // Visibilità - Potrebbe essere un Enum o tabella esterna
     visibility    String           @default("both") @db.VarChar(20) // both, catalog, search, none
@@ -131,7 +131,7 @@ model ProductVariantTranslation {
 model ProductVariant {
     id        Int     @id @default(autoincrement())
     productId Int
-    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
 
     // Identificatori Univoci della Variante
     variantCode String  @unique @db.VarChar(64)
@@ -207,7 +207,7 @@ model ProductVariant {
 model ProductImage {
     id        Int     @id @default(autoincrement())
     productId Int
-    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
 
     //Relazione opzionale con variante
     variantId Int?

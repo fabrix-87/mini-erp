@@ -62,6 +62,7 @@ model User {
 
   assignedLeads  Lead[] @relation("LeadAssignedUser")
   convertedLeads Lead[] @relation("LeadConvertedBy")
+  createdLeads   Lead[] @relation("LeadCreatedBy")
 
   details UserDetails?
 

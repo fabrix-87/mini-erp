@@ -8,39 +8,39 @@
 
 // Enum per lo stato della lead nel funnel
 enum LeadStatus {
-  NEW             // Nuova lead non ancora contattata
-  CONTACTED       // Primo contatto effettuato
-  QUALIFIED       // Lead qualificata e pronta per opportunità
-  UNQUALIFIED     // Lead non qualificata (non target)
-  NURTURING       // In fase di nurturing/coltivazione
-  CONVERTED       // Convertita in Customer
-  LOST            // Persa/Non interessata
-  DUPLICATE       // Duplicato di altra lead
-  ARCHIVED        // Archiviata
+  NEW // Nuova lead non ancora contattata
+  CONTACTED // Primo contatto effettuato
+  QUALIFIED // Lead qualificata e pronta per opportunità
+  UNQUALIFIED // Lead non qualificata (non target)
+  NURTURING // In fase di nurturing/coltivazione
+  CONVERTED // Convertita in Customer
+  LOST // Persa/Non interessata
+  DUPLICATE // Duplicato di altra lead
+  ARCHIVED // Archiviata
 }
 
 // Enum per la fonte di acquisizione della lead
 enum LeadSource {
-  WEBSITE         // Sito web (form contatto, landing page)
-  REFERRAL        // Passaparola/Referral da cliente
-  SOCIAL_MEDIA    // Social Media (LinkedIn, Facebook, etc.)
-  EMAIL_CAMPAIGN  // Campagna Email Marketing
-  PHONE_CALL      // Chiamata telefonica inbound
-  COLD_CALL       // Chiamata a freddo outbound
-  EVENT           // Evento/Fiera/Webinar
-  PARTNER         // Partner commerciale
-  ADVERTISING     // Pubblicità online (Google Ads, Facebook Ads)
-  CONTENT         // Content Marketing (blog, ebook, whitepaper)
-  DIRECT          // Contatto diretto
-  CHAT            // Chat dal sito web
-  OTHER           // Altro
+  WEBSITE // Sito web (form contatto, landing page)
+  REFERRAL // Passaparola/Referral da cliente
+  SOCIAL_MEDIA // Social Media (LinkedIn, Facebook, etc.)
+  EMAIL_CAMPAIGN // Campagna Email Marketing
+  PHONE_CALL // Chiamata telefonica inbound
+  COLD_CALL // Chiamata a freddo outbound
+  EVENT // Evento/Fiera/Webinar
+  PARTNER // Partner commerciale
+  ADVERTISING // Pubblicità online (Google Ads, Facebook Ads)
+  CONTENT // Content Marketing (blog, ebook, whitepaper)
+  DIRECT // Contatto diretto
+  CHAT // Chat dal sito web
+  OTHER // Altro
 }
 
 // Enum per la qualità/temperatura della lead
 enum LeadQuality {
-  HOT             // Lead calda - alta probabilità di conversione
-  WARM            // Lead tiepida - media probabilità
-  COLD            // Lead fredda - bassa probabilità
+  HOT // Lead calda - alta probabilità di conversione
+  WARM // Lead tiepida - media probabilità
+  COLD // Lead fredda - bassa probabilità
 }
 
 // ============================================================================
@@ -57,22 +57,22 @@ model Lead {
   companyName String  @db.VarChar(255)
   tradeName   String? @db.VarChar(255) // Nome commerciale se diverso da ragione sociale
   website     String? @db.VarChar(255)
-  
+
   // Dati Fiscali (opzionali per una lead, diventeranno obbligatori alla conversione)
   vatNumber String? @db.VarChar(20) // Partita IVA
   taxCode   String? @db.VarChar(20) // Codice Fiscale
-  
+
   // Nazione
   countryCode String  @default("IT") @db.Char(2)
   country     Country @relation("LeadCountry", fields: [countryCode], references: [code])
 
   // === CONTATTO PRINCIPALE ===
-  contactFirstName String  @db.VarChar(100)
-  contactLastName  String  @db.VarChar(100)
-  contactEmail     String  @db.VarChar(255)
-  contactPhone     String? @db.VarChar(50)
-  contactMobile    String? @db.VarChar(50)
-  contactPosition  String? @db.VarChar(100) // Es. CEO, Responsabile Acquisti
+  contactFirstName  String  @db.VarChar(100)
+  contactLastName   String  @db.VarChar(100)
+  contactEmail      String  @db.VarChar(255)
+  contactPhone      String? @db.VarChar(50)
+  contactMobile     String? @db.VarChar(50)
+  contactPosition   String? @db.VarChar(100) // Es. CEO, Responsabile Acquisti
   contactDepartment String? @db.VarChar(100) // Es. IT, Marketing, Procurement
 
   // === INDIRIZZO (semplificato - verrà espanso alla conversione) ===
@@ -85,7 +85,7 @@ model Lead {
   status  LeadStatus  @default(NEW)
   source  LeadSource  @default(OTHER)
   quality LeadQuality @default(COLD)
-  
+
   // Lead Score (0-100) - per prioritizzazione automatica
   // Può essere calcolato automaticamente in base a:
   // - Interazioni (email aperte, link cliccati)
@@ -94,39 +94,41 @@ model Lead {
   score Int @default(0) @db.SmallInt
 
   // === DATI COMMERCIALI E QUALIFICAZIONE ===
-  
+
   // Valore stimato dell'opportunità potenziale
   estimatedValue Decimal? @db.Decimal(15, 2)
-  
+
   // Dimensione stimata dell'azienda
   estimatedSize CustomerSize?
-  
+
   // Settore/Industria (es. "Manifatturiero", "Retail", "IT")
   industry String? @db.VarChar(100)
-  
+
   // Numero dipendenti stimati
   employeesCount Int?
-  
+
   // Fatturato annuo stimato
   annualRevenue Decimal? @db.Decimal(15, 2)
-  
+
   // Budget disponibile
   budget Decimal? @db.Decimal(15, 2)
-  
+
   // Timeframe per l'acquisto
   purchaseTimeframe String? @db.VarChar(50) // Es. "Immediato", "1-3 mesi", "3-6 mesi", "6-12 mesi"
-  
+
   // Autorità decisionale del contatto
   decisionAuthority String? @db.VarChar(50) // Es. "Decision Maker", "Influencer", "Gatekeeper"
-  
+
   // Necessità/Pain Point principale
   primaryNeed String? @db.Text
-  
+
   // Prodotti/Servizi di interesse
   interestedIn String? @db.Text
 
   // === TRACKING E CONVERSIONE ===
-  
+  createdByUserId Int?
+  createdBy       User? @relation("LeadCreatedBy", fields: [createdByUserId], references: [id])
+
   // Utente assegnato (sales owner)
   assignedUserId Int?
   assignedUser   User? @relation("LeadAssignedUser", fields: [assignedUserId], references: [id], onDelete: SetNull)
@@ -135,31 +137,31 @@ model Lead {
   convertedAt   DateTime?
   convertedToId Int?      @unique
   convertedTo   Customer? @relation("ConvertedCustomer", fields: [convertedToId], references: [id])
-  
+
   // Utente che ha convertito la lead
   convertedByUserId Int?
   convertedBy       User? @relation("LeadConvertedBy", fields: [convertedByUserId], references: [id])
 
   // === GESTIONE PERDITA ===
-  
+
   // Motivo perdita (se status = LOST)
-  lostReason String? @db.Text
+  lostReason String?   @db.Text
   lostDate   DateTime?
 
   // === TRACKING ATTIVITÀ ===
-  
+
   // Data primo contatto
   firstContactDate DateTime?
-  
+
   // Data ultimo contatto
   lastContactDate DateTime?
 
   // Data prossimo follow-up programmato
   nextFollowUpDate DateTime?
-  
+
   // Numero di tentativi di contatto
   contactAttempts Int @default(0)
-  
+
   // Data ultima modifica dello status
   lastStatusChange DateTime @default(now())
 
@@ -168,61 +170,61 @@ model Lead {
   bantNotes     String? @db.Text
 
   // === GDPR E CONSENSI ===
-  
+
   // Consenso al trattamento dati
-  privacyConsent        Boolean   @default(false)
-  privacyConsentDate    DateTime?
-  
+  privacyConsent     Boolean   @default(false)
+  privacyConsentDate DateTime?
+
   // Consenso marketing
-  marketingConsent      Boolean   @default(false)
-  marketingConsentDate  DateTime?
-  
+  marketingConsent     Boolean   @default(false)
+  marketingConsentDate DateTime?
+
   // Opt-out comunicazioni
-  doNotCall             Boolean   @default(false)
-  doNotEmail            Boolean   @default(false)
+  doNotCall  Boolean @default(false)
+  doNotEmail Boolean @default(false)
 
   // === CAMPAGNE E TRACKING ===
-  
+
   // Campagna di origine (es. "Summer Campaign 2026", "Webinar AI")
   campaignName String? @db.VarChar(100)
-  
+
   // Medium (es. "cpc", "organic", "social")
   utmMedium String? @db.VarChar(50)
-  
+
   // Source (es. "google", "facebook", "linkedin")
   utmSource String? @db.VarChar(50)
-  
+
   // Campaign (es. "spring_sale")
   utmCampaign String? @db.VarChar(50)
-  
+
   // Pagina di atterraggio
   landingPage String? @db.VarChar(255)
-  
+
   // Referrer
   referrer String? @db.VarChar(255)
 
   // === NOTE E CAMPI CUSTOM ===
-  
+
   // Note generali
   notes String? @db.Text
-  
+
   // Descrizione dettagliata dell'interesse/bisogno
   description String? @db.Text
-  
+
   // Campi personalizzati (JSON flessibile)
   customFields Json?
-  
+
   // Informazioni competitive
   competitors String? @db.Text // Concorrenti che sta valutando
 
   // === RELAZIONI ===
-  
+
   // Attività collegate (chiamate, email, meeting)
   activities Activity[]
-  
+
   // Documenti allegati (presentazioni, offerte, contratti)
   documents Document[]
-  
+
   // Opportunità generate da questa lead
   opportunities Opportunity[]
 

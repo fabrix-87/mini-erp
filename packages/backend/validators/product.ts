@@ -7,6 +7,7 @@ import {
   createProductVariantTranslationSchema,
   manufacturerIdSchema,
   productCategoryIdSchema,
+  productIdAsProductIdSchema,
   productIdSchema,
   productImageIdSchema,
   productQuerySchema,
@@ -60,6 +61,14 @@ export const validateUpdateVariant = validateBody(
  */
 export const validateProductId = validateParams(
   productIdSchema,
+  "Product ID validation",
+);
+
+/**
+ * Middleware per la validazione dell'ID prodotto come productId (params)
+ */
+export const validateProductIdAsProductId = validateParams(
+  productIdAsProductIdSchema,
   "Product ID validation",
 );
 

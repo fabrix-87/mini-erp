@@ -813,6 +813,7 @@ export const LeadScalarFieldEnum = {
   decisionAuthority: 'decisionAuthority',
   primaryNeed: 'primaryNeed',
   interestedIn: 'interestedIn',
+  createdByUserId: 'createdByUserId',
   assignedUserId: 'assignedUserId',
   convertedAt: 'convertedAt',
   convertedToId: 'convertedToId',

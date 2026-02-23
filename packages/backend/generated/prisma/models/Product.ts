@@ -436,7 +436,7 @@ export type ProductWhereInput = {
   deletedBy?: Prisma.IntNullableFilter<"Product"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
-  defaultTaxRule?: Prisma.XOR<Prisma.TaxRuleScalarRelationFilter, Prisma.TaxRuleWhereInput>
+  defaultTaxRule?: Prisma.XOR<Prisma.TaxRuleNullableScalarRelationFilter, Prisma.TaxRuleWhereInput> | null
   manufacturer?: Prisma.XOR<Prisma.ManufacturerNullableScalarRelationFilter, Prisma.ManufacturerWhereInput> | null
   supplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
   variants?: Prisma.ProductVariantListRelationFilter
@@ -517,7 +517,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   deletedBy?: Prisma.IntNullableFilter<"Product"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
-  defaultTaxRule?: Prisma.XOR<Prisma.TaxRuleScalarRelationFilter, Prisma.TaxRuleWhereInput>
+  defaultTaxRule?: Prisma.XOR<Prisma.TaxRuleNullableScalarRelationFilter, Prisma.TaxRuleWhereInput> | null
   manufacturer?: Prisma.XOR<Prisma.ManufacturerNullableScalarRelationFilter, Prisma.ManufacturerWhereInput> | null
   supplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
   variants?: Prisma.ProductVariantListRelationFilter
@@ -621,7 +621,7 @@ export type ProductCreateInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  defaultTaxRule: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
+  defaultTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
   manufacturer?: Prisma.ManufacturerCreateNestedOneWithoutProductsInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutProductsInput
   variants?: Prisma.ProductVariantCreateNestedManyWithoutProductInput
@@ -690,7 +690,7 @@ export type ProductUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  defaultTaxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutProductsNestedInput
+  defaultTaxRule?: Prisma.TaxRuleUpdateOneWithoutProductsNestedInput
   manufacturer?: Prisma.ManufacturerUpdateOneWithoutProductsNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutProductsNestedInput
   variants?: Prisma.ProductVariantUpdateManyWithoutProductNestedInput
@@ -1038,10 +1038,12 @@ export type ProductCreateNestedOneWithoutVariantsInput = {
   connect?: Prisma.ProductWhereUniqueInput
 }
 
-export type ProductUpdateOneRequiredWithoutVariantsNestedInput = {
+export type ProductUpdateOneWithoutVariantsNestedInput = {
   create?: Prisma.XOR<Prisma.ProductCreateWithoutVariantsInput, Prisma.ProductUncheckedCreateWithoutVariantsInput>
   connectOrCreate?: Prisma.ProductCreateOrConnectWithoutVariantsInput
   upsert?: Prisma.ProductUpsertWithoutVariantsInput
+  disconnect?: Prisma.ProductWhereInput | boolean
+  delete?: Prisma.ProductWhereInput | boolean
   connect?: Prisma.ProductWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutVariantsInput, Prisma.ProductUpdateWithoutVariantsInput>, Prisma.ProductUncheckedUpdateWithoutVariantsInput>
 }
@@ -1052,10 +1054,12 @@ export type ProductCreateNestedOneWithoutImagesInput = {
   connect?: Prisma.ProductWhereUniqueInput
 }
 
-export type ProductUpdateOneRequiredWithoutImagesNestedInput = {
+export type ProductUpdateOneWithoutImagesNestedInput = {
   create?: Prisma.XOR<Prisma.ProductCreateWithoutImagesInput, Prisma.ProductUncheckedCreateWithoutImagesInput>
   connectOrCreate?: Prisma.ProductCreateOrConnectWithoutImagesInput
   upsert?: Prisma.ProductUpsertWithoutImagesInput
+  disconnect?: Prisma.ProductWhereInput | boolean
+  delete?: Prisma.ProductWhereInput | boolean
   connect?: Prisma.ProductWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutImagesInput, Prisma.ProductUpdateWithoutImagesInput>, Prisma.ProductUncheckedUpdateWithoutImagesInput>
 }
@@ -1224,7 +1228,7 @@ export type ProductCreateWithoutSupplierInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  defaultTaxRule: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
+  defaultTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
   manufacturer?: Prisma.ManufacturerCreateNestedOneWithoutProductsInput
   variants?: Prisma.ProductVariantCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
@@ -1351,7 +1355,7 @@ export type ProductCreateWithoutDocumentLinesInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  defaultTaxRule: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
+  defaultTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
   manufacturer?: Prisma.ManufacturerCreateNestedOneWithoutProductsInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutProductsInput
   variants?: Prisma.ProductVariantCreateNestedManyWithoutProductInput
@@ -1434,7 +1438,7 @@ export type ProductUpdateWithoutDocumentLinesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  defaultTaxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutProductsNestedInput
+  defaultTaxRule?: Prisma.TaxRuleUpdateOneWithoutProductsNestedInput
   manufacturer?: Prisma.ManufacturerUpdateOneWithoutProductsNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutProductsNestedInput
   variants?: Prisma.ProductVariantUpdateManyWithoutProductNestedInput
@@ -1501,7 +1505,7 @@ export type ProductCreateWithoutVariantsInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  defaultTaxRule: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
+  defaultTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
   manufacturer?: Prisma.ManufacturerCreateNestedOneWithoutProductsInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutProductsInput
   images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
@@ -1584,7 +1588,7 @@ export type ProductUpdateWithoutVariantsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  defaultTaxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutProductsNestedInput
+  defaultTaxRule?: Prisma.TaxRuleUpdateOneWithoutProductsNestedInput
   manufacturer?: Prisma.ManufacturerUpdateOneWithoutProductsNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutProductsNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
@@ -1651,7 +1655,7 @@ export type ProductCreateWithoutImagesInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  defaultTaxRule: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
+  defaultTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
   manufacturer?: Prisma.ManufacturerCreateNestedOneWithoutProductsInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutProductsInput
   variants?: Prisma.ProductVariantCreateNestedManyWithoutProductInput
@@ -1734,7 +1738,7 @@ export type ProductUpdateWithoutImagesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  defaultTaxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutProductsNestedInput
+  defaultTaxRule?: Prisma.TaxRuleUpdateOneWithoutProductsNestedInput
   manufacturer?: Prisma.ManufacturerUpdateOneWithoutProductsNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutProductsNestedInput
   variants?: Prisma.ProductVariantUpdateManyWithoutProductNestedInput
@@ -1801,7 +1805,7 @@ export type ProductCreateWithoutCategoriesInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  defaultTaxRule: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
+  defaultTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
   manufacturer?: Prisma.ManufacturerCreateNestedOneWithoutProductsInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutProductsInput
   variants?: Prisma.ProductVariantCreateNestedManyWithoutProductInput
@@ -1884,7 +1888,7 @@ export type ProductUpdateWithoutCategoriesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  defaultTaxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutProductsNestedInput
+  defaultTaxRule?: Prisma.TaxRuleUpdateOneWithoutProductsNestedInput
   manufacturer?: Prisma.ManufacturerUpdateOneWithoutProductsNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutProductsNestedInput
   variants?: Prisma.ProductVariantUpdateManyWithoutProductNestedInput
@@ -1951,7 +1955,7 @@ export type ProductCreateWithoutManufacturerInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  defaultTaxRule: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
+  defaultTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutProductsInput
   variants?: Prisma.ProductVariantCreateNestedManyWithoutProductInput
   images?: Prisma.ProductImageCreateNestedManyWithoutProductInput
@@ -2137,7 +2141,7 @@ export type ProductCreateWithoutDeletedByUserInput = {
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  defaultTaxRule: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
+  defaultTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutProductsInput
   manufacturer?: Prisma.ManufacturerCreateNestedOneWithoutProductsInput
   supplier?: Prisma.SupplierCreateNestedOneWithoutProductsInput
   variants?: Prisma.ProductVariantCreateNestedManyWithoutProductInput
@@ -2260,7 +2264,7 @@ export type ProductUpdateWithoutSupplierInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  defaultTaxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutProductsNestedInput
+  defaultTaxRule?: Prisma.TaxRuleUpdateOneWithoutProductsNestedInput
   manufacturer?: Prisma.ManufacturerUpdateOneWithoutProductsNestedInput
   variants?: Prisma.ProductVariantUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
@@ -2387,7 +2391,7 @@ export type ProductUpdateWithoutManufacturerInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  defaultTaxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutProductsNestedInput
+  defaultTaxRule?: Prisma.TaxRuleUpdateOneWithoutProductsNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutProductsNestedInput
   variants?: Prisma.ProductVariantUpdateManyWithoutProductNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput
@@ -2641,7 +2645,7 @@ export type ProductUpdateWithoutDeletedByUserInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  defaultTaxRule?: Prisma.TaxRuleUpdateOneRequiredWithoutProductsNestedInput
+  defaultTaxRule?: Prisma.TaxRuleUpdateOneWithoutProductsNestedInput
   manufacturer?: Prisma.ManufacturerUpdateOneWithoutProductsNestedInput
   supplier?: Prisma.SupplierUpdateOneWithoutProductsNestedInput
   variants?: Prisma.ProductVariantUpdateManyWithoutProductNestedInput
@@ -2801,7 +2805,7 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   deletedBy?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  defaultTaxRule?: boolean | Prisma.TaxRuleDefaultArgs<ExtArgs>
+  defaultTaxRule?: boolean | Prisma.Product$defaultTaxRuleArgs<ExtArgs>
   manufacturer?: boolean | Prisma.Product$manufacturerArgs<ExtArgs>
   supplier?: boolean | Prisma.Product$supplierArgs<ExtArgs>
   variants?: boolean | Prisma.Product$variantsArgs<ExtArgs>
@@ -2841,7 +2845,7 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   deletedBy?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  defaultTaxRule?: boolean | Prisma.TaxRuleDefaultArgs<ExtArgs>
+  defaultTaxRule?: boolean | Prisma.Product$defaultTaxRuleArgs<ExtArgs>
   manufacturer?: boolean | Prisma.Product$manufacturerArgs<ExtArgs>
   supplier?: boolean | Prisma.Product$supplierArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Product$deletedByUserArgs<ExtArgs>
@@ -2876,7 +2880,7 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   deletedBy?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  defaultTaxRule?: boolean | Prisma.TaxRuleDefaultArgs<ExtArgs>
+  defaultTaxRule?: boolean | Prisma.Product$defaultTaxRuleArgs<ExtArgs>
   manufacturer?: boolean | Prisma.Product$manufacturerArgs<ExtArgs>
   supplier?: boolean | Prisma.Product$supplierArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Product$deletedByUserArgs<ExtArgs>
@@ -2915,7 +2919,7 @@ export type ProductSelectScalar = {
 
 export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "status" | "reference" | "active" | "availableForOrder" | "showPrice" | "onlineOnly" | "onSale" | "price" | "wholesalePrice" | "ecotax" | "defaultTaxRuleId" | "visibility" | "condition" | "showCondition" | "manufacturerId" | "supplierId" | "additionalShippingCost" | "carrierReferenceIds" | "deliveryTimeNoteType" | "redirectType" | "redirectTarget" | "coverThumbnailUrl" | "deletedAt" | "deletedBy" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  defaultTaxRule?: boolean | Prisma.TaxRuleDefaultArgs<ExtArgs>
+  defaultTaxRule?: boolean | Prisma.Product$defaultTaxRuleArgs<ExtArgs>
   manufacturer?: boolean | Prisma.Product$manufacturerArgs<ExtArgs>
   supplier?: boolean | Prisma.Product$supplierArgs<ExtArgs>
   variants?: boolean | Prisma.Product$variantsArgs<ExtArgs>
@@ -2926,13 +2930,13 @@ export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  defaultTaxRule?: boolean | Prisma.TaxRuleDefaultArgs<ExtArgs>
+  defaultTaxRule?: boolean | Prisma.Product$defaultTaxRuleArgs<ExtArgs>
   manufacturer?: boolean | Prisma.Product$manufacturerArgs<ExtArgs>
   supplier?: boolean | Prisma.Product$supplierArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Product$deletedByUserArgs<ExtArgs>
 }
 export type ProductIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  defaultTaxRule?: boolean | Prisma.TaxRuleDefaultArgs<ExtArgs>
+  defaultTaxRule?: boolean | Prisma.Product$defaultTaxRuleArgs<ExtArgs>
   manufacturer?: boolean | Prisma.Product$manufacturerArgs<ExtArgs>
   supplier?: boolean | Prisma.Product$supplierArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Product$deletedByUserArgs<ExtArgs>
@@ -2941,7 +2945,7 @@ export type ProductIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Product"
   objects: {
-    defaultTaxRule: Prisma.$TaxRulePayload<ExtArgs>
+    defaultTaxRule: Prisma.$TaxRulePayload<ExtArgs> | null
     manufacturer: Prisma.$ManufacturerPayload<ExtArgs> | null
     supplier: Prisma.$SupplierPayload<ExtArgs> | null
     variants: Prisma.$ProductVariantPayload<ExtArgs>[]
@@ -3373,7 +3377,7 @@ readonly fields: ProductFieldRefs;
  */
 export interface Prisma__ProductClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  defaultTaxRule<T extends Prisma.TaxRuleDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaxRuleDefaultArgs<ExtArgs>>): Prisma.Prisma__TaxRuleClient<runtime.Types.Result.GetResult<Prisma.$TaxRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  defaultTaxRule<T extends Prisma.Product$defaultTaxRuleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$defaultTaxRuleArgs<ExtArgs>>): Prisma.Prisma__TaxRuleClient<runtime.Types.Result.GetResult<Prisma.$TaxRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   manufacturer<T extends Prisma.Product$manufacturerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$manufacturerArgs<ExtArgs>>): Prisma.Prisma__ManufacturerClient<runtime.Types.Result.GetResult<Prisma.$ManufacturerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   supplier<T extends Prisma.Product$supplierArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$supplierArgs<ExtArgs>>): Prisma.Prisma__SupplierClient<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   variants<T extends Prisma.Product$variantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$variantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductVariantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3831,6 +3835,25 @@ export type ProductDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Products to delete.
    */
   limit?: number
+}
+
+/**
+ * Product.defaultTaxRule
+ */
+export type Product$defaultTaxRuleArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TaxRule
+   */
+  select?: Prisma.TaxRuleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TaxRule
+   */
+  omit?: Prisma.TaxRuleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaxRuleInclude<ExtArgs> | null
+  where?: Prisma.TaxRuleWhereInput
 }
 
 /**

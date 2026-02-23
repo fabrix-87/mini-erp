@@ -9,16 +9,24 @@ import { prisma } from "../config/prisma-client";
 import { Prisma } from "../generated/prisma/client";
 import { generateVariantCode, getProductSelection } from "../helpers/product";
 import { AuthenticatedValidatedRequest } from "@/types/validate";
+
+import {
+  sendCreated,
+  sendDeleted,
+  sendPaginatedResponse,
+  sendSuccess,
+} from "@/utils/response";
+
 import {
   CreateManufacturerInput,
   CreateProductCategoryInput,
   CreateProductImageInput,
   CreateProductInput,
-  CreateProductTranslationInput,
   CreateProductVariantInput,
+  CreateProductVariantTranslationInput,
   ManufacturerIdParam,
   ProductCategoryIdParam,
-  ProductIdLanguageIdParam,
+  ProductIdAsProductIdParam,
   ProductIdParam,
   ProductImageIdParam,
   ProductQueryInput,
@@ -26,15 +34,9 @@ import {
   UpdateManufacturerInput,
   UpdateProductCategoryInput,
   UpdateProductImageInput,
-  UpdateProductTranslationInput,
+  UpdateProductInput,
+  UpdateProductVariantInput,
 } from "@mini-erp/shared";
-import {
-  sendCreated,
-  sendDeleted,
-  sendPaginatedResponse,
-  sendSuccess,
-} from "@/utils/response";
-import { ProductVariantUpdateInput } from "@/generated/prisma/models";
 
 // ============================================================================
 // PRODUCTS - CRUD Operations
@@ -65,7 +67,6 @@ export const getAllProducts = asyncHandler(
     } = req.validatedQuery as ProductQueryInput;
 
     const skip = (page - 1) * limit;
-    const take = limit;
 
     // Costruisci filtri dinamici
     const where: Prisma.ProductWhereInput = {};
@@ -75,12 +76,16 @@ export const getAllProducts = asyncHandler(
       where.OR = [
         { reference: { contains: search, mode: "insensitive" } },
         {
-          translations: {
+          variants: {
             some: {
-              OR: [
-                { name: { contains: search, mode: "insensitive" } },
-                { description: { contains: search, mode: "insensitive" } },
-              ],
+              translations: {
+                some: {
+                  OR: [
+                    { name: { contains: search, mode: "insensitive" } },
+                    { description: { contains: search, mode: "insensitive" } },
+                  ],
+                },
+              },
             },
           },
         },
@@ -89,25 +94,25 @@ export const getAllProducts = asyncHandler(
 
     // Filtri semplici
     if (active !== undefined) where.active = active;
-    if (type) where.type = type as any;
-    if (condition) where.condition = condition as any;
+    if (type) where.type = type;
+    if (condition) where.condition = condition;
     if (onSale !== undefined) where.onSale = onSale;
-    if (manufacturerId) where.manufacturerId = Number(manufacturerId);
-    if (supplierId) where.supplierId = Number(supplierId);
+    if (manufacturerId) where.manufacturerId = manufacturerId;
+    if (supplierId) where.supplierId = supplierId;
 
     // Filtro categoria
     if (categoryId) {
-      where.categories = {
-        some: { categoryId: Number(categoryId) },
-      };
+      where.categories = { some: { categoryId } };
     }
 
     // Filtro range prezzo
     if (minPrice || maxPrice) {
       where.price = {};
-      if (minPrice) where.price.gte = Number(minPrice);
-      if (maxPrice) where.price.lte = Number(maxPrice);
+      if (minPrice) where.price.gte = minPrice;
+      if (maxPrice) where.price.lte = maxPrice;
     }
+
+    where.deletedAt = null;
 
     // Query con paginazione
     const [products, total] = await Promise.all([
@@ -115,8 +120,8 @@ export const getAllProducts = asyncHandler(
         where,
         select: getProductSelection(),
         skip,
-        take,
-        orderBy: { [sortBy as string]: sortOrder },
+        take: limit,
+        orderBy: { [sortBy]: sortOrder },
       }),
       prisma.product.count({ where }),
     ]);
@@ -135,7 +140,7 @@ export const getProductById = asyncHandler(
     const { id } = req.validatedParams as ProductIdParam;
 
     const product = await prisma.product.findUnique({
-      where: { id: Number(id) },
+      where: { id, deletedAt: null },
       select: getProductSelection(),
     });
 
@@ -161,15 +166,8 @@ export const createProduct = asyncHandler(
     const existingProduct = await prisma.product.findUnique({
       where: { reference: productData.reference },
     });
-
-    if (existingProduct) {
+    if (existingProduct)
       throw new ConflictError("Reference prodotto già esistente");
-    }
-
-    // Verifica che sia fornita almeno una variante
-    if (!variants || !Array.isArray(variants) || variants.length === 0) {
-      throw new BadRequestError("Almeno una variante è obbligatoria");
-    }
 
     // Verifica unicità variantCode
     for (const variant of variants) {
@@ -186,8 +184,7 @@ export const createProduct = asyncHandler(
     }
 
     // Assicurati che almeno una variante sia impostata come default
-    const hasDefault = variants.some((v) => v.isDefault === true);
-    if (!hasDefault) {
+    if (!variants.some((v) => v.isDefault === true)) {
       variants[0].isDefault = true;
     }
 
@@ -195,17 +192,17 @@ export const createProduct = asyncHandler(
     const product = await prisma.$transaction(async (tx) => {
       // Crea il prodotto
       const newProduct = await tx.product.create({
-        data: productData,
+        data: productData as Prisma.ProductCreateInput,
       });
 
       // Crea le varianti
-      const createdVariants = await Promise.all(
+      await Promise.all(
         variants.map((variant: any) =>
           tx.productVariant.create({
             data: {
               ...variant,
               productId: newProduct.id,
-            },
+            } as Prisma.ProductVariantCreateInput,
           }),
         ),
       );
@@ -228,36 +225,30 @@ export const createProduct = asyncHandler(
  */
 export const updateProduct = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams;
-    const updateData = req.validatedBody;
+    const { id } = req.validatedParams as ProductIdParam;
+    const updateData = req.validatedBody as UpdateProductInput;
 
     // Verifica esistenza
-    const existingProduct = await prisma.product.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!existingProduct) {
-      throw new NotFoundError("Prodotto non trovato");
-    }
+    const existing = await prisma.product.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundError("Prodotto non trovato");
 
     // Verifica unicità reference se modificato
-    if (
-      updateData.reference &&
-      updateData.reference !== existingProduct.reference
-    ) {
-      const duplicateReference = await prisma.product.findUnique({
+    if (updateData.reference && updateData.reference !== existing.reference) {
+      const duplicate = await prisma.product.findUnique({
         where: { reference: updateData.reference },
       });
-
-      if (duplicateReference) {
+      if (duplicate)
         throw new ConflictError("Reference prodotto già esistente");
-      }
     }
+
+    // Strip variants if accidentally passed (updateProductSchema is partial of createProductSchema)
+    const { variants: _variants, ...safeData } =
+      updateData as UpdateProductInput & { variants?: unknown };
 
     // Aggiorna prodotto
     const product = await prisma.product.update({
-      where: { id: Number(id) },
-      data: updateData,
+      where: { id },
+      data: safeData as Prisma.ProductUpdateInput,
       select: getProductSelection(),
     });
 
@@ -272,21 +263,16 @@ export const updateProduct = asyncHandler(
  */
 export const deleteProduct = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams;
+    const { id } = req.validatedParams as ProductIdParam;
+    const deletedBy = req.user!.userId;
 
-    const product = await prisma.product.findUnique({
-      where: { id: Number(id) },
+    const product = await prisma.product.findUnique({ where: { id } });
+    if (!product) throw new NotFoundError("Prodotto non trovato");
+
+    await prisma.product.update({
+      where: { id },
+      data: { deletedAt: new Date(), deletedBy },
     });
-
-    if (!product) {
-      throw new NotFoundError("Prodotto non trovato");
-    }
-
-    // Elimina prodotto (cascade gestirà le relazioni)
-    await prisma.product.delete({
-      where: { id: Number(id) },
-    });
-
     sendDeleted(res);
   },
 );
@@ -305,15 +291,17 @@ export const getProductVariants = asyncHandler(
     const { id } = req.validatedParams as ProductIdParam;
 
     const variants = await prisma.productVariant.findMany({
-      where: { productId: Number(id) },
+      where: { productId: id, deletedAt: null },
       include: {
+        translations: {
+          include: {
+            language: { select: { id: true, name: true, iso_code: true } },
+          },
+        },
         attributes: {
           include: {
             attribute: {
-              include: {
-                attributeGroup: true,
-                translations: true,
-              },
+              include: { attributeGroup: true, translations: true },
             },
           },
         },
@@ -335,27 +323,25 @@ export const getVariantById = asyncHandler(
     const { id } = req.validatedParams as ProductVariantIdParam;
 
     const variant = await prisma.productVariant.findUnique({
-      where: { id: Number(id) },
+      where: { id, deletedAt: null },
       include: {
-        product: {
-          select: { id: true, reference: true },
+        product: { select: { id: true, reference: true } },
+        translations: {
+          include: {
+            language: { select: { id: true, name: true, iso_code: true } },
+          },
         },
         attributes: {
           include: {
             attribute: {
-              include: {
-                attributeGroup: true,
-                translations: true,
-              },
+              include: { attributeGroup: true, translations: true },
             },
           },
         },
       },
     });
 
-    if (!variant) {
-      throw new NotFoundError("Variante non trovata");
-    }
+    if (!variant) throw new NotFoundError("Variante non trovata");
 
     sendSuccess(res, variant);
   },
@@ -368,33 +354,26 @@ export const getVariantById = asyncHandler(
  */
 export const createVariant = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams;
+    const { id } = req.validatedParams as ProductIdParam;
     const variantData = req.validatedBody as CreateProductVariantInput;
 
     // Verifica esistenza prodotto
-    const product = await prisma.product.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!product) {
-      throw new NotFoundError("Prodotto non trovato");
-    }
+    const product = await prisma.product.findUnique({ where: { id } });
+    if (!product) throw new NotFoundError("Prodotto non trovato");
 
     // Verifica unicità variantCode
     const existingVariant = await prisma.productVariant.findUnique({
       where: { variantCode: variantData.variantCode },
     });
-
-    if (existingVariant) {
+    if (existingVariant)
       throw new ConflictError("Codice variante già esistente");
-    }
 
     // Crea variante
     const variant = await prisma.productVariant.create({
       data: {
         ...variantData,
-        productId: Number(id),
-      },
+        productId: id,
+      } as Prisma.ProductVariantCreateInput,
     });
 
     sendCreated(res, variant, "Variante creata con successo");
@@ -408,34 +387,26 @@ export const createVariant = asyncHandler(
  */
 export const updateVariant = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams;
-    const updateData = req.validatedBody as ProductVariantUpdateInput;
+    const { id } = req.validatedParams as ProductVariantIdParam;
+    const updateData = req.validatedBody as UpdateProductVariantInput;
 
-    const existingVariant = await prisma.productVariant.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!existingVariant) {
-      throw new NotFoundError("Variante non trovata");
-    }
+    const existing = await prisma.productVariant.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundError("Variante non trovata");
 
     // Verifica unicità variantCode se modificato
     if (
       updateData.variantCode &&
-      updateData.variantCode !== existingVariant.variantCode
+      updateData.variantCode !== existing.variantCode
     ) {
-      const duplicateCode = await prisma.productVariant.findUnique({
-        where: { variantCode: updateData.variantCode as string },
+      const duplicate = await prisma.productVariant.findUnique({
+        where: { variantCode: updateData.variantCode },
       });
-
-      if (duplicateCode) {
-        throw new ConflictError("Codice variante già esistente");
-      }
+      if (duplicate) throw new ConflictError("Codice variante già esistente");
     }
 
     const variant = await prisma.productVariant.update({
-      where: { id: Number(id) },
-      data: updateData,
+      where: { id },
+      data: updateData as Prisma.ProductVariantUpdateInput,
     });
 
     sendSuccess(res, variant, { message: "Variante aggiornata con successo" });
@@ -449,19 +420,16 @@ export const updateVariant = asyncHandler(
  */
 export const deleteVariant = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id, productId } = req.validatedParams;
+    const { id } = req.validatedParams as ProductVariantIdParam;
+    const { productId } = req.validatedParams as ProductIdAsProductIdParam;
+    const deletedBy = req.user!.userId;
 
-    const variant = await prisma.productVariant.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!variant) {
-      throw new NotFoundError("Variante non trovata");
-    }
+    const variant = await prisma.productVariant.findUnique({ where: { id } });
+    if (!variant) throw new NotFoundError("Variante non trovata");
 
     // Verifica che non sia l'ultima variante del prodotto
     const variantCount = await prisma.productVariant.count({
-      where: { productId: Number(productId) },
+      where: { productId },
     });
 
     if (variantCount <= 1) {
@@ -473,13 +441,9 @@ export const deleteVariant = asyncHandler(
     // Se è la variante default, imposta un'altra come default
     if (variant.isDefault) {
       const newDefault = await prisma.productVariant.findFirst({
-        where: {
-          productId: Number(productId),
-          id: { not: Number(id) },
-        },
+        where: { productId, id: { not: id } },
         orderBy: { position: "asc" },
       });
-
       if (newDefault) {
         await prisma.productVariant.update({
           where: { id: newDefault.id },
@@ -488,8 +452,12 @@ export const deleteVariant = asyncHandler(
       }
     }
 
-    await prisma.productVariant.delete({
-      where: { id: Number(id) },
+    await prisma.productVariant.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+        deletedBy,
+      },
     });
 
     sendDeleted(res);
@@ -505,15 +473,12 @@ export const deleteVariant = asyncHandler(
 export const createSimpleProduct = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     const {
-      // Dati prodotto
       reference,
       defaultTaxRuleId,
       manufacturerId,
       supplierId,
       type = "STANDARD",
       condition = "NEW",
-
-      // Dati variante (i dati "reali" del prodotto)
       sku,
       ean13,
       price,
@@ -524,11 +489,7 @@ export const createSimpleProduct = asyncHandler(
       height,
       depth,
       location,
-
-      // Traduzioni (almeno una lingua)
       translations,
-
-      // Opzionale
       images,
       categoryIds,
       ...otherData
@@ -540,8 +501,7 @@ export const createSimpleProduct = asyncHandler(
         "Reference e defaultTaxRuleId sono obbligatori",
       );
     }
-
-    if (!translations || translations.length === 0) {
+    if (!Array.isArray(translations) || translations.length === 0) {
       throw new BadRequestError("Almeno una traduzione è obbligatoria");
     }
 
@@ -550,9 +510,8 @@ export const createSimpleProduct = asyncHandler(
       where: { reference },
     });
 
-    if (existingProduct) {
+    if (existingProduct)
       throw new ConflictError("Reference prodotto già esistente");
-    }
 
     // Genera variantCode automaticamente
     const variantCode = generateVariantCode(reference);
@@ -575,7 +534,7 @@ export const createSimpleProduct = asyncHandler(
       });
 
       // 2. Crea la variante default
-      await tx.productVariant.create({
+      const newVariant = await tx.productVariant.create({
         data: {
           productId: newProduct.id,
           variantCode,
@@ -595,52 +554,49 @@ export const createSimpleProduct = asyncHandler(
       });
 
       // 3. Crea le traduzioni
-      if (translations && Array.isArray(translations)) {
-        await Promise.all(
-          translations.map((translation: any) =>
-            tx.productTranslation.create({
-              data: {
-                productId: newProduct.id,
-                languageId: translation.languageId,
-                name: translation.name,
-                description: translation.description,
-                shortDescription: translation.shortDescription,
-                metaTitle: translation.metaTitle,
-                metaDescription: translation.metaDescription,
-                linkRewrite: translation.linkRewrite,
-              },
-            }),
-          ),
-        );
-      }
+      await Promise.all(
+        (
+          translations as Array<Partial<CreateProductVariantTranslationInput>>
+        ).map((t) =>
+          tx.productVariantTranslation.create({
+            data: {
+              productVariantId: newVariant.id,
+              languageId: t.languageId!,
+              name: t.name!,
+              description: t.description,
+              shortDescription: t.shortDescription,
+              metaTitle: t.metaTitle,
+              metaDescription: t.metaDescription,
+              linkRewrite: t.linkRewrite,
+            },
+          }),
+        ),
+      );
 
       // 4. Aggiungi immagini se presenti
-      if (images && Array.isArray(images)) {
+      if (Array.isArray(images)) {
         await Promise.all(
-          images.map((image: any, index: number) =>
-            tx.productImage.create({
-              data: {
-                productId: newProduct.id,
-                imageUrl: image.imageUrl,
-                imageType: image.imageType || "extra",
-                position: image.position || index,
-                isCover: index === 0, // Prima immagine come cover
-              },
-            }),
+          (images as Array<Partial<CreateProductImageInput>>).map(
+            (image, index) =>
+              tx.productImage.create({
+                data: {
+                  productId: newProduct.id,
+                  imageUrl: image.imageUrl!,
+                  imageType: image.imageType ?? "extra",
+                  position: image.position ?? index,
+                  isCover: index === 0,
+                },
+              }),
           ),
         );
       }
 
       // 5. Associa categorie se presenti
-      if (categoryIds && Array.isArray(categoryIds)) {
+      if (Array.isArray(categoryIds)) {
         await Promise.all(
-          categoryIds.map((categoryId: number, index: number) =>
+          (categoryIds as number[]).map((categoryId, index) =>
             tx.productCategory.create({
-              data: {
-                productId: newProduct.id,
-                categoryId,
-                position: index,
-              },
+              data: { productId: newProduct.id, categoryId, position: index },
             }),
           ),
         );
@@ -653,24 +609,19 @@ export const createSimpleProduct = asyncHandler(
       });
     });
 
-    res.status(201).json({
-      status: "success",
-      message: "Prodotto semplice creato con successo",
-      data: product,
-    });
+    sendCreated(res, product, "Prodotto semplice creato con successo");
   },
 );
 
 // ============================================================================
-// PRODUCT TRANSLATIONS
+// VARIANT TRANSLATIONS (ProductVariantTranslation)
 // ============================================================================
-
 /**
- * @desc    Lista traduzioni di un prodotto
- * @route   GET /api/products/:id/translations
- * @access  Public
+ * @desc   List all translations for a variant
+ * @route  GET /api/products/:productId/variants/:variantId/translations
+ * @access Public
  */
-export const getProductTranslations = asyncHandler(
+export const getVariantTranslations = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     const { id } = req.validatedParams;
 
@@ -790,10 +741,10 @@ export const deleteTranslation = asyncHandler(
  */
 export const getProductImages = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams;
+    const { id } = req.validatedParams as ProductIdParam;
 
     const images = await prisma.productImage.findMany({
-      where: { productId: Number(id) },
+      where: { productId: id },
       orderBy: { position: "asc" },
     });
 
@@ -811,19 +762,11 @@ export const createImage = asyncHandler(
     const { id } = req.validatedParams as ProductIdParam;
     const imageData = req.validatedBody as CreateProductImageInput;
 
-    const product = await prisma.product.findUnique({
-      where: { id: Number(id) },
-    });
-
-    if (!product) {
-      throw new NotFoundError("Prodotto non trovato");
-    }
+    const product = await prisma.product.findUnique({ where: { id } });
+    if (!product) throw new NotFoundError("Prodotto non trovato");
 
     const image = await prisma.productImage.create({
-      data: {
-        ...imageData,
-        productId: Number(id),
-      },
+      data: imageData,
     });
 
     sendCreated(res, image, "Immagine aggiunta con successo");
@@ -858,10 +801,7 @@ export const deleteImage = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     const { id } = req.validatedParams as ProductImageIdParam;
 
-    await prisma.productImage.delete({
-      where: { id: Number(id) },
-    });
-
+    await prisma.productImage.delete({ where: { id } });
     sendDeleted(res);
   },
 );
@@ -877,13 +817,13 @@ export const setCoverImage = asyncHandler(
 
     // Rimuovi cover da tutte le altre immagini
     await prisma.productImage.updateMany({
-      where: { productId: Number(productId), isCover: true },
+      where: { productId, isCover: true },
       data: { isCover: false },
     });
 
     // Imposta questa come cover
     const image = await prisma.productImage.update({
-      where: { id: Number(id) },
+      where: { id },
       data: { isCover: true },
     });
 
@@ -905,20 +845,12 @@ export const getProductCategories = asyncHandler(
     const { id } = req.validatedParams as ProductIdParam;
 
     const categories = await prisma.productCategory.findMany({
-      where: { productId: Number(id) },
-      include: {
-        category: {
-          include: {
-            translations: true,
-          },
-        },
-      },
+      where: { productId: id },
+      include: { category: { include: { translations: true } } },
       orderBy: { position: "asc" },
     });
 
-    sendSuccess(res, categories, {
-      results: categories.length,
-    });
+    sendSuccess(res, categories, { results: categories.length });
   },
 );
 
@@ -930,29 +862,16 @@ export const getProductCategories = asyncHandler(
 export const addCategory = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     const { id } = req.validatedParams as ProductIdParam;
-    const { categoryId, position = 0 } =
-      req.validatedBody as CreateProductCategoryInput;
+    const { categoryId, position = 0 } = req.validatedBody as CreateProductCategoryInput;
 
     // Verifica se già esiste
     const existing = await prisma.productCategory.findUnique({
-      where: {
-        productId_categoryId: {
-          productId: Number(id),
-          categoryId: Number(categoryId),
-        },
-      },
+      where: { productId_categoryId: { productId: id, categoryId } },
     });
-
-    if (existing) {
-      throw new ConflictError("Categoria già associata");
-    }
+    if (existing) throw new ConflictError("Categoria già associata");
 
     const productCategory = await prisma.productCategory.create({
-      data: {
-        productId: Number(id),
-        categoryId: Number(categoryId),
-        position,
-      },
+      data: { productId: id, categoryId, position },
     });
 
     sendCreated(res, productCategory, "Categoria aggiunta con successo");
@@ -966,16 +885,10 @@ export const addCategory = asyncHandler(
  */
 export const removeCategory = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { productId, categoryId } =
-      req.validatedParams as ProductCategoryIdParam;
+    const { productId, categoryId } = req.validatedParams as ProductCategoryIdParam;
 
     await prisma.productCategory.delete({
-      where: {
-        productId_categoryId: {
-          productId: Number(productId),
-          categoryId: Number(categoryId),
-        },
-      },
+      where: { productId_categoryId: { productId, categoryId } },
     });
 
     sendDeleted(res);
@@ -993,13 +906,8 @@ export const updateCategoryPosition = asyncHandler(
     const { position } = req.validatedBody as UpdateProductCategoryInput;
 
     const productCategory = await prisma.productCategory.update({
-      where: {
-        productId_categoryId: {
-          productId: Number(productId),
-          categoryId: Number(categoryId),
-        },
-      },
-      data: { position },
+      where: { productId_categoryId: { productId, categoryId } },
+      data:  { position },
     });
 
     sendSuccess(res, productCategory, {
@@ -1037,20 +945,14 @@ export const getAllManufacturers = asyncHandler(
  */
 export const getManufacturerById = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams;
+    const { id } = req.validatedParams as ManufacturerIdParam;
 
     const manufacturer = await prisma.manufacturer.findUnique({
-      where: { id: Number(id) },
-      include: {
-        products: {
-          select: { id: true, reference: true },
-        },
-      },
+      where:   { id },
+      include: { products: { select: { id: true, reference: true } } },
     });
 
-    if (!manufacturer) {
-      throw new NotFoundError("Produttore non trovato");
-    }
+    if (!manufacturer) throw new NotFoundError("Produttore non trovato");
 
     sendSuccess(res, manufacturer);
   },
@@ -1084,8 +986,8 @@ export const updateManufacturer = asyncHandler(
     const updateData = req.validatedBody as UpdateManufacturerInput;
 
     const manufacturer = await prisma.manufacturer.update({
-      where: { id: Number(id) },
-      data: updateData,
+      where: { id },
+      data:  updateData,
     });
 
     sendSuccess(res, manufacturer, {
@@ -1103,9 +1005,7 @@ export const deleteManufacturer = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     const { id } = req.validatedParams as ManufacturerIdParam;
 
-    await prisma.manufacturer.delete({
-      where: { id: Number(id) },
-    });
+    await prisma.manufacturer.delete({ where: { id } });
 
     sendDeleted(res);
   },
@@ -1122,23 +1022,22 @@ export const deleteManufacturer = asyncHandler(
  */
 export const bulkUpdateProducts = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { productIds, updateData } = req.validatedBody;
+    const { productIds, updateData } = req.validatedBody as {
+      productIds: number[];
+      updateData: Prisma.ProductUpdateInput;
+    };
 
     if (!Array.isArray(productIds) || productIds.length === 0) {
       throw new BadRequestError("Array di ID prodotti richiesto");
     }
 
     const result = await prisma.product.updateMany({
-      where: {
-        id: { in: productIds },
-      },
-      data: updateData,
+      where: { id: { in: productIds } },
+      data:  updateData,
     });
 
-    res.json({
-      status: "success",
+    sendSuccess(res, { count: result.count }, {
       message: `${result.count} prodotti aggiornati con successo`,
-      data: { count: result.count },
     });
   },
 );
@@ -1150,22 +1049,18 @@ export const bulkUpdateProducts = asyncHandler(
  */
 export const bulkDeleteProducts = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { productIds } = req.validatedBody;
+    const { productIds } = req.validatedBody as { productIds: number[] };
 
     if (!Array.isArray(productIds) || productIds.length === 0) {
       throw new BadRequestError("Array di ID prodotti richiesto");
     }
 
     const result = await prisma.product.deleteMany({
-      where: {
-        id: { in: productIds },
-      },
+      where: { id: { in: productIds } },
     });
 
-    res.json({
-      status: "success",
+    sendSuccess(res, { count: result.count }, {
       message: `${result.count} prodotti eliminati con successo`,
-      data: { count: result.count },
     });
   },
 );

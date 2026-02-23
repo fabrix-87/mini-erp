@@ -19,7 +19,6 @@ import { creditLimitSchema } from "./business/currency";
 // ============================================================================
 
 export const customerTypeSchema = z.enum([
-  "LEAD",
   "PROSPECT",
   "CUSTOMER",
   "PARTNER",
@@ -64,7 +63,7 @@ export const createCustomerSchema = z
     priority: customerPrioritySchema.default("MEDIUM"),
     segment: customerSegmentSchema.default("STANDARD"),
     size: customerSizeSchema.default("SMALL"),
-    type: customerTypeSchema.default("LEAD"),
+    type: customerTypeSchema.default("CUSTOMER"),
     creditStatus: creditCheckStatusSchema.default("PENDING"),
 
     // ===== Dati Commerciali =====

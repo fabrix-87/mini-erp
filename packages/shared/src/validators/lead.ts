@@ -6,7 +6,8 @@ import { createDecimalSchema } from "./primitives/decimal";
 import { countryCodeBaseSchema, inputJsonValueSchema } from "./base";
 import { sortOrderSchema, pageSchema, limitSchema } from "./query/pagination";
 import { queryBooleanSchema, queryNumberSchema } from "./query/params";
-import { customerSizeSchema } from "./customer";
+import { customerPrioritySchema, customerSegmentSchema, customerSizeSchema, customerTypeSchema } from "./customer";
+import { companyTypeEntitySchema } from "./company";
 
 // ============================================================================
 // ENUMS
@@ -356,11 +357,12 @@ export const convertLeadSchema = z
     companyName: z.string().min(1).max(255),
     vatNumber: z.string().min(1).max(20).optional(),
     taxCode: z.string().min(1).max(20).optional(),
+    entityType: companyTypeEntitySchema,
     countryCode: countryCodeBaseSchema,
     // Customer specific fields
-    customerType: z
-      .enum(["PROSPECT", "CUSTOMER", "PARTNER"])
-      .default("CUSTOMER"),
+    customerType: customerTypeSchema.default("CUSTOMER"),
+    priority: customerPrioritySchema.default("LOW"),
+    segment: customerSegmentSchema.default("STANDARD"),
     notes: z.string().max(1000).optional().nullable(),
   })
   .strict()
