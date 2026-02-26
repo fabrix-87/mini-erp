@@ -190,15 +190,15 @@ export const productIdAsProductIdSchema = z.object({
 });
 
 // ============================================================================
-// PRODUCT VARIANT TRANSLATION SCHEMAS
+// PRODUCT TRANSLATION SCHEMAS
 // ============================================================================
 
 /**
  * Schema per la creazione di una ProductVariantTranslation
  */
-export const createProductVariantTranslationSchema = z
+export const createProductTranslationSchema = z
   .object({
-    productVariantId: createIdSchema("ID variante prodotto obbligatorio"),
+    productId: createIdSchema("ID variante prodotto obbligatorio"),
     languageId: createIdSchema("ID lingua obbligatorio"),
 
     name: z
@@ -227,11 +227,18 @@ export const createProductVariantTranslationSchema = z
 /**
  * Schema per l'aggiornamento di una ProductVariantTranslation
  */
-export const updateProductVariantTranslationSchema =
-  createProductVariantTranslationSchema
-    .omit({ productVariantId: true, languageId: true })
-    .partial()
-    .strict();
+export const updateProductTranslationSchema = createProductTranslationSchema
+  .omit({ productId: true, languageId: true })
+  .partial()
+  .strict();
+
+/**
+ * Schema for product+language params
+ */
+export const productIdLanguageIdSchema = z.object({
+  id: createIdSchema("ID prodotto non valido"),
+  languageId: createIdSchema("ID lingua non valido"),
+});
 
 // ============================================================================
 // PRODUCT IMAGE SCHEMAS

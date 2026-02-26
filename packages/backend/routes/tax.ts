@@ -1,203 +1,217 @@
-import express from 'express';
-import { authenticateToken, authorize } from '../middleware/auth';
+import express from "express";
+import { authenticateToken, authorize } from "../middleware/auth";
 import {
-  validateCreateTaxRate,
-  validateUpdateTaxRate,
+  // Tax Rule
   validateCreateTaxRule,
   validateUpdateTaxRule,
-  validateTaxRateId,
   validateTaxRuleId,
   validateTaxRuleQuery,
-  validateToggleTaxRuleStatus,
-  validateTaxRateQuery,
-  validateToggleTaxRateStatus,
-} from '../validators/tax';
+  validateToggleTaxStatus,
+  validateTaxRuleTranslationId,
+  validateCreateTaxRuleTranslation,
+  validateUpdateTaxRuleTranslation,
+  // VatNature
+  validateCreateVatNature,
+  validateUpdateVatNature,
+  validateVatNatureId,
+  validateVatNatureQuery,
+  validateVatNatureTranslationId,
+  validateCreateVatNatureTranslation,
+  validateUpdateVatNatureTranslation,
+} from "../validators/tax";
 import {
-  getAllTaxRates,
-  getTaxRateById,
-  createTaxRate,
-  updateTaxRate,
-  toggleTaxRateActive,
-  deleteTaxRate,
+  // Tax Rule
   getAllTaxRules,
   getTaxRuleById,
   createTaxRule,
   updateTaxRule,
   toggleTaxRuleActive,
   deleteTaxRule,
-} from '../controllers/tax';
+  // Tax Rule Translation
+  createTaxRuleTranslation,
+  updateTaxRuleTranslation,
+  deleteTaxRuleTranslation,
+  // VatNature
+  getAllVatNatures,
+  getVatNatureById,
+  createVatNature,
+  updateVatNature,
+  toggleVatNatureActive,
+  deleteVatNature,
+  // VatNature Translation
+  createVatNatureTranslation,
+  updateVatNatureTranslation,
+  deleteVatNatureTranslation,
+} from "../controllers/tax";
 
 const router = express.Router();
-
-// ============================================================================
-// TAX RATE ROUTES
-// ============================================================================
-
-/**
- * @route   GET /api/tax/rates
- * @desc    Ottieni tutte le Tax Rates
- * @access  Private (tax:read)
- * @query   active, sortBy, sortOrder
- */
-router.get(
-  '/rates',
-  authenticateToken,
-  authorize(['tax:read', 'tax:manage']),
-  validateTaxRateQuery,
-  getAllTaxRates
-);
-
-/**
- * @route   GET /api/tax/rates/:id
- * @desc    Ottieni dettagli di una Tax Rate specifica
- * @access  Private (tax:read)
- */
-router.get(
-  '/rates/:id',
-  authenticateToken,
-  authorize(['tax:read', 'tax:manage']),
-  validateTaxRateId,
-  getTaxRateById
-);
-
-/**
- * @route   POST /api/tax/rates
- * @desc    Crea nuova Tax Rate
- * @access  Private (tax:create)
- */
-router.post(
-  '/rates',
-  authenticateToken,
-  authorize(['tax:create', 'tax:manage']),
-  validateCreateTaxRate,
-  createTaxRate
-);
-
-/**
- * @route   PUT /api/tax/rates/:id
- * @desc    Aggiorna Tax Rate esistente
- * @access  Private (tax:update)
- */
-router.put(
-  '/rates/:id',
-  authenticateToken,
-  authorize(['tax:update', 'tax:manage']),
-  validateTaxRateId,
-  validateUpdateTaxRate,
-  updateTaxRate
-);
-
-/**
- * @route   PATCH /api/tax/rates/:id/toggle-active
- * @desc    Attiva/Disattiva una Tax Rate
- * @access  Private (tax:update)
- */
-router.patch(
-  '/rates/:id/toggle-active',
-  authenticateToken,
-  authorize(['tax:update', 'tax:manage']),
-  validateToggleTaxRateStatus,
-  toggleTaxRateActive
-);
-
-/**
- * @route   DELETE /api/tax/rates/:id
- * @desc    Elimina una Tax Rate
- * @access  Private (tax:delete)
- */
-router.delete(
-  '/rates/:id',
-  authenticateToken,
-  authorize(['tax:delete', 'tax:manage']),
-  validateTaxRateId,
-  deleteTaxRate
-);
 
 // ============================================================================
 // TAX RULE ROUTES
 // ============================================================================
 
-/**
- * @route   GET /api/tax/rules
- * @desc    Ottieni tutte le Tax Rules
- * @access  Private (tax:read)
- * @query   active, operationType, sortBy, sortOrder
- */
 router.get(
-  '/rules',
+  "/rules",
   authenticateToken,
-  authorize(['tax:read', 'tax:manage']),
+  authorize(["tax:read", "tax:manage"]),
   validateTaxRuleQuery,
-  getAllTaxRules
+  getAllTaxRules,
 );
 
-/**
- * @route   GET /api/tax/rules/:id
- * @desc    Ottieni dettagli di una Tax Rule specifica
- * @access  Private (tax:read)
- */
 router.get(
-  '/rules/:id',
+  "/rules/:id",
   authenticateToken,
-  authorize(['tax:read', 'tax:manage']),
+  authorize(["tax:read", "tax:manage"]),
   validateTaxRuleId,
-  getTaxRuleById
+  getTaxRuleById,
 );
 
-/**
- * @route   POST /api/tax/rules
- * @desc    Crea nuova Tax Rule
- * @access  Private (tax:create)
- */
 router.post(
-  '/rules',
+  "/rules",
   authenticateToken,
-  authorize(['tax:create', 'tax:manage']),
+  authorize(["tax:create", "tax:manage"]),
   validateCreateTaxRule,
-  createTaxRule
+  createTaxRule,
 );
 
-/**
- * @route   PUT /api/tax/rules/:id
- * @desc    Aggiorna Tax Rule esistente
- * @access  Private (tax:update)
- */
 router.put(
-  '/rules/:id',
+  "/rules/:id",
   authenticateToken,
-  authorize(['tax:update', 'tax:manage']),
-  validateUpdateTaxRule,
-  updateTaxRule
-);
-
-/**
- * @route   PATCH /api/tax/rules/:id/toggle-active
- * @desc    Attiva/Disattiva una Tax Rule
- * @access  Private (tax:update)
- */
-router.patch(
-  '/rules/:id/toggle-active',
-  authenticateToken,
-  authorize(['tax:update', 'tax:manage']),
-  validateToggleTaxRuleStatus,
-  toggleTaxRuleActive
-);
-
-/**
- * @route   DELETE /api/tax/rules/:id
- * @desc    Elimina una Tax Rule
- * @access  Private (tax:delete)
- */
-router.delete(
-  '/rules/:id',
-  authenticateToken,
-  authorize(['tax:delete', 'tax:manage']),
+  authorize(["tax:update", "tax:manage"]),
   validateTaxRuleId,
-  deleteTaxRule
+  validateUpdateTaxRule,
+  updateTaxRule,
+);
+
+router.patch(
+  "/rules/:id/toggle-active",
+  authenticateToken,
+  authorize(["tax:update", "tax:manage"]),
+  validateTaxRuleId,
+  validateToggleTaxStatus,
+  toggleTaxRuleActive,
+);
+
+router.delete(
+  "/rules/:id",
+  authenticateToken,
+  authorize(["tax:delete", "tax:manage"]),
+  validateTaxRuleId,
+  deleteTaxRule,
 );
 
 // ============================================================================
-// EXPORT
+// TAX RULE TRANSLATION ROUTES
 // ============================================================================
+
+router.post(
+  "/rules/:id/translations",
+  authenticateToken,
+  authorize(["tax:update", "tax:manage"]),
+  validateTaxRuleId,
+  validateCreateTaxRuleTranslation,
+  createTaxRuleTranslation,
+);
+
+router.put(
+  "/rules/:taxRuleId/translations/:languageId",
+  authenticateToken,
+  authorize(["tax:update", "tax:manage"]),
+  validateTaxRuleTranslationId,
+  validateUpdateTaxRuleTranslation,
+  updateTaxRuleTranslation,
+);
+
+router.delete(
+  "/rules/:taxRuleId/translations/:languageId",
+  authenticateToken,
+  authorize(["tax:delete", "tax:manage"]),
+  validateTaxRuleTranslationId,
+  deleteTaxRuleTranslation,
+);
+
+// ============================================================================
+// VAT NATURE ROUTES
+// ============================================================================
+
+router.get(
+  "/vat-natures",
+  authenticateToken,
+  authorize(["tax:read", "tax:manage"]),
+  validateVatNatureQuery,
+  getAllVatNatures,
+);
+
+router.get(
+  "/vat-natures/:id",
+  authenticateToken,
+  authorize(["tax:read", "tax:manage"]),
+  validateVatNatureId,
+  getVatNatureById,
+);
+
+router.post(
+  "/vat-natures",
+  authenticateToken,
+  authorize(["tax:create", "tax:manage"]),
+  validateCreateVatNature,
+  createVatNature,
+);
+
+router.put(
+  "/vat-natures/:id",
+  authenticateToken,
+  authorize(["tax:update", "tax:manage"]),
+  validateVatNatureId,
+  validateUpdateVatNature,
+  updateVatNature,
+);
+
+router.patch(
+  "/vat-natures/:id/toggle-active",
+  authenticateToken,
+  authorize(["tax:update", "tax:manage"]),
+  validateVatNatureId,
+  validateToggleTaxStatus,
+  toggleVatNatureActive,
+);
+
+router.delete(
+  "/vat-natures/:id",
+  authenticateToken,
+  authorize(["tax:delete", "tax:manage"]),
+  validateVatNatureId,
+  deleteVatNature,
+);
+
+// ============================================================================
+// VAT NATURE TRANSLATION ROUTES
+// ============================================================================
+
+router.post(
+  "/vat-natures/:id/translations",
+  authenticateToken,
+  authorize(["tax:update", "tax:manage"]),
+  validateVatNatureId,
+  validateCreateVatNatureTranslation,
+  createVatNatureTranslation,
+);
+
+router.put(
+  "/vat-natures/:vatNatureId/translations/:languageId",
+  authenticateToken,
+  authorize(["tax:update", "tax:manage"]),
+  validateVatNatureTranslationId,
+  validateUpdateVatNatureTranslation,
+  updateVatNatureTranslation,
+);
+
+router.delete(
+  "/vat-natures/:vatNatureId/translations/:languageId",
+  authenticateToken,
+  authorize(["tax:delete", "tax:manage"]),
+  validateVatNatureTranslationId,
+  deleteVatNatureTranslation,
+);
 
 export default router;

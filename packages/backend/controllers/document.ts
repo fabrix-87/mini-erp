@@ -14,7 +14,7 @@ import {
   sendPaginatedResponse,
   sendSuccess,
 } from "@/utils/response";
-import { DocumentQueryInput } from "@mini-erp/shared";
+import { DocumentQueryInput, TopProductsReportInput } from "@mini-erp/shared";
 // ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
@@ -1609,29 +1609,29 @@ export const getTopCustomersReport = asyncHandler(
  */
 export const getTopProductsReport = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { limit = 10, dateFrom, dateTo } = req.validatedQuery;
+    const { limit = 10, dateFrom, dateTo } = req.validatedQuery as TopProductsReportInput;
 
     const { preferredLanguageId } = req.user!;
 
-    const where: any = {
-      document: {
-        status: { notIn: ["DRAFT", "VOIDED"] },
-      },
-      productVariantId: { not: null },
+    const documentFilter: Prisma.DocumentWhereInput = {
+      status: { notIn: ["DRAFT", "VOIDED"] },
     };
 
     if (dateFrom || dateTo) {
-      where.document = {
-        ...where.document,
-        documentDate: {},
+      documentFilter.documentDate = {
+        ...(dateFrom && { gte: dateFrom }),
+        ...(dateTo && { lte:dateTo }),
       };
-      if (dateFrom)
-        where.document.documentDate.gte = new Date(dateFrom as string);
-      if (dateTo) where.document.documentDate.lte = new Date(dateTo as string);
     }
 
+    const where: Prisma.DocumentLineWhereInput = {
+      document: documentFilter,
+      productId: { not: null },
+      productVariantId: { not: null },
+    };
+
     const topProducts = await prisma.documentLine.groupBy({
-      by: ["productVariantId"],
+      by: ["productId"],
       where,
       _sum: {
         quantity: true,
@@ -1640,35 +1640,58 @@ export const getTopProductsReport = asyncHandler(
       orderBy: {
         _sum: { lineTotal: "desc" },
       },
-      take: Number(limit),
+      take: limit,
     });
 
+    if (topProducts.length === 0) {
+      sendSuccess(res, []);
+      return;
+    }
+
+    // Collect productIds
+    const productIds = topProducts
+      .map((p) => p.productId)
+      .filter((id): id is number => id !== null);
+
     // Carica dati prodotti
-    const variantIds = topProducts.map((p) => p.productVariantId!);
-    const variants = await prisma.productVariant.findMany({
-      where: { id: { in: variantIds } },
-      include: {
-        product: {
-          select: {
-            reference: true,
-          },
-        },
+    const products = await prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: {
+        id: true,
+        reference: true,
         translations: {
           select: { name: true, languageId: true },
-          take: 1,
-          where: {
-            languageId: preferredLanguageId,
-          },
+          // Preferred language first, fallback handled in map below
+          orderBy: [
+            // Put preferred language first via raw order trick:
+            // Prisma doesn't support conditional orderBy, so we fetch all and sort in JS
+          ],
         },
       },
     });
 
+    /**
+     * Resolves the best translation name for a product:
+     * 1. Preferred language
+     * 2. First available translation
+     * 3. Fallback "N/A"
+     */
+    const resolveName = (
+      translations: { name: string; languageId: number }[],
+    ): string => {
+      if (!translations.length) return "N/A";
+      const preferred = translations.find(
+        (t) => t.languageId === preferredLanguageId,
+      );
+      return preferred?.name ?? translations[0].name;
+    };
+
     const report = topProducts.map((tp) => {
-      const variant = variants.find((v) => v.id === tp.productVariantId);
+      const product = products.find((p) => p.id === tp.productId);
       return {
-        productVariantId: tp.productVariantId,
-        productName: variant?.translations[0].name || "N/A",
-        variantCode: variant?.variantCode || "N/A",
+        productId: tp.productId,
+        reference: product?.reference ?? "N/A",
+        productName: resolveName(product?.translations ?? []),
         quantitySold: tp._sum.quantity,
         totalRevenue: tp._sum.lineTotal,
       };

@@ -6,7 +6,12 @@ import { createDecimalSchema } from "./primitives/decimal";
 import { countryCodeBaseSchema, inputJsonValueSchema } from "./base";
 import { sortOrderSchema, pageSchema, limitSchema } from "./query/pagination";
 import { queryBooleanSchema, queryNumberSchema } from "./query/params";
-import { customerPrioritySchema, customerSegmentSchema, customerSizeSchema, customerTypeSchema } from "./customer";
+import {
+  customerPrioritySchema,
+  customerSegmentSchema,
+  customerSizeSchema,
+  customerTypeSchema,
+} from "./customer";
 import { companyTypeEntitySchema } from "./company";
 
 // ============================================================================
@@ -105,153 +110,115 @@ const leadScoreSchema = z
 export const leadIdSchema = createIdSchema("ID Lead non valido");
 
 /**
- * Schema for creating a Lead
+ * Raw object shape for Lead — no refinements.
+ * Used as base for both create and update schemas.
  */
-export const createLeadSchema = z
-  .object({
-    code: z
-      .string()
-      .max(20, "Codice non può superare 20 caratteri")
-      .trim()
-      .optional(), // Auto-generated if not provided
+const leadShape = z.object({
+  code: z
+    .string()
+    .max(20, "Codice non può superare 20 caratteri")
+    .trim()
+    .optional(),
 
-    // Company data
-    companyName: z
-      .string()
-      .min(1, "Nome azienda obbligatorio")
-      .max(255, "Nome azienda max 255 caratteri")
-      .trim(),
+  // Company data
+  companyName: z
+    .string()
+    .min(1, "Nome azienda obbligatorio")
+    .max(255, "Nome azienda max 255 caratteri")
+    .trim(),
 
-    tradeName: z
-      .string()
-      .max(255, "Trade name max 255 caratteri")
-      .optional()
-      .nullable(),
+  tradeName: z.string().max(255).optional().nullable(),
+  website: z.string().url("URL non valido").max(255).optional().nullable(),
+  vatNumber: z.string().max(20).optional().nullable(),
+  taxCode: z.string().max(20).optional().nullable(),
+  countryCode: countryCodeBaseSchema.default("IT"),
 
-    website: z.string().url("URL non valido").max(255).optional().nullable(),
+  // Contact data
+  contactFirstName: z
+    .string()
+    .min(1, "Nome contatto obbligatorio")
+    .max(100, "Nome contatto max 100 caratteri")
+    .trim(),
 
-    vatNumber: z.string().max(20).optional().nullable(),
+  contactLastName: z
+    .string()
+    .min(1, "Cognome contatto obbligatorio")
+    .max(100, "Cognome contatto max 100 caratteri")
+    .trim(),
 
-    taxCode: z.string().max(20).optional().nullable(),
+  contactEmail: emailSchema(),
+  contactPhone: phoneSchema,
+  contactMobile: phoneSchema,
+  contactPosition: z.string().max(100).optional().nullable(),
+  contactDepartment: z.string().max(100).optional().nullable(),
 
-    countryCode: countryCodeBaseSchema.default("IT"),
+  // Address
+  address: z.string().max(255).optional().nullable(),
+  city: z.string().max(100).optional().nullable(),
+  provinceCode: z.string().length(2).optional().nullable(),
+  zipCode: z.string().max(20).optional().nullable(),
 
-    // Contact data
-    contactFirstName: z
-      .string()
-      .min(1, "Nome contatto obbligatorio")
-      .max(100, "Nome contatto max 100 caratteri")
-      .trim(),
+  // Lead management
+  status: leadStatusSchema.default("NEW"),
+  source: leadSourceSchema.default("OTHER"),
+  quality: leadQualitySchema.default("COLD"),
+  score: leadScoreSchema,
 
-    contactLastName: z
-      .string()
-      .min(1, "Cognome contatto obbligatorio")
-      .max(100, "Cognome contatto max 100 caratteri")
-      .trim(),
+  // Commercial data
+  estimatedValue: estimatedValueSchema.optional().nullable(),
+  estimatedSize: customerSizeSchema.optional().nullable(),
+  industry: z.string().max(100).optional().nullable(),
+  employeesCount: z.number().int().positive().optional().nullable(),
+  annualRevenue: estimatedValueSchema.optional().nullable(),
+  budget: estimatedValueSchema.optional().nullable(),
+  purchaseTimeframe: z.string().max(50).optional().nullable(),
+  decisionAuthority: z.string().max(50).optional().nullable(),
+  primaryNeed: z.string().max(5000).optional().nullable(),
+  interestedIn: z.string().max(5000).optional().nullable(),
 
-    contactEmail: emailSchema(),
+  // Assignment
+  assignedUserId: createIdSchema("User ID non valido").optional().nullable(),
 
-    contactPhone: phoneSchema,
+  // Follow-up
+  nextFollowUpDate: isoDateSchema(),
 
-    contactMobile: phoneSchema,
+  // BANT
+  bantQualified: z.boolean().default(false),
+  bantNotes: z.string().max(5000).optional().nullable(),
 
-    contactPosition: z.string().max(100).optional().nullable(),
+  // GDPR
+  privacyConsent: z.boolean().default(false),
+  privacyConsentDate: isoDateSchema(),
+  marketingConsent: z.boolean().default(false),
+  marketingConsentDate: isoDateSchema(),
+  doNotCall: z.boolean().default(false),
+  doNotEmail: z.boolean().default(false),
 
-    contactDepartment: z.string().max(100).optional().nullable(),
+  // Campaign tracking
+  campaignName: z.string().max(100).optional().nullable(),
+  utmMedium: z.string().max(50).optional().nullable(),
+  utmSource: z.string().max(50).optional().nullable(),
+  utmCampaign: z.string().max(50).optional().nullable(),
+  landingPage: z.string().max(255).optional().nullable(),
+  referrer: z.string().max(255).optional().nullable(),
 
-    // Address (simplified)
-    address: z.string().max(255).optional().nullable(),
+  // Notes
+  notes: z.string().max(5000).optional().nullable(),
+  description: z.string().max(5000).optional().nullable(),
+  competitors: z.string().max(5000).optional().nullable(),
 
-    city: z.string().max(100).optional().nullable(),
+  // Custom fields
+  customFields: inputJsonValueSchema.optional().nullable(),
+});
 
-    provinceCode: z.string().length(2).optional().nullable(),
-
-    zipCode: z.string().max(20).optional().nullable(),
-
-    // Lead management
-    status: leadStatusSchema.default("NEW"),
-
-    source: leadSourceSchema.default("OTHER"),
-
-    quality: leadQualitySchema.default("COLD"),
-
-    score: leadScoreSchema,
-
-    // Commercial data
-    estimatedValue: estimatedValueSchema.optional().nullable(),
-
-    estimatedSize: customerSizeSchema.optional().nullable(),
-
-    industry: z.string().max(100).optional().nullable(),
-
-    employeesCount: z.number().int().positive().optional().nullable(),
-
-    annualRevenue: estimatedValueSchema.optional().nullable(),
-
-    budget: estimatedValueSchema.optional().nullable(),
-
-    purchaseTimeframe: z.string().max(50).optional().nullable(),
-
-    decisionAuthority: z.string().max(50).optional().nullable(),
-
-    primaryNeed: z.string().max(5000).optional().nullable(),
-
-    interestedIn: z.string().max(5000).optional().nullable(),
-
-    // Assignment
-    assignedUserId: createIdSchema("User ID non valido").optional().nullable(),
-
-    // Follow-up
-    nextFollowUpDate: isoDateSchema(),
-
-    // BANT Qualification
-    bantQualified: z.boolean().default(false),
-
-    bantNotes: z.string().max(5000).optional().nullable(),
-
-    // GDPR
-    privacyConsent: z.boolean().default(false),
-
-    privacyConsentDate: isoDateSchema(),
-
-    marketingConsent: z.boolean().default(false),
-
-    marketingConsentDate: isoDateSchema(),
-
-    doNotCall: z.boolean().default(false),
-
-    doNotEmail: z.boolean().default(false),
-
-    // Campaign tracking
-    campaignName: z.string().max(100).optional().nullable(),
-
-    utmMedium: z.string().max(50).optional().nullable(),
-
-    utmSource: z.string().max(50).optional().nullable(),
-
-    utmCampaign: z.string().max(50).optional().nullable(),
-
-    landingPage: z.string().max(255).optional().nullable(),
-
-    referrer: z.string().max(255).optional().nullable(),
-
-    // Notes
-    notes: z.string().max(5000).optional().nullable(),
-
-    description: z.string().max(5000).optional().nullable(),
-
-    competitors: z.string().max(5000).optional().nullable(),
-
-    // Custom fields
-    customFields: inputJsonValueSchema.optional().nullable(),
-  })
+/**
+ * Schema for creating a Lead — includes GDPR consent date validation.
+ */
+export const createLeadSchema = leadShape
   .strict()
   .refine(
     (data) => {
-      // If privacyConsent is true, privacyConsentDate must be set
-      if (data.privacyConsent && !data.privacyConsentDate) {
-        return false;
-      }
+      if (data.privacyConsent && !data.privacyConsentDate) return false;
       return true;
     },
     {
@@ -261,10 +228,7 @@ export const createLeadSchema = z
   )
   .refine(
     (data) => {
-      // If marketingConsent is true, marketingConsentDate must be set
-      if (data.marketingConsent && !data.marketingConsentDate) {
-        return false;
-      }
+      if (data.marketingConsent && !data.marketingConsentDate) return false;
       return true;
     },
     {
@@ -274,36 +238,34 @@ export const createLeadSchema = z
   );
 
 /**
- * Schema for updating a Lead
+ * Schema for updating a Lead — partial, code is immutable after creation.
+ * GDPR consent refinements omitted: partial updates may carry only one
+ * of the two fields; controller validates consistency against DB state.
  */
-export const updateLeadSchema = createLeadSchema
+export const updateLeadSchema = leadShape
   .omit({ code: true })
   .partial()
   .strict();
 
+const updateLeadStatusShape = z.object({
+  status: leadStatusSchema,
+  lostReason: z.string().max(1000).optional().nullable(),
+  notes: z.string().max(1000).optional().nullable(),
+});
+
 /**
- * Schema for updating Lead status with reason
+ * Schema for updating Lead status — lostReason required when LOST.
  */
-export const updateLeadStatusSchema = z
-  .object({
-    status: leadStatusSchema,
-    lostReason: z.string().max(1000).optional().nullable(),
-    notes: z.string().max(1000).optional().nullable(),
-  })
-  .strict()
-  .refine(
-    (data) => {
-      // If status is LOST, lostReason is required
-      if (data.status === "LOST" && !data.lostReason) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "Motivo perdita obbligatorio quando status è LOST",
-      path: ["lostReason"],
-    },
-  );
+export const updateLeadStatusSchema = updateLeadStatusShape.strict().refine(
+  (data) => {
+    if (data.status === "LOST" && !data.lostReason) return false;
+    return true;
+  },
+  {
+    message: "Motivo perdita obbligatorio quando status è LOST",
+    path: ["lostReason"],
+  },
+);
 
 /**
  * Schema for updating Lead score
@@ -315,70 +277,65 @@ export const updateLeadScoreSchema = z
   })
   .strict();
 
-/**
- * Schema for Lead qualification (BANT)
- */
-export const qualifyLeadSchema = z
-  .object({
-    bantQualified: z.boolean(),
-    budget: estimatedValueSchema.optional().nullable(),
-    decisionAuthority: decisionAuthoritySchema.optional().nullable(),
-    primaryNeed: z.string().max(5000),
-    purchaseTimeframe: purchaseTimeframeSchema.optional().nullable(),
-    bantNotes: z.string().max(5000).optional().nullable(),
-  })
-  .strict()
-  .refine(
-    (data) => {
-      // If bantQualified is true, all BANT fields should be set
-      if (data.bantQualified) {
-        return !!(
-          data.budget &&
-          data.decisionAuthority &&
-          data.primaryNeed &&
-          data.purchaseTimeframe
-        );
-      }
-      return true;
-    },
-    {
-      message:
-        "Tutti i campi BANT (Budget, Authority, Need, Timeframe) sono obbligatori per lead qualificate",
-      path: ["bantQualified"],
-    },
-  );
+const qualifyLeadShape = z.object({
+  bantQualified: z.boolean(),
+  budget: estimatedValueSchema.optional().nullable(),
+  decisionAuthority: decisionAuthoritySchema.optional().nullable(),
+  primaryNeed: z.string().max(5000),
+  purchaseTimeframe: purchaseTimeframeSchema.optional().nullable(),
+  bantNotes: z.string().max(5000).optional().nullable(),
+});
 
 /**
- * Schema for converting Lead to Customer
+ * Schema for BANT Lead qualification — all BANT fields required when qualified.
  */
-export const convertLeadSchema = z
-  .object({
-    // All required fields for customer creation
-    companyName: z.string().min(1).max(255),
-    vatNumber: z.string().min(1).max(20).optional(),
-    taxCode: z.string().min(1).max(20).optional(),
-    entityType: companyTypeEntitySchema,
-    countryCode: countryCodeBaseSchema,
-    // Customer specific fields
-    customerType: customerTypeSchema.default("CUSTOMER"),
-    priority: customerPrioritySchema.default("LOW"),
-    segment: customerSegmentSchema.default("STANDARD"),
-    notes: z.string().max(1000).optional().nullable(),
-  })
-  .strict()
-  .refine(
-    (data) => {
-      // Italian companies must have vatNumber or taxCode
-      if (data.countryCode === "IT") {
-        return !!(data.vatNumber || data.taxCode);
-      }
-      return true;
-    },
-    {
-      message: "P.IVA o Codice Fiscale obbligatorio per aziende italiane",
-      path: ["vatNumber"],
-    },
-  );
+export const qualifyLeadSchema = qualifyLeadShape.strict().refine(
+  (data) => {
+    if (data.bantQualified) {
+      return !!(
+        data.budget &&
+        data.decisionAuthority &&
+        data.primaryNeed &&
+        data.purchaseTimeframe
+      );
+    }
+    return true;
+  },
+  {
+    message:
+      "Tutti i campi BANT (Budget, Authority, Need, Timeframe) sono obbligatori per lead qualificate",
+    path: ["bantQualified"],
+  },
+);
+
+const convertLeadShape = z.object({
+  companyName: z.string().min(1).max(255),
+  vatNumber: z.string().min(1).max(20).optional(),
+  taxCode: z.string().min(1).max(20).optional(),
+  entityType: companyTypeEntitySchema,
+  countryCode: countryCodeBaseSchema,
+  customerType: customerTypeSchema.default("CUSTOMER"),
+  priority: customerPrioritySchema.default("LOW"),
+  segment: customerSegmentSchema.default("STANDARD"),
+  notes: z.string().max(1000).optional().nullable(),
+});
+
+/**
+ * Schema for converting a Lead to Customer — Italian companies require
+ * vatNumber or taxCode.
+ */
+export const convertLeadSchema = convertLeadShape.strict().refine(
+  (data) => {
+    if (data.countryCode === "IT") {
+      return !!(data.vatNumber || data.taxCode);
+    }
+    return true;
+  },
+  {
+    message: "P.IVA o Codice Fiscale obbligatorio per aziende italiane",
+    path: ["vatNumber"],
+  },
+);
 
 /**
  * Schema for bulk Lead assignment

@@ -115,77 +115,56 @@ export const stockMovementIdSchema = createIdSchema(
   "ID Stock Movement non valido",
 );
 
-export const createStockMovementSchema = z
-  .object({
-    productVariantId: createIdSchema("Product Variant ID non valido"),
+/**
+ * Raw object shape for StockMovement — no refinements.
+ */
+const stockMovementShape = z.object({
+  productVariantId: createIdSchema("Product Variant ID non valido"),
+  warehouseId: warehouseIdSchema,
 
-    warehouseId: warehouseIdSchema,
+  quantity: z
+    .number()
+    .int("Quantità deve essere un intero")
+    .min(MIN_MOVEMENT_QUANTITY, `Quantità minima ${MIN_MOVEMENT_QUANTITY}`)
+    .max(MAX_MOVEMENT_QUANTITY, `Quantità massima ${MAX_MOVEMENT_QUANTITY}`)
+    .refine((val) => val !== 0, "Quantità non può essere zero"),
 
-    quantity: z
-      .number()
-      .int("Quantità deve essere un intero")
-      .min(MIN_MOVEMENT_QUANTITY, `Quantità minima ${MIN_MOVEMENT_QUANTITY}`)
-      .max(MAX_MOVEMENT_QUANTITY, `Quantità massima ${MAX_MOVEMENT_QUANTITY}`)
-      .refine((val) => val !== 0, "Quantità non può essere zero"),
+  movementType: movementTypeSchema,
+  referenceId: z.string().max(100).optional().nullable(),
+  note: z.string().max(1000).optional().nullable(),
+  movementDate: isoDateSchema().default(() => new Date().toISOString()),
+  unitCost: unitCostSchema.optional().nullable(),
+  totalCost: totalCostSchema.optional().nullable(),
+  documentId: createIdSchema("Document ID non valido").optional().nullable(),
+  documentLineId: createIdSchema("Document Line ID non valido")
+    .optional()
+    .nullable(),
+  batchNumber: z.string().max(MAX_BATCH_NUMBER_LENGTH).optional().nullable(),
+  serialNumber: z.string().max(MAX_SERIAL_NUMBER_LENGTH).optional().nullable(),
+  expiryDate: isoDateSchema(),
+  status: movementStatusSchema.default(MOVEMENT_STATUS.PENDING),
+});
 
-    movementType: movementTypeSchema,
+/**
+ * Schema for creating a StockMovement — includes cross-field cost validation.
+ */
+export const createStockMovementSchema = stockMovementShape.strict().refine(
+  (data) => {
+    if (data.totalCost && !data.unitCost) return false;
+    return true;
+  },
+  {
+    message: "Unit cost obbligatorio se total cost è specificato",
+    path: ["unitCost"],
+  },
+);
 
-    referenceId: z.string().max(100).optional().nullable(),
-
-    note: z.string().max(1000).optional().nullable(),
-
-    movementDate: isoDateSchema().default(() => new Date().toISOString()),
-
-    // Cost fields
-    unitCost: unitCostSchema.optional().nullable(),
-
-    totalCost: totalCostSchema.optional().nullable(),
-
-    // Document references
-    documentId: createIdSchema("Document ID non valido").optional().nullable(),
-
-    documentLineId: createIdSchema("Document Line ID non valido")
-      .optional()
-      .nullable(),
-
-    // Batch/Serial tracking
-    batchNumber: z
-      .string()
-      .max(MAX_BATCH_NUMBER_LENGTH)
-      .optional()
-      .nullable(),
-
-    serialNumber: z
-      .string()
-      .max(MAX_SERIAL_NUMBER_LENGTH)
-      .optional()
-      .nullable(),
-
-    expiryDate: isoDateSchema(),
-
-    status: movementStatusSchema.default(MOVEMENT_STATUS.PENDING),
-  })
-  .strict()
-  .refine(
-    (data) => {
-      // If totalCost is provided, unitCost should also be provided
-      if (data.totalCost && !data.unitCost) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "Unit cost obbligatorio se total cost è specificato",
-      path: ["unitCost"],
-    },
-  );
-
-export const updateStockMovementSchema = createStockMovementSchema
-  .omit({
-    productVariantId: true,
-    warehouseId: true,
-    movementType: true,
-  })
+/**
+ * Schema for updating a StockMovement — partial, immutable fields excluded.
+ * productVariantId, warehouseId and movementType cannot change after creation.
+ */
+export const updateStockMovementSchema = stockMovementShape
+  .omit({ productVariantId: true, warehouseId: true, movementType: true })
   .partial()
   .strict();
 
@@ -215,50 +194,54 @@ export const bulkConfirmMovementsSchema = z
 // VIRTUAL STOCK SCHEMAS
 // ============================================================================
 
-export const virtualStockIdSchema = createIdSchema("ID Virtual Stock non valido");
+export const virtualStockIdSchema = createIdSchema(
+  "ID Virtual Stock non valido",
+);
 
-export const createVirtualStockSchema = z
-  .object({
-    productVariantId: createIdSchema("Product Variant ID non valido"),
+/**
+ * Raw object shape for VirtualStock — no refinements.
+ */
+const virtualStockShape = z.object({
+  productVariantId: createIdSchema("Product Variant ID non valido"),
+  warehouseId: warehouseIdSchema,
 
-    warehouseId: warehouseIdSchema,
+  quantity: z
+    .number()
+    .int("Quantità deve essere un intero")
+    .nonnegative("Quantità non può essere negativa"),
 
-    quantity: z
-      .number()
-      .int("Quantità deve essere un intero")
-      .nonnegative("Quantità non può essere negativa"),
+  source: z.string().max(100).optional().nullable(),
+  expectedAvailableDate: isoDateSchema(),
 
-    source: z.string().max(100).optional().nullable(),
+  leadTimeDays: z
+    .number()
+    .int("Lead time deve essere un intero")
+    .nonnegative("Lead time non può essere negativo")
+    .max(MAX_LEAD_TIME_DAYS, `Lead time massimo ${MAX_LEAD_TIME_DAYS} giorni`)
+    .default(0),
 
-    expectedAvailableDate: isoDateSchema(),
+  supplierPrice: supplierPriceSchema.optional().nullable(),
+  supplierCurrencyCode: currencyCodeBaseSchema.optional().nullable(),
+});
 
-    leadTimeDays: z
-      .number()
-      .int("Lead time deve essere un intero")
-      .nonnegative("Lead time non può essere negativo")
-      .max(MAX_LEAD_TIME_DAYS, `Lead time massimo ${MAX_LEAD_TIME_DAYS} giorni`)
-      .default(0),
+/**
+ * Schema for creating a VirtualStock — includes supplier price/currency validation.
+ */
+export const createVirtualStockSchema = virtualStockShape.strict().refine(
+  (data) => {
+    if (data.supplierPrice && !data.supplierCurrencyCode) return false;
+    return true;
+  },
+  {
+    message: "Valuta fornitore obbligatoria se prezzo specificato",
+    path: ["supplierCurrencyCode"],
+  },
+);
 
-    supplierPrice: supplierPriceSchema.optional().nullable(),
-
-    supplierCurrencyCode: currencyCodeBaseSchema.optional().nullable(),
-  })
-  .strict()
-  .refine(
-    (data) => {
-      // If supplierPrice is provided, currency must be provided
-      if (data.supplierPrice && !data.supplierCurrencyCode) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "Valuta fornitore obbligatoria se prezzo specificato",
-      path: ["supplierCurrencyCode"],
-    },
-  );
-
-export const updateVirtualStockSchema = createVirtualStockSchema
+/**
+ * Schema for updating a VirtualStock — partial, immutable FK fields excluded.
+ */
+export const updateVirtualStockSchema = virtualStockShape
   .omit({ productVariantId: true, warehouseId: true })
   .partial()
   .strict();
@@ -268,7 +251,12 @@ export const syncVirtualStockSchema = z
     quantity: z.number().int().nonnegative(),
     supplierPrice: supplierPriceSchema.optional().nullable(),
     expectedAvailableDate: isoDateSchema(),
-    leadTimeDays: z.number().int().nonnegative().max(MAX_LEAD_TIME_DAYS).optional(),
+    leadTimeDays: z
+      .number()
+      .int()
+      .nonnegative()
+      .max(MAX_LEAD_TIME_DAYS)
+      .optional(),
   })
   .strict();
 
@@ -284,44 +272,54 @@ export const markSyncErrorSchema = z
 
 export const stockBatchIdSchema = createIdSchema("ID Stock Batch non valido");
 
-export const createStockBatchSchema = z
-  .object({
-    productVariantId: createIdSchema("Product Variant ID non valido"),
+/**
+ * Raw object shape for StockBatch — no refinements.
+ */
+const stockBatchShape = z.object({
+  productVariantId: createIdSchema("Product Variant ID non valido"),
 
-    batchNumber: z
-      .string()
-      .min(1, "Batch number obbligatorio")
-      .max(MAX_BATCH_NUMBER_LENGTH)
-      .trim(),
+  batchNumber: z
+    .string()
+    .min(1, "Batch number obbligatorio")
+    .max(MAX_BATCH_NUMBER_LENGTH)
+    .trim(),
 
-    manufacturedDate: isoDateSchema(),
+  manufacturedDate: isoDateSchema(),
+  expiryDate: isoDateSchema(),
+  supplierId: createIdSchema("Supplier ID non valido").optional().nullable(),
 
-    expiryDate: isoDateSchema(),
+  quantity: z.number().int().nonnegative("Quantità non può essere negativa"),
 
-    supplierId: createIdSchema("Supplier ID non valido").optional().nullable(),
+  reserved: z
+    .number()
+    .int()
+    .nonnegative("Reserved non può essere negativo")
+    .default(0),
 
-    quantity: z.number().int().nonnegative("Quantità non può essere negativa"),
+  status: stockBatchStatusSchema.default(STOCK_BATCH_STATUS.ACTIVE),
+});
 
-    reserved: z.number().int().nonnegative("Reserved non può essere negativo").default(0),
+/**
+ * Schema for creating a StockBatch — includes expiry/manufactured date validation.
+ */
+export const createStockBatchSchema = stockBatchShape.strict().refine(
+  (data) => {
+    if (data.manufacturedDate && data.expiryDate) {
+      return new Date(data.expiryDate) > new Date(data.manufacturedDate);
+    }
+    return true;
+  },
+  {
+    message: "Data scadenza deve essere successiva alla data produzione",
+    path: ["expiryDate"],
+  },
+);
 
-    status: stockBatchStatusSchema.default(STOCK_BATCH_STATUS.ACTIVE),
-  })
-  .strict()
-  .refine(
-    (data) => {
-      // Expiry date must be after manufactured date
-      if (data.manufacturedDate && data.expiryDate) {
-        return new Date(data.expiryDate) > new Date(data.manufacturedDate);
-      }
-      return true;
-    },
-    {
-      message: "Data scadenza deve essere successiva alla data produzione",
-      path: ["expiryDate"],
-    },
-  );
-
-export const updateStockBatchSchema = createStockBatchSchema
+/**
+ * Schema for updating a StockBatch — partial, immutable fields excluded.
+ * productVariantId and batchNumber cannot change after creation.
+ */
+export const updateStockBatchSchema = stockBatchShape
   .omit({ productVariantId: true, batchNumber: true })
   .partial()
   .strict();
@@ -360,11 +358,7 @@ export const createStockReservationSchema = z
 
     expiresAt: isoDateSchema().optional(),
 
-    batchNumber: z
-      .string()
-      .max(MAX_BATCH_NUMBER_LENGTH)
-      .optional()
-      .nullable(),
+    batchNumber: z.string().max(MAX_BATCH_NUMBER_LENGTH).optional().nullable(),
 
     expiryMinutes: z
       .number()

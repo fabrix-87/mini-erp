@@ -506,7 +506,6 @@ export type ProductVariantWhereInput = {
   documentLines?: Prisma.DocumentLineListRelationFilter
   priceListItems?: Prisma.PriceListItemListRelationFilter
   images?: Prisma.ProductImageListRelationFilter
-  translations?: Prisma.ProductVariantTranslationListRelationFilter
   deletedByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
@@ -554,7 +553,6 @@ export type ProductVariantOrderByWithRelationInput = {
   documentLines?: Prisma.DocumentLineOrderByRelationAggregateInput
   priceListItems?: Prisma.PriceListItemOrderByRelationAggregateInput
   images?: Prisma.ProductImageOrderByRelationAggregateInput
-  translations?: Prisma.ProductVariantTranslationOrderByRelationAggregateInput
   deletedByUser?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -605,7 +603,6 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   documentLines?: Prisma.DocumentLineListRelationFilter
   priceListItems?: Prisma.PriceListItemListRelationFilter
   images?: Prisma.ProductImageListRelationFilter
-  translations?: Prisma.ProductVariantTranslationListRelationFilter
   deletedByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id" | "variantCode" | "sku" | "ean13">
 
@@ -729,7 +726,6 @@ export type ProductVariantCreateInput = {
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
 }
 
@@ -775,7 +771,6 @@ export type ProductVariantUncheckedCreateInput = {
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantUpdateInput = {
@@ -818,7 +813,6 @@ export type ProductVariantUpdateInput = {
   documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
 }
 
@@ -864,7 +858,6 @@ export type ProductVariantUncheckedUpdateInput = {
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantCreateManyInput = {
@@ -1263,20 +1256,6 @@ export type ProductVariantUncheckedUpdateManyWithoutProductNestedInput = {
   deleteMany?: Prisma.ProductVariantScalarWhereInput | Prisma.ProductVariantScalarWhereInput[]
 }
 
-export type ProductVariantCreateNestedOneWithoutTranslationsInput = {
-  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutTranslationsInput, Prisma.ProductVariantUncheckedCreateWithoutTranslationsInput>
-  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutTranslationsInput
-  connect?: Prisma.ProductVariantWhereUniqueInput
-}
-
-export type ProductVariantUpdateOneRequiredWithoutTranslationsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutTranslationsInput, Prisma.ProductVariantUncheckedCreateWithoutTranslationsInput>
-  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutTranslationsInput
-  upsert?: Prisma.ProductVariantUpsertWithoutTranslationsInput
-  connect?: Prisma.ProductVariantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutTranslationsInput, Prisma.ProductVariantUpdateWithoutTranslationsInput>, Prisma.ProductVariantUncheckedUpdateWithoutTranslationsInput>
-}
-
 export type ProductVariantCreateNestedOneWithoutImagesInput = {
   create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutImagesInput, Prisma.ProductVariantUncheckedCreateWithoutImagesInput>
   connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutImagesInput
@@ -1430,7 +1409,6 @@ export type ProductVariantCreateWithoutAttributesInput = {
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
 }
 
@@ -1475,7 +1453,6 @@ export type ProductVariantUncheckedCreateWithoutAttributesInput = {
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutAttributesInput = {
@@ -1533,7 +1510,6 @@ export type ProductVariantUpdateWithoutAttributesInput = {
   documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
 }
 
@@ -1578,7 +1554,6 @@ export type ProductVariantUncheckedUpdateWithoutAttributesInput = {
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutDocumentLinesInput = {
@@ -1620,7 +1595,6 @@ export type ProductVariantCreateWithoutDocumentLinesInput = {
   virtualStock?: Prisma.VirtualStockCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
 }
 
@@ -1665,7 +1639,6 @@ export type ProductVariantUncheckedCreateWithoutDocumentLinesInput = {
   virtualStock?: Prisma.VirtualStockUncheckedCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutDocumentLinesInput = {
@@ -1723,7 +1696,6 @@ export type ProductVariantUpdateWithoutDocumentLinesInput = {
   virtualStock?: Prisma.VirtualStockUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
 }
 
@@ -1768,7 +1740,6 @@ export type ProductVariantUncheckedUpdateWithoutDocumentLinesInput = {
   virtualStock?: Prisma.VirtualStockUncheckedUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutCommodityInput = {
@@ -1810,7 +1781,6 @@ export type ProductVariantCreateWithoutCommodityInput = {
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
 }
 
@@ -1855,7 +1825,6 @@ export type ProductVariantUncheckedCreateWithoutCommodityInput = {
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutCommodityInput = {
@@ -1962,7 +1931,6 @@ export type ProductVariantCreateWithoutPriceListItemsInput = {
   virtualStock?: Prisma.VirtualStockCreateNestedManyWithoutProductVariantInput
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
   images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
 }
 
@@ -2007,7 +1975,6 @@ export type ProductVariantUncheckedCreateWithoutPriceListItemsInput = {
   virtualStock?: Prisma.VirtualStockUncheckedCreateNestedManyWithoutProductVariantInput
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutPriceListItemsInput = {
@@ -2065,7 +2032,6 @@ export type ProductVariantUpdateWithoutPriceListItemsInput = {
   virtualStock?: Prisma.VirtualStockUpdateManyWithoutProductVariantNestedInput
   documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
 }
 
@@ -2110,7 +2076,6 @@ export type ProductVariantUncheckedUpdateWithoutPriceListItemsInput = {
   virtualStock?: Prisma.VirtualStockUncheckedUpdateManyWithoutProductVariantNestedInput
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutProductInput = {
@@ -2152,7 +2117,6 @@ export type ProductVariantCreateWithoutProductInput = {
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
 }
 
@@ -2197,7 +2161,6 @@ export type ProductVariantUncheckedCreateWithoutProductInput = {
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutProductInput = {
@@ -2224,196 +2187,6 @@ export type ProductVariantUpdateWithWhereUniqueWithoutProductInput = {
 export type ProductVariantUpdateManyWithWhereWithoutProductInput = {
   where: Prisma.ProductVariantScalarWhereInput
   data: Prisma.XOR<Prisma.ProductVariantUpdateManyMutationInput, Prisma.ProductVariantUncheckedUpdateManyWithoutProductInput>
-}
-
-export type ProductVariantCreateWithoutTranslationsInput = {
-  variantCode: string
-  sku?: string | null
-  ean13?: string | null
-  upc?: string | null
-  isbn?: string | null
-  mpn?: string | null
-  quantity?: number
-  minimalQuantity?: number
-  lowStockThreshold?: number
-  lowStockAlertEnabled?: boolean
-  location?: string | null
-  packStockType?: number
-  outOfStockType?: number
-  availableDate?: Date | string | null
-  price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  wholesalePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  unitPriceRatio?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  weight?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  width?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  height?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  depth?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  position?: number
-  isDefault?: boolean
-  active?: boolean
-  availableForOrder?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  product?: Prisma.ProductCreateNestedOneWithoutVariantsInput
-  commodity?: Prisma.IntrastatCommodityCodeCreateNestedOneWithoutProductVariantsInput
-  attributes?: Prisma.ProductVariantAttributeCreateNestedManyWithoutProductVariantInput
-  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutProductVariantInput
-  stockReservations?: Prisma.StockReservationCreateNestedManyWithoutProductVariantInput
-  stockBatchs?: Prisma.StockBatchCreateNestedManyWithoutProductVariantInput
-  virtualStock?: Prisma.VirtualStockCreateNestedManyWithoutProductVariantInput
-  documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
-  priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
-  images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
-}
-
-export type ProductVariantUncheckedCreateWithoutTranslationsInput = {
-  id?: number
-  productId: number
-  variantCode: string
-  sku?: string | null
-  ean13?: string | null
-  upc?: string | null
-  isbn?: string | null
-  mpn?: string | null
-  quantity?: number
-  minimalQuantity?: number
-  lowStockThreshold?: number
-  lowStockAlertEnabled?: boolean
-  location?: string | null
-  packStockType?: number
-  outOfStockType?: number
-  availableDate?: Date | string | null
-  price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  wholesalePrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  unitPriceRatio?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  weight?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  width?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  height?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  depth?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  commodityCode?: string | null
-  position?: number
-  isDefault?: boolean
-  active?: boolean
-  availableForOrder?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  deletedAt?: Date | string | null
-  deletedBy?: number | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  attributes?: Prisma.ProductVariantAttributeUncheckedCreateNestedManyWithoutProductVariantInput
-  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutProductVariantInput
-  stockReservations?: Prisma.StockReservationUncheckedCreateNestedManyWithoutProductVariantInput
-  stockBatchs?: Prisma.StockBatchUncheckedCreateNestedManyWithoutProductVariantInput
-  virtualStock?: Prisma.VirtualStockUncheckedCreateNestedManyWithoutProductVariantInput
-  documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
-  priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
-  images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-}
-
-export type ProductVariantCreateOrConnectWithoutTranslationsInput = {
-  where: Prisma.ProductVariantWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutTranslationsInput, Prisma.ProductVariantUncheckedCreateWithoutTranslationsInput>
-}
-
-export type ProductVariantUpsertWithoutTranslationsInput = {
-  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutTranslationsInput, Prisma.ProductVariantUncheckedUpdateWithoutTranslationsInput>
-  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutTranslationsInput, Prisma.ProductVariantUncheckedCreateWithoutTranslationsInput>
-  where?: Prisma.ProductVariantWhereInput
-}
-
-export type ProductVariantUpdateToOneWithWhereWithoutTranslationsInput = {
-  where?: Prisma.ProductVariantWhereInput
-  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutTranslationsInput, Prisma.ProductVariantUncheckedUpdateWithoutTranslationsInput>
-}
-
-export type ProductVariantUpdateWithoutTranslationsInput = {
-  variantCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sku?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ean13?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  upc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isbn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mpn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
-  minimalQuantity?: Prisma.IntFieldUpdateOperationsInput | number
-  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
-  lowStockAlertEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  packStockType?: Prisma.IntFieldUpdateOperationsInput | number
-  outOfStockType?: Prisma.IntFieldUpdateOperationsInput | number
-  availableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  wholesalePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  unitPriceRatio?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  weight?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  width?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  height?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  depth?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  position?: Prisma.IntFieldUpdateOperationsInput | number
-  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  availableForOrder?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  product?: Prisma.ProductUpdateOneWithoutVariantsNestedInput
-  commodity?: Prisma.IntrastatCommodityCodeUpdateOneWithoutProductVariantsNestedInput
-  attributes?: Prisma.ProductVariantAttributeUpdateManyWithoutProductVariantNestedInput
-  stockMovement?: Prisma.StockMovementUpdateManyWithoutProductVariantNestedInput
-  stockReservations?: Prisma.StockReservationUpdateManyWithoutProductVariantNestedInput
-  stockBatchs?: Prisma.StockBatchUpdateManyWithoutProductVariantNestedInput
-  virtualStock?: Prisma.VirtualStockUpdateManyWithoutProductVariantNestedInput
-  documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
-  priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
-  images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
-}
-
-export type ProductVariantUncheckedUpdateWithoutTranslationsInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  productId?: Prisma.IntFieldUpdateOperationsInput | number
-  variantCode?: Prisma.StringFieldUpdateOperationsInput | string
-  sku?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ean13?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  upc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isbn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mpn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
-  minimalQuantity?: Prisma.IntFieldUpdateOperationsInput | number
-  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
-  lowStockAlertEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  packStockType?: Prisma.IntFieldUpdateOperationsInput | number
-  outOfStockType?: Prisma.IntFieldUpdateOperationsInput | number
-  availableDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  wholesalePrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  unitPriceRatio?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  weight?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  width?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  height?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  depth?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  commodityCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.IntFieldUpdateOperationsInput | number
-  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  availableForOrder?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  attributes?: Prisma.ProductVariantAttributeUncheckedUpdateManyWithoutProductVariantNestedInput
-  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutProductVariantNestedInput
-  stockReservations?: Prisma.StockReservationUncheckedUpdateManyWithoutProductVariantNestedInput
-  stockBatchs?: Prisma.StockBatchUncheckedUpdateManyWithoutProductVariantNestedInput
-  virtualStock?: Prisma.VirtualStockUncheckedUpdateManyWithoutProductVariantNestedInput
-  documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
-  priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
-  images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutImagesInput = {
@@ -2455,7 +2228,6 @@ export type ProductVariantCreateWithoutImagesInput = {
   virtualStock?: Prisma.VirtualStockCreateNestedManyWithoutProductVariantInput
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
 }
 
@@ -2500,7 +2272,6 @@ export type ProductVariantUncheckedCreateWithoutImagesInput = {
   virtualStock?: Prisma.VirtualStockUncheckedCreateNestedManyWithoutProductVariantInput
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutImagesInput = {
@@ -2558,7 +2329,6 @@ export type ProductVariantUpdateWithoutImagesInput = {
   virtualStock?: Prisma.VirtualStockUpdateManyWithoutProductVariantNestedInput
   documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
 }
 
@@ -2603,7 +2373,6 @@ export type ProductVariantUncheckedUpdateWithoutImagesInput = {
   virtualStock?: Prisma.VirtualStockUncheckedUpdateManyWithoutProductVariantNestedInput
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutDeletedByUserInput = {
@@ -2646,7 +2415,6 @@ export type ProductVariantCreateWithoutDeletedByUserInput = {
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutDeletedByUserInput = {
@@ -2690,7 +2458,6 @@ export type ProductVariantUncheckedCreateWithoutDeletedByUserInput = {
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutDeletedByUserInput = {
@@ -2758,7 +2525,6 @@ export type ProductVariantCreateWithoutStockMovementInput = {
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
 }
 
@@ -2803,7 +2569,6 @@ export type ProductVariantUncheckedCreateWithoutStockMovementInput = {
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutStockMovementInput = {
@@ -2861,7 +2626,6 @@ export type ProductVariantUpdateWithoutStockMovementInput = {
   documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
 }
 
@@ -2906,7 +2670,6 @@ export type ProductVariantUncheckedUpdateWithoutStockMovementInput = {
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutVirtualStockInput = {
@@ -2948,7 +2711,6 @@ export type ProductVariantCreateWithoutVirtualStockInput = {
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
 }
 
@@ -2993,7 +2755,6 @@ export type ProductVariantUncheckedCreateWithoutVirtualStockInput = {
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutVirtualStockInput = {
@@ -3051,7 +2812,6 @@ export type ProductVariantUpdateWithoutVirtualStockInput = {
   documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
 }
 
@@ -3096,7 +2856,6 @@ export type ProductVariantUncheckedUpdateWithoutVirtualStockInput = {
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutStockBatchsInput = {
@@ -3138,7 +2897,6 @@ export type ProductVariantCreateWithoutStockBatchsInput = {
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
 }
 
@@ -3183,7 +2941,6 @@ export type ProductVariantUncheckedCreateWithoutStockBatchsInput = {
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutStockBatchsInput = {
@@ -3241,7 +2998,6 @@ export type ProductVariantUpdateWithoutStockBatchsInput = {
   documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
 }
 
@@ -3286,7 +3042,6 @@ export type ProductVariantUncheckedUpdateWithoutStockBatchsInput = {
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutStockReservationsInput = {
@@ -3328,7 +3083,6 @@ export type ProductVariantCreateWithoutStockReservationsInput = {
   documentLines?: Prisma.DocumentLineCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutProductVariantInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedProductVariantsInput
 }
 
@@ -3373,7 +3127,6 @@ export type ProductVariantUncheckedCreateWithoutStockReservationsInput = {
   documentLines?: Prisma.DocumentLineUncheckedCreateNestedManyWithoutProductVariantInput
   priceListItems?: Prisma.PriceListItemUncheckedCreateNestedManyWithoutVariantInput
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutVariantInput
-  translations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutProductVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutStockReservationsInput = {
@@ -3431,7 +3184,6 @@ export type ProductVariantUpdateWithoutStockReservationsInput = {
   documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
 }
 
@@ -3476,7 +3228,6 @@ export type ProductVariantUncheckedUpdateWithoutStockReservationsInput = {
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantCreateManyCommodityInput = {
@@ -3553,7 +3304,6 @@ export type ProductVariantUpdateWithoutCommodityInput = {
   documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
 }
 
@@ -3598,7 +3348,6 @@ export type ProductVariantUncheckedUpdateWithoutCommodityInput = {
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateManyWithoutCommodityInput = {
@@ -3710,7 +3459,6 @@ export type ProductVariantUpdateWithoutProductInput = {
   documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedProductVariantsNestedInput
 }
 
@@ -3755,7 +3503,6 @@ export type ProductVariantUncheckedUpdateWithoutProductInput = {
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
@@ -3868,7 +3615,6 @@ export type ProductVariantUpdateWithoutDeletedByUserInput = {
   documentLines?: Prisma.DocumentLineUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutDeletedByUserInput = {
@@ -3912,7 +3658,6 @@ export type ProductVariantUncheckedUpdateWithoutDeletedByUserInput = {
   documentLines?: Prisma.DocumentLineUncheckedUpdateManyWithoutProductVariantNestedInput
   priceListItems?: Prisma.PriceListItemUncheckedUpdateManyWithoutVariantNestedInput
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutVariantNestedInput
-  translations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutProductVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateManyWithoutDeletedByUserInput = {
@@ -3964,7 +3709,6 @@ export type ProductVariantCountOutputType = {
   documentLines: number
   priceListItems: number
   images: number
-  translations: number
 }
 
 export type ProductVariantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3976,7 +3720,6 @@ export type ProductVariantCountOutputTypeSelect<ExtArgs extends runtime.Types.Ex
   documentLines?: boolean | ProductVariantCountOutputTypeCountDocumentLinesArgs
   priceListItems?: boolean | ProductVariantCountOutputTypeCountPriceListItemsArgs
   images?: boolean | ProductVariantCountOutputTypeCountImagesArgs
-  translations?: boolean | ProductVariantCountOutputTypeCountTranslationsArgs
 }
 
 /**
@@ -4045,13 +3788,6 @@ export type ProductVariantCountOutputTypeCountImagesArgs<ExtArgs extends runtime
   where?: Prisma.ProductImageWhereInput
 }
 
-/**
- * ProductVariantCountOutputType without action
- */
-export type ProductVariantCountOutputTypeCountTranslationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProductVariantTranslationWhereInput
-}
-
 
 export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -4097,7 +3833,6 @@ export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.Intern
   documentLines?: boolean | Prisma.ProductVariant$documentLinesArgs<ExtArgs>
   priceListItems?: boolean | Prisma.ProductVariant$priceListItemsArgs<ExtArgs>
   images?: boolean | Prisma.ProductVariant$imagesArgs<ExtArgs>
-  translations?: boolean | Prisma.ProductVariant$translationsArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.ProductVariant$deletedByUserArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productVariant"]>
@@ -4228,7 +3963,6 @@ export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.Inter
   documentLines?: boolean | Prisma.ProductVariant$documentLinesArgs<ExtArgs>
   priceListItems?: boolean | Prisma.ProductVariant$priceListItemsArgs<ExtArgs>
   images?: boolean | Prisma.ProductVariant$imagesArgs<ExtArgs>
-  translations?: boolean | Prisma.ProductVariant$translationsArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.ProductVariant$deletedByUserArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -4256,7 +3990,6 @@ export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.Inte
     documentLines: Prisma.$DocumentLinePayload<ExtArgs>[]
     priceListItems: Prisma.$PriceListItemPayload<ExtArgs>[]
     images: Prisma.$ProductImagePayload<ExtArgs>[]
-    translations: Prisma.$ProductVariantTranslationPayload<ExtArgs>[]
     deletedByUser: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -4697,7 +4430,6 @@ export interface Prisma__ProductVariantClient<T, Null = never, ExtArgs extends r
   documentLines<T extends Prisma.ProductVariant$documentLinesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$documentLinesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentLinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   priceListItems<T extends Prisma.ProductVariant$priceListItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$priceListItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PriceListItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   images<T extends Prisma.ProductVariant$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  translations<T extends Prisma.ProductVariant$translationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$translationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductVariantTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deletedByUser<T extends Prisma.ProductVariant$deletedByUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$deletedByUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -5384,30 +5116,6 @@ export type ProductVariant$imagesArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.ProductImageScalarFieldEnum | Prisma.ProductImageScalarFieldEnum[]
-}
-
-/**
- * ProductVariant.translations
- */
-export type ProductVariant$translationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProductVariantTranslation
-   */
-  select?: Prisma.ProductVariantTranslationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProductVariantTranslation
-   */
-  omit?: Prisma.ProductVariantTranslationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProductVariantTranslationInclude<ExtArgs> | null
-  where?: Prisma.ProductVariantTranslationWhereInput
-  orderBy?: Prisma.ProductVariantTranslationOrderByWithRelationInput | Prisma.ProductVariantTranslationOrderByWithRelationInput[]
-  cursor?: Prisma.ProductVariantTranslationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProductVariantTranslationScalarFieldEnum | Prisma.ProductVariantTranslationScalarFieldEnum[]
 }
 
 /**

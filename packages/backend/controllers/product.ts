@@ -23,7 +23,7 @@ import {
   CreateProductImageInput,
   CreateProductInput,
   CreateProductVariantInput,
-  CreateProductVariantTranslationInput,
+  CreateProductTranslationInput,
   ManufacturerIdParam,
   ProductCategoryIdParam,
   ProductIdAsProductIdParam,
@@ -36,6 +36,8 @@ import {
   UpdateProductImageInput,
   UpdateProductInput,
   UpdateProductVariantInput,
+  ProductIdLanguageIdParam,
+  UpdateProductTranslationInput,
 } from "@mini-erp/shared";
 
 // ============================================================================
@@ -76,16 +78,12 @@ export const getAllProducts = asyncHandler(
       where.OR = [
         { reference: { contains: search, mode: "insensitive" } },
         {
-          variants: {
+          translations: {
             some: {
-              translations: {
-                some: {
-                  OR: [
-                    { name: { contains: search, mode: "insensitive" } },
-                    { description: { contains: search, mode: "insensitive" } },
-                  ],
-                },
-              },
+              OR: [
+                { name: { contains: search, mode: "insensitive" } },
+                { description: { contains: search, mode: "insensitive" } },
+              ],
             },
           },
         },
@@ -292,12 +290,7 @@ export const getProductVariants = asyncHandler(
 
     const variants = await prisma.productVariant.findMany({
       where: { productId: id, deletedAt: null },
-      include: {
-        translations: {
-          include: {
-            language: { select: { id: true, name: true, iso_code: true } },
-          },
-        },
+      include: {        
         attributes: {
           include: {
             attribute: {
@@ -326,11 +319,6 @@ export const getVariantById = asyncHandler(
       where: { id, deletedAt: null },
       include: {
         product: { select: { id: true, reference: true } },
-        translations: {
-          include: {
-            language: { select: { id: true, name: true, iso_code: true } },
-          },
-        },
         attributes: {
           include: {
             attribute: {
@@ -556,11 +544,11 @@ export const createSimpleProduct = asyncHandler(
       // 3. Crea le traduzioni
       await Promise.all(
         (
-          translations as Array<Partial<CreateProductVariantTranslationInput>>
+          translations as Array<Partial<CreateProductTranslationInput>>
         ).map((t) =>
-          tx.productVariantTranslation.create({
+          tx.productTranslation.create({
             data: {
-              productVariantId: newVariant.id,
+              productId: newVariant.id,
               languageId: t.languageId!,
               name: t.name!,
               description: t.description,
@@ -614,23 +602,25 @@ export const createSimpleProduct = asyncHandler(
 );
 
 // ============================================================================
-// VARIANT TRANSLATIONS (ProductVariantTranslation)
+// PRODUCT TRANSLATIONS
 // ============================================================================
+
 /**
- * @desc   List all translations for a variant
- * @route  GET /api/products/:productId/variants/:variantId/translations
+ * @desc   List all translations for a product
+ * @route  GET /api/products/:id/translations
  * @access Public
  */
-export const getVariantTranslations = asyncHandler(
+export const getProductTranslations = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams;
+    const { id } = req.validatedParams as ProductIdParam;
+
+    const product = await prisma.product.findUnique({ where: { id } });
+    if (!product) throw new NotFoundError("Prodotto non trovato");
 
     const translations = await prisma.productTranslation.findMany({
-      where: { productId: Number(id) },
+      where: { productId: id },
       include: {
-        language: {
-          select: { id: true, name: true, iso_code: true },
-        },
+        language: { select: { id: true, name: true, iso_code: true } },
       },
     });
 
@@ -639,43 +629,31 @@ export const getVariantTranslations = asyncHandler(
 );
 
 /**
- * @desc    Crea una traduzione
- * @route   POST /api/products/:id/translations
- * @access  Private (Admin, Product Manager)
+ * @desc   Create a translation for a product
+ * @route  POST /api/products/:id/translations
+ * @access Private (Admin, Product Manager)
  */
-export const createTranslation = asyncHandler(
+export const createProductTranslation = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id } = req.validatedParams;
+    const { id } = req.validatedParams as ProductIdParam;
     const translationData = req.validatedBody as CreateProductTranslationInput;
 
-    // Verifica esistenza prodotto
-    const product = await prisma.product.findUnique({
-      where: { id: Number(id) },
-    });
+    const product = await prisma.product.findUnique({ where: { id } });
+    if (!product) throw new NotFoundError("Prodotto non trovato");
 
-    if (!product) {
-      throw new NotFoundError("Prodotto non trovato");
-    }
-
-    // Verifica se esiste già una traduzione per questa lingua
-    const existingTranslation = await prisma.productTranslation.findUnique({
+    const existing = await prisma.productTranslation.findUnique({
       where: {
         productId_languageId: {
-          productId: Number(id),
+          productId: id,
           languageId: translationData.languageId,
         },
       },
     });
-
-    if (existingTranslation) {
+    if (existing)
       throw new ConflictError("Traduzione già esistente per questa lingua");
-    }
 
     const translation = await prisma.productTranslation.create({
-      data: {
-        ...translationData,
-        productId: Number(id),
-      },
+      data: { ...translationData, productId: id },
     });
 
     sendCreated(res, translation, "Traduzione creata con successo");
@@ -683,22 +661,17 @@ export const createTranslation = asyncHandler(
 );
 
 /**
- * @desc    Aggiorna una traduzione
- * @route   PUT /api/products/:id/translations/:languageId
- * @access  Private (Admin, Product Manager)
+ * @desc   Update a product translation
+ * @route  PUT /api/products/:id/translations/:languageId
+ * @access Private (Admin, Product Manager)
  */
-export const updateTranslation = asyncHandler(
+export const updateProductTranslation = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { id, languageId } = req.validatedParams;
+    const { id, languageId } = req.validatedParams as ProductIdLanguageIdParam;
     const updateData = req.validatedBody as UpdateProductTranslationInput;
 
     const translation = await prisma.productTranslation.update({
-      where: {
-        productId_languageId: {
-          productId: Number(id),
-          languageId: Number(languageId),
-        },
-      },
+      where: { productId_languageId: { productId: id, languageId } },
       data: updateData,
     });
 
@@ -709,21 +682,16 @@ export const updateTranslation = asyncHandler(
 );
 
 /**
- * @desc    Elimina una traduzione
- * @route   DELETE /api/products/:id/translations/:languageId
- * @access  Private (Admin, Product Manager)
+ * @desc   Delete a product translation
+ * @route  DELETE /api/products/:id/translations/:languageId
+ * @access Private (Admin, Product Manager)
  */
-export const deleteTranslation = asyncHandler(
+export const deleteProductTranslation = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     const { id, languageId } = req.validatedParams as ProductIdLanguageIdParam;
 
     await prisma.productTranslation.delete({
-      where: {
-        productId_languageId: {
-          productId: Number(id),
-          languageId: Number(languageId),
-        },
-      },
+      where: { productId_languageId: { productId: id, languageId } },
     });
 
     sendDeleted(res);
@@ -862,7 +830,8 @@ export const getProductCategories = asyncHandler(
 export const addCategory = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     const { id } = req.validatedParams as ProductIdParam;
-    const { categoryId, position = 0 } = req.validatedBody as CreateProductCategoryInput;
+    const { categoryId, position = 0 } =
+      req.validatedBody as CreateProductCategoryInput;
 
     // Verifica se già esiste
     const existing = await prisma.productCategory.findUnique({
@@ -885,7 +854,8 @@ export const addCategory = asyncHandler(
  */
 export const removeCategory = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const { productId, categoryId } = req.validatedParams as ProductCategoryIdParam;
+    const { productId, categoryId } =
+      req.validatedParams as ProductCategoryIdParam;
 
     await prisma.productCategory.delete({
       where: { productId_categoryId: { productId, categoryId } },
@@ -907,7 +877,7 @@ export const updateCategoryPosition = asyncHandler(
 
     const productCategory = await prisma.productCategory.update({
       where: { productId_categoryId: { productId, categoryId } },
-      data:  { position },
+      data: { position },
     });
 
     sendSuccess(res, productCategory, {
@@ -948,7 +918,7 @@ export const getManufacturerById = asyncHandler(
     const { id } = req.validatedParams as ManufacturerIdParam;
 
     const manufacturer = await prisma.manufacturer.findUnique({
-      where:   { id },
+      where: { id },
       include: { products: { select: { id: true, reference: true } } },
     });
 
@@ -987,7 +957,7 @@ export const updateManufacturer = asyncHandler(
 
     const manufacturer = await prisma.manufacturer.update({
       where: { id },
-      data:  updateData,
+      data: updateData,
     });
 
     sendSuccess(res, manufacturer, {
@@ -1033,12 +1003,16 @@ export const bulkUpdateProducts = asyncHandler(
 
     const result = await prisma.product.updateMany({
       where: { id: { in: productIds } },
-      data:  updateData,
+      data: updateData,
     });
 
-    sendSuccess(res, { count: result.count }, {
-      message: `${result.count} prodotti aggiornati con successo`,
-    });
+    sendSuccess(
+      res,
+      { count: result.count },
+      {
+        message: `${result.count} prodotti aggiornati con successo`,
+      },
+    );
   },
 );
 
@@ -1059,8 +1033,12 @@ export const bulkDeleteProducts = asyncHandler(
       where: { id: { in: productIds } },
     });
 
-    sendSuccess(res, { count: result.count }, {
-      message: `${result.count} prodotti eliminati con successo`,
-    });
+    sendSuccess(
+      res,
+      { count: result.count },
+      {
+        message: `${result.count} prodotti eliminati con successo`,
+      },
+    );
   },
 );

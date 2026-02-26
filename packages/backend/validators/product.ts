@@ -4,7 +4,7 @@ import {
   createProductImageSchema,
   createProductSchema,
   createProductVariantSchema,
-  createProductVariantTranslationSchema,
+  createProductTranslationSchema,
   manufacturerIdSchema,
   productCategoryIdSchema,
   productIdAsProductIdSchema,
@@ -16,7 +16,8 @@ import {
   updateProductImageSchema,
   updateProductSchema,
   updateProductVariantSchema,
-  updateProductVariantTranslationSchema,
+  updateProductTranslationSchema,
+  productIdLanguageIdSchema,
 } from "@mini-erp/shared";
 import { validateBody, validateParams } from "../middleware/validation";
 
@@ -83,8 +84,8 @@ export const validateVariantId = validateParams(
 /**
  * Middleware per la creazione di una traduzione
  */
-export const validateCreateVarianTranslation = validateBody(
-  createProductVariantTranslationSchema,
+export const validateCreateTranslation = validateBody(
+  createProductTranslationSchema,
   "Product translation creation",
 );
 
@@ -92,9 +93,17 @@ export const validateCreateVarianTranslation = validateBody(
  * Middleware per l'aggiornamento di una traduzione
  */
 export const validateUpdateTranslation = validateBody(
-  updateProductVariantTranslationSchema,
+  updateProductTranslationSchema,
   "Product translation update",
 );
+
+/**
+ * Validate productId, languageId
+ */
+export const validateProductIdLanguageId = validateParams(
+  productIdLanguageIdSchema,
+  "Product ID, Language ID"
+)
 
 /**
  * Middleware per la creazione di un'immagine

@@ -37,9 +37,9 @@ import {
   deleteVariant,
   // Translations
   getProductTranslations,
-  createTranslation,
-  updateTranslation,
-  deleteTranslation,
+  createProductTranslation,
+  updateProductTranslation,
+  deleteProductTranslation,
   // Images
   getProductImages,
   createImage,
@@ -261,7 +261,7 @@ router.post(
   authenticateToken,
   authorize(['product:create', 'product:manage']),
   validateCreateTranslation,
-  createTranslation
+  createProductTranslation
 );
 
 /**
@@ -275,7 +275,7 @@ router.put(
   authorize(['product:update', 'product:manage']),
   validateProductIdLanguageId,
   validateUpdateTranslation,
-  updateTranslation
+  updateProductTranslation
 );
 
 /**
@@ -288,7 +288,7 @@ router.delete(
   authenticateToken,
   authorize(['product:delete', 'product:manage']),
   validateProductIdLanguageId,
-  deleteTranslation
+  deleteProductTranslation
 );
 
 // ============================================================================

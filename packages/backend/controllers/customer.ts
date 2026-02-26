@@ -1,4 +1,3 @@
-import { Response } from "express";
 import {
   buildCustomerWhereClause,
   buildPagination,
@@ -7,8 +6,7 @@ import {
 } from "../helpers/company";
 import { prisma } from "../config/prisma-client";
 import { calculateCustomerStats, validateFiscalData } from "../utils/company";
-import {
-  formatPaginatedResponse,
+import {  
   sendCreated,
   sendDeleted,
   sendFail,
@@ -415,15 +413,15 @@ export const getCustomerStats = asyncHandler<AuthenticatedValidatedRequest>(
               where: { id: item.productVariantId! },
               select: {
                 id: true,
-                translations: {
-                  where: {
-                    languageId: preferredLanguageId,
-                  },
-                  take: 1,
-                  select: {
-                    name: true,
-                  },
-                },
+              },
+            },
+            translations: {
+              where: {
+                languageId: preferredLanguageId,
+              },
+              take: 1,
+              select: {
+                name: true,
               },
             },
           },
@@ -432,8 +430,7 @@ export const getCustomerStats = asyncHandler<AuthenticatedValidatedRequest>(
         return {
           productId: item.productId,
           variantId: item.productVariantId,
-          productName:
-            product?.variants[0]?.translations[0].name || product?.reference,
+          productName: product?.translations[0].name || product?.reference,
           totalQuantity: item._sum.quantity,
           orderCount: item._count.id,
         };
@@ -490,8 +487,14 @@ export const deleteCustomer = asyncHandler<AuthenticatedValidatedRequest>(
       sendFail(res, {
         message: `Impossibile eliminare: Customer ha ${totalRelations} relazioni attive`,
         errors: [
-          { field: "documents", message: customer._count.documentsOut.toString() },
-          { field: "opportunities", message: customer._count.opportunities.toString() },
+          {
+            field: "documents",
+            message: customer._count.documentsOut.toString(),
+          },
+          {
+            field: "opportunities",
+            message: customer._count.opportunities.toString(),
+          },
         ],
       });
       return;

@@ -111,62 +111,60 @@ export const proposedProductSchema = z
   .strict();
 
 /**
- * Schema per la creazione di un'opportunità
+ * Raw object shape for Opportunity — no refinements, no strict.
+ * Used as base for both create and update schemas.
  */
-export const createOpportunitySchema = z
-  .object({
-    title: z
-      .string()
-      .min(1, "Titolo è obbligatorio")
-      .max(255, "Titolo non può superare 255 caratteri")
-      .trim(),
-    description: z.string().max(5000).optional().nullable(),
-    // Relations
-    leadId: createIdSchema("Lead ID non valido").optional().nullable(),
-    customerId: createIdSchema("Customer ID non valido"),
-    source: opportunitySourceSchema.default("OTHER"),
-    // Status and stage
-    status: opportunityStatusSchema.default("OPEN"),
-    stage: salesStageSchema.default("LEAD_QUALIFICATION"),
-    // Financial metrics
-    estimatedValue: opportunityValueSchema.optional().nullable(),
-    probability: probabilitySchema,
-    // Calculated field (can be provided or auto-calculated)
-    weightedValue: opportunityValueSchema.optional(),
-    // Timing
-    expectedCloseDate: isoDateSchema(),
-    // Assignment
-    assignedUserId: userIdSchema.optional().nullable(),
-    // Products/Services
-    proposedProducts: z
-      .array(proposedProductSchema)
-      .optional()
-      .nullable()
-      .default([]),
+const opportunityShape = z.object({
+  title: z
+    .string()
+    .min(1, "Titolo è obbligatorio")
+    .max(255, "Titolo non può superare 255 caratteri")
+    .trim(),
+  description: z.string().max(5000).optional().nullable(),
 
-    // Notes
-    notes: z.string().trim().optional(),
-    customFields: inputJsonValueSchema.optional().nullable(),
-  })
-  .strict()
-  .refine(
-    (data) => {
-      // If estimatedValue is provided and probability is set, calculate weightedValue
-      if (data.estimatedValue && !data.weightedValue) {
-        // This will be handled in the service layer
-        return true;
-      }
-      return true;
-    },
-    {
-      message: "Weighted value calcolato automaticamente",
-    },
-  );
+  // Relations
+  leadId: createIdSchema("Lead ID non valido").optional().nullable(),
+  customerId: createIdSchema("Customer ID non valido"),
+  source: opportunitySourceSchema.default("OTHER"),
+
+  // Status and stage
+  status: opportunityStatusSchema.default("OPEN"),
+  stage: salesStageSchema.default("LEAD_QUALIFICATION"),
+
+  // Financial metrics
+  estimatedValue: opportunityValueSchema.optional().nullable(),
+  probability: probabilitySchema,
+  weightedValue: opportunityValueSchema.optional(),
+
+  // Timing
+  expectedCloseDate: isoDateSchema(),
+
+  // Assignment
+  assignedUserId: userIdSchema.optional().nullable(),
+
+  // Products/Services
+  proposedProducts: z
+    .array(proposedProductSchema)
+    .optional()
+    .nullable()
+    .default([]),
+
+  notes: z.string().trim().optional(),
+  customFields: inputJsonValueSchema.optional().nullable(),
+});
 
 /**
- * Schema for updating an Opportunity
+ * Schema for creating an Opportunity.
+ * The refine here is a no-op placeholder — weightedValue is auto-calculated
+ * in the service layer. Kept as documentation intent only.
  */
-export const updateOpportunitySchema = createOpportunitySchema
+export const createOpportunitySchema = opportunityShape.strict();
+
+/**
+ * Schema for updating an Opportunity — partial, without immutable FK fields.
+ * customerId and leadId are immutable after creation.
+ */
+export const updateOpportunitySchema = opportunityShape
   .omit({ customerId: true, leadId: true })
   .partial()
   .strict();
@@ -183,21 +181,25 @@ export const updateOpportunityStageSchema = z
   .strict();
 
 /**
- * Schema for updating Opportunity status
+ * Raw shape for status update — no refinements.
  */
-export const updateOpportunityStatusSchema = z
-  .object({
-    status: opportunityStatusSchema,
-    closedReasonId: createIdSchema("Closed Reason ID non valido")
-      .optional()
-      .nullable(),
-    closedNotes: z.string().max(1000).optional().nullable(),
-    actualValue: opportunityValueSchema.optional().nullable(),
-  })
+const opportunityStatusShape = z.object({
+  status: opportunityStatusSchema,
+  closedReasonId: createIdSchema("Closed Reason ID non valido")
+    .optional()
+    .nullable(),
+  closedNotes: z.string().max(1000).optional().nullable(),
+  actualValue: opportunityValueSchema.optional().nullable(),
+});
+
+/**
+ * Schema for updating Opportunity status — includes cross-field refinements
+ * for WON/LOST validation.
+ */
+export const updateOpportunityStatusSchema = opportunityStatusShape
   .strict()
   .refine(
     (data) => {
-      // If status is WON or LOST, closedReasonId is required
       if (
         (data.status === "WON" || data.status === "LOST") &&
         !data.closedReasonId
@@ -213,7 +215,6 @@ export const updateOpportunityStatusSchema = z
   )
   .refine(
     (data) => {
-      // If status is WON, actualValue should be provided
       if (data.status === "WON" && !data.actualValue) {
         return false;
       }
@@ -385,7 +386,9 @@ export const opportunityQuerySchema = z.object({
 export const closedReasonQuerySchema = z.object({
   isWon: z.boolean().optional(),
   active: z.boolean().optional(),
-  sortBy: z.enum(["id", "code", "displayOrder", "createdAt"]).default("displayOrder"),
+  sortBy: z
+    .enum(["id", "code", "displayOrder", "createdAt"])
+    .default("displayOrder"),
   sortOrder: sortOrderSchema,
 });
 
@@ -419,5 +422,7 @@ export const salesFunnelAnalysisSchema = z.object({
   assignedUserId: createIdSchema("User ID non valido").optional(),
   dateFrom: isoDateSchema(),
   dateTo: isoDateSchema(),
-  groupBy: z.enum(["stage", "source", "assignedUser", "month"]).default("stage"),
+  groupBy: z
+    .enum(["stage", "source", "assignedUser", "month"])
+    .default("stage"),
 });

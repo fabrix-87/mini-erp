@@ -91,7 +91,7 @@ export const ModelName = {
   PriceList: 'PriceList',
   PriceListItem: 'PriceListItem',
   Product: 'Product',
-  ProductVariantTranslation: 'ProductVariantTranslation',
+  ProductTranslation: 'ProductTranslation',
   ProductVariant: 'ProductVariant',
   ProductImage: 'ProductImage',
   ProductCategory: 'ProductCategory',
@@ -1011,9 +1011,9 @@ export const ProductScalarFieldEnum = {
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
 
 
-export const ProductVariantTranslationScalarFieldEnum = {
+export const ProductTranslationScalarFieldEnum = {
   id: 'id',
-  productVariantId: 'productVariantId',
+  productId: 'productId',
   languageId: 'languageId',
   name: 'name',
   description: 'description',
@@ -1031,7 +1031,7 @@ export const ProductVariantTranslationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type ProductVariantTranslationScalarFieldEnum = (typeof ProductVariantTranslationScalarFieldEnum)[keyof typeof ProductVariantTranslationScalarFieldEnum]
+export type ProductTranslationScalarFieldEnum = (typeof ProductTranslationScalarFieldEnum)[keyof typeof ProductTranslationScalarFieldEnum]
 
 
 export const ProductVariantScalarFieldEnum = {

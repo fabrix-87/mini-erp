@@ -22,70 +22,67 @@ export const sdiTransmissionFormatSchema = z.enum([
 ]);
 
 /**
- * Schema for creating Tenant Settings
+ * Raw object shape for TenantSettings — no refinements.
  */
-export const createTenantSettingsSchema = z
-  .object({
-    tenantCode: z
-      .string()
-      .max(20, "Tenant code non può superare 20 caratteri")
-      .trim()
-      .optional()
-      .nullable(),
+const tenantSettingsShape = z.object({
+  tenantCode: z
+    .string()
+    .max(20, "Tenant code non può superare 20 caratteri")
+    .trim()
+    .optional()
+    .nullable(),
 
-    companyId: createIdSchema("Company ID non valido").optional().nullable(),
+  companyId: createIdSchema("Company ID non valido").optional().nullable(),
 
-    // Tax regime
-    taxRegime: z
-      .string()
-      .max(50, "Tax regime non può superare 50 caratteri")
-      .optional()
-      .nullable(),
+  taxRegime: z
+    .string()
+    .max(50, "Tax regime non può superare 50 caratteri")
+    .optional()
+    .nullable(),
 
-    // Default tax rules
-    defaultSalesTaxRuleId: createIdSchema("Tax Rule ID non valido")
-      .optional()
-      .nullable(),
+  defaultSalesTaxRuleId: createIdSchema("Tax Rule ID non valido")
+    .optional()
+    .nullable(),
 
-    defaultPurchasesTaxRuleId: createIdSchema("Tax Rule ID non valido")
-      .optional()
-      .nullable(),
+  defaultPurchasesTaxRuleId: createIdSchema("Tax Rule ID non valido")
+    .optional()
+    .nullable(),
 
-    // Defaults
-    defaultCurrency: currencyCodeBaseSchema.default("EUR"),
+  defaultCurrency: currencyCodeBaseSchema.default("EUR"),
 
-    defaultLanguageId: createIdSchema("Language ID non valido")
-      .optional()
-      .nullable(),
+  defaultLanguageId: createIdSchema("Language ID non valido")
+    .optional()
+    .nullable(),
 
-    // Electronic invoicing configuration
-    sdiTransmissionFormat: sdiTransmissionFormatSchema.optional().nullable(),
+  sdiTransmissionFormat: sdiTransmissionFormatSchema.optional().nullable(),
 
-    sdiCertificatePath: z
-      .string()
-      .max(500, "Certificate path non può superare 500 caratteri")
-      .optional()
-      .nullable(),
-  })
-  .strict()
-  .refine(
-    (data) => {
-      // If sdiCertificatePath is provided, sdiTransmissionFormat must be set
-      if (data.sdiCertificatePath && !data.sdiTransmissionFormat) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "Formato trasmissione SDI obbligatorio se certificato specificato",
-      path: ["sdiTransmissionFormat"],
-    },
-  );
+  sdiCertificatePath: z
+    .string()
+    .max(500, "Certificate path non può superare 500 caratteri")
+    .optional()
+    .nullable(),
+});
 
 /**
- * Schema for updating Tenant Settings
+ * Schema for creating TenantSettings — includes SDI cross-field validation.
  */
-export const updateTenantSettingsSchema = createTenantSettingsSchema
+export const createTenantSettingsSchema = tenantSettingsShape.strict().refine(
+  (data) => {
+    if (data.sdiCertificatePath && !data.sdiTransmissionFormat) return false;
+    return true;
+  },
+  {
+    message: "Formato trasmissione SDI obbligatorio se certificato specificato",
+    path: ["sdiTransmissionFormat"],
+  },
+);
+
+/**
+ * Schema for updating TenantSettings — partial, tenantCode immutable.
+ * SDI validation omitted: partial updates may carry only one of the two fields.
+ * Controller validates consistency against DB state.
+ */
+export const updateTenantSettingsSchema = tenantSettingsShape
   .omit({ tenantCode: true })
   .partial()
   .strict();
@@ -107,29 +104,24 @@ export const updateTaxDefaultsSchema = z
   })
   .strict();
 
-/**
- * Schema for updating SDI configuration
- */
-export const updateSdiConfigSchema = z
-  .object({
-    sdiTransmissionFormat: sdiTransmissionFormatSchema.optional().nullable(),
+const sdiConfigShape = z.object({
+  sdiTransmissionFormat: sdiTransmissionFormatSchema.optional().nullable(),
+  sdiCertificatePath: z.string().max(500).optional().nullable(),
+});
 
-    sdiCertificatePath: z.string().max(500).optional().nullable(),
-  })
-  .strict()
-  .refine(
-    (data) => {
-      // If certificate path is set, format must be provided
-      if (data.sdiCertificatePath && !data.sdiTransmissionFormat) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "Formato trasmissione obbligatorio con certificato",
-      path: ["sdiTransmissionFormat"],
-    },
-  );
+/**
+ * Schema for updating SDI configuration — format required when certificate is set.
+ */
+export const updateSdiConfigSchema = sdiConfigShape.strict().refine(
+  (data) => {
+    if (data.sdiCertificatePath && !data.sdiTransmissionFormat) return false;
+    return true;
+  },
+  {
+    message: "Formato trasmissione obbligatorio con certificato",
+    path: ["sdiTransmissionFormat"],
+  },
+);
 
 /**
  * Schema for updating regional settings

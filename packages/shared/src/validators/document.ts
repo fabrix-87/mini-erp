@@ -147,64 +147,54 @@ export const documentLineIdSchema = createIdSchema(
   "ID Document Line non valido",
 );
 
-export const createDocumentLineSchema = z
-  .object({
-    productVariantId: createIdSchema("Product Variant ID non valido")
-      .optional()
-      .nullable(),
-    productId: createIdSchema("Product ID non valido").optional().nullable(),
+/**
+ * Raw object shape for DocumentLine — no strict, used for omit/partial.
+ */
+const documentLineShape = z.object({
+  productVariantId: createIdSchema("Product Variant ID non valido")
+    .optional()
+    .nullable(),
+  productId: createIdSchema("Product ID non valido").optional().nullable(),
+  lineNumber: z.number().int().positive("Line number deve essere positivo"),
+  lineType: documentLineTypeSchema.default(DOCUMENT_LINE_TYPES.PRODUCT),
+  code: z.string().max(100).optional().nullable(),
+  nameSystem: z
+    .string()
+    .min(1, "Nome sistema obbligatorio")
+    .max(255, "Nome max 255 caratteri"),
+  descriptionSystem: z.string().max(5000).optional().nullable(),
+  nameCustomer: z.string().max(255).optional().nullable(),
+  descriptionCustomer: z.string().max(5000).optional().nullable(),
+  quantity: quantitySchema(1),
+  unit: z.string().max(20).default("pz"),
+  unitPrice: priceSchema({ defaultValue: 0 }),
+  unitCost: priceSchema({ defaultValue: 0 }),
+  discountPercent: discountPercentSchema,
+  discountAmount: moneySchema,
+  lineTotal: moneySchema,
+  taxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
+  taxPercent: taxPercentSchema.default(new Decimal(22)),
+  taxAmount: moneySchema,
+  vatNatureCode: z.string().max(10).optional().nullable(),
+  vatNormReference: z.string().max(255).optional().nullable(),
+  lineTotalWithTax: moneySchema,
+  notes: z.string().max(1000).optional().nullable(),
+  customFields: inputJsonValueSchema.optional().nullable(),
+  warehouseId: createIdSchema("Warehouse ID non valido").optional().nullable(),
+  parentLineId: documentLineIdSchema.optional().nullable(),
+  isComponent: z.boolean().default(false),
+  quantityInvoiced: quantitySchema(0),
+  quantityDelivered: quantitySchema(0),
+  quantityReturned: quantitySchema(0),
+  originalUnitPrice: priceSchema().optional().nullable(),
+  priceOverrideReason: z.string().max(500).optional().nullable(),
+});
 
-    lineNumber: z.number().int().positive("Line number deve essere positivo"),
-    lineType: documentLineTypeSchema.default(DOCUMENT_LINE_TYPES.PRODUCT),
-    code: z.string().max(100).optional().nullable(),
+/** Schema for creating a DocumentLine. */
+export const createDocumentLineSchema = documentLineShape.strict();
 
-    nameSystem: z
-      .string()
-      .min(1, "Nome sistema obbligatorio")
-      .max(255, "Nome max 255 caratteri"),
-    descriptionSystem: z.string().max(5000).optional().nullable(),
-    nameCustomer: z.string().max(255).optional().nullable(),
-    descriptionCustomer: z.string().max(5000).optional().nullable(),
-
-    quantity: quantitySchema(1),
-    unit: z.string().max(20, "Unità max 20 caratteri").default("pz"),
-
-    unitPrice: priceSchema({ defaultValue: 0 }),
-    unitCost: priceSchema({ defaultValue: 0 }),
-
-    discountPercent: discountPercentSchema,
-    discountAmount: moneySchema,
-
-    lineTotal: moneySchema,
-
-    taxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
-    taxPercent: taxPercentSchema.default(new Decimal(22)),
-    taxAmount: moneySchema,
-
-    vatNatureCode: z.string().max(10).optional().nullable(),
-    vatNormReference: z.string().max(255).optional().nullable(),
-
-    lineTotalWithTax: moneySchema,
-
-    notes: z.string().max(1000).optional().nullable(),
-    customFields: inputJsonValueSchema.optional().nullable(),
-
-    warehouseId: createIdSchema("Warehouse ID non valido")
-      .optional()
-      .nullable(),
-
-    parentLineId: documentLineIdSchema.optional().nullable(),
-
-    isComponent: z.boolean().default(false),
-    quantityInvoiced: quantitySchema(0),
-    quantityDelivered: quantitySchema(0),
-    quantityReturned: quantitySchema(0),
-    originalUnitPrice: priceSchema().optional().nullable(),
-    priceOverrideReason: z.string().max(500).optional().nullable(),
-  })
-  .strict();
-
-export const updateDocumentLineSchema = createDocumentLineSchema
+/** Schema for updating a DocumentLine — lineNumber is immutable. */
+export const updateDocumentLineSchema = documentLineShape
   .omit({ lineNumber: true })
   .partial()
   .strict();
@@ -215,22 +205,25 @@ export const updateDocumentLineSchema = createDocumentLineSchema
 
 export const installmentIdSchema = createIdSchema("ID Installment non valido");
 
-export const createInstallmentSchema = z
-  .object({
-    installmentNumber: z.number().int().positive().default(1),
-    percentage: installmentPercentSchema,
-    amount: moneySchema,
-    dueDate: isoDateSchema(),
-    notes: z.string().max(500).optional().nullable(),
-    paymentMethodId: createIdSchema("Payment Method ID non valido")
-      .optional()
-      .nullable(),
-  })
-  .strict();
+/**
+ * Raw object shape for Installment.
+ */
+const installmentShape = z.object({
+  installmentNumber: z.number().int().positive().default(1),
+  percentage: installmentPercentSchema,
+  amount: moneySchema,
+  dueDate: isoDateSchema(),
+  notes: z.string().max(500).optional().nullable(),
+  paymentMethodId: createIdSchema("Payment Method ID non valido")
+    .optional()
+    .nullable(),
+});
 
-export const updateInstallmentSchema = createInstallmentSchema
-  .partial()
-  .strict();
+/** Schema for creating an Installment. */
+export const createInstallmentSchema = installmentShape.strict();
+
+/** Schema for updating an Installment — all fields optional. */
+export const updateInstallmentSchema = installmentShape.partial().strict();
 
 export const payInstallmentSchema = z
   .object({
@@ -252,163 +245,117 @@ export const payInstallmentSchema = z
 
 export const documentIdSchema = createIdSchema("ID Document non valido");
 
-export const createDocumentSchema = z
-  .object({
-    documentType: documentTypeSchema,
+/**
+ * Raw object shape for Document — no refinements.
+ */
+const documentShape = z.object({
+  documentType: documentTypeSchema,
+  statusCategory: documentStatusCategorySchema.default(
+    DOCUMENT_STATUS_CATEGORIES.DRAFT_PHASE,
+  ),
+  status: documentStatusSchema.default(DOCUMENT_STATUSES.DRAFT),
+  documentYear: z
+    .number()
+    .int()
+    .min(2000)
+    .max(2100)
+    .default(() => new Date().getFullYear()),
 
-    statusCategory: documentStatusCategorySchema.default(
-      DOCUMENT_STATUS_CATEGORIES.DRAFT_PHASE,
-    ),
+  companyId: createIdSchema("Company ID non valido"),
+  customerId: createIdSchema("Customer ID non valido").optional().nullable(),
+  supplierId: createIdSchema("Supplier ID non valido").optional().nullable(),
+  contactId: createIdSchema("Contact ID non valido").optional().nullable(),
+  opportunityId: createIdSchema("Opportunity ID non valido")
+    .optional()
+    .nullable(),
+  leadId: createIdSchema("Lead ID non valido").optional().nullable(),
+  warehouseId: createIdSchema("Warehouse ID non valido").optional().nullable(),
 
-    status: documentStatusSchema.default(DOCUMENT_STATUSES.DRAFT),
+  documentDate: isoDateSchema().default(() => new Date().toISOString()),
+  dueDate: isoDateSchema(),
+  deliveryDate: isoDateSchema(),
+  validUntil: isoDateSchema(),
+  parentDocumentId: documentIdSchema.optional().nullable(),
 
-    documentYear: z
-      .number()
-      .int()
-      .min(2000)
-      .max(2100)
-      .default(() => new Date().getFullYear()),
+  // Customer snapshot
+  customerName: z.string().min(1, "Nome cliente obbligatorio").max(255),
+  customerVatNumber: z.string().max(20).optional().nullable(),
+  customerTaxCode: z.string().max(20).optional().nullable(),
+  customerPec: z
+    .string()
+    .email("PEC non valida")
+    .max(255)
+    .optional()
+    .nullable(),
+  customerSdiCode: z.string().max(7).optional().nullable(),
+  customerAddress: z.string().max(255).optional().nullable(),
+  customerCity: z.string().max(100).optional().nullable(),
+  customerPostalCode: z.string().max(20).optional().nullable(),
+  customerProvince: z.string().max(2).optional().nullable(),
+  customerCountryCode: countryCodeBaseSchema.default("IT"),
+  customerEmail: emailSchema().optional().nullable(),
+  customerPhone: phoneSchema,
 
-    companyId: createIdSchema("Company ID non valido"),
+  // Shipping
+  shippingName: z.string().max(255).optional().nullable(),
+  shippingAddress: z.string().max(255).optional().nullable(),
+  shippingCity: z.string().max(100).optional().nullable(),
+  shippingPostalCode: z.string().max(20).optional().nullable(),
+  shippingProvince: z.string().max(2).optional().nullable(),
+  shippingCountryCode: countryCodeBaseSchema.optional().nullable(),
 
-    customerId: createIdSchema("Customer ID non valido").optional().nullable(),
+  // Amounts
+  subtotal: moneySchema,
+  discountPercent: discountPercentSchema,
+  discountAmount: moneySchema,
+  shippingCost: moneySchema,
+  shippingTaxAmount: moneySchema,
+  taxableAmount: moneySchema,
+  taxAmount: moneySchema,
+  totalAmount: moneySchema,
+  paidAmount: moneySchema,
+  currencyCode: currencyCodeBaseSchema.default("EUR"),
+  exchangeRate: exchangeRateSchema.default(new Decimal(1.0)),
+  exchangeRateDate: isoDateSchema().default(() => new Date().toISOString()),
+  baseCurrencyCode: currencyCodeBaseSchema.default("EUR"),
 
-    supplierId: createIdSchema("Supplier ID non valido").optional().nullable(),
+  // Payment
+  paymentMethodId: createIdSchema("Payment Method ID non valido")
+    .optional()
+    .nullable(),
+  paymentMethod: z.string().max(50).default("bank_transfer"),
+  paymentTerms: z.string().max(100).optional().nullable(),
+  bankName: z.string().max(100).optional().nullable(),
+  bankIban: z.string().max(34).optional().nullable(),
+  bankSwift: z.string().max(11).optional().nullable(),
 
-    contactId: createIdSchema("Contact ID non valido").optional().nullable(),
+  // Notes
+  notes: z.string().max(5000).optional().nullable(),
+  internalNotes: z.string().max(5000).optional().nullable(),
+  termsAndConditions: z.string().max(10000).optional().nullable(),
+  customFields: inputJsonValueSchema.optional().nullable(),
 
-    opportunityId: createIdSchema("Opportunity ID non valido")
-      .optional()
-      .nullable(),
+  // Lines & Installments
+  lines: z
+    .array(createDocumentLineSchema)
+    .max(MAX_DOCUMENT_LINES, `Massimo ${MAX_DOCUMENT_LINES} righe`)
+    .optional()
+    .default([]),
+  installments: z
+    .array(createInstallmentSchema)
+    .max(MAX_INSTALLMENTS, `Massimo ${MAX_INSTALLMENTS} rate`)
+    .optional()
+    .default([]),
+});
 
-    leadId: createIdSchema("Lead ID non valido").optional().nullable(),
-
-    warehouseId: createIdSchema("Warehouse ID non valido")
-      .optional()
-      .nullable(),
-
-    documentDate: isoDateSchema().default(() => new Date().toISOString()),
-
-    dueDate: isoDateSchema(),
-
-    deliveryDate: isoDateSchema(),
-
-    validUntil: isoDateSchema(),
-
-    parentDocumentId: documentIdSchema.optional().nullable(),
-
-    // Customer snapshot data
-    customerName: z.string().min(1, "Nome cliente obbligatorio").max(255),
-
-    customerVatNumber: z.string().max(20).optional().nullable(),
-
-    customerTaxCode: z.string().max(20).optional().nullable(),
-
-    customerPec: z
-      .string()
-      .email("PEC non valida")
-      .max(255)
-      .optional()
-      .nullable(),
-
-    customerSdiCode: z.string().max(7).optional().nullable(),
-
-    customerAddress: z.string().max(255).optional().nullable(),
-
-    customerCity: z.string().max(100).optional().nullable(),
-
-    customerPostalCode: z.string().max(20).optional().nullable(),
-
-    customerProvince: z.string().max(2).optional().nullable(),
-
-    customerCountryCode: countryCodeBaseSchema.default("IT"),
-
-    customerEmail: emailSchema().optional().nullable(),
-
-    customerPhone: phoneSchema,
-
-    // Shipping address
-    shippingName: z.string().max(255).optional().nullable(),
-
-    shippingAddress: z.string().max(255).optional().nullable(),
-
-    shippingCity: z.string().max(100).optional().nullable(),
-
-    shippingPostalCode: z.string().max(20).optional().nullable(),
-
-    shippingProvince: z.string().max(2).optional().nullable(),
-
-    shippingCountryCode: countryCodeBaseSchema.optional().nullable(),
-
-    // Amounts
-    subtotal: moneySchema,
-
-    discountPercent: discountPercentSchema,
-
-    discountAmount: moneySchema,
-
-    shippingCost: moneySchema,
-
-    shippingTaxAmount: moneySchema,
-
-    taxableAmount: moneySchema,
-
-    taxAmount: moneySchema,
-
-    totalAmount: moneySchema,
-
-    paidAmount: moneySchema,
-
-    currencyCode: currencyCodeBaseSchema.default("EUR"),
-
-    exchangeRate: exchangeRateSchema.default(new Decimal(1.0)),
-
-    exchangeRateDate: isoDateSchema().default(() => new Date().toISOString()),
-
-    baseCurrencyCode: currencyCodeBaseSchema.default("EUR"),
-
-    // Payment
-    paymentMethodId: createIdSchema("Payment Method ID non valido")
-      .optional()
-      .nullable(),
-
-    paymentMethod: z.string().max(50).default("bank_transfer"),
-
-    paymentTerms: z.string().max(100).optional().nullable(),
-
-    bankName: z.string().max(100).optional().nullable(),
-
-    bankIban: z.string().max(34).optional().nullable(),
-
-    bankSwift: z.string().max(11).optional().nullable(),
-
-    // Notes
-    notes: z.string().max(5000).optional().nullable(),
-
-    internalNotes: z.string().max(5000).optional().nullable(),
-
-    termsAndConditions: z.string().max(10000).optional().nullable(),
-
-    customFields: inputJsonValueSchema.optional().nullable(),
-
-    // Lines
-    lines: z
-      .array(createDocumentLineSchema)
-      .max(MAX_DOCUMENT_LINES, `Massimo ${MAX_DOCUMENT_LINES} righe`)
-      .optional()
-      .default([]),
-
-    // Installments
-    installments: z
-      .array(createInstallmentSchema)
-      .max(MAX_INSTALLMENTS, `Massimo ${MAX_INSTALLMENTS} rate`)
-      .optional()
-      .default([]),
-  })
+/**
+ * Schema for creating a Document — includes customer/supplier and
+ * installment sum cross-field validation.
+ */
+export const createDocumentSchema = documentShape
   .strict()
   .refine(
     (data) => {
-      // Customer required for sales documents
       if (
         DOCUMENTS_REQUIRING_CUSTOMER_ARRAY.includes(data.documentType as any) &&
         !data.customerId
@@ -424,7 +371,6 @@ export const createDocumentSchema = z
   )
   .refine(
     (data) => {
-      // Supplier required for purchase documents
       if (
         DOCUMENTS_REQUIRING_SUPPLIER_ARRAY.includes(data.documentType as any) &&
         !data.supplierId
@@ -440,7 +386,6 @@ export const createDocumentSchema = z
   )
   .refine(
     (data) => {
-      // Validate installments sum to 100%
       if (data.installments && data.installments.length > 0) {
         const totalPercentage = data.installments.reduce(
           (sum, inst) => sum + Number(inst.percentage),
@@ -456,7 +401,12 @@ export const createDocumentSchema = z
     },
   );
 
-export const updateDocumentSchema = createDocumentSchema
+/**
+ * Schema for updating a Document — immutable structural fields excluded.
+ * documentType, documentYear, companyId, lines and installments cannot
+ * change after creation; manage them via dedicated endpoints.
+ */
+export const updateDocumentSchema = documentShape
   .omit({
     documentType: true,
     documentYear: true,
@@ -467,20 +417,22 @@ export const updateDocumentSchema = createDocumentSchema
   .partial()
   .strict();
 
-export const updateDocumentStatusSchema = z
-  .object({
-    status: documentStatusSchema,
-    statusCategory: documentStatusCategorySchema.optional(),
-    reason: z.string().max(500).optional().nullable(),
-    voidedReason: z.string().max(1000).optional().nullable(),
-  })
+const documentStatusUpdateShape = z.object({
+  status: documentStatusSchema,
+  statusCategory: documentStatusCategorySchema.optional(),
+  reason: z.string().max(500).optional().nullable(),
+  voidedReason: z.string().max(1000).optional().nullable(),
+});
+
+/**
+ * Schema for updating Document status — voidedReason required when VOIDED.
+ */
+export const updateDocumentStatusSchema = documentStatusUpdateShape
   .strict()
   .refine(
     (data) => {
-      // Voided reason required when status is VOIDED
-      if (data.status === DOCUMENT_STATUSES.VOIDED && !data.voidedReason) {
+      if (data.status === DOCUMENT_STATUSES.VOIDED && !data.voidedReason)
         return false;
-      }
       return true;
     },
     {
@@ -523,25 +475,21 @@ export const sendDocumentSchema = z
 // DOCUMENT RELATION SCHEMAS
 // ============================================================================
 
-export const createDocumentRelationSchema = z
-  .object({
-    sourceDocumentId: documentIdSchema,
+const documentRelationShape = z.object({
+  sourceDocumentId: documentIdSchema,
+  targetDocumentId: documentIdSchema,
+  relationType: documentRelationTypeSchema,
+});
 
-    targetDocumentId: documentIdSchema,
-
-    relationType: documentRelationTypeSchema,
-  })
+/**
+ * Schema for creating a Document relation — source and target must differ.
+ */
+export const createDocumentRelationSchema = documentRelationShape
   .strict()
-  .refine(
-    (data) => {
-      // Source and target cannot be the same
-      return data.sourceDocumentId !== data.targetDocumentId;
-    },
-    {
-      message: "Documento sorgente e destinazione devono essere diversi",
-      path: ["targetDocumentId"],
-    },
-  );
+  .refine((data) => data.sourceDocumentId !== data.targetDocumentId, {
+    message: "Documento sorgente e destinazione devono essere diversi",
+    path: ["targetDocumentId"],
+  });
 
 // ============================================================================
 // BULK OPERATIONS SCHEMAS
@@ -718,6 +666,12 @@ export const agingReportSchema = z.object({
   asOfDate: isoDateSchema().default(() => new Date().toISOString()),
   customerId: createIdSchema("Customer ID non valido").optional(),
   intervals: z.array(z.number().int().nonnegative()).default([30, 60, 90, 120]),
+});
+
+export const topProductsReportSchema = z.object({
+  dateFrom: isoDateSchema(),
+  dateTo: isoDateSchema(),
+  limit: limitSchema,
 });
 
 // ============================================================================

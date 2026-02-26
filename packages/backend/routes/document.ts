@@ -28,6 +28,7 @@ import {
   validateBulkSendDocuments,
   // Attachment validators
   validateDocumentAttachmentIdParam,
+  validateTopProductsReportQuery,
 } from "../validators/document";
 import {
   // Documents CRUD
@@ -658,6 +659,7 @@ router.get(
   "/reports/top-products",
   authenticateToken,
   authorize(["report:read", "document:manage"]),
+  validateTopProductsReportQuery,
   getTopProductsReport,
 );
 

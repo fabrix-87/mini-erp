@@ -225,7 +225,7 @@ export type LanguageWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Language"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Language"> | Date | string
   usersPreferred?: Prisma.UserListRelationFilter
-  productTranslations?: Prisma.ProductVariantTranslationListRelationFilter
+  productTranslations?: Prisma.ProductTranslationListRelationFilter
   categoryTranslations?: Prisma.CategoryTranslationListRelationFilter
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationListRelationFilter
   taxRuleTranslations?: Prisma.TaxRuleTranslationListRelationFilter
@@ -245,7 +245,7 @@ export type LanguageOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   usersPreferred?: Prisma.UserOrderByRelationAggregateInput
-  productTranslations?: Prisma.ProductVariantTranslationOrderByRelationAggregateInput
+  productTranslations?: Prisma.ProductTranslationOrderByRelationAggregateInput
   categoryTranslations?: Prisma.CategoryTranslationOrderByRelationAggregateInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationOrderByRelationAggregateInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationOrderByRelationAggregateInput
@@ -268,7 +268,7 @@ export type LanguageWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Language"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Language"> | Date | string
   usersPreferred?: Prisma.UserListRelationFilter
-  productTranslations?: Prisma.ProductVariantTranslationListRelationFilter
+  productTranslations?: Prisma.ProductTranslationListRelationFilter
   categoryTranslations?: Prisma.CategoryTranslationListRelationFilter
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationListRelationFilter
   taxRuleTranslations?: Prisma.TaxRuleTranslationListRelationFilter
@@ -313,7 +313,7 @@ export type LanguageCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutLanguageInput
@@ -333,7 +333,7 @@ export type LanguageUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserUncheckedCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationUncheckedCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutLanguageInput
@@ -352,7 +352,7 @@ export type LanguageUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutLanguageNestedInput
@@ -372,7 +372,7 @@ export type LanguageUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutLanguageNestedInput
@@ -652,7 +652,7 @@ export type LanguageCreateWithoutAttributeGroupTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutLanguageInput
@@ -671,7 +671,7 @@ export type LanguageUncheckedCreateWithoutAttributeGroupTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserUncheckedCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationUncheckedCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutLanguageInput
@@ -705,7 +705,7 @@ export type LanguageUpdateWithoutAttributeGroupTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutLanguageNestedInput
@@ -724,7 +724,7 @@ export type LanguageUncheckedUpdateWithoutAttributeGroupTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutLanguageNestedInput
@@ -742,7 +742,7 @@ export type LanguageCreateWithoutAttributeTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutLanguageInput
@@ -761,7 +761,7 @@ export type LanguageUncheckedCreateWithoutAttributeTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserUncheckedCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationUncheckedCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutLanguageInput
@@ -795,7 +795,7 @@ export type LanguageUpdateWithoutAttributeTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutLanguageNestedInput
@@ -814,7 +814,7 @@ export type LanguageUncheckedUpdateWithoutAttributeTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutLanguageNestedInput
@@ -832,7 +832,7 @@ export type LanguageCreateWithoutCategoryTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutLanguageInput
   attributeTranslations?: Prisma.AttributeTranslationCreateNestedManyWithoutLanguageInput
@@ -851,7 +851,7 @@ export type LanguageUncheckedCreateWithoutCategoryTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserUncheckedCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationUncheckedCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutLanguageInput
   attributeTranslations?: Prisma.AttributeTranslationUncheckedCreateNestedManyWithoutLanguageInput
@@ -885,7 +885,7 @@ export type LanguageUpdateWithoutCategoryTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutLanguageNestedInput
   attributeTranslations?: Prisma.AttributeTranslationUpdateManyWithoutLanguageNestedInput
@@ -904,7 +904,7 @@ export type LanguageUncheckedUpdateWithoutCategoryTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   attributeTranslations?: Prisma.AttributeTranslationUncheckedUpdateManyWithoutLanguageNestedInput
@@ -922,7 +922,7 @@ export type LanguageCreateWithoutCountriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutLanguageInput
@@ -941,7 +941,7 @@ export type LanguageUncheckedCreateWithoutCountriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserUncheckedCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationUncheckedCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutLanguageInput
@@ -992,7 +992,7 @@ export type LanguageCreateWithoutCurrencyTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutLanguageInput
@@ -1011,7 +1011,7 @@ export type LanguageUncheckedCreateWithoutCurrencyTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserUncheckedCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationUncheckedCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutLanguageInput
@@ -1045,7 +1045,7 @@ export type LanguageUpdateWithoutCurrencyTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutLanguageNestedInput
@@ -1064,7 +1064,7 @@ export type LanguageUncheckedUpdateWithoutCurrencyTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutLanguageNestedInput
@@ -1082,7 +1082,7 @@ export type LanguageCreateWithoutPaymentMethodTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutLanguageInput
   attributeTranslations?: Prisma.AttributeTranslationCreateNestedManyWithoutLanguageInput
@@ -1101,7 +1101,7 @@ export type LanguageUncheckedCreateWithoutPaymentMethodTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserUncheckedCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationUncheckedCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutLanguageInput
   attributeTranslations?: Prisma.AttributeTranslationUncheckedCreateNestedManyWithoutLanguageInput
@@ -1135,7 +1135,7 @@ export type LanguageUpdateWithoutPaymentMethodTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutLanguageNestedInput
   attributeTranslations?: Prisma.AttributeTranslationUpdateManyWithoutLanguageNestedInput
@@ -1154,7 +1154,7 @@ export type LanguageUncheckedUpdateWithoutPaymentMethodTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   attributeTranslations?: Prisma.AttributeTranslationUncheckedUpdateManyWithoutLanguageNestedInput
@@ -1262,7 +1262,7 @@ export type LanguageCreateWithoutTenantInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutLanguageInput
@@ -1281,7 +1281,7 @@ export type LanguageUncheckedCreateWithoutTenantInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserUncheckedCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationUncheckedCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutLanguageInput
@@ -1315,7 +1315,7 @@ export type LanguageUpdateWithoutTenantInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutLanguageNestedInput
@@ -1334,7 +1334,7 @@ export type LanguageUncheckedUpdateWithoutTenantInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutLanguageNestedInput
@@ -1352,7 +1352,7 @@ export type LanguageCreateWithoutVatNatureTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutLanguageInput
@@ -1371,7 +1371,7 @@ export type LanguageUncheckedCreateWithoutVatNatureTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserUncheckedCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationUncheckedCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutLanguageInput
@@ -1405,7 +1405,7 @@ export type LanguageUpdateWithoutVatNatureTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutLanguageNestedInput
@@ -1424,7 +1424,7 @@ export type LanguageUncheckedUpdateWithoutVatNatureTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutLanguageNestedInput
@@ -1442,7 +1442,7 @@ export type LanguageCreateWithoutTaxRuleTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutLanguageInput
   attributeTranslations?: Prisma.AttributeTranslationCreateNestedManyWithoutLanguageInput
@@ -1461,7 +1461,7 @@ export type LanguageUncheckedCreateWithoutTaxRuleTranslationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   usersPreferred?: Prisma.UserUncheckedCreateNestedManyWithoutPreferredLanguageInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationUncheckedCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutLanguageInput
   attributeTranslations?: Prisma.AttributeTranslationUncheckedCreateNestedManyWithoutLanguageInput
@@ -1495,7 +1495,7 @@ export type LanguageUpdateWithoutTaxRuleTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUpdateManyWithoutLanguageNestedInput
   attributeTranslations?: Prisma.AttributeTranslationUpdateManyWithoutLanguageNestedInput
@@ -1514,7 +1514,7 @@ export type LanguageUncheckedUpdateWithoutTaxRuleTranslationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   attributeTranslations?: Prisma.AttributeTranslationUncheckedUpdateManyWithoutLanguageNestedInput
@@ -1531,7 +1531,7 @@ export type LanguageCreateWithoutUsersPreferredInput = {
   language_code: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  productTranslations?: Prisma.ProductVariantTranslationCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationCreateNestedManyWithoutLanguageInput
@@ -1550,7 +1550,7 @@ export type LanguageUncheckedCreateWithoutUsersPreferredInput = {
   language_code: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedCreateNestedManyWithoutLanguageInput
+  productTranslations?: Prisma.ProductTranslationUncheckedCreateNestedManyWithoutLanguageInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedCreateNestedManyWithoutLanguageInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedCreateNestedManyWithoutLanguageInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedCreateNestedManyWithoutLanguageInput
@@ -1584,7 +1584,7 @@ export type LanguageUpdateWithoutUsersPreferredInput = {
   language_code?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  productTranslations?: Prisma.ProductVariantTranslationUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutLanguageNestedInput
@@ -1603,7 +1603,7 @@ export type LanguageUncheckedUpdateWithoutUsersPreferredInput = {
   language_code?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutLanguageNestedInput
@@ -1622,7 +1622,7 @@ export type LanguageUpdateWithoutCountriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUpdateManyWithoutLanguageNestedInput
@@ -1641,7 +1641,7 @@ export type LanguageUncheckedUpdateWithoutCountriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   usersPreferred?: Prisma.UserUncheckedUpdateManyWithoutPreferredLanguageNestedInput
-  productTranslations?: Prisma.ProductVariantTranslationUncheckedUpdateManyWithoutLanguageNestedInput
+  productTranslations?: Prisma.ProductTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   categoryTranslations?: Prisma.CategoryTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   paymentMethodTranslations?: Prisma.PaymentMethodTranslationUncheckedUpdateManyWithoutLanguageNestedInput
   taxRuleTranslations?: Prisma.TaxRuleTranslationUncheckedUpdateManyWithoutLanguageNestedInput
@@ -1715,7 +1715,7 @@ export type LanguageCountOutputTypeCountUsersPreferredArgs<ExtArgs extends runti
  * LanguageCountOutputType without action
  */
 export type LanguageCountOutputTypeCountProductTranslationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProductVariantTranslationWhereInput
+  where?: Prisma.ProductTranslationWhereInput
 }
 
 /**
@@ -1852,7 +1852,7 @@ export type $LanguagePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "Language"
   objects: {
     usersPreferred: Prisma.$UserPayload<ExtArgs>[]
-    productTranslations: Prisma.$ProductVariantTranslationPayload<ExtArgs>[]
+    productTranslations: Prisma.$ProductTranslationPayload<ExtArgs>[]
     categoryTranslations: Prisma.$CategoryTranslationPayload<ExtArgs>[]
     paymentMethodTranslations: Prisma.$PaymentMethodTranslationPayload<ExtArgs>[]
     taxRuleTranslations: Prisma.$TaxRuleTranslationPayload<ExtArgs>[]
@@ -2265,7 +2265,7 @@ readonly fields: LanguageFieldRefs;
 export interface Prisma__LanguageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   usersPreferred<T extends Prisma.Language$usersPreferredArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Language$usersPreferredArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  productTranslations<T extends Prisma.Language$productTranslationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Language$productTranslationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductVariantTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  productTranslations<T extends Prisma.Language$productTranslationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Language$productTranslationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   categoryTranslations<T extends Prisma.Language$categoryTranslationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Language$categoryTranslationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CategoryTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   paymentMethodTranslations<T extends Prisma.Language$paymentMethodTranslationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Language$paymentMethodTranslationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentMethodTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   taxRuleTranslations<T extends Prisma.Language$taxRuleTranslationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Language$taxRuleTranslationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaxRuleTranslationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2726,23 +2726,23 @@ export type Language$usersPreferredArgs<ExtArgs extends runtime.Types.Extensions
  */
 export type Language$productTranslationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the ProductVariantTranslation
+   * Select specific fields to fetch from the ProductTranslation
    */
-  select?: Prisma.ProductVariantTranslationSelect<ExtArgs> | null
+  select?: Prisma.ProductTranslationSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the ProductVariantTranslation
+   * Omit specific fields from the ProductTranslation
    */
-  omit?: Prisma.ProductVariantTranslationOmit<ExtArgs> | null
+  omit?: Prisma.ProductTranslationOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ProductVariantTranslationInclude<ExtArgs> | null
-  where?: Prisma.ProductVariantTranslationWhereInput
-  orderBy?: Prisma.ProductVariantTranslationOrderByWithRelationInput | Prisma.ProductVariantTranslationOrderByWithRelationInput[]
-  cursor?: Prisma.ProductVariantTranslationWhereUniqueInput
+  include?: Prisma.ProductTranslationInclude<ExtArgs> | null
+  where?: Prisma.ProductTranslationWhereInput
+  orderBy?: Prisma.ProductTranslationOrderByWithRelationInput | Prisma.ProductTranslationOrderByWithRelationInput[]
+  cursor?: Prisma.ProductTranslationWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ProductVariantTranslationScalarFieldEnum | Prisma.ProductVariantTranslationScalarFieldEnum[]
+  distinct?: Prisma.ProductTranslationScalarFieldEnum | Prisma.ProductTranslationScalarFieldEnum[]
 }
 
 /**

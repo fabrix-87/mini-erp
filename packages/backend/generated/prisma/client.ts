@@ -240,10 +240,10 @@ export type PriceListItem = Prisma.PriceListItemModel
  */
 export type Product = Prisma.ProductModel
 /**
- * Model ProductVariantTranslation
+ * Model ProductTranslation
  * 
  */
-export type ProductVariantTranslation = Prisma.ProductVariantTranslationModel
+export type ProductTranslation = Prisma.ProductTranslationModel
 /**
  * Model ProductVariant
  * 

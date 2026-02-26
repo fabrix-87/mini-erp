@@ -56,123 +56,101 @@ export const companyIdSchema = z.object({
 // ============================================================================
 
 /**
- * Schema base per Company - usato per nested creation in Customer/Supplier
+ * Raw object shape — no refinements.
+ * Used as base for both create and update schemas.
+ * Refinements are applied separately only where needed (create).
  */
-export const baseCompanySchema = z
-  .object({
-    code: z
-      .string()
-      .min(1, "Il codice è obbligatorio")
-      .max(20, "Il codice non può superare 20 caratteri")
-      .trim()
-      .optional(), // Generato automaticamente se non fornito
+const baseCompanyShape = z.object({
+  code: z
+    .string()
+    .min(1, "Il codice è obbligatorio")
+    .max(20, "Il codice non può superare 20 caratteri")
+    .trim()
+    .optional(),
 
-    companyName: z
-      .string()
-      .min(1, "Il nome dell'azienda è obbligatorio")
-      .max(255, "Il nome non può superare 255 caratteri")
-      .trim(),
+  companyName: z
+    .string()
+    .min(1, "Il nome dell'azienda è obbligatorio")
+    .max(255, "Il nome non può superare 255 caratteri")
+    .trim(),
 
-    tradeName: z
-      .string()
-      .max(255, "Trade name non può superare 255 caratteri")
-      .optional()
-      .nullable(),
+  tradeName: z
+    .string()
+    .max(255, "Trade name non può superare 255 caratteri")
+    .optional()
+    .nullable(),
 
-    legalForm: z
-      .string()
-      .max(100, "Legal form non può superare 100 caratteri")
-      .optional()
-      .nullable(),
+  legalForm: z
+    .string()
+    .max(100, "Legal form non può superare 100 caratteri")
+    .optional()
+    .nullable(),
 
-    status: companyStatusSchema.default("ACTIVE"),
-    entityType: companyTypeEntitySchema.default("JURIDICAL"),
+  status:     companyStatusSchema.default("ACTIVE"),
+  entityType: companyTypeEntitySchema.default("JURIDICAL"),
 
-    legalAddressId: createIdSchema("LegalAddressId non valido")
-      .optional()
-      .nullable(),
+  legalAddressId: createIdSchema("LegalAddressId non valido")
+    .optional()
+    .nullable(),
 
-    // ===== Dati Fiscali ITALIANI =====
-    vatNumber: vatNumberSchema(),
-    taxCode: fiscalCodeSchema(),
-    sdiCode: sdiCodeSchema(),
-    pec: emailSchema().optional().nullable(),
+  // ===== Dati Fiscali ITALIANI =====
+  vatNumber: vatNumberSchema(),
+  taxCode:   fiscalCodeSchema(),
+  sdiCode:   sdiCodeSchema(),
+  pec:       emailSchema().optional().nullable(),
 
-    // ===== Dati Fiscali ESTERI =====
-    vatId: internationalVatIdSchema(),
-    eoriNumber: eoriNumberSchema(),
+  // ===== Dati Fiscali ESTERI =====
+  vatId:       internationalVatIdSchema(),
+  eoriNumber:  eoriNumberSchema(),
 
-    taxRegime: z.string().max(20).optional().nullable(),
-    vatExempt: z.boolean().default(false),
-    vatExemptReason: z.string().max(100).optional().nullable(),
+  taxRegime:       z.string().max(20).optional().nullable(),
+  vatExempt:       z.boolean().default(false),
+  vatExemptReason: z.string().max(100).optional().nullable(),
 
-    // ===== Nazione =====
-    countryCode: countryCodeBaseSchema.default("IT"),
+  // ===== Nazione =====
+  countryCode: countryCodeBaseSchema.default("IT"),
 
-    // ===== Contatti Generali =====
-    mainEmail: emailSchema().optional().nullable(),
+  // ===== Contatti Generali =====
+  mainEmail: emailSchema().optional().nullable(),
+  mainPhone: phoneSchema.optional().nullable(),
 
-    mainPhone: phoneSchema.optional().nullable(),
+  // ===== Relazioni =====
+  assignedUserId: userIdSchema.optional().nullable(),
 
-    // ===== Relazioni =====
-    assignedUserId: userIdSchema.optional().nullable(),
+  // ===== Campi Custom =====
+  customFields: inputJsonValueSchema.optional().nullable(),
+  openingHours: inputJsonValueSchema.optional().nullable(),
+});
 
-    // ===== Campi Custom =====
-    customFields: inputJsonValueSchema.optional().nullable(),
-    openingHours: inputJsonValueSchema.optional().nullable(),
-  })
+// ============================================================================
+// EU country codes — extracted as constant to avoid duplication
+// ============================================================================
+
+const EU_COUNTRY_CODES = [
+  "AT", "BE", "BG", "HR", "CY", "CZ", "DE", "DK", "EE",
+  "EL", "GR", "ES", "FI", "FR", "HU", "IE", "LT", "LU",
+  "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK",
+] as const;
+
+/**
+ * Full schema for Company creation — includes fiscal validation refinements.
+ * Cannot be used with .partial() due to Zod v4 restrictions.
+ */
+export const baseCompanySchema = baseCompanyShape
   .refine(
     (data) => {
-      // Italian company validation
       if (data.countryCode === "IT") {
-        if (data.entityType === "JURIDICAL") {
-          return !!data.vatNumber;
-        } else {
-          return !!data.taxCode;
-        }
+        return data.entityType === "JURIDICAL" ? !!data.vatNumber : !!data.taxCode;
       }
-
-      // EU company validation
-      const euCountries = [
-        "AT",
-        "BE",
-        "BG",
-        "HR",
-        "CY",
-        "CZ",
-        "DE",
-        "DK",
-        "EE",
-        "EL",
-        "GR",
-        "ES",
-        "FI",
-        "FR",
-        "HU",
-        "IE",
-        "LT",
-        "LU",
-        "LV",
-        "MT",
-        "NL",
-        "PL",
-        "PT",
-        "RO",
-        "SE",
-        "SI",
-        "SK",
-      ];
-
-      if (euCountries.includes(data.countryCode)) {
+      if (EU_COUNTRY_CODES.includes(data.countryCode as typeof EU_COUNTRY_CODES[number])) {
         return !!data.vatId;
       }
-
-      // Extra-EU: VAT ID or EORI
+      // Extra-EU
       return !!(data.vatId || data.eoriNumber);
     },
     {
       message: "Dati fiscali obbligatori mancanti",
-      path: ["vatNumber"],
+      path:    ["vatNumber"],
     },
   )
   .refine(
@@ -184,15 +162,17 @@ export const baseCompanySchema = z
     },
     {
       message: "PEC obbligatoria per SDI 0000000",
-      path: ["pec"],
+      path:    ["pec"],
     },
   )
   .strict();
 
 /**
- * Schema per Update Company (partial del base)
+ * Schema for Company update — partial of raw shape, no fiscal refinements.
+ * Refinements are intentionally omitted: partial updates may not include
+ * all fields required to validate fiscal consistency.
  */
-export const updateCompanySchema = baseCompanySchema.partial().strict();
+export const updateCompanySchema = baseCompanyShape.partial().strict();
 
 /**
  * Schema per Query Parameters Company

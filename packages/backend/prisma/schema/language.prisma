@@ -5,17 +5,17 @@ model Language {
   language_code String @unique @db.Char(5) // it_IT, en_US, ...
 
   // Relazioni
-  usersPreferred       User[]                @relation("UserPreferredLanguage")
-  productTranslations  ProductVariantTranslation[]
-  categoryTranslations CategoryTranslation[]
-  paymentMethodTranslations PaymentMethodTranslation[]
-  taxRuleTranslations TaxRuleTranslation[]
-  attributeTranslations AttributeTranslation[]
+  usersPreferred             User[]                      @relation("UserPreferredLanguage")
+  productTranslations        ProductTranslation[]
+  categoryTranslations       CategoryTranslation[]
+  paymentMethodTranslations  PaymentMethodTranslation[]
+  taxRuleTranslations        TaxRuleTranslation[]
+  attributeTranslations      AttributeTranslation[]
   attributeGroupTranslations AttributeGroupTranslation[]
-  vatNatureTranslations VatNatureTranslation[]
-  tenant TenantSettings[]
-  countries Country[]
-  currencyTranslations CurrencyTranslation[]
+  vatNatureTranslations      VatNatureTranslation[]
+  tenant                     TenantSettings[]
+  countries                  Country[]
+  currencyTranslations       CurrencyTranslation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -4,26 +4,31 @@ import {
   validateQuery,
 } from "../middleware/validation";
 import {
+  // Tax Rule
   createTaxRuleSchema,
-  createTaxRuleTranslationSchema,
+  updateTaxRuleSchema,
   taxRuleIdParamSchema,
   taxRuleQuerySchema,
-  taxRuleTranslationIdParamSchema,
   toggleTaxStatusSchema,
-  updateTaxRuleSchema,
+  // Tax Rule Translation
+  createTaxRuleTranslationSchema,
   updateTaxRuleTranslationSchema,
+  taxRuleTranslationIdParamSchema,
+  // VatNature
+  createVatNatureSchema,
+  updateVatNatureSchema,
+  vatNatureIdParamSchema,
+  vatNatureQuerySchema,
+  vatNatureTranslationIdParamSchema,
+  // VatNature Translation
+  createVatNatureTranslationSchema,
+  updateVatNatureTranslationSchema,
 } from "@mini-erp/shared";
 
 // ============================================================================
-// VALIDATION MIDDLEWARE
+// TAX RULE VALIDATORS
 // ============================================================================
 
-export const validateToggleTaxRateStatus = validateBody(
-  toggleTaxStatusSchema,
-  "Toggle Tax Rate status",
-);
-
-// Tax Rule Validators
 export const validateCreateTaxRule = validateBody(
   createTaxRuleSchema,
   "Tax Rule creation",
@@ -44,12 +49,15 @@ export const validateTaxRuleQuery = validateQuery(
   "Tax Rule query",
 );
 
-export const validateToggleTaxRuleStatus = validateBody(
+export const validateToggleTaxStatus = validateBody(
   toggleTaxStatusSchema,
-  "Toggle Tax Rule status",
+  "Toggle Tax status",
 );
 
-// Tax Rule Translation Validators
+// ============================================================================
+// TAX RULE TRANSLATION VALIDATORS
+// ============================================================================
+
 export const validateCreateTaxRuleTranslation = validateBody(
   createTaxRuleTranslationSchema,
   "Tax Rule Translation creation",
@@ -63,4 +71,47 @@ export const validateUpdateTaxRuleTranslation = validateBody(
 export const validateTaxRuleTranslationId = validateParams(
   taxRuleTranslationIdParamSchema,
   "Tax Rule Translation ID",
+);
+
+// ============================================================================
+// VAT NATURE VALIDATORS
+// ============================================================================
+
+export const validateCreateVatNature = validateBody(
+  createVatNatureSchema,
+  "VAT Nature creation",
+);
+
+export const validateUpdateVatNature = validateBody(
+  updateVatNatureSchema,
+  "VAT Nature update",
+);
+
+export const validateVatNatureId = validateParams(
+  vatNatureIdParamSchema,
+  "VAT Nature ID",
+);
+
+export const validateVatNatureQuery = validateQuery(
+  vatNatureQuerySchema,
+  "VAT Nature query",
+);
+
+// ============================================================================
+// VAT NATURE TRANSLATION VALIDATORS
+// ============================================================================
+
+export const validateCreateVatNatureTranslation = validateBody(
+  createVatNatureTranslationSchema,
+  "VAT Nature Translation creation",
+);
+
+export const validateUpdateVatNatureTranslation = validateBody(
+  updateVatNatureTranslationSchema,
+  "VAT Nature Translation update",
+);
+
+export const validateVatNatureTranslationId = validateParams(
+  vatNatureTranslationIdParamSchema,
+  "VAT Nature Translation ID",
 );

@@ -424,7 +424,7 @@ export const ModelName = {
   PriceList: 'PriceList',
   PriceListItem: 'PriceListItem',
   Product: 'Product',
-  ProductVariantTranslation: 'ProductVariantTranslation',
+  ProductTranslation: 'ProductTranslation',
   ProductVariant: 'ProductVariant',
   ProductImage: 'ProductImage',
   ProductCategory: 'ProductCategory',
@@ -459,7 +459,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "activity" | "activityParticipant" | "activityTemplate" | "attributeGroup" | "attributeGroupTranslation" | "attribute" | "attributeTranslation" | "productVariantAttribute" | "auditLog" | "securityEvent" | "category" | "categoryTranslation" | "company" | "customer" | "supplier" | "companyAddress" | "contact" | "companyNote" | "country" | "currency" | "exchangeRateHistory" | "currencyTranslation" | "document" | "documentLine" | "documentPaymentInstallment" | "documentSequence" | "documentRelation" | "intrastatTransaction" | "intrastatTransactionCode" | "intrastatCommodityCode" | "language" | "lead" | "opportunity" | "closedReason" | "paymentMethod" | "paymentTermDetail" | "paymentMethodTranslation" | "priceList" | "priceListItem" | "product" | "productVariantTranslation" | "productVariant" | "productImage" | "productCategory" | "manufacturer" | "role" | "permission" | "rolePermission" | "tenantSettings" | "vatNature" | "vatNatureTranslation" | "taxRule" | "taxRuleTranslation" | "user" | "userDetails" | "warehouse" | "stockMovement" | "virtualStock" | "stockBatch" | "stockReservation"
+    modelProps: "activity" | "activityParticipant" | "activityTemplate" | "attributeGroup" | "attributeGroupTranslation" | "attribute" | "attributeTranslation" | "productVariantAttribute" | "auditLog" | "securityEvent" | "category" | "categoryTranslation" | "company" | "customer" | "supplier" | "companyAddress" | "contact" | "companyNote" | "country" | "currency" | "exchangeRateHistory" | "currencyTranslation" | "document" | "documentLine" | "documentPaymentInstallment" | "documentSequence" | "documentRelation" | "intrastatTransaction" | "intrastatTransactionCode" | "intrastatCommodityCode" | "language" | "lead" | "opportunity" | "closedReason" | "paymentMethod" | "paymentTermDetail" | "paymentMethodTranslation" | "priceList" | "priceListItem" | "product" | "productTranslation" | "productVariant" | "productImage" | "productCategory" | "manufacturer" | "role" | "permission" | "rolePermission" | "tenantSettings" | "vatNature" | "vatNatureTranslation" | "taxRule" | "taxRuleTranslation" | "user" | "userDetails" | "warehouse" | "stockMovement" | "virtualStock" | "stockBatch" | "stockReservation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3423,77 +3423,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    ProductVariantTranslation: {
-      payload: Prisma.$ProductVariantTranslationPayload<ExtArgs>
-      fields: Prisma.ProductVariantTranslationFieldRefs
+    ProductTranslation: {
+      payload: Prisma.$ProductTranslationPayload<ExtArgs>
+      fields: Prisma.ProductTranslationFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.ProductVariantTranslationFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductVariantTranslationPayload> | null
+          args: Prisma.ProductTranslationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductTranslationPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.ProductVariantTranslationFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductVariantTranslationPayload>
+          args: Prisma.ProductTranslationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductTranslationPayload>
         }
         findFirst: {
-          args: Prisma.ProductVariantTranslationFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductVariantTranslationPayload> | null
+          args: Prisma.ProductTranslationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductTranslationPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.ProductVariantTranslationFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductVariantTranslationPayload>
+          args: Prisma.ProductTranslationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductTranslationPayload>
         }
         findMany: {
-          args: Prisma.ProductVariantTranslationFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductVariantTranslationPayload>[]
+          args: Prisma.ProductTranslationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductTranslationPayload>[]
         }
         create: {
-          args: Prisma.ProductVariantTranslationCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductVariantTranslationPayload>
+          args: Prisma.ProductTranslationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductTranslationPayload>
         }
         createMany: {
-          args: Prisma.ProductVariantTranslationCreateManyArgs<ExtArgs>
+          args: Prisma.ProductTranslationCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.ProductVariantTranslationCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductVariantTranslationPayload>[]
+          args: Prisma.ProductTranslationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductTranslationPayload>[]
         }
         delete: {
-          args: Prisma.ProductVariantTranslationDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductVariantTranslationPayload>
+          args: Prisma.ProductTranslationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductTranslationPayload>
         }
         update: {
-          args: Prisma.ProductVariantTranslationUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductVariantTranslationPayload>
+          args: Prisma.ProductTranslationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductTranslationPayload>
         }
         deleteMany: {
-          args: Prisma.ProductVariantTranslationDeleteManyArgs<ExtArgs>
+          args: Prisma.ProductTranslationDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.ProductVariantTranslationUpdateManyArgs<ExtArgs>
+          args: Prisma.ProductTranslationUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.ProductVariantTranslationUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductVariantTranslationPayload>[]
+          args: Prisma.ProductTranslationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductTranslationPayload>[]
         }
         upsert: {
-          args: Prisma.ProductVariantTranslationUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductVariantTranslationPayload>
+          args: Prisma.ProductTranslationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductTranslationPayload>
         }
         aggregate: {
-          args: Prisma.ProductVariantTranslationAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateProductVariantTranslation>
+          args: Prisma.ProductTranslationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductTranslation>
         }
         groupBy: {
-          args: Prisma.ProductVariantTranslationGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ProductVariantTranslationGroupByOutputType>[]
+          args: Prisma.ProductTranslationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductTranslationGroupByOutputType>[]
         }
         count: {
-          args: Prisma.ProductVariantTranslationCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ProductVariantTranslationCountAggregateOutputType> | number
+          args: Prisma.ProductTranslationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductTranslationCountAggregateOutputType> | number
         }
       }
     }
@@ -5824,9 +5824,9 @@ export const ProductScalarFieldEnum = {
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
 
 
-export const ProductVariantTranslationScalarFieldEnum = {
+export const ProductTranslationScalarFieldEnum = {
   id: 'id',
-  productVariantId: 'productVariantId',
+  productId: 'productId',
   languageId: 'languageId',
   name: 'name',
   description: 'description',
@@ -5844,7 +5844,7 @@ export const ProductVariantTranslationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type ProductVariantTranslationScalarFieldEnum = (typeof ProductVariantTranslationScalarFieldEnum)[keyof typeof ProductVariantTranslationScalarFieldEnum]
+export type ProductTranslationScalarFieldEnum = (typeof ProductTranslationScalarFieldEnum)[keyof typeof ProductTranslationScalarFieldEnum]
 
 
 export const ProductVariantScalarFieldEnum = {
@@ -7001,7 +7001,7 @@ export type GlobalOmitConfig = {
   priceList?: Prisma.PriceListOmit
   priceListItem?: Prisma.PriceListItemOmit
   product?: Prisma.ProductOmit
-  productVariantTranslation?: Prisma.ProductVariantTranslationOmit
+  productTranslation?: Prisma.ProductTranslationOmit
   productVariant?: Prisma.ProductVariantOmit
   productImage?: Prisma.ProductImageOmit
   productCategory?: Prisma.ProductCategoryOmit

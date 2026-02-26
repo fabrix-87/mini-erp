@@ -104,49 +104,43 @@ export const intrastatTransactionIdSchema = createIdSchema(
   "ID Intrastat Transaction non valido",
 );
 
-export const createIntrastatTransactionSchema = z
-  .object({
-    documentId: createIdSchema("Document ID non valido"),
+/**
+ * Raw object shape for IntrastatTransaction — no refinements.
+ */
+const intrastatTransactionShape = z.object({
+  documentId: createIdSchema("Document ID non valido"),
+  documentLineId: createIdSchema("Document Line ID non valido"),
+  flow: intrastatFlowSchema,
+  transactionDate: isoDateSchema(),
+  transactionCode: transactionCodeSchema,
+  commodityCode: commodityCodeSchema,
+  partnerCountryCode: euCountryCodeSchema,
+  invoicedValue: monetaryValueSchema,
+  statisticalValue: monetaryValueSchema,
+  netMass: netMassSchema,
 
-    documentLineId: createIdSchema("Document Line ID non valido"),
+  supplementaryUnits: z
+    .number()
+    .int("Unità supplementari deve essere un intero")
+    .nonnegative("Unità supplementari non può essere negativo")
+    .max(
+      MAX_SUPPLEMENTARY_UNITS,
+      `Unità supplementari massimo ${MAX_SUPPLEMENTARY_UNITS}`,
+    )
+    .optional()
+    .nullable(),
 
-    flow: intrastatFlowSchema,
+  modeOfTransport: z.string().length(1).optional().nullable(),
+  isCorrection: z.boolean().default(false),
+});
 
-    transactionDate: isoDateSchema(),
-
-    transactionCode: transactionCodeSchema,
-
-    commodityCode: commodityCodeSchema,
-
-    partnerCountryCode: euCountryCodeSchema,
-
-    invoicedValue: monetaryValueSchema,
-
-    statisticalValue: monetaryValueSchema,
-
-    netMass: netMassSchema,
-
-    supplementaryUnits: z
-      .number()
-      .int("Unità supplementari deve essere un intero")
-      .nonnegative("Unità supplementari non può essere negativo")
-      .max(
-        MAX_SUPPLEMENTARY_UNITS,
-        `Unità supplementari massimo ${MAX_SUPPLEMENTARY_UNITS}`,
-      )
-      .optional()
-      .nullable(),
-
-    modeOfTransport: z.string().length(1).optional().nullable(),
-
-    isCorrection: z.boolean().default(false),
-  })
+/**
+ * Schema for creating an IntrastatTransaction — statistical >= invoiced value.
+ */
+export const createIntrastatTransactionSchema = intrastatTransactionShape
   .strict()
   .refine(
-    (data) => {
-      // Statistical value should be >= invoiced value
-      return Number(data.statisticalValue) >= Number(data.invoicedValue);
-    },
+    (data) => Number(data.statisticalValue) >= Number(data.invoicedValue),
     {
       message:
         "Valore statistico deve essere maggiore o uguale al valore fatturato",
@@ -154,11 +148,12 @@ export const createIntrastatTransactionSchema = z
     },
   );
 
-export const updateIntrastatTransactionSchema = createIntrastatTransactionSchema
-  .omit({
-    documentId: true,
-    documentLineId: true,
-  })
+/**
+ * Schema for updating an IntrastatTransaction — partial, immutable FK fields excluded.
+ * documentId and documentLineId cannot change after creation.
+ */
+export const updateIntrastatTransactionSchema = intrastatTransactionShape
+  .omit({ documentId: true, documentLineId: true })
   .partial()
   .strict();
 
@@ -166,23 +161,31 @@ export const updateIntrastatTransactionSchema = createIntrastatTransactionSchema
 // TRANSACTION CODE SCHEMAS
 // ============================================================================
 
-export const createTransactionCodeSchema = z
-  .object({
-    code: transactionCodeSchema,
+/**
+ * Raw object shape for TransactionCode.
+ */
+const transactionCodeShape = z.object({
+  code: transactionCodeSchema,
+  descriptionIT: z
+    .string()
+    .min(1, "Descrizione italiana obbligatoria")
+    .max(255, "Descrizione max 255 caratteri"),
+  descriptionEN: z
+    .string()
+    .min(1, "Descrizione inglese obbligatoria")
+    .max(255, "Descrizione max 255 caratteri"),
+});
 
-    descriptionIT: z
-      .string()
-      .min(1, "Descrizione italiana obbligatoria")
-      .max(255, "Descrizione max 255 caratteri"),
+/**
+ * Schema for creating a TransactionCode.
+ */
+export const createTransactionCodeSchema = transactionCodeShape.strict();
 
-    descriptionEN: z
-      .string()
-      .min(1, "Descrizione inglese obbligatoria")
-      .max(255, "Descrizione max 255 caratteri"),
-  })
-  .strict();
-
-export const updateTransactionCodeSchema = createTransactionCodeSchema
+/**
+ * Schema for updating a TransactionCode — partial, code is immutable.
+ */
+export const updateTransactionCodeSchema = transactionCodeShape
+  .omit({ code: true })
   .partial()
   .strict();
 
@@ -190,23 +193,31 @@ export const updateTransactionCodeSchema = createTransactionCodeSchema
 // COMMODITY CODE SCHEMAS
 // ============================================================================
 
-export const createCommodityCodeSchema = z
-  .object({
-    code: commodityCodeSchema,
+/**
+ * Raw object shape for CommodityCode.
+ */
+const commodityCodeShape = z.object({
+  code: commodityCodeSchema,
+  descriptionIT: z
+    .string()
+    .min(1, "Descrizione italiana obbligatoria")
+    .max(500, "Descrizione max 500 caratteri"),
+  descriptionEN: z
+    .string()
+    .min(1, "Descrizione inglese obbligatoria")
+    .max(500, "Descrizione max 500 caratteri"),
+});
 
-    descriptionIT: z
-      .string()
-      .min(1, "Descrizione italiana obbligatoria")
-      .max(500, "Descrizione max 500 caratteri"),
+/**
+ * Schema for creating a CommodityCode.
+ */
+export const createCommodityCodeSchema = commodityCodeShape.strict();
 
-    descriptionEN: z
-      .string()
-      .min(1, "Descrizione inglese obbligatoria")
-      .max(500, "Descrizione max 500 caratteri"),
-  })
-  .strict();
-
-export const updateCommodityCodeSchema = createCommodityCodeSchema
+/**
+ * Schema for updating a CommodityCode — partial, code is immutable.
+ */
+export const updateCommodityCodeSchema = commodityCodeShape
+  .omit({ code: true })
   .partial()
   .strict();
 
@@ -346,30 +357,32 @@ export const intrastatReportQuerySchema = z.object({
   format: z.enum(["csv", "xml", "pdf", "xlsx"]).default("csv"),
 });
 
-export const intrastatDeclarationSchema = z
-  .object({
-    flow: intrastatFlowSchema,
+/**
+ * Raw object shape for IntrastatDeclaration.
+ */
+const intrastatDeclarationShape = z.object({
+  flow: intrastatFlowSchema,
 
-    reportingPeriod: z.object({
-      year: z.number().int().min(2000).max(2100),
-      month: z.number().int().min(1).max(12).optional(),
-      quarter: z.number().int().min(1).max(4).optional(),
-    }),
+  reportingPeriod: z.object({
+    year: z.number().int().min(2000).max(2100),
+    month: z.number().int().min(1).max(12).optional(),
+    quarter: z.number().int().min(1).max(4).optional(),
+  }),
 
-    companyVatNumber: z.string().min(1, "Partita IVA obbligatoria").max(20),
+  companyVatNumber: z.string().min(1, "Partita IVA obbligatoria").max(20),
+  declarantName: z.string().min(1, "Nome dichiarante obbligatorio").max(255),
+  declarantEmail: z.string().email("Email non valida").max(255),
+  declarantPhone: z.string().max(20).optional().nullable(),
+  notes: z.string().max(1000).optional().nullable(),
+});
 
-    declarantName: z.string().min(1, "Nome dichiarante obbligatorio").max(255),
-
-    declarantEmail: z.string().email("Email non valida").max(255),
-
-    declarantPhone: z.string().max(20).optional().nullable(),
-
-    notes: z.string().max(1000).optional().nullable(),
-  })
+/**
+ * Schema for Intrastat declaration — month XOR quarter must be specified.
+ */
+export const intrastatDeclarationSchema = intrastatDeclarationShape
   .strict()
   .refine(
     (data) => {
-      // Either month or quarter must be specified, not both
       const hasMonth = data.reportingPeriod.month !== undefined;
       const hasQuarter = data.reportingPeriod.quarter !== undefined;
       return hasMonth !== hasQuarter; // XOR

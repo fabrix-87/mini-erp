@@ -34,6 +34,19 @@ export const getProductSelection = () => ({
   manufacturer: {
     select: { id: true, name: true },
   },
+  translations: {
+    select: {
+      id: true,
+      languageId: true,
+      name: true,
+      description: true,
+      shortDescription: true,
+      metaTitle: true,
+      linkRewrite: true,
+      availableNowLabel: true,
+      availableLaterLabel: true,
+    },
+  },
   variants: {
     select: {
       id: true,
@@ -48,16 +61,7 @@ export const getProductSelection = () => ({
       height: true,
       depth: true,
       isDefault: true,
-      active: true,
-      translations: {
-        select: {
-          id: true,
-          languageId: true,
-          name: true,
-          description: true,
-          shortDescription: true,
-        },
-      },
+      active: true,      
       attributes: {
         include: {
           attribute: {

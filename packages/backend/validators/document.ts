@@ -2,6 +2,7 @@ import {
   validate,
   validateBody,
   validateParams,
+  validateQuery,
 } from "../middleware/validation";
 import {
   bulkSendDocumentsSchema,
@@ -19,6 +20,7 @@ import {
   duplicateDocumentSchema,
   installmentIdParamSchema,
   recalculateDocumentSchema,
+  topProductsReportSchema,
   updateDocumentLineSchema,
   updateDocumentSchema,
   updateDocumentStatusSchema,
@@ -131,3 +133,9 @@ export const validateBulkSendDocuments = validateBody(
   bulkSendDocumentsSchema,
   "Bulk Send Documents",
 );
+
+// REPORTS
+export const validateTopProductsReportQuery = validateQuery(
+  topProductsReportSchema,
+  "Top Products Report"
+)

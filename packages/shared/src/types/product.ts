@@ -5,7 +5,7 @@ import {
   createProductImageSchema,
   createProductSchema,
   createProductVariantSchema,
-  createProductVariantTranslationSchema,
+  createProductTranslationSchema,
   manufacturerIdSchema,
   productCategoryIdSchema,
   productIdAsProductIdSchema,
@@ -18,7 +18,8 @@ import {
   updateProductImageSchema,
   updateProductSchema,
   updateProductVariantSchema,
-  updateProductVariantTranslationSchema, 
+  updateProductTranslationSchema,
+  productIdLanguageIdSchema, 
 } from "../validators/product";
 import { ProductCondition, ProductType, ProductStatus } from "../constants";
 import { Supplier } from "./supplier";
@@ -81,6 +82,7 @@ export type Product = {
   coverThumbnailUrl?: string;
 
   // Dettagli del Prodotto
+  translations: ProductTranslation[];
   variants: ProductVariant[];
   images: ProductImage[];
   categories: Category[];
@@ -134,16 +136,15 @@ export type ProductVariant = {
   metadata?: string; // È una stringa JSON
 
   // Relazioni
-  translations: ProductVariantTranslation[]; 
   attributes: Attribute[];
   stockMovement: StockMovement[];
   virtualStock: VirtualStock[];
   images: ProductImage[];
 };
 
-export type ProductVariantTranslation = {
+export type ProductTranslation = {
   id: number;
-  productVariantId: number;
+  productId: number;
   languageId: number;
   language: Language;
   name: string;
@@ -190,11 +191,11 @@ export type CreateProductVariantInput = z.infer<
 export type UpdateProductVariantInput = z.infer<
   typeof updateProductVariantSchema
 >;
-export type CreateProductVariantTranslationInput = z.infer<
-  typeof createProductVariantTranslationSchema
+export type CreateProductTranslationInput = z.infer<
+  typeof createProductTranslationSchema
 >;
-export type UpdateProductVariantTranslationInput = z.infer<
-  typeof updateProductVariantTranslationSchema
+export type UpdateProductTranslationInput = z.infer<
+  typeof updateProductTranslationSchema
 >;
 export type CreateProductImageInput = z.infer<typeof createProductImageSchema>;
 export type UpdateProductImageInput = z.infer<typeof updateProductImageSchema>;
@@ -214,6 +215,7 @@ export type ProductImageIdParam = z.infer<typeof productImageIdSchema>;
 export type ManufacturerIdParam = z.infer<typeof manufacturerIdSchema>;
 export type ProductCategoryIdParam = z.infer<typeof productCategoryIdSchema>;
 export type ProductIdAsProductIdParam = z.infer<typeof productIdAsProductIdSchema>;
+export type ProductIdLanguageIdParam = z.infer<typeof productIdLanguageIdSchema>;
 
 // Type Query
 export type ProductQueryInput = z.infer<typeof productQuerySchema>;

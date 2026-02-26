@@ -19,7 +19,7 @@ export const dateStringSchema = (options?: DateStringOptions) => {
     .string()
     .optional()
     .or(z.literal(""))
-    .transform((val) => {
+    .transform<Date | null>((val) => {
       if (!val || val.trim() === "") return null;
       const date = new Date(val);
       return isNaN(date.getTime()) ? null : date;

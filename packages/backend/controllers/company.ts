@@ -51,7 +51,7 @@ export const listCompanies = asyncHandler(
     ]);
 
     res.json(formatPaginatedResponse(data, total, page, limit));
-  }
+  },
 );
 
 /**
@@ -59,14 +59,18 @@ export const listCompanies = asyncHandler(
  */
 export const getCompanyById = async (
   req: AuthenticatedValidatedRequest,
-  res: Response
+  res: Response,
 ) => {
   try {
     const id = Number(req.validatedParams.id);
     const company = await prisma.company.findUnique({
       where: { id },
       include: {
-        legalAddress: true,
+        addresses: {
+          where: {
+            addressType: "LEGAL",
+          },
+        },
         documents: true,
         notes: true,
       },
