@@ -96,17 +96,18 @@ export const createActivitySchema = z
     scheduledEnd: isoDateSchema({ message: "Data fine non valida" }),
     actualStart: isoDateSchema({ message: "Data inizio effettiva non valida" }),
     actualEnd: isoDateSchema({ message: "Data fine effettiva non valida" }),
-    duration: isoDateSchema({ message: "La durata deve essere positiva" }),
+    duration: positiveNumbersSchema.optional().nullable(),
 
     // Promemoria
-    reminderMinutes: positiveNumbersSchema,
+    reminderMinutes: positiveNumbersSchema.optional().nullable(),
     reminderSent: z.boolean().default(false),
 
     // Relazioni
-    companyId: positiveNumbersSchema,
-    customerId: positiveNumbersSchema,
-    contactId: positiveNumbersSchema,
-    opportunityId: positiveNumbersSchema,
+    companyId: positiveNumbersSchema.optional().nullable(),
+    customerId: positiveNumbersSchema.optional().nullable(),
+    contactId: positiveNumbersSchema.optional().nullable(),
+    opportunityId: positiveNumbersSchema.optional().nullable(),
+    leadId: positiveNumbersSchema.optional().nullable(),
 
     // Utente assegnato (obbligatorio)
     assignedUserId: userIdSchema,
@@ -114,7 +115,7 @@ export const createActivitySchema = z
     // Follow-up
     requiresFollowUp: z.boolean().default(false),
     followUpDate: isoDateSchema(),
-    followUpActivityId: positiveNumbersSchema,
+    followUpActivityId: positiveNumbersSchema.optional().nullable(),
 
     // Allegati e note
     attachments: z.any().optional().nullable(),
@@ -166,6 +167,7 @@ export const activityQuerySchema = z
     customerId: createIdSchema("CustomerId non valido").optional(),
     opportunityId: createIdSchema("OpportunityId non valido").optional(),
     assignedUserId: createIdSchema("Assigned User ID non valido").optional(),
+    leadId: createIdSchema("Lead ID non valido").optional(),
 
     // Filtri data
     startDate: isoDateSchema({ message: "Data inizio non valida" }),

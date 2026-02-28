@@ -13,11 +13,11 @@ export { deleteActivity } from './activity/activity'
 export { getActivityStats } from './activity/activity'
 
 // Partecipant
-export { getActivityParticipants } from './activity/partecipant'
-export { addActivityParticipant } from './activity/partecipant'
-export { updateActivityParticipant } from './activity/partecipant'
-export { removeActivityParticipant } from './activity/partecipant'
-export { addBulkParticipants } from './activity/partecipant'
+export { getActivityParticipants } from './activity/participant'
+export { addActivityParticipant } from './activity/participant'
+export { updateActivityParticipant } from './activity/participant'
+export { removeActivityParticipant } from './activity/participant'
+export { addBulkParticipants } from './activity/participant'
 
 // Template
 export { getAllActivityTemplates } from './activity/template'

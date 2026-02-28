@@ -44,6 +44,23 @@ export const toDate = (value: string | undefined) =>
   value ? new Date(value) : value === undefined ? undefined : null;
 
 /**
+ * Converte input date del DTO in formato Prisma-safe.
+ *
+ * undefined → non aggiornare
+ * null → setta NULL
+ * string → parse Date
+ */
+export const parseOptionalDate = (
+  value: string | null | undefined,
+): Date | null | undefined => {
+  if (value === undefined) return undefined;
+  if (value === null) return null;
+
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d;
+};
+
+/**
  * Converts a string to Date for required (non-nullable) DateTime fields.
  * - `undefined` → field not updated
  * - string      → Date
@@ -57,7 +74,6 @@ export const toDate = (value: string | undefined) =>
 export const toRequiredDate = (value: string | undefined): Date | undefined =>
   value ? new Date(value) : undefined;
 
-
 /**
  * Handles nullable Prisma relations connected via `id` (numeric FK).
  * For relations with custom unique keys (e.g. `code`), use `ifDefined` directly.
@@ -65,9 +81,7 @@ export const toRequiredDate = (value: string | undefined): Date | undefined =>
  * @param id - Numeric ID of the relation
  * @returns Prisma connect/disconnect object or undefined
  */
-export const connectOrDisconnectById = (
-  id: number | null | undefined,
-) =>
+export const connectOrDisconnectById = (id: number | null | undefined) =>
   id === undefined
     ? undefined
     : id
@@ -80,15 +94,12 @@ export const connectOrDisconnectById = (
  * @param code - Unique string code of the relation
  * @returns Prisma connect/disconnect object or undefined
  */
-export const connectOrDisconnectByCode = (
-  code: string | null | undefined,
-) =>
+export const connectOrDisconnectByCode = (code: string | null | undefined) =>
   code === undefined
     ? undefined
     : code
       ? { connect: { code } }
       : { disconnect: true as const };
-
 
 /**
  * Rimuove tutte le proprietà con valore `undefined` da un oggetto.

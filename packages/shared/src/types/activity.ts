@@ -6,6 +6,8 @@ import { Company } from "./company";
 import { Customer } from "./customer";
 import { Opportunity } from "./opportunity";
 import {
+  activityIdAsActivityIdSchema,
+  activityIdSchema,
   activityOutcomeSchema,
   activityPrioritySchema,
   activityQuerySchema,
@@ -41,8 +43,8 @@ export type Activity = z.infer<typeof createActivitySchema> & {
   opportunity?: Opportunity;
   assignedUser: User;
   createdBy: User;
-  partecipants?: ActivityParticipant[];
-  followUpActivity: Activity;
+  participants?: ActivityParticipant[];
+  followUpActivity?: Activity | null;
   followedUpBy: Activity[];
   createdAt: Date;
   updatedAt: Date;
@@ -57,9 +59,9 @@ export type ActivityParticipant = z.infer<
   id: number;
 
   // Relazioni
-  activity?: Activity[];
-  user?: User[];
-  contact?: Contact[];
+  activity?: Activity;
+  user?: User;
+  contact?: Contact;
 
   responseDate?: Date;
 
@@ -132,3 +134,5 @@ export type CreateActivityFromTemplateInput = z.infer<
   typeof createActivityFromTemplateSchema
 >;
 export type BulkActivityActionInput = z.infer<typeof bulkActivityActionSchema>;
+export type ActivityIdParam = z.infer<typeof activityIdSchema>;
+export type ActivityIdAsActivityIdParam = z.infer<typeof activityIdAsActivityIdSchema>;
