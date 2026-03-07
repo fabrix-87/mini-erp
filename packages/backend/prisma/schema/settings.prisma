@@ -40,3 +40,24 @@ model TenantSettings {
   @@index([defaultSalesTaxRuleId])
   @@index([defaultPurchasesTaxRuleId])
 }
+
+
+// ============================================================================
+// USER SETTINGS - Per-user key/value store (dashboard layout, preferences, etc.)
+// ============================================================================
+
+model UserSetting {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation("UserSettings", fields: [userId], references: [id], onDelete: Cascade)
+
+  key       String   @db.VarChar(100) // e.g. "dashboard.layout"
+  value     Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, key])
+  @@index([userId])
+  @@index([key])
+}

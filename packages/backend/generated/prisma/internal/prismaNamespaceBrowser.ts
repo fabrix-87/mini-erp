@@ -100,6 +100,7 @@ export const ModelName = {
   Permission: 'Permission',
   RolePermission: 'RolePermission',
   TenantSettings: 'TenantSettings',
+  UserSetting: 'UserSetting',
   VatNature: 'VatNature',
   VatNatureTranslation: 'VatNatureTranslation',
   TaxRule: 'TaxRule',
@@ -1166,6 +1167,18 @@ export const TenantSettingsScalarFieldEnum = {
 } as const
 
 export type TenantSettingsScalarFieldEnum = (typeof TenantSettingsScalarFieldEnum)[keyof typeof TenantSettingsScalarFieldEnum]
+
+
+export const UserSettingScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  key: 'key',
+  value: 'value',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserSettingScalarFieldEnum = (typeof UserSettingScalarFieldEnum)[keyof typeof UserSettingScalarFieldEnum]
 
 
 export const VatNatureScalarFieldEnum = {

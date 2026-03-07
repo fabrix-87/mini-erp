@@ -263,6 +263,11 @@ export type RolePermission = Prisma.RolePermissionModel
  */
 export type TenantSettings = Prisma.TenantSettingsModel
 /**
+ * Model UserSetting
+ * 
+ */
+export type UserSetting = Prisma.UserSettingModel
+/**
  * Model VatNature
  * 
  */

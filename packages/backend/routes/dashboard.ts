@@ -1,155 +1,51 @@
-// routes/dashboard.ts
+// ============================================================================
+// UNIFIED DASHBOARD ROUTES
+// ============================================================================
 
-import express from 'express';
-import { authenticateToken, authorize } from '../middleware/auth';
+import { Router } from "express";
+import { authenticateToken } from "@/middleware/auth";
 import {
-  validateDashboardOverview,
-  validateDashboardSales,
-  validateDashboardOpportunity,
-  validateDashboardProduct,
-  validateDashboardCustomer,
-  validateDashboardDocument,
-  validateDashboardFinancial,
-  validateDashboardWarehouse,
   validateDashboardQuery,
-} from '../validators/dashboard';
+  validateUpdateLayout,
+} from "@/validators/dashboard";
 import {
-  getDashboardOverview,
-  getSalesStatistics,
-  getOpportunityStatistics,
-  getProductStatistics,
-  getCustomerStatistics,
-  getDocumentStatistics,
-  getFinancialStatistics,
-  getWarehouseStatistics,
-  getSupplierStatistics,
-} from '../controllers/dashboard';
+  getUnifiedDashboard,
+  updateDashboardLayout,
+  resetDashboardLayout,
+} from "@/controllers/dashboard";
 
-const router = express.Router();
-
-// ============================================================================
-// DASHBOARD ROUTES
-// ============================================================================
+const router = Router();
 
 /**
- * @route   GET /api/dashboard/overview
- * @desc    KPI principali aggregati
- * @access  Private (dashboard:read)
+ * GET /api/dashboard
+ * Fetch unified dashboard data with all authorized widgets
  */
 router.get(
-  '/overview',
+  "/",
   authenticateToken,
-  authorize(['dashboard:read', 'dashboard:manage']),
-  validateDashboardOverview,
-  getDashboardOverview
-);
-
-/**
- * @route   GET /api/dashboard/sales
- * @desc    Statistiche vendite con trend e top performers
- * @access  Private (dashboard:read)
- */
-router.get(
-  '/sales',
-  authenticateToken,
-  authorize(['dashboard:read', 'dashboard:manage']),
-  validateDashboardSales,
-  getSalesStatistics
-);
-
-/**
- * @route   GET /api/dashboard/opportunities
- * @desc    Pipeline CRM e metriche opportunità
- * @access  Private (dashboard:read)
- */
-router.get(
-  '/opportunities',
-  authenticateToken,
-  authorize(['dashboard:read', 'dashboard:manage']),
-  validateDashboardOpportunity,
-  getOpportunityStatistics
-);
-
-/**
- * @route   GET /api/dashboard/products
- * @desc    Performance prodotti e alert scorte
- * @access  Private (dashboard:read)
- */
-router.get(
-  '/products',
-  authenticateToken,
-  authorize(['dashboard:read', 'dashboard:manage']),
-  validateDashboardProduct,
-  getProductStatistics
-);
-
-/**
- * @route   GET /api/dashboard/customers
- * @desc    Segmentazione clienti e LTV
- * @access  Private (dashboard:read)
- */
-router.get(
-  '/customers',
-  authenticateToken,
-  authorize(['dashboard:read', 'dashboard:manage']),
-  validateDashboardCustomer,
-  getCustomerStatistics
-);
-
-/**
- * @route   GET /api/dashboard/documents
- * @desc    Workflow documenti e pagamenti
- * @access  Private (dashboard:read)
- */
-router.get(
-  '/documents',
-  authenticateToken,
-  authorize(['dashboard:read', 'dashboard:manage']),
-  validateDashboardDocument,
-  getDocumentStatistics
-);
-
-/**
- * @route   GET /api/dashboard/financial
- * @desc    Contabilità, P&L, cash flow
- * @access  Private (dashboard:read, financial:read)
- */
-router.get(
-  '/financial',
-  authenticateToken,
-  authorize(['dashboard:read', 'dashboard:manage', 'financial:read']),
-  validateDashboardFinancial,
-  getFinancialStatistics
-);
-
-/**
- * @route   GET /api/dashboard/warehouse
- * @desc    Statistiche magazzino e movimenti
- * @access  Private (dashboard:read, warehouse:read)
- */
-router.get(
-  '/warehouse',
-  authenticateToken,
-  authorize(['dashboard:read', 'dashboard:manage', 'warehouse:read']),
-  validateDashboardWarehouse,
-  getWarehouseStatistics
-);
-
-/**
- * @route   GET /api/dashboard/warehouse
- * @desc    Statistiche magazzino e movimenti
- * @access  Private (dashboard:read, warehouse:read)
- */
-router.get(
-  '/supplier',
-  authenticateToken,
-  authorize(['dashboard:read', 'dashboard:manage', 'supplier:read']),
   validateDashboardQuery,
-  getSupplierStatistics
+  getUnifiedDashboard,
 );
 
-// ============================================================================
-// EXPORT
-// ============================================================================
+/**
+ * PUT /api/dashboard/layout
+ * Save user's custom widget layout
+ */
+router.put(
+  "/layout",
+  authenticateToken,
+  validateUpdateLayout,
+  updateDashboardLayout,
+);
+
+/**
+ * DELETE /api/dashboard/layout
+ * Reset layout to role default
+ */
+router.delete(
+  "/layout",
+  authenticateToken,
+  resetDashboardLayout,
+);
 
 export default router;

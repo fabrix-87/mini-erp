@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.4.1
- * Query Engine version: 55ae170b1ced7fc6ed07a15f110549408c501bb3
+ * Prisma Client JS version: 7.4.2
+ * Query Engine version: 94a226be1cf2967af2541cca5529f0f7ba866919
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.4.1",
-  engine: "55ae170b1ced7fc6ed07a15f110549408c501bb3"
+  client: "7.4.2",
+  engine: "94a226be1cf2967af2541cca5529f0f7ba866919"
 }
 
 /**
@@ -433,6 +433,7 @@ export const ModelName = {
   Permission: 'Permission',
   RolePermission: 'RolePermission',
   TenantSettings: 'TenantSettings',
+  UserSetting: 'UserSetting',
   VatNature: 'VatNature',
   VatNatureTranslation: 'VatNatureTranslation',
   TaxRule: 'TaxRule',
@@ -459,7 +460,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "activity" | "activityParticipant" | "activityTemplate" | "attributeGroup" | "attributeGroupTranslation" | "attribute" | "attributeTranslation" | "productVariantAttribute" | "auditLog" | "securityEvent" | "category" | "categoryTranslation" | "company" | "customer" | "supplier" | "companyAddress" | "contact" | "companyNote" | "country" | "currency" | "exchangeRateHistory" | "currencyTranslation" | "document" | "documentLine" | "documentPaymentInstallment" | "documentSequence" | "documentRelation" | "intrastatTransaction" | "intrastatTransactionCode" | "intrastatCommodityCode" | "language" | "lead" | "opportunity" | "closedReason" | "paymentMethod" | "paymentTermDetail" | "paymentMethodTranslation" | "priceList" | "priceListItem" | "product" | "productTranslation" | "productVariant" | "productImage" | "productCategory" | "manufacturer" | "role" | "permission" | "rolePermission" | "tenantSettings" | "vatNature" | "vatNatureTranslation" | "taxRule" | "taxRuleTranslation" | "user" | "userDetails" | "warehouse" | "stockMovement" | "virtualStock" | "stockBatch" | "stockReservation"
+    modelProps: "activity" | "activityParticipant" | "activityTemplate" | "attributeGroup" | "attributeGroupTranslation" | "attribute" | "attributeTranslation" | "productVariantAttribute" | "auditLog" | "securityEvent" | "category" | "categoryTranslation" | "company" | "customer" | "supplier" | "companyAddress" | "contact" | "companyNote" | "country" | "currency" | "exchangeRateHistory" | "currencyTranslation" | "document" | "documentLine" | "documentPaymentInstallment" | "documentSequence" | "documentRelation" | "intrastatTransaction" | "intrastatTransactionCode" | "intrastatCommodityCode" | "language" | "lead" | "opportunity" | "closedReason" | "paymentMethod" | "paymentTermDetail" | "paymentMethodTranslation" | "priceList" | "priceListItem" | "product" | "productTranslation" | "productVariant" | "productImage" | "productCategory" | "manufacturer" | "role" | "permission" | "rolePermission" | "tenantSettings" | "userSetting" | "vatNature" | "vatNatureTranslation" | "taxRule" | "taxRuleTranslation" | "user" | "userDetails" | "warehouse" | "stockMovement" | "virtualStock" | "stockBatch" | "stockReservation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4089,6 +4090,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserSetting: {
+      payload: Prisma.$UserSettingPayload<ExtArgs>
+      fields: Prisma.UserSettingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserSettingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSettingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserSettingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSettingPayload>
+        }
+        findFirst: {
+          args: Prisma.UserSettingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSettingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserSettingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSettingPayload>
+        }
+        findMany: {
+          args: Prisma.UserSettingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSettingPayload>[]
+        }
+        create: {
+          args: Prisma.UserSettingCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSettingPayload>
+        }
+        createMany: {
+          args: Prisma.UserSettingCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserSettingCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSettingPayload>[]
+        }
+        delete: {
+          args: Prisma.UserSettingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSettingPayload>
+        }
+        update: {
+          args: Prisma.UserSettingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSettingPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserSettingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserSettingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserSettingUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSettingPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserSettingUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserSettingPayload>
+        }
+        aggregate: {
+          args: Prisma.UserSettingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserSetting>
+        }
+        groupBy: {
+          args: Prisma.UserSettingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserSettingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserSettingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserSettingCountAggregateOutputType> | number
+        }
+      }
+    }
     VatNature: {
       payload: Prisma.$VatNaturePayload<ExtArgs>
       fields: Prisma.VatNatureFieldRefs
@@ -5981,6 +6056,18 @@ export const TenantSettingsScalarFieldEnum = {
 export type TenantSettingsScalarFieldEnum = (typeof TenantSettingsScalarFieldEnum)[keyof typeof TenantSettingsScalarFieldEnum]
 
 
+export const UserSettingScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  key: 'key',
+  value: 'value',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserSettingScalarFieldEnum = (typeof UserSettingScalarFieldEnum)[keyof typeof UserSettingScalarFieldEnum]
+
+
 export const VatNatureScalarFieldEnum = {
   id: 'id',
   code: 'code',
@@ -7010,6 +7097,7 @@ export type GlobalOmitConfig = {
   permission?: Prisma.PermissionOmit
   rolePermission?: Prisma.RolePermissionOmit
   tenantSettings?: Prisma.TenantSettingsOmit
+  userSetting?: Prisma.UserSettingOmit
   vatNature?: Prisma.VatNatureOmit
   vatNatureTranslation?: Prisma.VatNatureTranslationOmit
   taxRule?: Prisma.TaxRuleOmit

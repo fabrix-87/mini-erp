@@ -397,6 +397,7 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   roles?: Prisma.RoleListRelationFilter
+  settings?: Prisma.UserSettingListRelationFilter
   preferredLanguage?: Prisma.XOR<Prisma.LanguageScalarRelationFilter, Prisma.LanguageWhereInput>
   createdDocuments?: Prisma.DocumentListRelationFilter
   assignedDocuments?: Prisma.DocumentListRelationFilter
@@ -449,6 +450,7 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   roles?: Prisma.RoleOrderByRelationAggregateInput
+  settings?: Prisma.UserSettingOrderByRelationAggregateInput
   preferredLanguage?: Prisma.LanguageOrderByWithRelationInput
   createdDocuments?: Prisma.DocumentOrderByRelationAggregateInput
   assignedDocuments?: Prisma.DocumentOrderByRelationAggregateInput
@@ -504,6 +506,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   roles?: Prisma.RoleListRelationFilter
+  settings?: Prisma.UserSettingListRelationFilter
   preferredLanguage?: Prisma.XOR<Prisma.LanguageScalarRelationFilter, Prisma.LanguageWhereInput>
   createdDocuments?: Prisma.DocumentListRelationFilter
   assignedDocuments?: Prisma.DocumentListRelationFilter
@@ -620,6 +623,7 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -672,6 +676,7 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -721,6 +726,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -773,6 +779,7 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -1376,6 +1383,20 @@ export type UserUncheckedUpdateManyWithoutRolesNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
+export type UserCreateNestedOneWithoutSettingsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSettingsInput, Prisma.UserUncheckedCreateWithoutSettingsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSettingsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSettingsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSettingsInput, Prisma.UserUncheckedCreateWithoutSettingsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSettingsInput
+  upsert?: Prisma.UserUpsertWithoutSettingsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSettingsInput, Prisma.UserUpdateWithoutSettingsInput>, Prisma.UserUncheckedUpdateWithoutSettingsInput>
+}
+
 export type UserCreateNestedOneWithoutDetailsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutDetailsInput, Prisma.UserUncheckedCreateWithoutDetailsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutDetailsInput
@@ -1432,6 +1453,7 @@ export type UserCreateWithoutActivitiesAssignedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -1483,6 +1505,7 @@ export type UserUncheckedCreateWithoutActivitiesAssignedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -1536,6 +1559,7 @@ export type UserCreateWithoutActivitiesCreatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -1587,6 +1611,7 @@ export type UserUncheckedCreateWithoutActivitiesCreatedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -1651,6 +1676,7 @@ export type UserUpdateWithoutActivitiesAssignedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -1702,6 +1728,7 @@ export type UserUncheckedUpdateWithoutActivitiesAssignedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -1761,6 +1788,7 @@ export type UserUpdateWithoutActivitiesCreatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -1812,6 +1840,7 @@ export type UserUncheckedUpdateWithoutActivitiesCreatedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -1860,6 +1889,7 @@ export type UserCreateWithoutActivityParticipantsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -1911,6 +1941,7 @@ export type UserUncheckedCreateWithoutActivityParticipantsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -1975,6 +2006,7 @@ export type UserUpdateWithoutActivityParticipantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -2026,6 +2058,7 @@ export type UserUncheckedUpdateWithoutActivityParticipantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -2074,6 +2107,7 @@ export type UserCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -2125,6 +2159,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -2189,6 +2224,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -2240,6 +2276,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -2288,6 +2325,7 @@ export type UserCreateWithoutSecurityEventsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -2339,6 +2377,7 @@ export type UserUncheckedCreateWithoutSecurityEventsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -2403,6 +2442,7 @@ export type UserUpdateWithoutSecurityEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -2454,6 +2494,7 @@ export type UserUncheckedUpdateWithoutSecurityEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -2502,6 +2543,7 @@ export type UserCreateWithoutAssignedCompaniesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -2553,6 +2595,7 @@ export type UserUncheckedCreateWithoutAssignedCompaniesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -2617,6 +2660,7 @@ export type UserUpdateWithoutAssignedCompaniesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -2668,6 +2712,7 @@ export type UserUncheckedUpdateWithoutAssignedCompaniesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -2716,6 +2761,7 @@ export type UserCreateWithoutDeletedCustomersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -2767,6 +2813,7 @@ export type UserUncheckedCreateWithoutDeletedCustomersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -2831,6 +2878,7 @@ export type UserUpdateWithoutDeletedCustomersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -2882,6 +2930,7 @@ export type UserUncheckedUpdateWithoutDeletedCustomersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -2930,6 +2979,7 @@ export type UserCreateWithoutDeletedSuppliersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -2981,6 +3031,7 @@ export type UserUncheckedCreateWithoutDeletedSuppliersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -3045,6 +3096,7 @@ export type UserUpdateWithoutDeletedSuppliersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -3096,6 +3148,7 @@ export type UserUncheckedUpdateWithoutDeletedSuppliersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -3144,6 +3197,7 @@ export type UserCreateWithoutCompanyNotesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -3195,6 +3249,7 @@ export type UserUncheckedCreateWithoutCompanyNotesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -3259,6 +3314,7 @@ export type UserUpdateWithoutCompanyNotesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -3310,6 +3366,7 @@ export type UserUncheckedUpdateWithoutCompanyNotesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -3358,6 +3415,7 @@ export type UserCreateWithoutCreatedDocumentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
@@ -3409,6 +3467,7 @@ export type UserUncheckedCreateWithoutCreatedDocumentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
   assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
@@ -3462,6 +3521,7 @@ export type UserCreateWithoutAssignedDocumentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
@@ -3513,6 +3573,7 @@ export type UserUncheckedCreateWithoutAssignedDocumentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
   assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
@@ -3566,6 +3627,7 @@ export type UserCreateWithoutDeletedDocumentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -3617,6 +3679,7 @@ export type UserUncheckedCreateWithoutDeletedDocumentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -3681,6 +3744,7 @@ export type UserUpdateWithoutCreatedDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -3732,6 +3796,7 @@ export type UserUncheckedUpdateWithoutCreatedDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
@@ -3791,6 +3856,7 @@ export type UserUpdateWithoutAssignedDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -3842,6 +3908,7 @@ export type UserUncheckedUpdateWithoutAssignedDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
@@ -3901,6 +3968,7 @@ export type UserUpdateWithoutDeletedDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -3952,6 +4020,7 @@ export type UserUncheckedUpdateWithoutDeletedDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -4000,6 +4069,7 @@ export type UserCreateWithoutPreferredLanguageInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
@@ -4050,6 +4120,7 @@ export type UserUncheckedCreateWithoutPreferredLanguageInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -4157,6 +4228,7 @@ export type UserCreateWithoutCreatedLeadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -4208,6 +4280,7 @@ export type UserUncheckedCreateWithoutCreatedLeadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -4261,6 +4334,7 @@ export type UserCreateWithoutAssignedLeadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -4312,6 +4386,7 @@ export type UserUncheckedCreateWithoutAssignedLeadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -4365,6 +4440,7 @@ export type UserCreateWithoutConvertedLeadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -4416,6 +4492,7 @@ export type UserUncheckedCreateWithoutConvertedLeadsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -4480,6 +4557,7 @@ export type UserUpdateWithoutCreatedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -4531,6 +4609,7 @@ export type UserUncheckedUpdateWithoutCreatedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -4590,6 +4669,7 @@ export type UserUpdateWithoutAssignedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -4641,6 +4721,7 @@ export type UserUncheckedUpdateWithoutAssignedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -4700,6 +4781,7 @@ export type UserUpdateWithoutConvertedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -4751,6 +4833,7 @@ export type UserUncheckedUpdateWithoutConvertedLeadsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -4799,6 +4882,7 @@ export type UserCreateWithoutCreatedOpportunitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -4850,6 +4934,7 @@ export type UserUncheckedCreateWithoutCreatedOpportunitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
@@ -4903,6 +4988,7 @@ export type UserCreateWithoutAssignedOpportunitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -4954,6 +5040,7 @@ export type UserUncheckedCreateWithoutAssignedOpportunitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -5018,6 +5105,7 @@ export type UserUpdateWithoutCreatedOpportunitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -5069,6 +5157,7 @@ export type UserUncheckedUpdateWithoutCreatedOpportunitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
@@ -5128,6 +5217,7 @@ export type UserUpdateWithoutAssignedOpportunitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -5179,6 +5269,7 @@ export type UserUncheckedUpdateWithoutAssignedOpportunitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -5227,6 +5318,7 @@ export type UserCreateWithoutDeletedProductsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -5278,6 +5370,7 @@ export type UserUncheckedCreateWithoutDeletedProductsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -5342,6 +5435,7 @@ export type UserUpdateWithoutDeletedProductsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -5393,6 +5487,7 @@ export type UserUncheckedUpdateWithoutDeletedProductsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -5441,6 +5536,7 @@ export type UserCreateWithoutDeletedProductVariantsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -5492,6 +5588,7 @@ export type UserUncheckedCreateWithoutDeletedProductVariantsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -5556,6 +5653,7 @@ export type UserUpdateWithoutDeletedProductVariantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -5607,6 +5705,7 @@ export type UserUncheckedUpdateWithoutDeletedProductVariantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -5654,6 +5753,7 @@ export type UserCreateWithoutRolesInput = {
   dataRetentionExpiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -5705,6 +5805,7 @@ export type UserUncheckedCreateWithoutRolesInput = {
   preferredLanguageId?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -5749,6 +5850,224 @@ export type UserUpdateManyWithWhereWithoutRolesInput = {
   data: Prisma.XOR<Prisma.UserUpdateManyMutationInput, Prisma.UserUncheckedUpdateManyWithoutRolesInput>
 }
 
+export type UserCreateWithoutSettingsInput = {
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
+  createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  SecurityEvents?: Prisma.SecurityEventCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadCreateNestedManyWithoutCreatedByInput
+  details?: Prisma.UserDetailsCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSettingsInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  active?: boolean
+  emailVerified?: boolean
+  emailVerificationToken?: string | null
+  emailVerificationExpires?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  resetPasswordToken?: string | null
+  resetPasswordExpires?: Date | string | null
+  passwordResetAttempts?: number
+  lastPasswordResetAt?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Date | string | null
+  passwordChangedBy?: number | null
+  failedLoginAttempts?: number
+  lastFailedLoginAt?: Date | string | null
+  lockedUntil?: Date | string | null
+  consentGivenAt?: Date | string | null
+  dataRetentionExpiresAt?: Date | string | null
+  preferredLanguageId?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
+  createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutAssignedUserInput
+  assignedCompanies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  activitiesAssigned?: Prisma.ActivityUncheckedCreateNestedManyWithoutAssignedUserInput
+  activitiesCreated?: Prisma.ActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutUserInput
+  companyNotes?: Prisma.CompanyNoteUncheckedCreateNestedManyWithoutAuthorInput
+  stockMovement?: Prisma.StockMovementUncheckedCreateNestedManyWithoutCreatedByInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  SecurityEvents?: Prisma.SecurityEventUncheckedCreateNestedManyWithoutUserInput
+  deletedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProducts?: Prisma.ProductUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedCustomers?: Prisma.CustomerUncheckedCreateNestedManyWithoutDeletedByUserInput
+  deletedSuppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutDeletedByUserInput
+  assignedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutAssignedUserInput
+  convertedLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutConvertedByInput
+  createdLeads?: Prisma.LeadUncheckedCreateNestedManyWithoutCreatedByInput
+  details?: Prisma.UserDetailsUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSettingsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSettingsInput, Prisma.UserUncheckedCreateWithoutSettingsInput>
+}
+
+export type UserUpsertWithoutSettingsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSettingsInput, Prisma.UserUncheckedUpdateWithoutSettingsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSettingsInput, Prisma.UserUncheckedCreateWithoutSettingsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSettingsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSettingsInput, Prisma.UserUncheckedUpdateWithoutSettingsInput>
+}
+
+export type UserUpdateWithoutSettingsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
+  createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  SecurityEvents?: Prisma.SecurityEventUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUpdateManyWithoutCreatedByNestedInput
+  details?: Prisma.UserDetailsUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSettingsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailVerificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerificationExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastPasswordResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorBackupCodes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  lastPasswordChangeAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordChangedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lastFailedLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  consentGivenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
+  createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
+  assignedOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  assignedCompanies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  activitiesAssigned?: Prisma.ActivityUncheckedUpdateManyWithoutAssignedUserNestedInput
+  activitiesCreated?: Prisma.ActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutUserNestedInput
+  companyNotes?: Prisma.CompanyNoteUncheckedUpdateManyWithoutAuthorNestedInput
+  stockMovement?: Prisma.StockMovementUncheckedUpdateManyWithoutCreatedByNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  SecurityEvents?: Prisma.SecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  deletedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProducts?: Prisma.ProductUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedProductVariants?: Prisma.ProductVariantUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedCustomers?: Prisma.CustomerUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  deletedSuppliers?: Prisma.SupplierUncheckedUpdateManyWithoutDeletedByUserNestedInput
+  assignedLeads?: Prisma.LeadUncheckedUpdateManyWithoutAssignedUserNestedInput
+  convertedLeads?: Prisma.LeadUncheckedUpdateManyWithoutConvertedByNestedInput
+  createdLeads?: Prisma.LeadUncheckedUpdateManyWithoutCreatedByNestedInput
+  details?: Prisma.UserDetailsUncheckedUpdateOneWithoutUserNestedInput
+}
+
 export type UserCreateWithoutDetailsInput = {
   username: string
   email: string
@@ -5775,6 +6094,7 @@ export type UserCreateWithoutDetailsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -5826,6 +6146,7 @@ export type UserUncheckedCreateWithoutDetailsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -5890,6 +6211,7 @@ export type UserUpdateWithoutDetailsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -5941,6 +6263,7 @@ export type UserUncheckedUpdateWithoutDetailsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -5989,6 +6312,7 @@ export type UserCreateWithoutStockMovementInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
   preferredLanguage?: Prisma.LanguageCreateNestedOneWithoutUsersPreferredInput
   createdDocuments?: Prisma.DocumentCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentCreateNestedManyWithoutAssignedUserInput
@@ -6040,6 +6364,7 @@ export type UserUncheckedCreateWithoutStockMovementInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutUsersInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
   createdDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutCreatedByInput
   assignedDocuments?: Prisma.DocumentUncheckedCreateNestedManyWithoutAssignedUserInput
   createdOpportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCreatedByInput
@@ -6104,6 +6429,7 @@ export type UserUpdateWithoutStockMovementInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -6155,6 +6481,7 @@ export type UserUncheckedUpdateWithoutStockMovementInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -6231,6 +6558,7 @@ export type UserUpdateWithoutPreferredLanguageInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUpdateManyWithoutCreatedByNestedInput
@@ -6281,6 +6609,7 @@ export type UserUncheckedUpdateWithoutPreferredLanguageInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roles?: Prisma.RoleUncheckedUpdateManyWithoutUsersNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -6357,6 +6686,7 @@ export type UserUpdateWithoutRolesInput = {
   dataRetentionExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
   preferredLanguage?: Prisma.LanguageUpdateOneRequiredWithoutUsersPreferredNestedInput
   createdDocuments?: Prisma.DocumentUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUpdateManyWithoutAssignedUserNestedInput
@@ -6408,6 +6738,7 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   preferredLanguageId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
   createdDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutCreatedByNestedInput
   assignedDocuments?: Prisma.DocumentUncheckedUpdateManyWithoutAssignedUserNestedInput
   createdOpportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -6467,6 +6798,7 @@ export type UserUncheckedUpdateManyWithoutRolesInput = {
 
 export type UserCountOutputType = {
   roles: number
+  settings: number
   createdDocuments: number
   assignedDocuments: number
   createdOpportunities: number
@@ -6491,6 +6823,7 @@ export type UserCountOutputType = {
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   roles?: boolean | UserCountOutputTypeCountRolesArgs
+  settings?: boolean | UserCountOutputTypeCountSettingsArgs
   createdDocuments?: boolean | UserCountOutputTypeCountCreatedDocumentsArgs
   assignedDocuments?: boolean | UserCountOutputTypeCountAssignedDocumentsArgs
   createdOpportunities?: boolean | UserCountOutputTypeCountCreatedOpportunitiesArgs
@@ -6528,6 +6861,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type UserCountOutputTypeCountRolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.RoleWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSettingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserSettingWhereInput
 }
 
 /**
@@ -6699,6 +7039,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
+  settings?: boolean | Prisma.User$settingsArgs<ExtArgs>
   preferredLanguage?: boolean | Prisma.LanguageDefaultArgs<ExtArgs>
   createdDocuments?: boolean | Prisma.User$createdDocumentsArgs<ExtArgs>
   assignedDocuments?: boolean | Prisma.User$assignedDocumentsArgs<ExtArgs>
@@ -6816,6 +7157,7 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "active" | "emailVerified" | "emailVerificationToken" | "emailVerificationExpires" | "emailVerifiedAt" | "resetPasswordToken" | "resetPasswordExpires" | "passwordResetAttempts" | "lastPasswordResetAt" | "twoFactorEnabled" | "twoFactorSecret" | "twoFactorBackupCodes" | "lastPasswordChangeAt" | "passwordChangedBy" | "failedLoginAttempts" | "lastFailedLoginAt" | "lockedUntil" | "consentGivenAt" | "dataRetentionExpiresAt" | "preferredLanguageId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
+  settings?: boolean | Prisma.User$settingsArgs<ExtArgs>
   preferredLanguage?: boolean | Prisma.LanguageDefaultArgs<ExtArgs>
   createdDocuments?: boolean | Prisma.User$createdDocumentsArgs<ExtArgs>
   assignedDocuments?: boolean | Prisma.User$assignedDocumentsArgs<ExtArgs>
@@ -6851,6 +7193,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     roles: Prisma.$RolePayload<ExtArgs>[]
+    settings: Prisma.$UserSettingPayload<ExtArgs>[]
     preferredLanguage: Prisma.$LanguagePayload<ExtArgs>
     createdDocuments: Prisma.$DocumentPayload<ExtArgs>[]
     assignedDocuments: Prisma.$DocumentPayload<ExtArgs>[]
@@ -7296,6 +7639,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   roles<T extends Prisma.User$rolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  settings<T extends Prisma.User$settingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$settingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   preferredLanguage<T extends Prisma.LanguageDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LanguageDefaultArgs<ExtArgs>>): Prisma.Prisma__LanguageClient<runtime.Types.Result.GetResult<Prisma.$LanguagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   createdDocuments<T extends Prisma.User$createdDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignedDocuments<T extends Prisma.User$assignedDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -7790,6 +8134,30 @@ export type User$rolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   distinct?: Prisma.RoleScalarFieldEnum | Prisma.RoleScalarFieldEnum[]
+}
+
+/**
+ * User.settings
+ */
+export type User$settingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserSetting
+   */
+  select?: Prisma.UserSettingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserSetting
+   */
+  omit?: Prisma.UserSettingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserSettingInclude<ExtArgs> | null
+  where?: Prisma.UserSettingWhereInput
+  orderBy?: Prisma.UserSettingOrderByWithRelationInput | Prisma.UserSettingOrderByWithRelationInput[]
+  cursor?: Prisma.UserSettingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserSettingScalarFieldEnum | Prisma.UserSettingScalarFieldEnum[]
 }
 
 /**

@@ -42,6 +42,8 @@ export const DOCUMENT_STATUSES = {
   REJECTED: "REJECTED",
   // Fulfillment phase
   PREPARING: "PREPARING",
+  PARTIALLY_FULFILLED: "PARTIALLY_FULFILLED",
+  FULFILLED: "FULFILLED",
   IN_TRANSIT: "IN_TRANSIT",
   DELIVERED: "DELIVERED",
   // Payment phase
@@ -114,6 +116,8 @@ export const DOCUMENT_STATUS_LABELS: Record<
   ACCEPTED: "Accettato",
   REJECTED: "Rifiutato",
   PREPARING: "In preparazione",
+  PARTIALLY_FULFILLED: "Evasione parziale",
+  FULFILLED: "Totalmente evaso",
   IN_TRANSIT: "In transito",
   DELIVERED: "Consegnato",
   UNPAID: "Non pagato",

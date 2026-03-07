@@ -37,6 +37,8 @@ enum DocumentStatus {
 
     // Stati logistici/fiscali
     PREPARING // In preparazione (picking)
+    PARTIALLY_FULFILLED // Evasione parziale (alcuni item spediti)
+    FULFILLED // Totalmente evaso (tutti item pronti)
     IN_TRANSIT // In transito (per DDT)
     DELIVERED // Consegnato (per DDT)
 

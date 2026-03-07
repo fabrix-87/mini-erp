@@ -40,3 +40,4 @@ export * from "./lead";
 export * from "./tenant";
 export * from "./intrastat";
 export * from "./category";
+export * from "./dashboard";

@@ -117,12 +117,10 @@ export const removePermissionsSchema = z
  * Schema per query filtri ruoli
  */
 export const roleQuerySchema = z.object({
-  query: z.object({
-    search: z.string().optional(),
-    isDefault: queryBooleanSchema,
-    sortBy: z.enum(["createdAt", "name", "code"]).default("name"),
-    sortOrder: sortOrderSchema,
-  }),
+  search: z.string().optional(),
+  isDefault: queryBooleanSchema,
+  sortBy: z.enum(["createdAt", "name", "code"]).default("name"),
+  sortOrder: sortOrderSchema,
 });
 
 // ============================================================================
