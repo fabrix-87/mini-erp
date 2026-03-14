@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { createIdSchema } from "./primitives/id";
 import { queryBooleanSchema } from "./query/params";
-import { sortOrderSchema } from "./query/pagination";
+import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import { userIdSchema } from "./base";
 
 // ============================================================================
@@ -41,10 +41,7 @@ export const roleCodeSchema = z
   .min(1, "Codice ruolo obbligatorio")
   .max(50, "Il codice non può superare 50 caratteri")
   .toUpperCase()
-  .regex(
-    /^[A-Z0-9_]+$/,
-    "Il codice può contenere solo lettere maiuscole, numeri e underscore",
-  );
+  .regex(/^[A-Z0-9_]+$/, "Il codice può contenere solo lettere maiuscole, numeri e underscore");
 
 /**
  * Schema per validare code nei params
@@ -52,6 +49,8 @@ export const roleCodeSchema = z
 export const roleCodeParamSchema = z.object({
   code: roleCodeSchema,
 });
+
+export const roleSortFieldSchema = z.enum(["createdAt", "name", "code", "updatedAt"]);
 
 // ============================================================================
 // ROLE SCHEMAS
@@ -96,9 +95,7 @@ export const updateRoleSchema = z
  */
 export const assignPermissionsSchema = z
   .object({
-    permissionIds: z
-      .array(permissionIdSchema)
-      .min(1, "Almeno un permesso è richiesto"),
+    permissionIds: z.array(permissionIdSchema).min(1, "Almeno un permesso è richiesto"),
   })
   .strict();
 
@@ -107,9 +104,7 @@ export const assignPermissionsSchema = z
  */
 export const removePermissionsSchema = z
   .object({
-    permissionIds: z
-      .array(permissionIdSchema)
-      .min(1, "Almeno un permesso è richiesto"),
+    permissionIds: z.array(permissionIdSchema).min(1, "Almeno un permesso è richiesto"),
   })
   .strict();
 
@@ -119,8 +114,10 @@ export const removePermissionsSchema = z
 export const roleQuerySchema = z.object({
   search: z.string().optional(),
   isDefault: queryBooleanSchema,
-  sortBy: z.enum(["createdAt", "name", "code"]).default("name"),
+  sortBy: roleSortFieldSchema.default("name"),
   sortOrder: sortOrderSchema,
+  page: pageSchema,
+  limit: limitSchema
 });
 
 // ============================================================================
@@ -142,8 +139,7 @@ const permissionCodeSchema = z
       return parts.length === 2 && parts[0].length > 0 && parts[1].length > 0;
     },
     {
-      message:
-        "Il codice deve seguire il formato resource:action (es. product:read)",
+      message: "Il codice deve seguire il formato resource:action (es. product:read)",
     },
   );
 
@@ -194,9 +190,7 @@ export const permissionQuerySchema = z.object({
   search: z.string().optional(),
   resource: z.string().optional(),
   action: z.string().optional(),
-  sortBy: z
-    .enum(["createdAt", "code", "resource", "action"])
-    .default("resource"),
+  sortBy: z.enum(["createdAt", "code", "resource", "action"]).default("resource"),
   sortOrder: sortOrderSchema,
 });
 

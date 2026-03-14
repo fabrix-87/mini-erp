@@ -197,10 +197,10 @@ export default function ContactForm({ isNew }: ContactFormProps) {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Indietro
         </Button>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold">
           {isNew ? "Nuovo Contatto" : "Modifica Contatto"}
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-muted-foreground">
           {isNew
             ? "Inserisci i dati del nuovo contatto"
             : "Aggiorna le informazioni del contatto"}

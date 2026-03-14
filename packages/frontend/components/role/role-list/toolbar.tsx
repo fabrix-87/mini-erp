@@ -1,36 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Search, Filter, Download } from "lucide-react";
+import { Plus, Search, Filter, Download, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ContactQueryInput } from "@mini-erp/shared";
+import { RoleQueryInput } from "@mini-erp/shared";
 
-interface ContactToolbarProps {
+interface RoleToolbarProps {
   onSearch: (search: string) => void;
-  onToggleFilters: () => void;
-  onNewContact: () => void;
-  onExport: (params: ContactQueryInput) => Promise<void>;
-  isExporting: boolean;
-  showFilters: boolean;
+  onNewRole: () => void;
   initialSearch: string;
-  params: ContactQueryInput;
 }
 
-export default function ContactToolbar({
-  onSearch,
-  onToggleFilters,
-  onNewContact,
-  onExport,
-  isExporting,
-  showFilters,
-  initialSearch,
-  params
-}: ContactToolbarProps) {
+export default function RoleToolbar({ onSearch, onNewRole, initialSearch }: RoleToolbarProps) {
   const [searchTerm, setSearchTerm] = useState(initialSearch);
 
   const handleSearch = () => {
     onSearch(searchTerm);
+  };
+
+  /** Clears the search input and triggers a search with empty string */
+  const handleClear = () => {
+    setSearchTerm("");
+    onSearch("");
   };
 
   return (
@@ -43,25 +35,26 @@ export default function ContactToolbar({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            placeholder="Cerca per nome, email, posizione..."
+            placeholder="Cerca per nome o codice"
             className="pl-10"
           />
+          {searchTerm && (
+            <button
+              onClick={handleClear}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Cancella ricerca"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
         <Button onClick={handleSearch}>Cerca</Button>
       </div>
 
       <div className="flex gap-2">
-        <Button variant="outline" onClick={onToggleFilters}>
-          <Filter className="w-4 h-4 mr-2" />
-          Filtri
-        </Button>
-        <Button variant="default" onClick={onNewContact}>
+        <Button variant="default" onClick={onNewRole}>
           <Plus className="w-4 h-4 mr-2" />
           Nuovo
-        </Button>
-        <Button variant="outline" onClick={() => onExport(params)} disabled={isExporting}>
-          <Download className="w-4 h-4 mr-2" />
-          Export
         </Button>
       </div>
     </div>

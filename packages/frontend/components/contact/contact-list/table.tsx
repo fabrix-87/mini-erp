@@ -2,8 +2,9 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { Contact, ContactSortField, SortOrder } from '@/types/contact';
+import type { Contact, ContactSortField } from '@/types/contact';
 import ContactTableRow from './table-row';
+import { SortOrder } from '@mini-erp/shared';
 
 interface ContactTableProps {
   contacts: Contact[];

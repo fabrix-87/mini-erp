@@ -1,6 +1,5 @@
 import {
   buildCustomerWhereClause,
-  buildPagination,
   getCustomerInclude,
   generateCompanyCode,
 } from "../helpers/company";
@@ -22,6 +21,7 @@ import {
 } from "@mini-erp/shared";
 import asyncHandler from "@/middleware/async-handler";
 import { Prisma } from "@/generated/prisma/client";
+import { buildPagination } from "@/utils/query";
 
 // ============================================================================
 // CUSTOMER CONTROLLERS

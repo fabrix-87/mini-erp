@@ -102,7 +102,7 @@ export default function ContactDetails() {
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold">
                 {contact.firstName} {contact.lastName}
               </h1>
               <Badge variant={contact.active ? 'default' : 'secondary'}>
@@ -328,14 +328,14 @@ export default function ContactDetails() {
                 <p className="text-sm text-gray-500">Creato il</p>
                 <div className="flex items-center gap-2 mt-1">
                   <Calendar className="w-4 h-4 text-gray-400" />
-                  <p className="text-sm">{formatDate(contact.createdAt)}</p>
+                  <p className="text-sm">{formatDate(contact.createdAt.toString())}</p>
                 </div>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Ultimo aggiornamento</p>
                 <div className="flex items-center gap-2 mt-1">
                   <Calendar className="w-4 h-4 text-gray-400" />
-                  <p className="text-sm">{formatDate(contact.updatedAt)}</p>
+                  <p className="text-sm">{formatDate(contact.updatedAt.toString())}</p>
                 </div>
               </div>
             </CardContent>

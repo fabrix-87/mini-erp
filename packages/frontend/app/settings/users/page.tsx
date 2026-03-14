@@ -6,10 +6,12 @@ import { getAllUsers, getUserStats } from '@/services/server/user';
 import { ServerApiError } from '@/types/server-client';
 import { UsersFilterBar } from '@/components/users/users-filter-bar';
 import { UsersTable } from '@/components/users/users-table';
-import { UsersPagination } from '@/components/users/users-pagination';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Users, UserCheck, UserX, Shield } from 'lucide-react';
+import { DataPagination } from '@/components/ui/data-pagination';
+import { BreadcrumbSetter } from '@/components/ui/breadcrumb-setter';
+import { StatisticCard } from '@/components/ui/statistic-card';
 
 
 // ============================================================================
@@ -58,62 +60,40 @@ async function UsersContent({ searchParams }: PageProps) {
     getUserStats(),
   ]);
 
-  const { data: users, pagination } = usersResponse;
+  const { data: users, pagination } = usersResponse;  
 
   return (
     <>
+      <BreadcrumbSetter title='Gestione Utenti'/>
       {/* Statistics Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Utenti Totali</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Attivi</CardTitle>
-            <UserCheck className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.active}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {((stats.active / stats.total) * 100).toFixed(1)}% del totale
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Inattivi</CardTitle>
-            <UserX className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.inactive}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {((stats.inactive / stats.total) * 100).toFixed(1)}% del totale
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ruoli</CardTitle>
-            <Shield className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {Object.keys(stats.byRole).length}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Tipi di ruolo configurati
-            </p>
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 md:grid-cols-4">        
+        <StatisticCard
+          title="Utenti Totali"
+          value={stats.total}
+          icon={Users}
+          colorClass="text-muted-foreground"
+        />
+        <StatisticCard
+          title="Attivi"
+          value={stats.active}
+          icon={UserCheck}
+          colorClass="text-green-600"
+          description={`${((stats.active / stats.total) * 100).toFixed(1)}% del totale`}
+        />
+        <StatisticCard
+          title="Inattivi"
+          value={stats.inactive}
+          icon={UserX}
+          colorClass="text-red-600"
+          description={`${((stats.inactive / stats.total) * 100).toFixed(1)}% del totale`}
+        />
+        <StatisticCard
+          title="Ruoli"
+          value={Object.keys(stats.byRole).length}
+          icon={Shield}
+          colorClass="text-blue-600"
+          description="Tipi di ruolo configurati"
+        />
       </div>
 
       {/* Filters */}
@@ -128,14 +108,15 @@ async function UsersContent({ searchParams }: PageProps) {
       <UsersTable users={users} />
 
       {/* Pagination */}
-      {pagination.totalPages > 0 && (
-        <UsersPagination
+      {pagination && pagination.totalPages > 0 && (
+        <DataPagination
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}
           totalItems={pagination.totalItems}
           limit={limit}
           hasNextPage={pagination.hasNextPage}
           hasPrevPage={pagination.hasPrevPage}
+          itemLabel="utenti"
         />
       )}
     </>
@@ -164,7 +145,7 @@ function UsersLoadingSkeleton() {
       </div>
 
       <div className="rounded-lg border bg-card">
-        <Skeleton className="h-[400px] w-full" />
+        <Skeleton className="h-100 w-full" />
       </div>
     </>
   );

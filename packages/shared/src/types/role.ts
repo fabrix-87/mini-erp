@@ -10,7 +10,7 @@ import {
   permissionIdParamSchema,
   permissionQuerySchema,
   roleIdParamSchema,
-  roleQuerySchema,
+  roleQuerySchema,  
   updatePermissionSchema,
   updateRoleSchema,
 } from "../validators";
@@ -29,6 +29,9 @@ export type Role = {
   description?: string;
   isDefault: boolean;
   permissions?: Permission[];
+  createdAt: Date;
+  updatedAt: Date;
+  userCount?: number;
 };
 
 /**

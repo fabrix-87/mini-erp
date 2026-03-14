@@ -1,3 +1,4 @@
+import { AddressType } from "@mini-erp/shared";
 import { prisma as prismaGlobal } from "../config/prisma-client";
 import { Prisma, PrismaClient } from "../generated/prisma/client";
 
@@ -7,7 +8,6 @@ import {
   SupplierFilters,
   AddressFilters,
 } from "../types/company";
-import { AddressType } from "../validators/address"; 
 
 // ============================================================================
 // WHERE CLAUSE BUILDERS
@@ -53,7 +53,6 @@ export const buildCustomerWhereClause = (
   if (filters.type) where.type = filters.type as any;
   if (filters.priority) where.priority = filters.priority as any;
   if (filters.segment) where.segment = filters.segment as any;
-  if (filters.leadStatus) where.leadStatus = filters.leadStatus as any;
   if (filters.creditStatus) where.creditStatus = filters.creditStatus as any;
 
   return where;
@@ -205,11 +204,6 @@ export const buildOrderBy = (
     totalRevenue: { totalRevenue: sortOrder },
   };
   return orderByMap[sortBy] || { id: sortOrder };
-};
-
-export const buildPagination = (page: number = 1, limit: number = 10) => {
-  const skip = (page - 1) * limit;
-  return { skip, take: limit };
 };
 
 // ============================================================================

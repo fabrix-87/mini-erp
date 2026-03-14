@@ -299,7 +299,7 @@ export function useContactMutations(): UseContactMutationsReturn {
 export function useContactExport() {
   const [isExporting, setIsExporting] = useState(false);
 
-  const exportCSV = async (params?: ContactQueryInput) => {
+  const exportCSV = async (params: ContactQueryInput) => {
     setIsExporting(true);
     try {
       const blob = await contactService.exportCSV(params);
@@ -320,7 +320,7 @@ export function useContactExport() {
     }
   };
 
-  const exportExcel = async (params?: ContactQueryInput) => {
+  const exportExcel = async (params: ContactQueryInput) : Promise<void> => {
     setIsExporting(true);
     try {
       const blob = await contactService.exportExcel(params);

@@ -4,7 +4,7 @@
 import { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  useContactsList, 
+  useContactsList,
   useContactMutations,
   useContactExport,
   useContactBulkOperations,
@@ -14,8 +14,9 @@ import ContactToolbar from "./contact-list/toolbar";
 import ContactFilters from "./contact-list/filters";
 import ContactBulkActions from "./contact-list/bulk-actions";
 import ContactTable from "./contact-list/table";
-import ContactPagination from "./contact-list/pagination";
 import { SortOrder } from "@mini-erp/shared/constants";
+import { DataPagination } from "../ui/data-pagination";
+import { mergeSearchParams } from "@/lib/utils/url";
 
 export default function ContactListPage() {
   const router = useRouter();
@@ -31,7 +32,9 @@ export default function ContactListPage() {
       sortOrder: (searchParams.get("sortOrder") as SortOrder) || "asc",
       companyId: searchParams.get("companyId") ? Number(searchParams.get("companyId")) : undefined,
       active: searchParams.get("active") ? searchParams.get("active") === "true" : undefined,
-      isPrimaryContact: searchParams.get("isPrimaryContact") ? searchParams.get("isPrimaryContact") === "true" : undefined,
+      isPrimaryContact: searchParams.get("isPrimaryContact")
+        ? searchParams.get("isPrimaryContact") === "true"
+        : undefined,
       department: searchParams.get("department") || undefined,
       position: searchParams.get("position") || undefined,
     };
@@ -64,16 +67,8 @@ export default function ContactListPage() {
   };
 
   const updateURL = (newParams: Partial<ContactQueryInput>) => {
-    const urlParams = new URLSearchParams();
-    const merged = { ...params, ...newParams };
-    
-    Object.entries(merged).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
-        urlParams.set(key, String(value));
-      }
-    });
-    
-    router.push(`/contacts?${urlParams.toString()}`, { scroll: false });
+    const qs = mergeSearchParams(params, newParams);
+    router.push(`/contacts?${qs}`, { scroll: false });
   };
 
   const handleSearch = (searchTerm: string) => {
@@ -98,9 +93,7 @@ export default function ContactListPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Contatti</h1>
-          <p className="text-muted-foreground">
-            Gestisci i contatti delle aziende
-          </p>
+          <p className="text-muted-foreground">Gestisci i contatti delle aziende</p>
         </div>
       </div>
 
@@ -112,11 +105,10 @@ export default function ContactListPage() {
         isExporting={isExporting}
         showFilters={showFilters}
         initialSearch={params.search || ""}
+        params={params}
       />
 
-      {showFilters && (
-        <ContactFilters filters={filters} onFilterChange={handleFilterChange} />
-      )}
+      {showFilters && <ContactFilters filters={filters} onFilterChange={handleFilterChange} />}
 
       <ContactBulkActions
         selectedIds={selectedIds}
@@ -142,13 +134,9 @@ export default function ContactListPage() {
         contacts={contacts}
         loading={loading}
         selectedIds={selectedIds}
-        onSelectAll={(checked) =>
-          setSelectedIds(checked ? contacts.map((c) => c.id) : [])
-        }
+        onSelectAll={(checked) => setSelectedIds(checked ? contacts.map((c) => c.id) : [])}
         onSelectOne={(id, checked) => {
-          setSelectedIds((prev) =>
-            checked ? [...prev, id] : prev.filter((i) => i !== id)
-          );
+          setSelectedIds((prev) => (checked ? [...prev, id] : prev.filter((i) => i !== id)));
         }}
         onSort={handleSort}
         sort={sort}
@@ -171,9 +159,14 @@ export default function ContactListPage() {
       />
 
       {pagination && pagination.totalPages > 1 && (
-        <ContactPagination
-          pagination={pagination}
-          onPageChange={handlePageChange}
+        <DataPagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          limit={params.limit}
+          hasNextPage={pagination.hasNextPage}
+          hasPrevPage={pagination.hasPrevPage}
+          itemLabel="contatti"
         />
       )}
     </div>

@@ -1,7 +1,6 @@
 import { Response, NextFunction } from "express";
 import {
-  buildSupplierWhereClause,
-  buildPagination,
+  buildSupplierWhereClause,  
   getSupplierInclude,
   generateCompanyCode,
 } from "../helpers/company";
@@ -14,6 +13,7 @@ import { formatPaginatedResponse } from "../utils/response";
 import { AuthenticatedValidatedRequest } from '@/types/validate';
 
 import { prisma } from "../config/prisma-client";
+import { buildPagination } from "@/utils/query";
 
 // ============================================================================
 // SUPPLIER CONTROLLERS
