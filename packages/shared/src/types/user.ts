@@ -17,7 +17,6 @@ import type { Customer } from "./customer";
 import type { Supplier } from "./supplier";
 import type { Lead } from "./lead";
 import {
-  genderSchema,
   userFormSchema,
   createUserFormSchema,
   updateUserFormSchema,

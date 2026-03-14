@@ -7,10 +7,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   User,
-  CreateUserFormValues,
-  UpdateUserFormValues,
-  CreateUserFormSchema,
-  UpdateUserFormSchema,
+  CreateUserFormInput,
+  UpdateUserFormInput,
+  createUserFormSchema,
+  updateUserFormSchema
 } from "@/types/user";
 import {
   Form,
@@ -67,15 +67,12 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
     "profile"
   );
 
-  const schema =
-    mode === "create" ? CreateUserFormSchema : UpdateUserFormSchema;
-  type FormValues = CreateUserFormValues | UpdateUserFormValues;
+  const schema = mode === "create" ? createUserFormSchema : updateUserFormSchema;
+  type FormValues = CreateUserFormInput | UpdateUserFormInput;
 
   // Initialize form
   const form = useForm<FormValues>({
-    resolver: zodResolver(
-      mode === "create" ? CreateUserFormSchema : UpdateUserFormSchema
-    ) as any,
+    resolver: zodResolver(schema) as any,
     defaultValues: {
       username: user?.username || "",
       email: user?.email || "",
@@ -100,7 +97,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
     startTransition(async () => {
       try {
         if (mode === "create") {
-          const createData = data as CreateUserFormValues;
+          const createData = data as CreateUserFormInput;
 
           // Create new user
           const result = await createUserAction({
@@ -124,7 +121,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
           }
         } else {
           // Update existing user
-          const updateData = data as UpdateUserFormValues;
+          const updateData = data as UpdateUserFormInput;
           const userId = user!.id;
 
           // Update profile if changed

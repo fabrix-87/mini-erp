@@ -1,13 +1,12 @@
 export type { 
     User, 
-    GenderType,
     LoginInput,
     UpdateUserDetailsInput,
     UpdateUserProfileInput,
     RegisterUserInput,
-    CreateUserFormValues,
-    UpdateUserFormValues,    
+    CreateUserFormInput,
+    UpdateUserFormInput
 } from "@mini-erp/shared/types";
 
 
-export { CreateUserFormSchema, UpdateUserFormSchema } from "@mini-erp/shared/validators"
+export { createUserFormSchema, updateUserFormSchema } from "@mini-erp/shared/validators"
