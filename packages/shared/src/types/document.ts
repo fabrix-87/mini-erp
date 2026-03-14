@@ -20,11 +20,8 @@ import type { StockMovement, StockReservation } from "./warehouse";
 import type { IntrastatTransaction } from "./intrastat";
 import Decimal from "decimal.js";
 import {
-  documentTypeSchema,
   documentStatusCategorySchema,
-  documentStatusSchema,
   documentRelationTypeSchema,
-  documentLineTypeSchema,
   installmentStatusSchema,
   createDocumentLineSchema,
   updateDocumentLineSchema,
@@ -54,18 +51,19 @@ import {
   agingReportSchema,
   topProductsReportSchema,
 } from "../validators/document";
+import { DOCUMENT_LINE_TYPES, DOCUMENT_STATUSES, DOCUMENT_TYPES } from "../constants";
 
 // ============================================================================
 // ENUM TYPES
 // ============================================================================
 
-export type DocumentType = z.infer<typeof documentTypeSchema>;
+export type DocumentType = keyof typeof DOCUMENT_TYPES;
 export type DocumentStatusCategory = z.infer<
   typeof documentStatusCategorySchema
 >;
-export type DocumentStatus = z.infer<typeof documentStatusSchema>;
+export type DocumentStatus = keyof typeof DOCUMENT_STATUSES;
 export type DocumentRelationType = z.infer<typeof documentRelationTypeSchema>;
-export type DocumentLineType = z.infer<typeof documentLineTypeSchema>;
+export type DocumentLineType = (typeof DOCUMENT_LINE_TYPES)[keyof typeof DOCUMENT_LINE_TYPES];
 export type InstallmentStatus = z.infer<typeof installmentStatusSchema>;
 
 // ============================================================================

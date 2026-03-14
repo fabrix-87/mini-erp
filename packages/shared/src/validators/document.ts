@@ -24,8 +24,7 @@ import {
   MIN_DISCOUNT_PERCENT,
   MAX_LINE_QUANTITY,
   MAX_DOCUMENT_AMOUNT,
-  DOCUMENTS_REQUIRING_SUPPLIER_ARRAY,
-  DOCUMENTS_REQUIRING_CUSTOMER_ARRAY,
+  DOCUMENTS_REQUIRING_CUSTOMER,
 } from "../constants/document";
 import { priceSchema } from "./business";
 import Decimal from "decimal.js";
@@ -96,6 +95,7 @@ export const installmentStatusSchema = z.enum([
   INSTALLMENT_STATUSES.PAID,
   INSTALLMENT_STATUSES.OVERDUE,
   INSTALLMENT_STATUSES.CANCELLED,
+  INSTALLMENT_STATUSES.PARTIAL
 ]);
 
 // ============================================================================
@@ -215,6 +215,7 @@ const installmentShape = z.object({
   percentage: installmentPercentSchema,
   amount: moneySchema,
   dueDate: isoDateSchema(),
+  status: installmentStatusSchema.default("PENDING"),
   notes: z.string().max(500).optional().nullable(),
   paymentMethodId: createIdSchema("Payment Method ID non valido")
     .optional()
@@ -267,6 +268,7 @@ const documentShape = z.object({
   customerId: createIdSchema("Customer ID non valido").optional().nullable(),
   supplierId: createIdSchema("Supplier ID non valido").optional().nullable(),
   contactId: createIdSchema("Contact ID non valido").optional().nullable(),
+  assignedUserId: createIdSchema("User ID non valido").optional().nullable(),
   opportunityId: createIdSchema("Opportunity ID non valido")
     .optional()
     .nullable(),
@@ -284,7 +286,6 @@ const documentShape = z.object({
   customerVatNumber: z.string().max(20).optional().nullable(),
   customerTaxCode: z.string().max(20).optional().nullable(),
   customerPec: z
-    .string()
     .email("PEC non valida")
     .max(255)
     .optional()
@@ -359,7 +360,7 @@ export const createDocumentSchema = documentShape
   .refine(
     (data) => {
       if (
-        DOCUMENTS_REQUIRING_CUSTOMER_ARRAY.includes(data.documentType as any) &&
+        DOCUMENTS_REQUIRING_CUSTOMER.includes(data.documentType as any) &&
         !data.customerId
       ) {
         return false;
@@ -374,7 +375,7 @@ export const createDocumentSchema = documentShape
   .refine(
     (data) => {
       if (
-        DOCUMENTS_REQUIRING_SUPPLIER_ARRAY.includes(data.documentType as any) &&
+        DOCUMENTS_REQUIRING_CUSTOMER.includes(data.documentType as any) &&
         !data.supplierId
       ) {
         return false;

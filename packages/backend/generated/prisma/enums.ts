@@ -247,6 +247,17 @@ export const DocumentRelationType = {
 export type DocumentRelationType = (typeof DocumentRelationType)[keyof typeof DocumentRelationType]
 
 
+export const InstallmentStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  OVERDUE: 'OVERDUE',
+  CANCELLED: 'CANCELLED',
+  PARTIAL: 'PARTIAL'
+} as const
+
+export type InstallmentStatus = (typeof InstallmentStatus)[keyof typeof InstallmentStatus]
+
+
 export const IntrastatFlow = {
   ARRIVAL: 'ARRIVAL',
   DISPATCH: 'DISPATCH'

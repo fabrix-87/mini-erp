@@ -6675,6 +6675,20 @@ export type ListEnumDocumentStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
 
 
 /**
+ * Reference to a field of type 'InstallmentStatus'
+ */
+export type EnumInstallmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InstallmentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'InstallmentStatus[]'
+ */
+export type ListEnumInstallmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InstallmentStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'DocumentRelationType'
  */
 export type EnumDocumentRelationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DocumentRelationType'>

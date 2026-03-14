@@ -61,6 +61,15 @@ enum DocumentRelationType {
     AMENDS
 }
 
+enum InstallmentStatus {
+  PENDING     // In attesa di pagamento
+  PAID        // Pagato completamente
+  OVERDUE     // Scaduto
+  CANCELLED   // Annullato
+  PARTIAL     // Pagato parzialmente (opzionale)
+}
+
+
 model Document {
     id Int @id @default(autoincrement())
 
@@ -333,7 +342,7 @@ model DocumentPaymentInstallment {
     dueDate    DateTime // La data di scadenza CALCOLATA
     paidDate   DateTime? // Data di pagamento effettivo
     paidAmount Decimal   @default(0) @db.Decimal(15, 2)
-    status     String    @default("pending") @db.VarChar(20) // pending, paid, overdue
+    status     InstallmentStatus  @default(PENDING)
 
     notes String? @db.Text
 

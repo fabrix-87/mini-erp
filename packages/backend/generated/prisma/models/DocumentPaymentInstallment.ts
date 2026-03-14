@@ -59,7 +59,7 @@ export type DocumentPaymentInstallmentMinAggregateOutputType = {
   dueDate: Date | null
   paidDate: Date | null
   paidAmount: runtime.Decimal | null
-  status: string | null
+  status: $Enums.InstallmentStatus | null
   notes: string | null
   paymentMethodId: number | null
   paymentReference: string | null
@@ -80,7 +80,7 @@ export type DocumentPaymentInstallmentMaxAggregateOutputType = {
   dueDate: Date | null
   paidDate: Date | null
   paidAmount: runtime.Decimal | null
-  status: string | null
+  status: $Enums.InstallmentStatus | null
   notes: string | null
   paymentMethodId: number | null
   paymentReference: string | null
@@ -298,7 +298,7 @@ export type DocumentPaymentInstallmentGroupByOutputType = {
   dueDate: Date
   paidDate: Date | null
   paidAmount: runtime.Decimal
-  status: string
+  status: $Enums.InstallmentStatus
   notes: string | null
   paymentMethodId: number | null
   paymentReference: string | null
@@ -342,7 +342,7 @@ export type DocumentPaymentInstallmentWhereInput = {
   dueDate?: Prisma.DateTimeFilter<"DocumentPaymentInstallment"> | Date | string
   paidDate?: Prisma.DateTimeNullableFilter<"DocumentPaymentInstallment"> | Date | string | null
   paidAmount?: Prisma.DecimalFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFilter<"DocumentPaymentInstallment"> | string
+  status?: Prisma.EnumInstallmentStatusFilter<"DocumentPaymentInstallment"> | $Enums.InstallmentStatus
   notes?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
   paymentMethodId?: Prisma.IntNullableFilter<"DocumentPaymentInstallment"> | number | null
   paymentReference?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
@@ -391,7 +391,7 @@ export type DocumentPaymentInstallmentWhereUniqueInput = Prisma.AtLeast<{
   dueDate?: Prisma.DateTimeFilter<"DocumentPaymentInstallment"> | Date | string
   paidDate?: Prisma.DateTimeNullableFilter<"DocumentPaymentInstallment"> | Date | string | null
   paidAmount?: Prisma.DecimalFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFilter<"DocumentPaymentInstallment"> | string
+  status?: Prisma.EnumInstallmentStatusFilter<"DocumentPaymentInstallment"> | $Enums.InstallmentStatus
   notes?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
   paymentMethodId?: Prisma.IntNullableFilter<"DocumentPaymentInstallment"> | number | null
   paymentReference?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
@@ -443,7 +443,7 @@ export type DocumentPaymentInstallmentScalarWhereWithAggregatesInput = {
   dueDate?: Prisma.DateTimeWithAggregatesFilter<"DocumentPaymentInstallment"> | Date | string
   paidDate?: Prisma.DateTimeNullableWithAggregatesFilter<"DocumentPaymentInstallment"> | Date | string | null
   paidAmount?: Prisma.DecimalWithAggregatesFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringWithAggregatesFilter<"DocumentPaymentInstallment"> | string
+  status?: Prisma.EnumInstallmentStatusWithAggregatesFilter<"DocumentPaymentInstallment"> | $Enums.InstallmentStatus
   notes?: Prisma.StringNullableWithAggregatesFilter<"DocumentPaymentInstallment"> | string | null
   paymentMethodId?: Prisma.IntNullableWithAggregatesFilter<"DocumentPaymentInstallment"> | number | null
   paymentReference?: Prisma.StringNullableWithAggregatesFilter<"DocumentPaymentInstallment"> | string | null
@@ -462,7 +462,7 @@ export type DocumentPaymentInstallmentCreateInput = {
   dueDate: Date | string
   paidDate?: Date | string | null
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: string
+  status?: $Enums.InstallmentStatus
   notes?: string | null
   paymentReference?: string | null
   bankTransactionId?: string | null
@@ -484,7 +484,7 @@ export type DocumentPaymentInstallmentUncheckedCreateInput = {
   dueDate: Date | string
   paidDate?: Date | string | null
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: string
+  status?: $Enums.InstallmentStatus
   notes?: string | null
   paymentMethodId?: number | null
   paymentReference?: string | null
@@ -503,7 +503,7 @@ export type DocumentPaymentInstallmentUpdateInput = {
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumInstallmentStatusFieldUpdateOperationsInput | $Enums.InstallmentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -525,7 +525,7 @@ export type DocumentPaymentInstallmentUncheckedUpdateInput = {
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumInstallmentStatusFieldUpdateOperationsInput | $Enums.InstallmentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -546,7 +546,7 @@ export type DocumentPaymentInstallmentCreateManyInput = {
   dueDate: Date | string
   paidDate?: Date | string | null
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: string
+  status?: $Enums.InstallmentStatus
   notes?: string | null
   paymentMethodId?: number | null
   paymentReference?: string | null
@@ -565,7 +565,7 @@ export type DocumentPaymentInstallmentUpdateManyMutationInput = {
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumInstallmentStatusFieldUpdateOperationsInput | $Enums.InstallmentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -585,7 +585,7 @@ export type DocumentPaymentInstallmentUncheckedUpdateManyInput = {
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumInstallmentStatusFieldUpdateOperationsInput | $Enums.InstallmentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -736,6 +736,10 @@ export type DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentNestedIn
   deleteMany?: Prisma.DocumentPaymentInstallmentScalarWhereInput | Prisma.DocumentPaymentInstallmentScalarWhereInput[]
 }
 
+export type EnumInstallmentStatusFieldUpdateOperationsInput = {
+  set?: $Enums.InstallmentStatus
+}
+
 export type DocumentPaymentInstallmentCreateNestedManyWithoutPaymentMethodInput = {
   create?: Prisma.XOR<Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput, Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput> | Prisma.DocumentPaymentInstallmentCreateWithoutPaymentMethodInput[] | Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput[]
   connectOrCreate?: Prisma.DocumentPaymentInstallmentCreateOrConnectWithoutPaymentMethodInput | Prisma.DocumentPaymentInstallmentCreateOrConnectWithoutPaymentMethodInput[]
@@ -785,7 +789,7 @@ export type DocumentPaymentInstallmentCreateWithoutDocumentInput = {
   dueDate: Date | string
   paidDate?: Date | string | null
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: string
+  status?: $Enums.InstallmentStatus
   notes?: string | null
   paymentReference?: string | null
   bankTransactionId?: string | null
@@ -805,7 +809,7 @@ export type DocumentPaymentInstallmentUncheckedCreateWithoutDocumentInput = {
   dueDate: Date | string
   paidDate?: Date | string | null
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: string
+  status?: $Enums.InstallmentStatus
   notes?: string | null
   paymentMethodId?: number | null
   paymentReference?: string | null
@@ -855,7 +859,7 @@ export type DocumentPaymentInstallmentScalarWhereInput = {
   dueDate?: Prisma.DateTimeFilter<"DocumentPaymentInstallment"> | Date | string
   paidDate?: Prisma.DateTimeNullableFilter<"DocumentPaymentInstallment"> | Date | string | null
   paidAmount?: Prisma.DecimalFilter<"DocumentPaymentInstallment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFilter<"DocumentPaymentInstallment"> | string
+  status?: Prisma.EnumInstallmentStatusFilter<"DocumentPaymentInstallment"> | $Enums.InstallmentStatus
   notes?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
   paymentMethodId?: Prisma.IntNullableFilter<"DocumentPaymentInstallment"> | number | null
   paymentReference?: Prisma.StringNullableFilter<"DocumentPaymentInstallment"> | string | null
@@ -874,7 +878,7 @@ export type DocumentPaymentInstallmentCreateWithoutPaymentMethodInput = {
   dueDate: Date | string
   paidDate?: Date | string | null
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: string
+  status?: $Enums.InstallmentStatus
   notes?: string | null
   paymentReference?: string | null
   bankTransactionId?: string | null
@@ -895,7 +899,7 @@ export type DocumentPaymentInstallmentUncheckedCreateWithoutPaymentMethodInput =
   dueDate: Date | string
   paidDate?: Date | string | null
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: string
+  status?: $Enums.InstallmentStatus
   notes?: string | null
   paymentReference?: string | null
   bankTransactionId?: string | null
@@ -940,7 +944,7 @@ export type DocumentPaymentInstallmentCreateManyDocumentInput = {
   dueDate: Date | string
   paidDate?: Date | string | null
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: string
+  status?: $Enums.InstallmentStatus
   notes?: string | null
   paymentMethodId?: number | null
   paymentReference?: string | null
@@ -959,7 +963,7 @@ export type DocumentPaymentInstallmentUpdateWithoutDocumentInput = {
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumInstallmentStatusFieldUpdateOperationsInput | $Enums.InstallmentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -979,7 +983,7 @@ export type DocumentPaymentInstallmentUncheckedUpdateWithoutDocumentInput = {
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumInstallmentStatusFieldUpdateOperationsInput | $Enums.InstallmentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -999,7 +1003,7 @@ export type DocumentPaymentInstallmentUncheckedUpdateManyWithoutDocumentInput = 
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumInstallmentStatusFieldUpdateOperationsInput | $Enums.InstallmentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1020,7 +1024,7 @@ export type DocumentPaymentInstallmentCreateManyPaymentMethodInput = {
   dueDate: Date | string
   paidDate?: Date | string | null
   paidAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: string
+  status?: $Enums.InstallmentStatus
   notes?: string | null
   paymentReference?: string | null
   bankTransactionId?: string | null
@@ -1038,7 +1042,7 @@ export type DocumentPaymentInstallmentUpdateWithoutPaymentMethodInput = {
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumInstallmentStatusFieldUpdateOperationsInput | $Enums.InstallmentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1059,7 +1063,7 @@ export type DocumentPaymentInstallmentUncheckedUpdateWithoutPaymentMethodInput =
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumInstallmentStatusFieldUpdateOperationsInput | $Enums.InstallmentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1079,7 +1083,7 @@ export type DocumentPaymentInstallmentUncheckedUpdateManyWithoutPaymentMethodInp
   dueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paidDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paidAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumInstallmentStatusFieldUpdateOperationsInput | $Enums.InstallmentStatus
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bankTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1211,7 +1215,7 @@ export type $DocumentPaymentInstallmentPayload<ExtArgs extends runtime.Types.Ext
     dueDate: Date
     paidDate: Date | null
     paidAmount: runtime.Decimal
-    status: string
+    status: $Enums.InstallmentStatus
     notes: string | null
     paymentMethodId: number | null
     paymentReference: string | null
@@ -1654,7 +1658,7 @@ export interface DocumentPaymentInstallmentFieldRefs {
   readonly dueDate: Prisma.FieldRef<"DocumentPaymentInstallment", 'DateTime'>
   readonly paidDate: Prisma.FieldRef<"DocumentPaymentInstallment", 'DateTime'>
   readonly paidAmount: Prisma.FieldRef<"DocumentPaymentInstallment", 'Decimal'>
-  readonly status: Prisma.FieldRef<"DocumentPaymentInstallment", 'String'>
+  readonly status: Prisma.FieldRef<"DocumentPaymentInstallment", 'InstallmentStatus'>
   readonly notes: Prisma.FieldRef<"DocumentPaymentInstallment", 'String'>
   readonly paymentMethodId: Prisma.FieldRef<"DocumentPaymentInstallment", 'Int'>
   readonly paymentReference: Prisma.FieldRef<"DocumentPaymentInstallment", 'String'>
