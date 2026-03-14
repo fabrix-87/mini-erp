@@ -3,11 +3,7 @@
 // Business validation rules for documents
 // ============================================================================
 
-import {
-  DOCUMENT_STATUS_TRANSITIONS,
-  DOCUMENT_TYPE_CONFIG,
-  DocumentType,
-} from "@mini-erp/shared";
+import { DOCUMENT_STATUS_TRANSITIONS, DOCUMENT_TYPE_CONFIG, DOCUMENT_TYPE_STATUS_TRANSITIONS, DocumentStatus, DocumentType } from "@mini-erp/shared";
 
 export type StatusType = keyof typeof DOCUMENT_STATUS_TRANSITIONS;
 
@@ -18,9 +14,7 @@ export const isStatusTransitionAllowed = (
   currentStatus: StatusType,
   newStatus: string,
 ): boolean => {
-  const allowedTransitions = DOCUMENT_STATUS_TRANSITIONS[
-    currentStatus
-  ] as readonly string[];
+  const allowedTransitions = DOCUMENT_STATUS_TRANSITIONS[currentStatus] as readonly string[];
   return allowedTransitions.includes(newStatus);
 };
 
@@ -34,10 +28,7 @@ export const isDocumentEditable = (status: string): boolean => {
 /**
  * Verifica se documento può essere eliminato
  */
-export const isDocumentDeletable = (
-  status: string,
-  hasNumber: boolean,
-): boolean => {
+export const isDocumentDeletable = (status: string, hasNumber: boolean): boolean => {
   return status === "DRAFT" && !hasNumber;
 };
 
@@ -57,10 +48,7 @@ export const validateInstallments = (
   valid: boolean;
   totalPercentage: number;
 } => {
-  const totalPercentage = installments.reduce(
-    (sum, inst) => sum + Number(inst.percentage),
-    0,
-  );
+  const totalPercentage = installments.reduce((sum, inst) => sum + Number(inst.percentage), 0);
 
   return {
     valid: Math.abs(totalPercentage - 100) < 0.01,
@@ -135,4 +123,26 @@ export const getSDIDocumentType = (documentType: DocumentType): string => {
   };
 
   return sdiTypes[documentType] || "TD01";
+};
+
+/**
+ * Resolves the allowed status transitions for a document,
+ * preferring type-specific rules over the global fallback.
+ *
+ * @param documentType - Current document type
+ * @param currentStatus - Current document status
+ * @returns Array of allowed next statuses
+ */
+export const resolveAllowedTransitions = (
+  documentType: DocumentType,
+  currentStatus: DocumentStatus,
+): DocumentStatus[] => {
+  const typeTransitions = DOCUMENT_TYPE_STATUS_TRANSITIONS[documentType];
+  const specific = typeTransitions?.[currentStatus];
+
+  if (specific && specific.length > 0) {
+    return [...specific] as DocumentStatus[];
+  }
+
+  return [...DOCUMENT_STATUS_TRANSITIONS[currentStatus]] as DocumentStatus[];
 };

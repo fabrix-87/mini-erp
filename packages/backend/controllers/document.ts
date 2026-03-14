@@ -1,48 +1,35 @@
 import { Response } from "express";
 import asyncHandler from "../middleware/async-handler";
-import {
-  NotFoundError,
-  BadRequestError,
-  ConflictError,
-} from "../utils/app-error";
+import { NotFoundError, BadRequestError, ConflictError } from "../utils/app-error";
 import { prisma } from "../config/prisma-client";
 import { Prisma } from "../generated/prisma/client";
 import { AuthenticatedValidatedRequest } from "@/types/validate";
+import { sendCreated, sendDeleted, sendPaginatedResponse, sendSuccess } from "@/utils/response";
 import {
-  sendCreated,
-  sendDeleted,
-  sendPaginatedResponse,
-  sendSuccess,
-} from "@/utils/response";
-import { calculateDocumentTotals, calculateLineTotals, CreateDocumentInput, CreateDocumentLineInput, CreateInstallmentInput, DOCUMENT_STATUS_TRANSITIONS, DOCUMENT_TYPE_CONFIG, DOCUMENT_TYPES_WITH_STOCK_MOVEMENTS, DocumentLine, DocumentPaymentInstallment, DocumentQueryInput, DocumentStatus, DocumentType, INSTALLMENT_STATUS_TRANSITIONS, InstallmentStatus, STATUSES_REQUIRING_NUMBER, TopProductsReportInput, UpdateDocumentStatusInput } from "@mini-erp/shared";
+  calculateDocumentTotals,
+  calculateLineTotals,
+  CreateDocumentInput,
+  DOCUMENT_TYPE_CONFIG,
+  DOCUMENT_TYPES_WITH_STOCK_MOVEMENTS,
+  DocumentQueryInput,
+  DocumentStatus,
+  DocumentType,
+  INSTALLMENT_STATUS_TRANSITIONS,
+  InstallmentStatus,
+  STATUSES_REQUIRING_NUMBER,
+  TopProductsReportInput,
+  UpdateDocumentInput,
+  UpdateDocumentStatusInput,
+} from "@mini-erp/shared";
 import * as documentFulfillmentService from "@/services/document/fulfillment";
 import { getDocumentSelection } from "@/helpers/document";
-import { generateDocumentNumber, updateDocumentPaidAmount } from "@/services/document";
-import { Decimal } from "@prisma/client/runtime/client";
-
-// ============================================================================
-// HELPER TYPES
-// ============================================================================
-
-/**
- * Document line with calculated totals (internal use)
- */
-interface ProcessedDocumentLine extends Omit<CreateDocumentLineInput, 'quantity' | 'unitPrice' | 'unitCost' | 'discountPercent' | 'taxPercent'> {
-  lineNumber: number;
-  quantity: number;
-  unitPrice: number;
-  unitCost: number;
-  discountPercent: number;
-  taxPercent: number;
-  lineSubtotal?: number;
-  discountAmount: Decimal;
-  lineTotal: Decimal;
-  taxAmount: Decimal;
-  lineTotalWithTax: Decimal;
-  quantityInvoiced: Decimal;
-  quantityDelivered: Decimal;
-  quantityReturned: Decimal;
-}
+import {
+  buildDocumentCreateData,
+  buildDocumentUpdateData,
+  generateDocumentNumber,
+  resolveAllowedTransitions,
+  updateDocumentPaidAmount,
+} from "@/services/document";
 
 // ============================================================================
 // DOCUMENTS - CRUD Operations
@@ -153,265 +140,30 @@ export const getDocumentById = asyncHandler(
  */
 export const createDocument = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const {
-      lines = [],
-      installments = [],
-      ...documentData
-    } = req.validatedBody as CreateDocumentInput;
+    const input = req.validatedBody as CreateDocumentInput;
     const userId = req.user!.userId;
 
     // Validate document type configuration
-    const config = DOCUMENT_TYPE_CONFIG[documentData.documentType as DocumentType];
+    const config = DOCUMENT_TYPE_CONFIG[input.documentType as DocumentType];
 
-    // ============================================================================
-    // VALIDATIONS
-    // ============================================================================
-
-    // Check customer requirement
-    if (config.requiresCustomer && !documentData.customerId) {
+    if (config.requiresCustomer && !input.customerId) {
+      throw new BadRequestError(`Tipo documento ${input.documentType} richiede un cliente`);
+    }
+    if (config.requiresSupplier && !input.supplierId) {
+      throw new BadRequestError(`Tipo documento ${input.documentType} richiede un fornitore`);
+    }
+    if (config.requiresWarehouse && !input.warehouseId) {
+      throw new BadRequestError(`Tipo documento ${input.documentType} richiede un magazzino`);
+    }
+    if (config.requiresPaymentMethod && !input.paymentMethod) {
       throw new BadRequestError(
-        `Tipo documento ${documentData.documentType} richiede un cliente`
+        `Tipo documento ${input.documentType} richiede metodo di pagamento`,
       );
     }
 
-    // Check supplier requirement
-    if (config.requiresSupplier && !documentData.supplierId) {
-      throw new BadRequestError(
-        `Tipo documento ${documentData.documentType} richiede un fornitore`
-      );
-    }
-
-    // Check warehouse requirement
-    if (config.requiresWarehouse && !documentData.warehouseId) {
-      throw new BadRequestError(
-        `Tipo documento ${documentData.documentType} richiede un magazzino`
-      );
-    }
-
-    // Check payment method requirement
-    if (config.requiresPaymentMethod && !documentData.paymentMethod) {
-      throw new BadRequestError(
-        `Tipo documento ${documentData.documentType} richiede metodo di pagamento`
-      );
-    }
-
-    // ============================================================================
-    // CALCULATE TOTALS
-    // ============================================================================
-
-    // Calcola totali se ci sono righe
-    let totals = {
-      subtotal: new Decimal(0),
-      discountAmount: new Decimal(0),
-      taxableAmount: new Decimal(0),
-      taxAmount: new Decimal(0),
-      shippingTaxAmount: new Decimal(0),
-      totalAmount: new Decimal(0),
-    };
-
-    let processedLines: ProcessedDocumentLine[] = [];
-
-     if (lines.length > 0) {
-      for (let index = 0; index < lines.length; index++) {
-        const line = lines[index];
-
-        // Calculate line totals
-        const lineTotals = calculateLineTotals(
-          line.quantity,
-          line.unitPrice,
-          line.discountPercent,
-          line.taxPercent,
-        );
-
-        const processedLine: ProcessedDocumentLine = {
-          // From input
-          productId: line.productId ?? null,
-          productVariantId: line.productVariantId ?? null,
-          lineType: line.lineType ?? "product",
-          code: line.code ?? null,
-          nameSystem: line.nameSystem,
-          descriptionSystem: line.descriptionSystem ?? null,
-          nameCustomer: line.nameCustomer ?? null,
-          descriptionCustomer: line.descriptionCustomer ?? null,
-          unit: line.unit ?? "pz",
-          taxRuleId: line.taxRuleId ?? null,
-          vatNatureCode: line.vatNatureCode ?? null,
-          vatNormReference: line.vatNormReference ?? null,
-          notes: line.notes ?? null,
-          customFields: line.customFields ?? null,
-          warehouseId: line.warehouseId ?? null,
-          parentLineId: line.parentLineId ?? null,
-          isComponent: line.isComponent ?? false,
-          originalUnitPrice: line.originalUnitPrice ?? null,
-          priceOverrideReason: line.priceOverrideReason ?? null,
-
-          // Line position
-          lineNumber: index + 1,
-
-          // Converted Decimal to number
-          quantity: Number(line.quantity),
-          unitPrice: Number(line.unitPrice),
-          unitCost: Number(line.unitCost ?? 0),
-          discountPercent: Number(line.discountPercent ?? 0),
-          taxPercent: Number(line.taxPercent ?? 0),
-
-          // Calculated totals
-          ...lineTotals,
-
-          // Fulfillment tracking (initialized to 0)
-          quantityInvoiced: new Decimal(0),
-          quantityDelivered: new Decimal(0),
-          quantityReturned: new Decimal(0),
-        };
-
-        processedLines.push(processedLine);
-      }
-
-      totals = calculateDocumentTotals(
-        processedLines,
-        documentData.discountPercent || 0,
-        documentData.shippingCost || 0,
-      );
-    }
-
-    // ============================================================================
-    // CREATE DOCUMENT IN TRANSACTION
-    // ============================================================================
-
-    // Crea documento con righe e rate in transazione
     const document = await prisma.$transaction(async (tx) => {
-      // Genera numero documento se non in DRAFT
-      let documentNumber = null;
-      const currentYear = new Date().getFullYear();
-
-      if (documentData.status !== "DRAFT") {
-        // Check if status requires number
-        if (STATUSES_REQUIRING_NUMBER.includes(documentData.status as DocumentStatus)) {
-          documentNumber = await generateDocumentNumber(
-            documentData.documentType,
-            currentYear,
-            tx,
-          );
-        }
-      }
-
-      const newDocument = await tx.document.create({
-        data: {
-          // Document metadata
-          documentType: documentData.documentType,
-          status: documentData.status,
-          documentNumber: documentNumber?.documentNumber,
-          documentYear: currentYear,
-          documentDate: new Date(documentData.documentDate ?? ''),
-          dueDate: documentData.dueDate ? new Date(documentData.dueDate) : null,
-          deliveryDate: documentData.deliveryDate ? new Date(documentData.deliveryDate) : null,
-          validUntil: documentData.validUntil ? new Date(documentData.validUntil) : null,
-
-          // Customer/Supplier info
-          customerName: documentData.customerName || "",
-          customerVatNumber: documentData.customerVatNumber ?? null,
-          customerTaxCode: documentData.customerTaxCode ?? null,
-          customerPec: documentData.customerPec ?? null,
-          customerSdiCode: documentData.customerSdiCode ?? null,
-          customerAddress: documentData.customerAddress ?? null,
-          customerCity: documentData.customerCity ?? null,
-          customerPostalCode: documentData.customerPostalCode ?? null,
-          customerProvince: documentData.customerProvince ?? null,
-          customerCountryCode: documentData.customerCountryCode || "IT",
-          customerEmail: documentData.customerEmail ?? null,
-          customerPhone: documentData.customerPhone ?? null,
-
-          // Shipping info
-          shippingName: documentData.shippingName ?? null,
-          shippingAddress: documentData.shippingAddress ?? null,
-          shippingCity: documentData.shippingCity ?? null,
-          shippingPostalCode: documentData.shippingPostalCode ?? null,
-          shippingProvince: documentData.shippingProvince ?? null,
-          shippingCountryCode: documentData.shippingCountryCode ?? null,
-
-          // Financial data
-          discountPercent: Number(documentData.discountPercent ?? 0),
-          shippingCost: Number(documentData.shippingCost ?? 0),
-          currencyCode: documentData.currencyCode || "EUR",
-          exchangeRate: Number(documentData.exchangeRate ?? 1),
-          exchangeRateDate: documentData.exchangeRateDate ? new Date(documentData.exchangeRateDate) : new Date(),
-          baseCurrencyCode: documentData.baseCurrencyCode || "EUR",
-
-          // Payment
-          paymentMethod: documentData.paymentMethod ?? "bank_transfer",
-          paymentTerms: documentData.paymentTerms ?? null,
-          bankName: documentData.bankName ?? null,
-          bankIban: documentData.bankIban ?? null,
-          bankSwift: documentData.bankSwift ?? null,
-
-          // Notes
-          notes: documentData.notes ?? null,
-          internalNotes: documentData.internalNotes ?? null,
-          termsAndConditions: documentData.termsAndConditions ?? null,
-
-          // User tracking
-          createdByUserId: userId,
-
-          // Custom fields
-          customFields: documentData.customFields ?? null,
-
-          // Calculated totals
-          ...totals,
-
-          // Relations
-          ...(documentData.customerId && {
-            customer: { connect: { id: documentData.customerId } },
-          }),
-          ...(documentData.supplierId && {
-            supplier: { connect: { id: documentData.supplierId } },
-          }),
-          ...(documentData.warehouseId && {
-            warehouse: { connect: { id: documentData.warehouseId } },
-          }),
-          ...(documentData.contactId && {
-            contact: { connect: { id: documentData.contactId } },
-          }),
-          ...(documentData.opportunityId && {
-            opportunity: { connect: { id: documentData.opportunityId } },
-          }),
-          ...(documentData.leadId && {
-            lead: { connect: { id: documentData.leadId } },
-          }),
-          ...(documentData.paymentMethodId && {
-            paymentMethodRel: { connect: { id: documentData.paymentMethodId } },
-          }),
-          ...(documentData.assignedUserId && {
-            assignedUser: { connect: { id: documentData.assignedUserId } },
-          }),
-
-          // Lines
-          ...(processedLines.length > 0 && {
-            lines: {
-              create: processedLines,
-            },
-          }),
-
-          // Installments
-          ...(installments.length > 0 && {
-            installments: {
-              create: installments.map((inst: CreateInstallmentInput) => ({
-                installmentNumber: inst.installmentNumber,
-                percentage: Number(inst.percentage ?? 0),
-                amount: Number(inst.amount),
-                dueDate: inst.dueDate ? new Date(inst.dueDate) : undefined,
-                status: inst.status,
-                notes: inst.notes ?? null,
-                paidAmount: 0,
-                remindersSent: 0,
-                lateFeeAmount: 0,
-              })),
-            },
-          }),
-        },
-        select: getDocumentSelection(),
-      });
-
-      return newDocument;
+      const data = await buildDocumentCreateData(input, userId, tx);
+      return tx.document.create({ data, select: getDocumentSelection() });
     });
 
     sendCreated(res, document, "Documento creato con successo");
@@ -426,52 +178,31 @@ export const createDocument = asyncHandler(
 export const updateDocument = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     const { id } = req.validatedParams;
-    const updateData = req.validatedBody;
+    const payload = req.validatedBody as UpdateDocumentInput;
 
-    // Verifica esistenza
     const existingDocument = await prisma.document.findUnique({
       where: { id: Number(id) },
-      include: { lines: true },
+      select: { status: true },
     });
 
     if (!existingDocument) {
       throw new NotFoundError("Documento non trovato");
     }
 
-    // Non permettere modifica se non in DRAFT
     if (
       existingDocument.status !== "DRAFT" &&
       existingDocument.status !== "PENDING_APPROVAL"
     ) {
-      throw new BadRequestError(
-        "Impossibile modificare un documento non in bozza",
-      );
+      throw new BadRequestError("Impossibile modificare un documento non in bozza");
     }
 
-    // Se cambia lo status da DRAFT, genera numero
-    if (
-      existingDocument.status === "DRAFT" &&
-      updateData.status &&
-      updateData.status !== "DRAFT"
-    ) {
-      if (!existingDocument.documentNumber) {
-        updateData.documentNumber = await generateDocumentNumber(
-          existingDocument.documentType,
-          existingDocument.documentYear,
-        );
-      }
-    }
-
-    // Aggiorna documento
     const document = await prisma.document.update({
       where: { id: Number(id) },
-      data: updateData,
+      data: buildDocumentUpdateData(payload),
       select: getDocumentSelection(),
     });
 
-    sendSuccess(res, document, {
-      message: "Documento aggiornato con successo",
-    });
+    sendSuccess(res, document, { message: "Documento aggiornato con successo" });
   },
 );
 
@@ -499,9 +230,13 @@ export const deleteDocument = asyncHandler(
       );
     }
 
-    // Elimina documento (cascade gestirà righe e rate)
-    await prisma.document.delete({
+    // Elimina documento — soft delete
+    await prisma.document.update({
       where: { id: Number(id) },
+      data: {
+        deletedAt: new Date(),
+        deletedBy: req.user!.userId,
+      },
     });
 
     sendDeleted(res, "Documento eliminato");
@@ -525,36 +260,66 @@ export const updateDocumentStatus = asyncHandler(
     // Fetch current document
     const currentDoc = await prisma.document.findUnique({
       where: { id: Number(id) },
-      select: { id: true, status: true, documentType: true, documentNumber: true },
+      select: {
+        id: true,
+        status: true,
+        documentType: true,
+        documentNumber: true,
+      },
     });
 
     if (!currentDoc) {
       throw new NotFoundError("Documento non trovato");
     }
 
-    // Validate status transition
-    const allowedTransitions = DOCUMENT_STATUS_TRANSITIONS[currentDoc.status as DocumentStatus];
-    
+    // Cast esplicito a ReadonlyArray<DocumentStatus> su entrambi i rami
+    // così il tipo risultante è sempre readonly DocumentStatus[] e .includes() accetta DocumentStatus
+    const currentStatus = currentDoc.status as DocumentStatus;
+    const currentType = currentDoc.documentType as DocumentType;
+
+    const allowedTransitions = resolveAllowedTransitions(currentType, currentStatus);
+
     if (!allowedTransitions.includes(status as DocumentStatus)) {
       throw new BadRequestError(
-        `Transizione non permessa: ${currentDoc.status} → ${status}`
+        `Transizione non permessa per ${currentType}: ${currentStatus} → ${status}`,
       );
     }
 
     // Check if status requires document number
-    if (STATUSES_REQUIRING_NUMBER.includes(status as DocumentStatus) && !currentDoc.documentNumber) {
-      throw new BadRequestError(
-        `Status ${status} richiede un numero documento`
-      );
+    if (
+      STATUSES_REQUIRING_NUMBER.includes(status as DocumentStatus) &&
+      !currentDoc.documentNumber
+    ) {
+      throw new BadRequestError(`Status ${status} richiede un numero documento`);
     }
 
-    const document = await prisma.document.update(
-      where: { id: Number(id) },
-      data: {
-        status,
-        ...(notes && { internalNotes: notes }),
-      },
-      select: getDocumentSelection(),
+    const document = await prisma.$transaction(async (tx) => {
+      // Genera numero se necessario
+      let documentNumber: string | undefined;
+      if (
+        STATUSES_REQUIRING_NUMBER.includes(status as DocumentStatus) &&
+        !currentDoc.documentNumber
+      ) {
+        const generated = await generateDocumentNumber(
+          currentDoc.documentType,
+          new Date().getFullYear(),
+          tx,
+        );
+        documentNumber = generated.documentNumber;
+      }
+
+      return tx.document.update({
+        where: { id: Number(id) },
+        data: {
+          status,
+          ...(documentNumber && { documentNumber }),
+          ...(reason && { internalNotes: reason }),
+          ...(status === "VOIDED" && { voidedAt: new Date(), voidedReason: reason ?? null }),
+          ...(status === "CLOSED" && { closedAt: new Date() }),
+          ...(status === "DELIVERED" && { deliveredAt: new Date() }),
+        },
+        select: getDocumentSelection(),
+      });
     });
 
     sendSuccess(res, document, {
@@ -562,7 +327,6 @@ export const updateDocumentStatus = asyncHandler(
     });
   },
 );
-
 
 /**
  * @desc    Invia documento al cliente
@@ -676,10 +440,9 @@ export const getOrderFulfillment = asyncHandler(
       throw new BadRequestError("Il fulfillment è disponibile solo per ordini");
     }
 
-    const fulfillmentDetails =
-      await documentFulfillmentService.getDocumentFulfillmentDetails(
-        Number(id),
-      );
+    const fulfillmentDetails = await documentFulfillmentService.getDocumentFulfillmentDetails(
+      Number(id),
+    );
 
     sendSuccess(res, fulfillmentDetails);
   },
@@ -714,16 +477,11 @@ export const updateLineDeliveredQuantity = asyncHandler(
     }
 
     if (quantityDelivered > Number(line.quantity)) {
-      throw new BadRequestError(
-        "Quantità consegnata superiore a quella ordinata",
-      );
+      throw new BadRequestError("Quantità consegnata superiore a quella ordinata");
     }
 
     // Update using service (automatically updates parent document status)
-    await documentFulfillmentService.updateLineDeliveredQuantity(
-      Number(lineId),
-      quantityDelivered,
-    );
+    await documentFulfillmentService.updateLineDeliveredQuantity(Number(lineId), quantityDelivered);
 
     const updatedLine = await prisma.documentLine.findUnique({
       where: { id: Number(lineId) },
@@ -771,22 +529,21 @@ export const createPartialDeliveryNote = asyncHandler(
       "ACCEPTED",
       "PREPARING",
       "PARTIALLY_FULFILLED",
-      "FULFILLED"
+      "FULFILLED",
     ];
-    
+
     if (!allowedStatuses.includes(order.status as DocumentStatus)) {
       throw new BadRequestError(
-        `Status ${order.status} non permette creazione DDT. Status richiesti: ${allowedStatuses.join(", ")}`
+        `Status ${order.status} non permette creazione DDT. Status richiesti: ${allowedStatuses.join(", ")}`,
       );
     }
 
     // Create delivery note using service
-    const deliveryNoteId =
-      await documentFulfillmentService.createPartialDeliveryNote(
-        Number(id),
-        lineQuantities,
-        userId,
-      );
+    const deliveryNoteId = await documentFulfillmentService.createPartialDeliveryNote(
+      Number(id),
+      lineQuantities,
+      userId,
+    );
 
     const deliveryNote = await prisma.document.findUnique({
       where: { id: deliveryNoteId },
@@ -823,7 +580,7 @@ export const fulfillOrder = asyncHandler(
     const allowedStatuses: DocumentStatus[] = ["ACCEPTED", "PREPARING", "PARTIALLY_FULFILLED"];
     if (!allowedStatuses.includes(document.status as DocumentStatus)) {
       throw new BadRequestError(
-        `Status ${document.status} non permette evasione. Status richiesti: ${allowedStatuses.join(", ")}`
+        `Status ${document.status} non permette evasione. Status richiesti: ${allowedStatuses.join(", ")}`,
       );
     }
 
@@ -838,9 +595,7 @@ export const fulfillOrder = asyncHandler(
     });
 
     // Update document status to FULFILLED
-    await documentFulfillmentService.updateDocumentFulfillmentStatus(
-      Number(id),
-    );
+    await documentFulfillmentService.updateDocumentFulfillmentStatus(Number(id));
 
     const updatedDocument = await prisma.document.findUnique({
       where: { id: Number(id) },
@@ -860,12 +615,7 @@ export const fulfillOrder = asyncHandler(
  */
 export const getPendingFulfillmentOrders = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const {
-      page = 1,
-      limit = 20,
-      sortBy = "documentDate",
-      sortOrder = "asc",
-    } = req.validatedQuery;
+    const { page = 1, limit = 20, sortBy = "documentDate", sortOrder = "asc" } = req.validatedQuery;
 
     const skip = (Number(page) - 1) * Number(limit);
     const take = Number(limit);
@@ -889,7 +639,6 @@ export const getPendingFulfillmentOrders = asyncHandler(
     sendPaginatedResponse(res, orders, total, page, limit);
   },
 );
-
 
 // ============================================================================
 // DOCUMENT LINES Management
@@ -936,16 +685,11 @@ export const addDocumentLine = asyncHandler(
     }
 
     if (document.status !== "DRAFT" && document.status !== "PENDING_APPROVAL") {
-      throw new BadRequestError(
-        "Impossibile modificare righe di un documento non in bozza",
-      );
+      throw new BadRequestError("Impossibile modificare righe di un documento non in bozza");
     }
 
     // Calcola numero riga
-    const maxLineNumber = document.lines.reduce(
-      (max, line) => Math.max(max, line.lineNumber),
-      0,
-    );
+    const maxLineNumber = document.lines.reduce((max, line) => Math.max(max, line.lineNumber), 0);
 
     // Calcola totali riga
     const lineTotals = calculateLineTotals(
@@ -1071,48 +815,74 @@ export const convertDocument = asyncHandler(
       lines: __,
       installments: ___,
       documentNumber: ____,
+      sequenceNumber: _____,
+      createdAt: _______,
+      updatedAt: ________,
+      deletedAt: _________,
+      statusHistory: __________,
+      approvedAt: ___________,
+      invoicedAt: ____________,
+      deliveredAt: _____________,
+      closedAt: ______________,
+      voidedAt: _______________,
+      voidedReason: ________________,
+      sentDate: _________________,
       ...documentData
     } = sourceDocument as any;
 
     const currentYear = new Date().getFullYear();
-    let documentNumber = null;
 
-    if (status !== "DRAFT") {
-      documentNumber = await generateDocumentNumber(targetType, currentYear);
-    }
+    const newDocument = await prisma.$transaction(async (tx) => {
+      let documentNumber: string | null = null;
+      let sequenceNumber: number | undefined;
 
-    // Crea nuovo documento
-    const newDocument = await prisma.document.create({
-      data: {
-        ...documentData,
-        documentType: targetType,
-        status,
-        documentNumber,
-        documentYear: currentYear,
-        createdByUserId: userId,
-        [`related${sourceDocument.documentType.charAt(0) + sourceDocument.documentType.slice(1).toLowerCase()}Id`]:
-          sourceDocument.id,
-        lines: copyLines
-          ? {
-              create: sourceDocument.lines.map((line, index) => {
-                const { id, documentId, createdAt, updatedAt, ...lineData } =
-                  line as any;
-                return { ...lineData, lineNumber: index + 1 };
-              }),
-            }
-          : undefined,
-        installments:
-          copyInstallments && sourceDocument.installments.length > 0
+      if (status !== "DRAFT") {
+        const generated = await generateDocumentNumber(targetType, currentYear, tx);
+        documentNumber = generated.documentNumber;
+        sequenceNumber = generated.sequenceNumber;
+      }
+
+      const doc = await tx.document.create({
+        data: {
+          ...documentData,
+          documentType: targetType,
+          status,
+          documentNumber,
+          sequenceNumber: sequenceNumber ?? null,
+          documentYear: currentYear,
+          createdByUserId: userId,
+          parentDocumentId: sourceDocument.id, // ← relazione chain esistente nel modello
+          lines: copyLines
             ? {
-                create: sourceDocument.installments.map((inst) => {
-                  const { id, documentId, createdAt, updatedAt, ...instData } =
-                    inst as any;
-                  return instData;
+                create: sourceDocument.lines.map((line, index) => {
+                  const { id, documentId, ...lineData } = line as any;
+                  return { ...lineData, lineNumber: index + 1 };
                 }),
               }
             : undefined,
-      },
-      select: getDocumentSelection(),
+          installments:
+            copyInstallments && sourceDocument.installments.length > 0
+              ? {
+                  create: sourceDocument.installments.map((inst) => {
+                    const { id, documentId, ...instData } = inst as any;
+                    return instData;
+                  }),
+                }
+              : undefined,
+        },
+        select: getDocumentSelection(),
+      });
+
+      // Crea relazione tipizzata nella tabella DocumentRelation
+      await tx.documentRelation.create({
+        data: {
+          sourceDocumentId: sourceDocument.id,
+          targetDocumentId: doc.id,
+          relationType: "CONVERTS_TO",
+        },
+      });
+
+      return doc;
     });
 
     sendCreated(
@@ -1157,6 +927,18 @@ export const duplicateDocument = asyncHandler(
       lines: __,
       installments: ___,
       documentNumber: ____,
+      sequenceNumber: _____,
+      createdAt: _______,
+      updatedAt: ________,
+      deletedAt: _________,
+      statusHistory: __________,
+      approvedAt: ___________,
+      invoicedAt: ____________,
+      deliveredAt: _____________,
+      closedAt: ______________,
+      voidedAt: _______________,
+      voidedReason: ________________,
+      sentDate: _________________,
       ...documentData
     } = sourceDocument as any;
 
@@ -1171,8 +953,7 @@ export const duplicateDocument = asyncHandler(
         lines: includeLines
           ? {
               create: sourceDocument.lines.map((line, index) => {
-                const { id, documentId, createdAt, updatedAt, ...lineData } =
-                  line as any;
+                const { id, documentId, createdAt, updatedAt, ...lineData } = line as any;
                 return { ...lineData, lineNumber: index + 1 };
               }),
             }
@@ -1190,7 +971,7 @@ export const duplicateDocument = asyncHandler(
                   status: instStatus,
                   ...instData
                 } = inst as any;
-                return { ...instData, status: "pending" };
+                return { ...instData, status: "PENDING" as InstallmentStatus };
               }),
             }
           : undefined,
@@ -1289,13 +1070,12 @@ export const updateInstallment = asyncHandler(
         throw new NotFoundError("Rata non trovata");
       }
 
-      const allowedTransitions = INSTALLMENT_STATUS_TRANSITIONS[
-        currentInstallment.status as InstallmentStatus
-      ];
+      const allowedTransitions =
+        INSTALLMENT_STATUS_TRANSITIONS[currentInstallment.status as InstallmentStatus];
 
       if (!allowedTransitions.includes(updateData.status as InstallmentStatus)) {
         throw new BadRequestError(
-          `Transizione non permessa: ${currentInstallment.status} → ${updateData.status}`
+          `Transizione non permessa: ${currentInstallment.status} → ${updateData.status}`,
         );
       }
     }
@@ -1330,7 +1110,13 @@ export const payInstallment = asyncHandler(
 
     const installment = await prisma.documentPaymentInstallment.findUnique({
       where: { id: Number(installmentId) },
-      select: { amount: true, paidAmount: true, status: true, documentId: true, notes: true },
+      select: {
+        amount: true,
+        paidAmount: true,
+        status: true,
+        documentId: true,
+        notes: true,
+      },
     });
 
     if (!installment) {
@@ -1386,7 +1172,6 @@ export const payInstallment = asyncHandler(
   },
 );
 
-
 // ============================================================================
 // DOCUMENT BY TYPE
 // ============================================================================
@@ -1396,38 +1181,34 @@ export const payInstallment = asyncHandler(
  * @route   GET /api/documents/quotes
  * @access  Private
  */
-export const getQuotes = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const documents = await prisma.document.findMany({
-      where: { documentType: "QUOTE" },
-      select: getDocumentSelection(),
-      orderBy: { documentDate: "desc" },
-    });
+export const getQuotes = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
+  const documents = await prisma.document.findMany({
+    where: { documentType: "QUOTE" },
+    select: getDocumentSelection(),
+    orderBy: { documentDate: "desc" },
+  });
 
-    sendSuccess(res, documents, {
-      results: documents.length,
-    });
-  },
-);
+  sendSuccess(res, documents, {
+    results: documents.length,
+  });
+});
 
 /**
  * @desc    Lista ordini
  * @route   GET /api/documents/orders
  * @access  Private
  */
-export const getOrders = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const documents = await prisma.document.findMany({
-      where: { documentType: "ORDER" },
-      select: getDocumentSelection(),
-      orderBy: { documentDate: "desc" },
-    });
+export const getOrders = asyncHandler(async (req: AuthenticatedValidatedRequest, res: Response) => {
+  const documents = await prisma.document.findMany({
+    where: { documentType: "ORDER" },
+    select: getDocumentSelection(),
+    orderBy: { documentDate: "desc" },
+  });
 
-    sendSuccess(res, documents, {
-      results: documents.length,
-    });
-  },
-);
+  sendSuccess(res, documents, {
+    results: documents.length,
+  });
+});
 
 /**
  * @desc    Lista fatture
@@ -1498,7 +1279,10 @@ export const getDocumentsByCustomer = asyncHandler(
     const { customerId } = req.validatedParams;
 
     const documents = await prisma.document.findMany({
-      where: { customerId: Number(customerId) },
+      where: {
+        customerId: Number(customerId),
+        deletedAt: null, // ← esclude soft-deleted
+      },
       select: getDocumentSelection(),
       orderBy: { documentDate: "desc" },
     });
@@ -1519,7 +1303,10 @@ export const getDocumentsBySupplier = asyncHandler(
     const { supplierId } = req.validatedParams;
 
     const documents = await prisma.document.findMany({
-      where: { supplierId: Number(supplierId) },
+      where: {
+        supplierId: Number(supplierId),
+        deletedAt: null, // ← esclude soft-deleted
+      },
       select: getDocumentSelection(),
       orderBy: { documentDate: "desc" },
     });
@@ -1732,18 +1519,21 @@ export const bulkSendDocuments = asyncHandler(
 
     for (const doc of documents) {
       if (!doc.documentNumber) {
-        const documentNumber = await generateDocumentNumber(
-          doc.documentType,
-          doc.documentYear,
-        );
-
-        await prisma.document.update({
-          where: { id: doc.id },
-          data: {
-            documentNumber,
-            status: "SENT",
-            sentDate: new Date(),
-          },
+        await prisma.$transaction(async (tx) => {
+          const { documentNumber, sequenceNumber } = await generateDocumentNumber(
+            doc.documentType,
+            doc.documentYear,
+            tx,
+          );
+          await tx.document.update({
+            where: { id: doc.id },
+            data: {
+              documentNumber,
+              sequenceNumber,
+              status: "SENT",
+              sentDate: new Date(),
+            },
+          });
         });
       }
     }
@@ -1944,11 +1734,7 @@ export const getTopCustomersReport = asyncHandler(
  */
 export const getTopProductsReport = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
-    const {
-      limit = 10,
-      dateFrom,
-      dateTo,
-    } = req.validatedQuery as TopProductsReportInput;
+    const { limit = 10, dateFrom, dateTo } = req.validatedQuery as TopProductsReportInput;
 
     const { preferredLanguageId } = req.user!;
 
@@ -2015,13 +1801,9 @@ export const getTopProductsReport = asyncHandler(
      * 2. First available translation
      * 3. Fallback "N/A"
      */
-    const resolveName = (
-      translations: { name: string; languageId: number }[],
-    ): string => {
+    const resolveName = (translations: { name: string; languageId: number }[]): string => {
       if (!translations.length) return "N/A";
-      const preferred = translations.find(
-        (t) => t.languageId === preferredLanguageId,
-      );
+      const preferred = translations.find((t) => t.languageId === preferredLanguageId);
       return preferred?.name ?? translations[0].name;
     };
 
@@ -2068,7 +1850,7 @@ export const generateStockMovements = asyncHandler(
     // Use constant from shared
     if (!DOCUMENT_TYPES_WITH_STOCK_MOVEMENTS.includes(document.documentType as DocumentType)) {
       throw new BadRequestError(
-        `Tipo documento ${document.documentType} non genera movimenti magazzino`
+        `Tipo documento ${document.documentType} non genera movimenti magazzino`,
       );
     }
 
@@ -2117,11 +1899,7 @@ export const generateStockMovements = asyncHandler(
       }
     }
 
-    sendCreated(
-      res,
-      movements,
-      `${movements.length} movimenti magazzino generati`,
-    );
+    sendCreated(res, movements, `${movements.length} movimenti magazzino generati`);
   },
 );
 
@@ -2174,13 +1952,9 @@ export const validateFiscalData = asyncHandler(
 
     // Check negative quantities
     if (!config.allowNegativeQuantity) {
-      const negativeLines = document.lines.filter(
-        (line) => Number(line.quantity) < 0
-      );
+      const negativeLines = document.lines.filter((line) => Number(line.quantity) < 0);
       if (negativeLines.length > 0) {
-        errors.push(
-          `Tipo documento ${document.documentType} non permette quantità negative`
-        );
+        errors.push(`Tipo documento ${document.documentType} non permette quantità negative`);
       }
     }
 
@@ -2191,10 +1965,7 @@ export const validateFiscalData = asyncHandler(
       Number(document.shippingCost),
     );
 
-    if (
-      Math.abs(Number(document.totalAmount) - Number(calculatedTotals.totalAmount)) >
-      0.01
-    ) {
+    if (Math.abs(Number(document.totalAmount) - Number(calculatedTotals.totalAmount)) > 0.01) {
       warnings.push("Totale documento non corrisponde alla somma delle righe");
     }
 
@@ -2213,7 +1984,6 @@ export const validateFiscalData = asyncHandler(
     });
   },
 );
-
 
 // ============================================================================
 // 7. ALLEGATI DOCUMENTI
@@ -2318,12 +2088,7 @@ export const getDocumentHistory = asyncHandler(
 export const sendDocumentByEmail = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     const { id } = req.validatedParams;
-    const {
-      recipientEmail,
-      subject,
-      message,
-      attachPDF = true,
-    } = req.validatedBody;
+    const { recipientEmail, subject, message, attachPDF = true } = req.validatedBody;
 
     const document = await prisma.document.findUnique({
       where: { id: Number(id) },

@@ -50,9 +50,7 @@ export const toDate = (value: string | undefined) =>
  * null → setta NULL
  * string → parse Date
  */
-export const parseOptionalDate = (
-  value: string | null | undefined,
-): Date | null | undefined => {
+export const parseOptionalDate = (value: string | null | undefined): Date | null | undefined => {
   if (value === undefined) return undefined;
   if (value === null) return null;
 
@@ -82,11 +80,7 @@ export const toRequiredDate = (value: string | undefined): Date | undefined =>
  * @returns Prisma connect/disconnect object or undefined
  */
 export const connectOrDisconnectById = (id: number | null | undefined) =>
-  id === undefined
-    ? undefined
-    : id
-      ? { connect: { id } }
-      : { disconnect: true as const };
+  id === undefined ? undefined : id ? { connect: { id } } : { disconnect: true as const };
 
 /**
  * Handles nullable Prisma relations connected via a string `code` field.
@@ -95,11 +89,7 @@ export const connectOrDisconnectById = (id: number | null | undefined) =>
  * @returns Prisma connect/disconnect object or undefined
  */
 export const connectOrDisconnectByCode = (code: string | null | undefined) =>
-  code === undefined
-    ? undefined
-    : code
-      ? { connect: { code } }
-      : { disconnect: true as const };
+  code === undefined ? undefined : code ? { connect: { code } } : { disconnect: true as const };
 
 /**
  * Rimuove tutte le proprietà con valore `undefined` da un oggetto.
@@ -111,6 +101,15 @@ export const connectOrDisconnectByCode = (code: string | null | undefined) =>
  * @returns Nuovo oggetto senza proprietà undefined
  */
 export const clean = <T extends object>(obj: T) =>
-  Object.fromEntries(
-    Object.entries(obj).filter(([, v]) => v !== undefined),
-  ) as T;
+  Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined)) as T;
+
+/**
+ * Converts a nullable JS value to a Prisma-compatible nullable JSON value.
+ * Prisma requires Prisma.JsonNull instead of native null for Json? fields.
+ *
+ * @param value - Any serializable value or null/undefined
+ * @returns Prisma.JsonNull or the value cast as InputJsonValue
+ */
+export function toJsonField(value: unknown): typeof Prisma.JsonNull | Prisma.InputJsonValue {
+  return value != null ? (value as Prisma.InputJsonValue) : Prisma.JsonNull;
+}
