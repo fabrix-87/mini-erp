@@ -1,6 +1,4 @@
 // services/server/role.ts
-"use server";
-
 import { serverApi } from "@/lib/server/api";
 import { buildQueryString } from "@/helpers/role";
 import type { ApiResponse } from "@/types/api";
@@ -28,7 +26,7 @@ export async function getAllRoles(params: RoleQueryInput): Promise<RoleListApiRe
  * Get single role by ID (includes permissions)
  */
 export async function getRoleById(id: number): Promise<RoleSingleApiResponse> {
-  return serverApi.get<RoleSingleApiResponse>(`/roles/${id}`);
+  return serverApi.get<RoleSingleApiResponse>(`/roles/${id}`, {unwrapData: false});
 }
 
 // ============================================================================

@@ -1,6 +1,4 @@
 // services/server/permission.ts
-"use server";
-
 import { serverApi } from "@/lib/server/api";
 import type { ApiResponse } from "@/types/api";
 import { PermissionListApiResponse, PermissionSingleApiResponse } from "@/types/role";

@@ -68,11 +68,6 @@ export default function RoleDetailPage({ roleId }: RoleDetailProps) {
 
   const { role, loading, error } = useRole(roleId);
 
-  console.log(`#${roleId}`);
-  console.log(`Loading: ${loading}`);
-  console.log(`Error: ${error}`);
-  console.log(`Role: ${role}`);
-
   const { permissions: allPermissions, loading: permLoading } = usePermissions();
   const { assignPermissionsToRole, removePermissionsFromRole, isAssigning, isRemoving } =
     usePermissionMutations();
