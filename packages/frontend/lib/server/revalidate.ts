@@ -203,6 +203,14 @@ export const documentRevalidation = {
   documentWithList: (id: number) => revalidateEntityWithList("document", id),
 };
 
+/**
+ * Revalidate role-related cache
+ */
+export const roleRevalidation = {
+  role: (id: number) => revalidateEntityWithList("settings/roles", id),
+  list: () => revalidateEntity("settings/roles"),
+};
+
 // ============================================================================
 // Export for convenience
 // ============================================================================

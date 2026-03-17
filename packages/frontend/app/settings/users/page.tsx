@@ -1,18 +1,20 @@
 // app/settings/users/page.tsx
-import { Suspense } from 'react';
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { requirePermission } from "@/lib/server/auth";
-import { getAllUsers, getUserStats } from '@/services/server/user';
-import { ServerApiError } from '@/types/server-client';
-import { UsersFilterBar } from '@/components/users/users-filter-bar';
-import { UsersTable } from '@/components/users/users-table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Users, UserCheck, UserX, Shield } from 'lucide-react';
-import { DataPagination } from '@/components/ui/data-pagination';
-import { BreadcrumbSetter } from '@/components/ui/breadcrumb-setter';
-import { StatisticCard } from '@/components/ui/statistic-card';
-
+import { checkUserPermission, requirePermission } from "@/lib/server/auth";
+import { getAllUsers, getUserStats } from "@/services/server/user";
+import { ServerApiError } from "@/types/server-client";
+import { UsersFilterBar } from "@/components/users/users-filter-bar";
+import { UsersTable } from "@/components/users/users-table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Users, UserCheck, UserX, Shield, Plus } from "lucide-react";
+import { DataPagination } from "@/components/ui/data-pagination";
+import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
+import { StatisticCard } from "@/components/ui/statistic-card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useAuth } from "@/hooks/use-auth";
 
 // ============================================================================
 // Server Component - Admin Users List
@@ -25,26 +27,21 @@ interface PageProps {
     search?: string;
     active?: string;
     sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
+    sortOrder?: "asc" | "desc";
   }>;
 }
 
 // Component separato per il contenuto che dipende dai dati
 async function UsersContent({ searchParams }: PageProps) {
-  const params = await searchParams
+  const params = await searchParams;
 
   // Parse Query Params
-  const page = parseInt(params.page || '1', 10);
-  const limit = parseInt(params.limit || '20', 10);
+  const page = parseInt(params.page || "1", 10);
+  const limit = parseInt(params.limit || "20", 10);
   const search = params.search || undefined;
-  const active =
-    params.active === 'true'
-      ? true
-      : params.active === 'false'
-      ? false
-      : undefined;
-  const sortBy = params.sortBy || 'createdAt';
-  const sortOrder = params.sortOrder || 'desc';
+  const active = params.active === "true" ? true : params.active === "false" ? false : undefined;
+  const sortBy = params.sortBy || "createdAt";
+  const sortOrder = params.sortOrder || "desc";
 
   // Fetch Data (Parallel)
   const [usersResponse, stats] = await Promise.all([
@@ -60,13 +57,13 @@ async function UsersContent({ searchParams }: PageProps) {
     getUserStats(),
   ]);
 
-  const { data: users, pagination } = usersResponse;  
+  const { data: users, pagination } = usersResponse;
 
   return (
     <>
-      <BreadcrumbSetter title='Gestione Utenti'/>
+      <BreadcrumbSetter title="Gestione Utenti" />
       {/* Statistics Cards */}
-      <div className="grid gap-4 md:grid-cols-4">        
+      <div className="grid gap-4 md:grid-cols-4">
         <StatisticCard
           title="Utenti Totali"
           value={stats.total}
@@ -157,7 +154,7 @@ export default async function UsersPage({ searchParams }: PageProps) {
   // Authorization Check
   // ========================================
   try {
-    await requirePermission('user:read');
+    await requirePermission("user:read");
   } catch (error) {
     if (error instanceof ServerApiError && error.statusCode === 401) {
       redirect("/login");
@@ -167,16 +164,24 @@ export default async function UsersPage({ searchParams }: PageProps) {
     }
     throw error;
   }
- 
+
   return (
     <div className="container mx-auto p-6">
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Gestione Utenti</h1>
-          <p className="text-muted-foreground mt-2">
-            Amministra gli utenti del sistema.
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Gestione Utenti</h1>
+            <p className="text-muted-foreground mt-2">Amministra gli utenti del sistema.</p>
+          </div>
+          {(await checkUserPermission("user:create")) && (
+            <Button asChild>
+              <Link href="/settings/users/new">
+                <Plus className="h-4 w-4 mr-2" />
+                Nuovo utente
+              </Link>
+            </Button>
+          )}
         </div>
 
         {/* Content with Suspense */}
@@ -191,5 +196,5 @@ export default async function UsersPage({ searchParams }: PageProps) {
 // Metadata
 export const metadata = {
   title: `Gestione Utenti | ${process.env.APP_NAME}`,
-  description: 'Amministra gli utenti del sistema',
+  description: "Amministra gli utenti del sistema",
 };

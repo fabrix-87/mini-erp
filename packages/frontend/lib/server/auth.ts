@@ -1,6 +1,6 @@
 // lib/api/server-modules/auth.ts
+import { User } from '@mini-erp/shared';
 import { serverApi } from './api';
-import type { User } from '@/types/api';
 
 // ============================================================================
 // Server-Side Auth API Functions

@@ -68,7 +68,7 @@ export default function RoleListPage() {
 
       <RoleToolbar
         onSearch={handleSearch}
-        onNewRole={() => router.push("/setting/roles/new")}
+        onNewRole={() => router.push("/settings/roles/new")}
         initialSearch={params.search || ""}
       />
 
@@ -78,7 +78,7 @@ export default function RoleListPage() {
         onSort={handleSort}
         sort={sort}
         onView={(id) => router.push(`/settings/roles/${id}`)}
-        onEdit={(id) => router.push(`//settings/roles/${id}/edit`)}
+        onEdit={(id) => router.push(`/settings/roles/${id}/edit`)}
         onDelete={async (id) => {
           if (confirm("Sei sicuro di voler eliminare questo contatto?")) {
             await deleteRole(id);

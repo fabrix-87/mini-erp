@@ -1,6 +1,7 @@
 import RoleListPage from "@/components/role/role-list";
+import { requirePermission } from "@/lib/server/auth";
 import { HydrationBoundary } from "@/providers/hydration-boundary";
-import { serverRoleService } from "@/services/server/role";
+import { getAllRoles } from "@/services/server/role";
 import { defaultParams, roleKeys } from "@/types/role";
 import { RoleQueryInput } from "@mini-erp/shared";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
@@ -10,6 +11,8 @@ interface RolesPageProps {
 }
 
 export default async function RolesPage({ searchParams }: RolesPageProps) {
+  await requirePermission("role:read");
+
   const queryClient = new QueryClient();
   const resolvedSearchParams = await searchParams;
 
@@ -25,7 +28,7 @@ export default async function RolesPage({ searchParams }: RolesPageProps) {
   // Prefetch usando contact-services
   await queryClient.prefetchQuery({
     queryKey: roleKeys.list(params),
-    queryFn: () => serverRoleService.getAllRoles(params),
+    queryFn: () => getAllRoles(params),
   });
 
   return (

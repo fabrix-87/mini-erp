@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Plus, Search, Filter, Download, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { RoleQueryInput } from "@mini-erp/shared";
 
 interface RoleToolbarProps {
   onSearch: (search: string) => void;
