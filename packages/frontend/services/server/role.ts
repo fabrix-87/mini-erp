@@ -7,7 +7,7 @@ import type {
   RoleListApiResponse,
   RoleSingleApiResponse,
 } from "@/types/role";
-import type { CreateRoleInput, UpdateRoleInput, RoleQueryInput } from "@mini-erp/shared";
+import type { CreateRoleInput, UpdateRoleInput, RoleQueryInput, Role } from "@mini-erp/shared";
 
 // ============================================================================
 // READ
@@ -36,8 +36,8 @@ export async function getRoleById(id: number): Promise<RoleSingleApiResponse> {
 /**
  * Create a new role
  */
-export async function createRole(data: CreateRoleInput): Promise<RoleSingleApiResponse> {
-  return serverApi.post<RoleSingleApiResponse>("/roles", data);
+export async function createRole(data: CreateRoleInput): Promise<Role> {
+  return serverApi.post<Role>("/roles", data);
 }
 
 /**
@@ -46,8 +46,8 @@ export async function createRole(data: CreateRoleInput): Promise<RoleSingleApiRe
 export async function updateRole(
   id: number,
   data: UpdateRoleInput,
-): Promise<RoleSingleApiResponse> {
-  return serverApi.put<RoleSingleApiResponse>(`/roles/${id}`, data);
+): Promise<Role> {
+  return serverApi.put<Role>(`/roles/${id}`, data);
 }
 
 /**

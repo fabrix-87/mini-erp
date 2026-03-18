@@ -10,20 +10,24 @@ import {
   updateRole,
 } from "@/services/server/role";
 import { redirect } from "next/navigation";
-import type { CreateRoleInput, UpdateRoleInput } from "@mini-erp/shared";
-import { withAuth, type ActionResult } from "@/lib/server/action";
+import type { CreateRoleInput, Role, UpdateRoleInput } from "@mini-erp/shared";
+import { type ActionResult, withAuth } from "@/lib/server/action";
 
-export async function createRoleAction(data: CreateRoleInput): Promise<ActionResult> {
+export async function createRoleAction(data: CreateRoleInput): Promise<ActionResult<Role>> {
   const result = await withAuth(async () => {
-    const role = await createRole(data);
+    const response = await createRole(data); // RoleSingleApiResponse
     roleRevalidation.list();
-    return role;
+    console.log('saro: ' + JSON.stringify(response))
+    return response;
   }, "role:create");
-  if (result.success) result.message = "Ruolo creato con successo";
+
   return result;
 }
 
-export async function updateRoleAction(id: number, data: UpdateRoleInput): Promise<ActionResult> {
+export async function updateRoleAction(
+  id: number,
+  data: UpdateRoleInput,
+): Promise<ActionResult<Role>> {
   const result = await withAuth(async () => {
     const role = await updateRole(id, data);
     roleRevalidation.role(id);
@@ -35,9 +39,9 @@ export async function updateRoleAction(id: number, data: UpdateRoleInput): Promi
 
 export async function deleteRoleAction(id: number): Promise<ActionResult> {
   const result = await withAuth(async () => {
-    await deleteRole(id);
+    const response = await deleteRole(id); 
     roleRevalidation.list();
-    return null;
+    return response;
   }, "role:delete");
   if (result.success) redirect("/settings/roles");
   return result;

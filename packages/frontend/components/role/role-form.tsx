@@ -148,8 +148,8 @@ export default function RoleFormPage({ mode, roleId }: RoleFormProps) {
 
     if (mode === "create") {
       const result = await createRoleAction(payload);
-      if (result.success && result.id) {
-        router.push(`/settings/roles/${result.id}`);
+      if (result.success && result.data?.id) {
+        router.push(`/settings/roles/${result.data?.id}`);
       } else {
         setServerError(result.error ?? "Errore sconosciuto");
       }
