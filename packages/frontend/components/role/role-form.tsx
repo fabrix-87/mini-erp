@@ -36,7 +36,7 @@ import {
   deletePermissionAction,
   updatePermissionAction,
 } from "@/actions/permission";
-import { CreateRoleInput, Permission } from "@mini-erp/shared";
+import { CreateRoleInput, Permission, UpdateRoleInput } from "@mini-erp/shared";
 import { PermissionDialogState, RoleFormProps, RoleFormValues } from "@/types/role";
 import { PermissionDialog } from "./role-form/permission-dialog";
 
@@ -138,7 +138,7 @@ export default function RoleFormPage({ mode, roleId }: RoleFormProps) {
     e.preventDefault();
     setServerError(null);
 
-    const payload: CreateRoleInput = {
+    const payload: CreateRoleInput | UpdateRoleInput = {
       name: formValues.name,
       code: formValues.code.toUpperCase(),
       description: formValues.description || undefined,

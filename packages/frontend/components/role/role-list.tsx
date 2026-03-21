@@ -3,16 +3,22 @@
 import { useRoleMutations, useRoles } from "@/hooks/use-role";
 import { RoleQueryInput, RoleSortField, SortOrder } from "@mini-erp/shared";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DataPagination } from "../ui/data-pagination";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
 import RoleTable from "./role-list/table";
 import { mergeSearchParams } from "@/lib/utils/url";
 import RoleToolbar from "./role-list/toolbar";
+import DeleteDialog from "../dialog/delete-dialog";
 
 export default function RoleListPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedRoleId, setSelectedRoleId] = useState<number|null>(null);
+  const [selectedRoleName, setSelectedRoleName] = useState("");
 
   // Memoizza params per evitare re-render
   const params = useMemo((): RoleQueryInput => {
@@ -56,6 +62,21 @@ export default function RoleListPage() {
     updateURL({ ...newFilters, page: 1 });
   };
 
+  // ── Delete role ────────────────────────────────────────────────────────────
+  const handleDelete = async () => {
+    if (selectedRoleId !== null) {
+      setIsDeleting(true);
+      await deleteRole(selectedRoleId);
+      await refetch();
+      setSelectedRoleId(null);
+      setSelectedRoleName("");
+      setShowDeleteDialog(false);
+      setIsDeleting(false);
+    } else {
+      console.error("No role selected");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <BreadcrumbSetter title="Gestione ruoli" />
@@ -79,11 +100,10 @@ export default function RoleListPage() {
         sort={sort}
         onView={(id) => router.push(`/settings/roles/${id}`)}
         onEdit={(id) => router.push(`/settings/roles/${id}/edit`)}
-        onDelete={async (id) => {
-          if (confirm("Sei sicuro di voler eliminare questo contatto?")) {
-            await deleteRole(id);
-            await refetch();
-          }
+        onDelete={async (id, name) => {
+          setSelectedRoleId(id);
+          setSelectedRoleName(name);
+          setShowDeleteDialog(true);
         }}
       />
       {pagination && pagination.totalPages > 1 && (
@@ -97,6 +117,18 @@ export default function RoleListPage() {
           itemLabel="ruoli"
         />
       )}
+
+      {/* ── Delete confirmation ── */}
+      <DeleteDialog
+        isOpen={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        handleDelete={handleDelete}
+        title="Elimina ruolo"
+        isDeleting={isDeleting}
+      >
+        Sei sicuro di voler eliminare il ruolo <strong>{selectedRoleName}</strong>? Questa
+        operazione non può essere annullata e rimuoverà il ruolo da tutti gli utenti associati.
+      </DeleteDialog>
     </div>
   );
 }

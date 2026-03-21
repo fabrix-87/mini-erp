@@ -4,9 +4,9 @@ import { NotFoundError, BadRequestError, ConflictError } from "../utils/app-erro
 import { prisma } from "../config/prisma-client";
 import { Prisma } from "../generated/prisma/client";
 import { AuthenticatedValidatedRequest } from "../types/validate";
-import { RoleQueryInput } from "@mini-erp/shared";
+import { RoleQueryInput, UpdateRoleInput } from "@mini-erp/shared";
 import { buildPagination } from "@/utils/query";
-import { sendPaginatedResponse } from "@/utils/response";
+import { sendPaginatedResponse, sendSuccess } from "@/utils/response";
 
 // ============================================================================
 // HELPER FUNCTIONS
@@ -233,10 +233,8 @@ export const createRole = asyncHandler(
       select: roleSelect,
     });
 
-    res.status(201).json({
-      status: "success",
+    sendSuccess(res, formatRolePermissions(role), {
       message: "Ruolo creato con successo",
-      data: formatRolePermissions(role),
     });
   },
 );
@@ -249,7 +247,7 @@ export const createRole = asyncHandler(
 export const updateRole = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response) => {
     const { id } = req.validatedParams;
-    const updateData = req.validatedBody;
+    const { permissionIds, ...updateData } = req.validatedBody as UpdateRoleInput;
 
     // Verifica esistenza
     const existingRole = await prisma.role.findUnique({
@@ -282,14 +280,25 @@ export const updateRole = asyncHandler(
     // Aggiorna ruolo
     const role = await prisma.role.update({
       where: { id: Number(id) },
-      data: updateData,
+      data: {
+        ...updateData,
+        permissions: permissionIds?.length
+          ? {
+              deleteMany: {}, // cancella tutte le entry della tabella pivot per quel role
+              create: permissionIds.map((permissionId: number) => ({
+                permissionId,
+              })),
+            }
+          : {
+              // se vuoi semplicemente rimuovere tutti i permessi quando l’array è vuoto
+              deleteMany: {},
+            },
+      },
       select: roleSelect,
     });
 
-    res.json({
-      status: "success",
+    sendSuccess(res, formatRolePermissions(role), {
       message: "Ruolo aggiornato con successo",
-      data: formatRolePermissions(role),
     });
   },
 );

@@ -16,7 +16,6 @@ import {
   roleIdParamSchema,
   roleQuerySchema,
   updatePermissionSchema,
-  updateRoleSchema,
 } from "@mini-erp/shared/validators/role";
 
 // ============================================================================
@@ -29,7 +28,7 @@ export const validateCreateRole = validateBody(
   "Role creation"
 );
 
-export const validateUpdateRole = validateBody(updateRoleSchema, "Role update");
+export const validateUpdateRole = validateBody(createRoleSchema, "Role update");
 
 export const validateRoleId = validateParams(
   roleIdParamSchema,

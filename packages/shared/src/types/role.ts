@@ -12,7 +12,6 @@ import {
   roleIdParamSchema,
   roleQuerySchema,  
   updatePermissionSchema,
-  updateRoleSchema,
 } from "../validators";
 
 // ============================================================================
@@ -49,7 +48,7 @@ export type Permission = {
 // INPUT TYPES (using z.infer)
 // ============================================================================
 export type CreateRoleInput = z.infer<typeof createRoleSchema>;
-export type UpdateRoleInput = z.infer<typeof updateRoleSchema>;
+export type UpdateRoleInput = z.infer<typeof createRoleSchema>;
 export type AssignPermissionsInput = z.infer<typeof assignPermissionsSchema>;
 export type CreatePermissionInput = z.infer<typeof createPermissionSchema>;
 export type UpdatePermissionInput = z.infer<typeof updatePermissionSchema>;

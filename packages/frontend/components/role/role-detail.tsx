@@ -43,6 +43,7 @@ import { deleteRoleAction } from "@/actions/role";
 import { Permission } from "@mini-erp/shared";
 import { formatDate } from "@/utils/format";
 import { RoleDetailProps } from "@/types/role";
+import DeleteDialog from "../dialog/delete-dialog";
 
 // ============================================================================
 // HELPER: group by resource
@@ -411,26 +412,16 @@ export default function RoleDetailPage({ roleId }: RoleDetailProps) {
       </Tabs>
 
       {/* ── Delete confirmation ── */}
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Elimina ruolo</AlertDialogTitle>
-            <AlertDialogDescription>
-              Sei sicuro di voler eliminare il ruolo <strong>{role.name}</strong>? Questa operazione
-              non può essere annullata e rimuoverà il ruolo da tutti gli utenti associati.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annulla</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {isDeleting ? "Eliminazione..." : "Elimina"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteDialog
+        isOpen={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        handleDelete={handleDelete}
+        title="Elimina ruolo"
+        isDeleting={isDeleting}
+      >
+        Sei sicuro di voler eliminare il ruolo <strong>{role.name}</strong>? Questa operazione non
+        può essere annullata e rimuoverà il ruolo da tutti gli utenti associati.
+      </DeleteDialog>      
     </div>
   );
 }

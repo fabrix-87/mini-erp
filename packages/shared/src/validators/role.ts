@@ -79,18 +79,6 @@ export const createRoleSchema = z
   .strict();
 
 /**
- * Schema per l'aggiornamento di un Role
- */
-export const updateRoleSchema = z
-  .object({
-    code: roleCodeSchema.optional(),
-    name: z.string().min(1).max(100).trim().optional(),
-    description: z.string().max(1000).optional().nullable(),
-    isDefault: z.boolean().optional(),
-  })
-  .strict();
-
-/**
  * Schema per assegnare permessi a un ruolo
  */
 export const assignPermissionsSchema = z

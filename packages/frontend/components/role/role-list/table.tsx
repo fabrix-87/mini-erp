@@ -12,7 +12,7 @@ interface RoleTableProps {
   sort: { field: RoleSortField; order: SortOrder };
   onView: (id: number) => void;
   onEdit: (id: number) => void;
-  onDelete: (id: number) => Promise<void>;
+  onDelete: (id: number, name: string) => Promise<void>;
 }
 
 export default function RoleTable({
@@ -67,7 +67,7 @@ export default function RoleTable({
                 role={role}
                 onView={() => onView(role.id)}
                 onEdit={() => onEdit(role.id)}
-                onDelete={() => onDelete(role.id)}
+                onDelete={() => onDelete(role.id, role.name)}
               />
             ))
           )}
