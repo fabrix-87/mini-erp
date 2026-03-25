@@ -17,7 +17,6 @@ export async function createRoleAction(data: CreateRoleInput): Promise<ActionRes
   const result = await withAuth(async () => {
     const response = await createRole(data); // RoleSingleApiResponse
     roleRevalidation.list();
-    console.log('saro: ' + JSON.stringify(response))
     return response;
   }, "role:create");
 

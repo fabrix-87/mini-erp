@@ -27,6 +27,8 @@ export const genderSchema = z.enum([
   "PREFER_NOT_TO_SAY",
 ]);
 
+export const userSortFieldSchema = z.enum(["createdAt", "username", "email", "lastLogin"]);
+
 // ============================================================================
 // BASE SCHEMAS
 // ============================================================================
@@ -356,9 +358,7 @@ export const userQuerySchema = z.object({
   twoFactorEnabled: queryBooleanSchema,
   locked: queryBooleanSchema, // Users with lockedUntil > now
   roleId: createIdSchema("RoleId non valido").optional(),
-  sortBy: z
-    .enum(["createdAt", "username", "email", "lastLogin"])
-    .default("createdAt"),
+  sortBy: userSortFieldSchema.default("createdAt"),
   sortOrder: sortOrderSchema,
 });
 

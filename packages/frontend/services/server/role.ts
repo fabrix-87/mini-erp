@@ -10,23 +10,45 @@ import type {
 import type { CreateRoleInput, UpdateRoleInput, RoleQueryInput, Role } from "@mini-erp/shared";
 
 // ============================================================================
+// Cache Tags
+// ============================================================================
+
+const ROLE_TAGS = {
+  list: "roles-list",
+  detail: (id: number) => `role-${id}`,
+};
+
+// ============================================================================
 // READ
 // ============================================================================
 
 /**
  * Get all roles with filters and pagination
  */
-export async function getAllRoles(params: RoleQueryInput): Promise<RoleListApiResponse> {
-  const queryString = buildQueryString(params);
-  const url = queryString ? `/roles?${queryString}` : "/roles";
-  return serverApi.get<RoleListApiResponse>(url, { unwrapData: false });
+export async function getAllRoles(
+  params: RoleQueryInput,
+  revalidate?: number | false,
+): Promise<RoleListApiResponse> {
+  return serverApi.get<RoleListApiResponse>("/roles", {
+    params,
+    revalidate: revalidate ?? 30,
+    tags: [ROLE_TAGS.list],
+    unwrapData: false,
+  });
 }
 
 /**
  * Get single role by ID (includes permissions)
  */
-export async function getRoleById(id: number): Promise<RoleSingleApiResponse> {
-  return serverApi.get<RoleSingleApiResponse>(`/roles/${id}`, {unwrapData: false});
+export async function getRoleById(
+  id: number,
+  options?: { revalidate?: number | false },
+): Promise<RoleSingleApiResponse> {
+  return serverApi.get<RoleSingleApiResponse>(`/roles/${id}`, { 
+    revalidate: options?.revalidate ?? 60,
+    tags: [ROLE_TAGS.detail(id), ROLE_TAGS.list],
+    unwrapData: false
+  });
 }
 
 // ============================================================================
@@ -43,10 +65,7 @@ export async function createRole(data: CreateRoleInput): Promise<Role> {
 /**
  * Update an existing role
  */
-export async function updateRole(
-  id: number,
-  data: UpdateRoleInput,
-): Promise<Role> {
+export async function updateRole(id: number, data: UpdateRoleInput): Promise<Role> {
   return serverApi.put<Role>(`/roles/${id}`, data);
 }
 

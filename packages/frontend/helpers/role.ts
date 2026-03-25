@@ -4,15 +4,20 @@ import { RoleQueryInput } from "@mini-erp/shared";
 // QUERY BUILDER
 // ============================================================================
 
-export const buildQueryString = (params: RoleQueryInput): string => {
+type QueryValue = string | number | boolean | null | undefined | Array<string | number | boolean>;
+
+export const buildQueryString = <T extends Record<string, QueryValue>>(params: T): string => {
   const query = new URLSearchParams();
 
-  if (params.search) query.append('search', params.search);
-  if (params.isDefault) query.append('isDefault', params.isDefault.toString());
-  if (params.sortBy) query.append('sortBy', params.sortBy);
-  if (params.sortOrder) query.append('sortOrder', params.sortOrder);
-  if (params.page) query.append('page', params.page.toString());
-  if (params.limit) query.append('limit', params.limit.toString());
+  Object.entries(params).forEach(([key, value]) => {
+    if (value == null) return;
+
+    if (Array.isArray(value)) {
+      value.forEach((v) => v != null && query.append(key, String(v)));
+    } else {
+      query.append(key, String(value));
+    }
+  });
 
   return query.toString();
 };

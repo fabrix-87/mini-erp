@@ -5,7 +5,8 @@ import { serverApi } from '@/lib/server/api';
 import type {
   User,
   UpdateUserDetailsInput,
-  UpdateUserProfileInput
+  UpdateUserProfileInput,
+  UserListApiResponse
 } from '@/types/user'
 import { ApiResponse } from '@mini-erp/shared';
 import { PaginatedResponse } from '@mini-erp/shared/types';
@@ -90,10 +91,10 @@ export async function getAllUsers(params?: {
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
   revalidate?: number | false;
-}): Promise<ApiResponse<User[]>> {
+}): Promise<UserListApiResponse> {
   const { revalidate = 30, ...queryParams } = params || {};
 
-  return serverApi.get<ApiResponse<User[]>>('/users', {
+  return serverApi.get<UserListApiResponse>('/users', {
     params: queryParams,
     revalidate,
     tags: [USER_TAGS.list],
