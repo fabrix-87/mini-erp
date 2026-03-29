@@ -15,6 +15,7 @@ import {
   BulkAssignLeadsInput,
   BulkUpdateLeadStatusInput,
   LeadStatsInput,
+  LeadStats,
 } from "@mini-erp/shared";
 import {
   sendCreated,
@@ -23,6 +24,8 @@ import {
   sendPaginatedResponse,
   sendSuccess,
 } from "@/utils/response";
+import { startOfWeek, startOfMonth } from "date-fns";
+import { parseOptionalDate, parseOptionalDecimal } from "@/helpers/prisma";
 
 // ============================================================================
 // HELPERS
@@ -91,8 +94,7 @@ export const getAllLeads = asyncHandler(
     if (countryCode) where.countryCode = countryCode;
     if (estimatedSize) where.estimatedSize = estimatedSize;
     if (industry) where.industry = { contains: industry, mode: "insensitive" };
-    if (campaignName)
-      where.campaignName = { contains: campaignName, mode: "insensitive" };
+    if (campaignName) where.campaignName = { contains: campaignName, mode: "insensitive" };
 
     if (minScore !== undefined || maxScore !== undefined) {
       where.score = {};
@@ -102,8 +104,7 @@ export const getAllLeads = asyncHandler(
 
     if (bantQualified !== undefined) where.bantQualified = bantQualified;
     if (privacyConsent !== undefined) where.privacyConsent = privacyConsent;
-    if (marketingConsent !== undefined)
-      where.marketingConsent = marketingConsent;
+    if (marketingConsent !== undefined) where.marketingConsent = marketingConsent;
 
     if (hasNextFollowUp === true) where.nextFollowUpDate = { not: null };
     if (hasNextFollowUp === false) where.nextFollowUpDate = null;
@@ -228,28 +229,23 @@ export const createLead = asyncHandler(
 
     const lead = await prisma.lead.create({
       data: {
-        ...body,
+        // ── Spread body escludendo i campi che override manualmente ──────────────
+        ...(body as Prisma.LeadUncheckedCreateInput),
+
+        // ── Override espliciti ───────────────────────────────────────────────────
         code,
-        estimatedValue: body.estimatedValue
-          ? new Prisma.Decimal(Number(body.estimatedValue))
-          : null,
-        annualRevenue: body.annualRevenue
-          ? new Prisma.Decimal(Number(body.annualRevenue))
-          : null,
-        budget: body.budget ? new Prisma.Decimal(Number(body.budget)) : null,
-        nextFollowUpDate: body.nextFollowUpDate
-          ? new Date(body.nextFollowUpDate)
-          : null,
-        privacyConsentDate: body.privacyConsentDate
-          ? new Date(body.privacyConsentDate)
-          : null,
-        marketingConsentDate: body.marketingConsentDate
-          ? new Date(body.marketingConsentDate)
-          : null,
         createdByUserId: currentUserId,
         assignedUserId: body.assignedUserId ?? currentUserId,
         customFields: body.customFields ?? Prisma.JsonNull,
-      },
+
+        // ── Conversioni di tipo ──────────────────────────────────────────────────
+        estimatedValue: parseOptionalDecimal(body.estimatedValue),
+        annualRevenue: parseOptionalDecimal(body.annualRevenue),
+        budget: parseOptionalDecimal(body.budget),
+        nextFollowUpDate: parseOptionalDate(body.nextFollowUpDate),
+        privacyConsentDate: parseOptionalDate(body.privacyConsentDate),
+        marketingConsentDate: parseOptionalDate(body.marketingConsentDate),
+      } satisfies Prisma.LeadUncheckedCreateInput,
       include: {
         assignedUser: { select: { id: true, username: true } },
       },
@@ -259,11 +255,6 @@ export const createLead = asyncHandler(
   },
 );
 
-/**
- * @desc   Update an existing lead
- * @route  PUT /api/leads/:id
- * @access Private (lead:update)
- */
 export const updateLead = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const { id } = req.validatedParams as LeadIdParam;
@@ -275,18 +266,12 @@ export const updateLead = asyncHandler(
       return;
     }
 
-    if (
-      body.assignedUserId &&
-      body.assignedUserId !== existing.assignedUserId
-    ) {
+    if (body.assignedUserId && body.assignedUserId !== existing.assignedUserId) {
       const user = await prisma.user.findUnique({
         where: { id: body.assignedUserId },
       });
       if (!user) {
-        sendFail(res, {
-          statusCode: 404,
-          message: "Utente assegnato non trovato",
-        });
+        sendFail(res, { statusCode: 404, message: "Utente assegnato non trovato" });
         return;
       }
     }
@@ -294,48 +279,17 @@ export const updateLead = asyncHandler(
     const lead = await prisma.lead.update({
       where: { id },
       data: {
-        ...body,
-        estimatedValue:
-          body.estimatedValue !== undefined
-            ? body.estimatedValue
-              ? new Prisma.Decimal(Number(body.estimatedValue))
-              : null
-            : undefined,
-        annualRevenue:
-          body.annualRevenue !== undefined
-            ? body.annualRevenue
-              ? new Prisma.Decimal(Number(body.annualRevenue))
-              : null
-            : undefined,
-        budget:
-          body.budget !== undefined
-            ? body.budget
-              ? new Prisma.Decimal(Number(body.budget))
-              : null
-            : undefined,
-        nextFollowUpDate:
-          body.nextFollowUpDate !== undefined
-            ? body.nextFollowUpDate
-              ? new Date(body.nextFollowUpDate)
-              : null
-            : undefined,
-        privacyConsentDate:
-          body.privacyConsentDate !== undefined
-            ? body.privacyConsentDate
-              ? new Date(body.privacyConsentDate)
-              : null
-            : undefined,
-        marketingConsentDate:
-          body.marketingConsentDate !== undefined
-            ? body.marketingConsentDate
-              ? new Date(body.marketingConsentDate)
-              : null
-            : undefined,
+        ...(body as Prisma.LeadUncheckedUpdateInput),
+
+        estimatedValue: parseOptionalDecimal(body.estimatedValue),
+        annualRevenue: parseOptionalDecimal(body.annualRevenue),
+        budget: parseOptionalDecimal(body.budget),
+        nextFollowUpDate: parseOptionalDate(body.nextFollowUpDate),
+        privacyConsentDate: parseOptionalDate(body.privacyConsentDate),
+        marketingConsentDate: parseOptionalDate(body.marketingConsentDate),
         customFields:
-          body.customFields !== undefined
-            ? (body.customFields ?? Prisma.JsonNull)
-            : undefined,
-      },
+          body.customFields !== undefined ? (body.customFields ?? Prisma.JsonNull) : undefined,
+      } satisfies Prisma.LeadUncheckedUpdateInput,
       include: {
         assignedUser: { select: { id: true, username: true } },
       },
@@ -353,8 +307,7 @@ export const updateLead = asyncHandler(
 export const updateLeadStatus = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const { id } = req.validatedParams as LeadIdParam;
-    const { status, lostReason, notes } =
-      req.validatedBody as UpdateLeadStatusInput;
+    const { status, lostReason, notes } = req.validatedBody as UpdateLeadStatusInput;
 
     const existing = await prisma.lead.findUnique({ where: { id } });
     if (!existing) {
@@ -428,9 +381,7 @@ export const qualifyLead = asyncHandler(
         primaryNeed: payload.primaryNeed,
         decisionAuthority: payload.decisionAuthority,
         purchaseTimeframe: payload.purchaseTimeframe,
-        budget: payload.budget
-          ? new Prisma.Decimal(Number(payload.budget))
-          : undefined,
+        budget: payload.budget ? new Prisma.Decimal(Number(payload.budget)) : undefined,
         // Auto-upgrade status if qualified
         ...(payload.bantQualified &&
           existing.status === "NEW" && {
@@ -557,10 +508,7 @@ export const convertLead = asyncHandler(
 export const assignLead = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
     const { id } = req.validatedParams as LeadIdParam;
-    const { assignedUserId } = req.validatedBody as Pick<
-      UpdateLeadInput,
-      "assignedUserId"
-    >;
+    const { assignedUserId } = req.validatedBody as Pick<UpdateLeadInput, "assignedUserId">;
 
     if (!assignedUserId) {
       sendFail(res, {
@@ -603,8 +551,7 @@ export const assignLead = asyncHandler(
  */
 export const bulkAssignLeads = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { leadIds, assignedUserId } =
-      req.validatedBody as BulkAssignLeadsInput;
+    const { leadIds, assignedUserId } = req.validatedBody as BulkAssignLeadsInput;
 
     const user = await prisma.user.findUnique({
       where: { id: assignedUserId },
@@ -630,8 +577,7 @@ export const bulkAssignLeads = asyncHandler(
  */
 export const bulkUpdateLeadStatus = asyncHandler(
   async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { leadIds, status, lostReason } =
-      req.validatedBody as BulkUpdateLeadStatusInput;
+    const { leadIds, status, lostReason } = req.validatedBody as BulkUpdateLeadStatusInput;
 
     const result = await prisma.lead.updateMany({
       where: { id: { in: leadIds } },
@@ -688,7 +634,7 @@ export const deleteLead = asyncHandler(
 );
 
 /**
- * @desc   Get lead statistics
+ * @desc   Get lead statistics with database-level aggregations
  * @route  GET /api/leads/stats
  * @access Private (lead:read)
  */
@@ -697,43 +643,153 @@ export const getLeadStats = asyncHandler(
     const { assignedUserId, dateFrom, dateTo, source, campaignName } =
       req.validatedQuery as LeadStatsInput;
 
+    // ── Where clause ─────────────────────────────────────────────────────────
     const where: Prisma.LeadWhereInput = {};
     if (assignedUserId) where.assignedUserId = assignedUserId;
     if (source) where.source = source;
     if (campaignName) where.campaignName = campaignName;
     if (dateFrom || dateTo) {
-      where.createdAt = {};
-      if (dateFrom) where.createdAt.gte = new Date(dateFrom);
-      if (dateTo) where.createdAt.lte = new Date(dateTo);
+      where.createdAt = {
+        ...(dateFrom && { gte: new Date(dateFrom) }),
+        ...(dateTo && { lte: new Date(dateTo) }),
+      };
     }
 
-    const leads = await prisma.lead.findMany({
-      where,
-      select: {
-        status: true,
-        source: true,
-        quality: true,
-        score: true,
-        bantQualified: true,
-      },
-    });
+    // ── Date boundaries ───────────────────────────────────────────────────────
+    const now = new Date();
+    // startOfWeek con locale Monday (weekStartsOn: 1)
+    const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+    const monthStart = startOfMonth(now);
+
+    // ── Parallel DB queries (aggregazioni delegate al DB) ────────────────────
+    const [
+      byStatusRaw,
+      bySourceRaw,
+      byQualityRaw,
+      aggregates,
+      conversionTimeRaw,
+      estimatedValueRaw,
+      newThisWeekCount,
+      newThisMonthCount,
+      overdueFollowUpCount,
+      scheduledFollowUpCount,
+    ] = await Promise.all([
+      // Conteggi per status
+      prisma.lead.groupBy({
+        by: ["status"],
+        where,
+        _count: { _all: true },
+      }),
+
+      // Conteggi per source
+      prisma.lead.groupBy({
+        by: ["source"],
+        where,
+        _count: { _all: true },
+      }),
+
+      // Conteggi per quality
+      prisma.lead.groupBy({
+        by: ["quality"],
+        where,
+        _count: { _all: true },
+      }),
+
+      // Aggregati globali: total, avgScore, bantQualified, lost
+      prisma.lead.aggregate({
+        where,
+        _count: { _all: true, bantQualified: true },
+        _avg: { score: true },
+      }),
+
+      // Tempo medio di conversione: prendiamo solo i converted con convertedAt
+      prisma.lead.findMany({
+        where: { ...where, status: "CONVERTED", convertedAt: { not: null } },
+        select: { createdAt: true, convertedAt: true },
+      }),
+
+      // Somma estimatedValue (esclusi LOST, ARCHIVED, DUPLICATE)
+      prisma.lead.aggregate({
+        where: {
+          ...where,
+          status: { notIn: ["LOST", "ARCHIVED", "DUPLICATE"] },
+          estimatedValue: { not: null },
+        },
+        _sum: { estimatedValue: true },
+      }),
+
+      // Nuovi questa settimana
+      prisma.lead.count({
+        where: { ...where, createdAt: { gte: weekStart } },
+      }),
+
+      // Nuovi questo mese
+      prisma.lead.count({
+        where: { ...where, createdAt: { gte: monthStart } },
+      }),
+
+      // Follow-up scaduti
+      prisma.lead.count({
+        where: {
+          ...where,
+          nextFollowUpDate: { lte: now },
+          status: { notIn: ["CONVERTED", "LOST", "ARCHIVED", "DUPLICATE"] },
+        },
+      }),
+
+      // Follow-up pianificati (futuri)
+      prisma.lead.count({
+        where: {
+          ...where,
+          nextFollowUpDate: { gt: now },
+          status: { notIn: ["CONVERTED", "LOST", "ARCHIVED", "DUPLICATE"] },
+        },
+      }),
+    ]);
+
+    // ── Trasformazione risultati ──────────────────────────────────────────────
+    const byStatus = Object.fromEntries(byStatusRaw.map((r) => [r.status, r._count._all]));
+
+    const bySource = Object.fromEntries(bySourceRaw.map((r) => [r.source, r._count._all]));
+
+    const byQuality = Object.fromEntries(byQualityRaw.map((r) => [r.quality, r._count._all]));
+
+    const total = aggregates._count._all;
+    const converted = byStatus["CONVERTED"] ?? 0;
+    const lost = byStatus["LOST"] ?? 0;
+
+    /**
+     * Calculates the average conversion time in days for converted leads.
+     * Returns 0 if no converted leads with valid dates are found.
+     */
+    const averageConversionTime = (() => {
+      if (conversionTimeRaw.length === 0) return 0;
+      const totalDays = conversionTimeRaw.reduce((sum, lead) => {
+        const days = Math.round(
+          (lead.convertedAt!.getTime() - lead.createdAt.getTime()) / (1000 * 60 * 60 * 24),
+        );
+        return sum + days;
+      }, 0);
+      return Math.round(totalDays / conversionTimeRaw.length);
+    })();
 
     const stats = {
-      total: leads.length,
-      byStatus: {} as Record<string, number>,
-      bySource: {} as Record<string, number>,
-      byQuality: {} as Record<string, number>,
-      qualified: leads.filter((l) => l.bantQualified).length,
-      avgScore: leads.length
-        ? Math.round(leads.reduce((acc, l) => acc + l.score, 0) / leads.length)
-        : 0,
-    };
-
-    for (const lead of leads) {
-      stats.byStatus[lead.status] = (stats.byStatus[lead.status] ?? 0) + 1;
-      stats.bySource[lead.source] = (stats.bySource[lead.source] ?? 0) + 1;
-      stats.byQuality[lead.quality] = (stats.byQuality[lead.quality] ?? 0) + 1;
-    }
+      total,
+      byStatus,
+      bySource,
+      byQuality,
+      newThisWeek: newThisWeekCount,
+      newThisMonth: newThisMonthCount,
+      converted,
+      lost,
+      conversionRate: total > 0 ? Math.round((converted / total) * 100) : 0,
+      averageScore: Math.round(aggregates._avg.score ?? 0),
+      averageConversionTime,
+      totalEstimatedValue: estimatedValueRaw._sum.estimatedValue ?? new Prisma.Decimal(0),
+      qualifiedLeads: aggregates._count.bantQualified,
+      needFollowUp: overdueFollowUpCount,
+      overdueFollowUp: scheduledFollowUpCount,
+    } satisfies LeadStats;
 
     sendSuccess(res, stats);
   },

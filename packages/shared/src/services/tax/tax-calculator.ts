@@ -15,7 +15,7 @@ export function calculateTax(input: TaxCalculationInput): TaxCalculationResult {
     : netAmount;
   
   // Get tax rate from rule
-  const taxRate = new Decimal(taxRule.rate);
+  const taxRate = new Decimal(taxRule.rate ?? 0);
   
   // Calculate tax amount
   const taxAmount = baseNetAmount.mul(taxRate).div(100);
@@ -24,7 +24,7 @@ export function calculateTax(input: TaxCalculationInput): TaxCalculationResult {
   const grossAmount = baseNetAmount.add(taxAmount);
   
   // Get deductibility percentage
-  const deductibilityPercent = new Decimal(taxRule.deductibilityPercent);
+  const deductibilityPercent = new Decimal(taxRule.deductibilityPercent ?? 0);
   
   return {
     netAmount: baseNetAmount,
@@ -74,7 +74,7 @@ export function calculateReverseTax(
   grossAmount: Decimal,
   taxRule: TaxCalculationInput["taxRule"],
 ): TaxCalculationResult {
-  const taxRate = new Decimal(taxRule.rate);
+  const taxRate = new Decimal(taxRule.rate ?? 0);
   
   // Calculate net amount: gross / (1 + rate/100)
   const netAmount = grossAmount.div(
@@ -84,7 +84,7 @@ export function calculateReverseTax(
   // Calculate tax amount
   const taxAmount = grossAmount.minus(netAmount);
   
-  const deductibilityPercent = new Decimal(taxRule.deductibilityPercent);
+  const deductibilityPercent = new Decimal(taxRule.deductibilityPercent ?? 0);
   
   return {
     netAmount,
@@ -130,7 +130,7 @@ export function validateTaxCalculation(
   }
   
   // Validate that VAT nature is set if rate is 0
-  if (taxRule.rate.equals(0) && !taxRule.vatNature) {
+  if (taxRule.rate?.equals(0) && !taxRule.vatNature) {
     errors.push("Natura IVA obbligatoria per aliquota 0%");
   }
   
@@ -169,14 +169,14 @@ export function isTaxRuleValidForDate(
 export function getEffectiveTaxRate(
   taxRule: TaxCalculationInput["taxRule"],
 ): Decimal {
-  const taxRate = new Decimal(taxRule.rate);
+  const taxRate = new Decimal(taxRule.rate ?? 0);
   
   if (!taxRule.vatDeductible) {
     return taxRate;
   }
   
   // Effective rate = rate * (100 - deductibility) / 100
-  const deductibilityPercent = new Decimal(taxRule.deductibilityPercent);
+  const deductibilityPercent = new Decimal(taxRule.deductibilityPercent ?? 0);
   const nonDeductiblePercent = new Decimal(100).minus(deductibilityPercent);
   
   return taxRate.mul(nonDeductiblePercent).div(100);

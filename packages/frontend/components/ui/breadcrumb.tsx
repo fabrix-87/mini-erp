@@ -3,8 +3,39 @@ import { Slot } from "@radix-ui/react-slot"
 import { ChevronRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useBreadcrumbItems } from "@/hooks/use-breadcrumb";
+import Link from "next/link";
 
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
+  const items = useBreadcrumbItems();
+
+  // Se lo store è vuoto, fallback alla logica pathname esistente
+  if (items.length > 0) {
+    return (
+      <Breadcrumb>
+        <BreadcrumbList>
+          {items.map((item, i) => {
+            const isLast = i === items.length - 1;
+            return (
+              <React.Fragment key={i}>
+                {i > 0 && <BreadcrumbSeparator />}
+                <BreadcrumbItem>
+                  {item.href && !isLast ? (
+                    <BreadcrumbLink asChild>
+                      <Link href={item.href}>{item.label}</Link>
+                    </BreadcrumbLink>
+                  ) : (
+                    <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                  )}
+                </BreadcrumbItem>
+              </React.Fragment>
+            );
+          })}
+        </BreadcrumbList>
+      </Breadcrumb>
+    );
+  }
+
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />
 }
 
@@ -13,7 +44,7 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
     <ol
       data-slot="breadcrumb-list"
       className={cn(
-        "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5",
+        "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm wrap-break-word sm:gap-2.5",
         className
       )}
       {...props}

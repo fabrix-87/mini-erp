@@ -1,5 +1,6 @@
 import Decimal from "decimal.js";
 import { createDecimalSchema } from "../primitives/decimal";
+import { z } from "zod";
 
 /**
  * Schema per prezzo/importo
@@ -18,14 +19,8 @@ export const priceSchema = (options?: {
     messages: {
       invalid: "Prezzo non valido",
       positive: "Il prezzo deve essere positivo",
-      min:
-        options?.min !== undefined
-          ? `Il prezzo deve essere almeno ${options.min}`
-          : undefined,
-      max:
-        options?.max !== undefined
-          ? `Il prezzo non può superare ${options.max}`
-          : undefined,
+      min: options?.min !== undefined ? `Il prezzo deve essere almeno ${options.min}` : undefined,
+      max: options?.max !== undefined ? `Il prezzo non può superare ${options.max}` : undefined,
     },
   });
 
@@ -46,4 +41,4 @@ export const creditLimitSchema = priceSchema();
 export const percentageSchema = createDecimalSchema(2, {
   min: 0,
   max: 100,
-});
+}).pipe(z.instanceof(Decimal, { message: "Percentuale obbligatoria" }));

@@ -220,6 +220,14 @@ export const roleRevalidation = {
   list: () => revalidateEntity("roles", undefined, { pathRoot: "settings/roles" }),
 };
 
+/**
+ * Revalidate lead-related cache
+ */
+export const leadRevalidation = {
+  lead: (id: number) => revalidateEntityWithList("lead", id, { pathRoot: "leads" }),
+  list: () => revalidateEntity("leads", undefined, { pathRoot: "leads" }),
+};
+
 // ============================================================================
 // Export for convenience
 // ============================================================================

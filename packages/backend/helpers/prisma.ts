@@ -1,4 +1,5 @@
 import { Prisma } from "@/generated/prisma/client";
+import { Decimal } from "@prisma/client/runtime/client";
 
 /**
  * Applica una trasformazione solo se il valore è definito.
@@ -56,6 +57,18 @@ export const parseOptionalDate = (value: string | null | undefined): Date | null
 
   const d = new Date(value);
   return isNaN(d.getTime()) ? null : d;
+};
+
+/**
+ * Converts an optional nullable string value to a Prisma-compatible Decimal or undefined.
+ * Returns undefined when the input is undefined (field not included in update).
+ * Returns null when the input is null/empty (explicit clear).
+ */
+export const parseOptionalDecimal = (
+  val: Decimal | string | number | null | undefined,
+): Prisma.Decimal | null | undefined => {
+  if (val === undefined) return undefined;
+  return val ? new Prisma.Decimal(Number(val)) : null;
 };
 
 /**

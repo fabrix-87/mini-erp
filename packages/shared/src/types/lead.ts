@@ -22,6 +22,7 @@ import {
   leadQuerySchema,
   leadIdParamSchema,
   leadStatsSchema,
+  assignedUserIdSchema,
 } from "../validators/lead";
 import { DecisionAuthority, LeadQuality, LeadSource, LeadStatus, PurchaseTimeframe } from "../constants/lead";
 
@@ -59,15 +60,21 @@ export type Lead = Omit<CreateLeadInput, "code"> & {
 // ============================================================================
 
 export type CreateLeadInput = z.infer<typeof createLeadSchema>;
+export type CreateLeadFormInput = z.input<typeof createLeadSchema>;
 export type UpdateLeadInput = z.infer<typeof updateLeadSchema>;
+export type UpdateLeadFormInput = z.input<typeof updateLeadSchema>;
 export type UpdateLeadStatusInput = z.infer<typeof updateLeadStatusSchema>;
 export type UpdateLeadScoreInput = z.infer<typeof updateLeadScoreSchema>;
+export type UpdateLeadScoreFormInput = z.input<typeof updateLeadScoreSchema>;
 export type QualifyLeadInput = z.infer<typeof qualifyLeadSchema>;
+export type QualifyLeadFormInput = z.input<typeof qualifyLeadSchema>;
 export type ConvertLeadInput = z.infer<typeof convertLeadSchema>;
+export type ConvertLeadFormInput = z.input<typeof convertLeadSchema>;
 export type BulkAssignLeadsInput = z.infer<typeof bulkAssignLeadsSchema>;
 export type BulkUpdateLeadStatusInput = z.infer<
   typeof bulkUpdateLeadStatusSchema
 >;
+export type AssignUserIdFormValues = z.input<typeof assignedUserIdSchema>;
 
 // ============================================================================
 // QUERY TYPES (using z.infer)
@@ -130,9 +137,9 @@ export type LeadWithContact = Lead & {
  */
 export interface LeadStats {
   total: number;
-  byStatus: Record<LeadStatus, number>;
-  bySource: Record<LeadSource, number>;
-  byQuality: Record<LeadQuality, number>;
+  byStatus: Record<string, number>;
+  bySource: Record<string, number>;
+  byQuality: Record<string, number>;
   newThisMonth: number;
   newThisWeek: number;
   converted: number;
@@ -143,7 +150,7 @@ export interface LeadStats {
   totalEstimatedValue: Decimal;
   qualifiedLeads: number;
   needFollowUp: number;
-  overduFollowUp: number;
+  overdueFollowUp: number;
 }
 
 /**

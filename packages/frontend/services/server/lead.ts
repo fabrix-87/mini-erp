@@ -1,0 +1,119 @@
+// services/server/lead.ts
+"use server";
+
+import { serverApi } from "@/lib/server/api";
+import type { ApiResponse } from "@/types/api";
+import type {
+  Lead,
+  LeadListItem,
+  LeadStats,
+  LeadQueryInput,
+  LeadStatsInput,
+  UpdateLeadStatusInput,
+  BulkAssignLeadsInput,
+  BulkUpdateLeadStatusInput,
+} from "@/types/lead";
+import { ConvertLeadFormInput, CreateLeadFormInput, QualifyLeadFormInput, UpdateLeadFormInput, UpdateLeadScoreFormInput } from "@mini-erp/shared";
+
+// ============================================================================
+// READ
+// ============================================================================
+
+/**
+ * Ottieni lista lead con filtri e paginazione
+ */
+export async function getAllLeads(params: LeadQueryInput): Promise<ApiResponse<LeadListItem[]>> {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null) query.append(k, String(v));
+  });
+  const url = `/leads?${query.toString()}`;
+  return serverApi.get<ApiResponse<LeadListItem[]>>(url, { unwrapData: false });
+}
+
+/**
+ * Ottieni singola lead per ID
+ */
+export async function getLeadByIdServer(id: number): Promise<ApiResponse<Lead>> {
+  return serverApi.get<ApiResponse<Lead>>(`/leads/${id}`, { unwrapData: false });
+}
+
+/**
+ * Ottieni statistiche lead
+ */
+export async function getLeadStatsServer(params?: LeadStatsInput): Promise<ApiResponse<LeadStats>> {
+  const query = new URLSearchParams();
+  if (params) {
+    Object.entries(params).forEach(([k, v]) => {
+      if (v !== undefined && v !== null) query.append(k, String(v));
+    });
+  }
+  const url = `/leads/stats${query.toString() ? `?${query.toString()}` : ""}`;
+  return serverApi.get<ApiResponse<LeadStats>>(url, { unwrapData: false });
+}
+
+// ============================================================================
+// WRITE (usate dalle server actions)
+// ============================================================================
+
+export async function createLeadServer(data: CreateLeadFormInput): Promise<ApiResponse<Lead>> {
+  return serverApi.post<ApiResponse<Lead>>("/leads", data);
+}
+
+export async function updateLeadServer(
+  id: number,
+  data: UpdateLeadFormInput,
+): Promise<ApiResponse<Lead>> {
+  return serverApi.put<ApiResponse<Lead>>(`/leads/${id}`, data);
+}
+
+export async function updateLeadStatusServer(
+  id: number,
+  data: UpdateLeadStatusInput,
+): Promise<ApiResponse<Lead>> {
+  return serverApi.patch<ApiResponse<Lead>>(`/leads/${id}/status`, data);
+}
+
+export async function updateLeadScoreServer(
+  id: number,
+  data: UpdateLeadScoreFormInput,
+): Promise<ApiResponse<Lead>> {
+  return serverApi.patch<ApiResponse<Lead>>(`/leads/${id}/score`, data);
+}
+
+export async function qualifyLeadServer(
+  id: number,
+  data: QualifyLeadFormInput,
+): Promise<ApiResponse<Lead>> {
+  return serverApi.patch<ApiResponse<Lead>>(`/leads/${id}/qualify`, data);
+}
+
+export async function convertLeadServer(
+  id: number,
+  data: ConvertLeadFormInput,
+): Promise<ApiResponse<Lead>> {
+  return serverApi.post<ApiResponse<Lead>>(`/leads/${id}/convert`, data);
+}
+
+export async function assignLeadServer(
+  id: number,
+  assignedUserId: number,
+): Promise<ApiResponse<Lead>> {
+  return serverApi.patch<ApiResponse<Lead>>(`/leads/${id}/assign`, { assignedUserId });
+}
+
+export async function bulkAssignLeadsServer(
+  data: BulkAssignLeadsInput,
+): Promise<ApiResponse<null>> {
+  return serverApi.post<ApiResponse<null>>("/leads/bulk/assign", data);
+}
+
+export async function bulkUpdateLeadStatusServer(
+  data: BulkUpdateLeadStatusInput,
+): Promise<ApiResponse<null>> {
+  return serverApi.post<ApiResponse<null>>("/leads/bulk/status", data);
+}
+
+export async function deleteLeadServer(id: number): Promise<ApiResponse<null>> {
+  return serverApi.delete<ApiResponse<null>>(`/leads/${id}`);
+}

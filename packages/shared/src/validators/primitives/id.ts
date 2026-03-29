@@ -5,23 +5,52 @@ import { z } from "zod";
  * @param errorMessage
  * @returns positive number
  */
+/*
 export const createIdSchema = (errorMessage: string) =>
-  z.preprocess(
-    // 1. Se arriva una stringa vuota o null, la trasformiamo in undefined PRIMA di validare
-    (val) => (val === "" || val === null ? undefined : val),
+  z
+    .union([z.string(), z.number()])
+    .optional()
+    .transform((val, ctx) => {
+      if (val === "" || val === null || val === undefined) {
+        return undefined;
+      }
 
-    // 2. Ora applichiamo la logica di conversione e validazione
-    z
-      .unknown()
-      .transform((val) => Number(val))
-      .refine((val) => !isNaN(val), { message: errorMessage })
-      .pipe(
-        z
-          .number()
-          .int({ message: errorMessage })
-          .positive({ message: errorMessage }),
-      ),
-  );
+      const num = Number(val);
+
+      if (isNaN(num)) {
+        ctx.addIssue({
+          code: "custom",
+          message: errorMessage,
+        });
+        return z.NEVER;
+      }
+
+      return num;
+    })
+    .refine((val) => val === undefined || Number.isInteger(val), {
+      message: errorMessage,
+    })
+    .refine((val) => val === undefined || val > 0, {
+      message: errorMessage,
+    });
+*/
+export const createIdSchema = (errorMessage: string) =>
+  z
+    .union([z.string(), z.number()]) // input accettabile da form
+    .transform((val, ctx) => {
+      // converti stringa in numero
+      const num = Number(val);
+
+      if (isNaN(num) || !Number.isInteger(num) || num <= 0) {
+        ctx.addIssue({
+          code: "custom",
+          message: errorMessage,
+        });
+        return z.NEVER;
+      }
+
+      return num;
+    });
 
 /**
  * Schema per numeri positivi

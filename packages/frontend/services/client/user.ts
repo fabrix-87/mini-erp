@@ -18,6 +18,11 @@ export const clientUserService = {
     return data;
   },
 
+  async getUserById(id: number): Promise<UserSingleApiResponse> {
+    const { data } = await api.get<UserSingleApiResponse>(`/users/${id}`);
+    return data;
+  },
+
   async getStats(): Promise<{
     total: number;
     active: number;

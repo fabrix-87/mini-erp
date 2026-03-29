@@ -1,43 +1,30 @@
+// providers/breadcrumb-provider.tsx
 import { BreadcrumbContext } from "@/app/context/breadcrumb-context";
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
+
+import { breadcrumbStore } from "@/lib/stores/breadcrumb-store";
 
 export function BreadcrumbProvider({ children }: { children: ReactNode }) {
-  const baseTitle = process.env.APP_NAME || "MyERP - Gestionale Aziendale";
-  const [customTitles, setCustomTitles] = useState<Record<string, string>>({});
-  const [pageTitle, setPageTitleState] = useState<string>(baseTitle);
+  const baseTitle = process.env.NEXT_PUBLIC_APP_NAME ?? "MyERP - Gestionale Aziendale";
 
-  const setCustomTitle = useCallback((path: string, title: string) => {
-    setCustomTitles((prev) => ({ ...prev, [path]: title }));
-  }, []);
-
-  const clearCustomTitle = useCallback((path: string) => {
-    setCustomTitles((prev) => {
-      const newTitles = { ...prev };
-      delete newTitles[path];
-      return newTitles;
-    });
-  }, []);
-
-  const setPageTitle = useCallback((title: string) => {
-    setPageTitleState(title);
-  }, []);
-
-  // Aggiorna il document.title quando cambia pageTitle
   useEffect(() => {
-    document.title =
-      pageTitle && pageTitle !== baseTitle
-        ? `${pageTitle} | ${baseTitle}`
-        : baseTitle;
-  }, [pageTitle]);
+    // Aggiorna document.title ogni volta che lo store cambia
+    const unsub = breadcrumbStore.subscribe(() => {
+      const items = breadcrumbStore.getSnapshot().items;
+      const last = items.at(-1);
+      document.title = last?.label ? `${last.label} | ${baseTitle}` : baseTitle;
+    });
+    return unsub;
+  }, [baseTitle]);
 
   return (
     <BreadcrumbContext.Provider
       value={{
-        customTitles,
-        setCustomTitle,
-        clearCustomTitle,
-        pageTitle,
-        setPageTitle,
+        customTitles: {}, // ← stub vuoto, non più usato
+        setCustomTitle: () => {}, // ← stub
+        clearCustomTitle: () => {}, // ← stub
+        pageTitle: "", // ← stub
+        setPageTitle: () => {}, // ← stub
       }}
     >
       {children}

@@ -28,19 +28,10 @@ export const termTypeSchema = z.enum([
 export const paymentTermDetailSchema = z
   .object({
     percentage: percentageSchema,
-
     termType: termTypeSchema.default("days_from_invoice"),
-
-    dueDays: z
-      .number()
-      .int()
-      .nonnegative("dueDays deve essere >= 0")
-      .default(0),
-
+    dueDays: z.number().int().nonnegative("dueDays deve essere >= 0").default(0),
     isEndOfMonth: z.boolean().default(false),
-
     isFixedDate: z.boolean().default(false),
-
     fixedDay: z
       .number()
       .int()
@@ -48,9 +39,7 @@ export const paymentTermDetailSchema = z
       .max(31, "fixedDay deve essere <= 31")
       .optional()
       .nullable(),
-
     fixedMonthOffset: z.number().int().nonnegative().default(0),
-
     position: z.number().int().nonnegative().default(0),
   })
   .strict();
@@ -82,30 +71,18 @@ export const createPaymentMethodSchema = z
       .min(1, "Codice è obbligatorio")
       .max(50, "Codice non può superare 50 caratteri")
       .trim(),
-
     active: z.boolean().default(true),
-
     position: z.number().int().nonnegative().default(0),
-
     translations: z
       .array(paymentMethodTranslationSchema)
       .min(1, "Almeno una traduzione è obbligatoria"),
-
-    details: z.array(paymentTermDetailSchema).optional(),
+    details: z.array(paymentTermDetailSchema),
   })
   .strict()
-  .refine(
-    (data) => {
-      if (data.details && data.details.length > 0) {
-        return isValidPercentageTotal(data.details);
-      }
-      return true;
-    },
-    {
-      message: "La somma delle percentuali deve essere 100",
-      path: ["details"],
-    },
-  );
+  .refine((data) => data.details.length === 0 || isValidPercentageTotal(data.details), {
+    message: "La somma delle percentuali deve essere 100",
+    path: ["details"],
+  });
 
 /**
  * Schema per l'aggiornamento di un Payment Method
@@ -132,9 +109,7 @@ export const updatePaymentMethodSchema = z
  */
 export const updatePaymentTermDetailsSchema = z
   .object({
-    details: z
-      .array(paymentTermDetailSchema)
-      .min(1, "Almeno un detail è obbligatorio"),
+    details: z.array(paymentTermDetailSchema).min(1, "Almeno un detail è obbligatorio"),
   })
   .strict()
   .refine(
@@ -173,10 +148,7 @@ export const paymentMethodIdSchema = z.object({
 export const paymentQuerySchema = z
   .object({
     active: queryBooleanSchema,
-    sortBy: z
-      .enum(["code", "position", "createdAt"])
-      .optional()
-      .default("position"),
+    sortBy: z.enum(["code", "position", "createdAt"]).optional().default("position"),
     sortOrder: sortOrderSchema,
   })
   .strict();

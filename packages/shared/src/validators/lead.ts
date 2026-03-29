@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createIdSchema } from "./primitives/id";
-import { emailSchema, phoneSchema } from "./primitives/string";
+import { emailSchema, emptyStringToNull, phoneSchema, urlSchema } from "./primitives/string";
 import { isoDateSchema } from "./primitives/date";
 import { createDecimalSchema } from "./primitives/decimal";
 import { countryCodeBaseSchema, inputJsonValueSchema } from "./base";
@@ -109,16 +109,16 @@ const leadScoreSchema = z
  */
 export const leadIdSchema = createIdSchema("ID Lead non valido");
 
+export const assignedUserIdSchema = z.object({
+  assignedUserId: createIdSchema("User ID non valido"),
+});
+
 /**
  * Raw object shape for Lead — no refinements.
  * Used as base for both create and update schemas.
  */
-const leadShape = z.object({
-  code: z
-    .string()
-    .max(20, "Codice non può superare 20 caratteri")
-    .trim()
-    .optional(),
+export const leadShape = z.object({
+  code: z.string().max(20, "Codice non può superare 20 caratteri").trim().optional(),
 
   // Company data
   companyName: z
@@ -128,10 +128,10 @@ const leadShape = z.object({
     .trim(),
 
   tradeName: z.string().max(255).optional().nullable(),
-  website: z.string().url("URL non valido").max(255).optional().nullable(),
+  website: urlSchema(false, 255),
   vatNumber: z.string().max(20).optional().nullable(),
   taxCode: z.string().max(20).optional().nullable(),
-  countryCode: countryCodeBaseSchema.default("IT"),
+  countryCode: countryCodeBaseSchema.default("IT").optional().nullable(),
 
   // Contact data
   contactFirstName: z
@@ -155,7 +155,7 @@ const leadShape = z.object({
   // Address
   address: z.string().max(255).optional().nullable(),
   city: z.string().max(100).optional().nullable(),
-  provinceCode: z.string().length(2).optional().nullable(),
+  provinceCode: emptyStringToNull(z.string().length(2, "Codice provincia non valido")).optional().nullable(),
   zipCode: z.string().max(20).optional().nullable(),
 
   // Lead management
@@ -242,10 +242,7 @@ export const createLeadSchema = leadShape
  * GDPR consent refinements omitted: partial updates may carry only one
  * of the two fields; controller validates consistency against DB state.
  */
-export const updateLeadSchema = leadShape
-  .omit({ code: true })
-  .partial()
-  .strict();
+export const updateLeadSchema = leadShape.omit({ code: true }).partial().strict();
 
 const updateLeadStatusShape = z.object({
   status: leadStatusSchema,
@@ -277,36 +274,35 @@ export const updateLeadScoreSchema = z
   })
   .strict();
 
-const qualifyLeadShape = z.object({
-  bantQualified: z.boolean(),
-  budget: estimatedValueSchema.optional().nullable(),
-  decisionAuthority: decisionAuthoritySchema.optional().nullable(),
+const baseFields = {
+  budget: estimatedValueSchema.nullable().optional(),
+  decisionAuthority: decisionAuthoritySchema.nullable().optional(),
   primaryNeed: z.string().max(5000),
-  purchaseTimeframe: purchaseTimeframeSchema.optional().nullable(),
+  purchaseTimeframe: purchaseTimeframeSchema.nullable().optional(),
   bantNotes: z.string().max(5000).optional().nullable(),
+};
+
+const qualifiedSchema = z.object({
+  bantQualified: z.literal(true),
+  budget: estimatedValueSchema,
+  decisionAuthority: decisionAuthoritySchema,
+  primaryNeed: z.string().max(5000),
+  purchaseTimeframe: purchaseTimeframeSchema,
+  bantNotes: z.string().max(5000).optional().nullable(),
+});
+
+const unqualifiedSchema = z.object({
+  bantQualified: z.literal(false),
+  ...baseFields,
 });
 
 /**
  * Schema for BANT Lead qualification — all BANT fields required when qualified.
  */
-export const qualifyLeadSchema = qualifyLeadShape.strict().refine(
-  (data) => {
-    if (data.bantQualified) {
-      return !!(
-        data.budget &&
-        data.decisionAuthority &&
-        data.primaryNeed &&
-        data.purchaseTimeframe
-      );
-    }
-    return true;
-  },
-  {
-    message:
-      "Tutti i campi BANT (Budget, Authority, Need, Timeframe) sono obbligatori per lead qualificate",
-    path: ["bantQualified"],
-  },
-);
+export const qualifyLeadSchema = z.discriminatedUnion("bantQualified", [
+  unqualifiedSchema,
+  qualifiedSchema,
+]);
 
 const convertLeadShape = z.object({
   companyName: z.string().min(1).max(255),
@@ -382,15 +378,15 @@ export const leadQuerySchema = z.object({
     .optional(),
   estimatedSize: customerSizeSchema.optional(),
   industry: z.string().optional(),
-  bantQualified: queryBooleanSchema,
-  privacyConsent: queryBooleanSchema,
-  marketingConsent: queryBooleanSchema,
-  hasNextFollowUp: queryBooleanSchema,
+  bantQualified: queryBooleanSchema.optional(),
+  privacyConsent: queryBooleanSchema.optional(),
+  marketingConsent: queryBooleanSchema.optional(),
+  hasNextFollowUp: queryBooleanSchema.optional(),
   campaignName: z.string().optional(),
-  createdFrom: isoDateSchema(),
-  createdTo: isoDateSchema(),
-  lastContactFrom: isoDateSchema(),
-  lastContactTo: isoDateSchema(),
+  createdFrom: isoDateSchema().optional(),
+  createdTo: isoDateSchema().optional(),
+  lastContactFrom: isoDateSchema().optional(),
+  lastContactTo: isoDateSchema().optional(),
   sortBy: z
     .enum([
       "code",

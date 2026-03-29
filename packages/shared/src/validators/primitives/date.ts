@@ -47,15 +47,43 @@ export const dateStringSchema = (options?: DateStringOptions) => {
 };
 
 /**
- * Schema per date ISO (Zod v4)
+ * Schema for ISO date fields.
+ * Accepts both full ISO datetime strings (API) and YYYY-MM-DD strings (HTML date inputs).
+ * Transforms YYYY-MM-DD to a full ISO string at midnight UTC.
+ *
+ * @param options.required - If true, null/undefined are rejected
+ * @param options.message  - Custom error message
  */
-export const isoDateSchema = (options?: {
-  required?: boolean;
-  message?: string;
-}) => {
-  const baseSchema = z.iso.datetime(options?.message || "Data non valida");
+export const isoDateSchema = (options?: { required?: boolean; message?: string }) => {
+  const baseSchema = z
+    .string()
+    .transform((val, ctx) => {
+      if (!val || val.trim() === "") return undefined;
 
-  return options?.required === true
-    ? baseSchema
-    : baseSchema.optional().nullable();
+      // Formato YYYY-MM-DD da <input type="date"> → converti a ISO
+      const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(val);
+      const normalized = dateOnly ? `${val}T00:00:00.000Z` : val;
+
+      // Valida come ISO datetime
+      const result = z.iso.datetime().safeParse(normalized);
+      if (!result.success) {
+        ctx.addIssue({
+          code: "custom",
+          message: options?.message ?? "Data non valida",
+        });
+        return z.NEVER;
+      }
+
+      return normalized;
+    })
+    .optional()
+    .nullable();
+
+  if (options?.required) {
+    return baseSchema.refine((val) => val !== null && val !== undefined, {
+      message: options?.message ?? "Data obbligatoria",
+    });
+  }
+
+  return baseSchema;
 };

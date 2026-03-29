@@ -1,19 +1,28 @@
-// packages/frontend/components/ui/breadcrumb-setter.tsx
-'use client';
+// components/ui/breadcrumb-setter.tsx
+"use client";
 
-import { useBreadcrumbTitle } from '@/hooks/use-breadcrumb-title';
+import { useBreadcrumbSetter } from "@/hooks/use-breadcrumb";
+import type { BreadcrumbItem } from "@/lib/stores/breadcrumb-store";
 
-interface BreadcrumbSetterProps {
-  /** The title to display in the breadcrumb */
-  title: string;
-}
+// ============================================================================
+// Props — mutually exclusive
+// ============================================================================
+
+type BreadcrumbSetterProps =
+  | { items: BreadcrumbItem[]; title?: never }
+  | { title: string; items?: never };
 
 /**
- * Headless client component that sets the breadcrumb title.
- * Renders nothing — use it inside Server Components to drive
- * breadcrumb state from the server layout.
+ * Headless client component that drives breadcrumb state via the store.
+ * Renders nothing — place it at the top of any page or layout.
+ *
+ * @example strutturato (nuovo)
+ * <BreadcrumbSetter items={[{ label: "Lead", href: "/leads" }, { label: "Nuovo lead" }]} />
+ *
+ * @example legacy (title singolo)
+ * <BreadcrumbSetter title="Dashboard" />
  */
-export function BreadcrumbSetter({ title }: BreadcrumbSetterProps) {
-  useBreadcrumbTitle(title);
+export function BreadcrumbSetter({ items, title }: BreadcrumbSetterProps) {
+  useBreadcrumbSetter(items ?? [{ label: title as string }]);
   return null;
 }

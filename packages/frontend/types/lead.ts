@@ -1,8 +1,16 @@
-export interface LeadStats {
-  total: number
-  new: number
-  contacted: number
-  qualified: number
-  avgScore: number
-  conversionRate: number
-}
+export type {
+  Lead,
+  LeadListItem,
+  LeadStats,
+  CreateLeadInput,
+  UpdateLeadInput,
+  UpdateLeadStatusInput,
+  UpdateLeadScoreInput,
+  QualifyLeadInput,
+  ConvertLeadInput,
+  BulkAssignLeadsInput,
+  BulkUpdateLeadStatusInput,
+  LeadQueryInput,
+  LeadStatsInput,
+  LeadIdParam,
+} from "@mini-erp/shared/types";
