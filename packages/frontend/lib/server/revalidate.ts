@@ -43,7 +43,7 @@ const DEFAULT_PATH_TYPE: RevalidatePathType = "page";
  */
 export function revalidateTag(
   tag: string,
-  profile: RevalidateTagProfile = DEFAULT_TAG_PROFILE
+  profile: RevalidateTagProfile = DEFAULT_TAG_PROFILE,
 ): void {
   nextRevalidateTag(tag, profile);
 }
@@ -58,10 +58,7 @@ export function revalidateTag(
  * revalidatePath('/users');
  * revalidatePath('/users/1', 'page');
  */
-export function revalidatePath(
-  path: string,
-  type: RevalidatePathType = DEFAULT_PATH_TYPE
-): void {
+export function revalidatePath(path: string, type: RevalidatePathType = DEFAULT_PATH_TYPE): void {
   nextRevalidatePath(path, type);
 }
 
@@ -76,7 +73,7 @@ export function revalidatePath(
  */
 export function revalidateTags(
   tags: string[],
-  profile: RevalidateTagProfile = DEFAULT_TAG_PROFILE
+  profile: RevalidateTagProfile = DEFAULT_TAG_PROFILE,
 ): void {
   tags.forEach((tag) => nextRevalidateTag(tag, profile));
 }
@@ -92,7 +89,7 @@ export function revalidateTags(
  */
 export function revalidatePaths(
   paths: string[],
-  type: RevalidatePathType = DEFAULT_PATH_TYPE
+  type: RevalidatePathType = DEFAULT_PATH_TYPE,
 ): void {
   paths.forEach((path) => nextRevalidatePath(path, type));
 }
@@ -117,14 +114,19 @@ export function revalidateEntity(
   options?: {
     tagProfile?: RevalidateTagProfile;
     pathType?: RevalidatePathType;
-  }
+    tagPrefix?: string;
+    pathRoot?: string;
+  },
 ): void {
+  const tag = options?.tagPrefix ?? entity;
+  const pathRoot = options?.pathRoot ?? (id !== undefined ? `${entity}s` : entity);
+
   if (id !== undefined) {
-    revalidateTag(`${entity}-${id}`, options?.tagProfile);
-    revalidatePath(`/${entity}/${id}`, options?.pathType);
+    revalidateTag(`${tag}-${id}`, options?.tagProfile);
+    revalidatePath(`/${pathRoot}/${id}`, options?.pathType);
   } else {
-    revalidateTag(`${entity}-list`, options?.tagProfile);
-    revalidatePath(`/${entity}`, options?.pathType);
+    revalidateTag(`${tag}s-list`, options?.tagProfile);
+    revalidatePath(`/${pathRoot}`, options?.pathType);
   }
 }
 
@@ -145,15 +147,19 @@ export function revalidateEntityWithList(
   options?: {
     tagProfile?: RevalidateTagProfile;
     pathType?: RevalidatePathType;
-  }
+    tagPrefix?: string;
+    /** Override path root, e.g. 'settings/users' instead of 'users' */
+    pathRoot?: string;
+  },
 ): void {
-  // Revalidate specific entity
-  revalidateTag(`${entity}-${id}`, options?.tagProfile);
-  revalidatePath(`/${entity}/${id}`, options?.pathType);
+  const tag = options?.tagPrefix ?? entity;
+  const pathRoot = options?.pathRoot ?? `${entity}s`;
 
-  // Revalidate list
-  revalidateTag(`${entity}s-list`, options?.tagProfile);
-  revalidatePath(`/${entity}s`, options?.pathType);
+  revalidateTag(`${tag}-${id}`, options?.tagProfile);
+  revalidatePath(`/${pathRoot}/${id}`, options?.pathType);
+
+  revalidateTag(`${tag}s-list`, options?.tagProfile);
+  revalidatePath(`/${pathRoot}`, options?.pathType);
 }
 
 // ============================================================================
@@ -164,24 +170,20 @@ export function revalidateEntityWithList(
  * Revalidate user-related cache
  */
 export const userRevalidation = {
-  /**
-   * Revalidate specific user
-   */
-  user: (id: number) => revalidateEntity("user", id),
+  /** Revalidate specific user detail and path */
+  user: (id: number) => revalidateEntity("user", id, { pathRoot: "settings/users" }),
 
-  /**
-   * Revalidate users list
-   */
-  list: () => revalidateEntity("users"),
+  /** Revalidate users list */
+  list: () => revalidateEntity("users", undefined, { pathRoot: "settings/users" }),
 
-  /**
-   * Revalidate user and list
-   */
-  userWithList: (id: number) => revalidateEntityWithList("user", id),
+  /** Revalidate specific user + list */
+  userWithList: (id: number) =>
+    revalidateEntityWithList("user", id, {
+      tagPrefix: "user",
+      pathRoot: "settings/users",
+    }),
 
-  /**
-   * Revalidate user profile
-   */
+  /** Revalidate user profile (no path needed) */
   profile: () => revalidateTag("user-profile"),
 };
 
@@ -207,8 +209,15 @@ export const documentRevalidation = {
  * Revalidate role-related cache
  */
 export const roleRevalidation = {
-  role: (id: number) => revalidateEntityWithList("settings/roles", id),
-  list: () => revalidateEntity("settings/roles"),
+  /** Revalidate specific role and roles list */
+  role: (id: number) =>
+    revalidateEntityWithList("role", id, {
+      tagPrefix: "role",
+      pathRoot: "settings/roles",
+    }),
+
+  /** Revalidate roles list only */
+  list: () => revalidateEntity("roles", undefined, { pathRoot: "settings/roles" }),
 };
 
 // ============================================================================

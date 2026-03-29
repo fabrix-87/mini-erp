@@ -10,7 +10,7 @@ import {
   CreateUserFormInput,
   UpdateUserFormInput,
   createUserFormSchema,
-  updateUserFormSchema
+  updateUserFormSchema,
 } from "@/types/user";
 import {
   Form,
@@ -31,20 +31,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import {
   createUserAction,
   updateUserProfileAction,
   updateUserDetailsAction,
+  updateUserRolesAction,
 } from "@/actions/user";
-import { Loader2, Save, X } from "lucide-react";
+import { Loader2, Save, Shield, X } from "lucide-react";
+import { Badge } from "../ui/badge";
+import { Checkbox } from "../ui/checkbox";
+import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
+import { CountryCombobox } from "../ui/country-combobox";
 
 // ============================================================================
 // Component Props
@@ -53,19 +52,18 @@ import { Loader2, Save, X } from "lucide-react";
 interface UserFormProps {
   user?: User;
   mode: "create" | "edit";
-  roles?: Array<{ id: number; name: string; code: string }>;
+  roles: Array<{ id: number; name: string; code: string }>;
+  languages: Array<{ id: number; name: string; iso_code: string }>;
 }
 
 // ============================================================================
 // Component
 // ============================================================================
 
-export function UserForm({ user, mode, roles = [] }: UserFormProps) {
+export function UserForm({ user, mode, roles = [], languages = [] }: UserFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [activeTab, setActiveTab] = useState<"profile" | "details" | "address">(
-    "profile"
-  );
+  const [activeTab, setActiveTab] = useState<"profile" | "details" | "address">("profile");
 
   const schema = mode === "create" ? createUserFormSchema : updateUserFormSchema;
   type FormValues = CreateUserFormInput | UpdateUserFormInput;
@@ -89,6 +87,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
       gender: user?.details?.gender || undefined,
       bio: user?.details?.bio || "",
       roleIds: user?.roles?.map((r) => r.id) || [],
+      preferredLanguageId: user?.preferredLanguageId ?? 1,
     },
   });
 
@@ -105,6 +104,8 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
             email: createData.email,
             password: createData.password || "",
             roleIds: createData.roleIds,
+            preferredLanguageId: createData.preferredLanguageId ?? 1,
+            active: true,
             details: {
               firstName: createData.firstName,
               lastName: createData.lastName,
@@ -126,19 +127,33 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
 
           // Update profile if changed
           const profileChanged =
-            updateData.username !== updateData!.username ||
-            updateData.email !== updateData!.email;
+            updateData.username !== updateData!.username || updateData.email !== updateData!.email;
 
           if (profileChanged) {
             const profileResult = await updateUserProfileAction(userId, {
               username: updateData.username,
               email: updateData.email,
+              preferredLanguageId: updateData.preferredLanguageId ?? 1,
             });
 
             if (!profileResult.success) {
-              toast.error(
-                profileResult.error || "Errore aggiornamento profilo"
-              );
+              toast.error(profileResult.error || "Errore aggiornamento profilo");
+              return;
+            }
+          }
+
+          // Update details
+          // Update roles if changed
+          const currentRoleIds = (data as UpdateUserFormInput).roleIds ?? [];
+          const originalRoleIds = user?.roles?.map((r) => r.id) ?? [];
+          const rolesChanged =
+            JSON.stringify([...currentRoleIds].sort()) !==
+            JSON.stringify([...originalRoleIds].sort());
+
+          if (rolesChanged && currentRoleIds.length > 0) {
+            const rolesResult = await updateUserRolesAction(userId, currentRoleIds);
+            if (!rolesResult.success) {
+              toast.error(rolesResult.error || "Errore aggiornamento ruoli");
               return;
             }
           }
@@ -159,15 +174,11 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
           });
 
           if (detailsResult.success) {
-            toast.success(
-              detailsResult.message || "Utente aggiornato con successo"
-            );
+            toast.success(detailsResult.message || "Utente aggiornato con successo");
             router.push(`/settings/users/${userId}`);
             router.refresh();
           } else {
-            toast.error(
-              detailsResult.error || "Errore durante l'aggiornamento"
-            );
+            toast.error(detailsResult.error || "Errore durante l'aggiornamento");
           }
         }
       } catch (error) {
@@ -187,6 +198,9 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
 
   return (
     <Form {...form}>
+      <BreadcrumbSetter
+        title={mode === "edit" ? `Modifica Utente ${user?.username}` : `Crea Utente`}
+      />
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {/* Tab Navigation */}
         <div className="flex gap-2 border-b">
@@ -221,12 +235,10 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
           <Card>
             <CardHeader>
               <CardTitle>Informazioni Account</CardTitle>
-              <CardDescription>
-                Credenziali di accesso e informazioni base
-              </CardDescription>
+              <CardDescription>Credenziali di accesso e informazioni base</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2 items-start">
                 <FormField
                   control={form.control}
                   name="username"
@@ -234,11 +246,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Username *</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="johndoe"
-                          disabled={isPending}
-                        />
+                        <Input {...field} placeholder="johndoe" disabled={isPending} />
                       </FormControl>
                       <FormDescription>
                         Minimo 3 caratteri, solo lettere, numeri e underscore
@@ -268,6 +276,41 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                 />
               </div>
 
+              {/* Preferred Language */}
+              <FormField
+                control={form.control}
+                name="preferredLanguageId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Lingua preferita</FormLabel>
+                    <Select
+                      onValueChange={(val) => field.onChange(val ? Number(val) : null)}
+                      value={field.value != null ? String(field.value) : ""}
+                      disabled={isPending}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleziona lingua..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {languages.map((lang) => (
+                          <SelectItem key={lang.id} value={String(lang.id)}>
+                            <span className="flex items-center gap-2">
+                              <span className="font-mono text-xs uppercase text-muted-foreground w-6">
+                                {lang.iso_code}
+                              </span>
+                              {lang.name}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               {mode === "create" && (
                 <FormField
                   control={form.control}
@@ -293,11 +336,69 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
               {mode === "edit" && (
                 <div className="rounded-md border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
                   <p className="text-sm text-blue-800 dark:text-blue-200">
-                    Per cambiare la password, usa la funzione "Reset Password"
-                    dalla pagina dettagli utente
+                    Per cambiare la password, usa la funzione "Reset Password" dalla pagina dettagli
+                    utente
                   </p>
                 </div>
               )}
+
+              {/* Roles */}
+              <FormField
+                control={form.control}
+                name="roleIds"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Ruoli
+                    </FormLabel>
+                    <FormDescription>
+                      Seleziona i ruoli da assegnare all&apos;utente
+                    </FormDescription>
+                    {roles.length === 0 ? (
+                      <p className="text-sm text-muted-foreground italic">
+                        Nessun ruolo disponibile
+                      </p>
+                    ) : (
+                      <div className="flex flex-wrap gap-3 pt-1">
+                        {roles.map((role) => {
+                          const isChecked = (field.value ?? []).includes(role.id);
+                          return (
+                            <label
+                              key={role.id}
+                              className={[
+                                "flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors",
+                                isChecked
+                                  ? "border-primary bg-primary/5 text-primary"
+                                  : "border-border hover:border-primary/50",
+                                isPending ? "pointer-events-none opacity-50" : "",
+                              ].join(" ")}
+                            >
+                              <Checkbox
+                                checked={isChecked}
+                                disabled={isPending}
+                                onCheckedChange={(checked) => {
+                                  const current = field.value ?? [];
+                                  field.onChange(
+                                    checked
+                                      ? [...current, role.id]
+                                      : current.filter((id) => id !== role.id),
+                                  );
+                                }}
+                              />
+                              <span className="font-medium">{role.name}</span>
+                              <Badge variant="outline" className="text-xs font-mono">
+                                {role.code}
+                              </Badge>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
         )}
@@ -307,9 +408,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
           <Card>
             <CardHeader>
               <CardTitle>Dettagli Personali</CardTitle>
-              <CardDescription>
-                Informazioni anagrafiche e personali
-              </CardDescription>
+              <CardDescription>Informazioni anagrafiche e personali</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -320,11 +419,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Nome</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Mario"
-                          disabled={isPending}
-                        />
+                        <Input {...field} placeholder="Mario" disabled={isPending} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -338,11 +433,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Cognome</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Rossi"
-                          disabled={isPending}
-                        />
+                        <Input {...field} placeholder="Rossi" disabled={isPending} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -433,7 +524,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormControl>
                       <Textarea
                         {...field}
-                        value={field.value || ''}
+                        value={field.value || ""}
                         placeholder="Scrivi qualcosa su di te..."
                         rows={4}
                         disabled={isPending}
@@ -465,7 +556,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormControl>
                       <Input
                         {...field}
-                        value={field.value || ''}
+                        value={field.value || ""}
                         placeholder="Via Roma, 123"
                         disabled={isPending}
                       />
@@ -485,7 +576,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                       <FormControl>
                         <Input
                           {...field}
-                          value={field.value || ''}
+                          value={field.value || ""}
                           placeholder="Milano"
                           disabled={isPending}
                         />
@@ -504,7 +595,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                       <FormControl>
                         <Input
                           {...field}
-                          value={field.value || ''}
+                          value={field.value || ""}
                           placeholder="MI"
                           disabled={isPending}
                         />
@@ -525,7 +616,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                       <FormControl>
                         <Input
                           {...field}
-                          value={field.value || ''}
+                          value={field.value || ""}
                           placeholder="20100"
                           disabled={isPending}
                         />
@@ -542,10 +633,9 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
                     <FormItem>
                       <FormLabel>Paese</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          value={field.value || ''}
-                          placeholder="Italia"
+                        <CountryCombobox
+                          value={field.value ?? undefined}
+                          onValueChange={field.onChange}
                           disabled={isPending}
                         />
                       </FormControl>
@@ -560,12 +650,7 @@ export function UserForm({ user, mode, roles = [] }: UserFormProps) {
 
         {/* Form Actions */}
         <div className="flex justify-end gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCancel}
-            disabled={isPending}
-          >
+          <Button type="button" variant="outline" onClick={handleCancel} disabled={isPending}>
             <X className="h-4 w-4 mr-2" />
             Annulla
           </Button>

@@ -1,24 +1,24 @@
 // services/server/user.ts
 
-import { serverApi } from '@/lib/server/api';
+import { serverApi } from "@/lib/server/api";
 
 import type {
   User,
   UpdateUserDetailsInput,
   UpdateUserProfileInput,
-  UserListApiResponse
-} from '@/types/user'
-import { ApiResponse } from '@mini-erp/shared';
-import { PaginatedResponse } from '@mini-erp/shared/types';
+  UserListApiResponse,
+} from "@/types/user";
+import { ApiResponse, CreateUserInput } from "@mini-erp/shared";
+import { PaginatedResponse } from "@mini-erp/shared/types";
 
 // ============================================================================
 // Cache Tags
 // ============================================================================
 
 const USER_TAGS = {
-  list: 'users-list',
+  list: "users-list",
   detail: (id: number) => `user-${id}`,
-  profile: 'user-profile',
+  profile: "user-profile",
 };
 
 // ============================================================================
@@ -29,10 +29,8 @@ const USER_TAGS = {
  * Get current user data
  * Con cache strategy
  */
-export async function getUser(options?: {
-  revalidate?: number | false;
-}): Promise<User> {
-  return serverApi.get<User>('/users/me', {
+export async function getUser(options?: { revalidate?: number | false }): Promise<User> {
+  return serverApi.get<User>("/users/me", {
     revalidate: options?.revalidate ?? 60,
     tags: [USER_TAGS.profile],
   });
@@ -43,7 +41,7 @@ export async function getUser(options?: {
  * Invalida cache automaticamente
  */
 export async function updateProfile(data: UpdateUserProfileInput): Promise<User> {
-  return serverApi.put<User>('/users/me/profile', data, {
+  return serverApi.put<User>("/users/me/profile", data, {
     tags: [USER_TAGS.profile],
     revalidate: false,
   });
@@ -53,7 +51,7 @@ export async function updateProfile(data: UpdateUserProfileInput): Promise<User>
  * Update current user details
  */
 export async function updateDetails(data: UpdateUserDetailsInput): Promise<User> {
-  return serverApi.put<User>('/users/me/details', data, {
+  return serverApi.put<User>("/users/me/details", data, {
     tags: [USER_TAGS.profile],
     revalidate: false,
   });
@@ -62,16 +60,17 @@ export async function updateDetails(data: UpdateUserDetailsInput): Promise<User>
 /**
  * Change current user password
  */
-export async function changePassword(
-  currentPassword: string,
-  newPassword: string
-): Promise<void> {
-  await serverApi.put<void>('/users/me/change-password', {
-    currentPassword,
-    newPassword,
-  }, {
-    revalidate: false,
-  });
+export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
+  await serverApi.put<void>(
+    "/users/me/change-password",
+    {
+      currentPassword,
+      newPassword,
+    },
+    {
+      revalidate: false,
+    },
+  );
 }
 
 // ============================================================================
@@ -89,16 +88,16 @@ export async function getAllUsers(params?: {
   active?: boolean;
   roleId?: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
   revalidate?: number | false;
 }): Promise<UserListApiResponse> {
   const { revalidate = 30, ...queryParams } = params || {};
 
-  return serverApi.get<UserListApiResponse>('/users', {
+  return serverApi.get<UserListApiResponse>("/users", {
     params: queryParams,
     revalidate,
     tags: [USER_TAGS.list],
-    unwrapData: false
+    unwrapData: false,
   });
 }
 
@@ -108,7 +107,7 @@ export async function getAllUsers(params?: {
  */
 export async function getUserById(
   id: number,
-  options?: { revalidate?: number | false }
+  options?: { revalidate?: number | false },
 ): Promise<User> {
   return serverApi.get<User>(`/users/${id}`, {
     revalidate: options?.revalidate ?? 60,
@@ -119,19 +118,8 @@ export async function getUserById(
 /**
  * Create new user (admin only)
  */
-export async function createUser(data: {
-  username: string;
-  email: string;
-  password: string;
-  roleIds?: number[];
-  preferredLanguageId?: number;
-  details?: {
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
-  };
-}): Promise<User> {
-  return serverApi.post<User>('/users', data, {
+export async function createUser(data: CreateUserInput): Promise<User> {
+  return serverApi.post<User>("/users", data, {
     tags: [USER_TAGS.list],
     revalidate: false,
   });
@@ -140,10 +128,7 @@ export async function createUser(data: {
 /**
  * Update user profile (admin)
  */
-export async function updateUserProfile(
-  id: number,
-  data: UpdateUserProfileInput
-): Promise<User> {
+export async function updateUserProfile(id: number, data: UpdateUserProfileInput): Promise<User> {
   return serverApi.put<User>(`/users/${id}/profile`, data, {
     tags: [USER_TAGS.detail(id), USER_TAGS.list],
     revalidate: false,
@@ -153,10 +138,7 @@ export async function updateUserProfile(
 /**
  * Update user details (admin)
  */
-export async function updateUserDetails(
-  id: number,
-  data: UpdateUserDetailsInput
-): Promise<User> {
+export async function updateUserDetails(id: number, data: UpdateUserDetailsInput): Promise<User> {
   return serverApi.put<User>(`/users/${id}/details`, data, {
     tags: [USER_TAGS.detail(id), USER_TAGS.list],
     revalidate: false,
@@ -166,27 +148,29 @@ export async function updateUserDetails(
 /**
  * Update user roles (admin)
  */
-export async function updateUserRoles(
-  id: number,
-  roleIds: number[]
-): Promise<User> {
-  return serverApi.put<User>(`/users/${id}/roles`, { roleIds }, {
-    tags: [USER_TAGS.detail(id), USER_TAGS.list],
-    revalidate: false,
-  });
+export async function updateUserRoles(id: number, roleIds: number[]): Promise<User> {
+  return serverApi.put<User>(
+    `/users/${id}/roles`,
+    { roleIds },
+    {
+      tags: [USER_TAGS.detail(id), USER_TAGS.list],
+      revalidate: false,
+    },
+  );
 }
 
 /**
  * Toggle user active status (admin)
  */
-export async function toggleUserActive(
-  id: number,
-  active: boolean
-): Promise<void> {
-  await serverApi.patch<void>(`/users/${id}/toggle-active`, { active }, {
-    tags: [USER_TAGS.detail(id), USER_TAGS.list],
-    revalidate: false,
-  });
+export async function toggleUserActive(id: number, active: boolean): Promise<void> {
+  await serverApi.patch<void>(
+    `/users/${id}/toggle-active`,
+    { active },
+    {
+      tags: [USER_TAGS.detail(id), USER_TAGS.list],
+      revalidate: false,
+    },
+  );
 }
 
 /**
@@ -209,7 +193,7 @@ export async function deleteUser(id: number): Promise<void> {
  */
 export async function getUsersByIds(
   ids: number[],
-  options?: { revalidate?: number | false }
+  options?: { revalidate?: number | false },
 ): Promise<User[]> {
   const promises = ids.map((id) => getUserById(id, options));
   return Promise.all(promises);
@@ -219,10 +203,10 @@ export async function getUsersByIds(
  * Bulk update users
  */
 export async function bulkUpdateUsers(
-  updates: Array<{ id: number; data: Partial<UpdateUserProfileInput> }>
+  updates: Array<{ id: number; data: Partial<UpdateUserProfileInput> }>,
 ): Promise<User[]> {
   const promises = updates.map(({ id, data }) =>
-    updateUserProfile(id, data as UpdateUserProfileInput)
+    updateUserProfile(id, data as UpdateUserProfileInput),
   );
   return Promise.all(promises);
 }
@@ -239,7 +223,7 @@ export async function searchUsers(
   options?: {
     limit?: number;
     revalidate?: number | false;
-  }
+  },
 ): Promise<ApiResponse<User[]>> {
   return getAllUsers({
     search: query,
@@ -257,7 +241,7 @@ export async function getUsersByRole(
     page?: number;
     limit?: number;
     revalidate?: number | false;
-  }
+  },
 ): Promise<ApiResponse<User[]>> {
   return getAllUsers({
     roleId,
@@ -296,7 +280,7 @@ export async function getUserStats(): Promise<{
   inactive: number;
   byRole: Record<string, number>;
 }> {
-  const users = await getAllUsers({ limit: 1000, revalidate: 60 }) as PaginatedResponse<User>;
+  const users = (await getAllUsers({ limit: 1000, revalidate: 60 })) as PaginatedResponse<User>;
 
   const stats = {
     total: users.pagination.totalItems,

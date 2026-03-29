@@ -122,6 +122,7 @@ export const userFormSchema = z.object({
   email: emailSchema(),
   password: passwordSchema.optional().or(z.literal("")),
   roleIds: z.array(z.number()).optional(),
+  preferredLanguageId: createIdSchema('Language ID obbligatorio'),
   ...userDetailsSchema.shape,
 });
 

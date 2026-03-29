@@ -1,13 +1,15 @@
 // app/settings/users/[id]/edit/page.tsx
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
-import { requireAdmin, requirePermission } from "@/lib/server/auth";
+import { requirePermission } from "@/lib/server/auth";
 import { getUserById } from "@/services/server/user";
 import { ServerApiError } from "@/types/server-client";
 import { UserForm } from "@/components/users/user-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { getAllRoles } from "@/services/server/role";
+import { getAllLanguages } from "@/services/server/language";
 
 interface PageProps {
   params: Promise<{
@@ -16,9 +18,18 @@ interface PageProps {
 }
 
 async function EditUserContent({ userId }: { userId: number }) {
+  const { data: roles } = await getAllRoles({
+    page: 1,
+    limit: 100,
+    sortOrder: "asc",
+    sortBy: "code",
+  });
+
+  const { data: languages } = await getAllLanguages();
+
   try {
     const user = await getUserById(userId, { revalidate: 0 });
-    return <UserForm user={user} mode="edit" />;
+    return <UserForm user={user} mode="edit" roles={roles} languages={languages} />;
   } catch (error) {
     if (error instanceof ServerApiError && error.statusCode === 404) {
       notFound();
@@ -76,9 +87,7 @@ export default async function EditUserPage({ params }: PageProps) {
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Modifica Utente</h1>
-          <p className="text-muted-foreground mt-2">
-            Aggiorna le informazioni dell'utente
-          </p>
+          <p className="text-muted-foreground mt-2">Aggiorna le informazioni dell'utente</p>
         </div>
 
         {/* Form */}

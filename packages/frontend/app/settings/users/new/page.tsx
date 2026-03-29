@@ -1,24 +1,35 @@
 // app/settings/users/new/page.tsx
-import { redirect } from 'next/navigation';
-import { requirePermission } from '@/lib/server/auth';
-import { ServerApiError } from '@/types/server-client';
-import { UserForm } from '@/components/users/user-form';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { redirect } from "next/navigation";
+import { requirePermission } from "@/lib/server/auth";
+import { ServerApiError } from "@/types/server-client";
+import { UserForm } from "@/components/users/user-form";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { getAllRoles } from "@/services/server/role";
+import { getAllLanguages } from "@/services/server/language";
 
 export default async function NewUserPage() {
   // Authorization Check
   try {
-    await requirePermission('user:create')
+    await requirePermission("user:create");
   } catch (error) {
     if (error instanceof ServerApiError && error.statusCode === 401) {
-      redirect('/login');
+      redirect("/login");
     }
     if (error instanceof ServerApiError && error.statusCode === 403) {
-      redirect('/dashboard');
+      redirect("/dashboard");
     }
     throw error;
   }
+
+  const { data: roles } = await getAllRoles({
+    page: 1,
+    limit: 100,
+    sortOrder: "asc",
+    sortBy: "code",
+  });
+
+  const { data: languages } = await getAllLanguages();
 
   return (
     <div className="container mx-auto p-6">
@@ -35,13 +46,11 @@ export default async function NewUserPage() {
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Nuovo Utente</h1>
-          <p className="text-muted-foreground mt-2">
-            Crea un nuovo utente nel sistema
-          </p>
+          <p className="text-muted-foreground mt-2">Crea un nuovo utente nel sistema</p>
         </div>
 
         {/* Form */}
-        <UserForm mode="create" />
+        <UserForm mode="create" roles={roles} languages={languages}/>
       </div>
     </div>
   );
@@ -49,6 +58,6 @@ export default async function NewUserPage() {
 
 // Metadata
 export const metadata = {
-  title: 'Nuovo Utente',
-  description: 'Crea un nuovo utente nel sistema',
+  title: "Nuovo Utente",
+  description: "Crea un nuovo utente nel sistema",
 };
