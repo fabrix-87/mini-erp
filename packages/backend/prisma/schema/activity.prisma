@@ -106,8 +106,6 @@ model Activity {
   result          String?          @db.Text
   
   // Follow-up
-  requiresFollowUp Boolean         @default(false)
-  followUpDate     DateTime?
   followUpActivity Activity?       @relation("ActivityFollowUp", fields: [followUpActivityId], references: [id], onDelete: SetNull)
   followUpActivityId Int?
   followedUpBy     Activity[]      @relation("ActivityFollowUp")

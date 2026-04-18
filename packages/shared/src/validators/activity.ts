@@ -33,12 +33,7 @@ export const activityStatusSchema = z.enum([
   "NO_SHOW",
 ]);
 
-export const activityPrioritySchema = z.enum([
-  "LOW",
-  "MEDIUM",
-  "HIGH",
-  "URGENT",
-]);
+export const activityPrioritySchema = z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]);
 
 export const activityOutcomeSchema = z.enum([
   "SUCCESSFUL",
@@ -61,11 +56,7 @@ export const participantStatusSchema = z.enum([
   "no_show",
 ]);
 
-export const participantRoleSchema = z.enum([
-  "organizer",
-  "required",
-  "optional",
-]);
+export const participantRoleSchema = z.enum(["organizer", "required", "optional"]);
 
 // ============================================================================
 // ACTIVITY SCHEMAS
@@ -113,8 +104,6 @@ export const createActivitySchema = z
     assignedUserId: userIdSchema,
 
     // Follow-up
-    requiresFollowUp: z.boolean().default(false),
-    followUpDate: isoDateSchema(),
     followUpActivityId: positiveNumbersSchema.optional().nullable(),
 
     // Allegati e note
@@ -175,7 +164,7 @@ export const activityQuerySchema = z
 
     // Filtri speciali
     overdue: queryBooleanSchema,
-    requiresFollowUp: queryBooleanSchema,
+    hasFollowUpActivity: queryBooleanSchema,
     myActivities: queryBooleanSchema, // Solo le mie attività
 
     sortBy: z.string().default("scheduledStart"),
@@ -205,15 +194,25 @@ export const updateActivityStatusSchema = z
   .strict();
 
 /**
- * Schema per completare un'attività
+ * Schema per completare un'attività con opzione di creare follow-up activity
  */
 export const completeActivitySchema = z
   .object({
     outcome: activityOutcomeSchema,
     result: z.string().optional().nullable(),
-    requiresFollowUp: z.boolean().default(false),
-    followUpDate: z.iso.datetime().optional().nullable(),
     internalNotes: z.string().optional().nullable(),
+    // If provided, a follow-up Activity will be created automatically
+    followUp: z
+      .object({
+        type: activityTypeSchema,
+        subject: z.string().min(1).max(255).trim(),
+        scheduledStart: z.iso.datetime("Data follow-up non valida"),
+        assignedUserId: userIdSchema.optional(), // default: stessa persona
+        priority: activityPrioritySchema.default("MEDIUM"),
+        description: z.string().optional().nullable(),
+      })
+      .optional()
+      .nullable(),
   })
   .strict();
 
@@ -247,8 +246,7 @@ export const createActivityParticipantSchema = z
       return data.userId || data.contactId || data.externalEmail;
     },
     {
-      message:
-        "Specificare almeno un partecipante (userId, contactId o externalEmail)",
+      message: "Specificare almeno un partecipante (userId, contactId o externalEmail)",
       path: ["userId"],
     },
   );
@@ -298,9 +296,7 @@ export const createActivityTemplateSchema = z
 /**
  * Schema per l'aggiornamento di un Activity Template
  */
-export const updateActivityTemplateSchema = createActivityTemplateSchema
-  .partial()
-  .strict();
+export const updateActivityTemplateSchema = createActivityTemplateSchema.partial().strict();
 
 /**
  * Schema per la validazione dell'ID template
@@ -360,9 +356,7 @@ export const activityStatsSchema = z.object({
  */
 export const bulkActivityActionSchema = z
   .object({
-    activityIds: z
-      .array(activityIdBaseSchema)
-      .min(1, "Almeno un ID è obbligatorio"),
+    activityIds: z.array(activityIdBaseSchema).min(1, "Almeno un ID è obbligatorio"),
     action: z.enum(["complete", "cancel", "delete", "reassign"]),
 
     // Campi opzionali in base all'azione

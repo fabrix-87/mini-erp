@@ -1,8 +1,8 @@
 // lib/server/cookies.ts
 
-import { User } from "@/types/api";
 import { cookies } from "next/headers";
 import { ACCESS_TOKEN_LIFETIME_SECONDS, REFRESH_TOKEN_LIFETIME_SECONDS } from "../constants/auth";
+import { User } from "@mini-erp/shared";
 
 /**
  * Legge i cookies dal server

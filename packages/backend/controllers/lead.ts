@@ -67,7 +67,7 @@ export const getAllLeads = asyncHandler(
       bantQualified,
       privacyConsent,
       marketingConsent,
-      hasNextFollowUp,
+      hasPendingActivity,
       campaignName,
       createdFrom,
       createdTo,
@@ -106,8 +106,20 @@ export const getAllLeads = asyncHandler(
     if (privacyConsent !== undefined) where.privacyConsent = privacyConsent;
     if (marketingConsent !== undefined) where.marketingConsent = marketingConsent;
 
-    if (hasNextFollowUp === true) where.nextFollowUpDate = { not: null };
-    if (hasNextFollowUp === false) where.nextFollowUpDate = null;
+    if (hasPendingActivity === true) {
+      where.activities = {
+        some: {
+          status: { in: ["SCHEDULED", "IN_PROGRESS"] },
+        },
+      };
+    }
+    if (hasPendingActivity === false) {
+      where.activities = {
+        none: {
+          status: { in: ["SCHEDULED", "IN_PROGRESS"] },
+        },
+      };
+    }
 
     if (createdFrom || createdTo) {
       where.createdAt = {};
@@ -130,6 +142,20 @@ export const getAllLeads = asyncHandler(
               status: true,
               estimatedValue: true,
             },
+          },
+          activities: {
+            where: {
+              status: { in: ["SCHEDULED", "IN_PROGRESS"] },
+            },
+            select: {
+              id: true,
+              type: true,
+              subject: true,
+              scheduledStart: true,
+              priority: true,
+            },
+            orderBy: { scheduledStart: "asc" },
+            take: 1, // solo la prossima — utile per mostrare la scadenza in lista
           },
         },
       }),
@@ -188,6 +214,22 @@ export const getLeadById = asyncHandler(
             },
           },
         },
+        activities: {
+          where: {
+            status: { in: ["SCHEDULED", "IN_PROGRESS"] },
+          },
+          select: {
+            id: true,
+            type: true,
+            subject: true,
+            status: true,
+            priority: true,
+            scheduledStart: true,
+            assignedUser: { select: { id: true, username: true } },
+          },
+          orderBy: { scheduledStart: "asc" },
+          take: 5, // le prossime 5 attività pianificate
+        },
       },
     });
 
@@ -242,7 +284,6 @@ export const createLead = asyncHandler(
         estimatedValue: parseOptionalDecimal(body.estimatedValue),
         annualRevenue: parseOptionalDecimal(body.annualRevenue),
         budget: parseOptionalDecimal(body.budget),
-        nextFollowUpDate: parseOptionalDate(body.nextFollowUpDate),
         privacyConsentDate: parseOptionalDate(body.privacyConsentDate),
         marketingConsentDate: parseOptionalDate(body.marketingConsentDate),
       } satisfies Prisma.LeadUncheckedCreateInput,
@@ -284,7 +325,6 @@ export const updateLead = asyncHandler(
         estimatedValue: parseOptionalDecimal(body.estimatedValue),
         annualRevenue: parseOptionalDecimal(body.annualRevenue),
         budget: parseOptionalDecimal(body.budget),
-        nextFollowUpDate: parseOptionalDate(body.nextFollowUpDate),
         privacyConsentDate: parseOptionalDate(body.privacyConsentDate),
         marketingConsentDate: parseOptionalDate(body.marketingConsentDate),
         customFields:
@@ -728,21 +768,29 @@ export const getLeadStats = asyncHandler(
         where: { ...where, createdAt: { gte: monthStart } },
       }),
 
-      // Follow-up scaduti
-      prisma.lead.count({
+      // Follow-up scaduti: activity SCHEDULED passata, collegata a un lead attivo
+      prisma.activity.count({
         where: {
-          ...where,
-          nextFollowUpDate: { lte: now },
-          status: { notIn: ["CONVERTED", "LOST", "ARCHIVED", "DUPLICATE"] },
+          leadId: { not: null },
+          status: { in: ["SCHEDULED", "IN_PROGRESS"] },
+          scheduledStart: { lt: now },
+          lead: {
+            status: { notIn: ["CONVERTED", "LOST", "ARCHIVED", "DUPLICATE"] },
+            ...(assignedUserId ? { assignedUserId } : {}),
+          },
         },
       }),
 
-      // Follow-up pianificati (futuri)
-      prisma.lead.count({
+      // Follow-up pianificati futuri
+      prisma.activity.count({
         where: {
-          ...where,
-          nextFollowUpDate: { gt: now },
-          status: { notIn: ["CONVERTED", "LOST", "ARCHIVED", "DUPLICATE"] },
+          leadId: { not: null },
+          status: "SCHEDULED",
+          scheduledStart: { gt: now },
+          lead: {
+            status: { notIn: ["CONVERTED", "LOST", "ARCHIVED", "DUPLICATE"] },
+            ...(assignedUserId ? { assignedUserId } : {}),
+          },
         },
       }),
     ]);

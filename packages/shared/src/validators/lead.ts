@@ -53,6 +53,20 @@ export const leadSourceSchema = z.enum([
 ]);
 
 /**
+ * Lead Sort By enum
+ */
+export const leadSortBySchema = z.enum([
+  "code",
+  "companyName",
+  "status",
+  "quality",
+  "score",
+  "estimatedValue",
+  "createdAt",
+  "lastContactDate",
+]);
+
+/**
  * Lead Quality enum
  */
 export const leadQualitySchema = z.enum(["HOT", "WARM", "COLD"]);
@@ -155,7 +169,9 @@ export const leadShape = z.object({
   // Address
   address: z.string().max(255).optional().nullable(),
   city: z.string().max(100).optional().nullable(),
-  provinceCode: emptyStringToNull(z.string().length(2, "Codice provincia non valido")).optional().nullable(),
+  provinceCode: emptyStringToNull(z.string().length(2, "Codice provincia non valido"))
+    .optional()
+    .nullable(),
   zipCode: z.string().max(20).optional().nullable(),
 
   // Lead management
@@ -178,9 +194,6 @@ export const leadShape = z.object({
 
   // Assignment
   assignedUserId: createIdSchema("User ID non valido").optional().nullable(),
-
-  // Follow-up
-  nextFollowUpDate: isoDateSchema(),
 
   // BANT
   bantQualified: z.boolean().default(false),
@@ -381,25 +394,13 @@ export const leadQuerySchema = z.object({
   bantQualified: queryBooleanSchema.optional(),
   privacyConsent: queryBooleanSchema.optional(),
   marketingConsent: queryBooleanSchema.optional(),
-  hasNextFollowUp: queryBooleanSchema.optional(),
+  hasPendingActivity: queryBooleanSchema.optional(), // ha activity SCHEDULED future
   campaignName: z.string().optional(),
   createdFrom: isoDateSchema().optional(),
   createdTo: isoDateSchema().optional(),
   lastContactFrom: isoDateSchema().optional(),
   lastContactTo: isoDateSchema().optional(),
-  sortBy: z
-    .enum([
-      "code",
-      "companyName",
-      "status",
-      "quality",
-      "score",
-      "estimatedValue",
-      "nextFollowUpDate",
-      "createdAt",
-      "lastContactDate",
-    ])
-    .default("createdAt"),
+  sortBy: leadSortBySchema.default("createdAt"),
   sortOrder: sortOrderSchema,
 });
 

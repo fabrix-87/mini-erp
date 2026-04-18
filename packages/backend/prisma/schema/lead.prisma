@@ -156,9 +156,6 @@ model Lead {
   // Data ultimo contatto
   lastContactDate DateTime?
 
-  // Data prossimo follow-up programmato
-  nextFollowUpDate DateTime?
-
   // Numero di tentativi di contatto
   contactAttempts Int @default(0)
 
@@ -240,7 +237,6 @@ model Lead {
   @@index([score])
   @@index([assignedUserId])
   @@index([contactEmail])
-  @@index([nextFollowUpDate])
   @@index([convertedToId])
   @@index([createdAt])
   @@index([lastContactDate])
