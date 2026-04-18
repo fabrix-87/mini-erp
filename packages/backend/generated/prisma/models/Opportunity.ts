@@ -382,7 +382,7 @@ export type OpportunityGroupByOutputType = {
   _max: OpportunityMaxAggregateOutputType | null
 }
 
-type GetOpportunityGroupByPayload<T extends OpportunityGroupByArgs> = Prisma.PrismaPromise<
+export type GetOpportunityGroupByPayload<T extends OpportunityGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<OpportunityGroupByOutputType, T['by']> &
       {
@@ -3412,6 +3412,11 @@ export type OpportunityFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Skip the first `n` Opportunities.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Opportunities.
+   */
   distinct?: Prisma.OpportunityScalarFieldEnum | Prisma.OpportunityScalarFieldEnum[]
 }
 

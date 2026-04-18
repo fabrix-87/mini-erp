@@ -25,6 +25,7 @@ import { ActivityFormData } from "@/types/activitiy";
 import { Customer } from "@/types/customer";
 import { Contact } from "@/types/contact";
 import { useMemo } from "react";
+import { Lead } from "@mini-erp/shared";
 
 const activityTypeLabels: Record<string, string> = {
   CALL: "Chiamata",
@@ -53,18 +54,24 @@ interface ActivityFormBasicInfoProps {
   formData: ActivityFormData;
   customers: Customer[];
   contacts: Contact[];
+  leads: Lead[];
   onChange: (field: keyof ActivityFormData, value: any) => void;
   onCustomerChange: (customerId: string) => void;
   onSearchCustomers: (query: string) => void;
+  onSearchLeads: (query: string) => void;
+  onLeadChange: (leadId: string) => void;
 }
 
 export function ActivityFormBasicInfo({
   formData,
   customers,
   contacts,
+  leads,
   onChange,
   onCustomerChange,
   onSearchCustomers,
+  onLeadChange,
+  onSearchLeads,
 }: ActivityFormBasicInfoProps) {
   const showLocationField = ["MEETING", "SITE_VISIT", "VIDEO_CALL"].includes(
     formData.type
@@ -72,6 +79,10 @@ export function ActivityFormBasicInfo({
 
   const selectedCustomer = customers.find(
     (c) => c.id.toString() === formData.customerId
+  );
+
+  const selectedLead = leads.find(
+    (l) => l.id.toString() == formData.leadId
   );
 
   // Converti customers in formato ComboboxOption
@@ -89,6 +100,18 @@ export function ActivityFormBasicInfo({
           }))
         : [],
     [customers]
+  );
+
+  // Converti leads in formato ComboboxOption
+  const leadOptions: ComboboxOption[] = useMemo(
+    () =>
+      Array.isArray(leads)
+        ? leads.map((lead) => ({
+            value: lead.id.toString(),
+            label: lead.companyName,
+          }))
+        : [],
+    [leads]
   );
 
   // Converti contacts in formato ComboboxOption
@@ -172,52 +195,80 @@ export function ActivityFormBasicInfo({
           />
         </div>
 
-        {/* Customer Selection con Combobox */}
-        <div className="space-y-2">
-          <Label htmlFor="customerId">Cliente *</Label>
-          <Combobox
-            options={customerOptions}
-            value={formData.customerId}
-            onValueChange={onCustomerChange}
-            onSearchChange={onSearchCustomers}
-            placeholder="Seleziona cliente..."
-            searchPlaceholder="Cerca per nome, P.IVA..."
-            emptyText="Nessun cliente trovato"
-          />
+        {/* Customer o Lead Selection con Combobox */}
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="customerId">Cliente *</Label>
+            <Combobox
+              options={customerOptions}
+              value={formData.customerId}
+              onValueChange={onCustomerChange}
+              onSearchChange={onSearchCustomers}
+              placeholder="Seleziona cliente..."
+              searchPlaceholder="Cerca per nome, P.IVA..."
+              emptyText="Nessun cliente trovato"
+            />
 
-          {/* Info Cliente Selezionato */}
-          {selectedCustomer && (
-            <div className="mt-2 p-3 bg-muted/50 rounded-lg space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">
-                  {selectedCustomer.company.companyName}
-                </span>
-                <Badge className={leadStatusColors[selectedCustomer.leadStatus]}>
-                  {selectedCustomer.leadStatus}
-                </Badge>
-              </div>
-              <div className="text-xs text-muted-foreground space-y-0.5">
-                <div>Codice: {selectedCustomer.company.code}</div>
-                {selectedCustomer.company.vatNumber && (
-                  <div>P.IVA: {selectedCustomer.company.vatNumber}</div>
-                )}
-                {selectedCustomer.company.mainEmail && (
-                  <div>Email: {selectedCustomer.company.mainEmail}</div>
-                )}
-                {selectedCustomer.company.mainPhone && (
-                  <div>Tel: {selectedCustomer.company.mainPhone}</div>
-                )}
-                <div className="flex gap-2 mt-1">
-                  <Badge variant="secondary" className="text-xs">
-                    {selectedCustomer.segment}
-                  </Badge>
-                  <Badge variant="secondary" className="text-xs">
-                    {selectedCustomer.type}
-                  </Badge>
+            {/* Info Cliente Selezionato */}
+            {selectedCustomer && (
+              <div className="mt-2 p-3 bg-muted/50 rounded-lg space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">
+                    {selectedCustomer.company.companyName}
+                  </span>
+                </div>
+                <div className="text-xs text-muted-foreground space-y-0.5">
+                  <div>Codice: {selectedCustomer.company.code}</div>
+                  {selectedCustomer.company.vatNumber && (
+                    <div>P.IVA: {selectedCustomer.company.vatNumber}</div>
+                  )}
+                  {selectedCustomer.company.mainEmail && (
+                    <div>Email: {selectedCustomer.company.mainEmail}</div>
+                  )}
+                  {selectedCustomer.company.mainPhone && (
+                    <div>Tel: {selectedCustomer.company.mainPhone}</div>
+                  )}
+                  <div className="flex gap-2 mt-1">
+                    <Badge variant="secondary" className="text-xs">
+                      {selectedCustomer.segment}
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {selectedCustomer.type}
+                    </Badge>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="leadId">Lead *</Label>
+            <Combobox
+              options={leadOptions}
+              value={formData.leadId}
+              onValueChange={onLeadChange}
+              onSearchChange={onSearchLeads}
+              placeholder="Seleziona Lead..."
+              searchPlaceholder="Cerca per nome"
+              emptyText="Nessun lead trovato"
+            />
+
+            {/* Info Lead Selezionato */}
+            {selectedLead && (
+              <div className="mt-2 p-3 bg-muted/50 rounded-lg space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">
+                    ({selectedLead.code}) • {selectedLead.companyName}
+                  </span>
+                  <Badge className={leadStatusColors[selectedLead.status]}>
+                    {selectedLead.status}
+                  </Badge>
+                </div>
+                <div className="text-xs text-muted-foreground space-y-0.5">
+                  <div>{selectedLead.contactFirstName} {selectedLead.contactLastName} • {selectedLead.contactEmail}</div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Contact Selection con Combobox */}

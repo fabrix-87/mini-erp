@@ -94,29 +94,6 @@ export type LeadIdParam = z.infer<typeof leadIdParamSchema>;
 // ============================================================================
 
 /**
- * Simplified lead for list views
- */
-export type LeadListItem = {
-  id: number;
-  code: string;
-  companyName: string;
-  contactFirstName: string;
-  contactLastName: string;
-  contactEmail: string;
-  contactPhone: string | null;
-  status: LeadStatus;
-  source: LeadSource;
-  quality: LeadQuality;
-  score: number;
-  estimatedValue: Decimal | null;
-  assignedUserId: number | null;
-  assignedUserName: string | null;
-  nextFollowUpDate: Date | null;
-  lastContactDate: Date | null;
-  createdAt: Date;
-};
-
-/**
  * Lead with full contact details
  */
 export type LeadWithContact = Lead & {

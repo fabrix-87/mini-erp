@@ -269,7 +269,7 @@ export type SecurityEventGroupByOutputType = {
   _max: SecurityEventMaxAggregateOutputType | null
 }
 
-type GetSecurityEventGroupByPayload<T extends SecurityEventGroupByArgs> = Prisma.PrismaPromise<
+export type GetSecurityEventGroupByPayload<T extends SecurityEventGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<SecurityEventGroupByOutputType, T['by']> &
       {
@@ -1551,6 +1551,11 @@ export type SecurityEventFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` SecurityEvents.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of SecurityEvents.
+   */
   distinct?: Prisma.SecurityEventScalarFieldEnum | Prisma.SecurityEventScalarFieldEnum[]
 }
 

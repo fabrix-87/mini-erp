@@ -20,28 +20,14 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
-import { LeadStatusBadge } from "@/components/leads/lead-status-badge";
-import { LeadQualityBadge } from "@/components/leads/lead-quality-badge";
-import { LeadSourceBadge } from "@/components/leads/lead-source-badge";
-import { LeadScoreDisplay } from "@/components/leads/lead-score-display";
+import { LeadStatusBadge } from "@/components/lead/lead-status-badge";
+import { LeadQualityBadge } from "@/components/lead/lead-quality-badge";
+import { LeadSourceBadge } from "@/components/lead/lead-source-badge";
+import { LeadScoreDisplay } from "@/components/lead/lead-score-display";
 import { getLeadByIdServer } from "@/services/server/lead";
 import { LeadDetailActions } from "../components/lead-detail-actions";
-
-// ============================================================================
-// Helpers
-// ============================================================================
-
-const fmt = (date: Date | string | null) =>
-  date
-    ? new Date(date).toLocaleDateString("it-IT", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      })
-    : "—";
-
-const daysSince = (date: Date | string) =>
-  Math.floor((Date.now() - new Date(date).getTime()) / (1000 * 60 * 60 * 24));
+import { LeadActivityList } from "@/components/lead/lead-activity-list";
+import { daysSince, formatDateIT } from "@/helpers/date";
 
 // ============================================================================
 // Page — Server Component
@@ -87,7 +73,7 @@ export default async function LeadDetailPage({ params }: Props) {
                 <LeadQualityBadge quality={lead.quality} />
               </div>
               <p className="text-sm text-muted-foreground">
-                {lead.code} · Lead dal {fmt(lead.createdAt)} · {daysSince(lead.createdAt)} giorni
+                {lead.code} · Lead dal {formatDateIT(lead.createdAt)} · {daysSince(lead.createdAt)} giorni
                 nel pipeline
               </p>
             </div>
@@ -119,13 +105,13 @@ export default async function LeadDetailPage({ params }: Props) {
               {lead.lastContactDate && (
                 <p>
                   Ultimo contatto{" "}
-                  <span className="font-medium text-foreground">{fmt(lead.lastContactDate)}</span>
+                  <span className="font-medium text-foreground">{formatDateIT(lead.lastContactDate)}</span>
                 </p>
               )}
-              {lead.nextFollowUpDate && (
+              {lead.activities && (
                 <p>
                   Prossimo follow-up{" "}
-                  <span className="font-medium text-foreground">{fmt(lead.nextFollowUpDate)}</span>
+                  <span className="font-medium text-foreground">{formatDateIT(lead.activities[0]?.scheduledStart)}</span>
                 </p>
               )}
             </div>
@@ -196,8 +182,8 @@ export default async function LeadDetailPage({ params }: Props) {
                   )}
                   <Row label="Paese" value={lead.countryCode} />
                   <Separator />
-                  <Row label="Creato il" value={fmt(lead.createdAt)} />
-                  <Row label="Aggiornato" value={fmt(lead.updatedAt)} />
+                  <Row label="Creato il" value={formatDateIT(lead.createdAt)} />
+                  <Row label="Aggiornato" value={formatDateIT(lead.updatedAt)} />
                 </CardContent>
               </Card>
             </div>
@@ -411,10 +397,10 @@ export default async function LeadDetailPage({ params }: Props) {
                 <Separator />
                 <Row label="Tentativi contatto" value={String(lead.contactAttempts)} />
                 {lead.firstContactDate && (
-                  <Row label="Primo contatto" value={fmt(lead.firstContactDate)} />
+                  <Row label="Primo contatto" value={formatDateIT(lead.firstContactDate)} />
                 )}
                 {lead.lastContactDate && (
-                  <Row label="Ultimo contatto" value={fmt(lead.lastContactDate)} />
+                  <Row label="Ultimo contatto" value={formatDateIT(lead.lastContactDate)} />
                 )}
               </CardContent>
             </Card>
@@ -423,42 +409,7 @@ export default async function LeadDetailPage({ params }: Props) {
           {/* Activities */}
           <TabsContent value="activities" className="mt-4">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-4 w-4" />
-                  Attività
-                </CardTitle>
-                <Button size="sm" asChild>
-                  <Link href={`/activities/new?leadId=${lead.id}`}>Nuova attività</Link>
-                </Button>
-              </CardHeader>
-              <CardContent>
-                {!lead.activities?.length ? (
-                  <div className="py-12 text-center text-muted-foreground">
-                    <Activity className="mx-auto mb-3 h-10 w-10 opacity-40" />
-                    <p>Nessuna attività registrata</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {lead.activities.map((a) => (
-                      <Link
-                        key={a.id}
-                        href={`/activities/${a.id}`}
-                        className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/40 transition-colors"
-                      >
-                        <div>
-                          <p className="font-medium text-sm">{a.subject}</p>
-                          <p className="text-xs text-muted-foreground">
-                            <Calendar className="inline h-3 w-3 mr-1" />
-                            {fmt(a.scheduledStart)}
-                          </p>
-                        </div>
-                        <Badge variant="outline">{a.status}</Badge>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
+              <LeadActivityList leadId={lead.id} activities={lead.activities} />
             </Card>
           </TabsContent>
         </Tabs>
@@ -499,7 +450,7 @@ function ConsentRow({
         <Badge variant={value ? "default" : "outline"}>
           {value ? "✓ Accordato" : "Non accordato"}
         </Badge>
-        {value && date && <span className="text-xs text-muted-foreground">{fmt(date)}</span>}
+        {value && date && <span className="text-xs text-muted-foreground">{formatDateIT(date)}</span>}
       </div>
     </div>
   );

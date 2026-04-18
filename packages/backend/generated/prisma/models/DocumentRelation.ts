@@ -189,7 +189,7 @@ export type DocumentRelationGroupByOutputType = {
   _max: DocumentRelationMaxAggregateOutputType | null
 }
 
-type GetDocumentRelationGroupByPayload<T extends DocumentRelationGroupByArgs> = Prisma.PrismaPromise<
+export type GetDocumentRelationGroupByPayload<T extends DocumentRelationGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<DocumentRelationGroupByOutputType, T['by']> &
       {
@@ -1262,6 +1262,11 @@ export type DocumentRelationFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` DocumentRelations.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of DocumentRelations.
+   */
   distinct?: Prisma.DocumentRelationScalarFieldEnum | Prisma.DocumentRelationScalarFieldEnum[]
 }
 

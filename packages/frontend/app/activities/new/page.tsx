@@ -1,11 +1,12 @@
 // app/activities/new/page.tsx
-import { Suspense } from "react";
 import { ActivityForm } from "@/components/activity/activity-form";
-import { Skeleton } from "@/components/ui/skeleton";
+import { requirePermission } from "@/lib/server/auth";
+import { getLeadByIdServer } from "@/services/server/lead";
 
 interface SearchParams {
   customerId?: string;
   contactId?: string;
+  leadId?: string;
   date?: string;
 }
 
@@ -14,24 +15,16 @@ export default async function NewActivityPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  await requirePermission("activity:create");
+
   const params = await searchParams;
 
   return (
-    <Suspense fallback={<ActivityFormSkeleton />}>
-      <ActivityForm
-        preselectedCustomerId={params.customerId}
-        preselectedContactId={params.contactId}
-        preselectedDate={params.date}
-      />
-    </Suspense>
-  );
-}
-
-function ActivityFormSkeleton() {
-  return (
-    <div className="space-y-6">
-      <Skeleton className="h-12 w-full" />
-      <Skeleton className="h-96 w-full" />
-    </div>
+    <ActivityForm
+      preselectedCustomerId={params.customerId}
+      preselectedContactId={params.contactId}
+      preselectedLeadId={params.leadId}
+      preselectedDate={params.date}
+    />
   );
 }

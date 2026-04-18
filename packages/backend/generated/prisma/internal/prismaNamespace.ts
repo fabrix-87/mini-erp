@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.4.2
- * Query Engine version: 94a226be1cf2967af2541cca5529f0f7ba866919
+ * Prisma Client JS version: 7.7.0
+ * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.4.2",
-  engine: "94a226be1cf2967af2541cca5529f0f7ba866919"
+  client: "7.7.0",
+  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
 }
 
 /**
@@ -5043,8 +5043,6 @@ export const ActivityScalarFieldEnum = {
   attachments: 'attachments',
   internalNotes: 'internalNotes',
   result: 'result',
-  requiresFollowUp: 'requiresFollowUp',
-  followUpDate: 'followUpDate',
   followUpActivityId: 'followUpActivityId',
   customFields: 'customFields',
   createdAt: 'createdAt',
@@ -5710,7 +5708,6 @@ export const LeadScalarFieldEnum = {
   lostDate: 'lostDate',
   firstContactDate: 'firstContactDate',
   lastContactDate: 'lastContactDate',
-  nextFollowUpDate: 'nextFollowUpDate',
   contactAttempts: 'contactAttempts',
   lastStatusChange: 'lastStatusChange',
   bantQualified: 'bantQualified',

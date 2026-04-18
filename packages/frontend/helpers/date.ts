@@ -34,6 +34,25 @@ export function toDateInput(val: Date | string | null | undefined): string {
 }
 
 /**
+ * Formats a Date or ISO string for display in the specified locale.
+ * Returns "—" when the value is absent.
+ *
+ * @param val - Date, ISO string, null or undefined
+ * @param locale - The locale to use for formatting (e.g., "it-IT", "en-US")
+ * @returns Formatted date string or "—"
+ */
+export function formatDate(val: Date | string | null | undefined, locale: string): string {
+  if (!val) return "—";
+  const d = new Date(val);
+  if (isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString(locale, {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+/**
  * Formats a Date or ISO string for display in the Italian locale.
  * Returns "—" when the value is absent.
  *
@@ -41,14 +60,7 @@ export function toDateInput(val: Date | string | null | undefined): string {
  * @returns Formatted date string (e.g. "29 marzo 2026") or "—"
  */
 export function formatDateIT(val: Date | string | null | undefined): string {
-  if (!val) return "—";
-  const d = new Date(val);
-  if (isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString("it-IT", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
+  return formatDate(val, "it-IT");
 }
 
 /**

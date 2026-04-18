@@ -315,7 +315,7 @@ export type DocumentPaymentInstallmentGroupByOutputType = {
   _max: DocumentPaymentInstallmentMaxAggregateOutputType | null
 }
 
-type GetDocumentPaymentInstallmentGroupByPayload<T extends DocumentPaymentInstallmentGroupByArgs> = Prisma.PrismaPromise<
+export type GetDocumentPaymentInstallmentGroupByPayload<T extends DocumentPaymentInstallmentGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<DocumentPaymentInstallmentGroupByOutputType, T['by']> &
       {
@@ -1864,6 +1864,11 @@ export type DocumentPaymentInstallmentFindManyArgs<ExtArgs extends runtime.Types
    * Skip the first `n` DocumentPaymentInstallments.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of DocumentPaymentInstallments.
+   */
   distinct?: Prisma.DocumentPaymentInstallmentScalarFieldEnum | Prisma.DocumentPaymentInstallmentScalarFieldEnum[]
 }
 

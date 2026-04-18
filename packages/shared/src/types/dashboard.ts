@@ -3,7 +3,7 @@
 // ============================================================================
 
 import type Decimal from "decimal.js";
-import type { ActivityType } from "./activity";
+
 import type { DocumentType, DocumentStatus } from "./document";
 import type { LeadStatus, LeadQuality } from "../constants/lead";
 import type { OpportunityStatus, SalesStage } from "../constants/opportunity";
@@ -19,6 +19,7 @@ import {
   widgetPositionSchema,
   updateLayoutSchema,
 } from "../validators/dashboard";
+import { ActivityType } from "../constants";
 
 // ============================================================================
 // QUERY / INPUT TYPES

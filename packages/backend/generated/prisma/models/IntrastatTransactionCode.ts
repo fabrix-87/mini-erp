@@ -158,7 +158,7 @@ export type IntrastatTransactionCodeGroupByOutputType = {
   _max: IntrastatTransactionCodeMaxAggregateOutputType | null
 }
 
-type GetIntrastatTransactionCodeGroupByPayload<T extends IntrastatTransactionCodeGroupByArgs> = Prisma.PrismaPromise<
+export type GetIntrastatTransactionCodeGroupByPayload<T extends IntrastatTransactionCodeGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<IntrastatTransactionCodeGroupByOutputType, T['by']> &
       {
@@ -1088,6 +1088,11 @@ export type IntrastatTransactionCodeFindManyArgs<ExtArgs extends runtime.Types.E
    * Skip the first `n` IntrastatTransactionCodes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of IntrastatTransactionCodes.
+   */
   distinct?: Prisma.IntrastatTransactionCodeScalarFieldEnum | Prisma.IntrastatTransactionCodeScalarFieldEnum[]
 }
 

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "bun test",
-    "prisma:migrate": "prisma migrate dev --schema=prisma",
+    "prisma:migrate": "prisma migrate dev --schema=prisma && prisma generate",
     "prisma:generate": "prisma generate --schema=prisma",
     "prisma:docs": "prisma format && prisma-fmt-js",
     "build": "bun build",

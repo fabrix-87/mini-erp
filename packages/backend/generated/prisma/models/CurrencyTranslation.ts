@@ -214,7 +214,7 @@ export type CurrencyTranslationGroupByOutputType = {
   _max: CurrencyTranslationMaxAggregateOutputType | null
 }
 
-type GetCurrencyTranslationGroupByPayload<T extends CurrencyTranslationGroupByArgs> = Prisma.PrismaPromise<
+export type GetCurrencyTranslationGroupByPayload<T extends CurrencyTranslationGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<CurrencyTranslationGroupByOutputType, T['by']> &
       {
@@ -1379,6 +1379,11 @@ export type CurrencyTranslationFindManyArgs<ExtArgs extends runtime.Types.Extens
    * Skip the first `n` CurrencyTranslations.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of CurrencyTranslations.
+   */
   distinct?: Prisma.CurrencyTranslationScalarFieldEnum | Prisma.CurrencyTranslationScalarFieldEnum[]
 }
 

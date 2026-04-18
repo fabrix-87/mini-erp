@@ -1,6 +1,6 @@
 // app/leads/new/page.tsx
 import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
-import { LeadForm } from "@/components/leads/lead-form";
+import { LeadForm } from "@/components/lead/lead-form";
 
 /**
  * New lead creation page — Server Component wrapper.

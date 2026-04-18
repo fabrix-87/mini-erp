@@ -261,7 +261,7 @@ export type StockReservationGroupByOutputType = {
   _max: StockReservationMaxAggregateOutputType | null
 }
 
-type GetStockReservationGroupByPayload<T extends StockReservationGroupByArgs> = Prisma.PrismaPromise<
+export type GetStockReservationGroupByPayload<T extends StockReservationGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<StockReservationGroupByOutputType, T['by']> &
       {
@@ -1916,6 +1916,11 @@ export type StockReservationFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` StockReservations.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of StockReservations.
+   */
   distinct?: Prisma.StockReservationScalarFieldEnum | Prisma.StockReservationScalarFieldEnum[]
 }
 

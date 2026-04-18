@@ -242,7 +242,7 @@ export type AttributeGroupByOutputType = {
   _max: AttributeMaxAggregateOutputType | null
 }
 
-type GetAttributeGroupByPayload<T extends AttributeGroupByArgs> = Prisma.PrismaPromise<
+export type GetAttributeGroupByPayload<T extends AttributeGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<AttributeGroupByOutputType, T['by']> &
       {
@@ -1640,6 +1640,11 @@ export type AttributeFindManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Skip the first `n` Attributes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Attributes.
+   */
   distinct?: Prisma.AttributeScalarFieldEnum | Prisma.AttributeScalarFieldEnum[]
 }
 

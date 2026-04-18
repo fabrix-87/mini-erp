@@ -242,7 +242,7 @@ export type CategoryTranslationGroupByOutputType = {
   _max: CategoryTranslationMaxAggregateOutputType | null
 }
 
-type GetCategoryTranslationGroupByPayload<T extends CategoryTranslationGroupByArgs> = Prisma.PrismaPromise<
+export type GetCategoryTranslationGroupByPayload<T extends CategoryTranslationGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<CategoryTranslationGroupByOutputType, T['by']> &
       {
@@ -1543,6 +1543,11 @@ export type CategoryTranslationFindManyArgs<ExtArgs extends runtime.Types.Extens
    * Skip the first `n` CategoryTranslations.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of CategoryTranslations.
+   */
   distinct?: Prisma.CategoryTranslationScalarFieldEnum | Prisma.CategoryTranslationScalarFieldEnum[]
 }
 

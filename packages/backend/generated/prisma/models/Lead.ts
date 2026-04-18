@@ -97,7 +97,6 @@ export type LeadMinAggregateOutputType = {
   lostDate: Date | null
   firstContactDate: Date | null
   lastContactDate: Date | null
-  nextFollowUpDate: Date | null
   contactAttempts: number | null
   lastStatusChange: Date | null
   bantQualified: boolean | null
@@ -164,7 +163,6 @@ export type LeadMaxAggregateOutputType = {
   lostDate: Date | null
   firstContactDate: Date | null
   lastContactDate: Date | null
-  nextFollowUpDate: Date | null
   contactAttempts: number | null
   lastStatusChange: Date | null
   bantQualified: boolean | null
@@ -231,7 +229,6 @@ export type LeadCountAggregateOutputType = {
   lostDate: number
   firstContactDate: number
   lastContactDate: number
-  nextFollowUpDate: number
   contactAttempts: number
   lastStatusChange: number
   bantQualified: number
@@ -329,7 +326,6 @@ export type LeadMinAggregateInputType = {
   lostDate?: true
   firstContactDate?: true
   lastContactDate?: true
-  nextFollowUpDate?: true
   contactAttempts?: true
   lastStatusChange?: true
   bantQualified?: true
@@ -396,7 +392,6 @@ export type LeadMaxAggregateInputType = {
   lostDate?: true
   firstContactDate?: true
   lastContactDate?: true
-  nextFollowUpDate?: true
   contactAttempts?: true
   lastStatusChange?: true
   bantQualified?: true
@@ -463,7 +458,6 @@ export type LeadCountAggregateInputType = {
   lostDate?: true
   firstContactDate?: true
   lastContactDate?: true
-  nextFollowUpDate?: true
   contactAttempts?: true
   lastStatusChange?: true
   bantQualified?: true
@@ -618,7 +612,6 @@ export type LeadGroupByOutputType = {
   lostDate: Date | null
   firstContactDate: Date | null
   lastContactDate: Date | null
-  nextFollowUpDate: Date | null
   contactAttempts: number
   lastStatusChange: Date
   bantQualified: boolean
@@ -648,7 +641,7 @@ export type LeadGroupByOutputType = {
   _max: LeadMaxAggregateOutputType | null
 }
 
-type GetLeadGroupByPayload<T extends LeadGroupByArgs> = Prisma.PrismaPromise<
+export type GetLeadGroupByPayload<T extends LeadGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<LeadGroupByOutputType, T['by']> &
       {
@@ -709,7 +702,6 @@ export type LeadWhereInput = {
   lostDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   firstContactDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   lastContactDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
-  nextFollowUpDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   contactAttempts?: Prisma.IntFilter<"Lead"> | number
   lastStatusChange?: Prisma.DateTimeFilter<"Lead"> | Date | string
   bantQualified?: Prisma.BoolFilter<"Lead"> | boolean
@@ -785,7 +777,6 @@ export type LeadOrderByWithRelationInput = {
   lostDate?: Prisma.SortOrderInput | Prisma.SortOrder
   firstContactDate?: Prisma.SortOrderInput | Prisma.SortOrder
   lastContactDate?: Prisma.SortOrderInput | Prisma.SortOrder
-  nextFollowUpDate?: Prisma.SortOrderInput | Prisma.SortOrder
   contactAttempts?: Prisma.SortOrder
   lastStatusChange?: Prisma.SortOrder
   bantQualified?: Prisma.SortOrder
@@ -864,7 +855,6 @@ export type LeadWhereUniqueInput = Prisma.AtLeast<{
   lostDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   firstContactDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   lastContactDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
-  nextFollowUpDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   contactAttempts?: Prisma.IntFilter<"Lead"> | number
   lastStatusChange?: Prisma.DateTimeFilter<"Lead"> | Date | string
   bantQualified?: Prisma.BoolFilter<"Lead"> | boolean
@@ -940,7 +930,6 @@ export type LeadOrderByWithAggregationInput = {
   lostDate?: Prisma.SortOrderInput | Prisma.SortOrder
   firstContactDate?: Prisma.SortOrderInput | Prisma.SortOrder
   lastContactDate?: Prisma.SortOrderInput | Prisma.SortOrder
-  nextFollowUpDate?: Prisma.SortOrderInput | Prisma.SortOrder
   contactAttempts?: Prisma.SortOrder
   lastStatusChange?: Prisma.SortOrder
   bantQualified?: Prisma.SortOrder
@@ -1016,7 +1005,6 @@ export type LeadScalarWhereWithAggregatesInput = {
   lostDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
   firstContactDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
   lastContactDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
-  nextFollowUpDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
   contactAttempts?: Prisma.IntWithAggregatesFilter<"Lead"> | number
   lastStatusChange?: Prisma.DateTimeWithAggregatesFilter<"Lead"> | Date | string
   bantQualified?: Prisma.BoolWithAggregatesFilter<"Lead"> | boolean
@@ -1078,7 +1066,6 @@ export type LeadCreateInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -1154,7 +1141,6 @@ export type LeadUncheckedCreateInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -1219,7 +1205,6 @@ export type LeadUpdateInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1295,7 +1280,6 @@ export type LeadUncheckedUpdateInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1366,7 +1350,6 @@ export type LeadCreateManyInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -1428,7 +1411,6 @@ export type LeadUpdateManyMutationInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1496,7 +1478,6 @@ export type LeadUncheckedUpdateManyInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1579,7 +1560,6 @@ export type LeadCountOrderByAggregateInput = {
   lostDate?: Prisma.SortOrder
   firstContactDate?: Prisma.SortOrder
   lastContactDate?: Prisma.SortOrder
-  nextFollowUpDate?: Prisma.SortOrder
   contactAttempts?: Prisma.SortOrder
   lastStatusChange?: Prisma.SortOrder
   bantQualified?: Prisma.SortOrder
@@ -1661,7 +1641,6 @@ export type LeadMaxOrderByAggregateInput = {
   lostDate?: Prisma.SortOrder
   firstContactDate?: Prisma.SortOrder
   lastContactDate?: Prisma.SortOrder
-  nextFollowUpDate?: Prisma.SortOrder
   contactAttempts?: Prisma.SortOrder
   lastStatusChange?: Prisma.SortOrder
   bantQualified?: Prisma.SortOrder
@@ -1728,7 +1707,6 @@ export type LeadMinOrderByAggregateInput = {
   lostDate?: Prisma.SortOrder
   firstContactDate?: Prisma.SortOrder
   lastContactDate?: Prisma.SortOrder
-  nextFollowUpDate?: Prisma.SortOrder
   contactAttempts?: Prisma.SortOrder
   lastStatusChange?: Prisma.SortOrder
   bantQualified?: Prisma.SortOrder
@@ -2067,7 +2045,6 @@ export type LeadCreateWithoutActivitiesInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -2142,7 +2119,6 @@ export type LeadUncheckedCreateWithoutActivitiesInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -2222,7 +2198,6 @@ export type LeadUpdateWithoutActivitiesInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2297,7 +2272,6 @@ export type LeadUncheckedUpdateWithoutActivitiesInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2361,7 +2335,6 @@ export type LeadCreateWithoutConvertedToInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -2435,7 +2408,6 @@ export type LeadUncheckedCreateWithoutConvertedToInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -2516,7 +2488,6 @@ export type LeadUpdateWithoutConvertedToInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2590,7 +2561,6 @@ export type LeadUncheckedUpdateWithoutConvertedToInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2655,7 +2625,6 @@ export type LeadCreateWithoutCountryInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -2729,7 +2698,6 @@ export type LeadUncheckedCreateWithoutCountryInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -2829,7 +2797,6 @@ export type LeadScalarWhereInput = {
   lostDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   firstContactDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   lastContactDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
-  nextFollowUpDate?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   contactAttempts?: Prisma.IntFilter<"Lead"> | number
   lastStatusChange?: Prisma.DateTimeFilter<"Lead"> | Date | string
   bantQualified?: Prisma.BoolFilter<"Lead"> | boolean
@@ -2891,7 +2858,6 @@ export type LeadCreateWithoutDocumentsInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -2966,7 +2932,6 @@ export type LeadUncheckedCreateWithoutDocumentsInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -3046,7 +3011,6 @@ export type LeadUpdateWithoutDocumentsInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3121,7 +3085,6 @@ export type LeadUncheckedUpdateWithoutDocumentsInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3185,7 +3148,6 @@ export type LeadCreateWithoutOpportunitiesInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -3260,7 +3222,6 @@ export type LeadUncheckedCreateWithoutOpportunitiesInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -3340,7 +3301,6 @@ export type LeadUpdateWithoutOpportunitiesInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3415,7 +3375,6 @@ export type LeadUncheckedUpdateWithoutOpportunitiesInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3479,7 +3438,6 @@ export type LeadCreateWithoutAssignedUserInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -3553,7 +3511,6 @@ export type LeadUncheckedCreateWithoutAssignedUserInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -3628,7 +3585,6 @@ export type LeadCreateWithoutConvertedByInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -3702,7 +3658,6 @@ export type LeadUncheckedCreateWithoutConvertedByInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -3777,7 +3732,6 @@ export type LeadCreateWithoutCreatedByInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -3851,7 +3805,6 @@ export type LeadUncheckedCreateWithoutCreatedByInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -3979,7 +3932,6 @@ export type LeadCreateManyCountryInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -4041,7 +3993,6 @@ export type LeadUpdateWithoutCountryInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4115,7 +4066,6 @@ export type LeadUncheckedUpdateWithoutCountryInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4185,7 +4135,6 @@ export type LeadUncheckedUpdateManyWithoutCountryInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4252,7 +4201,6 @@ export type LeadCreateManyAssignedUserInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -4319,7 +4267,6 @@ export type LeadCreateManyConvertedByInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -4386,7 +4333,6 @@ export type LeadCreateManyCreatedByInput = {
   lostDate?: Date | string | null
   firstContactDate?: Date | string | null
   lastContactDate?: Date | string | null
-  nextFollowUpDate?: Date | string | null
   contactAttempts?: number
   lastStatusChange?: Date | string
   bantQualified?: boolean
@@ -4448,7 +4394,6 @@ export type LeadUpdateWithoutAssignedUserInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4522,7 +4467,6 @@ export type LeadUncheckedUpdateWithoutAssignedUserInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4592,7 +4536,6 @@ export type LeadUncheckedUpdateManyWithoutAssignedUserInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4654,7 +4597,6 @@ export type LeadUpdateWithoutConvertedByInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4728,7 +4670,6 @@ export type LeadUncheckedUpdateWithoutConvertedByInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4798,7 +4739,6 @@ export type LeadUncheckedUpdateManyWithoutConvertedByInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4860,7 +4800,6 @@ export type LeadUpdateWithoutCreatedByInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4934,7 +4873,6 @@ export type LeadUncheckedUpdateWithoutCreatedByInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5004,7 +4942,6 @@ export type LeadUncheckedUpdateManyWithoutCreatedByInput = {
   lostDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   firstContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastContactDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextFollowUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contactAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lastStatusChange?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bantQualified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5121,7 +5058,6 @@ export type LeadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   lostDate?: boolean
   firstContactDate?: boolean
   lastContactDate?: boolean
-  nextFollowUpDate?: boolean
   contactAttempts?: boolean
   lastStatusChange?: boolean
   bantQualified?: boolean
@@ -5198,7 +5134,6 @@ export type LeadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   lostDate?: boolean
   firstContactDate?: boolean
   lastContactDate?: boolean
-  nextFollowUpDate?: boolean
   contactAttempts?: boolean
   lastStatusChange?: boolean
   bantQualified?: boolean
@@ -5271,7 +5206,6 @@ export type LeadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   lostDate?: boolean
   firstContactDate?: boolean
   lastContactDate?: boolean
-  nextFollowUpDate?: boolean
   contactAttempts?: boolean
   lastStatusChange?: boolean
   bantQualified?: boolean
@@ -5344,7 +5278,6 @@ export type LeadSelectScalar = {
   lostDate?: boolean
   firstContactDate?: boolean
   lastContactDate?: boolean
-  nextFollowUpDate?: boolean
   contactAttempts?: boolean
   lastStatusChange?: boolean
   bantQualified?: boolean
@@ -5369,7 +5302,7 @@ export type LeadSelectScalar = {
   updatedAt?: boolean
 }
 
-export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "companyName" | "tradeName" | "website" | "vatNumber" | "taxCode" | "countryCode" | "contactFirstName" | "contactLastName" | "contactEmail" | "contactPhone" | "contactMobile" | "contactPosition" | "contactDepartment" | "address" | "city" | "provinceCode" | "zipCode" | "status" | "source" | "quality" | "score" | "estimatedValue" | "estimatedSize" | "industry" | "employeesCount" | "annualRevenue" | "budget" | "purchaseTimeframe" | "decisionAuthority" | "primaryNeed" | "interestedIn" | "createdByUserId" | "assignedUserId" | "convertedAt" | "convertedToId" | "convertedByUserId" | "lostReason" | "lostDate" | "firstContactDate" | "lastContactDate" | "nextFollowUpDate" | "contactAttempts" | "lastStatusChange" | "bantQualified" | "bantNotes" | "privacyConsent" | "privacyConsentDate" | "marketingConsent" | "marketingConsentDate" | "doNotCall" | "doNotEmail" | "campaignName" | "utmMedium" | "utmSource" | "utmCampaign" | "landingPage" | "referrer" | "notes" | "description" | "customFields" | "competitors" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
+export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "companyName" | "tradeName" | "website" | "vatNumber" | "taxCode" | "countryCode" | "contactFirstName" | "contactLastName" | "contactEmail" | "contactPhone" | "contactMobile" | "contactPosition" | "contactDepartment" | "address" | "city" | "provinceCode" | "zipCode" | "status" | "source" | "quality" | "score" | "estimatedValue" | "estimatedSize" | "industry" | "employeesCount" | "annualRevenue" | "budget" | "purchaseTimeframe" | "decisionAuthority" | "primaryNeed" | "interestedIn" | "createdByUserId" | "assignedUserId" | "convertedAt" | "convertedToId" | "convertedByUserId" | "lostReason" | "lostDate" | "firstContactDate" | "lastContactDate" | "contactAttempts" | "lastStatusChange" | "bantQualified" | "bantNotes" | "privacyConsent" | "privacyConsentDate" | "marketingConsent" | "marketingConsentDate" | "doNotCall" | "doNotEmail" | "campaignName" | "utmMedium" | "utmSource" | "utmCampaign" | "landingPage" | "referrer" | "notes" | "description" | "customFields" | "competitors" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
 export type LeadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.Lead$createdByArgs<ExtArgs>
@@ -5451,7 +5384,6 @@ export type $LeadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     lostDate: Date | null
     firstContactDate: Date | null
     lastContactDate: Date | null
-    nextFollowUpDate: Date | null
     contactAttempts: number
     lastStatusChange: Date
     bantQualified: boolean
@@ -5947,7 +5879,6 @@ export interface LeadFieldRefs {
   readonly lostDate: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly firstContactDate: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly lastContactDate: Prisma.FieldRef<"Lead", 'DateTime'>
-  readonly nextFollowUpDate: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly contactAttempts: Prisma.FieldRef<"Lead", 'Int'>
   readonly lastStatusChange: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly bantQualified: Prisma.FieldRef<"Lead", 'Boolean'>
@@ -6166,6 +6097,11 @@ export type LeadFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Skip the first `n` Leads.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Leads.
+   */
   distinct?: Prisma.LeadScalarFieldEnum | Prisma.LeadScalarFieldEnum[]
 }
 

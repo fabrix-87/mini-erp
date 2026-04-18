@@ -241,7 +241,7 @@ export type ActivityTemplateGroupByOutputType = {
   _max: ActivityTemplateMaxAggregateOutputType | null
 }
 
-type GetActivityTemplateGroupByPayload<T extends ActivityTemplateGroupByArgs> = Prisma.PrismaPromise<
+export type GetActivityTemplateGroupByPayload<T extends ActivityTemplateGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ActivityTemplateGroupByOutputType, T['by']> &
       {
@@ -1191,6 +1191,11 @@ export type ActivityTemplateFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` ActivityTemplates.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ActivityTemplates.
+   */
   distinct?: Prisma.ActivityTemplateScalarFieldEnum | Prisma.ActivityTemplateScalarFieldEnum[]
 }
 

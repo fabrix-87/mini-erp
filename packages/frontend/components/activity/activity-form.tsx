@@ -22,6 +22,7 @@ interface ActivityFormProps {
   activity?: Activity;
   preselectedCustomerId?: string;
   preselectedContactId?: string;
+  preselectedLeadId?: string;
   preselectedDate?: string;
   isEditMode?: boolean;
 }
@@ -30,6 +31,7 @@ export function ActivityForm({
   activity,
   preselectedCustomerId,
   preselectedContactId,
+  preselectedLeadId,
   preselectedDate,
   isEditMode = false,
 }: ActivityFormProps) {
@@ -42,24 +44,29 @@ export function ActivityForm({
     formData,
     customers,
     contacts,
+    leads,
     handleChange,
     handleCustomerChange,
     searchCustomers,
+    searchLeads,
+    handleLeadChange,
   } = useActivityForm({
     activity,
     preselectedCustomerId,
     preselectedContactId,
+    preselectedLeadId,
     preselectedDate,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
 
     startTransition(async () => {
       try {
         const payload = {
-          customerId: parseInt(formData.customerId),
-          contactId: formData.contactId ? parseInt(formData.contactId) : undefined,
+          customerId: formData.customerId ? Number(formData.customerId) : undefined,
+          contactId: formData.contactId ? Number(formData.contactId) : undefined,
+          leadId: formData.leadId ? Number(formData.leadId) : undefined,
           type: formData.type,
           subject: formData.subject,
           description: formData.description || undefined,
@@ -77,8 +84,6 @@ export function ActivityForm({
           outcome: formData.outcome || undefined,
           result: formData.result || undefined,
           internalNotes: formData.internalNotes || undefined,
-          requiresFollowUp: formData.requiresFollowUp,
-          followUpDate: formData.followUpDate || undefined,
           assignedUserId: user?.id || 0
         } as Partial<Activity>;
 
@@ -133,9 +138,12 @@ export function ActivityForm({
             formData={formData}
             customers={customers}
             contacts={contacts}
+            leads={leads}
             onChange={handleChange}
             onCustomerChange={handleCustomerChange}
             onSearchCustomers={searchCustomers}
+            onLeadChange={handleLeadChange}
+            onSearchLeads={searchLeads}
           />
         </TabsContent>
 

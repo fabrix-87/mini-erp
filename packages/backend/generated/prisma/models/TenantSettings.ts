@@ -257,7 +257,7 @@ export type TenantSettingsGroupByOutputType = {
   _max: TenantSettingsMaxAggregateOutputType | null
 }
 
-type GetTenantSettingsGroupByPayload<T extends TenantSettingsGroupByArgs> = Prisma.PrismaPromise<
+export type GetTenantSettingsGroupByPayload<T extends TenantSettingsGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<TenantSettingsGroupByOutputType, T['by']> &
       {
@@ -1910,6 +1910,11 @@ export type TenantSettingsFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Skip the first `n` TenantSettings.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of TenantSettings.
+   */
   distinct?: Prisma.TenantSettingsScalarFieldEnum | Prisma.TenantSettingsScalarFieldEnum[]
 }
 

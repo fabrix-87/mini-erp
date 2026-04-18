@@ -6,6 +6,7 @@ import { serverApi } from "@/lib/server/api";
 import { Activity, ActivityFormData } from "@/types/activitiy";
 import { ApiResponse } from "@/types/api";
 import { ServerApiError } from "@/types/server-client";
+import { activityRevalidation } from "@/lib/server/revalidate";
 
 interface ActionResponse<T = void> {
   success: boolean;
@@ -18,7 +19,7 @@ interface ActionResponse<T = void> {
 }
 
 /**
- * Server Action to create a new activity
+ * Server Action — Create activity (generic)
  */
 export async function createActivity(
   activityData: Partial<Activity> | ActivityFormData
@@ -30,32 +31,43 @@ export async function createActivity(
       { unwrapData: false }
     );
 
-    // Revalidate the activities page to show the new activity
-    revalidatePath("/activities");
-    revalidatePath("/dashboard/activities");
+    activityRevalidation.list();
 
-    return {
-      success: true,
-      data: response.data,
-    };
+    return { success: true, data: response.data };
   } catch (error) {
-    console.error("Error creating activity:", error);
-    
     if (error instanceof ServerApiError) {
-      console.error(error.details)
-      return {
-        success: false,
-        error: error.message,
-        errors: error.details,
-      };
+      return { success: false, error: error.message, errors: error.details };
     }
-    
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
-    };
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
   }
 }
+
+/**
+ * Server Action — Create activity linked to a lead.
+ * Revalidates both the activities list and the lead detail page.
+ */
+export async function createLeadActivity(
+  leadId: number,
+  activityData: Partial<Activity> | ActivityFormData
+): Promise<ActionResponse<Activity>> {
+  try {
+    const response = await serverApi.post<ApiResponse<Activity>>(
+      "/activities",
+      { ...activityData, leadId },
+      { unwrapData: false }
+    );
+
+    activityRevalidation.list();
+    activityRevalidation.forLead(leadId);
+
+    return { success: true, data: response.data };
+  } catch (error) {
+    if (error instanceof ServerApiError) {
+      return { success: false, error: error.message, errors: error.details };
+    }
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+  }
+} 
 
 /**
  * Server Action to update an existing activity

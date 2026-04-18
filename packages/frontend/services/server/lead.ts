@@ -5,7 +5,6 @@ import { serverApi } from "@/lib/server/api";
 import type { ApiResponse } from "@/types/api";
 import type {
   Lead,
-  LeadListItem,
   LeadStats,
   LeadQueryInput,
   LeadStatsInput,
@@ -13,7 +12,14 @@ import type {
   BulkAssignLeadsInput,
   BulkUpdateLeadStatusInput,
 } from "@/types/lead";
-import { ConvertLeadFormInput, CreateLeadFormInput, QualifyLeadFormInput, UpdateLeadFormInput, UpdateLeadScoreFormInput } from "@mini-erp/shared";
+import {
+  Activity,
+  ConvertLeadFormInput,
+  CreateLeadFormInput,
+  QualifyLeadFormInput,
+  UpdateLeadFormInput,
+  UpdateLeadScoreFormInput,
+} from "@mini-erp/shared";
 
 // ============================================================================
 // READ
@@ -22,13 +28,13 @@ import { ConvertLeadFormInput, CreateLeadFormInput, QualifyLeadFormInput, Update
 /**
  * Ottieni lista lead con filtri e paginazione
  */
-export async function getAllLeads(params: LeadQueryInput): Promise<ApiResponse<LeadListItem[]>> {
+export async function getAllLeads(params: LeadQueryInput): Promise<ApiResponse<Lead[]>> {
   const query = new URLSearchParams();
   Object.entries(params).forEach(([k, v]) => {
     if (v !== undefined && v !== null) query.append(k, String(v));
   });
   const url = `/leads?${query.toString()}`;
-  return serverApi.get<ApiResponse<LeadListItem[]>>(url, { unwrapData: false });
+  return serverApi.get<ApiResponse<Lead[]>>(url, { unwrapData: false });
 }
 
 /**
@@ -50,6 +56,14 @@ export async function getLeadStatsServer(params?: LeadStatsInput): Promise<ApiRe
   }
   const url = `/leads/stats${query.toString() ? `?${query.toString()}` : ""}`;
   return serverApi.get<ApiResponse<LeadStats>>(url, { unwrapData: false });
+}
+
+/**
+ * Fetches activities associated with a specific lead (SSR)
+ */
+export async function getLeadActivitiesServer(leadId: number): Promise<ApiResponse<Activity[]>> {
+  const url = `/activities?leadId=${leadId}&status=SCHEDULED,IN_PROGRESS&limit=5`;
+  return serverApi.get<ApiResponse<Activity[]>>(url, { unwrapData: false });
 }
 
 // ============================================================================

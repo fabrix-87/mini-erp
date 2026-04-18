@@ -207,7 +207,7 @@ export type ExchangeRateHistoryGroupByOutputType = {
   _max: ExchangeRateHistoryMaxAggregateOutputType | null
 }
 
-type GetExchangeRateHistoryGroupByPayload<T extends ExchangeRateHistoryGroupByArgs> = Prisma.PrismaPromise<
+export type GetExchangeRateHistoryGroupByPayload<T extends ExchangeRateHistoryGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ExchangeRateHistoryGroupByOutputType, T['by']> &
       {
@@ -1214,6 +1214,11 @@ export type ExchangeRateHistoryFindManyArgs<ExtArgs extends runtime.Types.Extens
    * Skip the first `n` ExchangeRateHistories.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ExchangeRateHistories.
+   */
   distinct?: Prisma.ExchangeRateHistoryScalarFieldEnum | Prisma.ExchangeRateHistoryScalarFieldEnum[]
 }
 

@@ -41,8 +41,9 @@ import { LeadScoreDisplay } from "./lead-score-display";
 import { LeadBulkToolbar } from "./lead-bulk-toolbar";
 import { toast } from "sonner";
 import { deleteLeadAction } from "@/actions/lead";
-import type { LeadListItem, LeadQueryInput } from "@/types/lead";
+import type { Lead, LeadQueryInput } from "@/types/lead";
 import type { ApiResponse, PaginationInfo } from "@/types/api";
+import { formatDateIT } from "@/helpers/date";
 
 // ============================================================================
 // Sort field type — matches leadQuerySchema sortBy enum
@@ -78,7 +79,7 @@ function LeadTableSkeleton() {
 // ============================================================================
 
 interface LeadTableProps {
-  data: LeadListItem[];
+  data: Lead[];
   pagination: PaginationInfo | undefined;
   isLoading: boolean;
   sort: SortState<LeadSortField>;
@@ -234,11 +235,11 @@ export function LeadTable({
                       <span className="font-medium leading-tight">{lead.companyName}</span>
                       <span className="text-xs text-muted-foreground">
                         {lead.code}
-                        {lead.assignedUserName && (
+                        {lead.assignedUser?.username && (
                           <>
                             {" "}
                             · <UserCheck className="inline h-3 w-3 mr-0.5" />
-                            {lead.assignedUserName}
+                            {lead.assignedUser.username}
                           </>
                         )}
                       </span>
@@ -286,12 +287,9 @@ export function LeadTable({
 
                   {/* Follow-up */}
                   <TableCell>
-                    {lead.nextFollowUpDate ? (
+                    {lead.activities.length > 0 ? (
                       <span className="text-xs text-muted-foreground">
-                        {new Date(lead.nextFollowUpDate).toLocaleDateString("it-IT", {
-                          day: "2-digit",
-                          month: "short",
-                        })}
+                        {formatDateIT(lead.activities[0].scheduledStart)}
                       </span>
                     ) : (
                       <span className="text-xs text-muted-foreground/50">—</span>

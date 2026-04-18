@@ -236,7 +236,7 @@ export type StockBatchGroupByOutputType = {
   _max: StockBatchMaxAggregateOutputType | null
 }
 
-type GetStockBatchGroupByPayload<T extends StockBatchGroupByArgs> = Prisma.PrismaPromise<
+export type GetStockBatchGroupByPayload<T extends StockBatchGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<StockBatchGroupByOutputType, T['by']> &
       {
@@ -1473,6 +1473,11 @@ export type StockBatchFindManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Skip the first `n` StockBatches.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of StockBatches.
+   */
   distinct?: Prisma.StockBatchScalarFieldEnum | Prisma.StockBatchScalarFieldEnum[]
 }
 

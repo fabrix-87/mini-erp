@@ -7,11 +7,15 @@ import { useCustomer } from "@/hooks/use-company";
 import { useContactsByCompany } from "@/hooks/use-contact";
 import { Customer, CustomerQueryInput } from "@/types/customer";
 import { getCustomers } from "@/services/client/company";
+import { Lead, LeadQueryInput } from "@mini-erp/shared";
+import { getLeads } from "@/services/client/lead";
+import { useLead } from "./use-lead";
 
 interface UseActivityFormProps {
   activity?: Activity;
   preselectedCustomerId?: string;
   preselectedContactId?: string;
+  preselectedLeadId?: string;
   preselectedDate?: string;
 }
 
@@ -19,35 +23,36 @@ export function useActivityForm({
   activity,
   preselectedCustomerId,
   preselectedContactId,
+  preselectedLeadId,
   preselectedDate,
 }: UseActivityFormProps) {
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [selectedCustomerId, setSelectedCustomerId] = useState<
-    number | undefined
-  >(
-    activity?.customerId ||
-      (preselectedCustomerId ? parseInt(preselectedCustomerId) : undefined)
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>(
+    activity?.customerId || (preselectedCustomerId ? parseInt(preselectedCustomerId) : undefined),
+  );
+  const [selectedLeadId, setSelectedLeadId] = useState<number | undefined>(
+    activity?.leadId || (preselectedLeadId ? parseInt(preselectedLeadId) : undefined),
   );
 
   // Carica il customer selezionato
   const { data: customerData } = useCustomer(selectedCustomerId, !!selectedCustomerId);
+  const { data: leadData } = useLead(selectedLeadId, !!selectedLeadId);
 
   // Carica i contatti della company del customer selezionato
   const companyId = customerData?.data?.companyId ?? 0;
-  
-  const { contacts: companyContacts } = useContactsByCompany(companyId);
 
+  const { contacts: companyContacts } = useContactsByCompany(companyId);
 
   const [formData, setFormData] = useState<ActivityFormData>(() => {
     if (activity) {
       const scheduledStart = new Date(activity.scheduledStart);
-      const scheduledEnd = activity.scheduledEnd
-        ? new Date(activity.scheduledEnd)
-        : null;
+      const scheduledEnd = activity.scheduledEnd ? new Date(activity.scheduledEnd) : null;
 
       return {
         customerId: activity.customerId?.toString() || "",
         contactId: activity.contactId?.toString() || "",
+        leadId: activity.leadId?.toString() || "",
         type: activity.type,
         subject: activity.subject,
         description: activity.description || "",
@@ -61,17 +66,16 @@ export function useActivityForm({
         outcome: activity.outcome || "",
         result: activity.result || "",
         internalNotes: activity.internalNotes || "",
-        requiresFollowUp: activity.requiresFollowUp,
-        followUpDate: activity.followUpDate || "",
         customFields: activity.customFields || {},
       };
     }
 
-    const newDate = preselectedDate ? new Date(preselectedDate) : new Date()
+    const newDate = preselectedDate ? new Date(preselectedDate) : new Date();
 
     return {
       customerId: preselectedCustomerId || "",
       contactId: preselectedContactId || "",
+      leadId: preselectedLeadId || "",
       type: "CALL",
       subject: "",
       description: "",
@@ -85,8 +89,6 @@ export function useActivityForm({
       outcome: "",
       result: "",
       internalNotes: "",
-      requiresFollowUp: false,
-      followUpDate: "",
       customFields: {},
     };
   });
@@ -98,17 +100,38 @@ export function useActivityForm({
     }
   }, [customerData]);
 
+  // Inizializza la lista lead con quello selezionato
+  useEffect(() => {
+    if (leadData?.data) {
+      setLeads([leadData.data]);
+    }
+  }, [leadData]);
+
   const searchCustomersHandler = async (query: string) => {
     if (query.length < 2) return;
     try {
       const params = {
         search: query,
-        limit: 10
-      } as CustomerQueryInput
+        limit: 10,
+      } as CustomerQueryInput;
       const response = await getCustomers(params);
       setCustomers(response.data || []);
     } catch (error) {
       console.error("Error searching customers:", error);
+    }
+  };
+
+  const searchLeadsHandler = async (query: string) => {
+    if (query.length < 2) return;
+    try {
+      const params = {
+        search: query,
+        limit: 10,
+      } as LeadQueryInput;
+      const response = await getLeads(params);
+      setLeads(response.data || []);
+    } catch (error) {
+      console.error("Error searching leads:", error);
     }
   };
 
@@ -117,8 +140,19 @@ export function useActivityForm({
       ...prev,
       customerId,
       contactId: "", // Reset contact quando cambia customer
+      leadId: "", // Reset lead quando cambia customer
     }));
     setSelectedCustomerId(customerId ? parseInt(customerId) : undefined);
+  };
+
+  const handleLeadChange = (leadId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      leadId,
+      contactId: "", // Reset contact quando cambia lead
+      customerId: "", // Reset customer quando cambia lead
+    }));
+    setSelectedLeadId(leadId ? Number(leadId) : undefined);
   };
 
   const handleChange = (field: keyof ActivityFormData, value: any) => {
@@ -128,9 +162,12 @@ export function useActivityForm({
   return {
     formData,
     customers,
+    leads,
     contacts: companyContacts || [],
     handleChange,
     handleCustomerChange,
+    handleLeadChange,
     searchCustomers: searchCustomersHandler,
+    searchLeads: searchLeadsHandler,
   };
 }

@@ -175,7 +175,7 @@ export type ProductVariantAttributeGroupByOutputType = {
   _max: ProductVariantAttributeMaxAggregateOutputType | null
 }
 
-type GetProductVariantAttributeGroupByPayload<T extends ProductVariantAttributeGroupByArgs> = Prisma.PrismaPromise<
+export type GetProductVariantAttributeGroupByPayload<T extends ProductVariantAttributeGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ProductVariantAttributeGroupByOutputType, T['by']> &
       {
@@ -1176,6 +1176,11 @@ export type ProductVariantAttributeFindManyArgs<ExtArgs extends runtime.Types.Ex
    * Skip the first `n` ProductVariantAttributes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ProductVariantAttributes.
+   */
   distinct?: Prisma.ProductVariantAttributeScalarFieldEnum | Prisma.ProductVariantAttributeScalarFieldEnum[]
 }
 

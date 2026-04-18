@@ -228,6 +228,23 @@ export const leadRevalidation = {
   list: () => revalidateEntity("leads", undefined, { pathRoot: "leads" }),
 };
 
+/**
+ * Revalidate activity-related cache
+ */
+export const activityRevalidation = {
+  /** Revalidate specific activity detail + lists */
+  activity: (id: number) => revalidateEntityWithList("activity", id, { pathRoot: "activities" }),
+
+  /** Revalidate activities list */
+  list: () => revalidateEntity("activities", undefined, { pathRoot: "activities" }),
+
+  /** Revalidate activities belonging to a lead (revalidates lead detail page) */
+  forLead: (leadId: number) => {
+    revalidateTag(`activities-lead-${leadId}`);
+    revalidatePath(`/leads/${leadId}`, "page");
+  },
+};
+
 // ============================================================================
 // Export for convenience
 // ============================================================================

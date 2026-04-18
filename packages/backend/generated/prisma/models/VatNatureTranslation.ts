@@ -214,7 +214,7 @@ export type VatNatureTranslationGroupByOutputType = {
   _max: VatNatureTranslationMaxAggregateOutputType | null
 }
 
-type GetVatNatureTranslationGroupByPayload<T extends VatNatureTranslationGroupByArgs> = Prisma.PrismaPromise<
+export type GetVatNatureTranslationGroupByPayload<T extends VatNatureTranslationGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<VatNatureTranslationGroupByOutputType, T['by']> &
       {
@@ -1379,6 +1379,11 @@ export type VatNatureTranslationFindManyArgs<ExtArgs extends runtime.Types.Exten
    * Skip the first `n` VatNatureTranslations.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of VatNatureTranslations.
+   */
   distinct?: Prisma.VatNatureTranslationScalarFieldEnum | Prisma.VatNatureTranslationScalarFieldEnum[]
 }
 

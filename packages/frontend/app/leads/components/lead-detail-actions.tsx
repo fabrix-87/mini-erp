@@ -32,19 +32,19 @@ import type { Lead } from "@/types/lead";
 import dynamic from "next/dynamic";
 
 const LeadStatusDialog = dynamic(() =>
-  import("@/components/leads/lead-status-dialog").then((m) => m.LeadStatusDialog),
+  import("@/components/lead/lead-status-dialog").then((m) => m.LeadStatusDialog),
 );
 const LeadScoreDialog = dynamic(() =>
-  import("@/components/leads/lead-score-dialog").then((m) => m.LeadScoreDialog),
+  import("@/components/lead/lead-score-dialog").then((m) => m.LeadScoreDialog),
 );
 const LeadQualifyDialog = dynamic(() =>
-  import("@/components/leads/lead-qualify-dialog").then((m) => m.LeadQualifyDialog),
+  import("@/components/lead/lead-qualify-dialog").then((m) => m.LeadQualifyDialog),
 );
 const LeadConvertDialog = dynamic(() =>
-  import("@/components/leads/lead-convert-dialog").then((m) => m.LeadConvertDialog),
+  import("@/components/lead/lead-convert-dialog").then((m) => m.LeadConvertDialog),
 );
 const LeadAssignDialog = dynamic(() =>
-  import("@/components/leads/lead-assign-dialog").then((m) => m.LeadAssignDialog),
+  import("@/components/lead/lead-assign-dialog").then((m) => m.LeadAssignDialog),
 );
 
 // ============================================================================

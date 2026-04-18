@@ -268,7 +268,7 @@ export type VirtualStockGroupByOutputType = {
   _max: VirtualStockMaxAggregateOutputType | null
 }
 
-type GetVirtualStockGroupByPayload<T extends VirtualStockGroupByArgs> = Prisma.PrismaPromise<
+export type GetVirtualStockGroupByPayload<T extends VirtualStockGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<VirtualStockGroupByOutputType, T['by']> &
       {
@@ -1813,6 +1813,11 @@ export type VirtualStockFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` VirtualStocks.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of VirtualStocks.
+   */
   distinct?: Prisma.VirtualStockScalarFieldEnum | Prisma.VirtualStockScalarFieldEnum[]
 }
 

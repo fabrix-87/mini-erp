@@ -12,8 +12,6 @@ import {
   activityPrioritySchema,
   activityQuerySchema,
   activityStatsSchema,
-  activityStatusSchema,
-  activityTypeSchema,
   bulkActivityActionSchema,
   completeActivitySchema,
   createActivityFromTemplateSchema,
@@ -27,6 +25,8 @@ import {
   updateActivityStatusSchema,
   updateActivityTemplateSchema,
 } from "../validators";
+import { Lead } from "./lead";
+import { ActivityStatus, ActivityType } from "../constants/activity";
 
 // ============================================================================
 // TYPE EXPORTS
@@ -38,6 +38,7 @@ import {
 export type Activity = z.infer<typeof createActivitySchema> & {
   id: number;
   company?: Company;
+  lead?: Lead;
   customer?: Customer;
   contact?: Contact;
   opportunity?: Opportunity;
@@ -83,8 +84,9 @@ export type ActivityTemplate = z.infer<typeof createActivityTemplateSchema> & {
  * Type Form values per Activity
  */
 export type ActivityFormData = {
-  customerId: string;
-  contactId: string;
+  leadId?: string;
+  customerId?: string;
+  contactId?: string;
   type: ActivityType;
   subject: string;
   description: string;
@@ -98,13 +100,9 @@ export type ActivityFormData = {
   outcome?: ActivityOutcome | string;
   result?: string;
   internalNotes?: string;
-  requiresFollowUp: boolean;
-  followUpDate?: string;
   customFields?: any;
 };
 
-export type ActivityType = z.infer<typeof activityTypeSchema>;
-export type ActivityStatus = z.infer<typeof activityStatusSchema>;
 export type ActivityPriority = z.infer<typeof activityPrioritySchema>;
 export type ActivityOutcome = z.infer<typeof activityOutcomeSchema>;
 export type ParticipantStatus = z.infer<typeof participantStatusSchema>;

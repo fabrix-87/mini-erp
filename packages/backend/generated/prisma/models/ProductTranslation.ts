@@ -284,7 +284,7 @@ export type ProductTranslationGroupByOutputType = {
   _max: ProductTranslationMaxAggregateOutputType | null
 }
 
-type GetProductTranslationGroupByPayload<T extends ProductTranslationGroupByArgs> = Prisma.PrismaPromise<
+export type GetProductTranslationGroupByPayload<T extends ProductTranslationGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ProductTranslationGroupByOutputType, T['by']> &
       {
@@ -1789,6 +1789,11 @@ export type ProductTranslationFindManyArgs<ExtArgs extends runtime.Types.Extensi
    * Skip the first `n` ProductTranslations.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ProductTranslations.
+   */
   distinct?: Prisma.ProductTranslationScalarFieldEnum | Prisma.ProductTranslationScalarFieldEnum[]
 }
 

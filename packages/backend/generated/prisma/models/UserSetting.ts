@@ -199,7 +199,7 @@ export type UserSettingGroupByOutputType = {
   _max: UserSettingMaxAggregateOutputType | null
 }
 
-type GetUserSettingGroupByPayload<T extends UserSettingGroupByArgs> = Prisma.PrismaPromise<
+export type GetUserSettingGroupByPayload<T extends UserSettingGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<UserSettingGroupByOutputType, T['by']> &
       {
@@ -1202,6 +1202,11 @@ export type UserSettingFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Skip the first `n` UserSettings.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of UserSettings.
+   */
   distinct?: Prisma.UserSettingScalarFieldEnum | Prisma.UserSettingScalarFieldEnum[]
 }
 

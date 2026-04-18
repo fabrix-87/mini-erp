@@ -4,9 +4,9 @@
 import { useCallback, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { LeadStatsBar } from "@/components/leads/lead-stats-bar";
-import { LeadFilters } from "@/components/leads/lead-filters";
-import { LeadTable } from "@/components/leads/lead-table";
+import { LeadStatsBar } from "@/components/lead/lead-stats-bar";
+import { LeadFilters } from "@/components/lead/lead-filters";
+import { LeadTable } from "@/components/lead/lead-table";
 import { useLeads, useLeadStats } from "@/hooks/use-lead";
 import type { LeadQueryInput } from "@/types/lead";
 import type { SortState } from "@/components/ui/sortable-table-head";

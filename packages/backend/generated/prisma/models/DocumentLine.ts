@@ -471,7 +471,7 @@ export type DocumentLineGroupByOutputType = {
   _max: DocumentLineMaxAggregateOutputType | null
 }
 
-type GetDocumentLineGroupByPayload<T extends DocumentLineGroupByArgs> = Prisma.PrismaPromise<
+export type GetDocumentLineGroupByPayload<T extends DocumentLineGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<DocumentLineGroupByOutputType, T['by']> &
       {
@@ -4707,6 +4707,11 @@ export type DocumentLineFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` DocumentLines.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of DocumentLines.
+   */
   distinct?: Prisma.DocumentLineScalarFieldEnum | Prisma.DocumentLineScalarFieldEnum[]
 }
 

@@ -287,7 +287,7 @@ export type UserDetailsGroupByOutputType = {
   _max: UserDetailsMaxAggregateOutputType | null
 }
 
-type GetUserDetailsGroupByPayload<T extends UserDetailsGroupByArgs> = Prisma.PrismaPromise<
+export type GetUserDetailsGroupByPayload<T extends UserDetailsGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<UserDetailsGroupByOutputType, T['by']> &
       {
@@ -1537,6 +1537,11 @@ export type UserDetailsFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Skip the first `n` UserDetails.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of UserDetails.
+   */
   distinct?: Prisma.UserDetailsScalarFieldEnum | Prisma.UserDetailsScalarFieldEnum[]
 }
 

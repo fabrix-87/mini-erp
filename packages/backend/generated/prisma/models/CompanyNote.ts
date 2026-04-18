@@ -214,7 +214,7 @@ export type CompanyNoteGroupByOutputType = {
   _max: CompanyNoteMaxAggregateOutputType | null
 }
 
-type GetCompanyNoteGroupByPayload<T extends CompanyNoteGroupByArgs> = Prisma.PrismaPromise<
+export type GetCompanyNoteGroupByPayload<T extends CompanyNoteGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<CompanyNoteGroupByOutputType, T['by']> &
       {
@@ -1373,6 +1373,11 @@ export type CompanyNoteFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Skip the first `n` CompanyNotes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of CompanyNotes.
+   */
   distinct?: Prisma.CompanyNoteScalarFieldEnum | Prisma.CompanyNoteScalarFieldEnum[]
 }
 

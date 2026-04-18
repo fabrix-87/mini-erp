@@ -217,7 +217,7 @@ export type ClosedReasonGroupByOutputType = {
   _max: ClosedReasonMaxAggregateOutputType | null
 }
 
-type GetClosedReasonGroupByPayload<T extends ClosedReasonGroupByArgs> = Prisma.PrismaPromise<
+export type GetClosedReasonGroupByPayload<T extends ClosedReasonGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ClosedReasonGroupByOutputType, T['by']> &
       {
@@ -1231,6 +1231,11 @@ export type ClosedReasonFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` ClosedReasons.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ClosedReasons.
+   */
   distinct?: Prisma.ClosedReasonScalarFieldEnum | Prisma.ClosedReasonScalarFieldEnum[]
 }
 

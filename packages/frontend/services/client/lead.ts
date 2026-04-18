@@ -4,8 +4,7 @@
 import api from "@/lib/client/api";
 import type { ApiResponse } from "@/types/api";
 import type {
-  Lead,
-  LeadListItem,
+  Lead,  
   LeadStats,
   LeadQueryInput,
   LeadStatsInput,
@@ -20,8 +19,8 @@ import type {
 } from "@/types/lead";
 
 /** Recupera la lista lead con filtri e paginazione */
-export async function getLeads(params: LeadQueryInput): Promise<ApiResponse<LeadListItem[]>> {
-  const response = await api.get<ApiResponse<LeadListItem[]>>("/leads", { params });
+export async function getLeads(params: LeadQueryInput): Promise<ApiResponse<Lead[]>> {
+  const response = await api.get<ApiResponse<Lead[]>>("/leads", { params });
   return response.data;
 }
 

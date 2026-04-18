@@ -79,8 +79,6 @@ export type ActivityMinAggregateOutputType = {
   createdByUserId: number | null
   internalNotes: string | null
   result: string | null
-  requiresFollowUp: boolean | null
-  followUpDate: Date | null
   followUpActivityId: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -111,8 +109,6 @@ export type ActivityMaxAggregateOutputType = {
   createdByUserId: number | null
   internalNotes: string | null
   result: string | null
-  requiresFollowUp: boolean | null
-  followUpDate: Date | null
   followUpActivityId: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -144,8 +140,6 @@ export type ActivityCountAggregateOutputType = {
   attachments: number
   internalNotes: number
   result: number
-  requiresFollowUp: number
-  followUpDate: number
   followUpActivityId: number
   customFields: number
   createdAt: number
@@ -207,8 +201,6 @@ export type ActivityMinAggregateInputType = {
   createdByUserId?: true
   internalNotes?: true
   result?: true
-  requiresFollowUp?: true
-  followUpDate?: true
   followUpActivityId?: true
   createdAt?: true
   updatedAt?: true
@@ -239,8 +231,6 @@ export type ActivityMaxAggregateInputType = {
   createdByUserId?: true
   internalNotes?: true
   result?: true
-  requiresFollowUp?: true
-  followUpDate?: true
   followUpActivityId?: true
   createdAt?: true
   updatedAt?: true
@@ -272,8 +262,6 @@ export type ActivityCountAggregateInputType = {
   attachments?: true
   internalNotes?: true
   result?: true
-  requiresFollowUp?: true
-  followUpDate?: true
   followUpActivityId?: true
   customFields?: true
   createdAt?: true
@@ -393,8 +381,6 @@ export type ActivityGroupByOutputType = {
   attachments: runtime.JsonValue | null
   internalNotes: string | null
   result: string | null
-  requiresFollowUp: boolean
-  followUpDate: Date | null
   followUpActivityId: number | null
   customFields: runtime.JsonValue | null
   createdAt: Date
@@ -406,7 +392,7 @@ export type ActivityGroupByOutputType = {
   _max: ActivityMaxAggregateOutputType | null
 }
 
-type GetActivityGroupByPayload<T extends ActivityGroupByArgs> = Prisma.PrismaPromise<
+export type GetActivityGroupByPayload<T extends ActivityGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ActivityGroupByOutputType, T['by']> &
       {
@@ -450,8 +436,6 @@ export type ActivityWhereInput = {
   attachments?: Prisma.JsonNullableFilter<"Activity">
   internalNotes?: Prisma.StringNullableFilter<"Activity"> | string | null
   result?: Prisma.StringNullableFilter<"Activity"> | string | null
-  requiresFollowUp?: Prisma.BoolFilter<"Activity"> | boolean
-  followUpDate?: Prisma.DateTimeNullableFilter<"Activity"> | Date | string | null
   followUpActivityId?: Prisma.IntNullableFilter<"Activity"> | number | null
   customFields?: Prisma.JsonNullableFilter<"Activity">
   createdAt?: Prisma.DateTimeFilter<"Activity"> | Date | string
@@ -494,8 +478,6 @@ export type ActivityOrderByWithRelationInput = {
   attachments?: Prisma.SortOrderInput | Prisma.SortOrder
   internalNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   result?: Prisma.SortOrderInput | Prisma.SortOrder
-  requiresFollowUp?: Prisma.SortOrder
-  followUpDate?: Prisma.SortOrderInput | Prisma.SortOrder
   followUpActivityId?: Prisma.SortOrderInput | Prisma.SortOrder
   customFields?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -541,8 +523,6 @@ export type ActivityWhereUniqueInput = Prisma.AtLeast<{
   attachments?: Prisma.JsonNullableFilter<"Activity">
   internalNotes?: Prisma.StringNullableFilter<"Activity"> | string | null
   result?: Prisma.StringNullableFilter<"Activity"> | string | null
-  requiresFollowUp?: Prisma.BoolFilter<"Activity"> | boolean
-  followUpDate?: Prisma.DateTimeNullableFilter<"Activity"> | Date | string | null
   followUpActivityId?: Prisma.IntNullableFilter<"Activity"> | number | null
   customFields?: Prisma.JsonNullableFilter<"Activity">
   createdAt?: Prisma.DateTimeFilter<"Activity"> | Date | string
@@ -585,8 +565,6 @@ export type ActivityOrderByWithAggregationInput = {
   attachments?: Prisma.SortOrderInput | Prisma.SortOrder
   internalNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   result?: Prisma.SortOrderInput | Prisma.SortOrder
-  requiresFollowUp?: Prisma.SortOrder
-  followUpDate?: Prisma.SortOrderInput | Prisma.SortOrder
   followUpActivityId?: Prisma.SortOrderInput | Prisma.SortOrder
   customFields?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -627,8 +605,6 @@ export type ActivityScalarWhereWithAggregatesInput = {
   attachments?: Prisma.JsonNullableWithAggregatesFilter<"Activity">
   internalNotes?: Prisma.StringNullableWithAggregatesFilter<"Activity"> | string | null
   result?: Prisma.StringNullableWithAggregatesFilter<"Activity"> | string | null
-  requiresFollowUp?: Prisma.BoolWithAggregatesFilter<"Activity"> | boolean
-  followUpDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Activity"> | Date | string | null
   followUpActivityId?: Prisma.IntNullableWithAggregatesFilter<"Activity"> | number | null
   customFields?: Prisma.JsonNullableWithAggregatesFilter<"Activity">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Activity"> | Date | string
@@ -653,8 +629,6 @@ export type ActivityCreateInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -696,8 +670,6 @@ export type ActivityUncheckedCreateInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -724,8 +696,6 @@ export type ActivityUpdateInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -767,8 +737,6 @@ export type ActivityUncheckedUpdateInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -803,8 +771,6 @@ export type ActivityCreateManyInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -829,8 +795,6 @@ export type ActivityUpdateManyMutationInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -862,8 +826,6 @@ export type ActivityUncheckedUpdateManyInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -911,8 +873,6 @@ export type ActivityCountOrderByAggregateInput = {
   attachments?: Prisma.SortOrder
   internalNotes?: Prisma.SortOrder
   result?: Prisma.SortOrder
-  requiresFollowUp?: Prisma.SortOrder
-  followUpDate?: Prisma.SortOrder
   followUpActivityId?: Prisma.SortOrder
   customFields?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -958,8 +918,6 @@ export type ActivityMaxOrderByAggregateInput = {
   createdByUserId?: Prisma.SortOrder
   internalNotes?: Prisma.SortOrder
   result?: Prisma.SortOrder
-  requiresFollowUp?: Prisma.SortOrder
-  followUpDate?: Prisma.SortOrder
   followUpActivityId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -990,8 +948,6 @@ export type ActivityMinOrderByAggregateInput = {
   createdByUserId?: Prisma.SortOrder
   internalNotes?: Prisma.SortOrder
   result?: Prisma.SortOrder
-  requiresFollowUp?: Prisma.SortOrder
-  followUpDate?: Prisma.SortOrder
   followUpActivityId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -1452,8 +1408,6 @@ export type ActivityCreateWithoutFollowedUpByInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1494,8 +1448,6 @@ export type ActivityUncheckedCreateWithoutFollowedUpByInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -1526,8 +1478,6 @@ export type ActivityCreateWithoutFollowUpActivityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1568,8 +1518,6 @@ export type ActivityUncheckedCreateWithoutFollowUpActivityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1616,8 +1564,6 @@ export type ActivityUpdateWithoutFollowedUpByInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1658,8 +1604,6 @@ export type ActivityUncheckedUpdateWithoutFollowedUpByInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1712,8 +1656,6 @@ export type ActivityScalarWhereInput = {
   attachments?: Prisma.JsonNullableFilter<"Activity">
   internalNotes?: Prisma.StringNullableFilter<"Activity"> | string | null
   result?: Prisma.StringNullableFilter<"Activity"> | string | null
-  requiresFollowUp?: Prisma.BoolFilter<"Activity"> | boolean
-  followUpDate?: Prisma.DateTimeNullableFilter<"Activity"> | Date | string | null
   followUpActivityId?: Prisma.IntNullableFilter<"Activity"> | number | null
   customFields?: Prisma.JsonNullableFilter<"Activity">
   createdAt?: Prisma.DateTimeFilter<"Activity"> | Date | string
@@ -1738,8 +1680,6 @@ export type ActivityCreateWithoutParticipantsInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1780,8 +1720,6 @@ export type ActivityUncheckedCreateWithoutParticipantsInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -1823,8 +1761,6 @@ export type ActivityUpdateWithoutParticipantsInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1865,8 +1801,6 @@ export type ActivityUncheckedUpdateWithoutParticipantsInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1892,8 +1826,6 @@ export type ActivityCreateWithoutCompanyInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1933,8 +1865,6 @@ export type ActivityUncheckedCreateWithoutCompanyInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -1987,8 +1917,6 @@ export type ActivityCreateWithoutCustomerInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2028,8 +1956,6 @@ export type ActivityUncheckedCreateWithoutCustomerInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -2082,8 +2008,6 @@ export type ActivityCreateWithoutContactInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2123,8 +2047,6 @@ export type ActivityUncheckedCreateWithoutContactInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -2177,8 +2099,6 @@ export type ActivityCreateWithoutLeadInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2218,8 +2138,6 @@ export type ActivityUncheckedCreateWithoutLeadInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -2272,8 +2190,6 @@ export type ActivityCreateWithoutOpportunityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2313,8 +2229,6 @@ export type ActivityUncheckedCreateWithoutOpportunityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -2367,8 +2281,6 @@ export type ActivityCreateWithoutAssignedUserInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2408,8 +2320,6 @@ export type ActivityUncheckedCreateWithoutAssignedUserInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -2446,8 +2356,6 @@ export type ActivityCreateWithoutCreatedByInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2487,8 +2395,6 @@ export type ActivityUncheckedCreateWithoutCreatedByInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -2565,8 +2471,6 @@ export type ActivityCreateManyFollowUpActivityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2590,8 +2494,6 @@ export type ActivityUpdateWithoutFollowUpActivityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2632,8 +2534,6 @@ export type ActivityUncheckedUpdateWithoutFollowUpActivityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2667,8 +2567,6 @@ export type ActivityUncheckedUpdateManyWithoutFollowUpActivityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2699,8 +2597,6 @@ export type ActivityCreateManyCompanyInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -2725,8 +2621,6 @@ export type ActivityUpdateWithoutCompanyInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2766,8 +2660,6 @@ export type ActivityUncheckedUpdateWithoutCompanyInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2801,8 +2693,6 @@ export type ActivityUncheckedUpdateManyWithoutCompanyInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2834,8 +2724,6 @@ export type ActivityCreateManyCustomerInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -2860,8 +2748,6 @@ export type ActivityUpdateWithoutCustomerInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2901,8 +2787,6 @@ export type ActivityUncheckedUpdateWithoutCustomerInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2936,8 +2820,6 @@ export type ActivityUncheckedUpdateManyWithoutCustomerInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2969,8 +2851,6 @@ export type ActivityCreateManyContactInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -2995,8 +2875,6 @@ export type ActivityUpdateWithoutContactInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3036,8 +2914,6 @@ export type ActivityUncheckedUpdateWithoutContactInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3071,8 +2947,6 @@ export type ActivityUncheckedUpdateManyWithoutContactInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3104,8 +2978,6 @@ export type ActivityCreateManyLeadInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -3130,8 +3002,6 @@ export type ActivityUpdateWithoutLeadInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3171,8 +3041,6 @@ export type ActivityUncheckedUpdateWithoutLeadInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3206,8 +3074,6 @@ export type ActivityUncheckedUpdateManyWithoutLeadInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3239,8 +3105,6 @@ export type ActivityCreateManyOpportunityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -3265,8 +3129,6 @@ export type ActivityUpdateWithoutOpportunityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3306,8 +3168,6 @@ export type ActivityUncheckedUpdateWithoutOpportunityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3341,8 +3201,6 @@ export type ActivityUncheckedUpdateManyWithoutOpportunityInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3374,8 +3232,6 @@ export type ActivityCreateManyAssignedUserInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -3407,8 +3263,6 @@ export type ActivityCreateManyCreatedByInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: string | null
   result?: string | null
-  requiresFollowUp?: boolean
-  followUpDate?: Date | string | null
   followUpActivityId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -3433,8 +3287,6 @@ export type ActivityUpdateWithoutAssignedUserInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3474,8 +3326,6 @@ export type ActivityUncheckedUpdateWithoutAssignedUserInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3509,8 +3359,6 @@ export type ActivityUncheckedUpdateManyWithoutAssignedUserInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3535,8 +3383,6 @@ export type ActivityUpdateWithoutCreatedByInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3576,8 +3422,6 @@ export type ActivityUncheckedUpdateWithoutCreatedByInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3611,8 +3455,6 @@ export type ActivityUncheckedUpdateManyWithoutCreatedByInput = {
   attachments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   internalNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   result?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresFollowUp?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   followUpActivityId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3685,8 +3527,6 @@ export type ActivitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   attachments?: boolean
   internalNotes?: boolean
   result?: boolean
-  requiresFollowUp?: boolean
-  followUpDate?: boolean
   followUpActivityId?: boolean
   customFields?: boolean
   createdAt?: boolean
@@ -3730,8 +3570,6 @@ export type ActivitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   attachments?: boolean
   internalNotes?: boolean
   result?: boolean
-  requiresFollowUp?: boolean
-  followUpDate?: boolean
   followUpActivityId?: boolean
   customFields?: boolean
   createdAt?: boolean
@@ -3772,8 +3610,6 @@ export type ActivitySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   attachments?: boolean
   internalNotes?: boolean
   result?: boolean
-  requiresFollowUp?: boolean
-  followUpDate?: boolean
   followUpActivityId?: boolean
   customFields?: boolean
   createdAt?: boolean
@@ -3814,15 +3650,13 @@ export type ActivitySelectScalar = {
   attachments?: boolean
   internalNotes?: boolean
   result?: boolean
-  requiresFollowUp?: boolean
-  followUpDate?: boolean
   followUpActivityId?: boolean
   customFields?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ActivityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "status" | "priority" | "outcome" | "subject" | "description" | "location" | "scheduledStart" | "scheduledEnd" | "actualStart" | "actualEnd" | "duration" | "reminderMinutes" | "reminderSent" | "companyId" | "customerId" | "contactId" | "opportunityId" | "leadId" | "assignedUserId" | "createdByUserId" | "attachments" | "internalNotes" | "result" | "requiresFollowUp" | "followUpDate" | "followUpActivityId" | "customFields" | "createdAt" | "updatedAt", ExtArgs["result"]["activity"]>
+export type ActivityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "status" | "priority" | "outcome" | "subject" | "description" | "location" | "scheduledStart" | "scheduledEnd" | "actualStart" | "actualEnd" | "duration" | "reminderMinutes" | "reminderSent" | "companyId" | "customerId" | "contactId" | "opportunityId" | "leadId" | "assignedUserId" | "createdByUserId" | "attachments" | "internalNotes" | "result" | "followUpActivityId" | "customFields" | "createdAt" | "updatedAt", ExtArgs["result"]["activity"]>
 export type ActivityInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.Activity$companyArgs<ExtArgs>
   customer?: boolean | Prisma.Activity$customerArgs<ExtArgs>
@@ -3897,8 +3731,6 @@ export type $ActivityPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     attachments: runtime.JsonValue | null
     internalNotes: string | null
     result: string | null
-    requiresFollowUp: boolean
-    followUpDate: Date | null
     followUpActivityId: number | null
     customFields: runtime.JsonValue | null
     createdAt: Date
@@ -4361,8 +4193,6 @@ export interface ActivityFieldRefs {
   readonly attachments: Prisma.FieldRef<"Activity", 'Json'>
   readonly internalNotes: Prisma.FieldRef<"Activity", 'String'>
   readonly result: Prisma.FieldRef<"Activity", 'String'>
-  readonly requiresFollowUp: Prisma.FieldRef<"Activity", 'Boolean'>
-  readonly followUpDate: Prisma.FieldRef<"Activity", 'DateTime'>
   readonly followUpActivityId: Prisma.FieldRef<"Activity", 'Int'>
   readonly customFields: Prisma.FieldRef<"Activity", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Activity", 'DateTime'>
@@ -4563,6 +4393,11 @@ export type ActivityFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Skip the first `n` Activities.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Activities.
+   */
   distinct?: Prisma.ActivityScalarFieldEnum | Prisma.ActivityScalarFieldEnum[]
 }
 

@@ -1,6 +1,7 @@
 // actions/lead.ts
 "use server";
 
+import { ActionResult } from "@/lib/server/action";
 import { leadRevalidation } from "@/lib/server/revalidate";
 import {
   createLeadServer,
@@ -13,13 +14,14 @@ import {
   assignLeadServer,
   bulkAssignLeadsServer,
   bulkUpdateLeadStatusServer,
+  getLeadActivitiesServer,
 } from "@/services/server/lead";
 import type {
   UpdateLeadStatusInput,
   BulkAssignLeadsInput,
   BulkUpdateLeadStatusInput,
 } from "@/types/lead";
-import { ConvertLeadFormInput, CreateLeadFormInput, QualifyLeadFormInput, UpdateLeadFormInput, UpdateLeadScoreFormInput } from "@mini-erp/shared";
+import { Activity, ConvertLeadFormInput, CreateLeadFormInput, QualifyLeadFormInput, UpdateLeadFormInput, UpdateLeadScoreFormInput } from "@mini-erp/shared";
 
 // ============================================================================
 // Server Actions
@@ -134,3 +136,4 @@ export async function bulkUpdateLeadStatusAction(data: BulkUpdateLeadStatusInput
     return { success: false, error: error.message };
   }
 }
+

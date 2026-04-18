@@ -158,7 +158,7 @@ export type IntrastatCommodityCodeGroupByOutputType = {
   _max: IntrastatCommodityCodeMaxAggregateOutputType | null
 }
 
-type GetIntrastatCommodityCodeGroupByPayload<T extends IntrastatCommodityCodeGroupByArgs> = Prisma.PrismaPromise<
+export type GetIntrastatCommodityCodeGroupByPayload<T extends IntrastatCommodityCodeGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<IntrastatCommodityCodeGroupByOutputType, T['by']> &
       {
@@ -1185,6 +1185,11 @@ export type IntrastatCommodityCodeFindManyArgs<ExtArgs extends runtime.Types.Ext
    * Skip the first `n` IntrastatCommodityCodes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of IntrastatCommodityCodes.
+   */
   distinct?: Prisma.IntrastatCommodityCodeScalarFieldEnum | Prisma.IntrastatCommodityCodeScalarFieldEnum[]
 }
 

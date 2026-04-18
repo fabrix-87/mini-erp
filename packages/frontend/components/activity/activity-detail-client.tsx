@@ -44,7 +44,8 @@ import {
 import { toast } from "sonner";
 import { Activity } from "@/types/activitiy";
 import { deleteActivity } from "@/actions/activity";
-import { useBreadcrumbTitle } from "@/hooks/use-breadcrumb-title";
+import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
+import { formatDateIT } from "@/helpers/date";
 
 const activityTypeIcons: Record<string, any> = {
   CALL: Phone,
@@ -83,7 +84,7 @@ interface ActivityDetailClientProps {
 
 export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
 
-  useBreadcrumbTitle(activity.subject);
+  <BreadcrumbSetter items={[{ label: "Attività", href: "/activities" }, { label: activity.subject }]} />
 
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
@@ -100,17 +101,6 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
       toast.error("Errore durante l'eliminazione");
       setDeleting(false);
     }
-  };
-
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("it-IT", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
   };
 
   return (
@@ -224,16 +214,16 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
               <p className="text-sm font-medium text-muted-foreground">
                 Azienda
               </p>
-              <p className="text-base">{activity.Customer?.company?.companyName}</p>
+              <p className="text-base">{activity.customer?.company?.companyName}</p>
             </div>
 
-            {activity.Contact && (
+            {activity.contact && (
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
                   Contatto
                 </p>
                 <p className="text-base">
-                  {activity.Contact.firstName} {activity.Contact.lastName}
+                  {activity.contact.firstName} {activity.contact.lastName}
                 </p>
               </div>
             )}
@@ -264,7 +254,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
               </p>
               <p className="text-base flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                {formatDateTime(activity.scheduledStart)}
+                {formatDateIT(activity.scheduledStart)}
               </p>
             </div>
 
@@ -275,7 +265,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
                 </p>
                 <p className="text-base flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  {formatDateTime(activity.scheduledEnd)}
+                  {formatDateIT(activity.scheduledEnd)}
                 </p>
               </div>
             )}
@@ -376,11 +366,11 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
           <div className="grid gap-4 md:grid-cols-3 text-sm">
             <div>
               <p className="text-muted-foreground">Creata il</p>
-              <p>{formatDateTime(activity.createdAt)}</p>
+              <p>{formatDateIT(activity.createdAt)}</p>
             </div>
             <div>
               <p className="text-muted-foreground">Ultimo aggiornamento</p>
-              <p>{formatDateTime(activity.updatedAt)}</p>
+              <p>{formatDateIT(activity.updatedAt)}</p>
             </div>
             <div>
               <p className="text-muted-foreground">ID Attività</p>
