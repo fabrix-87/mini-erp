@@ -51,6 +51,10 @@ export function ActivityCalendar() {
   const { data: activitiesData, isLoading } = useActivities({
     startDate: startOfMonth(currentMonth).toISOString(),
     endDate: endOfMonth(currentMonth).toISOString(),
+    page: 1,
+    limit: 100,
+    sortBy: "scheduledStart",
+    sortOrder: "asc",
   });
 
   const activities = activitiesData?.data || [];
@@ -99,21 +103,13 @@ export function ActivityCalendar() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => handleMonthChange(-1)}
-            >
+            <Button variant="outline" size="icon" onClick={() => handleMonthChange(-1)}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <CardTitle className="text-lg">
               {format(currentMonth, "MMMM yyyy", { locale: it })}
             </CardTitle>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => handleMonthChange(1)}
-            >
+            <Button variant="outline" size="icon" onClick={() => handleMonthChange(1)}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -141,9 +137,7 @@ export function ActivityCalendar() {
           <div className="mt-4 space-y-2">
             <div className="flex items-center gap-2 text-sm">
               <div className="h-3 w-3 rounded-full bg-primary/10 border-2 border-primary/30"></div>
-              <span className="text-muted-foreground">
-                Giorni con attività
-              </span>
+              <span className="text-muted-foreground">Giorni con attività</span>
             </div>
           </div>
         </CardContent>
@@ -154,9 +148,7 @@ export function ActivityCalendar() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>
-                {format(selectedDate, "EEEE d MMMM yyyy", { locale: it })}
-              </CardTitle>
+              <CardTitle>{format(selectedDate, "EEEE d MMMM yyyy", { locale: it })}</CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
                 {selectedDayActivities.length === 0
                   ? "Nessuna attività programmata"
@@ -171,17 +163,11 @@ export function ActivityCalendar() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">
-              Caricamento...
-            </div>
+            <div className="text-center py-8 text-muted-foreground">Caricamento...</div>
           ) : selectedDayActivities.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <p>Nessuna attività per questo giorno.</p>
-              <Button
-                variant="link"
-                onClick={handleNewActivity}
-                className="mt-2"
-              >
+              <Button variant="link" onClick={handleNewActivity} className="mt-2">
                 Crea la prima attività
               </Button>
             </div>
@@ -190,8 +176,7 @@ export function ActivityCalendar() {
               {selectedDayActivities
                 .sort(
                   (a, b) =>
-                    new Date(a.scheduledStart).getTime() -
-                    new Date(b.scheduledStart).getTime()
+                    new Date(a.scheduledStart).getTime() - new Date(b.scheduledStart).getTime(),
                 )
                 .map((activity) => (
                   <div
@@ -206,10 +191,7 @@ export function ActivityCalendar() {
                         {/* Orario e Tipo */}
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <span className="font-medium">
-                            {format(
-                              new Date(activity.scheduledStart),
-                              "HH:mm"
-                            )}
+                            {format(new Date(activity.scheduledStart), "HH:mm")}
                           </span>
                           <span>•</span>
                           <Badge variant="outline" className="text-xs">
@@ -224,40 +206,44 @@ export function ActivityCalendar() {
                         </div>
 
                         {/* Soggetto */}
-                        <h4 className="font-semibold">{activity.Customer?.company.companyName} • {activity.subject}</h4>
+                        <h4 className="font-semibold">
+                          {activity.customer
+                            ? activity.customer.company.companyName
+                            : activity.lead?.companyName}{" "}
+                          • {activity.subject}
+                        </h4>
 
                         {/* Cliente */}
-                        {activity.Customer && (
+                        {activity.customer && (
                           <p className="text-sm text-muted-foreground">
-                            {activity.Customer.company.companyName}
+                            {activity.customer.company.companyName}
                           </p>
                         )}
 
                         {/* Contatto */}
-                        {activity.Contact && (
+                        {activity.contact && (
                           <p className="text-sm text-muted-foreground">
-                            👤 {activity.Contact.firstName}{" "}
-                            {activity.Contact.lastName}
+                            👤 {activity.contact.firstName} {activity.contact.lastName}
+                          </p>
+                        )}
+                        {activity.lead && (
+                          <p className="text-sm text-muted-foreground">
+                            👤 {activity.lead.contactFirstName} {activity.lead.contactLastName}
                           </p>
                         )}
 
                         {/* Location (se presente) */}
                         {activity.location && (
-                          <p className="text-sm text-muted-foreground">
-                            📍 {activity.location}
-                          </p>
+                          <p className="text-sm text-muted-foreground">📍 {activity.location}</p>
                         )}
                       </div>
 
                       {/* Status e Priorità */}
                       <div className="flex flex-col gap-2 items-end">
-                        <Badge className={statusColors[activity.status]}>
-                          {activity.status}
-                        </Badge>
+                        <Badge className={statusColors[activity.status]}>{activity.status}</Badge>
                         <Badge
                           variant={
-                            activity.priority === "URGENT" ||
-                            activity.priority === "HIGH"
+                            activity.priority === "URGENT" || activity.priority === "HIGH"
                               ? "destructive"
                               : "secondary"
                           }

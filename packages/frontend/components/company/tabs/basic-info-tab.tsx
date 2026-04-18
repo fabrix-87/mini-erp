@@ -17,14 +17,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CompanyFormData, CompanyType } from "@/types/company";
+import { CompanyFormData } from "@/types/company";
 import { CountryCombobox } from "@/components/ui/country-combobox";
+import { CompanyTypeEntity } from "@mini-erp/shared";
 
 interface BasicInfoTabProps {
   formData: CompanyFormData;
   onChange: (field: keyof CompanyFormData, value: any) => void;
   onNestedChange: (parent: string, field: string, value: any) => void;
-  companyType: CompanyType;
+  companyType: CompanyTypeEntity;
 }
 
 export function BasicInfoTab({

@@ -7,6 +7,7 @@ import { Activity, ActivityFormData } from "@/types/activitiy";
 import { ApiResponse } from "@/types/api";
 import { ServerApiError } from "@/types/server-client";
 import { activityRevalidation } from "@/lib/server/revalidate";
+import { UpdateActivityInput } from "@mini-erp/shared";
 
 interface ActionResponse<T = void> {
   success: boolean;
@@ -22,16 +23,17 @@ interface ActionResponse<T = void> {
  * Server Action — Create activity (generic)
  */
 export async function createActivity(
-  activityData: Partial<Activity> | ActivityFormData
+  activityData: Partial<Activity> | ActivityFormData,
 ): Promise<ActionResponse<Activity>> {
   try {
-    const response = await serverApi.post<ApiResponse<Activity>>(
-      "/activities",
-      activityData,
-      { unwrapData: false }
-    );
+    const response = await serverApi.post<ApiResponse<Activity>>("/activities", activityData, {
+      unwrapData: false,
+    });
 
     activityRevalidation.list();
+    if (activityData.leadId) {
+      activityRevalidation.forLead(Number(activityData.leadId));
+    }
 
     return { success: true, data: response.data };
   } catch (error) {
@@ -48,13 +50,13 @@ export async function createActivity(
  */
 export async function createLeadActivity(
   leadId: number,
-  activityData: Partial<Activity> | ActivityFormData
+  activityData: Partial<Activity> | ActivityFormData,
 ): Promise<ActionResponse<Activity>> {
   try {
     const response = await serverApi.post<ApiResponse<Activity>>(
       "/activities",
       { ...activityData, leadId },
-      { unwrapData: false }
+      { unwrapData: false },
     );
 
     activityRevalidation.list();
@@ -67,21 +69,19 @@ export async function createLeadActivity(
     }
     return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
   }
-} 
+}
 
 /**
  * Server Action to update an existing activity
  */
 export async function updateActivity(
   id: number,
-  activityData: Partial<Activity> | Partial<ActivityFormData>
+  activityData: UpdateActivityInput,
 ): Promise<ActionResponse<Activity>> {
   try {
-    const response = await serverApi.put<ApiResponse<Activity>>(
-      `/activities/${id}`,
-      activityData,
-      { unwrapData: false }
-    );
+    const response = await serverApi.put<ApiResponse<Activity>>(`/activities/${id}`, activityData, {
+      unwrapData: false,
+    });
 
     // Revalidate relevant paths
     revalidatePath("/activities");
@@ -95,7 +95,7 @@ export async function updateActivity(
     };
   } catch (error) {
     console.error("Error updating activity:", error);
-    
+
     if (error instanceof ServerApiError) {
       return {
         success: false,
@@ -103,7 +103,7 @@ export async function updateActivity(
         errors: error.details,
       };
     }
-    
+
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -114,9 +114,7 @@ export async function updateActivity(
 /**
  * Server Action to delete an activity
  */
-export async function deleteActivity(
-  id: number
-): Promise<ActionResponse> {
+export async function deleteActivity(id: number): Promise<ActionResponse> {
   try {
     await serverApi.delete(`/activities/${id}`);
 
@@ -129,7 +127,7 @@ export async function deleteActivity(
     };
   } catch (error) {
     console.error("Error deleting activity:", error);
-    
+
     if (error instanceof ServerApiError) {
       return {
         success: false,
@@ -137,7 +135,7 @@ export async function deleteActivity(
         errors: error.details,
       };
     }
-    
+
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -150,13 +148,13 @@ export async function deleteActivity(
  */
 export async function updateActivityStatus(
   id: number,
-  status: Activity["status"]
+  status: Activity["status"],
 ): Promise<ActionResponse<Activity>> {
   try {
     const response = await serverApi.patch<ApiResponse<Activity>>(
       `/activities/${id}/status`,
       { status },
-      { unwrapData: false }
+      { unwrapData: false },
     );
 
     // Revalidate relevant paths
@@ -171,7 +169,7 @@ export async function updateActivityStatus(
     };
   } catch (error) {
     console.error("Error updating activity status:", error);
-    
+
     if (error instanceof ServerApiError) {
       return {
         success: false,
@@ -179,7 +177,7 @@ export async function updateActivityStatus(
         errors: error.details,
       };
     }
-    
+
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -192,7 +190,7 @@ export async function updateActivityStatus(
  */
 export async function bulkUpdateActivities(
   ids: number[],
-  updateData: Partial<Activity>
+  updateData: Partial<Activity>,
 ): Promise<ActionResponse> {
   try {
     await serverApi.patch("/activities/bulk-update", {
@@ -209,7 +207,7 @@ export async function bulkUpdateActivities(
     };
   } catch (error) {
     console.error("Error bulk updating activities:", error);
-    
+
     if (error instanceof ServerApiError) {
       return {
         success: false,
@@ -217,7 +215,7 @@ export async function bulkUpdateActivities(
         errors: error.details,
       };
     }
-    
+
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -231,7 +229,7 @@ export async function bulkUpdateActivities(
 export async function completeActivity(
   id: number,
   outcome?: string,
-  outcomeNotes?: string
+  outcomeNotes?: string,
 ): Promise<ActionResponse<Activity>> {
   try {
     const response = await serverApi.patch<ApiResponse<Activity>>(
@@ -242,7 +240,7 @@ export async function completeActivity(
         outcome,
         outcomeNotes,
       },
-      { unwrapData: false }
+      { unwrapData: false },
     );
 
     // Revalidate relevant paths
@@ -257,7 +255,7 @@ export async function completeActivity(
     };
   } catch (error) {
     console.error("Error completing activity:", error);
-    
+
     if (error instanceof ServerApiError) {
       return {
         success: false,
@@ -265,7 +263,7 @@ export async function completeActivity(
         errors: error.details,
       };
     }
-    
+
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

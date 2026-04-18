@@ -56,6 +56,11 @@ export const participantStatusSchema = z.enum([
   "no_show",
 ]);
 
+export const activitySortFieldsSchema = z.enum([
+  "scheduledStart",
+  "priority"
+])
+
 export const participantRoleSchema = z.enum(["organizer", "required", "optional"]);
 
 // ============================================================================
@@ -167,7 +172,7 @@ export const activityQuerySchema = z
     hasFollowUpActivity: queryBooleanSchema,
     myActivities: queryBooleanSchema, // Solo le mie attività
 
-    sortBy: z.string().default("scheduledStart"),
+    sortBy: activitySortFieldsSchema.default("scheduledStart"),
     sortOrder: sortOrderSchema,
   })
   .partial({

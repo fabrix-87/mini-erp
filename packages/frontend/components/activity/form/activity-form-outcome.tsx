@@ -93,38 +93,6 @@ export function ActivityFormOutcome({
           )}
         </CardContent>
       </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Follow-up</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="requiresFollowUp"
-              checked={formData.requiresFollowUp}
-              onCheckedChange={(checked) =>
-                onChange("requiresFollowUp", checked)
-              }
-            />
-            <Label htmlFor="requiresFollowUp">
-              Richiede attività di follow-up
-            </Label>
-          </div>
-
-          {formData.requiresFollowUp && (
-            <div className="space-y-2 pl-6">
-              <Label htmlFor="followUpDate">Data Follow-up Suggerita</Label>
-              <Input
-                id="followUpDate"
-                type="date"
-                value={formData.followUpDate}
-                onChange={(e) => onChange("followUpDate", e.target.value)}
-              />
-            </div>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 }

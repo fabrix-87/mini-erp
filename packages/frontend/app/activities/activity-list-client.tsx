@@ -18,7 +18,6 @@ export function ActivityListClient() {
     page: 1,
     limit: 20,
     overdue: false,
-    requiresFollowUp: false,
     myActivities: false,
     sortBy: "scheduledStart",
     sortOrder: "asc",
@@ -77,6 +76,12 @@ export function ActivityListClient() {
                     {activity.customer && (
                       <p className="text-sm text-muted-foreground">
                         {activity.customer.company.companyName}
+                      </p>
+                    )}
+
+                    {activity.lead && (
+                      <p className="text-sm text-muted-foreground">
+                        {activity.lead.companyName} - {activity.lead.contactFirstName} {activity.lead.contactLastName} 
                       </p>
                     )}
                     

@@ -128,6 +128,17 @@ export const getAllActivities = asyncHandler(
               },
             },
           },
+          lead: {
+            select: {
+              code: true,
+              companyName: true,
+              contactFirstName: true,
+              contactLastName: true,
+              contactEmail: true,
+              contactPhone: true,
+              contactMobile: true,
+            },
+          },
           contact: {
             select: {
               id: true,
@@ -205,6 +216,7 @@ export const getActivityById = asyncHandler(
       include: {
         company: { include: { country: true } },
         customer: { include: { company: { include: { country: true } } } },
+        lead: true,
         contact: true,
         opportunity: true,
         assignedUser: {

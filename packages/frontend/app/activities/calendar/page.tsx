@@ -1,7 +1,5 @@
 // app/activities/calendar/page.tsx
-import { Suspense } from "react";
 import { ActivityCalendar } from "@/components/activity/calendar/activity-calendar";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ActivityCalendarPage() {
   return (
@@ -13,18 +11,9 @@ export default function ActivityCalendarPage() {
         </p>
       </div>
 
-      <Suspense fallback={<CalendarSkeleton />}>
-        <ActivityCalendar />
-      </Suspense>
+      <ActivityCalendar />
     </div>
   );
 }
 
-function CalendarSkeleton() {
-  return (
-    <div className="grid gap-6 lg:grid-cols-[350px_1fr]">
-      <Skeleton className="h-[400px]" />
-      <Skeleton className="h-[600px]" />
-    </div>
-  );
-}
+

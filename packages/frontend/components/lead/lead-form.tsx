@@ -6,13 +6,24 @@ import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Loader2, Building2, User, MapPin, TrendingUp, ShieldCheck, Megaphone } from "lucide-react";
 import {
-  Loader2, Building2, User, MapPin, TrendingUp,
-  ShieldCheck, Megaphone,
-} from "lucide-react";
-import { CreateLeadFormInput, createLeadSchema, Lead, UpdateLeadFormInput, updateLeadSchema } from "@mini-erp/shared";
+  CreateLeadFormInput,
+  createLeadSchema,
+  Lead,
+  UpdateLeadFormInput,
+  updateLeadSchema,
+} from "@mini-erp/shared";
 import { createLeadAction, updateLeadAction } from "@/actions/lead";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Input } from "../ui/input";
@@ -22,64 +33,65 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
 import { toDateInput } from "@/helpers/date";
+import { CountryCombobox } from "../ui/country-combobox";
 
 // ============================================================================
 // Constants
 // ============================================================================
 
 const STATUS_OPTIONS = [
-  { value: "NEW",         label: "Nuovo" },
-  { value: "CONTACTED",   label: "Contattato" },
-  { value: "QUALIFIED",   label: "Qualificato" },
+  { value: "NEW", label: "Nuovo" },
+  { value: "CONTACTED", label: "Contattato" },
+  { value: "QUALIFIED", label: "Qualificato" },
   { value: "UNQUALIFIED", label: "Non qualificato" },
-  { value: "NURTURING",   label: "Nurturing" },
-  { value: "LOST",        label: "Perso" },
-  { value: "ARCHIVED",    label: "Archiviato" },
+  { value: "NURTURING", label: "Nurturing" },
+  { value: "LOST", label: "Perso" },
+  { value: "ARCHIVED", label: "Archiviato" },
 ] as const;
 
 const SOURCE_OPTIONS = [
-  { value: "WEBSITE",         label: "Website" },
-  { value: "REFERRAL",        label: "Referral" },
-  { value: "SOCIAL_MEDIA",    label: "Social Media" },
-  { value: "EMAIL_CAMPAIGN",  label: "Email Campaign" },
-  { value: "PHONE_CALL",      label: "Telefono" },
-  { value: "COLD_CALL",       label: "Cold Call" },
-  { value: "EVENT",           label: "Evento" },
-  { value: "PARTNER",         label: "Partner" },
-  { value: "ADVERTISING",     label: "Pubblicità" },
-  { value: "CONTENT",         label: "Contenuto" },
-  { value: "DIRECT",          label: "Diretto" },
-  { value: "CHAT",            label: "Chat" },
-  { value: "OTHER",           label: "Altro" },
+  { value: "WEBSITE", label: "Website" },
+  { value: "REFERRAL", label: "Referral" },
+  { value: "SOCIAL_MEDIA", label: "Social Media" },
+  { value: "EMAIL_CAMPAIGN", label: "Email Campaign" },
+  { value: "PHONE_CALL", label: "Telefono" },
+  { value: "COLD_CALL", label: "Cold Call" },
+  { value: "EVENT", label: "Evento" },
+  { value: "PARTNER", label: "Partner" },
+  { value: "ADVERTISING", label: "Pubblicità" },
+  { value: "CONTENT", label: "Contenuto" },
+  { value: "DIRECT", label: "Diretto" },
+  { value: "CHAT", label: "Chat" },
+  { value: "OTHER", label: "Altro" },
 ] as const;
 
 const QUALITY_OPTIONS = [
-  { value: "HOT",  label: "🔥 Hot" },
+  { value: "HOT", label: "🔥 Hot" },
   { value: "WARM", label: "♨️ Warm" },
   { value: "COLD", label: "❄️ Cold" },
 ] as const;
 
 const SIZE_OPTIONS = [
-  { value: "MICRO",      label: "Micro (1-9)" },
-  { value: "SMALL",      label: "Piccola (10-49)" },
-  { value: "MEDIUM",     label: "Media (50-249)" },
-  { value: "LARGE",      label: "Grande (250-999)" },
+  { value: "MICRO", label: "Micro (1-9)" },
+  { value: "SMALL", label: "Piccola (10-49)" },
+  { value: "MEDIUM", label: "Media (50-249)" },
+  { value: "LARGE", label: "Grande (250-999)" },
   { value: "ENTERPRISE", label: "Enterprise (1000+)" },
 ] as const;
 
 const TIMEFRAME_OPTIONS = [
-  { value: "IMMEDIATE",      label: "Immediato" },
-  { value: "1_3_MONTHS",     label: "1-3 mesi" },
-  { value: "3_6_MONTHS",     label: "3-6 mesi" },
-  { value: "6_12_MONTHS",    label: "6-12 mesi" },
+  { value: "IMMEDIATE", label: "Immediato" },
+  { value: "1_3_MONTHS", label: "1-3 mesi" },
+  { value: "3_6_MONTHS", label: "3-6 mesi" },
+  { value: "6_12_MONTHS", label: "6-12 mesi" },
   { value: "12_PLUS_MONTHS", label: "Oltre 12 mesi" },
 ] as const;
 
 const AUTHORITY_OPTIONS = [
   { value: "DECISION_MAKER", label: "Decision Maker" },
-  { value: "INFLUENCER",     label: "Influencer" },
-  { value: "GATEKEEPER",     label: "Gatekeeper" },
-  { value: "USER",           label: "User" },
+  { value: "INFLUENCER", label: "Influencer" },
+  { value: "GATEKEEPER", label: "Gatekeeper" },
+  { value: "USER", label: "User" },
 ] as const;
 
 // ============================================================================
@@ -94,7 +106,6 @@ const AUTHORITY_OPTIONS = [
 
 type LeadFormMode = "create" | "edit";
 type LeadFormValues = CreateLeadFormInput & Partial<UpdateLeadFormInput>;
-
 
 interface LeadFormProps {
   mode: LeadFormMode;
@@ -112,10 +123,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
   // Pick the right schema at runtime — both are compatible with LeadFormValues
   // because updateLeadSchema is .partial() of the same shape, and
   // createLeadSchema adds only .refine() on top.
-  const schema = useMemo(
-    () => (isEdit ? updateLeadSchema : createLeadSchema),
-    [isEdit]
-  );
+  const schema = useMemo(() => (isEdit ? updateLeadSchema : createLeadSchema), [isEdit]);
 
   const form = useForm<LeadFormValues>({
     resolver: zodResolver(schema) as Resolver<LeadFormValues>,
@@ -159,7 +167,6 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
       competitors: lead?.competitors ?? "",
       notes: lead?.notes ?? "",
       description: lead?.description ?? "",
-      nextFollowUpDate: toDateInput(lead?.nextFollowUpDate),
       // GDPR
       privacyConsent: lead?.privacyConsent ?? false,
       privacyConsentDate: toDateInput(lead?.privacyConsentDate),
@@ -306,9 +313,12 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                       <FormItem>
                         <FormLabel>Paese</FormLabel>
                         <FormControl>
-                          <Input placeholder="IT" maxLength={2} {...field} value={field.value ?? ""} />
+                           <CountryCombobox
+                            value={field.value ?? ""}
+                            onValueChange={field.onChange}
+                            disabled={isPending}
+                          />
                         </FormControl>
-                        <FormDescription>Codice ISO 2 lettere</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -338,7 +348,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                 <Separator />
 
                 {/* Lead management */}
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-4">
                   <FormField
                     control={form.control}
                     name="status"
@@ -411,9 +421,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                       </FormItem>
                     )}
                   />
-                </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="score"
@@ -428,19 +436,6 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             {...field}
                             onChange={(e) => field.onChange(Number(e.target.value))}
                           />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="nextFollowUpDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Prossimo follow-up</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} value={field.value ?? ""} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -737,7 +732,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             step="0.01"
                             placeholder="50000"
                             {...field}
-                            value={String(field.value) ?? ''}
+                            value={String(field.value) ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -757,7 +752,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             step="0.01"
                             placeholder="30000"
                             {...field}
-                            value={String(field.value) ?? ''}
+                            value={String(field.value) ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -779,7 +774,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             min={0}
                             step="0.01"
                             {...field}
-                            value={String(field.value) ?? ''}
+                            value={String(field.value) ?? ""}
                           />
                         </FormControl>
                         <FormMessage />

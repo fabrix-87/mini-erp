@@ -19,15 +19,10 @@ import {
   CheckCircle2,
   MessageSquare,
   Smartphone,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -46,6 +41,7 @@ import { Activity } from "@/types/activitiy";
 import { deleteActivity } from "@/actions/activity";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
 import { formatDateIT } from "@/helpers/date";
+import Link from "next/link";
 
 const activityTypeIcons: Record<string, any> = {
   CALL: Phone,
@@ -83,8 +79,9 @@ interface ActivityDetailClientProps {
 }
 
 export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
-
-  <BreadcrumbSetter items={[{ label: "Attività", href: "/activities" }, { label: activity.subject }]} />
+  <BreadcrumbSetter
+    items={[{ label: "Attività", href: "/activities" }, { label: activity.subject }]}
+  />;
 
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
@@ -108,25 +105,16 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/activities")}
-          >
+          <Button variant="ghost" size="icon" onClick={() => router.push("/activities")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
             <h1 className="text-3xl font-bold">{activity.subject}</h1>
-            <p className="text-muted-foreground">
-              Dettagli dell'attività #{activity.id}
-            </p>
+            <p className="text-muted-foreground">Dettagli dell'attività #{activity.id}</p>
           </div>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => router.push(`/activities/${activity.id}/edit`)}
-          >
+          <Button variant="outline" onClick={() => router.push(`/activities/${activity.id}/edit`)}>
             <Edit className="mr-2 h-4 w-4" />
             Modifica
           </Button>
@@ -141,8 +129,8 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
               <AlertDialogHeader>
                 <AlertDialogTitle>Conferma eliminazione</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Sei sicuro di voler eliminare questa attività? L'operazione
-                  non può essere annullata.
+                  Sei sicuro di voler eliminare questa attività? L'operazione non può essere
+                  annullata.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -177,9 +165,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
               <Badge className={statusColors[activity.status]}>
                 {statusLabels[activity.status]}
               </Badge>
-              <Badge variant="outline">
-                Priorità: {activity.priority}
-              </Badge>
+              <Badge variant="outline">Priorità: {activity.priority}</Badge>
             </div>
           </div>
         </CardContent>
@@ -193,17 +179,13 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Oggetto
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Oggetto</p>
               <p className="text-base">{activity.subject}</p>
             </div>
 
             {activity.description && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Descrizione
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Descrizione</p>
                 <p className="text-base">{activity.description}</p>
               </div>
             )}
@@ -211,28 +193,43 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
             <Separator />
 
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Azienda
-              </p>
-              <p className="text-base">{activity.customer?.company?.companyName}</p>
+              <p className="text-sm font-medium text-muted-foreground">Azienda</p>
+              {activity.customer && (
+                <p className="text-base">{activity.customer?.company?.companyName}</p>
+              )}
+              {activity.lead && (
+                <p className="text-base">
+                  <Link
+                    href={`/leads/${activity.leadId}`}
+                    className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
+                  >
+                    {activity.lead.companyName} <ExternalLink className="h-3.5 w-3.5" />
+                  </Link>
+                </p>
+              )}
             </div>
 
             {activity.contact && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Contatto
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Contatto</p>
                 <p className="text-base">
-                  {activity.contact.firstName} {activity.contact.lastName}
+                  👤 {activity.contact.firstName} {activity.contact.lastName}
+                </p>
+              </div>
+            )}
+
+            {activity.lead && (
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Contatto</p>
+                <p className="text-base">
+                  👤 {activity.lead.contactFirstName} {activity.lead?.contactLastName}
                 </p>
               </div>
             )}
 
             {activity.location && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Luogo
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Luogo</p>
                 <p className="text-base flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
                   {activity.location}
@@ -249,9 +246,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Data e Ora Inizio
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Data e Ora Inizio</p>
               <p className="text-base flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 {formatDateIT(activity.scheduledStart)}
@@ -260,9 +255,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
 
             {activity.scheduledEnd && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Data e Ora Fine
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Data e Ora Fine</p>
                 <p className="text-base flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   {formatDateIT(activity.scheduledEnd)}
@@ -272,9 +265,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
 
             {activity.duration && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Durata
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Durata</p>
                 <p className="text-base flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   {activity.duration} minuti
@@ -284,9 +275,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
 
             {activity.reminderMinutes && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Promemoria
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Promemoria</p>
                 <p className="text-base flex items-center gap-2">
                   <AlertCircle className="h-4 w-4" />
                   {activity.reminderMinutes} minuti prima
@@ -305,9 +294,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
             <CardContent className="space-y-4">
               {activity.outcome && (
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Esito
-                  </p>
+                  <p className="text-sm font-medium text-muted-foreground">Esito</p>
                   <Badge variant="outline" className="mt-1">
                     {activity.outcome}
                   </Badge>
@@ -316,24 +303,18 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
 
               {activity.result && (
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Note sul Risultato
-                  </p>
+                  <p className="text-sm font-medium text-muted-foreground">Note sul Risultato</p>
                   <p className="text-base mt-1">{activity.result}</p>
                 </div>
               )}
 
-              {activity.requiresFollowUp && (
+              {activity.followUpActivity && (
                 <div className="flex items-center gap-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                   <AlertCircle className="h-4 w-4 text-yellow-700" />
-                  <span className="text-sm font-medium text-yellow-700">
-                    Richiede Follow-up
-                  </span>
-                  {activity.followUpDate && (
+                  <span className="text-sm font-medium text-yellow-700">Richiede Follow-up</span>
+                  {activity.followUpActivity.scheduledStart && (
                     <span className="text-sm text-muted-foreground ml-auto">
-                      {new Date(activity.followUpDate).toLocaleDateString(
-                        "it-IT"
-                      )}
+                      {formatDateIT(activity.followUpActivity.scheduledStart)}
                     </span>
                   )}
                 </div>
@@ -349,9 +330,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
               <CardTitle>Note Interne</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-base whitespace-pre-wrap">
-                {activity.internalNotes}
-              </p>
+              <p className="text-base whitespace-pre-wrap">{activity.internalNotes}</p>
             </CardContent>
           </Card>
         )}

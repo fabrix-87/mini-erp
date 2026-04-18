@@ -73,8 +73,8 @@ export default async function LeadDetailPage({ params }: Props) {
                 <LeadQualityBadge quality={lead.quality} />
               </div>
               <p className="text-sm text-muted-foreground">
-                {lead.code} · Lead dal {formatDateIT(lead.createdAt)} · {daysSince(lead.createdAt)} giorni
-                nel pipeline
+                {lead.code} · Lead dal {formatDateIT(lead.createdAt)} · {daysSince(lead.createdAt)}{" "}
+                giorni nel pipeline
               </p>
             </div>
           </div>
@@ -105,13 +105,17 @@ export default async function LeadDetailPage({ params }: Props) {
               {lead.lastContactDate && (
                 <p>
                   Ultimo contatto{" "}
-                  <span className="font-medium text-foreground">{formatDateIT(lead.lastContactDate)}</span>
+                  <span className="font-medium text-foreground">
+                    {formatDateIT(lead.lastContactDate)}
+                  </span>
                 </p>
               )}
               {lead.activities && (
                 <p>
                   Prossimo follow-up{" "}
-                  <span className="font-medium text-foreground">{formatDateIT(lead.activities[0]?.scheduledStart)}</span>
+                  <span className="font-medium text-foreground">
+                    {formatDateIT(lead.activities[0]?.scheduledStart)}
+                  </span>
                 </p>
               )}
             </div>
@@ -408,9 +412,7 @@ export default async function LeadDetailPage({ params }: Props) {
 
           {/* Activities */}
           <TabsContent value="activities" className="mt-4">
-            <Card>
-              <LeadActivityList leadId={lead.id} activities={lead.activities} />
-            </Card>
+            <LeadActivityList leadId={lead.id} activities={lead.activities} />
           </TabsContent>
         </Tabs>
       </div>
@@ -450,7 +452,9 @@ function ConsentRow({
         <Badge variant={value ? "default" : "outline"}>
           {value ? "✓ Accordato" : "Non accordato"}
         </Badge>
-        {value && date && <span className="text-xs text-muted-foreground">{formatDateIT(date)}</span>}
+        {value && date && (
+          <span className="text-xs text-muted-foreground">{formatDateIT(date)}</span>
+        )}
       </div>
     </div>
   );

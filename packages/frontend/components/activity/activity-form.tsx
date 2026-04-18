@@ -38,7 +38,7 @@ export function ActivityForm({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("basic");
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   const {
     formData,
@@ -84,25 +84,22 @@ export function ActivityForm({
           outcome: formData.outcome || undefined,
           result: formData.result || undefined,
           internalNotes: formData.internalNotes || undefined,
-          assignedUserId: user?.id || 0
+          assignedUserId: user?.id || 0,
         } as Partial<Activity>;
 
         let result;
         if (isEditMode && activity) {
-          result = await updateActivity(activity.id, payload);
+          const { assignedUserId, ...cleanPayload } = payload;
+          result = await updateActivity(activity.id, cleanPayload);
         } else {
           result = await createActivity(payload);
         }
 
         if (result.success) {
           toast.success(
-            isEditMode
-              ? "Attività aggiornata con successo"
-              : "Attività creata con successo"
+            isEditMode ? "Attività aggiornata con successo" : "Attività creata con successo",
           );
-          router.push(
-            isEditMode ? `/activities/${activity!.id}` : "/activities"
-          );
+          router.push(isEditMode ? `/activities/${activity!.id}` : "/activities");
         } else {
           toast.error(result.error || "Errore durante il salvataggio");
         }
@@ -120,10 +117,7 @@ export function ActivityForm({
         onCancel={() => router.back()}
       />
 
-      <ActivityStatusBadge
-        status={formData.status}
-        priority={formData.priority}
-      />
+      <ActivityStatusBadge status={formData.status} priority={formData.priority} />
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-4">
@@ -164,13 +158,9 @@ export function ActivityForm({
         <Button type="button" variant="outline" onClick={() => router.back()}>
           Annulla
         </Button>
-        <Button type="submit" disabled={isPending || !formData.customerId}>
+        <Button type="submit" disabled={isPending || (!formData.customerId && !formData.leadId)}>
           <Save className="mr-2 h-4 w-4" />
-          {isPending
-            ? "Salvataggio..."
-            : isEditMode
-            ? "Aggiorna"
-            : "Crea Attività"}
+          {isPending ? "Salvataggio..." : isEditMode ? "Aggiorna" : "Crea Attività"}
         </Button>
       </div>
     </form>

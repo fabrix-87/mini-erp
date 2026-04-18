@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang='it' suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <link rel='icon' href='/favicon.svg' type='image/svg+xml' />
         <meta name="theme-color" content="#5d87ff" />

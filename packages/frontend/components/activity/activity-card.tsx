@@ -16,6 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Activity } from "@/types/activitiy";
 import { cn } from "@/lib/utils";
+import { formatDateIT } from "@/helpers/date";
 
 const activityTypeIcons: Record<string, any> = {
   CALL: Phone,
@@ -80,21 +81,7 @@ export function ActivityCard({ activity, onClick }: ActivityCardProps) {
     activity.status === "SCHEDULED" &&
     new Date(activity.scheduledStart) < new Date();
 
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return {
-      date: date.toLocaleDateString("it-IT", {
-        day: "2-digit",
-        month: "short",
-      }),
-      time: date.toLocaleTimeString("it-IT", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
-  };
-
-  const datetime = formatDateTime(activity.scheduledStart);
+  const datetime = formatDateIT(activity.scheduledStart);
 
   return (
     <div
@@ -106,7 +93,7 @@ export function ActivityCard({ activity, onClick }: ActivityCardProps) {
       onClick={onClick}
     >
       {/* Icon & Date */}
-      <div className="flex flex-col items-center gap-1 min-w-[60px]">
+      <div className="flex flex-col items-center gap-1 min-w-15">
         <div
           className={cn(
             "h-10 w-10 rounded-lg flex items-center justify-center",
@@ -115,8 +102,8 @@ export function ActivityCard({ activity, onClick }: ActivityCardProps) {
         >
           <Icon className="h-5 w-5" />
         </div>
-        <div className="text-xs font-medium text-center">{datetime.date}</div>
-        <div className="text-xs text-muted-foreground">{datetime.time}</div>
+        <div className="text-xs font-medium text-center">{datetime}</div>
+        <div className="text-xs text-muted-foreground">{datetime}</div>
       </div>
 
       {/* Content */}
@@ -147,18 +134,29 @@ export function ActivityCard({ activity, onClick }: ActivityCardProps) {
         )}
 
         <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Users className="h-3.5 w-3.5" />
-            <span className="truncate max-w-[200px]">
-              {activity.Customer?.company.companyName}
-            </span>
-          </div>
+          {activity.customer && (
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Users className="h-3.5 w-3.5" />
+              <span className="truncate max-w-50">
+                {activity.customer.company.companyName}
+              </span>
+            </div>
+          )}
 
-          {activity.Contact && (
+          {activity.lead && (
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Users className="h-3.5 w-3.5" />
+              <span className="truncate max-w-50">
+                {activity.lead.companyName}
+              </span>
+            </div>
+          )}
+
+          {activity.contact && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
               •
               <span className="truncate">
-                {activity.Contact.firstName} {activity.Contact.lastName}
+                {activity.contact.firstName} {activity.contact.lastName}
               </span>
             </div>
           )}
@@ -166,7 +164,7 @@ export function ActivityCard({ activity, onClick }: ActivityCardProps) {
           {activity.location && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <MapPin className="h-3.5 w-3.5" />
-              <span className="truncate max-w-[150px]">{activity.location}</span>
+              <span className="truncate max-w-37.5">{activity.location}</span>
             </div>
           )}
 
