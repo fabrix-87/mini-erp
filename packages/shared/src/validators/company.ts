@@ -1,10 +1,6 @@
 import { z } from "zod";
 
-import {
-  countryCodeBaseSchema,
-  inputJsonValueSchema,
-  userIdSchema,
-} from "./base";
+import { countryCodeBaseSchema, inputJsonValueSchema, userIdSchema } from "./base";
 import { createIdSchema } from "./primitives/id";
 import {
   eoriNumberSchema,
@@ -15,22 +11,14 @@ import {
 } from "./business/italian-codes";
 import { emailSchema, phoneSchema } from "./primitives/string";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
+import { createAddressSchema } from "./address";
 
 // ============================================================================
 // ENUMS - Shared across all company types
 // ============================================================================
 
-export const companyStatusSchema = z.enum([
-  "ACTIVE",
-  "INACTIVE",
-  "SUSPENDED",
-  "ARCHIVED",
-]);
-export const companyTypeEntitySchema = z.enum([
-  "JURIDICAL",
-  "NATURAL",
-  "FOREIGN",
-]);
+export const companyStatusSchema = z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "ARCHIVED"]);
+export const companyTypeEntitySchema = z.enum(["JURIDICAL", "NATURAL", "FOREIGN"]);
 
 /**
  * Schema base ID Company
@@ -61,51 +49,30 @@ export const companyIdSchema = z.object({
  * Refinements are applied separately only where needed (create).
  */
 const baseCompanyShape = z.object({
-  code: z
-    .string()
-    .min(1, "Il codice è obbligatorio")
-    .max(20, "Il codice non può superare 20 caratteri")
-    .trim()
-    .optional(),
-
   companyName: z
     .string()
     .min(1, "Il nome dell'azienda è obbligatorio")
     .max(255, "Il nome non può superare 255 caratteri")
     .trim(),
 
-  tradeName: z
-    .string()
-    .max(255, "Trade name non può superare 255 caratteri")
-    .optional()
-    .nullable(),
+  tradeName: z.string().max(255, "Trade name non può superare 255 caratteri").optional().nullable(),
 
-  legalForm: z
-    .string()
-    .max(100, "Legal form non può superare 100 caratteri")
-    .optional()
-    .nullable(),
+  legalForm: z.string().max(100, "Legal form non può superare 100 caratteri").optional().nullable(),
 
-  status:     companyStatusSchema.default("ACTIVE"),
+  status: companyStatusSchema.default("ACTIVE"),
   entityType: companyTypeEntitySchema.default("JURIDICAL"),
-
-  legalAddressId: createIdSchema("LegalAddressId non valido")
-    .optional()
-    .nullable(),
 
   // ===== Dati Fiscali ITALIANI =====
   vatNumber: vatNumberSchema(),
-  taxCode:   fiscalCodeSchema(),
-  sdiCode:   sdiCodeSchema(),
-  pec:       emailSchema().optional().nullable(),
+  taxCode: fiscalCodeSchema(),
+  sdiCode: sdiCodeSchema(),
+  pec: emailSchema().optional().nullable(),
 
   // ===== Dati Fiscali ESTERI =====
-  vatId:       internationalVatIdSchema(),
-  eoriNumber:  eoriNumberSchema(),
+  vatId: internationalVatIdSchema(),
+  eoriNumber: eoriNumberSchema(),
 
-  taxRegime:       z.string().max(20).optional().nullable(),
-  vatExempt:       z.boolean().default(false),
-  vatExemptReason: z.string().max(100).optional().nullable(),
+  taxRegime: z.string().max(20).optional().nullable(),
 
   // ===== Nazione =====
   countryCode: countryCodeBaseSchema.default("IT"),
@@ -120,6 +87,9 @@ const baseCompanyShape = z.object({
   // ===== Campi Custom =====
   customFields: inputJsonValueSchema.optional().nullable(),
   openingHours: inputJsonValueSchema.optional().nullable(),
+
+  // supporto per nested addresses al momento della creazione
+  addresses: z.array(createAddressSchema.omit({ companyId: true })).optional(),
 });
 
 // ============================================================================
@@ -127,22 +97,54 @@ const baseCompanyShape = z.object({
 // ============================================================================
 
 const EU_COUNTRY_CODES = [
-  "AT", "BE", "BG", "HR", "CY", "CZ", "DE", "DK", "EE",
-  "EL", "GR", "ES", "FI", "FR", "HU", "IE", "LT", "LU",
-  "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK",
+  "AT",
+  "BE",
+  "BG",
+  "HR",
+  "CY",
+  "CZ",
+  "DE",
+  "DK",
+  "EE",
+  "EL",
+  "GR",
+  "ES",
+  "FI",
+  "FR",
+  "HU",
+  "IE",
+  "LT",
+  "LU",
+  "LV",
+  "MT",
+  "NL",
+  "PL",
+  "PT",
+  "RO",
+  "SE",
+  "SI",
+  "SK",
 ] as const;
 
 /**
- * Full schema for Company creation — includes fiscal validation refinements.
- * Cannot be used with .partial() due to Zod v4 restrictions.
+ * Schema base senza validazioni fiscali obbligatorie.
+ * Usato per la creazione rapida (es. preventivi, prospect).
+ * I dati fiscali possono essere completati in seguito.
  */
-export const baseCompanySchema = baseCompanyShape
+export const baseCompanySchema = baseCompanyShape.strict();
+
+/**
+ * Schema completo con validazioni fiscali obbligatorie.
+ * Da usare quando il contesto richiede dati fiscali completi
+ * (es. emissione fattura, ordine confermato).
+ */
+export const strictCompanySchema = baseCompanyShape
   .refine(
     (data) => {
       if (data.countryCode === "IT") {
         return data.entityType === "JURIDICAL" ? !!data.vatNumber : !!data.taxCode;
       }
-      if (EU_COUNTRY_CODES.includes(data.countryCode as typeof EU_COUNTRY_CODES[number])) {
+      if (EU_COUNTRY_CODES.includes(data.countryCode as (typeof EU_COUNTRY_CODES)[number])) {
         return !!data.vatId;
       }
       // Extra-EU
@@ -150,7 +152,7 @@ export const baseCompanySchema = baseCompanyShape
     },
     {
       message: "Dati fiscali obbligatori mancanti",
-      path:    ["vatNumber"],
+      path: ["vatNumber"],
     },
   )
   .refine(
@@ -162,7 +164,7 @@ export const baseCompanySchema = baseCompanyShape
     },
     {
       message: "PEC obbligatoria per SDI 0000000",
-      path:    ["pec"],
+      path: ["pec"],
     },
   )
   .strict();
@@ -201,5 +203,4 @@ export const createCompanyNoteSchema = z.object({
 /**
  * Schema per Aggiornamento note
  */
-export const updateCompanyNoteSchema =
-  createCompanyNoteSchema.omit("companyId");
+export const updateCompanyNoteSchema = createCompanyNoteSchema.omit("companyId");

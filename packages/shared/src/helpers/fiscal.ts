@@ -4,6 +4,8 @@
 // Can be used in both frontend and backend
 // ============================================================================
 
+import Decimal from "decimal.js";
+
 /**
  * Validate Italian VAT number (Partita IVA)
  */
@@ -54,4 +56,17 @@ export const formatItalianVAT = (vatNumber: string): string => {
  */
 export const formatItalianTaxCode = (taxCode: string): string => {
   return taxCode.toUpperCase().replace(/\s/g, "");
+};
+
+/**
+ * Determines if a company is VAT exempt based on its assigned TaxRule.
+ * Exemption is derived from the tax rule (rate = 0 + vatNature) rather
+ * than stored as a flag on the company itself.
+ */
+export const isVatExempt = (taxRule?: {
+  rate: Decimal;
+  vatNatureId: number | null;
+}): boolean => {
+  if (!taxRule) return false;
+  return Number(taxRule.rate) === 0 && taxRule.vatNatureId !== null;
 };

@@ -1,19 +1,19 @@
 import { Response, NextFunction } from "express";
 import {
-  buildSupplierWhereClause,  
+  buildSupplierWhereClause,
   getSupplierInclude,
   generateCompanyCode,
 } from "../helpers/company";
 
-import {
-  calculateSupplierStats,
-  validateFiscalData,
-} from "../utils/company";
-import { formatPaginatedResponse } from "../utils/response";
-import { AuthenticatedValidatedRequest } from '@/types/validate';
+import { calculateSupplierStats, validateFiscalData } from "../utils/company";
+import { formatPaginatedResponse, sendFail, sendSuccess } from "../utils/response";
+import { AuthenticatedValidatedRequest } from "@/types/validate";
 
 import { prisma } from "../config/prisma-client";
 import { buildPagination } from "@/utils/query";
+import asyncHandler from "@/middleware/async-handler";
+import { SupplierIdParam, UpdateSupplierCompanyInput, UpdateSupplierInput } from "@mini-erp/shared";
+import { Prisma } from "@/generated/prisma/client";
 
 // ============================================================================
 // SUPPLIER CONTROLLERS
@@ -24,35 +24,25 @@ import { buildPagination } from "@/utils/query";
  * @route   GET /api/suppliers
  * @access  Private (supplier:read)
  */
-export const getAllSuppliers = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { page = 1, limit = 10, ...filters } = req.query;
+export const getAllSuppliers = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
+  const { page = 1, limit = 10, ...filters } = req.query;
 
-    const where = buildSupplierWhereClause(filters as any);
-    const { skip, take } = buildPagination(Number(page), Number(limit));
+  const where = buildSupplierWhereClause(filters as any);
+  const { skip, take } = buildPagination(Number(page), Number(limit));
 
-    const [suppliers, total] = await Promise.all([
-      prisma.supplier.findMany({
-        where,
-        skip,
-        take,
-        include: getSupplierInclude(false),
-        orderBy: { id: "desc" },
-      }),
-      prisma.supplier.count({ where }),
-    ]);
+  const [suppliers, total] = await Promise.all([
+    prisma.supplier.findMany({
+      where,
+      skip,
+      take,
+      include: getSupplierInclude(false),
+      orderBy: { id: "desc" },
+    }),
+    prisma.supplier.count({ where }),
+  ]);
 
-    res.json(
-      formatPaginatedResponse(suppliers, total, Number(page), Number(limit))
-    );
-  } catch (error) {
-    next(error);
-  }
-};
+  res.json(formatPaginatedResponse(suppliers, total, Number(page), Number(limit)));
+});
 
 /**
  * @desc    Ottieni supplier per ID
@@ -62,7 +52,7 @@ export const getAllSuppliers = async (
 export const getSupplierById = async (
   req: AuthenticatedValidatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { id } = req.validatedParams;
@@ -102,15 +92,13 @@ export const getSupplierById = async (
 export const createSupplier = async (
   req: AuthenticatedValidatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { company: companyData, ...supplierData } = req.validatedBody;
 
-    // Genera codice company se non fornito
-    if (!companyData.code) {
-      companyData.code = await generateCompanyCode(prisma, "SUP");
-    }
+    // Genera codice company
+    companyData.code = await generateCompanyCode(prisma, "SUP");
 
     // Valida dati fiscali
     const fiscalValidation = validateFiscalData({
@@ -183,129 +171,135 @@ export const createSupplier = async (
  * @route   PUT /api/suppliers/:id
  * @access  Private (supplier:update)
  */
-export const updateSupplier = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const data = req.validatedBody;
+export const updateSupplier = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
+  const { id } = req.validatedParams as SupplierIdParam;
+  const data = req.validatedBody as UpdateSupplierInput;
 
-    const existing = await prisma.supplier.findUnique({
-      where: { id: parseInt(id) },
+  const existing = await prisma.supplier.findUnique({
+    where: { id },
+  });
+
+  if (!existing) {
+    sendFail(res, {
+      statusCode: 404,
+      message: "Supplier non trovato",
+    });
+    return;
+  }
+
+  const supplier = await prisma.supplier.update({
+    where: { id },
+    data,
+    include: getSupplierInclude(true),
+  });
+
+  sendSuccess(res, supplier, {
+    message: "Supplier aggiornato con successo",
+  });
+});
+
+/**
+ * @desc    Valida i dati fiscali della company del supplier
+ * @route   POST /api/suppliers/:id/validate-fiscal
+ * @access  Private (supplier:read)
+ */
+export const validateSupplierFiscal = asyncHandler<AuthenticatedValidatedRequest>(
+  async (req, res) => {
+    const { id } = req.validatedParams as SupplierIdParam;
+
+    const supplier = await prisma.supplier.findUnique({
+      where: { id },
+      include: { company: true },
     });
 
-    if (!existing) {
-      res.status(404).json({
-        success: false,
-        message: "Supplier non trovato",
-      });
+    if (!supplier) {
+      sendFail(res, { statusCode: 404, message: "Supplier non trovato" });
       return;
     }
 
-    const supplier = await prisma.supplier.update({
-      where: { id: parseInt(id) },
-      data,
-      include: getSupplierInclude(true),
+    const fiscalValidation = validateFiscalData({
+      entityType: supplier.company.entityType,
+      countryCode: supplier.company.countryCode,
+      vatNumber: supplier.company.vatNumber,
+      taxCode: supplier.company.taxCode,
+      sdiCode: supplier.company.sdiCode,
+      pec: supplier.company.pec,
     });
 
-    res.json({
-      success: true,
-      message: "Supplier aggiornato con successo",
-      data: supplier,
+    sendSuccess(res, {
+      valid: fiscalValidation.valid,
+      errors: fiscalValidation.errors ?? [],
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Aggiorna company del supplier
  * @route   PUT /api/suppliers/:id/company
  * @access  Private (supplier:update)
  */
-export const updateSupplierCompany = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
-    const companyData = req.validatedBody;
+export const updateSupplierCompany = asyncHandler<AuthenticatedValidatedRequest>(
+  async (req, res) => {
+    const { id } = req.validatedParams as SupplierIdParam;
+    const companyData = req.validatedBody as UpdateSupplierCompanyInput;
 
     const supplier = await prisma.supplier.findUnique({
-      where: { id: parseInt(id) },
-      include: { company: true },
+      where: { id },
     });
 
     if (!supplier) {
-      res.status(404).json({
-        success: false,
+      sendFail(res, {
+        statusCode: 404,
         message: "Supplier non trovato",
       });
       return;
     }
+    const { addresses: addressesData, ...companyScalarData } = companyData;
 
-    // Valida dati fiscali se modificati
-    if (
-      companyData.entityType ||
-      companyData.countryCode ||
-      companyData.vatNumber ||
-      companyData.taxCode ||
-      companyData.sdiCode ||
-      companyData.pec
-    ) {
-      const fiscalValidation = validateFiscalData({
-        entityType: companyData.entityType || supplier.company.entityType,
-        countryCode: companyData.countryCode || supplier.company.countryCode,
-        vatNumber:
-          companyData.vatNumber !== undefined
-            ? companyData.vatNumber
-            : supplier.company.vatNumber,
-        taxCode:
-          companyData.taxCode !== undefined
-            ? companyData.taxCode
-            : supplier.company.taxCode,
-        sdiCode:
-          companyData.sdiCode !== undefined
-            ? companyData.sdiCode
-            : supplier.company.sdiCode,
-        pec:
-          companyData.pec !== undefined
-            ? companyData.pec
-            : supplier.company.pec,
+    const updatedSupplier = await prisma.$transaction(async (tx) => {
+      await tx.company.update({
+        where: { id: supplier.companyId },
+        data: companyScalarData as Prisma.CompanyUpdateInput,
       });
 
-      if (!fiscalValidation.valid) {
-        res.status(400).json({
-          success: false,
-          message: "Dati fiscali non validi",
-          errors: fiscalValidation.errors,
+      if (addressesData && addressesData.length > 0) {
+        const legalAddressData = addressesData[0];
+
+        const existingLegal = await tx.companyAddress.findFirst({
+          where: {
+            companyId: supplier.companyId,
+            isLegal: true,
+          },
         });
-        return;
+
+        if (existingLegal) {
+          await tx.companyAddress.update({
+            where: { id: existingLegal.id },
+            data: legalAddressData,
+          });
+        } else {
+          await tx.companyAddress.create({
+            data: {
+              ...legalAddressData,
+              companyId: supplier.companyId,
+              isLegal: true,
+              isPrimary: true,
+              addressType: "LEGAL",
+            },
+          });
+        }
       }
-    }
 
-    const updatedSupplier = await prisma.supplier.update({
-      where: { id: parseInt(id) },
-      data: {
-        company: {
-          update: companyData,
-        },
-      },
-      include: getSupplierInclude(true),
+      return tx.supplier.findUnique({
+        where: { id },
+        include: getSupplierInclude(true),
+      });
     });
-
-    res.json({
-      success: true,
-      message: "Company aggiornata con successo",
-      data: updatedSupplier,
+    sendSuccess(res, updatedSupplier, {
+      message: "Supplier Company aggiornata con successo",
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Aggiorna rating supplier
@@ -315,7 +309,7 @@ export const updateSupplierCompany = async (
 export const updateSupplierRating = async (
   req: AuthenticatedValidatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { id } = req.validatedParams;
@@ -369,7 +363,7 @@ export const updateSupplierRating = async (
 export const getSupplierStats = async (
   req: AuthenticatedValidatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { id } = req.validatedParams;
@@ -471,7 +465,7 @@ export const getSupplierStats = async (
 export const deleteSupplier = async (
   req: AuthenticatedValidatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { id } = req.validatedParams;
@@ -496,8 +490,7 @@ export const deleteSupplier = async (
       return;
     }
 
-    const totalRelations =
-      supplier._count.documentsIn + supplier._count.products;
+    const totalRelations = supplier._count.documentsIn + supplier._count.products;
 
     if (totalRelations > 0) {
       res.status(400).json({

@@ -100,10 +100,6 @@ model Company {
     // Regime fiscale
     taxRegime String? @db.VarChar(20) // "ordinario", "semplificato", "forfettario"
 
-    // Esenzione IVA
-    vatExempt       Boolean @default(false)
-    vatExemptReason String? @db.VarChar(100) // Riferimento normativo Art. X
-
     // Contatti Generali
     mainEmail String? @db.VarChar(255)
     mainPhone String? @db.VarChar(50)

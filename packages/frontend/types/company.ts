@@ -1,5 +1,4 @@
-import { Address } from "./address";
-import { CompanyStatus, CompanyEntityType } from "./company";
+import { CompanyAddressInput, CompanyStatus, CompanyTypeEntity, Decimal } from "@mini-erp/shared";
 import {
   CreditCheckStatus,
   CustomerPriority,
@@ -8,12 +7,7 @@ import {
   LeadStatus,
 } from "./customer";
 
-export type {
-  CompanyQueryInput,
-  CompanyStatus,
-  CompanyEntityType,
-  Company
-} from "@mini-erp/shared/types";
+export type { CompanyQueryInput, Company } from "@mini-erp/shared/types";
 
 // Form data (used in the form component)
 export interface CompanyFormData {
@@ -21,7 +15,7 @@ export interface CompanyFormData {
   companyName: string;
   tradeName?: string;
   legalForm?: string;
-  entityType: CompanyEntityType;
+  entityType: CompanyTypeEntity;
   status: CompanyStatus;
 
   // Fiscal data
@@ -38,8 +32,7 @@ export interface CompanyFormData {
   mainPhone?: string;
 
   // Legal address
-  legalAddressId?: number;
-  legalAddress?: Partial<Address>;
+  legalAddress?: CompanyAddressInput;
 
   // Customer specific
   priority?: CustomerPriority;
@@ -47,7 +40,7 @@ export interface CompanyFormData {
   leadStatus?: LeadStatus;
   size?: CustomerSize;
   creditStatus?: CreditCheckStatus;
-  creditLimit: number;
+  creditLimit: number | Decimal;
 
   // Supplier specific
   paymentTerms?: string;
@@ -63,3 +56,5 @@ export interface CompanyFormData {
   // Metadata
   customFields?: any;
 }
+
+export type CompanyType = "CUSTOMER" | "SUPPLIER";

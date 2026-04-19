@@ -18,6 +18,7 @@ import {
   updateSupplierRating,
   getSupplierStats,
   deleteSupplier,
+  validateSupplierFiscal,
 } from '../controllers/supplier';
 
 const router = express.Router();
@@ -119,6 +120,19 @@ router.delete(
   authorize(['supplier:delete', 'supplier:manage']),
   validateSupplierId,
   deleteSupplier
+);
+
+/**
+ * @desc    Valida i dati fiscali della company del supplier
+ * @route   POST /api/suppliers/:id/validate-fiscal
+ * @access  Private (supplier:read)
+ */
+router.post(
+  '/:id/validate-fiscal',
+  authenticateToken,
+  authorize(['supplier:read', 'supplier:manage']),
+  validateSupplierId,
+  validateSupplierFiscal
 );
 
 /**

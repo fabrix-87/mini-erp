@@ -1,6 +1,6 @@
-import { AddressType } from "@mini-erp/shared";
+
 import { prisma as prismaGlobal } from "../config/prisma-client";
-import { Prisma, PrismaClient } from "../generated/prisma/client";
+import { AddressType, Prisma, PrismaClient } from "../generated/prisma/client";
 
 import {
   CompanyFilters,
@@ -105,8 +105,19 @@ export const getCompanyBaseInclude = (includeRelations = true) => {
     country: {
       select: { code: true, name: true, isEU: true },
     },
-    legalAddress: {
+    /**
+     * Returns the legal address (isLegal flag) or falls back
+     * to the primary LEGAL-type address for the company.
+     */
+    addresses: {
+      where: {
+        OR: [
+          { isLegal: true },
+          { addressType: AddressType.LEGAL, isPrimary: true },
+        ],
+      },
       include: { country: true },
+      take: 1,
     },
     user: {
       select: {

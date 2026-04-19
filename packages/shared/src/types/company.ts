@@ -30,7 +30,7 @@ import { CompanyStatus, CompanyTypeEntity } from "../constants";
 /**
  * Company entity (base for Customer and Supplier)
  */
-export type Company = Omit<CreateCompanyInput, "code"> & {
+export type Company = CreateCompanyInput & {
   id: number;
   code: string;
   country: Country;

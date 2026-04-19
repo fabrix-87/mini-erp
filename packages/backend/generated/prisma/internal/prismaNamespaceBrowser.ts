@@ -362,8 +362,6 @@ export const CompanyScalarFieldEnum = {
   vatId: 'vatId',
   countryCode: 'countryCode',
   taxRegime: 'taxRegime',
-  vatExempt: 'vatExempt',
-  vatExemptReason: 'vatExemptReason',
   mainEmail: 'mainEmail',
   mainPhone: 'mainPhone',
   createdAt: 'createdAt',

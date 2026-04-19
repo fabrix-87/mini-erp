@@ -135,7 +135,7 @@ export function LeadActivitySheet({
     onOpenChange(nextOpen);
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     startTransition(async () => {
@@ -168,7 +168,7 @@ export function LeadActivitySheet({
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+      <SheetContent className="w-full sm:max-w-lg overflow-y-auto px-5">
         <SheetHeader>
           <SheetTitle>Nuova Attività</SheetTitle>
           <SheetDescription>

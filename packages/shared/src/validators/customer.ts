@@ -51,8 +51,11 @@ export const customerSizeSchema = z.enum([
 ]);
 
 /**
- * Schema per la creazione di un Customer
- * Estende BaseCompanySchema con dati CRM specifici
+ * Schema per la creazione di un Customer.
+ * Estende BaseCompanySchema con dati CRM specifici.
+ * I dati fiscali della company NON sono obbligatori in questa fase:
+ * possono essere completati in seguito tramite updateCustomerCompany.
+ * La validazione fiscale completa avviene alla conferma dell'ordine.
  */
 export const createCustomerSchema = z
   .object({

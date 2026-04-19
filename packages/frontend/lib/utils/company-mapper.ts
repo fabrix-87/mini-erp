@@ -7,12 +7,10 @@ import { Supplier } from "@/types/supplier";
 /**
  * Mappa i dati API (Customer o Supplier) al formato del form
  */
-export function mapApiToForm(
-  data: Customer | Supplier,
-  type: CompanyType
-): CompanyFormData {
-  // Accedi ai dati company nested
-  const company = (data as any).company;
+export function mapApiToForm(data: Customer | Supplier, type: CompanyType): CompanyFormData {
+  const company = data.company;
+
+  const legalAddress = company.addresses?.find((a) => a.isLegal) ?? company.addresses?.[0];
 
   const baseData: CompanyFormData = {
     companyName: company?.companyName || "",
@@ -30,7 +28,6 @@ export function mapApiToForm(
     mainEmail: company?.mainEmail || "",
     mainPhone: company?.mainPhone || "",
     customFields: company?.customFields,
-    legalAddressId: company?.legalAddressId,
     creditLimit: company?.creditLimit || 0,
   };
 
@@ -52,13 +49,11 @@ export function mapApiToForm(
       ...baseData,
       priority: customer.priority || "MEDIUM",
       segment: customer.segment || "STANDARD",
-      leadStatus: customer.leadStatus || "NEW",
       size: customer.size || "SMALL",
-      type: customer.type || "LEAD",
       creditStatus: customer.creditStatus || "PENDING",
       creditLimit: customer.creditLimit || 0,
       totalSales: customer.totalSales || 0,
-      totalRevenue: customer.totalRevenue || "0",
+      totalRevenue: customer.totalRevenue.toString() || "0",
     };
   } else {
     const supplier = data as Supplier;
@@ -69,7 +64,7 @@ export function mapApiToForm(
       rating: supplier.rating || 5,
       creditLimit: supplier.creditLimit || 0,
       totalOrders: supplier.totalOrders || 0,
-      totalSpent: supplier.totalSpent || "0",
+      totalSpent: supplier.totalSpent.toString() || "0",
     };
   }
 }
@@ -94,7 +89,6 @@ export function extractCompanyData(data: CompanyFormData) {
     mainEmail: data.mainEmail,
     mainPhone: data.mainPhone,
     customFields: data.customFields,
-    legalAddressId: data.legalAddressId,
   };
 }
 
@@ -107,7 +101,6 @@ export function extractCustomerData(data: CompanyFormData) {
     segment: data.segment,
     leadStatus: data.leadStatus,
     size: data.size,
-    type: data.type,
     creditStatus: data.creditStatus,
     creditLimit: data.creditLimit,
   };
@@ -130,7 +123,7 @@ export function extractSupplierData(data: CompanyFormData) {
  */
 export function mapFormToCreateApi(
   data: CompanyFormData,
-  type: CompanyType
+  type: CompanyType,
 ): Partial<Customer | Supplier> {
   const companyData = extractCompanyData(data);
 

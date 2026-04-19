@@ -16,6 +16,7 @@ import {
   updateCustomerCompany,
   getCustomerStats,
   deleteCustomer,
+  validateCustomerFiscal,
 } from '../controllers/customer';
 
 const router = express.Router();
@@ -116,6 +117,19 @@ router.get(
   authorize(['customer:read', 'customer:manage']),
   validateCustomerId,
   getCustomerById
+);
+
+/**
+ * @desc    Valida i dati fiscali della company del customer
+ * @route   POST /api/customers/:id/validate-fiscal
+ * @access  Private (customer:read)
+ */
+router.get(
+  '/:id',
+  authenticateToken,
+  authorize(['customer:read', 'customer:manage']),
+  validateCustomerId,
+  validateCustomerFiscal
 );
 
 

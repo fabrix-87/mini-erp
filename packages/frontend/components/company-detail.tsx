@@ -26,34 +26,40 @@ import {
 import { useState } from "react";
 import { useCustomer, useDeleteCustomer } from "@/hooks/use-company";
 import { useSupplier, useDeleteSupplier } from "@/hooks/use-company";
-import { CompanyType } from "@/types/company";
+
 import { CompanyDetailHeader } from "@/components/company/company-detail-header";
 import { CompanyDetailTabs } from "@/components/company/company-detail-tabs";
-import { useBreadcrumbTitle } from "@/hooks/use-breadcrumb-title";
+import { BreadcrumbSetter } from "./ui/breadcrumb-setter";
+import { CompanyType } from "@/types/company";
+import { BreadcrumbItem } from "@/lib/stores/breadcrumb-store";
 
 export default function CompanyDetailPage() {
   const router = useRouter();
   const params = useParams();
   const pathname = usePathname();
-  
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   // Determina il tipo dal path
-  const companyType: CompanyType = pathname.includes("/customers")
-    ? "CUSTOMER"
-    : "SUPPLIER";
-  
+  const companyType: CompanyType = pathname.includes("/customers") ? "CUSTOMER" : "SUPPLIER";
+
   const entityId = parseInt(params.id as string);
 
   // Fetch data basato sul tipo
   const customerQuery = useCustomer(entityId, companyType === "CUSTOMER");
   const supplierQuery = useSupplier(entityId, companyType === "SUPPLIER");
-  
-  const { data, isLoading, error } = companyType === "CUSTOMER" 
-    ? customerQuery 
-    : supplierQuery;
 
-  useBreadcrumbTitle(`${data?.data.company?.companyName} (${data?.data.company?.code})`);
+  const { data, isLoading, error } = companyType === "CUSTOMER" ? customerQuery : supplierQuery;
+
+  const breadcrumbItems: BreadcrumbItem[] = [
+    {
+      label: companyType === "CUSTOMER" ? "Clienti" : "Fornitori",
+      href: companyType === "CUSTOMER" ? "/customers" : "/suppliers",
+    },
+    {
+      label: data?.data.company.companyName || "",
+    },
+  ];
 
   // Delete mutations
   const deleteCustomerMutation = useDeleteCustomer();
@@ -85,9 +91,7 @@ export default function CompanyDetailPage() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-96">
-        <p className="text-lg text-muted-foreground mb-4">
-          Errore nel caricamento dei dati
-        </p>
+        <p className="text-lg text-muted-foreground mb-4">Errore nel caricamento dei dati</p>
         <Button onClick={() => router.back()}>Torna indietro</Button>
       </div>
     );
@@ -121,6 +125,7 @@ export default function CompanyDetailPage() {
 
   return (
     <div className="space-y-6">
+      <BreadcrumbSetter items={breadcrumbItems} />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -132,7 +137,7 @@ export default function CompanyDetailPage() {
               router.push(`/${path}`);
             }}
           >
-            <ArrowLeft className="h-4 w-4" /> 
+            <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
             <h1 className="text-3xl font-bold">{companyData?.company?.companyName}</h1>
@@ -148,12 +153,12 @@ export default function CompanyDetailPage() {
             <Plus className="mr-2 h-4 w-4" />
             Aggiungi Contatto
           </Button>
-          
+
           <Button onClick={handleEdit}>
             <Edit className="mr-2 h-4 w-4" />
             Modifica
           </Button>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
@@ -194,9 +199,8 @@ export default function CompanyDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Conferma eliminazione</AlertDialogTitle>
             <AlertDialogDescription>
-              Sei sicuro di voler eliminare{" "}
-              <strong>{companyData?.companyName}</strong>? Questa azione non può essere
-              annullata.
+              Sei sicuro di voler eliminare <strong>{companyData.company?.companyName}</strong>? Questa
+              azione non può essere annullata.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

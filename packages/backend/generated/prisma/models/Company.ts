@@ -56,8 +56,6 @@ export type CompanyMinAggregateOutputType = {
   vatId: string | null
   countryCode: string | null
   taxRegime: string | null
-  vatExempt: boolean | null
-  vatExemptReason: string | null
   mainEmail: string | null
   mainPhone: string | null
   createdAt: Date | null
@@ -84,8 +82,6 @@ export type CompanyMaxAggregateOutputType = {
   vatId: string | null
   countryCode: string | null
   taxRegime: string | null
-  vatExempt: boolean | null
-  vatExemptReason: string | null
   mainEmail: string | null
   mainPhone: string | null
   createdAt: Date | null
@@ -112,8 +108,6 @@ export type CompanyCountAggregateOutputType = {
   vatId: number
   countryCode: number
   taxRegime: number
-  vatExempt: number
-  vatExemptReason: number
   mainEmail: number
   mainPhone: number
   createdAt: number
@@ -158,8 +152,6 @@ export type CompanyMinAggregateInputType = {
   vatId?: true
   countryCode?: true
   taxRegime?: true
-  vatExempt?: true
-  vatExemptReason?: true
   mainEmail?: true
   mainPhone?: true
   createdAt?: true
@@ -186,8 +178,6 @@ export type CompanyMaxAggregateInputType = {
   vatId?: true
   countryCode?: true
   taxRegime?: true
-  vatExempt?: true
-  vatExemptReason?: true
   mainEmail?: true
   mainPhone?: true
   createdAt?: true
@@ -214,8 +204,6 @@ export type CompanyCountAggregateInputType = {
   vatId?: true
   countryCode?: true
   taxRegime?: true
-  vatExempt?: true
-  vatExemptReason?: true
   mainEmail?: true
   mainPhone?: true
   createdAt?: true
@@ -331,8 +319,6 @@ export type CompanyGroupByOutputType = {
   vatId: string | null
   countryCode: string
   taxRegime: string | null
-  vatExempt: boolean
-  vatExemptReason: string | null
   mainEmail: string | null
   mainPhone: string | null
   createdAt: Date
@@ -384,8 +370,6 @@ export type CompanyWhereInput = {
   vatId?: Prisma.StringNullableFilter<"Company"> | string | null
   countryCode?: Prisma.StringFilter<"Company"> | string
   taxRegime?: Prisma.StringNullableFilter<"Company"> | string | null
-  vatExempt?: Prisma.BoolFilter<"Company"> | boolean
-  vatExemptReason?: Prisma.StringNullableFilter<"Company"> | string | null
   mainEmail?: Prisma.StringNullableFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableFilter<"Company"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
@@ -424,8 +408,6 @@ export type CompanyOrderByWithRelationInput = {
   vatId?: Prisma.SortOrderInput | Prisma.SortOrder
   countryCode?: Prisma.SortOrder
   taxRegime?: Prisma.SortOrderInput | Prisma.SortOrder
-  vatExempt?: Prisma.SortOrder
-  vatExemptReason?: Prisma.SortOrderInput | Prisma.SortOrder
   mainEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   mainPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -467,8 +449,6 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   vatId?: Prisma.StringNullableFilter<"Company"> | string | null
   countryCode?: Prisma.StringFilter<"Company"> | string
   taxRegime?: Prisma.StringNullableFilter<"Company"> | string | null
-  vatExempt?: Prisma.BoolFilter<"Company"> | boolean
-  vatExemptReason?: Prisma.StringNullableFilter<"Company"> | string | null
   mainEmail?: Prisma.StringNullableFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableFilter<"Company"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
@@ -507,8 +487,6 @@ export type CompanyOrderByWithAggregationInput = {
   vatId?: Prisma.SortOrderInput | Prisma.SortOrder
   countryCode?: Prisma.SortOrder
   taxRegime?: Prisma.SortOrderInput | Prisma.SortOrder
-  vatExempt?: Prisma.SortOrder
-  vatExemptReason?: Prisma.SortOrderInput | Prisma.SortOrder
   mainEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   mainPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -545,8 +523,6 @@ export type CompanyScalarWhereWithAggregatesInput = {
   vatId?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   countryCode?: Prisma.StringWithAggregatesFilter<"Company"> | string
   taxRegime?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
-  vatExempt?: Prisma.BoolWithAggregatesFilter<"Company"> | boolean
-  vatExemptReason?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   mainEmail?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Company"> | Date | string
@@ -573,8 +549,6 @@ export type CompanyCreateInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -612,8 +586,6 @@ export type CompanyUncheckedCreateInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -648,8 +620,6 @@ export type CompanyUpdateInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -687,8 +657,6 @@ export type CompanyUncheckedUpdateInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -725,8 +693,6 @@ export type CompanyCreateManyInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -753,8 +719,6 @@ export type CompanyUpdateManyMutationInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -782,8 +746,6 @@ export type CompanyUncheckedUpdateManyInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -817,8 +779,6 @@ export type CompanyCountOrderByAggregateInput = {
   vatId?: Prisma.SortOrder
   countryCode?: Prisma.SortOrder
   taxRegime?: Prisma.SortOrder
-  vatExempt?: Prisma.SortOrder
-  vatExemptReason?: Prisma.SortOrder
   mainEmail?: Prisma.SortOrder
   mainPhone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -854,8 +814,6 @@ export type CompanyMaxOrderByAggregateInput = {
   vatId?: Prisma.SortOrder
   countryCode?: Prisma.SortOrder
   taxRegime?: Prisma.SortOrder
-  vatExempt?: Prisma.SortOrder
-  vatExemptReason?: Prisma.SortOrder
   mainEmail?: Prisma.SortOrder
   mainPhone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -882,8 +840,6 @@ export type CompanyMinOrderByAggregateInput = {
   vatId?: Prisma.SortOrder
   countryCode?: Prisma.SortOrder
   taxRegime?: Prisma.SortOrder
-  vatExempt?: Prisma.SortOrder
-  vatExemptReason?: Prisma.SortOrder
   mainEmail?: Prisma.SortOrder
   mainPhone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1146,8 +1102,6 @@ export type CompanyCreateWithoutActivitiesInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1184,8 +1138,6 @@ export type CompanyUncheckedCreateWithoutActivitiesInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1235,8 +1187,6 @@ export type CompanyUpdateWithoutActivitiesInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1273,8 +1223,6 @@ export type CompanyUncheckedUpdateWithoutActivitiesInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1308,8 +1256,6 @@ export type CompanyCreateWithoutCustomersInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1346,8 +1292,6 @@ export type CompanyUncheckedCreateWithoutCustomersInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1397,8 +1341,6 @@ export type CompanyUpdateWithoutCustomersInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1435,8 +1377,6 @@ export type CompanyUncheckedUpdateWithoutCustomersInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1470,8 +1410,6 @@ export type CompanyCreateWithoutSuppliersInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1508,8 +1446,6 @@ export type CompanyUncheckedCreateWithoutSuppliersInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1559,8 +1495,6 @@ export type CompanyUpdateWithoutSuppliersInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1597,8 +1531,6 @@ export type CompanyUncheckedUpdateWithoutSuppliersInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1632,8 +1564,6 @@ export type CompanyCreateWithoutAddressesInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1670,8 +1600,6 @@ export type CompanyUncheckedCreateWithoutAddressesInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1721,8 +1649,6 @@ export type CompanyUpdateWithoutAddressesInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1759,8 +1685,6 @@ export type CompanyUncheckedUpdateWithoutAddressesInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1794,8 +1718,6 @@ export type CompanyCreateWithoutContactsInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1832,8 +1754,6 @@ export type CompanyUncheckedCreateWithoutContactsInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1883,8 +1803,6 @@ export type CompanyUpdateWithoutContactsInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1921,8 +1839,6 @@ export type CompanyUncheckedUpdateWithoutContactsInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1956,8 +1872,6 @@ export type CompanyCreateWithoutNotesInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -1994,8 +1908,6 @@ export type CompanyUncheckedCreateWithoutNotesInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2045,8 +1957,6 @@ export type CompanyUpdateWithoutNotesInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2083,8 +1993,6 @@ export type CompanyUncheckedUpdateWithoutNotesInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2118,8 +2026,6 @@ export type CompanyCreateWithoutCountryInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2155,8 +2061,6 @@ export type CompanyUncheckedCreateWithoutCountryInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2222,8 +2126,6 @@ export type CompanyScalarWhereInput = {
   vatId?: Prisma.StringNullableFilter<"Company"> | string | null
   countryCode?: Prisma.StringFilter<"Company"> | string
   taxRegime?: Prisma.StringNullableFilter<"Company"> | string | null
-  vatExempt?: Prisma.BoolFilter<"Company"> | boolean
-  vatExemptReason?: Prisma.StringNullableFilter<"Company"> | string | null
   mainEmail?: Prisma.StringNullableFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableFilter<"Company"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
@@ -2250,8 +2152,6 @@ export type CompanyCreateWithoutDocumentsInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2288,8 +2188,6 @@ export type CompanyUncheckedCreateWithoutDocumentsInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2339,8 +2237,6 @@ export type CompanyUpdateWithoutDocumentsInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2377,8 +2273,6 @@ export type CompanyUncheckedUpdateWithoutDocumentsInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2412,8 +2306,6 @@ export type CompanyCreateWithoutTenantsInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2450,8 +2342,6 @@ export type CompanyUncheckedCreateWithoutTenantsInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2501,8 +2391,6 @@ export type CompanyUpdateWithoutTenantsInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2539,8 +2427,6 @@ export type CompanyUncheckedUpdateWithoutTenantsInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2574,8 +2460,6 @@ export type CompanyCreateWithoutUserInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2612,8 +2496,6 @@ export type CompanyUncheckedCreateWithoutUserInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2674,8 +2556,6 @@ export type CompanyCreateManyCountryInput = {
   eoriNumber?: string | null
   vatId?: string | null
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2702,8 +2582,6 @@ export type CompanyUpdateWithoutCountryInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2739,8 +2617,6 @@ export type CompanyUncheckedUpdateWithoutCountryInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2776,8 +2652,6 @@ export type CompanyUncheckedUpdateManyWithoutCountryInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2806,8 +2680,6 @@ export type CompanyCreateManyUserInput = {
   vatId?: string | null
   countryCode?: string
   taxRegime?: string | null
-  vatExempt?: boolean
-  vatExemptReason?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
   createdAt?: Date | string
@@ -2833,8 +2705,6 @@ export type CompanyUpdateWithoutUserInput = {
   eoriNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2871,8 +2741,6 @@ export type CompanyUncheckedUpdateWithoutUserInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2908,8 +2776,6 @@ export type CompanyUncheckedUpdateManyWithoutUserInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   taxRegime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vatExempt?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  vatExemptReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3031,8 +2897,6 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   vatId?: boolean
   countryCode?: boolean
   taxRegime?: boolean
-  vatExempt?: boolean
-  vatExemptReason?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
   createdAt?: boolean
@@ -3072,8 +2936,6 @@ export type CompanySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   vatId?: boolean
   countryCode?: boolean
   taxRegime?: boolean
-  vatExempt?: boolean
-  vatExemptReason?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
   createdAt?: boolean
@@ -3104,8 +2966,6 @@ export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   vatId?: boolean
   countryCode?: boolean
   taxRegime?: boolean
-  vatExempt?: boolean
-  vatExemptReason?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
   createdAt?: boolean
@@ -3136,8 +2996,6 @@ export type CompanySelectScalar = {
   vatId?: boolean
   countryCode?: boolean
   taxRegime?: boolean
-  vatExempt?: boolean
-  vatExemptReason?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
   createdAt?: boolean
@@ -3150,7 +3008,7 @@ export type CompanySelectScalar = {
   openingHours?: boolean
 }
 
-export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "companyName" | "tradeName" | "legalForm" | "status" | "entityType" | "vatNumber" | "taxCode" | "sdiCode" | "pec" | "eoriNumber" | "vatId" | "countryCode" | "taxRegime" | "vatExempt" | "vatExemptReason" | "mainEmail" | "mainPhone" | "createdAt" | "updatedAt" | "firstOrderDate" | "totalOrders" | "totalRevenue" | "assignedUserId" | "customFields" | "openingHours", ExtArgs["result"]["company"]>
+export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "companyName" | "tradeName" | "legalForm" | "status" | "entityType" | "vatNumber" | "taxCode" | "sdiCode" | "pec" | "eoriNumber" | "vatId" | "countryCode" | "taxRegime" | "mainEmail" | "mainPhone" | "createdAt" | "updatedAt" | "firstOrderDate" | "totalOrders" | "totalRevenue" | "assignedUserId" | "customFields" | "openingHours", ExtArgs["result"]["company"]>
 export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Company$userArgs<ExtArgs>
@@ -3203,8 +3061,6 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     vatId: string | null
     countryCode: string
     taxRegime: string | null
-    vatExempt: boolean
-    vatExemptReason: string | null
     mainEmail: string | null
     mainPhone: string | null
     createdAt: Date
@@ -3663,8 +3519,6 @@ export interface CompanyFieldRefs {
   readonly vatId: Prisma.FieldRef<"Company", 'String'>
   readonly countryCode: Prisma.FieldRef<"Company", 'String'>
   readonly taxRegime: Prisma.FieldRef<"Company", 'String'>
-  readonly vatExempt: Prisma.FieldRef<"Company", 'Boolean'>
-  readonly vatExemptReason: Prisma.FieldRef<"Company", 'String'>
   readonly mainEmail: Prisma.FieldRef<"Company", 'String'>
   readonly mainPhone: Prisma.FieldRef<"Company", 'String'>
   readonly createdAt: Prisma.FieldRef<"Company", 'DateTime'>
