@@ -127,6 +127,11 @@ export type CompanyAddress = Prisma.CompanyAddressModel
  */
 export type Contact = Prisma.ContactModel
 /**
+ * Model CompanyContact
+ * 
+ */
+export type CompanyContact = Prisma.CompanyContactModel
+/**
  * Model CompanyNote
  * 
  */

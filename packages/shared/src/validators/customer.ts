@@ -62,6 +62,9 @@ export const createCustomerSchema = z
     // Nested Company (usa il base schema)
     company: baseCompanySchema,
 
+    // parent customer (Hierarchy)
+    parentCustomerId: createIdSchema("Parent Customer ID non valido").optional().nullable(),
+
     // ===== Dati CRM Specifici Customer =====
     priority: customerPrioritySchema.default("MEDIUM"),
     segment: customerSegmentSchema.default("STANDARD"),

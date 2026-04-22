@@ -30,13 +30,14 @@ import { CompanyStatus, CompanyTypeEntity } from "../constants";
 /**
  * Company entity (base for Customer and Supplier)
  */
-export type Company = CreateCompanyInput & {
+export type Company = Omit<CreateCompanyInput, "legalAddress">  & {
   id: number;
   code: string;
   country: Country;
   assignedUser?: User | null;
   activities: Activity[];
   addresses: Address[];
+  legalAddress: Address[];
   contacts: Contact[];
   customers: Customer[];
   suppliers: Supplier[];

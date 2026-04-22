@@ -41,6 +41,7 @@ export type CustomerAvgAggregateOutputType = {
   healthScore: number | null
   npsScore: number | null
   satisfactionRate: runtime.Decimal | null
+  parentCustomerId: number | null
   deletedBy: number | null
 }
 
@@ -59,6 +60,7 @@ export type CustomerSumAggregateOutputType = {
   healthScore: number | null
   npsScore: number | null
   satisfactionRate: runtime.Decimal | null
+  parentCustomerId: number | null
   deletedBy: number | null
 }
 
@@ -87,6 +89,7 @@ export type CustomerMinAggregateOutputType = {
   npsScore: number | null
   satisfactionRate: runtime.Decimal | null
   lastSurveyDate: Date | null
+  parentCustomerId: number | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -118,6 +121,7 @@ export type CustomerMaxAggregateOutputType = {
   npsScore: number | null
   satisfactionRate: runtime.Decimal | null
   lastSurveyDate: Date | null
+  parentCustomerId: number | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -149,6 +153,7 @@ export type CustomerCountAggregateOutputType = {
   npsScore: number
   satisfactionRate: number
   lastSurveyDate: number
+  parentCustomerId: number
   createdAt: number
   updatedAt: number
   deletedAt: number
@@ -172,6 +177,7 @@ export type CustomerAvgAggregateInputType = {
   healthScore?: true
   npsScore?: true
   satisfactionRate?: true
+  parentCustomerId?: true
   deletedBy?: true
 }
 
@@ -190,6 +196,7 @@ export type CustomerSumAggregateInputType = {
   healthScore?: true
   npsScore?: true
   satisfactionRate?: true
+  parentCustomerId?: true
   deletedBy?: true
 }
 
@@ -218,6 +225,7 @@ export type CustomerMinAggregateInputType = {
   npsScore?: true
   satisfactionRate?: true
   lastSurveyDate?: true
+  parentCustomerId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -249,6 +257,7 @@ export type CustomerMaxAggregateInputType = {
   npsScore?: true
   satisfactionRate?: true
   lastSurveyDate?: true
+  parentCustomerId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -280,6 +289,7 @@ export type CustomerCountAggregateInputType = {
   npsScore?: true
   satisfactionRate?: true
   lastSurveyDate?: true
+  parentCustomerId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -398,6 +408,7 @@ export type CustomerGroupByOutputType = {
   npsScore: number | null
   satisfactionRate: runtime.Decimal | null
   lastSurveyDate: Date | null
+  parentCustomerId: number | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
@@ -452,6 +463,7 @@ export type CustomerWhereInput = {
   npsScore?: Prisma.IntNullableFilter<"Customer"> | number | null
   satisfactionRate?: Prisma.DecimalNullableFilter<"Customer"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
+  parentCustomerId?: Prisma.IntNullableFilter<"Customer"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
@@ -463,6 +475,8 @@ export type CustomerWhereInput = {
   documentsOut?: Prisma.DocumentListRelationFilter
   opportunities?: Prisma.OpportunityListRelationFilter
   activities?: Prisma.ActivityListRelationFilter
+  parentCustomer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
+  subsidiaries?: Prisma.CustomerListRelationFilter
   convertedFromLead?: Prisma.XOR<Prisma.LeadNullableScalarRelationFilter, Prisma.LeadWhereInput> | null
   deletedByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
@@ -492,6 +506,7 @@ export type CustomerOrderByWithRelationInput = {
   npsScore?: Prisma.SortOrderInput | Prisma.SortOrder
   satisfactionRate?: Prisma.SortOrderInput | Prisma.SortOrder
   lastSurveyDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  parentCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -503,6 +518,8 @@ export type CustomerOrderByWithRelationInput = {
   documentsOut?: Prisma.DocumentOrderByRelationAggregateInput
   opportunities?: Prisma.OpportunityOrderByRelationAggregateInput
   activities?: Prisma.ActivityOrderByRelationAggregateInput
+  parentCustomer?: Prisma.CustomerOrderByWithRelationInput
+  subsidiaries?: Prisma.CustomerOrderByRelationAggregateInput
   convertedFromLead?: Prisma.LeadOrderByWithRelationInput
   deletedByUser?: Prisma.UserOrderByWithRelationInput
 }
@@ -535,6 +552,7 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   npsScore?: Prisma.IntNullableFilter<"Customer"> | number | null
   satisfactionRate?: Prisma.DecimalNullableFilter<"Customer"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
+  parentCustomerId?: Prisma.IntNullableFilter<"Customer"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
@@ -546,6 +564,8 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   documentsOut?: Prisma.DocumentListRelationFilter
   opportunities?: Prisma.OpportunityListRelationFilter
   activities?: Prisma.ActivityListRelationFilter
+  parentCustomer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
+  subsidiaries?: Prisma.CustomerListRelationFilter
   convertedFromLead?: Prisma.XOR<Prisma.LeadNullableScalarRelationFilter, Prisma.LeadWhereInput> | null
   deletedByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id" | "companyId">
@@ -575,6 +595,7 @@ export type CustomerOrderByWithAggregationInput = {
   npsScore?: Prisma.SortOrderInput | Prisma.SortOrder
   satisfactionRate?: Prisma.SortOrderInput | Prisma.SortOrder
   lastSurveyDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  parentCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -614,6 +635,7 @@ export type CustomerScalarWhereWithAggregatesInput = {
   npsScore?: Prisma.IntNullableWithAggregatesFilter<"Customer"> | number | null
   satisfactionRate?: Prisma.DecimalNullableWithAggregatesFilter<"Customer"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Customer"> | Date | string | null
+  parentCustomerId?: Prisma.IntNullableWithAggregatesFilter<"Customer"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Customer"> | Date | string | null
@@ -650,6 +672,8 @@ export type CustomerCreateInput = {
   documentsOut?: Prisma.DocumentCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCustomerInput
+  parentCustomer?: Prisma.CustomerCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.CustomerCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadCreateNestedOneWithoutConvertedToInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedCustomersInput
 }
@@ -679,6 +703,7 @@ export type CustomerUncheckedCreateInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -686,6 +711,7 @@ export type CustomerUncheckedCreateInput = {
   documentsOut?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerUncheckedCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadUncheckedCreateNestedOneWithoutConvertedToInput
 }
 
@@ -719,6 +745,8 @@ export type CustomerUpdateInput = {
   documentsOut?: Prisma.DocumentUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCustomerNestedInput
+  parentCustomer?: Prisma.CustomerUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.CustomerUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUpdateOneWithoutConvertedToNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedCustomersNestedInput
 }
@@ -748,6 +776,7 @@ export type CustomerUncheckedUpdateInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -755,6 +784,7 @@ export type CustomerUncheckedUpdateInput = {
   documentsOut?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUncheckedUpdateOneWithoutConvertedToNestedInput
 }
 
@@ -783,6 +813,7 @@ export type CustomerCreateManyInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -839,6 +870,7 @@ export type CustomerUncheckedUpdateManyInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -885,6 +917,7 @@ export type CustomerCountOrderByAggregateInput = {
   npsScore?: Prisma.SortOrder
   satisfactionRate?: Prisma.SortOrder
   lastSurveyDate?: Prisma.SortOrder
+  parentCustomerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -906,6 +939,7 @@ export type CustomerAvgOrderByAggregateInput = {
   healthScore?: Prisma.SortOrder
   npsScore?: Prisma.SortOrder
   satisfactionRate?: Prisma.SortOrder
+  parentCustomerId?: Prisma.SortOrder
   deletedBy?: Prisma.SortOrder
 }
 
@@ -934,6 +968,7 @@ export type CustomerMaxOrderByAggregateInput = {
   npsScore?: Prisma.SortOrder
   satisfactionRate?: Prisma.SortOrder
   lastSurveyDate?: Prisma.SortOrder
+  parentCustomerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -965,6 +1000,7 @@ export type CustomerMinOrderByAggregateInput = {
   npsScore?: Prisma.SortOrder
   satisfactionRate?: Prisma.SortOrder
   lastSurveyDate?: Prisma.SortOrder
+  parentCustomerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -986,6 +1022,7 @@ export type CustomerSumOrderByAggregateInput = {
   healthScore?: Prisma.SortOrder
   npsScore?: Prisma.SortOrder
   satisfactionRate?: Prisma.SortOrder
+  parentCustomerId?: Prisma.SortOrder
   deletedBy?: Prisma.SortOrder
 }
 
@@ -1052,6 +1089,26 @@ export type CustomerUncheckedUpdateManyWithoutCompanyNestedInput = {
   deleteMany?: Prisma.CustomerScalarWhereInput | Prisma.CustomerScalarWhereInput[]
 }
 
+export type CustomerCreateNestedOneWithoutSubsidiariesInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutSubsidiariesInput, Prisma.CustomerUncheckedCreateWithoutSubsidiariesInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutSubsidiariesInput
+  connect?: Prisma.CustomerWhereUniqueInput
+}
+
+export type CustomerCreateNestedManyWithoutParentCustomerInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutParentCustomerInput, Prisma.CustomerUncheckedCreateWithoutParentCustomerInput> | Prisma.CustomerCreateWithoutParentCustomerInput[] | Prisma.CustomerUncheckedCreateWithoutParentCustomerInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutParentCustomerInput | Prisma.CustomerCreateOrConnectWithoutParentCustomerInput[]
+  createMany?: Prisma.CustomerCreateManyParentCustomerInputEnvelope
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+}
+
+export type CustomerUncheckedCreateNestedManyWithoutParentCustomerInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutParentCustomerInput, Prisma.CustomerUncheckedCreateWithoutParentCustomerInput> | Prisma.CustomerCreateWithoutParentCustomerInput[] | Prisma.CustomerUncheckedCreateWithoutParentCustomerInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutParentCustomerInput | Prisma.CustomerCreateOrConnectWithoutParentCustomerInput[]
+  createMany?: Prisma.CustomerCreateManyParentCustomerInputEnvelope
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+}
+
 export type EnumCustomerPriorityFieldUpdateOperationsInput = {
   set?: $Enums.CustomerPriority
 }
@@ -1078,6 +1135,52 @@ export type NullableDecimalFieldUpdateOperationsInput = {
   decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
   multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type DecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type CustomerUpdateOneWithoutSubsidiariesNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutSubsidiariesInput, Prisma.CustomerUncheckedCreateWithoutSubsidiariesInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutSubsidiariesInput
+  upsert?: Prisma.CustomerUpsertWithoutSubsidiariesInput
+  disconnect?: Prisma.CustomerWhereInput | boolean
+  delete?: Prisma.CustomerWhereInput | boolean
+  connect?: Prisma.CustomerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutSubsidiariesInput, Prisma.CustomerUpdateWithoutSubsidiariesInput>, Prisma.CustomerUncheckedUpdateWithoutSubsidiariesInput>
+}
+
+export type CustomerUpdateManyWithoutParentCustomerNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutParentCustomerInput, Prisma.CustomerUncheckedCreateWithoutParentCustomerInput> | Prisma.CustomerCreateWithoutParentCustomerInput[] | Prisma.CustomerUncheckedCreateWithoutParentCustomerInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutParentCustomerInput | Prisma.CustomerCreateOrConnectWithoutParentCustomerInput[]
+  upsert?: Prisma.CustomerUpsertWithWhereUniqueWithoutParentCustomerInput | Prisma.CustomerUpsertWithWhereUniqueWithoutParentCustomerInput[]
+  createMany?: Prisma.CustomerCreateManyParentCustomerInputEnvelope
+  set?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  disconnect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  delete?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  update?: Prisma.CustomerUpdateWithWhereUniqueWithoutParentCustomerInput | Prisma.CustomerUpdateWithWhereUniqueWithoutParentCustomerInput[]
+  updateMany?: Prisma.CustomerUpdateManyWithWhereWithoutParentCustomerInput | Prisma.CustomerUpdateManyWithWhereWithoutParentCustomerInput[]
+  deleteMany?: Prisma.CustomerScalarWhereInput | Prisma.CustomerScalarWhereInput[]
+}
+
+export type CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutParentCustomerInput, Prisma.CustomerUncheckedCreateWithoutParentCustomerInput> | Prisma.CustomerCreateWithoutParentCustomerInput[] | Prisma.CustomerUncheckedCreateWithoutParentCustomerInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutParentCustomerInput | Prisma.CustomerCreateOrConnectWithoutParentCustomerInput[]
+  upsert?: Prisma.CustomerUpsertWithWhereUniqueWithoutParentCustomerInput | Prisma.CustomerUpsertWithWhereUniqueWithoutParentCustomerInput[]
+  createMany?: Prisma.CustomerCreateManyParentCustomerInputEnvelope
+  set?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  disconnect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  delete?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  update?: Prisma.CustomerUpdateWithWhereUniqueWithoutParentCustomerInput | Prisma.CustomerUpdateWithWhereUniqueWithoutParentCustomerInput[]
+  updateMany?: Prisma.CustomerUpdateManyWithWhereWithoutParentCustomerInput | Prisma.CustomerUpdateManyWithWhereWithoutParentCustomerInput[]
+  deleteMany?: Prisma.CustomerScalarWhereInput | Prisma.CustomerScalarWhereInput[]
 }
 
 export type CustomerCreateNestedOneWithoutDocumentsOutInput = {
@@ -1323,6 +1426,8 @@ export type CustomerCreateWithoutActivitiesInput = {
   paymentMethod?: Prisma.PaymentMethodCreateNestedOneWithoutCustomersInput
   documentsOut?: Prisma.DocumentCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutCustomerInput
+  parentCustomer?: Prisma.CustomerCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.CustomerCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadCreateNestedOneWithoutConvertedToInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedCustomersInput
 }
@@ -1352,12 +1457,14 @@ export type CustomerUncheckedCreateWithoutActivitiesInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   deletedBy?: number | null
   documentsOut?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerUncheckedCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadUncheckedCreateNestedOneWithoutConvertedToInput
 }
 
@@ -1406,6 +1513,8 @@ export type CustomerUpdateWithoutActivitiesInput = {
   paymentMethod?: Prisma.PaymentMethodUpdateOneWithoutCustomersNestedInput
   documentsOut?: Prisma.DocumentUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutCustomerNestedInput
+  parentCustomer?: Prisma.CustomerUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.CustomerUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUpdateOneWithoutConvertedToNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedCustomersNestedInput
 }
@@ -1435,12 +1544,14 @@ export type CustomerUncheckedUpdateWithoutActivitiesInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentsOut?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUncheckedUpdateOneWithoutConvertedToNestedInput
 }
 
@@ -1473,6 +1584,8 @@ export type CustomerCreateWithoutCompanyInput = {
   documentsOut?: Prisma.DocumentCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCustomerInput
+  parentCustomer?: Prisma.CustomerCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.CustomerCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadCreateNestedOneWithoutConvertedToInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedCustomersInput
 }
@@ -1501,6 +1614,7 @@ export type CustomerUncheckedCreateWithoutCompanyInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1508,6 +1622,7 @@ export type CustomerUncheckedCreateWithoutCompanyInput = {
   documentsOut?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerUncheckedCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadUncheckedCreateNestedOneWithoutConvertedToInput
 }
 
@@ -1565,10 +1680,266 @@ export type CustomerScalarWhereInput = {
   npsScore?: Prisma.IntNullableFilter<"Customer"> | number | null
   satisfactionRate?: Prisma.DecimalNullableFilter<"Customer"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
+  parentCustomerId?: Prisma.IntNullableFilter<"Customer"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
   deletedBy?: Prisma.IntNullableFilter<"Customer"> | number | null
+}
+
+export type CustomerCreateWithoutSubsidiariesInput = {
+  priority?: $Enums.CustomerPriority
+  segment?: $Enums.CustomerSegment
+  size?: $Enums.CustomerSize
+  type?: $Enums.CustomerType
+  creditStatus?: $Enums.CreditCheckStatus
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstSaleDate?: Date | string | null
+  lastSaleDate?: Date | string | null
+  totalSales?: number
+  totalRevenue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  customerSince?: Date | string | null
+  lastInteractionAt?: Date | string | null
+  averageOrderValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lifetimeValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  churnRisk?: number
+  healthScore?: number
+  npsScore?: number | null
+  satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastSurveyDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutCustomersInput
+  defaultPriceList?: Prisma.PriceListCreateNestedOneWithoutCustomersInput
+  customerTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutCustomersInput
+  paymentMethod?: Prisma.PaymentMethodCreateNestedOneWithoutCustomersInput
+  documentsOut?: Prisma.DocumentCreateNestedManyWithoutCustomerInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutCustomerInput
+  activities?: Prisma.ActivityCreateNestedManyWithoutCustomerInput
+  parentCustomer?: Prisma.CustomerCreateNestedOneWithoutSubsidiariesInput
+  convertedFromLead?: Prisma.LeadCreateNestedOneWithoutConvertedToInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedCustomersInput
+}
+
+export type CustomerUncheckedCreateWithoutSubsidiariesInput = {
+  id?: number
+  companyId: number
+  priority?: $Enums.CustomerPriority
+  segment?: $Enums.CustomerSegment
+  size?: $Enums.CustomerSize
+  type?: $Enums.CustomerType
+  creditStatus?: $Enums.CreditCheckStatus
+  defaultPriceListId?: number | null
+  customerTaxRuleId?: number | null
+  paymentMethodId?: number | null
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstSaleDate?: Date | string | null
+  lastSaleDate?: Date | string | null
+  totalSales?: number
+  totalRevenue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  customerSince?: Date | string | null
+  lastInteractionAt?: Date | string | null
+  averageOrderValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lifetimeValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  churnRisk?: number
+  healthScore?: number
+  npsScore?: number | null
+  satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedBy?: number | null
+  documentsOut?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerInput
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCustomerInput
+  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCustomerInput
+  convertedFromLead?: Prisma.LeadUncheckedCreateNestedOneWithoutConvertedToInput
+}
+
+export type CustomerCreateOrConnectWithoutSubsidiariesInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutSubsidiariesInput, Prisma.CustomerUncheckedCreateWithoutSubsidiariesInput>
+}
+
+export type CustomerCreateWithoutParentCustomerInput = {
+  priority?: $Enums.CustomerPriority
+  segment?: $Enums.CustomerSegment
+  size?: $Enums.CustomerSize
+  type?: $Enums.CustomerType
+  creditStatus?: $Enums.CreditCheckStatus
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstSaleDate?: Date | string | null
+  lastSaleDate?: Date | string | null
+  totalSales?: number
+  totalRevenue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  customerSince?: Date | string | null
+  lastInteractionAt?: Date | string | null
+  averageOrderValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lifetimeValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  churnRisk?: number
+  healthScore?: number
+  npsScore?: number | null
+  satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastSurveyDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutCustomersInput
+  defaultPriceList?: Prisma.PriceListCreateNestedOneWithoutCustomersInput
+  customerTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutCustomersInput
+  paymentMethod?: Prisma.PaymentMethodCreateNestedOneWithoutCustomersInput
+  documentsOut?: Prisma.DocumentCreateNestedManyWithoutCustomerInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutCustomerInput
+  activities?: Prisma.ActivityCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerCreateNestedManyWithoutParentCustomerInput
+  convertedFromLead?: Prisma.LeadCreateNestedOneWithoutConvertedToInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedCustomersInput
+}
+
+export type CustomerUncheckedCreateWithoutParentCustomerInput = {
+  id?: number
+  companyId: number
+  priority?: $Enums.CustomerPriority
+  segment?: $Enums.CustomerSegment
+  size?: $Enums.CustomerSize
+  type?: $Enums.CustomerType
+  creditStatus?: $Enums.CreditCheckStatus
+  defaultPriceListId?: number | null
+  customerTaxRuleId?: number | null
+  paymentMethodId?: number | null
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstSaleDate?: Date | string | null
+  lastSaleDate?: Date | string | null
+  totalSales?: number
+  totalRevenue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  customerSince?: Date | string | null
+  lastInteractionAt?: Date | string | null
+  averageOrderValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lifetimeValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  churnRisk?: number
+  healthScore?: number
+  npsScore?: number | null
+  satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastSurveyDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedBy?: number | null
+  documentsOut?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerInput
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCustomerInput
+  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerUncheckedCreateNestedManyWithoutParentCustomerInput
+  convertedFromLead?: Prisma.LeadUncheckedCreateNestedOneWithoutConvertedToInput
+}
+
+export type CustomerCreateOrConnectWithoutParentCustomerInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutParentCustomerInput, Prisma.CustomerUncheckedCreateWithoutParentCustomerInput>
+}
+
+export type CustomerCreateManyParentCustomerInputEnvelope = {
+  data: Prisma.CustomerCreateManyParentCustomerInput | Prisma.CustomerCreateManyParentCustomerInput[]
+  skipDuplicates?: boolean
+}
+
+export type CustomerUpsertWithoutSubsidiariesInput = {
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutSubsidiariesInput, Prisma.CustomerUncheckedUpdateWithoutSubsidiariesInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutSubsidiariesInput, Prisma.CustomerUncheckedCreateWithoutSubsidiariesInput>
+  where?: Prisma.CustomerWhereInput
+}
+
+export type CustomerUpdateToOneWithWhereWithoutSubsidiariesInput = {
+  where?: Prisma.CustomerWhereInput
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutSubsidiariesInput, Prisma.CustomerUncheckedUpdateWithoutSubsidiariesInput>
+}
+
+export type CustomerUpdateWithoutSubsidiariesInput = {
+  priority?: Prisma.EnumCustomerPriorityFieldUpdateOperationsInput | $Enums.CustomerPriority
+  segment?: Prisma.EnumCustomerSegmentFieldUpdateOperationsInput | $Enums.CustomerSegment
+  size?: Prisma.EnumCustomerSizeFieldUpdateOperationsInput | $Enums.CustomerSize
+  type?: Prisma.EnumCustomerTypeFieldUpdateOperationsInput | $Enums.CustomerType
+  creditStatus?: Prisma.EnumCreditCheckStatusFieldUpdateOperationsInput | $Enums.CreditCheckStatus
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstSaleDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastSaleDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalSales?: Prisma.IntFieldUpdateOperationsInput | number
+  totalRevenue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  customerSince?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastInteractionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  averageOrderValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lifetimeValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  churnRisk?: Prisma.IntFieldUpdateOperationsInput | number
+  healthScore?: Prisma.IntFieldUpdateOperationsInput | number
+  npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutCustomersNestedInput
+  defaultPriceList?: Prisma.PriceListUpdateOneWithoutCustomersNestedInput
+  customerTaxRule?: Prisma.TaxRuleUpdateOneWithoutCustomersNestedInput
+  paymentMethod?: Prisma.PaymentMethodUpdateOneWithoutCustomersNestedInput
+  documentsOut?: Prisma.DocumentUpdateManyWithoutCustomerNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutCustomerNestedInput
+  activities?: Prisma.ActivityUpdateManyWithoutCustomerNestedInput
+  parentCustomer?: Prisma.CustomerUpdateOneWithoutSubsidiariesNestedInput
+  convertedFromLead?: Prisma.LeadUpdateOneWithoutConvertedToNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedCustomersNestedInput
+}
+
+export type CustomerUncheckedUpdateWithoutSubsidiariesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  priority?: Prisma.EnumCustomerPriorityFieldUpdateOperationsInput | $Enums.CustomerPriority
+  segment?: Prisma.EnumCustomerSegmentFieldUpdateOperationsInput | $Enums.CustomerSegment
+  size?: Prisma.EnumCustomerSizeFieldUpdateOperationsInput | $Enums.CustomerSize
+  type?: Prisma.EnumCustomerTypeFieldUpdateOperationsInput | $Enums.CustomerType
+  creditStatus?: Prisma.EnumCreditCheckStatusFieldUpdateOperationsInput | $Enums.CreditCheckStatus
+  defaultPriceListId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstSaleDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastSaleDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalSales?: Prisma.IntFieldUpdateOperationsInput | number
+  totalRevenue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  customerSince?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastInteractionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  averageOrderValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lifetimeValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  churnRisk?: Prisma.IntFieldUpdateOperationsInput | number
+  healthScore?: Prisma.IntFieldUpdateOperationsInput | number
+  npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentsOut?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerNestedInput
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCustomerNestedInput
+  activities?: Prisma.ActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  convertedFromLead?: Prisma.LeadUncheckedUpdateOneWithoutConvertedToNestedInput
+}
+
+export type CustomerUpsertWithWhereUniqueWithoutParentCustomerInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutParentCustomerInput, Prisma.CustomerUncheckedUpdateWithoutParentCustomerInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutParentCustomerInput, Prisma.CustomerUncheckedCreateWithoutParentCustomerInput>
+}
+
+export type CustomerUpdateWithWhereUniqueWithoutParentCustomerInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutParentCustomerInput, Prisma.CustomerUncheckedUpdateWithoutParentCustomerInput>
+}
+
+export type CustomerUpdateManyWithWhereWithoutParentCustomerInput = {
+  where: Prisma.CustomerScalarWhereInput
+  data: Prisma.XOR<Prisma.CustomerUpdateManyMutationInput, Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerInput>
 }
 
 export type CustomerCreateWithoutDocumentsOutInput = {
@@ -1600,6 +1971,8 @@ export type CustomerCreateWithoutDocumentsOutInput = {
   paymentMethod?: Prisma.PaymentMethodCreateNestedOneWithoutCustomersInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCustomerInput
+  parentCustomer?: Prisma.CustomerCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.CustomerCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadCreateNestedOneWithoutConvertedToInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedCustomersInput
 }
@@ -1629,12 +2002,14 @@ export type CustomerUncheckedCreateWithoutDocumentsOutInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   deletedBy?: number | null
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerUncheckedCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadUncheckedCreateNestedOneWithoutConvertedToInput
 }
 
@@ -1683,6 +2058,8 @@ export type CustomerUpdateWithoutDocumentsOutInput = {
   paymentMethod?: Prisma.PaymentMethodUpdateOneWithoutCustomersNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCustomerNestedInput
+  parentCustomer?: Prisma.CustomerUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.CustomerUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUpdateOneWithoutConvertedToNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedCustomersNestedInput
 }
@@ -1712,12 +2089,14 @@ export type CustomerUncheckedUpdateWithoutDocumentsOutInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUncheckedUpdateOneWithoutConvertedToNestedInput
 }
 
@@ -1751,6 +2130,8 @@ export type CustomerCreateWithoutConvertedFromLeadInput = {
   documentsOut?: Prisma.DocumentCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCustomerInput
+  parentCustomer?: Prisma.CustomerCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.CustomerCreateNestedManyWithoutParentCustomerInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedCustomersInput
 }
 
@@ -1779,6 +2160,7 @@ export type CustomerUncheckedCreateWithoutConvertedFromLeadInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1786,6 +2168,7 @@ export type CustomerUncheckedCreateWithoutConvertedFromLeadInput = {
   documentsOut?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerUncheckedCreateNestedManyWithoutParentCustomerInput
 }
 
 export type CustomerCreateOrConnectWithoutConvertedFromLeadInput = {
@@ -1834,6 +2217,8 @@ export type CustomerUpdateWithoutConvertedFromLeadInput = {
   documentsOut?: Prisma.DocumentUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCustomerNestedInput
+  parentCustomer?: Prisma.CustomerUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.CustomerUpdateManyWithoutParentCustomerNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedCustomersNestedInput
 }
 
@@ -1862,6 +2247,7 @@ export type CustomerUncheckedUpdateWithoutConvertedFromLeadInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1869,6 +2255,7 @@ export type CustomerUncheckedUpdateWithoutConvertedFromLeadInput = {
   documentsOut?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput
 }
 
 export type CustomerCreateWithoutOpportunitiesInput = {
@@ -1900,6 +2287,8 @@ export type CustomerCreateWithoutOpportunitiesInput = {
   paymentMethod?: Prisma.PaymentMethodCreateNestedOneWithoutCustomersInput
   documentsOut?: Prisma.DocumentCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCustomerInput
+  parentCustomer?: Prisma.CustomerCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.CustomerCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadCreateNestedOneWithoutConvertedToInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedCustomersInput
 }
@@ -1929,12 +2318,14 @@ export type CustomerUncheckedCreateWithoutOpportunitiesInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   deletedBy?: number | null
   documentsOut?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerUncheckedCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadUncheckedCreateNestedOneWithoutConvertedToInput
 }
 
@@ -1983,6 +2374,8 @@ export type CustomerUpdateWithoutOpportunitiesInput = {
   paymentMethod?: Prisma.PaymentMethodUpdateOneWithoutCustomersNestedInput
   documentsOut?: Prisma.DocumentUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCustomerNestedInput
+  parentCustomer?: Prisma.CustomerUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.CustomerUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUpdateOneWithoutConvertedToNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedCustomersNestedInput
 }
@@ -2012,12 +2405,14 @@ export type CustomerUncheckedUpdateWithoutOpportunitiesInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentsOut?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUncheckedUpdateOneWithoutConvertedToNestedInput
 }
 
@@ -2050,6 +2445,8 @@ export type CustomerCreateWithoutPaymentMethodInput = {
   documentsOut?: Prisma.DocumentCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCustomerInput
+  parentCustomer?: Prisma.CustomerCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.CustomerCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadCreateNestedOneWithoutConvertedToInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedCustomersInput
 }
@@ -2078,6 +2475,7 @@ export type CustomerUncheckedCreateWithoutPaymentMethodInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2085,6 +2483,7 @@ export type CustomerUncheckedCreateWithoutPaymentMethodInput = {
   documentsOut?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerUncheckedCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadUncheckedCreateNestedOneWithoutConvertedToInput
 }
 
@@ -2143,6 +2542,8 @@ export type CustomerCreateWithoutDefaultPriceListInput = {
   documentsOut?: Prisma.DocumentCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCustomerInput
+  parentCustomer?: Prisma.CustomerCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.CustomerCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadCreateNestedOneWithoutConvertedToInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedCustomersInput
 }
@@ -2171,6 +2572,7 @@ export type CustomerUncheckedCreateWithoutDefaultPriceListInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2178,6 +2580,7 @@ export type CustomerUncheckedCreateWithoutDefaultPriceListInput = {
   documentsOut?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerUncheckedCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadUncheckedCreateNestedOneWithoutConvertedToInput
 }
 
@@ -2236,6 +2639,8 @@ export type CustomerCreateWithoutCustomerTaxRuleInput = {
   documentsOut?: Prisma.DocumentCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCustomerInput
+  parentCustomer?: Prisma.CustomerCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.CustomerCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadCreateNestedOneWithoutConvertedToInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedCustomersInput
 }
@@ -2264,6 +2669,7 @@ export type CustomerUncheckedCreateWithoutCustomerTaxRuleInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2271,6 +2677,7 @@ export type CustomerUncheckedCreateWithoutCustomerTaxRuleInput = {
   documentsOut?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerUncheckedCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadUncheckedCreateNestedOneWithoutConvertedToInput
 }
 
@@ -2330,6 +2737,8 @@ export type CustomerCreateWithoutDeletedByUserInput = {
   documentsOut?: Prisma.DocumentCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCustomerInput
+  parentCustomer?: Prisma.CustomerCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.CustomerCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadCreateNestedOneWithoutConvertedToInput
 }
 
@@ -2358,12 +2767,14 @@ export type CustomerUncheckedCreateWithoutDeletedByUserInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   documentsOut?: Prisma.DocumentUncheckedCreateNestedManyWithoutCustomerInput
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutCustomerInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCustomerInput
+  subsidiaries?: Prisma.CustomerUncheckedCreateNestedManyWithoutParentCustomerInput
   convertedFromLead?: Prisma.LeadUncheckedCreateNestedOneWithoutConvertedToInput
 }
 
@@ -2417,6 +2828,7 @@ export type CustomerCreateManyCompanyInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2452,12 +2864,148 @@ export type CustomerUpdateWithoutCompanyInput = {
   documentsOut?: Prisma.DocumentUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCustomerNestedInput
+  parentCustomer?: Prisma.CustomerUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.CustomerUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUpdateOneWithoutConvertedToNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedCustomersNestedInput
 }
 
 export type CustomerUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  priority?: Prisma.EnumCustomerPriorityFieldUpdateOperationsInput | $Enums.CustomerPriority
+  segment?: Prisma.EnumCustomerSegmentFieldUpdateOperationsInput | $Enums.CustomerSegment
+  size?: Prisma.EnumCustomerSizeFieldUpdateOperationsInput | $Enums.CustomerSize
+  type?: Prisma.EnumCustomerTypeFieldUpdateOperationsInput | $Enums.CustomerType
+  creditStatus?: Prisma.EnumCreditCheckStatusFieldUpdateOperationsInput | $Enums.CreditCheckStatus
+  defaultPriceListId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstSaleDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastSaleDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalSales?: Prisma.IntFieldUpdateOperationsInput | number
+  totalRevenue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  customerSince?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastInteractionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  averageOrderValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lifetimeValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  churnRisk?: Prisma.IntFieldUpdateOperationsInput | number
+  healthScore?: Prisma.IntFieldUpdateOperationsInput | number
+  npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentsOut?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerNestedInput
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCustomerNestedInput
+  activities?: Prisma.ActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput
+  convertedFromLead?: Prisma.LeadUncheckedUpdateOneWithoutConvertedToNestedInput
+}
+
+export type CustomerUncheckedUpdateManyWithoutCompanyInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  priority?: Prisma.EnumCustomerPriorityFieldUpdateOperationsInput | $Enums.CustomerPriority
+  segment?: Prisma.EnumCustomerSegmentFieldUpdateOperationsInput | $Enums.CustomerSegment
+  size?: Prisma.EnumCustomerSizeFieldUpdateOperationsInput | $Enums.CustomerSize
+  type?: Prisma.EnumCustomerTypeFieldUpdateOperationsInput | $Enums.CustomerType
+  creditStatus?: Prisma.EnumCreditCheckStatusFieldUpdateOperationsInput | $Enums.CreditCheckStatus
+  defaultPriceListId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customerTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  paymentMethodId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstSaleDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastSaleDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalSales?: Prisma.IntFieldUpdateOperationsInput | number
+  totalRevenue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  customerSince?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastInteractionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  averageOrderValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lifetimeValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  churnRisk?: Prisma.IntFieldUpdateOperationsInput | number
+  healthScore?: Prisma.IntFieldUpdateOperationsInput | number
+  npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type CustomerCreateManyParentCustomerInput = {
+  id?: number
+  companyId: number
+  priority?: $Enums.CustomerPriority
+  segment?: $Enums.CustomerSegment
+  size?: $Enums.CustomerSize
+  type?: $Enums.CustomerType
+  creditStatus?: $Enums.CreditCheckStatus
+  defaultPriceListId?: number | null
+  customerTaxRuleId?: number | null
+  paymentMethodId?: number | null
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstSaleDate?: Date | string | null
+  lastSaleDate?: Date | string | null
+  totalSales?: number
+  totalRevenue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  customerSince?: Date | string | null
+  lastInteractionAt?: Date | string | null
+  averageOrderValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  lifetimeValue?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  churnRisk?: number
+  healthScore?: number
+  npsScore?: number | null
+  satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastSurveyDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedBy?: number | null
+}
+
+export type CustomerUpdateWithoutParentCustomerInput = {
+  priority?: Prisma.EnumCustomerPriorityFieldUpdateOperationsInput | $Enums.CustomerPriority
+  segment?: Prisma.EnumCustomerSegmentFieldUpdateOperationsInput | $Enums.CustomerSegment
+  size?: Prisma.EnumCustomerSizeFieldUpdateOperationsInput | $Enums.CustomerSize
+  type?: Prisma.EnumCustomerTypeFieldUpdateOperationsInput | $Enums.CustomerType
+  creditStatus?: Prisma.EnumCreditCheckStatusFieldUpdateOperationsInput | $Enums.CreditCheckStatus
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstSaleDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastSaleDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalSales?: Prisma.IntFieldUpdateOperationsInput | number
+  totalRevenue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  customerSince?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastInteractionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  averageOrderValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  lifetimeValue?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  churnRisk?: Prisma.IntFieldUpdateOperationsInput | number
+  healthScore?: Prisma.IntFieldUpdateOperationsInput | number
+  npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutCustomersNestedInput
+  defaultPriceList?: Prisma.PriceListUpdateOneWithoutCustomersNestedInput
+  customerTaxRule?: Prisma.TaxRuleUpdateOneWithoutCustomersNestedInput
+  paymentMethod?: Prisma.PaymentMethodUpdateOneWithoutCustomersNestedInput
+  documentsOut?: Prisma.DocumentUpdateManyWithoutCustomerNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutCustomerNestedInput
+  activities?: Prisma.ActivityUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUpdateManyWithoutParentCustomerNestedInput
+  convertedFromLead?: Prisma.LeadUpdateOneWithoutConvertedToNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedCustomersNestedInput
+}
+
+export type CustomerUncheckedUpdateWithoutParentCustomerInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.EnumCustomerPriorityFieldUpdateOperationsInput | $Enums.CustomerPriority
   segment?: Prisma.EnumCustomerSegmentFieldUpdateOperationsInput | $Enums.CustomerSegment
   size?: Prisma.EnumCustomerSizeFieldUpdateOperationsInput | $Enums.CustomerSize
@@ -2487,11 +3035,13 @@ export type CustomerUncheckedUpdateWithoutCompanyInput = {
   documentsOut?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUncheckedUpdateOneWithoutConvertedToNestedInput
 }
 
-export type CustomerUncheckedUpdateManyWithoutCompanyInput = {
+export type CustomerUncheckedUpdateManyWithoutParentCustomerInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
   priority?: Prisma.EnumCustomerPriorityFieldUpdateOperationsInput | $Enums.CustomerPriority
   segment?: Prisma.EnumCustomerSegmentFieldUpdateOperationsInput | $Enums.CustomerSegment
   size?: Prisma.EnumCustomerSizeFieldUpdateOperationsInput | $Enums.CustomerSize
@@ -2544,6 +3094,7 @@ export type CustomerCreateManyPaymentMethodInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2579,6 +3130,8 @@ export type CustomerUpdateWithoutPaymentMethodInput = {
   documentsOut?: Prisma.DocumentUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCustomerNestedInput
+  parentCustomer?: Prisma.CustomerUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.CustomerUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUpdateOneWithoutConvertedToNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedCustomersNestedInput
 }
@@ -2607,6 +3160,7 @@ export type CustomerUncheckedUpdateWithoutPaymentMethodInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2614,6 +3168,7 @@ export type CustomerUncheckedUpdateWithoutPaymentMethodInput = {
   documentsOut?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUncheckedUpdateOneWithoutConvertedToNestedInput
 }
 
@@ -2641,6 +3196,7 @@ export type CustomerUncheckedUpdateManyWithoutPaymentMethodInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2671,6 +3227,7 @@ export type CustomerCreateManyDefaultPriceListInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2706,6 +3263,8 @@ export type CustomerUpdateWithoutDefaultPriceListInput = {
   documentsOut?: Prisma.DocumentUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCustomerNestedInput
+  parentCustomer?: Prisma.CustomerUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.CustomerUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUpdateOneWithoutConvertedToNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedCustomersNestedInput
 }
@@ -2734,6 +3293,7 @@ export type CustomerUncheckedUpdateWithoutDefaultPriceListInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2741,6 +3301,7 @@ export type CustomerUncheckedUpdateWithoutDefaultPriceListInput = {
   documentsOut?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUncheckedUpdateOneWithoutConvertedToNestedInput
 }
 
@@ -2768,6 +3329,7 @@ export type CustomerUncheckedUpdateManyWithoutDefaultPriceListInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2798,6 +3360,7 @@ export type CustomerCreateManyCustomerTaxRuleInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2833,6 +3396,8 @@ export type CustomerUpdateWithoutCustomerTaxRuleInput = {
   documentsOut?: Prisma.DocumentUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCustomerNestedInput
+  parentCustomer?: Prisma.CustomerUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.CustomerUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUpdateOneWithoutConvertedToNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedCustomersNestedInput
 }
@@ -2861,6 +3426,7 @@ export type CustomerUncheckedUpdateWithoutCustomerTaxRuleInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2868,6 +3434,7 @@ export type CustomerUncheckedUpdateWithoutCustomerTaxRuleInput = {
   documentsOut?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUncheckedUpdateOneWithoutConvertedToNestedInput
 }
 
@@ -2895,6 +3462,7 @@ export type CustomerUncheckedUpdateManyWithoutCustomerTaxRuleInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2926,6 +3494,7 @@ export type CustomerCreateManyDeletedByUserInput = {
   npsScore?: number | null
   satisfactionRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Date | string | null
+  parentCustomerId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2961,6 +3530,8 @@ export type CustomerUpdateWithoutDeletedByUserInput = {
   documentsOut?: Prisma.DocumentUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCustomerNestedInput
+  parentCustomer?: Prisma.CustomerUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.CustomerUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUpdateOneWithoutConvertedToNestedInput
 }
 
@@ -2989,12 +3560,14 @@ export type CustomerUncheckedUpdateWithoutDeletedByUserInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   documentsOut?: Prisma.DocumentUncheckedUpdateManyWithoutCustomerNestedInput
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutCustomerNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  subsidiaries?: Prisma.CustomerUncheckedUpdateManyWithoutParentCustomerNestedInput
   convertedFromLead?: Prisma.LeadUncheckedUpdateOneWithoutConvertedToNestedInput
 }
 
@@ -3023,6 +3596,7 @@ export type CustomerUncheckedUpdateManyWithoutDeletedByUserInput = {
   npsScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   satisfactionRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   lastSurveyDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentCustomerId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3037,12 +3611,14 @@ export type CustomerCountOutputType = {
   documentsOut: number
   opportunities: number
   activities: number
+  subsidiaries: number
 }
 
 export type CustomerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   documentsOut?: boolean | CustomerCountOutputTypeCountDocumentsOutArgs
   opportunities?: boolean | CustomerCountOutputTypeCountOpportunitiesArgs
   activities?: boolean | CustomerCountOutputTypeCountActivitiesArgs
+  subsidiaries?: boolean | CustomerCountOutputTypeCountSubsidiariesArgs
 }
 
 /**
@@ -3076,6 +3652,13 @@ export type CustomerCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.T
   where?: Prisma.ActivityWhereInput
 }
 
+/**
+ * CustomerCountOutputType without action
+ */
+export type CustomerCountOutputTypeCountSubsidiariesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CustomerWhereInput
+}
+
 
 export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3102,6 +3685,7 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   npsScore?: boolean
   satisfactionRate?: boolean
   lastSurveyDate?: boolean
+  parentCustomerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -3113,6 +3697,8 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   documentsOut?: boolean | Prisma.Customer$documentsOutArgs<ExtArgs>
   opportunities?: boolean | Prisma.Customer$opportunitiesArgs<ExtArgs>
   activities?: boolean | Prisma.Customer$activitiesArgs<ExtArgs>
+  parentCustomer?: boolean | Prisma.Customer$parentCustomerArgs<ExtArgs>
+  subsidiaries?: boolean | Prisma.Customer$subsidiariesArgs<ExtArgs>
   convertedFromLead?: boolean | Prisma.Customer$convertedFromLeadArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Customer$deletedByUserArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
@@ -3143,6 +3729,7 @@ export type CustomerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   npsScore?: boolean
   satisfactionRate?: boolean
   lastSurveyDate?: boolean
+  parentCustomerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -3151,6 +3738,7 @@ export type CustomerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   defaultPriceList?: boolean | Prisma.Customer$defaultPriceListArgs<ExtArgs>
   customerTaxRule?: boolean | Prisma.Customer$customerTaxRuleArgs<ExtArgs>
   paymentMethod?: boolean | Prisma.Customer$paymentMethodArgs<ExtArgs>
+  parentCustomer?: boolean | Prisma.Customer$parentCustomerArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Customer$deletedByUserArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
@@ -3179,6 +3767,7 @@ export type CustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   npsScore?: boolean
   satisfactionRate?: boolean
   lastSurveyDate?: boolean
+  parentCustomerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -3187,6 +3776,7 @@ export type CustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   defaultPriceList?: boolean | Prisma.Customer$defaultPriceListArgs<ExtArgs>
   customerTaxRule?: boolean | Prisma.Customer$customerTaxRuleArgs<ExtArgs>
   paymentMethod?: boolean | Prisma.Customer$paymentMethodArgs<ExtArgs>
+  parentCustomer?: boolean | Prisma.Customer$parentCustomerArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Customer$deletedByUserArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
@@ -3215,13 +3805,14 @@ export type CustomerSelectScalar = {
   npsScore?: boolean
   satisfactionRate?: boolean
   lastSurveyDate?: boolean
+  parentCustomerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   deletedBy?: boolean
 }
 
-export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "priority" | "segment" | "size" | "type" | "creditStatus" | "defaultPriceListId" | "customerTaxRuleId" | "paymentMethodId" | "creditLimit" | "firstSaleDate" | "lastSaleDate" | "totalSales" | "totalRevenue" | "customerSince" | "lastInteractionAt" | "averageOrderValue" | "lifetimeValue" | "churnRisk" | "healthScore" | "npsScore" | "satisfactionRate" | "lastSurveyDate" | "createdAt" | "updatedAt" | "deletedAt" | "deletedBy", ExtArgs["result"]["customer"]>
+export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "priority" | "segment" | "size" | "type" | "creditStatus" | "defaultPriceListId" | "customerTaxRuleId" | "paymentMethodId" | "creditLimit" | "firstSaleDate" | "lastSaleDate" | "totalSales" | "totalRevenue" | "customerSince" | "lastInteractionAt" | "averageOrderValue" | "lifetimeValue" | "churnRisk" | "healthScore" | "npsScore" | "satisfactionRate" | "lastSurveyDate" | "parentCustomerId" | "createdAt" | "updatedAt" | "deletedAt" | "deletedBy", ExtArgs["result"]["customer"]>
 export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   defaultPriceList?: boolean | Prisma.Customer$defaultPriceListArgs<ExtArgs>
@@ -3230,6 +3821,8 @@ export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   documentsOut?: boolean | Prisma.Customer$documentsOutArgs<ExtArgs>
   opportunities?: boolean | Prisma.Customer$opportunitiesArgs<ExtArgs>
   activities?: boolean | Prisma.Customer$activitiesArgs<ExtArgs>
+  parentCustomer?: boolean | Prisma.Customer$parentCustomerArgs<ExtArgs>
+  subsidiaries?: boolean | Prisma.Customer$subsidiariesArgs<ExtArgs>
   convertedFromLead?: boolean | Prisma.Customer$convertedFromLeadArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Customer$deletedByUserArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
@@ -3239,6 +3832,7 @@ export type CustomerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   defaultPriceList?: boolean | Prisma.Customer$defaultPriceListArgs<ExtArgs>
   customerTaxRule?: boolean | Prisma.Customer$customerTaxRuleArgs<ExtArgs>
   paymentMethod?: boolean | Prisma.Customer$paymentMethodArgs<ExtArgs>
+  parentCustomer?: boolean | Prisma.Customer$parentCustomerArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Customer$deletedByUserArgs<ExtArgs>
 }
 export type CustomerIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3246,6 +3840,7 @@ export type CustomerIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   defaultPriceList?: boolean | Prisma.Customer$defaultPriceListArgs<ExtArgs>
   customerTaxRule?: boolean | Prisma.Customer$customerTaxRuleArgs<ExtArgs>
   paymentMethod?: boolean | Prisma.Customer$paymentMethodArgs<ExtArgs>
+  parentCustomer?: boolean | Prisma.Customer$parentCustomerArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Customer$deletedByUserArgs<ExtArgs>
 }
 
@@ -3259,6 +3854,8 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     documentsOut: Prisma.$DocumentPayload<ExtArgs>[]
     opportunities: Prisma.$OpportunityPayload<ExtArgs>[]
     activities: Prisma.$ActivityPayload<ExtArgs>[]
+    parentCustomer: Prisma.$CustomerPayload<ExtArgs> | null
+    subsidiaries: Prisma.$CustomerPayload<ExtArgs>[]
     convertedFromLead: Prisma.$LeadPayload<ExtArgs> | null
     deletedByUser: Prisma.$UserPayload<ExtArgs> | null
   }
@@ -3287,6 +3884,7 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     npsScore: number | null
     satisfactionRate: runtime.Decimal | null
     lastSurveyDate: Date | null
+    parentCustomerId: number | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -3692,6 +4290,8 @@ export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends runtime
   documentsOut<T extends Prisma.Customer$documentsOutArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$documentsOutArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   opportunities<T extends Prisma.Customer$opportunitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$opportunitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   activities<T extends Prisma.Customer$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  parentCustomer<T extends Prisma.Customer$parentCustomerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$parentCustomerArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  subsidiaries<T extends Prisma.Customer$subsidiariesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$subsidiariesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   convertedFromLead<T extends Prisma.Customer$convertedFromLeadArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$convertedFromLeadArgs<ExtArgs>>): Prisma.Prisma__LeadClient<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   deletedByUser<T extends Prisma.Customer$deletedByUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$deletedByUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
@@ -3747,6 +4347,7 @@ export interface CustomerFieldRefs {
   readonly npsScore: Prisma.FieldRef<"Customer", 'Int'>
   readonly satisfactionRate: Prisma.FieldRef<"Customer", 'Decimal'>
   readonly lastSurveyDate: Prisma.FieldRef<"Customer", 'DateTime'>
+  readonly parentCustomerId: Prisma.FieldRef<"Customer", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Customer", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Customer", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Customer", 'DateTime'>
@@ -4278,6 +4879,49 @@ export type Customer$activitiesArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.ActivityScalarFieldEnum | Prisma.ActivityScalarFieldEnum[]
+}
+
+/**
+ * Customer.parentCustomer
+ */
+export type Customer$parentCustomerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Customer
+   */
+  select?: Prisma.CustomerSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Customer
+   */
+  omit?: Prisma.CustomerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerInclude<ExtArgs> | null
+  where?: Prisma.CustomerWhereInput
+}
+
+/**
+ * Customer.subsidiaries
+ */
+export type Customer$subsidiariesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Customer
+   */
+  select?: Prisma.CustomerSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Customer
+   */
+  omit?: Prisma.CustomerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerInclude<ExtArgs> | null
+  where?: Prisma.CustomerWhereInput
+  orderBy?: Prisma.CustomerOrderByWithRelationInput | Prisma.CustomerOrderByWithRelationInput[]
+  cursor?: Prisma.CustomerWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CustomerScalarFieldEnum | Prisma.CustomerScalarFieldEnum[]
 }
 
 /**

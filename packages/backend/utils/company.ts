@@ -1,5 +1,6 @@
-import { ValidationError } from "@mini-erp/shared";
+import { Address, ValidationError } from "@mini-erp/shared";
 import { ValidationResult } from "../types/company";
+import { AddressType } from "@/generated/prisma/enums";
 
 // ============================================================================
 // VALIDATION UTILS
@@ -144,20 +145,12 @@ export const calculateCustomerStats = (customer: any) => ({
   totalOrders: customer._count?.documentsOut || 0,
   totalRevenue: customer.totalRevenue || 0,
   averageOrderValue:
-    customer._count?.documentsOut > 0
-      ? customer.totalRevenue / customer._count.documentsOut
-      : 0,
+    customer._count?.documentsOut > 0 ? customer.totalRevenue / customer._count.documentsOut : 0,
   daysSinceFirstSale: customer.firstSaleDate
-    ? Math.floor(
-        (Date.now() - new Date(customer.firstSaleDate).getTime()) /
-          (1000 * 60 * 60 * 24),
-      )
+    ? Math.floor((Date.now() - new Date(customer.firstSaleDate).getTime()) / (1000 * 60 * 60 * 24))
     : null,
   daysSinceLastSale: customer.lastSaleDate
-    ? Math.floor(
-        (Date.now() - new Date(customer.lastSaleDate).getTime()) /
-          (1000 * 60 * 60 * 24),
-      )
+    ? Math.floor((Date.now() - new Date(customer.lastSaleDate).getTime()) / (1000 * 60 * 60 * 24))
     : null,
 });
 
@@ -168,9 +161,42 @@ export const calculateSupplierStats = (supplier: any) => ({
   totalOrders: supplier._count?.documentsIn || 0,
   totalSpent: supplier.totalSpent || 0,
   averageOrderValue:
-    supplier._count?.documentsIn > 0
-      ? supplier.totalSpent / supplier._count.documentsIn
-      : 0,
+    supplier._count?.documentsIn > 0 ? supplier.totalSpent / supplier._count.documentsIn : 0,
   productsSupplied: supplier._count?.products || 0,
   rating: supplier.rating || 0,
 });
+
+/**
+ * Remaps company addresses for API response:
+ * - Extracts the LEGAL address from base include into a dedicated `legalAddress` field
+ * - Keeps remaining addresses (non-LEGAL) in the `addresses` array
+ * When using getCompanyFullInclude, addresses already excludes LEGAL type,
+ * so legalAddress comes from the base include's addresses[0].
+ */
+export const formatCompanyResponse = <
+  T extends {
+    company?: {
+      addresses?: Address[];
+    };
+  },
+>(
+  data: T,
+) => {
+  if (!data.company) return data;
+
+  const { addresses, ...companyRest } = data.company;
+
+  // Separa il legale dagli altri (nel caso getCompanyBaseInclude senza full)
+  const legalAddress = addresses?.find((a) => a.addressType === AddressType.LEGAL) ?? null;
+  const otherAddresses = addresses?.filter((a) => a.addressType !== AddressType.LEGAL) ?? [];
+
+  return {
+    ...data,
+    company: {
+      ...companyRest,
+      legalAddress,
+      // Espone addresses solo se presenti (evita array vuoto nel base include)
+      ...(otherAddresses.length > 0 && { addresses: otherAddresses }),
+    },
+  };
+};

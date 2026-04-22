@@ -36,6 +36,7 @@ export type SupplierAvgAggregateOutputType = {
   totalSpent: runtime.Decimal | null
   rating: number | null
   supplierTaxRuleId: number | null
+  parentSupplierId: number | null
   deletedBy: number | null
 }
 
@@ -49,6 +50,7 @@ export type SupplierSumAggregateOutputType = {
   totalSpent: runtime.Decimal | null
   rating: number | null
   supplierTaxRuleId: number | null
+  parentSupplierId: number | null
   deletedBy: number | null
 }
 
@@ -66,6 +68,7 @@ export type SupplierMinAggregateOutputType = {
   totalSpent: runtime.Decimal | null
   rating: number | null
   supplierTaxRuleId: number | null
+  parentSupplierId: number | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -86,6 +89,7 @@ export type SupplierMaxAggregateOutputType = {
   totalSpent: runtime.Decimal | null
   rating: number | null
   supplierTaxRuleId: number | null
+  parentSupplierId: number | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -106,6 +110,7 @@ export type SupplierCountAggregateOutputType = {
   totalSpent: number
   rating: number
   supplierTaxRuleId: number
+  parentSupplierId: number
   createdAt: number
   updatedAt: number
   deletedAt: number
@@ -124,6 +129,7 @@ export type SupplierAvgAggregateInputType = {
   totalSpent?: true
   rating?: true
   supplierTaxRuleId?: true
+  parentSupplierId?: true
   deletedBy?: true
 }
 
@@ -137,6 +143,7 @@ export type SupplierSumAggregateInputType = {
   totalSpent?: true
   rating?: true
   supplierTaxRuleId?: true
+  parentSupplierId?: true
   deletedBy?: true
 }
 
@@ -154,6 +161,7 @@ export type SupplierMinAggregateInputType = {
   totalSpent?: true
   rating?: true
   supplierTaxRuleId?: true
+  parentSupplierId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -174,6 +182,7 @@ export type SupplierMaxAggregateInputType = {
   totalSpent?: true
   rating?: true
   supplierTaxRuleId?: true
+  parentSupplierId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -194,6 +203,7 @@ export type SupplierCountAggregateInputType = {
   totalSpent?: true
   rating?: true
   supplierTaxRuleId?: true
+  parentSupplierId?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -301,6 +311,7 @@ export type SupplierGroupByOutputType = {
   totalSpent: runtime.Decimal
   rating: number | null
   supplierTaxRuleId: number | null
+  parentSupplierId: number | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
@@ -344,6 +355,7 @@ export type SupplierWhereInput = {
   totalSpent?: Prisma.DecimalFilter<"Supplier"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.IntNullableFilter<"Supplier"> | number | null
   supplierTaxRuleId?: Prisma.IntNullableFilter<"Supplier"> | number | null
+  parentSupplierId?: Prisma.IntNullableFilter<"Supplier"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Supplier"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Supplier"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Supplier"> | Date | string | null
@@ -353,6 +365,8 @@ export type SupplierWhereInput = {
   documentsIn?: Prisma.DocumentListRelationFilter
   products?: Prisma.ProductListRelationFilter
   stockBatchs?: Prisma.StockBatchListRelationFilter
+  parentSupplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
+  subsidiaries?: Prisma.SupplierListRelationFilter
   deletedByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
@@ -370,6 +384,7 @@ export type SupplierOrderByWithRelationInput = {
   totalSpent?: Prisma.SortOrder
   rating?: Prisma.SortOrderInput | Prisma.SortOrder
   supplierTaxRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
+  parentSupplierId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -379,6 +394,8 @@ export type SupplierOrderByWithRelationInput = {
   documentsIn?: Prisma.DocumentOrderByRelationAggregateInput
   products?: Prisma.ProductOrderByRelationAggregateInput
   stockBatchs?: Prisma.StockBatchOrderByRelationAggregateInput
+  parentSupplier?: Prisma.SupplierOrderByWithRelationInput
+  subsidiaries?: Prisma.SupplierOrderByRelationAggregateInput
   deletedByUser?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -399,6 +416,7 @@ export type SupplierWhereUniqueInput = Prisma.AtLeast<{
   totalSpent?: Prisma.DecimalFilter<"Supplier"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.IntNullableFilter<"Supplier"> | number | null
   supplierTaxRuleId?: Prisma.IntNullableFilter<"Supplier"> | number | null
+  parentSupplierId?: Prisma.IntNullableFilter<"Supplier"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Supplier"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Supplier"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Supplier"> | Date | string | null
@@ -408,6 +426,8 @@ export type SupplierWhereUniqueInput = Prisma.AtLeast<{
   documentsIn?: Prisma.DocumentListRelationFilter
   products?: Prisma.ProductListRelationFilter
   stockBatchs?: Prisma.StockBatchListRelationFilter
+  parentSupplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
+  subsidiaries?: Prisma.SupplierListRelationFilter
   deletedByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id" | "companyId">
 
@@ -425,6 +445,7 @@ export type SupplierOrderByWithAggregationInput = {
   totalSpent?: Prisma.SortOrder
   rating?: Prisma.SortOrderInput | Prisma.SortOrder
   supplierTaxRuleId?: Prisma.SortOrderInput | Prisma.SortOrder
+  parentSupplierId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -453,6 +474,7 @@ export type SupplierScalarWhereWithAggregatesInput = {
   totalSpent?: Prisma.DecimalWithAggregatesFilter<"Supplier"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.IntNullableWithAggregatesFilter<"Supplier"> | number | null
   supplierTaxRuleId?: Prisma.IntNullableWithAggregatesFilter<"Supplier"> | number | null
+  parentSupplierId?: Prisma.IntNullableWithAggregatesFilter<"Supplier"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Supplier"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Supplier"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Supplier"> | Date | string | null
@@ -478,6 +500,8 @@ export type SupplierCreateInput = {
   documentsIn?: Prisma.DocumentCreateNestedManyWithoutSupplierInput
   products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchCreateNestedManyWithoutSupplierInput
+  parentSupplier?: Prisma.SupplierCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.SupplierCreateNestedManyWithoutParentSupplierInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedSuppliersInput
 }
 
@@ -495,6 +519,7 @@ export type SupplierUncheckedCreateInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: number | null
   supplierTaxRuleId?: number | null
+  parentSupplierId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -502,6 +527,7 @@ export type SupplierUncheckedCreateInput = {
   documentsIn?: Prisma.DocumentUncheckedCreateNestedManyWithoutSupplierInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchUncheckedCreateNestedManyWithoutSupplierInput
+  subsidiaries?: Prisma.SupplierUncheckedCreateNestedManyWithoutParentSupplierInput
 }
 
 export type SupplierUpdateInput = {
@@ -523,6 +549,8 @@ export type SupplierUpdateInput = {
   documentsIn?: Prisma.DocumentUpdateManyWithoutSupplierNestedInput
   products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUpdateManyWithoutSupplierNestedInput
+  parentSupplier?: Prisma.SupplierUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.SupplierUpdateManyWithoutParentSupplierNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedSuppliersNestedInput
 }
 
@@ -540,6 +568,7 @@ export type SupplierUncheckedUpdateInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -547,6 +576,7 @@ export type SupplierUncheckedUpdateInput = {
   documentsIn?: Prisma.DocumentUncheckedUpdateManyWithoutSupplierNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUncheckedUpdateManyWithoutSupplierNestedInput
+  subsidiaries?: Prisma.SupplierUncheckedUpdateManyWithoutParentSupplierNestedInput
 }
 
 export type SupplierCreateManyInput = {
@@ -563,6 +593,7 @@ export type SupplierCreateManyInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: number | null
   supplierTaxRuleId?: number | null
+  parentSupplierId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -599,6 +630,7 @@ export type SupplierUncheckedUpdateManyInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -615,6 +647,11 @@ export type SupplierOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type SupplierNullableScalarRelationFilter = {
+  is?: Prisma.SupplierWhereInput | null
+  isNot?: Prisma.SupplierWhereInput | null
+}
+
 export type SupplierCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   companyId?: Prisma.SortOrder
@@ -629,6 +666,7 @@ export type SupplierCountOrderByAggregateInput = {
   totalSpent?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   supplierTaxRuleId?: Prisma.SortOrder
+  parentSupplierId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -645,6 +683,7 @@ export type SupplierAvgOrderByAggregateInput = {
   totalSpent?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   supplierTaxRuleId?: Prisma.SortOrder
+  parentSupplierId?: Prisma.SortOrder
   deletedBy?: Prisma.SortOrder
 }
 
@@ -662,6 +701,7 @@ export type SupplierMaxOrderByAggregateInput = {
   totalSpent?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   supplierTaxRuleId?: Prisma.SortOrder
+  parentSupplierId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -682,6 +722,7 @@ export type SupplierMinOrderByAggregateInput = {
   totalSpent?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   supplierTaxRuleId?: Prisma.SortOrder
+  parentSupplierId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -698,12 +739,8 @@ export type SupplierSumOrderByAggregateInput = {
   totalSpent?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   supplierTaxRuleId?: Prisma.SortOrder
+  parentSupplierId?: Prisma.SortOrder
   deletedBy?: Prisma.SortOrder
-}
-
-export type SupplierNullableScalarRelationFilter = {
-  is?: Prisma.SupplierWhereInput | null
-  isNot?: Prisma.SupplierWhereInput | null
 }
 
 export type SupplierCreateNestedManyWithoutCompanyInput = {
@@ -745,6 +782,64 @@ export type SupplierUncheckedUpdateManyWithoutCompanyNestedInput = {
   connect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
   update?: Prisma.SupplierUpdateWithWhereUniqueWithoutCompanyInput | Prisma.SupplierUpdateWithWhereUniqueWithoutCompanyInput[]
   updateMany?: Prisma.SupplierUpdateManyWithWhereWithoutCompanyInput | Prisma.SupplierUpdateManyWithWhereWithoutCompanyInput[]
+  deleteMany?: Prisma.SupplierScalarWhereInput | Prisma.SupplierScalarWhereInput[]
+}
+
+export type SupplierCreateNestedOneWithoutSubsidiariesInput = {
+  create?: Prisma.XOR<Prisma.SupplierCreateWithoutSubsidiariesInput, Prisma.SupplierUncheckedCreateWithoutSubsidiariesInput>
+  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutSubsidiariesInput
+  connect?: Prisma.SupplierWhereUniqueInput
+}
+
+export type SupplierCreateNestedManyWithoutParentSupplierInput = {
+  create?: Prisma.XOR<Prisma.SupplierCreateWithoutParentSupplierInput, Prisma.SupplierUncheckedCreateWithoutParentSupplierInput> | Prisma.SupplierCreateWithoutParentSupplierInput[] | Prisma.SupplierUncheckedCreateWithoutParentSupplierInput[]
+  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutParentSupplierInput | Prisma.SupplierCreateOrConnectWithoutParentSupplierInput[]
+  createMany?: Prisma.SupplierCreateManyParentSupplierInputEnvelope
+  connect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+}
+
+export type SupplierUncheckedCreateNestedManyWithoutParentSupplierInput = {
+  create?: Prisma.XOR<Prisma.SupplierCreateWithoutParentSupplierInput, Prisma.SupplierUncheckedCreateWithoutParentSupplierInput> | Prisma.SupplierCreateWithoutParentSupplierInput[] | Prisma.SupplierUncheckedCreateWithoutParentSupplierInput[]
+  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutParentSupplierInput | Prisma.SupplierCreateOrConnectWithoutParentSupplierInput[]
+  createMany?: Prisma.SupplierCreateManyParentSupplierInputEnvelope
+  connect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+}
+
+export type SupplierUpdateOneWithoutSubsidiariesNestedInput = {
+  create?: Prisma.XOR<Prisma.SupplierCreateWithoutSubsidiariesInput, Prisma.SupplierUncheckedCreateWithoutSubsidiariesInput>
+  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutSubsidiariesInput
+  upsert?: Prisma.SupplierUpsertWithoutSubsidiariesInput
+  disconnect?: Prisma.SupplierWhereInput | boolean
+  delete?: Prisma.SupplierWhereInput | boolean
+  connect?: Prisma.SupplierWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SupplierUpdateToOneWithWhereWithoutSubsidiariesInput, Prisma.SupplierUpdateWithoutSubsidiariesInput>, Prisma.SupplierUncheckedUpdateWithoutSubsidiariesInput>
+}
+
+export type SupplierUpdateManyWithoutParentSupplierNestedInput = {
+  create?: Prisma.XOR<Prisma.SupplierCreateWithoutParentSupplierInput, Prisma.SupplierUncheckedCreateWithoutParentSupplierInput> | Prisma.SupplierCreateWithoutParentSupplierInput[] | Prisma.SupplierUncheckedCreateWithoutParentSupplierInput[]
+  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutParentSupplierInput | Prisma.SupplierCreateOrConnectWithoutParentSupplierInput[]
+  upsert?: Prisma.SupplierUpsertWithWhereUniqueWithoutParentSupplierInput | Prisma.SupplierUpsertWithWhereUniqueWithoutParentSupplierInput[]
+  createMany?: Prisma.SupplierCreateManyParentSupplierInputEnvelope
+  set?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  disconnect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  delete?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  connect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  update?: Prisma.SupplierUpdateWithWhereUniqueWithoutParentSupplierInput | Prisma.SupplierUpdateWithWhereUniqueWithoutParentSupplierInput[]
+  updateMany?: Prisma.SupplierUpdateManyWithWhereWithoutParentSupplierInput | Prisma.SupplierUpdateManyWithWhereWithoutParentSupplierInput[]
+  deleteMany?: Prisma.SupplierScalarWhereInput | Prisma.SupplierScalarWhereInput[]
+}
+
+export type SupplierUncheckedUpdateManyWithoutParentSupplierNestedInput = {
+  create?: Prisma.XOR<Prisma.SupplierCreateWithoutParentSupplierInput, Prisma.SupplierUncheckedCreateWithoutParentSupplierInput> | Prisma.SupplierCreateWithoutParentSupplierInput[] | Prisma.SupplierUncheckedCreateWithoutParentSupplierInput[]
+  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutParentSupplierInput | Prisma.SupplierCreateOrConnectWithoutParentSupplierInput[]
+  upsert?: Prisma.SupplierUpsertWithWhereUniqueWithoutParentSupplierInput | Prisma.SupplierUpsertWithWhereUniqueWithoutParentSupplierInput[]
+  createMany?: Prisma.SupplierCreateManyParentSupplierInputEnvelope
+  set?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  disconnect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  delete?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  connect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  update?: Prisma.SupplierUpdateWithWhereUniqueWithoutParentSupplierInput | Prisma.SupplierUpdateWithWhereUniqueWithoutParentSupplierInput[]
+  updateMany?: Prisma.SupplierUpdateManyWithWhereWithoutParentSupplierInput | Prisma.SupplierUpdateManyWithWhereWithoutParentSupplierInput[]
   deleteMany?: Prisma.SupplierScalarWhereInput | Prisma.SupplierScalarWhereInput[]
 }
 
@@ -898,6 +993,8 @@ export type SupplierCreateWithoutCompanyInput = {
   documentsIn?: Prisma.DocumentCreateNestedManyWithoutSupplierInput
   products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchCreateNestedManyWithoutSupplierInput
+  parentSupplier?: Prisma.SupplierCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.SupplierCreateNestedManyWithoutParentSupplierInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedSuppliersInput
 }
 
@@ -914,6 +1011,7 @@ export type SupplierUncheckedCreateWithoutCompanyInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: number | null
   supplierTaxRuleId?: number | null
+  parentSupplierId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -921,6 +1019,7 @@ export type SupplierUncheckedCreateWithoutCompanyInput = {
   documentsIn?: Prisma.DocumentUncheckedCreateNestedManyWithoutSupplierInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchUncheckedCreateNestedManyWithoutSupplierInput
+  subsidiaries?: Prisma.SupplierUncheckedCreateNestedManyWithoutParentSupplierInput
 }
 
 export type SupplierCreateOrConnectWithoutCompanyInput = {
@@ -966,10 +1065,194 @@ export type SupplierScalarWhereInput = {
   totalSpent?: Prisma.DecimalFilter<"Supplier"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.IntNullableFilter<"Supplier"> | number | null
   supplierTaxRuleId?: Prisma.IntNullableFilter<"Supplier"> | number | null
+  parentSupplierId?: Prisma.IntNullableFilter<"Supplier"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Supplier"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Supplier"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Supplier"> | Date | string | null
   deletedBy?: Prisma.IntNullableFilter<"Supplier"> | number | null
+}
+
+export type SupplierCreateWithoutSubsidiariesInput = {
+  paymentTerms?: string | null
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  bankAccount?: string | null
+  leadTimeDays?: number | null
+  transportCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstOrderDate?: Date | string | null
+  lastOrderDate?: Date | string | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rating?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutSuppliersInput
+  supplierTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutSuppliersInput
+  documentsIn?: Prisma.DocumentCreateNestedManyWithoutSupplierInput
+  products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
+  stockBatchs?: Prisma.StockBatchCreateNestedManyWithoutSupplierInput
+  parentSupplier?: Prisma.SupplierCreateNestedOneWithoutSubsidiariesInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedSuppliersInput
+}
+
+export type SupplierUncheckedCreateWithoutSubsidiariesInput = {
+  id?: number
+  companyId: number
+  paymentTerms?: string | null
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  bankAccount?: string | null
+  leadTimeDays?: number | null
+  transportCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstOrderDate?: Date | string | null
+  lastOrderDate?: Date | string | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rating?: number | null
+  supplierTaxRuleId?: number | null
+  parentSupplierId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedBy?: number | null
+  documentsIn?: Prisma.DocumentUncheckedCreateNestedManyWithoutSupplierInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
+  stockBatchs?: Prisma.StockBatchUncheckedCreateNestedManyWithoutSupplierInput
+}
+
+export type SupplierCreateOrConnectWithoutSubsidiariesInput = {
+  where: Prisma.SupplierWhereUniqueInput
+  create: Prisma.XOR<Prisma.SupplierCreateWithoutSubsidiariesInput, Prisma.SupplierUncheckedCreateWithoutSubsidiariesInput>
+}
+
+export type SupplierCreateWithoutParentSupplierInput = {
+  paymentTerms?: string | null
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  bankAccount?: string | null
+  leadTimeDays?: number | null
+  transportCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstOrderDate?: Date | string | null
+  lastOrderDate?: Date | string | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rating?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutSuppliersInput
+  supplierTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutSuppliersInput
+  documentsIn?: Prisma.DocumentCreateNestedManyWithoutSupplierInput
+  products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
+  stockBatchs?: Prisma.StockBatchCreateNestedManyWithoutSupplierInput
+  subsidiaries?: Prisma.SupplierCreateNestedManyWithoutParentSupplierInput
+  deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedSuppliersInput
+}
+
+export type SupplierUncheckedCreateWithoutParentSupplierInput = {
+  id?: number
+  companyId: number
+  paymentTerms?: string | null
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  bankAccount?: string | null
+  leadTimeDays?: number | null
+  transportCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstOrderDate?: Date | string | null
+  lastOrderDate?: Date | string | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rating?: number | null
+  supplierTaxRuleId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedBy?: number | null
+  documentsIn?: Prisma.DocumentUncheckedCreateNestedManyWithoutSupplierInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
+  stockBatchs?: Prisma.StockBatchUncheckedCreateNestedManyWithoutSupplierInput
+  subsidiaries?: Prisma.SupplierUncheckedCreateNestedManyWithoutParentSupplierInput
+}
+
+export type SupplierCreateOrConnectWithoutParentSupplierInput = {
+  where: Prisma.SupplierWhereUniqueInput
+  create: Prisma.XOR<Prisma.SupplierCreateWithoutParentSupplierInput, Prisma.SupplierUncheckedCreateWithoutParentSupplierInput>
+}
+
+export type SupplierCreateManyParentSupplierInputEnvelope = {
+  data: Prisma.SupplierCreateManyParentSupplierInput | Prisma.SupplierCreateManyParentSupplierInput[]
+  skipDuplicates?: boolean
+}
+
+export type SupplierUpsertWithoutSubsidiariesInput = {
+  update: Prisma.XOR<Prisma.SupplierUpdateWithoutSubsidiariesInput, Prisma.SupplierUncheckedUpdateWithoutSubsidiariesInput>
+  create: Prisma.XOR<Prisma.SupplierCreateWithoutSubsidiariesInput, Prisma.SupplierUncheckedCreateWithoutSubsidiariesInput>
+  where?: Prisma.SupplierWhereInput
+}
+
+export type SupplierUpdateToOneWithWhereWithoutSubsidiariesInput = {
+  where?: Prisma.SupplierWhereInput
+  data: Prisma.XOR<Prisma.SupplierUpdateWithoutSubsidiariesInput, Prisma.SupplierUncheckedUpdateWithoutSubsidiariesInput>
+}
+
+export type SupplierUpdateWithoutSubsidiariesInput = {
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadTimeDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  transportCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutSuppliersNestedInput
+  supplierTaxRule?: Prisma.TaxRuleUpdateOneWithoutSuppliersNestedInput
+  documentsIn?: Prisma.DocumentUpdateManyWithoutSupplierNestedInput
+  products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
+  stockBatchs?: Prisma.StockBatchUpdateManyWithoutSupplierNestedInput
+  parentSupplier?: Prisma.SupplierUpdateOneWithoutSubsidiariesNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedSuppliersNestedInput
+}
+
+export type SupplierUncheckedUpdateWithoutSubsidiariesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadTimeDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  transportCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentsIn?: Prisma.DocumentUncheckedUpdateManyWithoutSupplierNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
+  stockBatchs?: Prisma.StockBatchUncheckedUpdateManyWithoutSupplierNestedInput
+}
+
+export type SupplierUpsertWithWhereUniqueWithoutParentSupplierInput = {
+  where: Prisma.SupplierWhereUniqueInput
+  update: Prisma.XOR<Prisma.SupplierUpdateWithoutParentSupplierInput, Prisma.SupplierUncheckedUpdateWithoutParentSupplierInput>
+  create: Prisma.XOR<Prisma.SupplierCreateWithoutParentSupplierInput, Prisma.SupplierUncheckedCreateWithoutParentSupplierInput>
+}
+
+export type SupplierUpdateWithWhereUniqueWithoutParentSupplierInput = {
+  where: Prisma.SupplierWhereUniqueInput
+  data: Prisma.XOR<Prisma.SupplierUpdateWithoutParentSupplierInput, Prisma.SupplierUncheckedUpdateWithoutParentSupplierInput>
+}
+
+export type SupplierUpdateManyWithWhereWithoutParentSupplierInput = {
+  where: Prisma.SupplierScalarWhereInput
+  data: Prisma.XOR<Prisma.SupplierUpdateManyMutationInput, Prisma.SupplierUncheckedUpdateManyWithoutParentSupplierInput>
 }
 
 export type SupplierCreateWithoutDocumentsInInput = {
@@ -990,6 +1273,8 @@ export type SupplierCreateWithoutDocumentsInInput = {
   supplierTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutSuppliersInput
   products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchCreateNestedManyWithoutSupplierInput
+  parentSupplier?: Prisma.SupplierCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.SupplierCreateNestedManyWithoutParentSupplierInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedSuppliersInput
 }
 
@@ -1007,12 +1292,14 @@ export type SupplierUncheckedCreateWithoutDocumentsInInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: number | null
   supplierTaxRuleId?: number | null
+  parentSupplierId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   deletedBy?: number | null
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchUncheckedCreateNestedManyWithoutSupplierInput
+  subsidiaries?: Prisma.SupplierUncheckedCreateNestedManyWithoutParentSupplierInput
 }
 
 export type SupplierCreateOrConnectWithoutDocumentsInInput = {
@@ -1049,6 +1336,8 @@ export type SupplierUpdateWithoutDocumentsInInput = {
   supplierTaxRule?: Prisma.TaxRuleUpdateOneWithoutSuppliersNestedInput
   products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUpdateManyWithoutSupplierNestedInput
+  parentSupplier?: Prisma.SupplierUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.SupplierUpdateManyWithoutParentSupplierNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedSuppliersNestedInput
 }
 
@@ -1066,12 +1355,14 @@ export type SupplierUncheckedUpdateWithoutDocumentsInInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUncheckedUpdateManyWithoutSupplierNestedInput
+  subsidiaries?: Prisma.SupplierUncheckedUpdateManyWithoutParentSupplierNestedInput
 }
 
 export type SupplierCreateWithoutProductsInput = {
@@ -1092,6 +1383,8 @@ export type SupplierCreateWithoutProductsInput = {
   supplierTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutSuppliersInput
   documentsIn?: Prisma.DocumentCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchCreateNestedManyWithoutSupplierInput
+  parentSupplier?: Prisma.SupplierCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.SupplierCreateNestedManyWithoutParentSupplierInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedSuppliersInput
 }
 
@@ -1109,12 +1402,14 @@ export type SupplierUncheckedCreateWithoutProductsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: number | null
   supplierTaxRuleId?: number | null
+  parentSupplierId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   deletedBy?: number | null
   documentsIn?: Prisma.DocumentUncheckedCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchUncheckedCreateNestedManyWithoutSupplierInput
+  subsidiaries?: Prisma.SupplierUncheckedCreateNestedManyWithoutParentSupplierInput
 }
 
 export type SupplierCreateOrConnectWithoutProductsInput = {
@@ -1151,6 +1446,8 @@ export type SupplierUpdateWithoutProductsInput = {
   supplierTaxRule?: Prisma.TaxRuleUpdateOneWithoutSuppliersNestedInput
   documentsIn?: Prisma.DocumentUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUpdateManyWithoutSupplierNestedInput
+  parentSupplier?: Prisma.SupplierUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.SupplierUpdateManyWithoutParentSupplierNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedSuppliersNestedInput
 }
 
@@ -1168,12 +1465,14 @@ export type SupplierUncheckedUpdateWithoutProductsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentsIn?: Prisma.DocumentUncheckedUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUncheckedUpdateManyWithoutSupplierNestedInput
+  subsidiaries?: Prisma.SupplierUncheckedUpdateManyWithoutParentSupplierNestedInput
 }
 
 export type SupplierCreateWithoutSupplierTaxRuleInput = {
@@ -1194,6 +1493,8 @@ export type SupplierCreateWithoutSupplierTaxRuleInput = {
   documentsIn?: Prisma.DocumentCreateNestedManyWithoutSupplierInput
   products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchCreateNestedManyWithoutSupplierInput
+  parentSupplier?: Prisma.SupplierCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.SupplierCreateNestedManyWithoutParentSupplierInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedSuppliersInput
 }
 
@@ -1210,6 +1511,7 @@ export type SupplierUncheckedCreateWithoutSupplierTaxRuleInput = {
   totalOrders?: number
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: number | null
+  parentSupplierId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1217,6 +1519,7 @@ export type SupplierUncheckedCreateWithoutSupplierTaxRuleInput = {
   documentsIn?: Prisma.DocumentUncheckedCreateNestedManyWithoutSupplierInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchUncheckedCreateNestedManyWithoutSupplierInput
+  subsidiaries?: Prisma.SupplierUncheckedCreateNestedManyWithoutParentSupplierInput
 }
 
 export type SupplierCreateOrConnectWithoutSupplierTaxRuleInput = {
@@ -1264,6 +1567,8 @@ export type SupplierCreateWithoutDeletedByUserInput = {
   documentsIn?: Prisma.DocumentCreateNestedManyWithoutSupplierInput
   products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchCreateNestedManyWithoutSupplierInput
+  parentSupplier?: Prisma.SupplierCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.SupplierCreateNestedManyWithoutParentSupplierInput
 }
 
 export type SupplierUncheckedCreateWithoutDeletedByUserInput = {
@@ -1280,12 +1585,14 @@ export type SupplierUncheckedCreateWithoutDeletedByUserInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: number | null
   supplierTaxRuleId?: number | null
+  parentSupplierId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   documentsIn?: Prisma.DocumentUncheckedCreateNestedManyWithoutSupplierInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
   stockBatchs?: Prisma.StockBatchUncheckedCreateNestedManyWithoutSupplierInput
+  subsidiaries?: Prisma.SupplierUncheckedCreateNestedManyWithoutParentSupplierInput
 }
 
 export type SupplierCreateOrConnectWithoutDeletedByUserInput = {
@@ -1332,6 +1639,8 @@ export type SupplierCreateWithoutStockBatchsInput = {
   supplierTaxRule?: Prisma.TaxRuleCreateNestedOneWithoutSuppliersInput
   documentsIn?: Prisma.DocumentCreateNestedManyWithoutSupplierInput
   products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
+  parentSupplier?: Prisma.SupplierCreateNestedOneWithoutSubsidiariesInput
+  subsidiaries?: Prisma.SupplierCreateNestedManyWithoutParentSupplierInput
   deletedByUser?: Prisma.UserCreateNestedOneWithoutDeletedSuppliersInput
 }
 
@@ -1349,12 +1658,14 @@ export type SupplierUncheckedCreateWithoutStockBatchsInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: number | null
   supplierTaxRuleId?: number | null
+  parentSupplierId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   deletedBy?: number | null
   documentsIn?: Prisma.DocumentUncheckedCreateNestedManyWithoutSupplierInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
+  subsidiaries?: Prisma.SupplierUncheckedCreateNestedManyWithoutParentSupplierInput
 }
 
 export type SupplierCreateOrConnectWithoutStockBatchsInput = {
@@ -1391,6 +1702,8 @@ export type SupplierUpdateWithoutStockBatchsInput = {
   supplierTaxRule?: Prisma.TaxRuleUpdateOneWithoutSuppliersNestedInput
   documentsIn?: Prisma.DocumentUpdateManyWithoutSupplierNestedInput
   products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
+  parentSupplier?: Prisma.SupplierUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.SupplierUpdateManyWithoutParentSupplierNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedSuppliersNestedInput
 }
 
@@ -1408,12 +1721,14 @@ export type SupplierUncheckedUpdateWithoutStockBatchsInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentsIn?: Prisma.DocumentUncheckedUpdateManyWithoutSupplierNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
+  subsidiaries?: Prisma.SupplierUncheckedUpdateManyWithoutParentSupplierNestedInput
 }
 
 export type SupplierCreateManyCompanyInput = {
@@ -1429,6 +1744,7 @@ export type SupplierCreateManyCompanyInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: number | null
   supplierTaxRuleId?: number | null
+  parentSupplierId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1453,11 +1769,101 @@ export type SupplierUpdateWithoutCompanyInput = {
   documentsIn?: Prisma.DocumentUpdateManyWithoutSupplierNestedInput
   products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUpdateManyWithoutSupplierNestedInput
+  parentSupplier?: Prisma.SupplierUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.SupplierUpdateManyWithoutParentSupplierNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedSuppliersNestedInput
 }
 
 export type SupplierUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadTimeDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  transportCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentsIn?: Prisma.DocumentUncheckedUpdateManyWithoutSupplierNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
+  stockBatchs?: Prisma.StockBatchUncheckedUpdateManyWithoutSupplierNestedInput
+  subsidiaries?: Prisma.SupplierUncheckedUpdateManyWithoutParentSupplierNestedInput
+}
+
+export type SupplierUncheckedUpdateManyWithoutCompanyInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadTimeDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  transportCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  supplierTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type SupplierCreateManyParentSupplierInput = {
+  id?: number
+  companyId: number
+  paymentTerms?: string | null
+  creditLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  bankAccount?: string | null
+  leadTimeDays?: number | null
+  transportCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstOrderDate?: Date | string | null
+  lastOrderDate?: Date | string | null
+  totalOrders?: number
+  totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  rating?: number | null
+  supplierTaxRuleId?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedBy?: number | null
+}
+
+export type SupplierUpdateWithoutParentSupplierInput = {
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadTimeDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  transportCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  firstOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastOrderDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutSuppliersNestedInput
+  supplierTaxRule?: Prisma.TaxRuleUpdateOneWithoutSuppliersNestedInput
+  documentsIn?: Prisma.DocumentUpdateManyWithoutSupplierNestedInput
+  products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
+  stockBatchs?: Prisma.StockBatchUpdateManyWithoutSupplierNestedInput
+  subsidiaries?: Prisma.SupplierUpdateManyWithoutParentSupplierNestedInput
+  deletedByUser?: Prisma.UserUpdateOneWithoutDeletedSuppliersNestedInput
+}
+
+export type SupplierUncheckedUpdateWithoutParentSupplierInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1476,10 +1882,12 @@ export type SupplierUncheckedUpdateWithoutCompanyInput = {
   documentsIn?: Prisma.DocumentUncheckedUpdateManyWithoutSupplierNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUncheckedUpdateManyWithoutSupplierNestedInput
+  subsidiaries?: Prisma.SupplierUncheckedUpdateManyWithoutParentSupplierNestedInput
 }
 
-export type SupplierUncheckedUpdateManyWithoutCompanyInput = {
+export type SupplierUncheckedUpdateManyWithoutParentSupplierInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  companyId?: Prisma.IntFieldUpdateOperationsInput | number
   paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creditLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   bankAccount?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1510,6 +1918,7 @@ export type SupplierCreateManySupplierTaxRuleInput = {
   totalOrders?: number
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: number | null
+  parentSupplierId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1534,6 +1943,8 @@ export type SupplierUpdateWithoutSupplierTaxRuleInput = {
   documentsIn?: Prisma.DocumentUpdateManyWithoutSupplierNestedInput
   products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUpdateManyWithoutSupplierNestedInput
+  parentSupplier?: Prisma.SupplierUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.SupplierUpdateManyWithoutParentSupplierNestedInput
   deletedByUser?: Prisma.UserUpdateOneWithoutDeletedSuppliersNestedInput
 }
 
@@ -1550,6 +1961,7 @@ export type SupplierUncheckedUpdateWithoutSupplierTaxRuleInput = {
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1557,6 +1969,7 @@ export type SupplierUncheckedUpdateWithoutSupplierTaxRuleInput = {
   documentsIn?: Prisma.DocumentUncheckedUpdateManyWithoutSupplierNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUncheckedUpdateManyWithoutSupplierNestedInput
+  subsidiaries?: Prisma.SupplierUncheckedUpdateManyWithoutParentSupplierNestedInput
 }
 
 export type SupplierUncheckedUpdateManyWithoutSupplierTaxRuleInput = {
@@ -1572,6 +1985,7 @@ export type SupplierUncheckedUpdateManyWithoutSupplierTaxRuleInput = {
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1592,6 +2006,7 @@ export type SupplierCreateManyDeletedByUserInput = {
   totalSpent?: runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: number | null
   supplierTaxRuleId?: number | null
+  parentSupplierId?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1616,6 +2031,8 @@ export type SupplierUpdateWithoutDeletedByUserInput = {
   documentsIn?: Prisma.DocumentUpdateManyWithoutSupplierNestedInput
   products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUpdateManyWithoutSupplierNestedInput
+  parentSupplier?: Prisma.SupplierUpdateOneWithoutSubsidiariesNestedInput
+  subsidiaries?: Prisma.SupplierUpdateManyWithoutParentSupplierNestedInput
 }
 
 export type SupplierUncheckedUpdateWithoutDeletedByUserInput = {
@@ -1632,12 +2049,14 @@ export type SupplierUncheckedUpdateWithoutDeletedByUserInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   documentsIn?: Prisma.DocumentUncheckedUpdateManyWithoutSupplierNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
   stockBatchs?: Prisma.StockBatchUncheckedUpdateManyWithoutSupplierNestedInput
+  subsidiaries?: Prisma.SupplierUncheckedUpdateManyWithoutParentSupplierNestedInput
 }
 
 export type SupplierUncheckedUpdateManyWithoutDeletedByUserInput = {
@@ -1654,6 +2073,7 @@ export type SupplierUncheckedUpdateManyWithoutDeletedByUserInput = {
   totalSpent?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   supplierTaxRuleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  parentSupplierId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1668,12 +2088,14 @@ export type SupplierCountOutputType = {
   documentsIn: number
   products: number
   stockBatchs: number
+  subsidiaries: number
 }
 
 export type SupplierCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   documentsIn?: boolean | SupplierCountOutputTypeCountDocumentsInArgs
   products?: boolean | SupplierCountOutputTypeCountProductsArgs
   stockBatchs?: boolean | SupplierCountOutputTypeCountStockBatchsArgs
+  subsidiaries?: boolean | SupplierCountOutputTypeCountSubsidiariesArgs
 }
 
 /**
@@ -1707,6 +2129,13 @@ export type SupplierCountOutputTypeCountStockBatchsArgs<ExtArgs extends runtime.
   where?: Prisma.StockBatchWhereInput
 }
 
+/**
+ * SupplierCountOutputType without action
+ */
+export type SupplierCountOutputTypeCountSubsidiariesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupplierWhereInput
+}
+
 
 export type SupplierSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1722,6 +2151,7 @@ export type SupplierSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   totalSpent?: boolean
   rating?: boolean
   supplierTaxRuleId?: boolean
+  parentSupplierId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -1731,6 +2161,8 @@ export type SupplierSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   documentsIn?: boolean | Prisma.Supplier$documentsInArgs<ExtArgs>
   products?: boolean | Prisma.Supplier$productsArgs<ExtArgs>
   stockBatchs?: boolean | Prisma.Supplier$stockBatchsArgs<ExtArgs>
+  parentSupplier?: boolean | Prisma.Supplier$parentSupplierArgs<ExtArgs>
+  subsidiaries?: boolean | Prisma.Supplier$subsidiariesArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Supplier$deletedByUserArgs<ExtArgs>
   _count?: boolean | Prisma.SupplierCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["supplier"]>
@@ -1749,12 +2181,14 @@ export type SupplierSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   totalSpent?: boolean
   rating?: boolean
   supplierTaxRuleId?: boolean
+  parentSupplierId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   deletedBy?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   supplierTaxRule?: boolean | Prisma.Supplier$supplierTaxRuleArgs<ExtArgs>
+  parentSupplier?: boolean | Prisma.Supplier$parentSupplierArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Supplier$deletedByUserArgs<ExtArgs>
 }, ExtArgs["result"]["supplier"]>
 
@@ -1772,12 +2206,14 @@ export type SupplierSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   totalSpent?: boolean
   rating?: boolean
   supplierTaxRuleId?: boolean
+  parentSupplierId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   deletedBy?: boolean
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   supplierTaxRule?: boolean | Prisma.Supplier$supplierTaxRuleArgs<ExtArgs>
+  parentSupplier?: boolean | Prisma.Supplier$parentSupplierArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Supplier$deletedByUserArgs<ExtArgs>
 }, ExtArgs["result"]["supplier"]>
 
@@ -1795,30 +2231,35 @@ export type SupplierSelectScalar = {
   totalSpent?: boolean
   rating?: boolean
   supplierTaxRuleId?: boolean
+  parentSupplierId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   deletedBy?: boolean
 }
 
-export type SupplierOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "paymentTerms" | "creditLimit" | "bankAccount" | "leadTimeDays" | "transportCost" | "firstOrderDate" | "lastOrderDate" | "totalOrders" | "totalSpent" | "rating" | "supplierTaxRuleId" | "createdAt" | "updatedAt" | "deletedAt" | "deletedBy", ExtArgs["result"]["supplier"]>
+export type SupplierOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "paymentTerms" | "creditLimit" | "bankAccount" | "leadTimeDays" | "transportCost" | "firstOrderDate" | "lastOrderDate" | "totalOrders" | "totalSpent" | "rating" | "supplierTaxRuleId" | "parentSupplierId" | "createdAt" | "updatedAt" | "deletedAt" | "deletedBy", ExtArgs["result"]["supplier"]>
 export type SupplierInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   supplierTaxRule?: boolean | Prisma.Supplier$supplierTaxRuleArgs<ExtArgs>
   documentsIn?: boolean | Prisma.Supplier$documentsInArgs<ExtArgs>
   products?: boolean | Prisma.Supplier$productsArgs<ExtArgs>
   stockBatchs?: boolean | Prisma.Supplier$stockBatchsArgs<ExtArgs>
+  parentSupplier?: boolean | Prisma.Supplier$parentSupplierArgs<ExtArgs>
+  subsidiaries?: boolean | Prisma.Supplier$subsidiariesArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Supplier$deletedByUserArgs<ExtArgs>
   _count?: boolean | Prisma.SupplierCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SupplierIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   supplierTaxRule?: boolean | Prisma.Supplier$supplierTaxRuleArgs<ExtArgs>
+  parentSupplier?: boolean | Prisma.Supplier$parentSupplierArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Supplier$deletedByUserArgs<ExtArgs>
 }
 export type SupplierIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   supplierTaxRule?: boolean | Prisma.Supplier$supplierTaxRuleArgs<ExtArgs>
+  parentSupplier?: boolean | Prisma.Supplier$parentSupplierArgs<ExtArgs>
   deletedByUser?: boolean | Prisma.Supplier$deletedByUserArgs<ExtArgs>
 }
 
@@ -1830,6 +2271,8 @@ export type $SupplierPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     documentsIn: Prisma.$DocumentPayload<ExtArgs>[]
     products: Prisma.$ProductPayload<ExtArgs>[]
     stockBatchs: Prisma.$StockBatchPayload<ExtArgs>[]
+    parentSupplier: Prisma.$SupplierPayload<ExtArgs> | null
+    subsidiaries: Prisma.$SupplierPayload<ExtArgs>[]
     deletedByUser: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1846,6 +2289,7 @@ export type $SupplierPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     totalSpent: runtime.Decimal
     rating: number | null
     supplierTaxRuleId: number | null
+    parentSupplierId: number | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -2249,6 +2693,8 @@ export interface Prisma__SupplierClient<T, Null = never, ExtArgs extends runtime
   documentsIn<T extends Prisma.Supplier$documentsInArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Supplier$documentsInArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   products<T extends Prisma.Supplier$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Supplier$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   stockBatchs<T extends Prisma.Supplier$stockBatchsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Supplier$stockBatchsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockBatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  parentSupplier<T extends Prisma.Supplier$parentSupplierArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Supplier$parentSupplierArgs<ExtArgs>>): Prisma.Prisma__SupplierClient<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  subsidiaries<T extends Prisma.Supplier$subsidiariesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Supplier$subsidiariesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deletedByUser<T extends Prisma.Supplier$deletedByUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Supplier$deletedByUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2292,6 +2738,7 @@ export interface SupplierFieldRefs {
   readonly totalSpent: Prisma.FieldRef<"Supplier", 'Decimal'>
   readonly rating: Prisma.FieldRef<"Supplier", 'Int'>
   readonly supplierTaxRuleId: Prisma.FieldRef<"Supplier", 'Int'>
+  readonly parentSupplierId: Prisma.FieldRef<"Supplier", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Supplier", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Supplier", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Supplier", 'DateTime'>
@@ -2785,6 +3232,49 @@ export type Supplier$stockBatchsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.StockBatchScalarFieldEnum | Prisma.StockBatchScalarFieldEnum[]
+}
+
+/**
+ * Supplier.parentSupplier
+ */
+export type Supplier$parentSupplierArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Supplier
+   */
+  select?: Prisma.SupplierSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Supplier
+   */
+  omit?: Prisma.SupplierOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupplierInclude<ExtArgs> | null
+  where?: Prisma.SupplierWhereInput
+}
+
+/**
+ * Supplier.subsidiaries
+ */
+export type Supplier$subsidiariesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Supplier
+   */
+  select?: Prisma.SupplierSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Supplier
+   */
+  omit?: Prisma.SupplierOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupplierInclude<ExtArgs> | null
+  where?: Prisma.SupplierWhereInput
+  orderBy?: Prisma.SupplierOrderByWithRelationInput | Prisma.SupplierOrderByWithRelationInput[]
+  cursor?: Prisma.SupplierWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupplierScalarFieldEnum | Prisma.SupplierScalarFieldEnum[]
 }
 
 /**

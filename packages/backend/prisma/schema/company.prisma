@@ -18,6 +18,7 @@ enum CreditCheckStatus {
     IN_PROGRESS
 }
 
+// Enum per la dimensione del cliente
 enum CustomerSize {
     MICRO
     SMALL
@@ -26,12 +27,14 @@ enum CustomerSize {
     ENTERPRISE
 }
 
+// Enum per la priorità del cliente
 enum CustomerPriority {
     LOW
     MEDIUM
     HIGH
 }
 
+// Enum per il segmento del cliente
 enum CustomerSegment {
     VIP
     GOLD
@@ -40,18 +43,7 @@ enum CustomerSegment {
     STANDARD
 }
 
-/**
- * enum LeadStatus {
- * NEW
- * CONTACTED
- * QUALIFIED
- * PROPOSAL
- * NEGOTIATION
- * CLOSED_WON
- * CLOSED_LOST
- * }
- */
-
+// Enum per il tipo di entità aziendale
 enum CompanyTypeEntity {
     JURIDICAL // Persona Giuridica (Azienda)
     NATURAL // Persona Fisica (Privato/Ditta individuale)
@@ -97,19 +89,9 @@ model Company {
     countryCode String  @default("IT") @db.Char(2)
     country     Country @relation("CompanyCountry", fields: [countryCode], references: [code])
 
-    // Regime fiscale
-    taxRegime String? @db.VarChar(20) // "ordinario", "semplificato", "forfettario"
-
     // Contatti Generali
     mainEmail String? @db.VarChar(255)
     mainPhone String? @db.VarChar(50)
-
-    // Campi per tracking
-    createdAt      DateTime  @default(now())
-    updatedAt      DateTime  @updatedAt
-    firstOrderDate DateTime?
-    totalOrders    Int       @default(0)
-    totalRevenue   Decimal   @default(0) @db.Decimal(15, 2)
 
     // Relazioni
     user           User?      @relation("AssignedUser", fields: [assignedUserId], references: [id])
@@ -119,10 +101,11 @@ model Company {
     // Indirizzi
     addresses CompanyAddress[] @relation("CompanyAddresses")
 
-    contacts  Contact[]
+    // Contatti e Relazioni Commerciali
+    contacts  CompanyContact[]
     customers Customer[]
     suppliers Supplier[]
-    tenants TenantSettings[] @relation("TenantCompany")
+    tenants   TenantSettings[] @relation("TenantCompany")
 
     // Documenti
     documents Document[]
@@ -133,8 +116,9 @@ model Company {
     // Custom Fields
     customFields Json?
 
-    // Opening Hours
-    openingHours Json?
+    // Campi per tracking
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     // Index
     @@index([vatNumber])
@@ -152,7 +136,6 @@ model Customer {
     // Dati specifici Cliente/CRM
     priority     CustomerPriority  @default(LOW)
     segment      CustomerSegment   @default(STANDARD)
-    //leadStatus   LeadStatus        @default(NEW)
     size         CustomerSize      @default(SMALL)
     type         CustomerType      @default(PROSPECT)
     creditStatus CreditCheckStatus @default(PENDING)
@@ -197,19 +180,24 @@ model Customer {
     opportunities Opportunity[]
     activities    Activity[]
 
+    // Relazioni tra clienti (gruppi e gerarchie)
+    parentCustomerId Int?
+    parentCustomer   Customer?  @relation("CustomerHierarchy", fields: [parentCustomerId], references: [id], onDelete: SetNull)
+    subsidiaries     Customer[] @relation("CustomerHierarchy")
+
     // Lead convertita in questo customer
     convertedFromLead Lead? @relation("ConvertedCustomer")
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
     deletedAt DateTime?
 
-    deletedBy Int?
+    // Safe delete
+    deletedBy     Int?
     deletedByUser User? @relation("DeletedBy", fields: [deletedBy], references: [id])
 
+    @@index([parentCustomerId])
     @@index([deletedAt])
-
-    //@@index([leadStatus])
 }
 
 // Tabella Supplier
@@ -246,13 +234,19 @@ model Supplier {
     // Relazione stocks
     stockBatchs StockBatch[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    // Relazioni tra fornitori (gruppi e gerarchie)
+    parentSupplierId Int?
+    parentSupplier   Supplier?  @relation("SupplierHierarchy", fields: [parentSupplierId], references: [id], onDelete: SetNull)
+    subsidiaries     Supplier[] @relation("SupplierHierarchy")
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
     deletedAt DateTime?
 
-    deletedBy Int?
+    deletedBy     Int?
     deletedByUser User? @relation("DeletedBy", fields: [deletedBy], references: [id])
 
+    @@index([parentSupplierId])
     @@index([deletedAt])
 }
 
@@ -266,15 +260,15 @@ enum AddressType {
     OTHER
 }
 
+// Modello per gli indirizzi delle aziende
 model CompanyAddress {
     id Int @id @default(autoincrement())
 
     companyId Int
     company   Company @relation("CompanyAddresses", fields: [companyId], references: [id], onDelete: Cascade)
 
-    addressType AddressType @default(LEGAL) // LEGAL, BILLING, SHIPPING, WAREHOUSE
+    addressType AddressType @default(BILLING) // LEGAL, BILLING, SHIPPING, WAREHOUSE
     isPrimary   Boolean     @default(false)
-    isLegal     Boolean     @default(false)
 
     // Campi base dell'indirizzo
     address String @db.VarChar(255)
@@ -301,45 +295,60 @@ model CompanyAddress {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@unique([companyId, addressType, isPrimary])
-    @@index([companyId, isLegal])
-    @@index([addressType])
-    @@index([provinceCode])
+    // Garantisce un solo indirizzo legale per company (partial unique index)
+    @@unique([companyId], map: "unique_company_legal_address", where: { addressType: "LEGAL" })
+    @@index([companyId])
+    @@index([companyId, addressType])
 }
 
+// Modello per i contatti
 model Contact {
-    id        Int     @id @default(autoincrement())
-    companyId Int
-    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    id Int @id @default(autoincrement())
 
+    // Dati anagrafici puri — nessun companyId diretto
     firstName   String  @db.VarChar(100)
-    lastName    String  @db.VarChar(100)
-    email       String  @db.VarChar(255)
+    lastName    String? @db.VarChar(100)
+    email       String? @unique @db.VarChar(255) // unique globale, non per company
     phone       String? @db.VarChar(50)
     mobilePhone String? @db.VarChar(50)
 
-    position   String? @db.VarChar(100)
-    department String? @db.VarChar(100)
+    active Boolean @default(true)
+    notes  String? @db.Text
 
-    isPrimaryContact Boolean @default(false)
-    active           Boolean @default(true)
-
-    notes String? @db.Text
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
+    // Relazioni
+    companies            CompanyContact[]
     documents            Document[]
     activities           Activity[]
     activityParticipants ActivityParticipant[]
 
-    // Un contatto unico per email all'interno di un'azienda.
-    @@unique([companyId, email])
-    // Unico contatto primario in azienda
-    @@index([companyId, isPrimaryContact])
-    @@index([companyId])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     @@index([email])
-    @@index([isPrimaryContact]) // Utile per trovare velocemente il contatto principale
+}
+
+// Tabella di relazione many-to-many con dati contestuali
+model CompanyContact {
+    id        Int     @id @default(autoincrement())
+    contactId Int
+    contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+    companyId Int
+    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+    // Dati specifici per il ruolo in questa company
+    position         String? @db.VarChar(100)
+    department       String? @db.VarChar(100)
+    isPrimaryContact Boolean @default(false)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Un contatto è associato una sola volta per company
+    @@unique([companyId, contactId])
+    // Un solo contatto primario per company
+    @@unique([companyId], map: "unique_primary_contact_per_company", where: { isPrimaryContact: true })
+    @@index([contactId])
+    @@index([companyId])
 }
 
 // Tabella Note
@@ -353,4 +362,7 @@ model CompanyNote {
     author    User     @relation(fields: [authorId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([companyId])
+    @@index([authorId])
 }

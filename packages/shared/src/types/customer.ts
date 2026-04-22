@@ -2,7 +2,7 @@
 // TYPE EXPORTS
 // ============================================================================
 
-import {z} from "zod";
+import { z } from "zod";
 import { Company } from "./company";
 import {
   createCustomerSchema,
@@ -19,6 +19,7 @@ import {
   CreditCheckStatus,
   CustomerPriority,
   CustomerSegment,
+  CustomerSize,
   CustomerType,
 } from "../constants/customer";
 import { PriceList } from "./pricelist";
@@ -34,10 +35,17 @@ import { Lead } from "./lead";
 /**
  * Customer entity
  */
-export type Customer = Omit<CreateCustomerInput, "company"> & {
+export type Customer = {
   id: number;
   companyId: number;
   company: Company;
+  // Dati specifici Cliente/CRM
+  priority: CustomerPriority;
+  segment: CustomerSegment;
+  size: CustomerSize;
+  type: CustomerType;
+  creditStatus: CreditCheckStatus;
+
   // Dati Commerciali
   defaultPriceList?: PriceList | null;
   customerTaxRule?: TaxRule | null;
@@ -67,6 +75,8 @@ export type Customer = Omit<CreateCustomerInput, "company"> & {
   npsScore: number | null;
   satisfactionRate: Decimal | null;
   lastSurveyDate: Date | null;
+  parentCustomer?: Customer;
+  subsidiaries?: Customer[];
 };
 
 // ============================================================================
@@ -75,9 +85,7 @@ export type Customer = Omit<CreateCustomerInput, "company"> & {
 
 export type CreateCustomerInput = z.infer<typeof createCustomerSchema>;
 export type UpdateCustomerInput = z.infer<typeof updateCustomerSchema>;
-export type UpdateCustomerCompanyInput = z.infer<
-  typeof updateCustomerCompanySchema
->;
+export type UpdateCustomerCompanyInput = z.infer<typeof updateCustomerCompanySchema>;
 
 // ============================================================================
 // QUERY TYPES (using z.infer)

@@ -20,7 +20,7 @@ import {
   UpdateCustomerInput,
 } from "@mini-erp/shared";
 import asyncHandler from "@/middleware/async-handler";
-import { Prisma } from "@/generated/prisma/client";
+import { AddressType, Prisma } from "@/generated/prisma/client";
 import { buildPagination } from "@/utils/query";
 import { CustomerFilters } from "@/types/company";
 
@@ -263,7 +263,7 @@ export const updateCustomerCompany = asyncHandler<AuthenticatedValidatedRequest>
     }
 
     // Separa addresses dai campi scalari company
-    const { addresses: addressesData, ...companyScalarData } = companyData;
+    const { legalAddress: addressesData, ...companyScalarData } = companyData;
 
     const updatedCustomer = await prisma.$transaction(async (tx) => {
       // 1. Aggiorna i campi scalari della company
@@ -273,14 +273,12 @@ export const updateCustomerCompany = asyncHandler<AuthenticatedValidatedRequest>
       });
 
       // 2. Se forniti indirizzi, aggiorna/crea quello legale
-      if (addressesData && addressesData.length > 0) {
-        const legalAddressData = addressesData[0];
-
+      if (addressesData) {
         // Cerca indirizzo legale esistente
         const existingLegal = await tx.companyAddress.findFirst({
           where: {
             companyId: customer.companyId,
-            isLegal: true,
+            addressType: AddressType.LEGAL,
           },
         });
 
@@ -288,15 +286,14 @@ export const updateCustomerCompany = asyncHandler<AuthenticatedValidatedRequest>
           // Aggiorna l'indirizzo legale esistente
           await tx.companyAddress.update({
             where: { id: existingLegal.id },
-            data: legalAddressData,
+            data: addressesData,
           });
         } else {
           // Crea il primo indirizzo legale
           await tx.companyAddress.create({
             data: {
-              ...legalAddressData,
+              ...addressesData,
               companyId: customer.companyId,
-              isLegal: true,
               isPrimary: true,
               addressType: "LEGAL",
             },

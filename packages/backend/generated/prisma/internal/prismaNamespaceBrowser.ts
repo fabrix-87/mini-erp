@@ -68,6 +68,7 @@ export const ModelName = {
   Supplier: 'Supplier',
   CompanyAddress: 'CompanyAddress',
   Contact: 'Contact',
+  CompanyContact: 'CompanyContact',
   CompanyNote: 'CompanyNote',
   Country: 'Country',
   Currency: 'Currency',
@@ -361,17 +362,12 @@ export const CompanyScalarFieldEnum = {
   eoriNumber: 'eoriNumber',
   vatId: 'vatId',
   countryCode: 'countryCode',
-  taxRegime: 'taxRegime',
   mainEmail: 'mainEmail',
   mainPhone: 'mainPhone',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  firstOrderDate: 'firstOrderDate',
-  totalOrders: 'totalOrders',
-  totalRevenue: 'totalRevenue',
   assignedUserId: 'assignedUserId',
-  customFields: 'customFields',
-  openingHours: 'openingHours'
+  customFields: 'customFields'
 } as const
 
 export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
@@ -402,6 +398,7 @@ export const CustomerScalarFieldEnum = {
   npsScore: 'npsScore',
   satisfactionRate: 'satisfactionRate',
   lastSurveyDate: 'lastSurveyDate',
+  parentCustomerId: 'parentCustomerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
@@ -425,6 +422,7 @@ export const SupplierScalarFieldEnum = {
   totalSpent: 'totalSpent',
   rating: 'rating',
   supplierTaxRuleId: 'supplierTaxRuleId',
+  parentSupplierId: 'parentSupplierId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
@@ -439,7 +437,6 @@ export const CompanyAddressScalarFieldEnum = {
   companyId: 'companyId',
   addressType: 'addressType',
   isPrimary: 'isPrimary',
-  isLegal: 'isLegal',
   address: 'address',
   city: 'city',
   provinceCode: 'provinceCode',
@@ -459,15 +456,11 @@ export type CompanyAddressScalarFieldEnum = (typeof CompanyAddressScalarFieldEnu
 
 export const ContactScalarFieldEnum = {
   id: 'id',
-  companyId: 'companyId',
   firstName: 'firstName',
   lastName: 'lastName',
   email: 'email',
   phone: 'phone',
   mobilePhone: 'mobilePhone',
-  position: 'position',
-  department: 'department',
-  isPrimaryContact: 'isPrimaryContact',
   active: 'active',
   notes: 'notes',
   createdAt: 'createdAt',
@@ -475,6 +468,20 @@ export const ContactScalarFieldEnum = {
 } as const
 
 export type ContactScalarFieldEnum = (typeof ContactScalarFieldEnum)[keyof typeof ContactScalarFieldEnum]
+
+
+export const CompanyContactScalarFieldEnum = {
+  id: 'id',
+  contactId: 'contactId',
+  companyId: 'companyId',
+  position: 'position',
+  department: 'department',
+  isPrimaryContact: 'isPrimaryContact',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CompanyContactScalarFieldEnum = (typeof CompanyContactScalarFieldEnum)[keyof typeof CompanyContactScalarFieldEnum]
 
 
 export const CompanyNoteScalarFieldEnum = {

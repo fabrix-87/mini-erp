@@ -7,6 +7,7 @@ import {
 } from "./company";
 import { creditLimitSchema } from "./business/currency";
 import { queryBooleanSchema, queryNumberSchema } from "./query/params";
+import { createIdSchema } from "./primitives";
 
 
 // ============================================================================
@@ -21,6 +22,10 @@ export const createSupplierSchema = z
   .object({
     // Nested Company (usa il base schema)
     company: baseCompanySchema,
+
+    // parent supplier (Hierarchy)
+    parentSupplierId: createIdSchema("Parent Supplier ID non valido").optional().nullable(),
+    
 
     // ===== Dati Procurement Specifici Supplier =====
     paymentTerms: z

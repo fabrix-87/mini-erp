@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.7.0
- * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
+ * Prisma Client JS version: 7.8.0
+ * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.7.0",
-  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
+  client: "7.8.0",
+  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
 }
 
 /**
@@ -401,6 +401,7 @@ export const ModelName = {
   Supplier: 'Supplier',
   CompanyAddress: 'CompanyAddress',
   Contact: 'Contact',
+  CompanyContact: 'CompanyContact',
   CompanyNote: 'CompanyNote',
   Country: 'Country',
   Currency: 'Currency',
@@ -460,7 +461,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "activity" | "activityParticipant" | "activityTemplate" | "attributeGroup" | "attributeGroupTranslation" | "attribute" | "attributeTranslation" | "productVariantAttribute" | "auditLog" | "securityEvent" | "category" | "categoryTranslation" | "company" | "customer" | "supplier" | "companyAddress" | "contact" | "companyNote" | "country" | "currency" | "exchangeRateHistory" | "currencyTranslation" | "document" | "documentLine" | "documentPaymentInstallment" | "documentSequence" | "documentRelation" | "intrastatTransaction" | "intrastatTransactionCode" | "intrastatCommodityCode" | "language" | "lead" | "opportunity" | "closedReason" | "paymentMethod" | "paymentTermDetail" | "paymentMethodTranslation" | "priceList" | "priceListItem" | "product" | "productTranslation" | "productVariant" | "productImage" | "productCategory" | "manufacturer" | "role" | "permission" | "rolePermission" | "tenantSettings" | "userSetting" | "vatNature" | "vatNatureTranslation" | "taxRule" | "taxRuleTranslation" | "user" | "userDetails" | "warehouse" | "stockMovement" | "virtualStock" | "stockBatch" | "stockReservation"
+    modelProps: "activity" | "activityParticipant" | "activityTemplate" | "attributeGroup" | "attributeGroupTranslation" | "attribute" | "attributeTranslation" | "productVariantAttribute" | "auditLog" | "securityEvent" | "category" | "categoryTranslation" | "company" | "customer" | "supplier" | "companyAddress" | "contact" | "companyContact" | "companyNote" | "country" | "currency" | "exchangeRateHistory" | "currencyTranslation" | "document" | "documentLine" | "documentPaymentInstallment" | "documentSequence" | "documentRelation" | "intrastatTransaction" | "intrastatTransactionCode" | "intrastatCommodityCode" | "language" | "lead" | "opportunity" | "closedReason" | "paymentMethod" | "paymentTermDetail" | "paymentMethodTranslation" | "priceList" | "priceListItem" | "product" | "productTranslation" | "productVariant" | "productImage" | "productCategory" | "manufacturer" | "role" | "permission" | "rolePermission" | "tenantSettings" | "userSetting" | "vatNature" | "vatNatureTranslation" | "taxRule" | "taxRuleTranslation" | "user" | "userDetails" | "warehouse" | "stockMovement" | "virtualStock" | "stockBatch" | "stockReservation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1719,6 +1720,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ContactCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ContactCountAggregateOutputType> | number
+        }
+      }
+    }
+    CompanyContact: {
+      payload: Prisma.$CompanyContactPayload<ExtArgs>
+      fields: Prisma.CompanyContactFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CompanyContactFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompanyContactPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CompanyContactFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompanyContactPayload>
+        }
+        findFirst: {
+          args: Prisma.CompanyContactFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompanyContactPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CompanyContactFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompanyContactPayload>
+        }
+        findMany: {
+          args: Prisma.CompanyContactFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompanyContactPayload>[]
+        }
+        create: {
+          args: Prisma.CompanyContactCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompanyContactPayload>
+        }
+        createMany: {
+          args: Prisma.CompanyContactCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CompanyContactCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompanyContactPayload>[]
+        }
+        delete: {
+          args: Prisma.CompanyContactDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompanyContactPayload>
+        }
+        update: {
+          args: Prisma.CompanyContactUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompanyContactPayload>
+        }
+        deleteMany: {
+          args: Prisma.CompanyContactDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CompanyContactUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CompanyContactUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompanyContactPayload>[]
+        }
+        upsert: {
+          args: Prisma.CompanyContactUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CompanyContactPayload>
+        }
+        aggregate: {
+          args: Prisma.CompanyContactAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCompanyContact>
+        }
+        groupBy: {
+          args: Prisma.CompanyContactGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CompanyContactGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CompanyContactCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CompanyContactCountAggregateOutputType> | number
         }
       }
     }
@@ -5248,17 +5323,12 @@ export const CompanyScalarFieldEnum = {
   eoriNumber: 'eoriNumber',
   vatId: 'vatId',
   countryCode: 'countryCode',
-  taxRegime: 'taxRegime',
   mainEmail: 'mainEmail',
   mainPhone: 'mainPhone',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  firstOrderDate: 'firstOrderDate',
-  totalOrders: 'totalOrders',
-  totalRevenue: 'totalRevenue',
   assignedUserId: 'assignedUserId',
-  customFields: 'customFields',
-  openingHours: 'openingHours'
+  customFields: 'customFields'
 } as const
 
 export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
@@ -5289,6 +5359,7 @@ export const CustomerScalarFieldEnum = {
   npsScore: 'npsScore',
   satisfactionRate: 'satisfactionRate',
   lastSurveyDate: 'lastSurveyDate',
+  parentCustomerId: 'parentCustomerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
@@ -5312,6 +5383,7 @@ export const SupplierScalarFieldEnum = {
   totalSpent: 'totalSpent',
   rating: 'rating',
   supplierTaxRuleId: 'supplierTaxRuleId',
+  parentSupplierId: 'parentSupplierId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
@@ -5326,7 +5398,6 @@ export const CompanyAddressScalarFieldEnum = {
   companyId: 'companyId',
   addressType: 'addressType',
   isPrimary: 'isPrimary',
-  isLegal: 'isLegal',
   address: 'address',
   city: 'city',
   provinceCode: 'provinceCode',
@@ -5346,15 +5417,11 @@ export type CompanyAddressScalarFieldEnum = (typeof CompanyAddressScalarFieldEnu
 
 export const ContactScalarFieldEnum = {
   id: 'id',
-  companyId: 'companyId',
   firstName: 'firstName',
   lastName: 'lastName',
   email: 'email',
   phone: 'phone',
   mobilePhone: 'mobilePhone',
-  position: 'position',
-  department: 'department',
-  isPrimaryContact: 'isPrimaryContact',
   active: 'active',
   notes: 'notes',
   createdAt: 'createdAt',
@@ -5362,6 +5429,20 @@ export const ContactScalarFieldEnum = {
 } as const
 
 export type ContactScalarFieldEnum = (typeof ContactScalarFieldEnum)[keyof typeof ContactScalarFieldEnum]
+
+
+export const CompanyContactScalarFieldEnum = {
+  id: 'id',
+  contactId: 'contactId',
+  companyId: 'companyId',
+  position: 'position',
+  department: 'department',
+  isPrimaryContact: 'isPrimaryContact',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CompanyContactScalarFieldEnum = (typeof CompanyContactScalarFieldEnum)[keyof typeof CompanyContactScalarFieldEnum]
 
 
 export const CompanyNoteScalarFieldEnum = {
@@ -6530,20 +6611,6 @@ export type ListEnumCompanyTypeEntityFieldRefInput<$PrismaModel> = FieldRefInput
 
 
 /**
- * Reference to a field of type 'Decimal'
- */
-export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
-    
-
-
-/**
- * Reference to a field of type 'Decimal[]'
- */
-export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
-    
-
-
-/**
  * Reference to a field of type 'CustomerPriority'
  */
 export type EnumCustomerPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CustomerPriority'>
@@ -6610,6 +6677,20 @@ export type EnumCreditCheckStatusFieldRefInput<$PrismaModel> = FieldRefInputType
  * Reference to a field of type 'CreditCheckStatus[]'
  */
 export type ListEnumCreditCheckStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CreditCheckStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
     
 
 
@@ -7055,6 +7136,21 @@ export type PrismaClientOptions = ({
    * ```
    */
   comments?: runtime.SqlCommenterPlugin[]
+  /**
+   * Optional maximum size for the query plan cache. If not provided, a default size will be used.
+   * A value of `0` can be used to disable the cache entirely. A higher cache size can improve
+   * performance for applications that execute a large number of unique queries, while a smaller
+   * cache size can reduce memory usage.
+   * 
+   * @example
+   * ```
+   * const prisma = new PrismaClient({
+   *   adapter,
+   *   queryPlanCacheMaxSize: 100,
+   * })
+   * ```
+   */
+  queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
   activity?: Prisma.ActivityOmit
@@ -7074,6 +7170,7 @@ export type GlobalOmitConfig = {
   supplier?: Prisma.SupplierOmit
   companyAddress?: Prisma.CompanyAddressOmit
   contact?: Prisma.ContactOmit
+  companyContact?: Prisma.CompanyContactOmit
   companyNote?: Prisma.CompanyNoteOmit
   country?: Prisma.CountryOmit
   currency?: Prisma.CurrencyOmit

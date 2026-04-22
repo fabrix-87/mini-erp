@@ -28,25 +28,19 @@ export type AggregateContact = {
 
 export type ContactAvgAggregateOutputType = {
   id: number | null
-  companyId: number | null
 }
 
 export type ContactSumAggregateOutputType = {
   id: number | null
-  companyId: number | null
 }
 
 export type ContactMinAggregateOutputType = {
   id: number | null
-  companyId: number | null
   firstName: string | null
   lastName: string | null
   email: string | null
   phone: string | null
   mobilePhone: string | null
-  position: string | null
-  department: string | null
-  isPrimaryContact: boolean | null
   active: boolean | null
   notes: string | null
   createdAt: Date | null
@@ -55,15 +49,11 @@ export type ContactMinAggregateOutputType = {
 
 export type ContactMaxAggregateOutputType = {
   id: number | null
-  companyId: number | null
   firstName: string | null
   lastName: string | null
   email: string | null
   phone: string | null
   mobilePhone: string | null
-  position: string | null
-  department: string | null
-  isPrimaryContact: boolean | null
   active: boolean | null
   notes: string | null
   createdAt: Date | null
@@ -72,15 +62,11 @@ export type ContactMaxAggregateOutputType = {
 
 export type ContactCountAggregateOutputType = {
   id: number
-  companyId: number
   firstName: number
   lastName: number
   email: number
   phone: number
   mobilePhone: number
-  position: number
-  department: number
-  isPrimaryContact: number
   active: number
   notes: number
   createdAt: number
@@ -91,25 +77,19 @@ export type ContactCountAggregateOutputType = {
 
 export type ContactAvgAggregateInputType = {
   id?: true
-  companyId?: true
 }
 
 export type ContactSumAggregateInputType = {
   id?: true
-  companyId?: true
 }
 
 export type ContactMinAggregateInputType = {
   id?: true
-  companyId?: true
   firstName?: true
   lastName?: true
   email?: true
   phone?: true
   mobilePhone?: true
-  position?: true
-  department?: true
-  isPrimaryContact?: true
   active?: true
   notes?: true
   createdAt?: true
@@ -118,15 +98,11 @@ export type ContactMinAggregateInputType = {
 
 export type ContactMaxAggregateInputType = {
   id?: true
-  companyId?: true
   firstName?: true
   lastName?: true
   email?: true
   phone?: true
   mobilePhone?: true
-  position?: true
-  department?: true
-  isPrimaryContact?: true
   active?: true
   notes?: true
   createdAt?: true
@@ -135,15 +111,11 @@ export type ContactMaxAggregateInputType = {
 
 export type ContactCountAggregateInputType = {
   id?: true
-  companyId?: true
   firstName?: true
   lastName?: true
   email?: true
   phone?: true
   mobilePhone?: true
-  position?: true
-  department?: true
-  isPrimaryContact?: true
   active?: true
   notes?: true
   createdAt?: true
@@ -239,15 +211,11 @@ export type ContactGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type ContactGroupByOutputType = {
   id: number
-  companyId: number
   firstName: string
-  lastName: string
-  email: string
+  lastName: string | null
+  email: string | null
   phone: string | null
   mobilePhone: string | null
-  position: string | null
-  department: string | null
-  isPrimaryContact: boolean
   active: boolean
   notes: string | null
   createdAt: Date
@@ -279,20 +247,16 @@ export type ContactWhereInput = {
   OR?: Prisma.ContactWhereInput[]
   NOT?: Prisma.ContactWhereInput | Prisma.ContactWhereInput[]
   id?: Prisma.IntFilter<"Contact"> | number
-  companyId?: Prisma.IntFilter<"Contact"> | number
   firstName?: Prisma.StringFilter<"Contact"> | string
-  lastName?: Prisma.StringFilter<"Contact"> | string
-  email?: Prisma.StringFilter<"Contact"> | string
+  lastName?: Prisma.StringNullableFilter<"Contact"> | string | null
+  email?: Prisma.StringNullableFilter<"Contact"> | string | null
   phone?: Prisma.StringNullableFilter<"Contact"> | string | null
   mobilePhone?: Prisma.StringNullableFilter<"Contact"> | string | null
-  position?: Prisma.StringNullableFilter<"Contact"> | string | null
-  department?: Prisma.StringNullableFilter<"Contact"> | string | null
-  isPrimaryContact?: Prisma.BoolFilter<"Contact"> | boolean
   active?: Prisma.BoolFilter<"Contact"> | boolean
   notes?: Prisma.StringNullableFilter<"Contact"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Contact"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Contact"> | Date | string
-  company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
+  companies?: Prisma.CompanyContactListRelationFilter
   documents?: Prisma.DocumentListRelationFilter
   activities?: Prisma.ActivityListRelationFilter
   activityParticipants?: Prisma.ActivityParticipantListRelationFilter
@@ -300,20 +264,16 @@ export type ContactWhereInput = {
 
 export type ContactOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
-  lastName?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  lastName?: Prisma.SortOrderInput | Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   mobilePhone?: Prisma.SortOrderInput | Prisma.SortOrder
-  position?: Prisma.SortOrderInput | Prisma.SortOrder
-  department?: Prisma.SortOrderInput | Prisma.SortOrder
-  isPrimaryContact?: Prisma.SortOrder
   active?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  company?: Prisma.CompanyOrderByWithRelationInput
+  companies?: Prisma.CompanyContactOrderByRelationAggregateInput
   documents?: Prisma.DocumentOrderByRelationAggregateInput
   activities?: Prisma.ActivityOrderByRelationAggregateInput
   activityParticipants?: Prisma.ActivityParticipantOrderByRelationAggregateInput
@@ -321,40 +281,31 @@ export type ContactOrderByWithRelationInput = {
 
 export type ContactWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  companyId_email?: Prisma.ContactCompanyIdEmailCompoundUniqueInput
+  email?: string
   AND?: Prisma.ContactWhereInput | Prisma.ContactWhereInput[]
   OR?: Prisma.ContactWhereInput[]
   NOT?: Prisma.ContactWhereInput | Prisma.ContactWhereInput[]
-  companyId?: Prisma.IntFilter<"Contact"> | number
   firstName?: Prisma.StringFilter<"Contact"> | string
-  lastName?: Prisma.StringFilter<"Contact"> | string
-  email?: Prisma.StringFilter<"Contact"> | string
+  lastName?: Prisma.StringNullableFilter<"Contact"> | string | null
   phone?: Prisma.StringNullableFilter<"Contact"> | string | null
   mobilePhone?: Prisma.StringNullableFilter<"Contact"> | string | null
-  position?: Prisma.StringNullableFilter<"Contact"> | string | null
-  department?: Prisma.StringNullableFilter<"Contact"> | string | null
-  isPrimaryContact?: Prisma.BoolFilter<"Contact"> | boolean
   active?: Prisma.BoolFilter<"Contact"> | boolean
   notes?: Prisma.StringNullableFilter<"Contact"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Contact"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Contact"> | Date | string
-  company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
+  companies?: Prisma.CompanyContactListRelationFilter
   documents?: Prisma.DocumentListRelationFilter
   activities?: Prisma.ActivityListRelationFilter
   activityParticipants?: Prisma.ActivityParticipantListRelationFilter
-}, "id" | "companyId_email">
+}, "id" | "email">
 
 export type ContactOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
-  lastName?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  lastName?: Prisma.SortOrderInput | Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   mobilePhone?: Prisma.SortOrderInput | Prisma.SortOrder
-  position?: Prisma.SortOrderInput | Prisma.SortOrder
-  department?: Prisma.SortOrderInput | Prisma.SortOrder
-  isPrimaryContact?: Prisma.SortOrder
   active?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -371,15 +322,11 @@ export type ContactScalarWhereWithAggregatesInput = {
   OR?: Prisma.ContactScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ContactScalarWhereWithAggregatesInput | Prisma.ContactScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Contact"> | number
-  companyId?: Prisma.IntWithAggregatesFilter<"Contact"> | number
   firstName?: Prisma.StringWithAggregatesFilter<"Contact"> | string
-  lastName?: Prisma.StringWithAggregatesFilter<"Contact"> | string
-  email?: Prisma.StringWithAggregatesFilter<"Contact"> | string
+  lastName?: Prisma.StringNullableWithAggregatesFilter<"Contact"> | string | null
+  email?: Prisma.StringNullableWithAggregatesFilter<"Contact"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"Contact"> | string | null
   mobilePhone?: Prisma.StringNullableWithAggregatesFilter<"Contact"> | string | null
-  position?: Prisma.StringNullableWithAggregatesFilter<"Contact"> | string | null
-  department?: Prisma.StringNullableWithAggregatesFilter<"Contact"> | string | null
-  isPrimaryContact?: Prisma.BoolWithAggregatesFilter<"Contact"> | boolean
   active?: Prisma.BoolWithAggregatesFilter<"Contact"> | boolean
   notes?: Prisma.StringNullableWithAggregatesFilter<"Contact"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Contact"> | Date | string
@@ -388,18 +335,15 @@ export type ContactScalarWhereWithAggregatesInput = {
 
 export type ContactCreateInput = {
   firstName: string
-  lastName: string
-  email: string
+  lastName?: string | null
+  email?: string | null
   phone?: string | null
   mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  company: Prisma.CompanyCreateNestedOneWithoutContactsInput
+  companies?: Prisma.CompanyContactCreateNestedManyWithoutContactInput
   documents?: Prisma.DocumentCreateNestedManyWithoutContactInput
   activities?: Prisma.ActivityCreateNestedManyWithoutContactInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutContactInput
@@ -407,19 +351,16 @@ export type ContactCreateInput = {
 
 export type ContactUncheckedCreateInput = {
   id?: number
-  companyId: number
   firstName: string
-  lastName: string
-  email: string
+  lastName?: string | null
+  email?: string | null
   phone?: string | null
   mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  companies?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutContactInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutContactInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutContactInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutContactInput
@@ -427,18 +368,15 @@ export type ContactUncheckedCreateInput = {
 
 export type ContactUpdateInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  company?: Prisma.CompanyUpdateOneRequiredWithoutContactsNestedInput
+  companies?: Prisma.CompanyContactUpdateManyWithoutContactNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutContactNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutContactNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutContactNestedInput
@@ -446,19 +384,16 @@ export type ContactUpdateInput = {
 
 export type ContactUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  companyId?: Prisma.IntFieldUpdateOperationsInput | number
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companies?: Prisma.CompanyContactUncheckedUpdateManyWithoutContactNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutContactNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutContactNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutContactNestedInput
@@ -466,15 +401,11 @@ export type ContactUncheckedUpdateInput = {
 
 export type ContactCreateManyInput = {
   id?: number
-  companyId: number
   firstName: string
-  lastName: string
-  email: string
+  lastName?: string | null
+  email?: string | null
   phone?: string | null
   mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: string | null
   createdAt?: Date | string
@@ -483,13 +414,10 @@ export type ContactCreateManyInput = {
 
 export type ContactUpdateManyMutationInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -498,15 +426,11 @@ export type ContactUpdateManyMutationInput = {
 
 export type ContactUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  companyId?: Prisma.IntFieldUpdateOperationsInput | number
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -518,32 +442,13 @@ export type ContactNullableScalarRelationFilter = {
   isNot?: Prisma.ContactWhereInput | null
 }
 
-export type ContactListRelationFilter = {
-  every?: Prisma.ContactWhereInput
-  some?: Prisma.ContactWhereInput
-  none?: Prisma.ContactWhereInput
-}
-
-export type ContactOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
-export type ContactCompanyIdEmailCompoundUniqueInput = {
-  companyId: number
-  email: string
-}
-
 export type ContactCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   mobilePhone?: Prisma.SortOrder
-  position?: Prisma.SortOrder
-  department?: Prisma.SortOrder
-  isPrimaryContact?: Prisma.SortOrder
   active?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -552,20 +457,15 @@ export type ContactCountOrderByAggregateInput = {
 
 export type ContactAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
 }
 
 export type ContactMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   mobilePhone?: Prisma.SortOrder
-  position?: Prisma.SortOrder
-  department?: Prisma.SortOrder
-  isPrimaryContact?: Prisma.SortOrder
   active?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -574,15 +474,11 @@ export type ContactMaxOrderByAggregateInput = {
 
 export type ContactMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   mobilePhone?: Prisma.SortOrder
-  position?: Prisma.SortOrder
-  department?: Prisma.SortOrder
-  isPrimaryContact?: Prisma.SortOrder
   active?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -591,7 +487,11 @@ export type ContactMinOrderByAggregateInput = {
 
 export type ContactSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  companyId?: Prisma.SortOrder
+}
+
+export type ContactScalarRelationFilter = {
+  is?: Prisma.ContactWhereInput
+  isNot?: Prisma.ContactWhereInput
 }
 
 export type ContactCreateNestedOneWithoutActivitiesInput = {
@@ -626,46 +526,18 @@ export type ContactUpdateOneWithoutActivityParticipantsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ContactUpdateToOneWithWhereWithoutActivityParticipantsInput, Prisma.ContactUpdateWithoutActivityParticipantsInput>, Prisma.ContactUncheckedUpdateWithoutActivityParticipantsInput>
 }
 
-export type ContactCreateNestedManyWithoutCompanyInput = {
-  create?: Prisma.XOR<Prisma.ContactCreateWithoutCompanyInput, Prisma.ContactUncheckedCreateWithoutCompanyInput> | Prisma.ContactCreateWithoutCompanyInput[] | Prisma.ContactUncheckedCreateWithoutCompanyInput[]
-  connectOrCreate?: Prisma.ContactCreateOrConnectWithoutCompanyInput | Prisma.ContactCreateOrConnectWithoutCompanyInput[]
-  createMany?: Prisma.ContactCreateManyCompanyInputEnvelope
-  connect?: Prisma.ContactWhereUniqueInput | Prisma.ContactWhereUniqueInput[]
+export type ContactCreateNestedOneWithoutCompaniesInput = {
+  create?: Prisma.XOR<Prisma.ContactCreateWithoutCompaniesInput, Prisma.ContactUncheckedCreateWithoutCompaniesInput>
+  connectOrCreate?: Prisma.ContactCreateOrConnectWithoutCompaniesInput
+  connect?: Prisma.ContactWhereUniqueInput
 }
 
-export type ContactUncheckedCreateNestedManyWithoutCompanyInput = {
-  create?: Prisma.XOR<Prisma.ContactCreateWithoutCompanyInput, Prisma.ContactUncheckedCreateWithoutCompanyInput> | Prisma.ContactCreateWithoutCompanyInput[] | Prisma.ContactUncheckedCreateWithoutCompanyInput[]
-  connectOrCreate?: Prisma.ContactCreateOrConnectWithoutCompanyInput | Prisma.ContactCreateOrConnectWithoutCompanyInput[]
-  createMany?: Prisma.ContactCreateManyCompanyInputEnvelope
-  connect?: Prisma.ContactWhereUniqueInput | Prisma.ContactWhereUniqueInput[]
-}
-
-export type ContactUpdateManyWithoutCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.ContactCreateWithoutCompanyInput, Prisma.ContactUncheckedCreateWithoutCompanyInput> | Prisma.ContactCreateWithoutCompanyInput[] | Prisma.ContactUncheckedCreateWithoutCompanyInput[]
-  connectOrCreate?: Prisma.ContactCreateOrConnectWithoutCompanyInput | Prisma.ContactCreateOrConnectWithoutCompanyInput[]
-  upsert?: Prisma.ContactUpsertWithWhereUniqueWithoutCompanyInput | Prisma.ContactUpsertWithWhereUniqueWithoutCompanyInput[]
-  createMany?: Prisma.ContactCreateManyCompanyInputEnvelope
-  set?: Prisma.ContactWhereUniqueInput | Prisma.ContactWhereUniqueInput[]
-  disconnect?: Prisma.ContactWhereUniqueInput | Prisma.ContactWhereUniqueInput[]
-  delete?: Prisma.ContactWhereUniqueInput | Prisma.ContactWhereUniqueInput[]
-  connect?: Prisma.ContactWhereUniqueInput | Prisma.ContactWhereUniqueInput[]
-  update?: Prisma.ContactUpdateWithWhereUniqueWithoutCompanyInput | Prisma.ContactUpdateWithWhereUniqueWithoutCompanyInput[]
-  updateMany?: Prisma.ContactUpdateManyWithWhereWithoutCompanyInput | Prisma.ContactUpdateManyWithWhereWithoutCompanyInput[]
-  deleteMany?: Prisma.ContactScalarWhereInput | Prisma.ContactScalarWhereInput[]
-}
-
-export type ContactUncheckedUpdateManyWithoutCompanyNestedInput = {
-  create?: Prisma.XOR<Prisma.ContactCreateWithoutCompanyInput, Prisma.ContactUncheckedCreateWithoutCompanyInput> | Prisma.ContactCreateWithoutCompanyInput[] | Prisma.ContactUncheckedCreateWithoutCompanyInput[]
-  connectOrCreate?: Prisma.ContactCreateOrConnectWithoutCompanyInput | Prisma.ContactCreateOrConnectWithoutCompanyInput[]
-  upsert?: Prisma.ContactUpsertWithWhereUniqueWithoutCompanyInput | Prisma.ContactUpsertWithWhereUniqueWithoutCompanyInput[]
-  createMany?: Prisma.ContactCreateManyCompanyInputEnvelope
-  set?: Prisma.ContactWhereUniqueInput | Prisma.ContactWhereUniqueInput[]
-  disconnect?: Prisma.ContactWhereUniqueInput | Prisma.ContactWhereUniqueInput[]
-  delete?: Prisma.ContactWhereUniqueInput | Prisma.ContactWhereUniqueInput[]
-  connect?: Prisma.ContactWhereUniqueInput | Prisma.ContactWhereUniqueInput[]
-  update?: Prisma.ContactUpdateWithWhereUniqueWithoutCompanyInput | Prisma.ContactUpdateWithWhereUniqueWithoutCompanyInput[]
-  updateMany?: Prisma.ContactUpdateManyWithWhereWithoutCompanyInput | Prisma.ContactUpdateManyWithWhereWithoutCompanyInput[]
-  deleteMany?: Prisma.ContactScalarWhereInput | Prisma.ContactScalarWhereInput[]
+export type ContactUpdateOneRequiredWithoutCompaniesNestedInput = {
+  create?: Prisma.XOR<Prisma.ContactCreateWithoutCompaniesInput, Prisma.ContactUncheckedCreateWithoutCompaniesInput>
+  connectOrCreate?: Prisma.ContactCreateOrConnectWithoutCompaniesInput
+  upsert?: Prisma.ContactUpsertWithoutCompaniesInput
+  connect?: Prisma.ContactWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ContactUpdateToOneWithWhereWithoutCompaniesInput, Prisma.ContactUpdateWithoutCompaniesInput>, Prisma.ContactUncheckedUpdateWithoutCompaniesInput>
 }
 
 export type ContactCreateNestedOneWithoutDocumentsInput = {
@@ -686,37 +558,31 @@ export type ContactUpdateOneWithoutDocumentsNestedInput = {
 
 export type ContactCreateWithoutActivitiesInput = {
   firstName: string
-  lastName: string
-  email: string
+  lastName?: string | null
+  email?: string | null
   phone?: string | null
   mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  company: Prisma.CompanyCreateNestedOneWithoutContactsInput
+  companies?: Prisma.CompanyContactCreateNestedManyWithoutContactInput
   documents?: Prisma.DocumentCreateNestedManyWithoutContactInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutContactInput
 }
 
 export type ContactUncheckedCreateWithoutActivitiesInput = {
   id?: number
-  companyId: number
   firstName: string
-  lastName: string
-  email: string
+  lastName?: string | null
+  email?: string | null
   phone?: string | null
   mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  companies?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutContactInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutContactInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutContactInput
 }
@@ -739,74 +605,62 @@ export type ContactUpdateToOneWithWhereWithoutActivitiesInput = {
 
 export type ContactUpdateWithoutActivitiesInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  company?: Prisma.CompanyUpdateOneRequiredWithoutContactsNestedInput
+  companies?: Prisma.CompanyContactUpdateManyWithoutContactNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutContactNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutContactNestedInput
 }
 
 export type ContactUncheckedUpdateWithoutActivitiesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  companyId?: Prisma.IntFieldUpdateOperationsInput | number
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companies?: Prisma.CompanyContactUncheckedUpdateManyWithoutContactNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutContactNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutContactNestedInput
 }
 
 export type ContactCreateWithoutActivityParticipantsInput = {
   firstName: string
-  lastName: string
-  email: string
+  lastName?: string | null
+  email?: string | null
   phone?: string | null
   mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  company: Prisma.CompanyCreateNestedOneWithoutContactsInput
+  companies?: Prisma.CompanyContactCreateNestedManyWithoutContactInput
   documents?: Prisma.DocumentCreateNestedManyWithoutContactInput
   activities?: Prisma.ActivityCreateNestedManyWithoutContactInput
 }
 
 export type ContactUncheckedCreateWithoutActivityParticipantsInput = {
   id?: number
-  companyId: number
   firstName: string
-  lastName: string
-  email: string
+  lastName?: string | null
+  email?: string | null
   phone?: string | null
   mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  companies?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutContactInput
   documents?: Prisma.DocumentUncheckedCreateNestedManyWithoutContactInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutContactInput
 }
@@ -829,50 +683,41 @@ export type ContactUpdateToOneWithWhereWithoutActivityParticipantsInput = {
 
 export type ContactUpdateWithoutActivityParticipantsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  company?: Prisma.CompanyUpdateOneRequiredWithoutContactsNestedInput
+  companies?: Prisma.CompanyContactUpdateManyWithoutContactNestedInput
   documents?: Prisma.DocumentUpdateManyWithoutContactNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutContactNestedInput
 }
 
 export type ContactUncheckedUpdateWithoutActivityParticipantsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  companyId?: Prisma.IntFieldUpdateOperationsInput | number
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companies?: Prisma.CompanyContactUncheckedUpdateManyWithoutContactNestedInput
   documents?: Prisma.DocumentUncheckedUpdateManyWithoutContactNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutContactNestedInput
 }
 
-export type ContactCreateWithoutCompanyInput = {
+export type ContactCreateWithoutCompaniesInput = {
   firstName: string
-  lastName: string
-  email: string
+  lastName?: string | null
+  email?: string | null
   phone?: string | null
   mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: string | null
   createdAt?: Date | string
@@ -882,16 +727,13 @@ export type ContactCreateWithoutCompanyInput = {
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutContactInput
 }
 
-export type ContactUncheckedCreateWithoutCompanyInput = {
+export type ContactUncheckedCreateWithoutCompaniesInput = {
   id?: number
   firstName: string
-  lastName: string
-  email: string
+  lastName?: string | null
+  email?: string | null
   phone?: string | null
   mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: string | null
   createdAt?: Date | string
@@ -901,85 +743,80 @@ export type ContactUncheckedCreateWithoutCompanyInput = {
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutContactInput
 }
 
-export type ContactCreateOrConnectWithoutCompanyInput = {
+export type ContactCreateOrConnectWithoutCompaniesInput = {
   where: Prisma.ContactWhereUniqueInput
-  create: Prisma.XOR<Prisma.ContactCreateWithoutCompanyInput, Prisma.ContactUncheckedCreateWithoutCompanyInput>
+  create: Prisma.XOR<Prisma.ContactCreateWithoutCompaniesInput, Prisma.ContactUncheckedCreateWithoutCompaniesInput>
 }
 
-export type ContactCreateManyCompanyInputEnvelope = {
-  data: Prisma.ContactCreateManyCompanyInput | Prisma.ContactCreateManyCompanyInput[]
-  skipDuplicates?: boolean
+export type ContactUpsertWithoutCompaniesInput = {
+  update: Prisma.XOR<Prisma.ContactUpdateWithoutCompaniesInput, Prisma.ContactUncheckedUpdateWithoutCompaniesInput>
+  create: Prisma.XOR<Prisma.ContactCreateWithoutCompaniesInput, Prisma.ContactUncheckedCreateWithoutCompaniesInput>
+  where?: Prisma.ContactWhereInput
 }
 
-export type ContactUpsertWithWhereUniqueWithoutCompanyInput = {
-  where: Prisma.ContactWhereUniqueInput
-  update: Prisma.XOR<Prisma.ContactUpdateWithoutCompanyInput, Prisma.ContactUncheckedUpdateWithoutCompanyInput>
-  create: Prisma.XOR<Prisma.ContactCreateWithoutCompanyInput, Prisma.ContactUncheckedCreateWithoutCompanyInput>
+export type ContactUpdateToOneWithWhereWithoutCompaniesInput = {
+  where?: Prisma.ContactWhereInput
+  data: Prisma.XOR<Prisma.ContactUpdateWithoutCompaniesInput, Prisma.ContactUncheckedUpdateWithoutCompaniesInput>
 }
 
-export type ContactUpdateWithWhereUniqueWithoutCompanyInput = {
-  where: Prisma.ContactWhereUniqueInput
-  data: Prisma.XOR<Prisma.ContactUpdateWithoutCompanyInput, Prisma.ContactUncheckedUpdateWithoutCompanyInput>
+export type ContactUpdateWithoutCompaniesInput = {
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  documents?: Prisma.DocumentUpdateManyWithoutContactNestedInput
+  activities?: Prisma.ActivityUpdateManyWithoutContactNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutContactNestedInput
 }
 
-export type ContactUpdateManyWithWhereWithoutCompanyInput = {
-  where: Prisma.ContactScalarWhereInput
-  data: Prisma.XOR<Prisma.ContactUpdateManyMutationInput, Prisma.ContactUncheckedUpdateManyWithoutCompanyInput>
-}
-
-export type ContactScalarWhereInput = {
-  AND?: Prisma.ContactScalarWhereInput | Prisma.ContactScalarWhereInput[]
-  OR?: Prisma.ContactScalarWhereInput[]
-  NOT?: Prisma.ContactScalarWhereInput | Prisma.ContactScalarWhereInput[]
-  id?: Prisma.IntFilter<"Contact"> | number
-  companyId?: Prisma.IntFilter<"Contact"> | number
-  firstName?: Prisma.StringFilter<"Contact"> | string
-  lastName?: Prisma.StringFilter<"Contact"> | string
-  email?: Prisma.StringFilter<"Contact"> | string
-  phone?: Prisma.StringNullableFilter<"Contact"> | string | null
-  mobilePhone?: Prisma.StringNullableFilter<"Contact"> | string | null
-  position?: Prisma.StringNullableFilter<"Contact"> | string | null
-  department?: Prisma.StringNullableFilter<"Contact"> | string | null
-  isPrimaryContact?: Prisma.BoolFilter<"Contact"> | boolean
-  active?: Prisma.BoolFilter<"Contact"> | boolean
-  notes?: Prisma.StringNullableFilter<"Contact"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"Contact"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Contact"> | Date | string
+export type ContactUncheckedUpdateWithoutCompaniesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  documents?: Prisma.DocumentUncheckedUpdateManyWithoutContactNestedInput
+  activities?: Prisma.ActivityUncheckedUpdateManyWithoutContactNestedInput
+  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutContactNestedInput
 }
 
 export type ContactCreateWithoutDocumentsInput = {
   firstName: string
-  lastName: string
-  email: string
+  lastName?: string | null
+  email?: string | null
   phone?: string | null
   mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  company: Prisma.CompanyCreateNestedOneWithoutContactsInput
+  companies?: Prisma.CompanyContactCreateNestedManyWithoutContactInput
   activities?: Prisma.ActivityCreateNestedManyWithoutContactInput
   activityParticipants?: Prisma.ActivityParticipantCreateNestedManyWithoutContactInput
 }
 
 export type ContactUncheckedCreateWithoutDocumentsInput = {
   id?: number
-  companyId: number
   firstName: string
-  lastName: string
-  email: string
+  lastName?: string | null
+  email?: string | null
   phone?: string | null
   mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  companies?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutContactInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutContactInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedCreateNestedManyWithoutContactInput
 }
@@ -1002,108 +839,33 @@ export type ContactUpdateToOneWithWhereWithoutDocumentsInput = {
 
 export type ContactUpdateWithoutDocumentsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  company?: Prisma.CompanyUpdateOneRequiredWithoutContactsNestedInput
+  companies?: Prisma.CompanyContactUpdateManyWithoutContactNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutContactNestedInput
   activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutContactNestedInput
 }
 
 export type ContactUncheckedUpdateWithoutDocumentsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  companyId?: Prisma.IntFieldUpdateOperationsInput | number
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  companies?: Prisma.CompanyContactUncheckedUpdateManyWithoutContactNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutContactNestedInput
   activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutContactNestedInput
-}
-
-export type ContactCreateManyCompanyInput = {
-  id?: number
-  firstName: string
-  lastName: string
-  email: string
-  phone?: string | null
-  mobilePhone?: string | null
-  position?: string | null
-  department?: string | null
-  isPrimaryContact?: boolean
-  active?: boolean
-  notes?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type ContactUpdateWithoutCompanyInput = {
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  documents?: Prisma.DocumentUpdateManyWithoutContactNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutContactNestedInput
-  activityParticipants?: Prisma.ActivityParticipantUpdateManyWithoutContactNestedInput
-}
-
-export type ContactUncheckedUpdateWithoutCompanyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  documents?: Prisma.DocumentUncheckedUpdateManyWithoutContactNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutContactNestedInput
-  activityParticipants?: Prisma.ActivityParticipantUncheckedUpdateManyWithoutContactNestedInput
-}
-
-export type ContactUncheckedUpdateManyWithoutCompanyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mobilePhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  position?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPrimaryContact?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -1112,12 +874,14 @@ export type ContactUncheckedUpdateManyWithoutCompanyInput = {
  */
 
 export type ContactCountOutputType = {
+  companies: number
   documents: number
   activities: number
   activityParticipants: number
 }
 
 export type ContactCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  companies?: boolean | ContactCountOutputTypeCountCompaniesArgs
   documents?: boolean | ContactCountOutputTypeCountDocumentsArgs
   activities?: boolean | ContactCountOutputTypeCountActivitiesArgs
   activityParticipants?: boolean | ContactCountOutputTypeCountActivityParticipantsArgs
@@ -1131,6 +895,13 @@ export type ContactCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
    * Select specific fields to fetch from the ContactCountOutputType
    */
   select?: Prisma.ContactCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ContactCountOutputType without action
+ */
+export type ContactCountOutputTypeCountCompaniesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CompanyContactWhereInput
 }
 
 /**
@@ -1157,20 +928,16 @@ export type ContactCountOutputTypeCountActivityParticipantsArgs<ExtArgs extends 
 
 export type ContactSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  companyId?: boolean
   firstName?: boolean
   lastName?: boolean
   email?: boolean
   phone?: boolean
   mobilePhone?: boolean
-  position?: boolean
-  department?: boolean
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
+  companies?: boolean | Prisma.Contact$companiesArgs<ExtArgs>
   documents?: boolean | Prisma.Contact$documentsArgs<ExtArgs>
   activities?: boolean | Prisma.Contact$activitiesArgs<ExtArgs>
   activityParticipants?: boolean | Prisma.Contact$activityParticipantsArgs<ExtArgs>
@@ -1179,91 +946,69 @@ export type ContactSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 
 export type ContactSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  companyId?: boolean
   firstName?: boolean
   lastName?: boolean
   email?: boolean
   phone?: boolean
   mobilePhone?: boolean
-  position?: boolean
-  department?: boolean
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["contact"]>
 
 export type ContactSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  companyId?: boolean
   firstName?: boolean
   lastName?: boolean
   email?: boolean
   phone?: boolean
   mobilePhone?: boolean
-  position?: boolean
-  department?: boolean
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["contact"]>
 
 export type ContactSelectScalar = {
   id?: boolean
-  companyId?: boolean
   firstName?: boolean
   lastName?: boolean
   email?: boolean
   phone?: boolean
   mobilePhone?: boolean
-  position?: boolean
-  department?: boolean
-  isPrimaryContact?: boolean
   active?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ContactOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "firstName" | "lastName" | "email" | "phone" | "mobilePhone" | "position" | "department" | "isPrimaryContact" | "active" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["contact"]>
+export type ContactOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "phone" | "mobilePhone" | "active" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["contact"]>
 export type ContactInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
+  companies?: boolean | Prisma.Contact$companiesArgs<ExtArgs>
   documents?: boolean | Prisma.Contact$documentsArgs<ExtArgs>
   activities?: boolean | Prisma.Contact$activitiesArgs<ExtArgs>
   activityParticipants?: boolean | Prisma.Contact$activityParticipantsArgs<ExtArgs>
   _count?: boolean | Prisma.ContactCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type ContactIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
-}
-export type ContactIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
-}
+export type ContactIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type ContactIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $ContactPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Contact"
   objects: {
-    company: Prisma.$CompanyPayload<ExtArgs>
+    companies: Prisma.$CompanyContactPayload<ExtArgs>[]
     documents: Prisma.$DocumentPayload<ExtArgs>[]
     activities: Prisma.$ActivityPayload<ExtArgs>[]
     activityParticipants: Prisma.$ActivityParticipantPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    companyId: number
     firstName: string
-    lastName: string
-    email: string
+    lastName: string | null
+    email: string | null
     phone: string | null
     mobilePhone: string | null
-    position: string | null
-    department: string | null
-    isPrimaryContact: boolean
     active: boolean
     notes: string | null
     createdAt: Date
@@ -1662,7 +1407,7 @@ readonly fields: ContactFieldRefs;
  */
 export interface Prisma__ContactClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  company<T extends Prisma.CompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__CompanyClient<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  companies<T extends Prisma.Contact$companiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contact$companiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanyContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   documents<T extends Prisma.Contact$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contact$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   activities<T extends Prisma.Contact$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contact$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   activityParticipants<T extends Prisma.Contact$activityParticipantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Contact$activityParticipantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1696,15 +1441,11 @@ export interface Prisma__ContactClient<T, Null = never, ExtArgs extends runtime.
  */
 export interface ContactFieldRefs {
   readonly id: Prisma.FieldRef<"Contact", 'Int'>
-  readonly companyId: Prisma.FieldRef<"Contact", 'Int'>
   readonly firstName: Prisma.FieldRef<"Contact", 'String'>
   readonly lastName: Prisma.FieldRef<"Contact", 'String'>
   readonly email: Prisma.FieldRef<"Contact", 'String'>
   readonly phone: Prisma.FieldRef<"Contact", 'String'>
   readonly mobilePhone: Prisma.FieldRef<"Contact", 'String'>
-  readonly position: Prisma.FieldRef<"Contact", 'String'>
-  readonly department: Prisma.FieldRef<"Contact", 'String'>
-  readonly isPrimaryContact: Prisma.FieldRef<"Contact", 'Boolean'>
   readonly active: Prisma.FieldRef<"Contact", 'Boolean'>
   readonly notes: Prisma.FieldRef<"Contact", 'String'>
   readonly createdAt: Prisma.FieldRef<"Contact", 'DateTime'>
@@ -1963,10 +1704,6 @@ export type ContactCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    */
   data: Prisma.ContactCreateManyInput | Prisma.ContactCreateManyInput[]
   skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ContactIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -2037,10 +1774,6 @@ export type ContactUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many Contacts to update.
    */
   limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ContactIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -2107,6 +1840,30 @@ export type ContactDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Contacts to delete.
    */
   limit?: number
+}
+
+/**
+ * Contact.companies
+ */
+export type Contact$companiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CompanyContact
+   */
+  select?: Prisma.CompanyContactSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CompanyContact
+   */
+  omit?: Prisma.CompanyContactOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CompanyContactInclude<ExtArgs> | null
+  where?: Prisma.CompanyContactWhereInput
+  orderBy?: Prisma.CompanyContactOrderByWithRelationInput | Prisma.CompanyContactOrderByWithRelationInput[]
+  cursor?: Prisma.CompanyContactWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CompanyContactScalarFieldEnum | Prisma.CompanyContactScalarFieldEnum[]
 }
 
 /**

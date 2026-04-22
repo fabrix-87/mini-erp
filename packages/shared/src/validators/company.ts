@@ -72,8 +72,6 @@ const baseCompanyShape = z.object({
   vatId: internationalVatIdSchema(),
   eoriNumber: eoriNumberSchema(),
 
-  taxRegime: z.string().max(20).optional().nullable(),
-
   // ===== Nazione =====
   countryCode: countryCodeBaseSchema.default("IT"),
 
@@ -89,7 +87,7 @@ const baseCompanyShape = z.object({
   openingHours: inputJsonValueSchema.optional().nullable(),
 
   // supporto per nested addresses al momento della creazione
-  addresses: z.array(createAddressSchema.omit({ companyId: true })).optional(),
+  legalAddress: createAddressSchema.omit({ companyId: true }),
 });
 
 // ============================================================================

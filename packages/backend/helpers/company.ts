@@ -1,13 +1,7 @@
-
 import { prisma as prismaGlobal } from "../config/prisma-client";
 import { AddressType, Prisma, PrismaClient } from "../generated/prisma/client";
 
-import {
-  CompanyFilters,
-  CustomerFilters,
-  SupplierFilters,
-  AddressFilters,
-} from "../types/company";
+import { CompanyFilters, CustomerFilters, SupplierFilters, AddressFilters } from "../types/company";
 
 // ============================================================================
 // WHERE CLAUSE BUILDERS
@@ -16,9 +10,7 @@ import {
 /**
  * Costruisce WHERE clause per Company
  */
-export const buildCompanyWhereClause = (
-  filters: CompanyFilters
-): Prisma.CompanyWhereInput => {
+export const buildCompanyWhereClause = (filters: CompanyFilters): Prisma.CompanyWhereInput => {
   const where: Prisma.CompanyWhereInput = {};
 
   if (filters.search) {
@@ -43,9 +35,7 @@ export const buildCompanyWhereClause = (
 /**
  * Costruisce WHERE clause per Customer
  */
-export const buildCustomerWhereClause = (
-  filters: CustomerFilters
-): Prisma.CustomerWhereInput => {
+export const buildCustomerWhereClause = (filters: CustomerFilters): Prisma.CustomerWhereInput => {
   const where: Prisma.CustomerWhereInput = {
     company: buildCompanyWhereClause(filters),
   };
@@ -61,9 +51,7 @@ export const buildCustomerWhereClause = (
 /**
  * Costruisce WHERE clause per Supplier
  */
-export const buildSupplierWhereClause = (
-  filters: SupplierFilters
-): Prisma.SupplierWhereInput => {
+export const buildSupplierWhereClause = (filters: SupplierFilters): Prisma.SupplierWhereInput => {
   const where: Prisma.SupplierWhereInput = {
     company: buildCompanyWhereClause(filters),
   };
@@ -83,7 +71,7 @@ export const buildSupplierWhereClause = (
  * Costruisce WHERE clause per Address
  */
 export const buildAddressWhereClause = (
-  filters: AddressFilters
+  filters: AddressFilters,
 ): Prisma.CompanyAddressWhereInput => {
   const where: Prisma.CompanyAddressWhereInput = {};
 
@@ -106,17 +94,11 @@ export const getCompanyBaseInclude = (includeRelations = true) => {
       select: { code: true, name: true, isEU: true },
     },
     /**
-     * Returns the legal address (isLegal flag) or falls back
-     * to the primary LEGAL-type address for the company.
+     * Returns the legal address
      */
     addresses: {
-      where: {
-        OR: [
-          { isLegal: true },
-          { addressType: AddressType.LEGAL, isPrimary: true },
-        ],
-      },
-      include: { country: true },
+      where: { addressType: AddressType.LEGAL },
+      include: { country: true as const },
       take: 1,
     },
     user: {
@@ -131,13 +113,25 @@ export const getCompanyBaseInclude = (includeRelations = true) => {
 };
 
 export const getCompanyFullInclude = () => ({
-  ...getCompanyBaseInclude(),
+  ...getCompanyBaseInclude(), // include legalAddress (addresses where LEGAL, take: 1)
   addresses: {
-    include: { country: true },
+    include: { country: true as const },
     orderBy: { isPrimary: "desc" as const },
   },
   contacts: {
-    where: { active: true },
+    include: {
+      contact: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          mobilePhone: true,
+        },
+      },
+    },
+    where: { contact: { active: true } },
     orderBy: { isPrimaryContact: "desc" as const },
     take: 5,
   },
@@ -177,6 +171,26 @@ export const getCustomerInclude = (detailed = false) => ({
     : undefined,
 });
 
+/**
+ * Extended include for group/hierarchy views.
+ * Use only when the parent-child relationship is needed
+ * (e.g. customer detail page, group report).
+ */
+export const getCustomerGroupInclude = () => ({
+  parentCustomer: {
+    select: {
+      id: true,
+      company: { select: { companyName: true, code: true } },
+    },
+  },
+  subsidiaries: {
+    select: {
+      id: true,
+      company: { select: { companyName: true, code: true } },
+    },
+  },
+});
+
 export const getSupplierInclude = (detailed = false) => ({
   company: {
     include: detailed ? getCompanyFullInclude() : getCompanyBaseInclude(),
@@ -186,6 +200,26 @@ export const getSupplierInclude = (detailed = false) => ({
         select: { documentsIn: true, products: true },
       }
     : undefined,
+});
+
+/**
+ * Extended include for group/hierarchy views.
+ * Use only when the parent-child relationship is needed
+ * (e.g. supplier detail page, group report).
+ */
+export const getSupplierGroupInclude = () => ({
+  parentSupplier: {
+    select: {
+      id: true,
+      company: { select: { companyName: true, code: true } },
+    },
+  },
+  subsidiaries: {
+    select: {
+      id: true,
+      company: { select: { companyName: true, code: true } },
+    },
+  },
 });
 
 export const getAddressInclude = () => ({
@@ -203,7 +237,7 @@ export const getAddressInclude = () => ({
 
 export const buildOrderBy = (
   sortBy: string = "id",
-  sortOrder: "asc" | "desc" = "desc"
+  sortOrder: "asc" | "desc" = "desc",
 ): Prisma.CompanyOrderByWithRelationInput => {
   const orderByMap: Record<string, any> = {
     id: { id: sortOrder },
@@ -225,8 +259,8 @@ export const buildOrderBy = (
  * Genera codice company univoco (Richiede accesso DB)
  */
 export const generateCompanyCode = async (
-  prisma: any, // Idealmente tipizzare con PrismaClient
-  prefix = "COM"
+  prisma: PrismaClient,
+  prefix: string = "COM",
 ): Promise<string> => {
   const lastCompany = await prisma.company.findFirst({
     where: { code: { startsWith: prefix } },
@@ -247,8 +281,8 @@ export const generateCompanyCode = async (
  * Verifica se può eliminare company
  */
 export const canDeleteCompany = async (
-  prisma: any,
-  companyId: number
+  prisma: PrismaClient,
+  companyId: number,
 ): Promise<{ canDelete: boolean; reason?: string }> => {
   const company = await prisma.company.findUnique({
     where: { id: companyId },
@@ -266,9 +300,7 @@ export const canDeleteCompany = async (
   if (!company) return { canDelete: false, reason: "Company non trovata" };
 
   const totalRelations =
-    company._count.documents +
-    company._count.customers +
-    company._count.suppliers;
+    company._count.documents + company._count.customers + company._count.suppliers;
 
   if (totalRelations > 0) {
     return {
@@ -284,10 +316,10 @@ export const canDeleteCompany = async (
  * Verifica se può impostare indirizzo primario
  */
 export const canSetPrimaryAddress = async (
-  prisma: any,
+  prisma: PrismaClient,
   addressId: number,
   companyId: number,
-  addressType: string
+  addressType: AddressType,
 ): Promise<{ canSet: boolean; reason?: string }> => {
   const address = await prisma.companyAddress.findUnique({
     where: { id: addressId },
@@ -320,7 +352,7 @@ export const clearPrimaryAddresses = async (
   prisma: PrismaClient,
   companyId: number,
   addressType: string,
-  excludeId?: number
+  excludeId?: number,
 ) => {
   // WHERE clause: tutti gli indirizzi PRIMARY dello stesso tipo
   // TRANNE quello che stiamo impostando
@@ -350,7 +382,7 @@ export const clearPrimaryAddresses = async (
  */
 export const generateUniqueCompanyCode = async (
   type: string,
-  tx: PrismaClient = prismaGlobal // Usa il client globale se non viene passata una transazione
+  tx: PrismaClient = prismaGlobal, // Usa il client globale se non viene passata una transazione
 ): Promise<string> => {
   const prefixMap: { [key: string]: string } = {
     lead: "LEA",
@@ -401,7 +433,7 @@ export const generateUniqueCompanyCode = async (
 export const validatePrimaryAddress = async (
   prisma: PrismaClient,
   companyId: number,
-  addressType: AddressType
+  addressType: AddressType,
 ): Promise<{ valid: boolean; error?: string }> => {
   const primaryCount = await prisma.companyAddress.count({
     where: {
@@ -425,17 +457,14 @@ export const validatePrimaryAddress = async (
  * Imposta un indirizzo come primario in modo atomico
  * Rimuove il flag dagli altri in una transazione
  */
-export const setPrimaryAddressAtomic = async (
-  prisma: PrismaClient,
-  addressId: number
-) => {
+export const setPrimaryAddressAtomic = async (prisma: PrismaClient, addressId: number) => {
   // Prima recupera l'indirizzo
   const address = await prisma.companyAddress.findUnique({
     where: { id: addressId },
   });
 
   if (!address) {
-    throw new Error('Indirizzo non trovato');
+    throw new Error("Indirizzo non trovato");
   }
 
   // Esegui in transazione
