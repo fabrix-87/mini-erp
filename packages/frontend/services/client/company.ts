@@ -2,6 +2,7 @@ import { ApiResponse } from "@/types/api";
 import { Customer, CustomerQueryInput, CustomerStats } from "@/types/customer";
 import api from "@/lib/client/api";
 import { Company, CompanyQueryInput } from "@/types/company";
+import { CreateCustomerForm } from "@mini-erp/shared/types";
 
 /**
  * Recupera la lista dei clienti con filtri e paginazione
@@ -28,7 +29,6 @@ export const getCustomers = async (
 ): Promise<ApiResponse<Customer[]>> => {
     const defaultParams = { limit: 20, page: 1 };
 
-    if(params.leadStatus === "all") params.leadStatus = undefined;
     if(params.type === "all") params.type = undefined;
     if(params.segment === "all") params.segment = undefined;
 
@@ -63,7 +63,7 @@ export const getCustomerById = async (
  * Crea un nuovo cliente
  */
 export const createCustomer = async (
-  data: Partial<Customer>
+  data: CreateCustomerForm
 ): Promise<ApiResponse<Customer>> => {
   const response = await api.post('/customers', data)
   return response.data

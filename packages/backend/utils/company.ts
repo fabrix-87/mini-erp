@@ -1,6 +1,7 @@
-import { Address, ValidationError } from "@mini-erp/shared";
+import { ValidationError } from "@mini-erp/shared";
 import { ValidationResult } from "../types/company";
 import { AddressType } from "@/generated/prisma/enums";
+import { CompanyAddress } from "@/generated/prisma/client";
 
 // ============================================================================
 // VALIDATION UTILS
@@ -168,25 +169,17 @@ export const calculateSupplierStats = (supplier: any) => ({
 
 /**
  * Remaps company addresses for API response:
- * - Extracts the LEGAL address from base include into a dedicated `legalAddress` field
+ * - Extracts the LEGAL address into a dedicated `legalAddress` field
  * - Keeps remaining addresses (non-LEGAL) in the `addresses` array
- * When using getCompanyFullInclude, addresses already excludes LEGAL type,
- * so legalAddress comes from the base include's addresses[0].
  */
 export const formatCompanyResponse = <
-  T extends {
-    company?: {
-      addresses?: Address[];
-    };
-  },
+  TCompany extends { addresses?: CompanyAddress[] },
+  TData extends { company: TCompany },
 >(
-  data: T,
+  data: TData,
 ) => {
-  if (!data.company) return data;
-
   const { addresses, ...companyRest } = data.company;
 
-  // Separa il legale dagli altri (nel caso getCompanyBaseInclude senza full)
   const legalAddress = addresses?.find((a) => a.addressType === AddressType.LEGAL) ?? null;
   const otherAddresses = addresses?.filter((a) => a.addressType !== AddressType.LEGAL) ?? [];
 
@@ -195,7 +188,6 @@ export const formatCompanyResponse = <
     company: {
       ...companyRest,
       legalAddress,
-      // Espone addresses solo se presenti (evita array vuoto nel base include)
       ...(otherAddresses.length > 0 && { addresses: otherAddresses }),
     },
   };

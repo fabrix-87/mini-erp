@@ -19,22 +19,20 @@ import {
   deleteSupplier,
   getDashboardStats as getSupplierStats,
 } from "@/lib/client/modules/supplier";
-import { Customer, CustomerQueryInput, CustomerType } from "@/types/customer";
-import { Supplier, SupplierQueryInput } from "@/types/supplier";
-import { CompanyQueryInput } from "@/types/company";
-import { createAddress, updateAddress } from "@/lib/client/modules/address";
-import { Address } from "@/types/address";
-import {
-  updateCustomerCompany,
-  updateSupplierCompany,
-} from "@/lib/client/modules/company";
+import { updateCustomerCompany, updateSupplierCompany } from "@/lib/client/modules/company";
+import { createAddress, updateAddress, getAddressByType } from "@/lib/client/modules/address";
+import type { CustomerQueryInput } from "@/types/customer";
+import type { SupplierQueryInput } from "@/types/supplier";
+import type { CompanyQueryInput } from "@/types/company";
+import { CreateCustomerInput } from "@mini-erp/shared/types";
+import { AddressTypeEnum } from "@mini-erp/shared/constants";
 
 // ============================================================================
 // COMPANY HOOKS
 // ============================================================================
 
 /**
- * Hook per recuperare la lista dei clienti
+ * Fetches the paginated list of companies (base registry, no customer/supplier data).
  */
 export function useCompanies(
   params: CompanyQueryInput = {
@@ -55,7 +53,7 @@ export function useCompanies(
 // ============================================================================
 
 /**
- * Hook per recuperare la lista dei clienti
+ * Fetches the paginated list of customers.
  */
 export function useCustomers(
   params: CustomerQueryInput = {
@@ -72,7 +70,7 @@ export function useCustomers(
 }
 
 /**
- * Hook per recuperare un cliente specifico
+ * Fetches a single customer by ID.
  */
 export function useCustomer(id: number | undefined, enabled = true) {
   return useQuery({
@@ -83,7 +81,7 @@ export function useCustomer(id: number | undefined, enabled = true) {
 }
 
 /**
- * Hook per le statistiche dei clienti
+ * Fetches customer dashboard statistics.
  */
 export function useCustomerStats() {
   return useQuery({
@@ -93,35 +91,32 @@ export function useCustomerStats() {
 }
 
 /**
- * Hook per creare un nuovo cliente
+ * Creates a new customer with its company and legal address in a single flow.
+ * The legal address is created as a separate API call after the customer is created,
+ * since addresses are managed via their own endpoint.
  */
 export function useCreateCustomer() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (
-      data: Partial<Customer> & { legalAddress?: Partial<Address> },
-    ) => {
-      // Estrai legalAddress dai dati
-      const { legalAddress, ...customerData } = data;
+    mutationFn: async (data: CreateCustomerInput) => {
+      const { company, ...customerData } = data;
+      const { legalAddress, ...companyData } = company;
 
-      // Crea il cliente (con company nested)
-      const customerResponse = await createCustomer(customerData);
+      // 1. Crea il customer con la company nested
+      const customerResponse = await createCustomer({
+        company: companyData,
+        ...customerData,
+      });
 
-      // Se c'è un indirizzo legale, crealo associato al nuovo cliente
-      if (legalAddress && customerResponse.data?.id) {
-        const newAddress = await createAddress(
-          customerResponse.data.companyId,
-          {
-            // Nell'indirizzo metto l'id della company
-            ...legalAddress,
-            addressType: "LEGAL",
-            isPrimary: true,
-          },
-        );
-        // Setta l'indirizzo legale appena creato nella company del fornitore
-        await updateSupplierCompany(customerResponse.data.id, {
-          legalAddressId: newAddress.data.id,
+      const companyId = customerResponse.data?.company?.id;
+
+      // 2. Se presente, crea l'indirizzo legale associato alla company
+      if (legalAddress && companyId) {
+        await createAddress(companyId, {
+          ...legalAddress,
+          addressType: AddressTypeEnum.LEGAL,
+          isPrimary: true,
         });
       }
 
@@ -138,50 +133,48 @@ export function useCreateCustomer() {
 }
 
 /**
- * Hook per aggiornare un cliente (company + customer + address)
+ * Updates an existing customer.
+ * Company data and legal address are updated via dedicated endpoints.
+ * The legal address is upserted: updated if it exists, created otherwise.
  */
 export function useUpdateCustomer(id: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: {
-      companyData?: any;
-      customerData?: any;
-      legalAddress?: Partial<Address>;
-      legalAddressId?: number;
+      companyData?: CompanyUpdateInput;
+      customerData?: CustomerUpdateInput;
     }) => {
-      const { companyData, customerData, legalAddress, legalAddressId } = data;
+      const { companyData, customerData } = data;
+      const { legalAddress, ...companyFields } = companyData ?? {};
 
-      // 1. Aggiorna i dati della company (se presenti)
-      if (companyData) {
-        await updateCustomerCompany(id, companyData);
-      }
+      // Esegue le chiamate in parallelo dove possibile
+      const [customerResponse] = await Promise.all([
+        customerData ? updateCustomer(id, customerData) : Promise.resolve(null),
+        Object.keys(companyFields).length > 0
+          ? updateCustomerCompany(id, companyFields)
+          : Promise.resolve(null),
+      ]);
 
-      // 2. Aggiorna i dati specifici del customer (se presenti)
-      let customerResponse;
-      if (customerData) {
-        customerResponse = await updateCustomer(id, customerData);
-      }
+      // Gestione indirizzo legale — upsert tramite API dedicata
+      if (legalAddress) {
+        const companyId = companyData?.companyId ?? customerResponse?.data?.companyId;
 
-      const companyId = companyData?.id || customerResponse?.data?.companyId;
+        if (companyId) {
+          // Cerca l'indirizzo legale esistente
+          const existing = await getAddressByType(companyId, AddressTypeEnum.LEGAL);
 
-      // 3. Gestisci l'indirizzo legale
-      if (legalAddress && companyId) {
-        if (legalAddressId) {
-          // Aggiorna l'indirizzo esistente
-          await updateAddress(legalAddressId, legalAddress);
-        } else {
-          // Crea un nuovo indirizzo
-          const newAddress = await createAddress(companyId, {
-            // Nell'indirizzo metto l'id della company
-            ...legalAddress,
-            addressType: "LEGAL",
-            isPrimary: true,
-          });
-          // Setta l'indirizzo legale appena creato nella company del fornitore
-          await updateSupplierCompany(id, {
-            legalAddressId: newAddress.data.id,
-          });
+          if (existing?.data?.id) {
+            // Aggiorna il legale esistente
+            await updateAddress(existing.data.id, legalAddress);
+          } else {
+            // Crea il legale se non esiste ancora
+            await createAddress(companyId, {
+              ...legalAddress,
+              addressType: AddressTypeEnum.LEGAL,
+              isPrimary: true,
+            });
+          }
         }
       }
 
@@ -199,7 +192,7 @@ export function useUpdateCustomer(id: number) {
 }
 
 /**
- * Hook per eliminare un cliente
+ * Soft-deletes a customer by ID.
  */
 export function useDeleteCustomer() {
   const queryClient = useQueryClient();
@@ -221,7 +214,7 @@ export function useDeleteCustomer() {
 // ============================================================================
 
 /**
- * Hook per recuperare la lista dei fornitori
+ * Fetches the paginated list of suppliers.
  */
 export function useSuppliers(
   params: SupplierQueryInput = {
@@ -238,7 +231,7 @@ export function useSuppliers(
 }
 
 /**
- * Hook per recuperare un fornitore specifico
+ * Fetches a single supplier by ID.
  */
 export function useSupplier(id: number | undefined, enabled = true) {
   return useQuery({
@@ -249,7 +242,7 @@ export function useSupplier(id: number | undefined, enabled = true) {
 }
 
 /**
- * Hook per le statistiche dei fornitori
+ * Fetches supplier dashboard statistics.
  */
 export function useSupplierStats() {
   return useQuery({
@@ -259,34 +252,30 @@ export function useSupplierStats() {
 }
 
 /**
- * Hook per creare un nuovo fornitore
+ * Creates a new supplier with its company and legal address in a single flow.
  */
 export function useCreateSupplier() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (
-      data: Partial<Supplier> & { legalAddress?: Partial<Address> },
-    ) => {
-      // Estrai legalAddress dai dati
-      const { legalAddress, ...supplierData } = data;
+    mutationFn: async (data: SupplierCreateInput) => {
+      const { company, ...supplierData } = data;
+      const { legalAddress, ...companyData } = company;
 
-      // Crea il fornitore (con company nested)
-      const supplierResponse = await createSupplier(supplierData);
+      // 1. Crea il supplier con la company nested
+      const supplierResponse = await createSupplier({
+        company: companyData,
+        ...supplierData,
+      });
 
-      // Se c'è un indirizzo legale, crealo associato al nuovo fornitore
-      if (legalAddress && supplierResponse.data?.id) {
-        const newAddress = await createAddress(
-          supplierResponse.data.companyId,
-          {
-            ...legalAddress,
-            addressType: "LEGAL",
-            isPrimary: true,
-          },
-        );
-        // Setta l'indirizzo legale appena creato nella company del fornitore
-        await updateSupplierCompany(supplierResponse.data.id, {
-          legalAddressId: newAddress.data.id,
+      const companyId = supplierResponse.data?.company?.id;
+
+      // 2. Se presente, crea l'indirizzo legale
+      if (legalAddress && companyId) {
+        await createAddress(companyId, {
+          ...legalAddress,
+          addressType: AddressTypeEnum.LEGAL,
+          isPrimary: true,
         });
       }
 
@@ -303,49 +292,42 @@ export function useCreateSupplier() {
 }
 
 /**
- * Hook per aggiornare un fornitore (company + supplier + address)
+ * Updates an existing supplier.
+ * Company data and legal address are updated via dedicated endpoints.
  */
 export function useUpdateSupplier(id: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: {
-      companyData?: any;
-      supplierData?: any;
-      legalAddress?: Partial<Address>;
-      legalAddressId?: number;
+      companyData?: CompanyUpdateInput;
+      supplierData?: SupplierUpdateInput;
     }) => {
-      const { companyData, supplierData, legalAddress, legalAddressId } = data;
+      const { companyData, supplierData } = data;
+      const { legalAddress, ...companyFields } = companyData ?? {};
 
-      // 1. Aggiorna i dati della company (se presenti)
-      if (companyData) {
-        await updateSupplierCompany(id, companyData);
-      }
+      const [supplierResponse] = await Promise.all([
+        supplierData ? updateSupplier(id, supplierData) : Promise.resolve(null),
+        Object.keys(companyFields).length > 0
+          ? updateSupplierCompany(id, companyFields)
+          : Promise.resolve(null),
+      ]);
 
-      // 2. Aggiorna i dati specifici del supplier (se presenti)
-      let supplierResponse;
-      if (supplierData) {
-        supplierResponse = await updateSupplier(id, supplierData);
-      }
+      if (legalAddress) {
+        const companyId = companyData?.companyId ?? supplierResponse?.data?.companyId;
 
-      const companyId = companyData?.id || supplierResponse?.data?.companyId;
+        if (companyId) {
+          const existing = await getAddressByType(companyId, AddressTypeEnum.LEGAL);
 
-      // 3. Gestisci l'indirizzo legale
-      if (legalAddress && companyId) {
-        if (legalAddressId) {
-          // Aggiorna l'indirizzo esistente
-          await updateAddress(legalAddressId, legalAddress);
-        } else {
-          // Crea un nuovo indirizzo
-          const newAddress = await createAddress(companyId, {
-            ...legalAddress,
-            addressType: "LEGAL",
-            isPrimary: true,
-          });
-          // Setta l'indirizzo legale appena creato nella company del fornitore
-          await updateSupplierCompany(id, {
-            legalAddressId: newAddress.data.id,
-          });
+          if (existing?.data?.id) {
+            await updateAddress(existing.data.id, legalAddress);
+          } else {
+            await createAddress(companyId, {
+              ...legalAddress,
+              addressType: AddressTypeEnum.LEGAL,
+              isPrimary: true,
+            });
+          }
         }
       }
 
@@ -363,7 +345,7 @@ export function useUpdateSupplier(id: number) {
 }
 
 /**
- * Hook per eliminare un fornitore
+ * Soft-deletes a supplier by ID.
  */
 export function useDeleteSupplier() {
   const queryClient = useQueryClient();
@@ -385,23 +367,18 @@ export function useDeleteSupplier() {
 // ============================================================================
 
 /**
- * Hook generico per recuperare un'entità (customer o supplier)
+ * Generic hook to fetch a single entity (customer or supplier) by type and ID.
  */
 export function useCompanyEntity(
-  type: CustomerType,
+  type: "CUSTOMER" | "SUPPLIER",
   id: number | undefined,
   enabled = true,
 ) {
   return useQuery({
-    queryKey: [type, id],
+    queryKey: [type.toLowerCase(), id],
     queryFn: async () => {
       if (!id) return null;
-
-      const response =
-        type === "CUSTOMER"
-          ? await getCustomerById(id)
-          : await getSupplierById(id);
-
+      const response = type === "CUSTOMER" ? await getCustomerById(id) : await getSupplierById(id);
       return response.data;
     },
     enabled: enabled && !!id,
@@ -409,20 +386,19 @@ export function useCompanyEntity(
 }
 
 /**
- * Hook generico per la lista di entità
+ * Generic hook to fetch the paginated list of entities (customers or suppliers).
  */
 export function useCompanyEntities(
-  type: CustomerType,
+  type: "CUSTOMER" | "SUPPLIER",
   params: CustomerQueryInput | SupplierQueryInput,
 ) {
   return useQuery({
-    queryKey: [type + "s", params],
+    queryKey: [type.toLowerCase() + "s", params],
     queryFn: async () => {
       const response =
         type === "CUSTOMER"
           ? await getCustomers(params as CustomerQueryInput)
           : await getSuppliers(params as SupplierQueryInput);
-
       return response.data;
     },
   });

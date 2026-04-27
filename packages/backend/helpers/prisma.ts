@@ -126,3 +126,15 @@ export const clean = <T extends object>(obj: T) =>
 export function toJsonField(value: unknown): typeof Prisma.JsonNull | Prisma.InputJsonValue {
   return value != null ? (value as Prisma.InputJsonValue) : Prisma.JsonNull;
 }
+
+/**
+ * Converts all null values to undefined in an object.
+ * Use before passing form/DTO data to Prisma create/update when
+ * optional FK fields are typed as `T | null | undefined` but Prisma
+ * expects `T | undefined` (null is reserved for explicit DB NULL on non-FK fields).
+ *
+ * @param obj - Object with potentially null values
+ * @returns Same object with null replaced by undefined
+ */
+export const nullToUndefined = <T extends Record<string, unknown>>(obj: T): T =>
+  Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, v === null ? undefined : v])) as T;

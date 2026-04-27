@@ -13,6 +13,7 @@ import {
   extractCompanyData,
   extractCustomerData,
   extractSupplierData,
+  mapFormToUpdateCompanyApi,
 } from "@/lib/utils/company-mapper";
 import {
   useCustomer,
@@ -29,35 +30,32 @@ export default function CompanyFormPage() {
   const pathname = usePathname();
 
   // Determina il tipo di entità dal path
-  const companyType: CompanyType = pathname.includes("/customers")
-    ? "CUSTOMER"
-    : "SUPPLIER";
+  const companyType: CompanyType = pathname.includes("/customers") ? "CUSTOMER" : "SUPPLIER";
 
   const isEditMode = !!params?.id;
-  const entityId = params?.id ? parseInt(params.id as string) : undefined;  
+  const entityId = params?.id ? parseInt(params.id as string) : undefined;
 
   const [formData, setFormData] = useState<CompanyFormData>({
     // Company base
     companyName: "",
-    tradeName: "",
-    legalForm: "",
+    tradeName: null,
+    legalForm: null,
     entityType: "JURIDICAL",
     status: "ACTIVE",
-
-    // Fiscal data
     vatNumber: "",
     taxCode: "",
     sdiCode: "",
-    pec: "",
-    eoriNumber: "",
-    vatId: "",
+    pec: null,
+    eoriNumber: null,
+    vatId: null,
     countryCode: "IT",
+    mainEmail: null,
+    mainPhone: null,
+    assignedUserId: null,
+    customFields: null,
+    openingHours: null,
 
-    // Contact info
-    mainEmail: "",
-    mainPhone: "",
-
-    // Legal address
+    // Legal address — sempre inizializzato per evitare uncontrolled inputs
     legalAddress: {
       address: "",
       city: "",
@@ -66,35 +64,38 @@ export default function CompanyFormPage() {
       countryCode: "IT",
     },
 
-    // Customer specific
-    ...(companyType === "CUSTOMER" && {
-      priority: "MEDIUM",
-      segment: "STANDARD",
-      leadStatus: "NEW",
-      size: "SMALL",
-      type: "LEAD",
-      creditStatus: "PENDING",
-    }),
+    // Customer fields
+    parentCustomerId: null,
+    priority: "MEDIUM",
+    segment: "STANDARD",
+    size: "SMALL",
+    type: "CUSTOMER",
+    creditStatus: "PENDING",
+    defaultPriceListId: null,
+    customerTaxRuleId: null,
+    paymentMethodId: null,
 
-    // Supplier specific
-    ...(companyType === "SUPPLIER" && {
-      paymentTerms: "",
-      leadTimeDays: 0,
-      rating: 5,
-    }),
+    // Supplier fields
+    parentSupplierId: null,
+    paymentTerms: null,
+    bankAccount: null,
+    leadTimeDays: 0,
+    transportCost: null,
+    rating: 5,
 
-    creditLimit: 0,
+    // Presente su entrambi
+    creditLimit: null,
   });
 
   // Fetch existing data usando gli hook specifici
   const { data: customerData, isLoading: isLoadingCustomer } = useCustomer(
     companyType === "CUSTOMER" ? entityId : undefined,
-    isEditMode && companyType === "CUSTOMER"
+    isEditMode && companyType === "CUSTOMER",
   );
 
   const { data: supplierData, isLoading: isLoadingSupplier } = useSupplier(
     companyType === "SUPPLIER" ? entityId : undefined,
-    isEditMode && companyType === "SUPPLIER"
+    isEditMode && companyType === "SUPPLIER",
   );
 
   const isLoading = isLoadingCustomer || isLoadingSupplier;
@@ -102,11 +103,12 @@ export default function CompanyFormPage() {
   // Popola il form quando i dati sono caricati
   useEffect(() => {
     if (isEditMode && !isLoading) {
-      const data =
-        companyType === "CUSTOMER" ? customerData?.data : supplierData?.data;
-      if (data) {
-        const mappedData = mapApiToForm(data, companyType);
-        setFormData(mappedData);        
+      if (customerData?.data || supplierData?.data) {
+        const mappedData =
+          companyType === "CUSTOMER"
+            ? mapApiToForm(customerData!.data, companyType)
+            : mapApiToForm(supplierData!.data, companyType);
+        setFormData(mappedData);
       }
     }
   }, [customerData, supplierData, isEditMode, isLoading, companyType]);
@@ -117,72 +119,44 @@ export default function CompanyFormPage() {
   const updateCustomerMutation = useUpdateCustomer(entityId || 0);
   const updateSupplierMutation = useUpdateSupplier(entityId || 0);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     if (companyType === "CUSTOMER") {
       if (isEditMode) {
-        // UPDATE: separa i dati
-        const {legalAddressId, ...companyData} = extractCompanyData(formData);
-        const customerData = extractCustomerData(formData);
-
+        // UPDATE: usa mapFormToUpdateCompanyApi per i dati company
         updateCustomerMutation.mutate(
           {
-            companyData,
-            customerData,
-            legalAddress: formData.legalAddress,
-            legalAddressId,
+            companyData: mapFormToUpdateCompanyApi(formData),
+            customerData: extractCustomerData(formData),
           },
           {
-            onSuccess: () => {
-              router.push(`/customers/${entityId}`);
-            },
-          }
+            onSuccess: () => router.push(`/customers/${entityId}`),
+          },
         );
       } else {
-        // CREATE: usa company nested
-        const apiData = mapFormToCreateApi(formData, companyType);
-
-        createCustomerMutation.mutate(
-          { ...apiData, legalAddress: formData.legalAddress },
-          {
-            onSuccess: (response) => {
-              router.push(`/customers/${response.data?.id}`);
-            },
-          }
-        );
+        // CREATE: payload completo con nested company + legalAddress
+        createCustomerMutation.mutate(mapFormToCreateApi(formData, "CUSTOMER"), {
+          onSuccess: (response) => {
+            router.push(`/customers/${response.data?.id}`);
+          },
+        });
       }
     } else {
       if (isEditMode) {
-        // UPDATE: separa i dati
-        const {legalAddressId, ...companyData} = extractCompanyData(formData);
-        const supplierData = extractSupplierData(formData);
-
         updateSupplierMutation.mutate(
           {
-            companyData,
-            supplierData,
-            legalAddress: formData.legalAddress,
-            legalAddressId,
+            companyData: mapFormToUpdateCompanyApi(formData),
+            supplierData: extractSupplierData(formData),
           },
           {
-            onSuccess: () => {
-              router.push(`/suppliers/${entityId}`);
-            },
-          }
+            onSuccess: () => router.push(`/suppliers/${entityId}`),
+          },
         );
       } else {
-        // CREATE: usa company nested
-        const apiData = mapFormToCreateApi(formData, companyType);
-
-        createSupplierMutation.mutate(
-          { ...apiData, legalAddress: formData.legalAddress },
-          {
-            onSuccess: (response) => {
-              router.push(`/suppliers/${response.data?.id}`);
-            },
-          }
-        );
+        createSupplierMutation.mutate(mapFormToCreateApi(formData, "SUPPLIER"), {
+          onSuccess: (response) => {
+            router.push(`/suppliers/${response.data?.id}`);
+          },
+        });
       }
     }
   };
@@ -216,14 +190,10 @@ export default function CompanyFormPage() {
                 ? `Modifica ${
                     companyType === "CUSTOMER" ? "Cliente" : "Fornitore"
                   } - ${formData.companyName}`
-                : `Nuovo ${
-                    companyType === "CUSTOMER" ? "Cliente" : "Fornitore"
-                  }`}
+                : `Nuovo ${companyType === "CUSTOMER" ? "Cliente" : "Fornitore"}`}
             </h1>
             <p className="text-muted-foreground">
-              {isEditMode
-                ? "Aggiorna le informazioni"
-                : "Crea una nuova anagrafica"}
+              {isEditMode ? "Aggiorna le informazioni" : "Crea una nuova anagrafica"}
             </p>
           </div>
         </div>
@@ -240,11 +210,7 @@ export default function CompanyFormPage() {
       </div>
 
       {/* Form Tabs */}
-      <CompanyFormTabs
-        formData={formData}
-        setFormData={setFormData}
-        companyType={companyType}
-      />
+      <CompanyFormTabs formData={formData} setFormData={setFormData} companyType={companyType} />
 
       {/* Footer Actions */}
       <div className="flex justify-end gap-2">

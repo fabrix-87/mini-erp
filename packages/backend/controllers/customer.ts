@@ -1,10 +1,14 @@
 import {
   buildCustomerWhereClause,
   getCustomerInclude,
-  generateCompanyCode,
+  generateUniqueCompanyCode,
 } from "../helpers/company";
 import { prisma } from "../config/prisma-client";
-import { calculateCustomerStats, validateFiscalData } from "../utils/company";
+import {
+  calculateCustomerStats,
+  formatCompanyResponse,
+  validateFiscalData,
+} from "../utils/company";
 import {
   sendCreated,
   sendDeleted,
@@ -14,6 +18,7 @@ import {
 } from "../utils/response";
 import { AuthenticatedValidatedRequest } from "@/types/validate";
 import {
+  CreateCustomerInput,
   CustomerIdParam,
   CustomerQueryInput,
   UpdateCustomerCompanyInput,
@@ -23,6 +28,7 @@ import asyncHandler from "@/middleware/async-handler";
 import { AddressType, Prisma } from "@/generated/prisma/client";
 import { buildPagination } from "@/utils/query";
 import { CustomerFilters } from "@/types/company";
+import { clean, connectOrDisconnectById, nullToUndefined, parseOptionalDecimal, toJsonField } from "@/helpers/prisma";
 
 // ============================================================================
 // CUSTOMER CONTROLLERS
@@ -87,111 +93,132 @@ export const getCustomerById = asyncHandler<AuthenticatedValidatedRequest>(async
 });
 
 /**
- * @desc    Crea nuovo customer (con company)
+ * @desc    Crea nuovo customer (con company e indirizzo legale)
  * @route   POST /api/customers
  * @access  Private (customer:create)
  */
 export const createCustomer = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
-  const { company: companyData, ...customerData } = req.validatedBody;
+  const {
+    company: { legalAddress, ...companyData },
+    ...customerData
+  } = req.validatedBody as CreateCustomerInput;
 
-  // Genera codice company
-  companyData.code = await generateCompanyCode(prisma, "CUS");
-
-  // Valida dati fiscali
-  const fiscalValidation = validateFiscalData({
-    entityType: companyData.entityType,
-    countryCode: companyData.countryCode,
-    vatNumber: companyData.vatNumber,
-    taxCode: companyData.taxCode,
-    sdiCode: companyData.sdiCode,
-    pec: companyData.pec,
-  });
-
-  if (!fiscalValidation.valid) {
-    sendFail(res, {
-      message: "Dati fiscali non validi",
-      errors: fiscalValidation.errors,
-    });
-    return;
-  }
-
-  // Verifica unicità codice
-  const existingCode = await prisma.company.findUnique({
-    where: { code: companyData.code },
-  });
-
-  if (existingCode) {
-    sendFail(res, {
-      message: "Codice company già esistente",
-    });
-    return;
-  }
-
-  // Verifica country esiste
-  const country = await prisma.country.findUnique({
-    where: { code: companyData.countryCode },
-  });
+  // -------------------------------------------------------------------------
+  // 1. Verifica esistenza relazioni — in parallelo per minimizzare la latenza
+  // -------------------------------------------------------------------------
+  const [country, priceList, taxRule, paymentMethod] = await Promise.all([
+    prisma.country.findUnique({
+      where: { code: companyData.countryCode },
+      select: { code: true },
+    }),
+    customerData.defaultPriceListId
+      ? prisma.priceList.findUnique({
+          where: { id: customerData.defaultPriceListId },
+          select: { id: true },
+        })
+      : Promise.resolve(true), // null check skippato se non fornito
+    customerData.customerTaxRuleId
+      ? prisma.taxRule.findUnique({
+          where: { id: customerData.customerTaxRuleId },
+          select: { id: true },
+        })
+      : Promise.resolve(true),
+    customerData.paymentMethodId
+      ? prisma.paymentMethod.findUnique({
+          where: { id: customerData.paymentMethodId },
+          select: { id: true },
+        })
+      : Promise.resolve(true),
+  ]);
 
   if (!country) {
-    sendFail(res, {
-      statusCode: 404,
-      message: "Paese non trovato",
-    });
+    sendFail(res, { statusCode: 404, message: "Paese non trovato" });
+    return;
+  }
+  if (!priceList) {
+    sendFail(res, { statusCode: 404, message: "Price List non trovata" });
+    return;
+  }
+  if (!taxRule) {
+    sendFail(res, { statusCode: 404, message: "Tax Rule non trovata" });
+    return;
+  }
+  if (!paymentMethod) {
+    sendFail(res, { statusCode: 404, message: "Payment Method non trovato" });
     return;
   }
 
-  // Verifica relazioni opzionali
-  if (customerData.defaultPriceListId) {
-    const priceList = await prisma.priceList.findUnique({
-      where: { id: customerData.defaultPriceListId },
-    });
-    if (!priceList) {
-      sendFail(res, {
-        statusCode: 404,
-        message: "Price List non trovato",
-      });
-      return;
-    }
-  }
+  // -------------------------------------------------------------------------
+  // 2. Transazione: generazione codice + creazione company + customer + address
+  //    La generazione del codice è dentro la transazione per evitare race
+  //    conditions in ambienti con richieste concorrenti.
+  // -------------------------------------------------------------------------
+  const customer = await prisma.$transaction(async (tx) => {
+    const companyCode = await generateUniqueCompanyCode("customer", tx);
 
-  if (customerData.customerTaxRuleId) {
-    const taxRule = await prisma.taxRule.findUnique({
-      where: { id: customerData.customerTaxRuleId },
-    });
-    if (!taxRule) {
-      sendFail(res, {
-        statusCode: 404,
-        message: "Tax Rule non trovato",
-      });
-      return;
-    }
-  }
-
-  if (customerData.paymentMethodId) {
-    const paymentMethod = await prisma.paymentMethod.findUnique({
-      where: { id: customerData.paymentMethodId },
-    });
-    if (!paymentMethod) {
-      sendFail(res, {
-        statusCode: 404,
-        message: "Payment Method non trovato",
-      });
-      return;
-    }
-  }
-
-  // Crea company e customer in transazione
-  const customer = await prisma.customer.create({
-    data: {
-      ...customerData,
-      company: {
-        create: companyData,
+    return tx.customer.create({
+      data: {
+        // Self-relation — richiede sintassi nested connect
+        parentCustomer: connectOrDisconnectById(customerData.parentCustomerId),
+        // FK verso altre tabelle — stessa logica
+        defaultPriceList: connectOrDisconnectById(customerData.defaultPriceListId),
+        customerTaxRule: connectOrDisconnectById(customerData.customerTaxRuleId),
+        paymentMethod: connectOrDisconnectById(customerData.paymentMethodId),
+        // Campi scalari
+        priority: customerData.priority,
+        segment: customerData.segment,
+        size: customerData.size,
+        type: customerData.type,
+        creditStatus: customerData.creditStatus,
+        creditLimit: parseOptionalDecimal(customerData.creditLimit) ?? undefined,
+        company: {
+          create: {
+            // Scalari company
+            companyName: companyData.companyName,
+            tradeName: companyData.tradeName ?? undefined,
+            legalForm: companyData.legalForm ?? undefined,
+            status: companyData.status,
+            entityType: companyData.entityType,
+            vatNumber: companyData.vatNumber ?? undefined,
+            taxCode: companyData.taxCode ?? undefined,
+            sdiCode: companyData.sdiCode ?? undefined,
+            pec: companyData.pec ?? undefined,
+            vatId: companyData.vatId ?? undefined,
+            eoriNumber: companyData.eoriNumber ?? undefined,
+            countryCode: companyData.countryCode,
+            mainEmail: companyData.mainEmail ?? undefined,
+            mainPhone: companyData.mainPhone ?? undefined,
+            code: companyCode,
+            // FK opzionali company
+            assignedUserId: companyData.assignedUserId ?? undefined,
+            // Json fields
+            customFields: toJsonField(companyData.customFields),
+            // Indirizzo legale nested
+            ...(legalAddress && {
+              addresses: {
+                create: {
+                  address: legalAddress.address,
+                  city: legalAddress.city,
+                  zipCode: legalAddress.zipCode,
+                  countryCode: legalAddress.countryCode,
+                  provinceCode: legalAddress.provinceCode ?? undefined,
+                  phone: legalAddress.phone ?? undefined,
+                  notes: legalAddress.notes ?? undefined,
+                  addressType: "LEGAL" as const,
+                  isPrimary: true,
+                  latitude: parseOptionalDecimal(legalAddress.latitude) ?? undefined,
+                  longitude: parseOptionalDecimal(legalAddress.longitude) ?? undefined,
+                },
+              },
+            }),
+          },
+        },
       },
-    },
-    include: getCustomerInclude(true),
+      include: getCustomerInclude(true),
+    });
   });
 
-  sendCreated(res, customer, "Customer creato con successo");
+  sendCreated(res, formatCompanyResponse(customer), "Customer creato con successo");
 });
 
 /**
@@ -251,7 +278,7 @@ export const updateCustomerCompany = asyncHandler<AuthenticatedValidatedRequest>
     const companyData = req.validatedBody as UpdateCustomerCompanyInput;
 
     const customer = await prisma.customer.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if (!customer) {

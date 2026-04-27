@@ -22,6 +22,7 @@ import {
 import { Address } from "./address";
 import { Contact } from "./contact";
 import { CompanyStatus, CompanyTypeEntity } from "../constants";
+import { createCustomerSchema, createSupplierSchema } from "../validators";
 
 // ============================================================================
 // ENTITY TYPES
@@ -30,14 +31,14 @@ import { CompanyStatus, CompanyTypeEntity } from "../constants";
 /**
  * Company entity (base for Customer and Supplier)
  */
-export type Company = Omit<CreateCompanyInput, "legalAddress">  & {
+export type Company = Omit<CreateCompanyInput, "legalAddress"> & {
   id: number;
   code: string;
   country: Country;
   assignedUser?: User | null;
   activities: Activity[];
   addresses: Address[];
-  legalAddress: Address[];
+  legalAddress: Address;
   contacts: Contact[];
   customers: Customer[];
   suppliers: Supplier[];
@@ -50,6 +51,10 @@ export type Company = Omit<CreateCompanyInput, "legalAddress">  & {
   totalOrders: number;
   totalRevenue: Decimal;
 };
+
+export type CompanyFormData = z.input<typeof baseCompanySchema> &
+  Omit<z.input<typeof createCustomerSchema>, "company"> &
+  Omit<z.input<typeof createSupplierSchema>, "company">;
 
 /**
  * Company Note entity
@@ -71,6 +76,7 @@ export type CompanyNote = {
 // ============================================================================
 
 export type CreateCompanyInput = z.infer<typeof baseCompanySchema>;
+export type CreateCompanyForm = z.input<typeof baseCompanySchema>;
 export type UpdateCompanyInput = z.infer<typeof updateCompanySchema>;
 export type CreateCompanyNoteInput = z.infer<typeof createCompanyNoteSchema>;
 export type UpdateCompanyNoteInput = z.infer<typeof updateCompanyNoteSchema>;
@@ -86,9 +92,7 @@ export type CompanyQueryInput = z.infer<typeof companyQueryBaseSchema>;
 // ============================================================================
 
 export type CompanyIdParam = z.infer<typeof companyIdSchema>;
-export type CompanyIdAsCompanyIdParam = z.infer<
-  typeof companyIdAsCompanyIdSchema
->;
+export type CompanyIdAsCompanyIdParam = z.infer<typeof companyIdAsCompanyIdSchema>;
 // ============================================================================
 // UTILITY TYPES
 // ============================================================================

@@ -47,36 +47,58 @@ export type Customer = {
   creditStatus: CreditCheckStatus;
 
   // Dati Commerciali
+  defaultPriceListId?: number | null;
   defaultPriceList?: PriceList | null;
+  customerTaxRuleId?: number | null;
   customerTaxRule?: TaxRule | null;
+  paymentMethodId?: number | null;
   paymentMethod?: PaymentMethod | null;
-  // Relazioni a documenti e attività di Vendita
-  documentsOut: Document[];
-  opportunities: Opportunity[];
-  activities: Activity[];
 
-  convertedFromLead?: Lead | null;
-  deletedBy?: number | null;
-  deletedByUser?: User | null;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | null;
+  creditLimit?: Decimal | null;
+
   // Tracking fields from schema
   firstSaleDate: Date | null;
   lastSaleDate: Date | null;
   totalSales: number;
   totalRevenue: Decimal;
+
+  // Date estese
   customerSince: Date | null;
   lastInteractionAt: Date | null;
+
+  // Metriche calcolate
   averageOrderValue: Decimal;
   lifetimeValue: Decimal;
+
+  // Score predittivi
   churnRisk: number;
   healthScore: number;
+
+  // NPS e soddisfazione
   npsScore: number | null;
   satisfactionRate: Decimal | null;
   lastSurveyDate: Date | null;
+
+  // Relazioni a documenti e attività di Vendita
+  documentsOut: Document[];
+  opportunities: Opportunity[];
+  activities: Activity[];
+
+  // Relazioni tra clienti (gruppi e gerarchie)
+  parentCustomerId?: number | null;
   parentCustomer?: Customer;
   subsidiaries?: Customer[];
+
+  // Lead convertita in questo customer
+  convertedFromLead?: Lead | null;
+
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+
+  // Safe delete
+  deletedBy?: number | null;
+  deletedByUser?: User | null;
 };
 
 // ============================================================================
@@ -84,6 +106,7 @@ export type Customer = {
 // ============================================================================
 
 export type CreateCustomerInput = z.infer<typeof createCustomerSchema>;
+export type CreateCustomerForm = z.input<typeof createCustomerSchema>;
 export type UpdateCustomerInput = z.infer<typeof updateCustomerSchema>;
 export type UpdateCustomerCompanyInput = z.infer<typeof updateCustomerCompanySchema>;
 

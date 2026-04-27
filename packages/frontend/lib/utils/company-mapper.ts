@@ -1,147 +1,206 @@
-// lib/utils/company-mapper.ts
+import type { CompanyFormData, CompanyType } from "@/types/company";
+import {
+  CreateCompanyForm,
+  CreateCustomerForm,
+  CreateSupplierForm,
+  Customer,
+  Supplier,
+} from "@mini-erp/shared/types";
 
-import { CompanyFormData, CompanyType } from "@/types/company";
-import { Customer } from "@/types/customer";
-import { Supplier } from "@/types/supplier";
+// ============================================================================
+// API → FORM
+// ============================================================================
 
 /**
- * Mappa i dati API (Customer o Supplier) al formato del form
+ * Maps API response data (Customer | Supplier) to CompanyFormData shape.
+ * Extracts nested company fields and type-specific fields into a flat form object.
  */
+export function mapApiToForm(data: Customer, type: "CUSTOMER"): CompanyFormData;
+export function mapApiToForm(data: Supplier, type: "SUPPLIER"): CompanyFormData;
 export function mapApiToForm(data: Customer | Supplier, type: CompanyType): CompanyFormData {
   const company = data.company;
 
-  const legalAddress = company.addresses?.find((a) => a.isLegal) ?? company.addresses?.[0];
+  const base: CompanyFormData = {
+    // Dati base company
+    companyName: company.companyName ?? "",
+    tradeName: company.tradeName ?? null,
+    legalForm: company.legalForm ?? null,
+    status: company.status ?? "ACTIVE",
+    entityType: company.entityType ?? "JURIDICAL",
+    vatNumber: company.vatNumber ?? "",
+    taxCode: company.taxCode ?? "",
+    sdiCode: company.sdiCode ?? "",
+    pec: company.pec ?? null,
+    vatId: company.vatId ?? null,
+    eoriNumber: company.eoriNumber ?? null,
+    countryCode: company.countryCode ?? "IT",
+    mainEmail: company.mainEmail ?? null,
+    mainPhone: company.mainPhone ?? null,
+    assignedUserId: company.assignedUserId ?? null,
+    customFields: company.customFields ?? null,
+    openingHours: company.openingHours ?? null,
 
-  const baseData: CompanyFormData = {
-    companyName: company?.companyName || "",
-    tradeName: company?.tradeName || "",
-    legalForm: company?.legalForm || "",
-    entityType: company?.entityType || "JURIDICAL",
-    status: company?.status || "ACTIVE",
-    vatNumber: company?.vatNumber || "",
-    taxCode: company?.taxCode || "",
-    sdiCode: company?.sdiCode || "",
-    pec: company?.pec || "",
-    eoriNumber: company?.eoriNumber || "",
-    vatId: company?.vatId || "",
-    countryCode: company?.countryCode || "IT",
-    mainEmail: company?.mainEmail || "",
-    mainPhone: company?.mainPhone || "",
-    customFields: company?.customFields,
-    creditLimit: company?.creditLimit || 0,
+    // Mappa legalAddress dalla response API
+    legalAddress: {
+      address: company.legalAddress.address ?? "",
+      city: company.legalAddress.city ?? "",
+      provinceCode: company.legalAddress.provinceCode ?? "",
+      zipCode: company.legalAddress.zipCode ?? "",
+      countryCode: company.legalAddress.countryCode ?? "IT",
+    },
+
+    // Campi customer (default — sovrascritti sotto se type === CUSTOMER)
+    parentCustomerId: null,
+    priority: "MEDIUM",
+    segment: "STANDARD",
+    size: "SMALL",
+    type: "CUSTOMER",
+    creditStatus: "PENDING",
+    defaultPriceListId: null,
+    customerTaxRuleId: null,
+    paymentMethodId: null,
+
+    // Campi supplier (default — sovrascritti sotto se type === SUPPLIER)
+    parentSupplierId: null,
+    paymentTerms: null,
+    bankAccount: null,
+    leadTimeDays: 0,
+    transportCost: null,
+    rating: 5,
+
+    // creditLimit presente su entrambi
+    creditLimit: null,
   };
 
-  // Mappa l'indirizzo legale se presente
-  // Nota: legalAddress può essere null o un oggetto Address
-  if (company?.legalAddress) {
-    baseData.legalAddress = {
-      address: company.legalAddress.address || "",
-      city: company.legalAddress.city || "",
-      provinceCode: company.legalAddress.provinceCode || "",
-      zipCode: company.legalAddress.zipCode || "",
-      countryCode: company.legalAddress.countryCode || "IT",
+  if (type === "CUSTOMER") {
+    const c = data as Customer;
+    return {
+      ...base,
+      parentCustomerId: c.parentCustomerId ?? null,
+      priority: c.priority ?? "MEDIUM",
+      segment: c.segment ?? "STANDARD",
+      size: c.size ?? "SMALL",
+      type: c.type ?? "CUSTOMER",
+      creditStatus: c.creditStatus ?? "PENDING",
+      defaultPriceListId: c.defaultPriceListId ?? null,
+      customerTaxRuleId: c.customerTaxRuleId ?? null,
+      paymentMethodId: c.paymentMethodId ?? null,
+      creditLimit: c.creditLimit ?? null,
     };
   }
 
-  if (type === "CUSTOMER") {
-    const customer = data as Customer;
-    return {
-      ...baseData,
-      priority: customer.priority || "MEDIUM",
-      segment: customer.segment || "STANDARD",
-      size: customer.size || "SMALL",
-      creditStatus: customer.creditStatus || "PENDING",
-      creditLimit: customer.creditLimit || 0,
-      totalSales: customer.totalSales || 0,
-      totalRevenue: customer.totalRevenue.toString() || "0",
-    };
-  } else {
-    const supplier = data as Supplier;
-    return {
-      ...baseData,
-      paymentTerms: supplier.paymentTerms || "",
-      leadTimeDays: supplier.leadTimeDays || 0,
-      rating: supplier.rating || 5,
-      creditLimit: supplier.creditLimit || 0,
-      totalOrders: supplier.totalOrders || 0,
-      totalSpent: supplier.totalSpent.toString() || "0",
-    };
-  }
+  const s = data as Supplier;
+  return {
+    ...base,
+    parentSupplierId: s.parentSupplierId ?? null,
+    paymentTerms: s.paymentTerms ?? null,
+    bankAccount: s.bankAccount ?? null,
+    leadTimeDays: s.leadTimeDays ?? 0,
+    transportCost: s.transportCost ?? null,
+    rating: s.rating ?? 5,
+    creditLimit: s.creditLimit ?? null,
+  };
 }
 
+// ============================================================================
+// FORM → API
+// ============================================================================
+
 /**
- * Estrae i dati della Company dal form
+ * Extracts company fields from form data and maps them to CompanyInput.
+ * Converts legalAddress to the nested addresses array expected by the API.
  */
-export function extractCompanyData(data: CompanyFormData) {
+export function extractCompanyData(data: CompanyFormData): CreateCompanyForm {
   return {
     companyName: data.companyName,
     tradeName: data.tradeName,
     legalForm: data.legalForm,
-    entityType: data.entityType,
     status: data.status,
+    entityType: data.entityType,
     vatNumber: data.vatNumber,
     taxCode: data.taxCode,
     sdiCode: data.sdiCode,
     pec: data.pec,
-    eoriNumber: data.eoriNumber,
     vatId: data.vatId,
+    eoriNumber: data.eoriNumber,
     countryCode: data.countryCode,
     mainEmail: data.mainEmail,
     mainPhone: data.mainPhone,
+    assignedUserId: data.assignedUserId,
     customFields: data.customFields,
+    openingHours: data.openingHours,
+    legalAddress: data.legalAddress,
   };
 }
 
 /**
- * Estrae i dati specifici del Customer
+ * Extracts customer-specific fields from form data.
  */
-export function extractCustomerData(data: CompanyFormData) {
+export function extractCustomerData(data: CompanyFormData): Omit<CreateCustomerForm, "company"> {
   return {
+    parentCustomerId: data.parentCustomerId,
     priority: data.priority,
     segment: data.segment,
-    leadStatus: data.leadStatus,
     size: data.size,
+    type: data.type,
     creditStatus: data.creditStatus,
+    defaultPriceListId: data.defaultPriceListId,
+    customerTaxRuleId: data.customerTaxRuleId,
+    paymentMethodId: data.paymentMethodId,
     creditLimit: data.creditLimit,
   };
 }
 
 /**
- * Estrae i dati specifici del Supplier
+ * Extracts supplier-specific fields from form data.
  */
-export function extractSupplierData(data: CompanyFormData) {
+export function extractSupplierData(data: CompanyFormData): Omit<CreateSupplierForm, "company"> {
   return {
+    parentSupplierId: data.parentSupplierId,
     paymentTerms: data.paymentTerms,
+    bankAccount: data.bankAccount,
     leadTimeDays: data.leadTimeDays,
+    transportCost: data.transportCost,
     rating: data.rating,
     creditLimit: data.creditLimit,
   };
 }
 
 /**
- * Mappa i dati del form per la creazione (include company nested)
+ * Maps form data to the create API payload.
+ * Overloaded to return the correct type based on CompanyType.
  */
+export function mapFormToCreateApi(data: CompanyFormData, type: "CUSTOMER"): CreateCustomerForm;
+export function mapFormToCreateApi(data: CompanyFormData, type: "SUPPLIER"): CreateSupplierForm;
 export function mapFormToCreateApi(
   data: CompanyFormData,
   type: CompanyType,
-): Partial<Customer | Supplier> {
-  const companyData = extractCompanyData(data);
+): CreateCustomerForm | CreateSupplierForm {
+  const company = extractCompanyData(data);
 
   if (type === "CUSTOMER") {
-    return {
-      company: companyData,
-      ...extractCustomerData(data),
-    } as Partial<Customer>;
-  } else {
-    return {
-      company: companyData,
-      ...extractSupplierData(data),
-    } as Partial<Supplier>;
+    return { company, ...extractCustomerData(data) };
   }
+  return { company, ...extractSupplierData(data) };
 }
 
 /**
- * Valida i dati obbligatori del form
+ * Maps form data to the update API payload for company fields only.
+ * Addresses are managed via dedicated /addresses endpoints.
+ */
+export function mapFormToUpdateCompanyApi(
+  data: CompanyFormData,
+): Omit<CreateCompanyForm, "legalAddress"> & { legalAddress?: CreateCompanyForm["legalAddress"] } {
+  return extractCompanyData(data);
+}
+
+// ============================================================================
+// VALIDAZIONE FORM (lato client — pre-submit)
+// ============================================================================
+
+/**
+ * Validates required company form fields before submission.
+ * Fiscal validation is handled server-side via /validate-fiscal endpoint.
  */
 export function validateCompanyForm(data: CompanyFormData): string[] {
   const errors: string[] = [];
@@ -158,11 +217,24 @@ export function validateCompanyForm(data: CompanyFormData): string[] {
     errors.push("Il codice paese deve essere di 2 caratteri");
   }
 
-  // Validazioni specifiche per tipo
-  if (data.vatNumber && !/^[A-Z]{2}\d{11}$/.test(data.vatNumber)) {
+  if (!data.legalAddress?.address?.trim()) {
+    errors.push("L'indirizzo legale è obbligatorio");
+  }
+
+  if (!data.legalAddress?.city?.trim()) {
+    errors.push("La città dell'indirizzo legale è obbligatoria");
+  }
+
+  if (!data.legalAddress?.zipCode?.trim()) {
+    errors.push("Il CAP dell'indirizzo legale è obbligatorio");
+  }
+
+  // Formato P.IVA italiana
+  if (data.vatNumber && !/^IT\d{11}$/.test(data.vatNumber)) {
     errors.push("Formato Partita IVA non valido (es: IT12345678901)");
   }
 
+  // Codice Fiscale persona giuridica
   if (data.taxCode && data.entityType === "JURIDICAL" && !/^\d{11}$/.test(data.taxCode)) {
     errors.push("Formato Codice Fiscale non valido per persona giuridica");
   }
@@ -173,6 +245,10 @@ export function validateCompanyForm(data: CompanyFormData): string[] {
 
   if (data.mainEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.mainEmail)) {
     errors.push("Formato email non valido");
+  }
+
+  if (data.rating !== undefined && (data.rating < 1 || data.rating > 5)) {
+    errors.push("Il rating deve essere compreso tra 1 e 5");
   }
 
   return errors;

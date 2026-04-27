@@ -9,7 +9,7 @@ export type {
   CustomerSize,
 } from "@mini-erp/shared/constants";
 
-import { CustomerQueryInput as BaseQuery } from "@mini-erp/shared/types";
+import { CustomerQueryInput as BaseQuery  } from "@mini-erp/shared/types";
 
 export type CustomerQueryInput = Omit<
   BaseQuery,

@@ -113,7 +113,18 @@ export const getCompanyBaseInclude = (includeRelations = true) => {
 };
 
 export const getCompanyFullInclude = () => ({
-  ...getCompanyBaseInclude(), // include legalAddress (addresses where LEGAL, take: 1)
+  country: {
+    select: { code: true, name: true, isEU: true },
+  },
+  user: {
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      details: { select: { firstName: true, lastName: true } },
+    },
+  },
+  // Tutti gli indirizzi — formatCompanyResponse separa il legale dagli altri
   addresses: {
     include: { country: true as const },
     orderBy: { isPrimary: "desc" as const },
@@ -144,6 +155,7 @@ export const getCompanyFullInclude = () => ({
     },
   },
 });
+
 
 export const getCustomerInclude = (detailed = false) => ({
   company: {
@@ -256,28 +268,6 @@ export const buildOrderBy = (
 // ============================================================================
 
 /**
- * Genera codice company univoco (Richiede accesso DB)
- */
-export const generateCompanyCode = async (
-  prisma: PrismaClient,
-  prefix: string = "COM",
-): Promise<string> => {
-  const lastCompany = await prisma.company.findFirst({
-    where: { code: { startsWith: prefix } },
-    orderBy: { id: "desc" },
-    select: { code: true },
-  });
-
-  let nextNumber = 1;
-  if (lastCompany?.code) {
-    const match = lastCompany.code.match(/\d+$/);
-    if (match) nextNumber = parseInt(match[0]) + 1;
-  }
-
-  return `${prefix}${nextNumber.toString().padStart(6, "0")}`;
-};
-
-/**
  * Verifica se può eliminare company
  */
 export const canDeleteCompany = async (
@@ -376,55 +366,59 @@ export const clearPrimaryAddresses = async (
   });
 };
 
+/** Union type che accetta sia il client globale sia un transaction client. */
+type PrismaClientOrTx = PrismaClient | Prisma.TransactionClient;
+
+const PREFIX_MAP: Record<string, string> = {
+  lead: "LEA",
+  prospect: "PRO",
+  customer: "CLI",
+  partner: "PAR",
+  supplier: "SUP",
+};
+
 /**
- * Genera un codice univoco per l'azienda basato sul tipo.
- * Accetta un'istanza prisma opzionale per supportare le transazioni.
+ * Generates a unique sequential company code based on entity type.
+ * Accepts an optional Prisma transaction client to participate in
+ * a broader transaction and avoid race conditions.
+ *
+ * Format: PREFIX-NNNN (e.g. CLI-0001, SUP-0042)
+ * Padding grows automatically beyond 9999 (e.g. CLI-10000).
+ *
+ * @param type - Entity type key (customer, supplier, lead, prospect, partner)
+ * @param tx   - Optional Prisma transaction client (defaults to global client)
+ * @returns    - Unique formatted company code string
+ * @throws     - Error if the type key is not recognized
  */
 export const generateUniqueCompanyCode = async (
   type: string,
-  tx: PrismaClient = prismaGlobal, // Usa il client globale se non viene passata una transazione
+  tx: PrismaClientOrTx = prismaGlobal,
 ): Promise<string> => {
-  const prefixMap: { [key: string]: string } = {
-    lead: "LEA",
-    prospect: "PRO",
-    customer: "CLI",
-    partner: "PAR",
-    supplier: "SUP",
-  };
-
-  const typeLower = type.toLowerCase();
-  const prefix = prefixMap[typeLower];
+  const prefix = PREFIX_MAP[type.toLowerCase()];
 
   if (!prefix) {
-    throw new Error(`Tipo di azienda non valido: ${type}`);
+    throw new Error(
+      `Tipo di azienda non valido: "${type}". Valori accettati: ${Object.keys(PREFIX_MAP).join(", ")}`,
+    );
   }
 
-  // Cerchiamo il codice più alto che inizia con il prefisso
-  const lastCompany = await tx.company.findFirst({
-    where: {
-      code: {
-        startsWith: `${prefix}-`,
-      },
-    },
-    orderBy: { code: "desc" },
-    select: { code: true },
-  });
+  // Ordine numerico via CAST — evita il bug lessicografico di _max su stringhe
+  // (es. "CLI-9999" > "CLI-10000" in ordine lessicografico).
+  // La regex esclude codici malformati dall'aggregazione.
+  const result = await (tx as PrismaClient).$queryRaw<[{ max_num: number | null }]>`
+    SELECT MAX(CAST(SPLIT_PART(code, '-', 2) AS INTEGER)) AS max_num
+    FROM "Company"
+    WHERE code LIKE ${`${prefix}-%`}
+      AND code ~ ${`^${prefix}-[0-9]+$`}
+  `;
 
-  let newNumber = 1;
+  const maxNum = result[0]?.max_num ?? 0;
+  const nextNumber = maxNum + 1;
 
-  if (lastCompany && lastCompany.code) {
-    // Estrae la parte numerica finale
-    const match = lastCompany.code.match(/(\d+)$/);
-    if (match && match[1]) {
-      newNumber = parseInt(match[1], 10) + 1;
-    }
-  }
+  // padStart(4) garantisce minimo 4 cifre — si espande automaticamente oltre 9999
+  const padded = String(nextNumber).padStart(4, "0");
 
-  // Pad a 4 cifre (o più se il numero cresce)
-  // Es: 1 -> "0001", 12 -> "0012"
-  const newNumberPadded = String(newNumber).padStart(4, "0");
-
-  return `${prefix}-${newNumberPadded}`;
+  return `${prefix}-${padded}`;
 };
 
 /**
