@@ -44,7 +44,8 @@ export const buildCustomerWhereClause = (filters: CustomerFilters): Prisma.Custo
   if (filters.priority) where.priority = filters.priority as any;
   if (filters.segment) where.segment = filters.segment as any;
   if (filters.creditStatus) where.creditStatus = filters.creditStatus as any;
-
+  if (filters.isDeleted) where.deletedAt = filters.isDeleted ? { not: null } : null;
+  
   return where;
 };
 
@@ -124,7 +125,7 @@ export const getCompanyFullInclude = () => ({
       details: { select: { firstName: true, lastName: true } },
     },
   },
-  // Tutti gli indirizzi — formatCompanyResponse separa il legale dagli altri
+  // Tutti gli indirizzi — formatCompanyResponse li separa
   addresses: {
     include: { country: true as const },
     orderBy: { isPrimary: "desc" as const },
@@ -157,31 +158,98 @@ export const getCompanyFullInclude = () => ({
 });
 
 
-export const getCustomerInclude = (detailed = false) => ({
-  company: {
-    include: detailed ? getCompanyFullInclude() : getCompanyBaseInclude(),
-  },
-  defaultPriceList: detailed
-    ? {
-        select: { id: true, code: true, name: true, currency: true },
-      }
-    : undefined,
-  customerTaxRule: detailed
-    ? {
-        select: { id: true, code: true, name: true },
-      }
-    : undefined,
-  paymentMethod: detailed
-    ? {
-        include: { translations: true },
-      }
-    : undefined,
-  _count: detailed
-    ? {
-        select: { documentsOut: true, opportunities: true },
-      }
-    : undefined,
-});
+// ============================================================================
+// INCLUDE TYPES
+// ============================================================================
+
+/** Return type of getCompanyBaseInclude() */
+type CompanyBaseInclude = ReturnType<typeof getCompanyBaseInclude>;
+
+/** Return type of getCompanyFullInclude() */
+type CompanyFullInclude = ReturnType<typeof getCompanyFullInclude>;
+
+/**
+ * Shared detailed fields added when detailed = true.
+ * Extracted to avoid repetition between Customer and Supplier.
+ */
+type CustomerDetailedFields = {
+  defaultPriceList: { select: { id: true; code: true; name: true; currency: true } };
+  customerTaxRule:  { select: { id: true; code: true; name: true } };
+  paymentMethod:    { include: { translations: true } };
+  _count:           { select: { documentsOut: true; opportunities: true } };
+};
+
+type CustomerBaseFields = {
+  defaultPriceList: undefined;
+  customerTaxRule:  undefined;
+  paymentMethod:    undefined;
+  _count:           undefined;
+};
+
+type SupplierDetailedFields = {
+  _count: { select: { documentsIn: true; products: true } };
+};
+
+type SupplierBaseFields = {
+  _count: undefined;
+};
+
+// ============================================================================
+// INCLUDE BUILDERS WITH OVERLOADS
+// ============================================================================
+
+/**
+ * Returns Prisma include for Customer queries.
+ * When detailed = true, includes full company data + commercial relations.
+ * When detailed = false (default), includes base company data only.
+ */
+export function getCustomerInclude(detailed: true): {
+  company: { include: CompanyFullInclude };
+} & CustomerDetailedFields;
+export function getCustomerInclude(detailed?: false): {
+  company: { include: CompanyBaseInclude };
+} & CustomerBaseFields;
+export function getCustomerInclude(detailed = false) {
+  return {
+    company: {
+      include: detailed ? getCompanyFullInclude() : getCompanyBaseInclude(),
+    },
+    defaultPriceList: detailed
+      ? { select: { id: true, code: true, name: true, currency: true } }
+      : undefined,
+    customerTaxRule: detailed
+      ? { select: { id: true, code: true, name: true } }
+      : undefined,
+    paymentMethod: detailed
+      ? { include: { translations: true } }
+      : undefined,
+    _count: detailed
+      ? { select: { documentsOut: true, opportunities: true } }
+      : undefined,
+  };
+}
+
+/**
+ * Returns Prisma include for Supplier queries.
+ * When detailed = true, includes full company data + document/product counts.
+ * When detailed = false (default), includes base company data only.
+ */
+export function getSupplierInclude(detailed: true): {
+  company: { include: CompanyFullInclude };
+} & SupplierDetailedFields;
+export function getSupplierInclude(detailed?: false): {
+  company: { include: CompanyBaseInclude };
+} & SupplierBaseFields;
+export function getSupplierInclude(detailed = false) {
+  return {
+    company: {
+      include: detailed ? getCompanyFullInclude() : getCompanyBaseInclude(),
+    },
+    _count: detailed
+      ? { select: { documentsIn: true, products: true } }
+      : undefined,
+  };
+}
 
 /**
  * Extended include for group/hierarchy views.
@@ -201,17 +269,6 @@ export const getCustomerGroupInclude = () => ({
       company: { select: { companyName: true, code: true } },
     },
   },
-});
-
-export const getSupplierInclude = (detailed = false) => ({
-  company: {
-    include: detailed ? getCompanyFullInclude() : getCompanyBaseInclude(),
-  },
-  _count: detailed
-    ? {
-        select: { documentsIn: true, products: true },
-      }
-    : undefined,
 });
 
 /**

@@ -45,6 +45,9 @@ export type Supplier = Omit<CreateSupplierInput, "company"> & {
   totalOrders: number;
   totalSpent: Decimal;
   rating: number | null;
+  // relationships
+  parentSupplier?: Supplier;
+  subsidiaries?: Supplier[];
 };
 
 // ============================================================================
@@ -54,12 +57,8 @@ export type Supplier = Omit<CreateSupplierInput, "company"> & {
 export type CreateSupplierInput = z.infer<typeof createSupplierSchema>;
 export type CreateSupplierForm = z.input<typeof createSupplierSchema>;
 export type UpdateSupplierInput = z.infer<typeof updateSupplierSchema>;
-export type UpdateSupplierCompanyInput = z.infer<
-  typeof updateSupplierCompanySchema
->;
-export type UpdateSupplierRatingInput = z.infer<
-  typeof updateSupplierRatingSchema
->;
+export type UpdateSupplierCompanyInput = z.infer<typeof updateSupplierCompanySchema>;
+export type UpdateSupplierRatingInput = z.infer<typeof updateSupplierRatingSchema>;
 
 // ============================================================================
 // QUERY TYPES (using z.infer)

@@ -171,9 +171,12 @@ export const calculateSupplierStats = (supplier: any) => ({
  * Remaps company addresses for API response:
  * - Extracts the LEGAL address into a dedicated `legalAddress` field
  * - Keeps remaining addresses (non-LEGAL) in the `addresses` array
+ * Works with both getCompanyBaseInclude (LEGAL only, take:1)
+ * and getCompanyFullInclude (all addresses).
  */
 export const formatCompanyResponse = <
-  TCompany extends { addresses?: CompanyAddress[] },
+  TAddress extends Pick<CompanyAddress, "addressType">,
+  TCompany extends { addresses?: TAddress[] },
   TData extends { company: TCompany },
 >(
   data: TData,

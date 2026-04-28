@@ -106,3 +106,10 @@ export const setPrimaryAddressSchema = z
     isPrimary: z.boolean(),
   })
   .strict();
+
+
+/**
+ * Schema for nested address creation (inside company create/update).
+ * companyId is omitted because it is injected automatically by Prisma.
+ */
+export const createNestedAddressSchema = createAddressSchema.omit({ companyId: true });

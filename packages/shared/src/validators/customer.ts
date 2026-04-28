@@ -18,37 +18,15 @@ import { creditLimitSchema } from "./business/currency";
 // CUSTOMER-SPECIFIC ENUMS
 // ============================================================================
 
-export const customerTypeSchema = z.enum([
-  "PROSPECT",
-  "CUSTOMER",
-  "PARTNER",
-  "OTHER",
-]);
+export const customerTypeSchema = z.enum(["PROSPECT", "CUSTOMER", "PARTNER", "OTHER"]);
 
 export const customerPrioritySchema = z.enum(["LOW", "MEDIUM", "HIGH"]);
 
-export const customerSegmentSchema = z.enum([
-  "VIP",
-  "GOLD",
-  "SILVER",
-  "BRONZE",
-  "STANDARD",
-]);
+export const customerSegmentSchema = z.enum(["VIP", "GOLD", "SILVER", "BRONZE", "STANDARD"]);
 
-export const creditCheckStatusSchema = z.enum([
-  "PENDING",
-  "APPROVED",
-  "REJECTED",
-  "IN_PROGRESS",
-]);
+export const creditCheckStatusSchema = z.enum(["PENDING", "APPROVED", "REJECTED", "IN_PROGRESS"]);
 
-export const customerSizeSchema = z.enum([
-  "MICRO",
-  "SMALL",
-  "MEDIUM",
-  "LARGE",
-  "ENTERPRISE",
-]);
+export const customerSizeSchema = z.enum(["MICRO", "SMALL", "MEDIUM", "LARGE", "ENTERPRISE"]);
 
 /**
  * Schema per la creazione di un Customer.
@@ -73,17 +51,11 @@ export const createCustomerSchema = z
     creditStatus: creditCheckStatusSchema.default("PENDING"),
 
     // ===== Dati Commerciali =====
-    defaultPriceListId: createIdSchema("Price List ID non valido")
-      .optional()
-      .nullable(),
+    defaultPriceListId: createIdSchema("Price List ID non valido").optional().nullable(),
 
-    customerTaxRuleId: createIdSchema("Tax Rule ID non valido")
-      .optional()
-      .nullable(),
+    customerTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
 
-    paymentMethodId: createIdSchema("Payment Method ID non valido")
-      .optional()
-      .nullable(),
+    paymentMethodId: createIdSchema("Payment Method ID non valido").optional().nullable(),
 
     creditLimit: creditLimitSchema.optional().nullable(),
   })
@@ -101,17 +73,14 @@ export const updateCustomerSchema = z
     size: customerSizeSchema.optional(),
     creditStatus: creditCheckStatusSchema.optional(),
 
-    defaultPriceListId: createIdSchema("Price List ID non valido")
-      .optional()
-      .nullable(),
+    defaultPriceListId: createIdSchema("Price List ID non valido").optional().nullable(),
 
-    customerTaxRuleId: createIdSchema("Tax Rule ID non valido")
-      .optional()
-      .nullable(),
+    customerTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
 
-    paymentMethodId: createIdSchema("Payment Method ID non valido")
-      .optional()
-      .nullable(),
+    paymentMethodId: createIdSchema("Payment Method ID non valido").optional().nullable(),
+
+    // parent customer (Hierarchy)
+    parentCustomerId: createIdSchema("Parent Customer ID non valido").optional().nullable(),
 
     creditLimit: creditLimitSchema.optional().nullable(),
   })

@@ -28,7 +28,13 @@ import asyncHandler from "@/middleware/async-handler";
 import { AddressType, Prisma } from "@/generated/prisma/client";
 import { buildPagination } from "@/utils/query";
 import { CustomerFilters } from "@/types/company";
-import { clean, connectOrDisconnectById, nullToUndefined, parseOptionalDecimal, toJsonField } from "@/helpers/prisma";
+import { connectOrDisconnectById, parseOptionalDecimal } from "@/helpers/prisma";
+import {
+  buildAddressCreateData,
+  buildCompanyCreateData,
+  buildCustomerCreateData,
+  buildCustomerUpdateData,
+} from "@/services/company/company";
 
 // ============================================================================
 // CUSTOMER CONTROLLERS
@@ -98,10 +104,7 @@ export const getCustomerById = asyncHandler<AuthenticatedValidatedRequest>(async
  * @access  Private (customer:create)
  */
 export const createCustomer = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
-  const {
-    company: { legalAddress, ...companyData },
-    ...customerData
-  } = req.validatedBody as CreateCustomerInput;
+  const { company: companyData, ...customerData } = req.validatedBody as CreateCustomerInput;
 
   // -------------------------------------------------------------------------
   // 1. Verifica esistenza relazioni — in parallelo per minimizzare la latenza
@@ -154,66 +157,9 @@ export const createCustomer = asyncHandler<AuthenticatedValidatedRequest>(async 
   //    conditions in ambienti con richieste concorrenti.
   // -------------------------------------------------------------------------
   const customer = await prisma.$transaction(async (tx) => {
-    const companyCode = await generateUniqueCompanyCode("customer", tx);
-
+    const code = await generateUniqueCompanyCode("customer", tx);
     return tx.customer.create({
-      data: {
-        // Self-relation — richiede sintassi nested connect
-        parentCustomer: connectOrDisconnectById(customerData.parentCustomerId),
-        // FK verso altre tabelle — stessa logica
-        defaultPriceList: connectOrDisconnectById(customerData.defaultPriceListId),
-        customerTaxRule: connectOrDisconnectById(customerData.customerTaxRuleId),
-        paymentMethod: connectOrDisconnectById(customerData.paymentMethodId),
-        // Campi scalari
-        priority: customerData.priority,
-        segment: customerData.segment,
-        size: customerData.size,
-        type: customerData.type,
-        creditStatus: customerData.creditStatus,
-        creditLimit: parseOptionalDecimal(customerData.creditLimit) ?? undefined,
-        company: {
-          create: {
-            // Scalari company
-            companyName: companyData.companyName,
-            tradeName: companyData.tradeName ?? undefined,
-            legalForm: companyData.legalForm ?? undefined,
-            status: companyData.status,
-            entityType: companyData.entityType,
-            vatNumber: companyData.vatNumber ?? undefined,
-            taxCode: companyData.taxCode ?? undefined,
-            sdiCode: companyData.sdiCode ?? undefined,
-            pec: companyData.pec ?? undefined,
-            vatId: companyData.vatId ?? undefined,
-            eoriNumber: companyData.eoriNumber ?? undefined,
-            countryCode: companyData.countryCode,
-            mainEmail: companyData.mainEmail ?? undefined,
-            mainPhone: companyData.mainPhone ?? undefined,
-            code: companyCode,
-            // FK opzionali company
-            assignedUserId: companyData.assignedUserId ?? undefined,
-            // Json fields
-            customFields: toJsonField(companyData.customFields),
-            // Indirizzo legale nested
-            ...(legalAddress && {
-              addresses: {
-                create: {
-                  address: legalAddress.address,
-                  city: legalAddress.city,
-                  zipCode: legalAddress.zipCode,
-                  countryCode: legalAddress.countryCode,
-                  provinceCode: legalAddress.provinceCode ?? undefined,
-                  phone: legalAddress.phone ?? undefined,
-                  notes: legalAddress.notes ?? undefined,
-                  addressType: "LEGAL" as const,
-                  isPrimary: true,
-                  latitude: parseOptionalDecimal(legalAddress.latitude) ?? undefined,
-                  longitude: parseOptionalDecimal(legalAddress.longitude) ?? undefined,
-                },
-              },
-            }),
-          },
-        },
-      },
+      data: buildCustomerCreateData(customerData, buildCompanyCreateData(companyData, code)),
       include: getCustomerInclude(true),
     });
   });
@@ -258,7 +204,7 @@ export const updateCustomer = asyncHandler<AuthenticatedValidatedRequest>(async 
 
   const customer = await prisma.customer.update({
     where: { id },
-    data: data as Prisma.CustomerUncheckedUpdateInput,
+    data: buildCustomerUpdateData(data),
     include: getCustomerInclude(true),
   });
 
@@ -277,53 +223,47 @@ export const updateCustomerCompany = asyncHandler<AuthenticatedValidatedRequest>
     const { id } = req.validatedParams as CustomerIdParam;
     const companyData = req.validatedBody as UpdateCustomerCompanyInput;
 
-    const customer = await prisma.customer.findUnique({
-      where: { id },
-    });
+    const customer = await prisma.customer.findUnique({ where: { id } });
 
     if (!customer) {
-      sendFail(res, {
-        statusCode: 404,
-        message: "Customer non trovato",
-      });
+      sendFail(res, { statusCode: 404, message: "Customer non trovato" });
       return;
     }
 
-    // Separa addresses dai campi scalari company
-    const { legalAddress: addressesData, ...companyScalarData } = companyData;
+    const { legalAddress, ...companyScalarData } = companyData;
 
     const updatedCustomer = await prisma.$transaction(async (tx) => {
       // 1. Aggiorna i campi scalari della company
-      await tx.company.update({
-        where: { id: customer.companyId },
-        data: companyScalarData as Prisma.CompanyUpdateInput,
-      });
+      if (Object.keys(companyScalarData).length > 0) {
+        await tx.company.update({
+          where: { id: customer.companyId },
+          data: companyScalarData as Prisma.CompanyUpdateInput,
+        });
+      }
 
-      // 2. Se forniti indirizzi, aggiorna/crea quello legale
-      if (addressesData) {
-        // Cerca indirizzo legale esistente
+      // 2. Upsert indirizzo legale tramite buildAddressCreateData
+      if (legalAddress) {
+        const addressData = buildAddressCreateData(legalAddress, {
+          addressType: AddressType.LEGAL,
+          isPrimary: true,
+        });
+
         const existingLegal = await tx.companyAddress.findFirst({
           where: {
             companyId: customer.companyId,
             addressType: AddressType.LEGAL,
           },
+          select: { id: true },
         });
 
         if (existingLegal) {
-          // Aggiorna l'indirizzo legale esistente
           await tx.companyAddress.update({
             where: { id: existingLegal.id },
-            data: addressesData,
+            data: addressData,
           });
         } else {
-          // Crea il primo indirizzo legale
           await tx.companyAddress.create({
-            data: {
-              ...addressesData,
-              companyId: customer.companyId,
-              isPrimary: true,
-              addressType: "LEGAL",
-            },
+            data: { ...addressData, companyId: customer.companyId },
           });
         }
       }
@@ -505,6 +445,7 @@ export const getCustomerStats = asyncHandler<AuthenticatedValidatedRequest>(asyn
  */
 export const deleteCustomer = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
   const { id } = req.validatedParams as CustomerIdParam;
+  const { userId } = req.user!;
 
   const customer = await prisma.customer.findUnique({
     where: { id },
@@ -546,8 +487,12 @@ export const deleteCustomer = asyncHandler<AuthenticatedValidatedRequest>(async 
   }
 
   // Elimina customer (cascade elimina anche company)
-  await prisma.customer.delete({
+  await prisma.customer.update({
     where: { id },
+    data: {
+      deletedBy: userId,
+      deletedAt: new Date(),
+    },
   });
 
   sendDeleted(res, "Customer eliminato con successo");

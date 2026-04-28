@@ -1,4 +1,4 @@
-import {z} from "zod";
+import { z } from "zod";
 import {
   baseCompanySchema,
   companyIdSchema,
@@ -8,7 +8,6 @@ import {
 import { creditLimitSchema } from "./business/currency";
 import { queryBooleanSchema, queryNumberSchema } from "./query/params";
 import { createIdSchema } from "./primitives";
-
 
 // ============================================================================
 // SUPPLIER SCHEMAS (Extended from Base)
@@ -20,12 +19,11 @@ import { createIdSchema } from "./primitives";
  */
 export const createSupplierSchema = z
   .object({
-    // Nested Company (usa il base schema)
-    company: baseCompanySchema,
-
     // parent supplier (Hierarchy)
     parentSupplierId: createIdSchema("Parent Supplier ID non valido").optional().nullable(),
-    
+
+    // Nested Company (usa il base schema)
+    company: baseCompanySchema,
 
     // ===== Dati Procurement Specifici Supplier =====
     paymentTerms: z
@@ -35,6 +33,8 @@ export const createSupplierSchema = z
       .nullable(),
 
     creditLimit: creditLimitSchema.optional().nullable(),
+
+    supplierTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
 
     bankAccount: z
       .string()
@@ -68,16 +68,14 @@ export const createSupplierSchema = z
  */
 export const updateSupplierSchema = z
   .object({
+    // parent supplier (Hierarchy)
+    parentSupplierId: createIdSchema("Parent Supplier ID non valido").optional().nullable(),
+    supplierTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
     paymentTerms: z.string().max(100).optional().nullable(),
-
     creditLimit: creditLimitSchema.optional().nullable(),
-
     bankAccount: z.string().max(100).optional().nullable(),
-
     leadTimeDays: z.number().int().nonnegative().optional(),
-
     transportCost: z.number().int().nonnegative().optional().nullable(),
-
     rating: z.number().int().min(1).max(5).optional(),
   })
   .strict();
@@ -99,11 +97,7 @@ export const updateSupplierRatingSchema = z
       .min(1, "Rating minimo è 1")
       .max(5, "Rating massimo è 5"),
 
-    notes: z
-      .string()
-      .max(1000, "Note non possono superare 1000 caratteri")
-      .optional()
-      .nullable(),
+    notes: z.string().max(1000, "Note non possono superare 1000 caratteri").optional().nullable(),
   })
   .strict();
 
@@ -129,7 +123,6 @@ export const supplierQuerySchema = companyQueryBaseSchema.extend({
   maxLeadTime: queryNumberSchema("Lead Time non valido").pipe(
     z.number().int().nonnegative().optional(),
   ),
-  
 });
 
 /**

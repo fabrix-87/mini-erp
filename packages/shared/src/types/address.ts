@@ -7,6 +7,7 @@ import {
   addressIdSchema,
   addressQuerySchema,
   createAddressSchema,
+  createNestedAddressSchema,
   updateAddressSchema,
 } from "../validators";
 import { Company } from "./company";
@@ -44,6 +45,7 @@ export interface CompanyAddressInput {
 // ============================================================================
 
 export type CreateAddressInput = z.infer<typeof createAddressSchema>;
+export type CreateNestedAddressInput = z.infer<typeof createNestedAddressSchema>;
 export type UpdateAddressInput = z.infer<typeof updateAddressSchema>;
 
 // ============================================================================

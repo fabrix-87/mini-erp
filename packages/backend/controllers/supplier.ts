@@ -1,19 +1,35 @@
 import { Response, NextFunction } from "express";
 import {
   buildSupplierWhereClause,
+  generateUniqueCompanyCode,
   getSupplierInclude,
-  generateCompanyCode,
 } from "../helpers/company";
 
-import { calculateSupplierStats, validateFiscalData } from "../utils/company";
-import { formatPaginatedResponse, sendFail, sendSuccess } from "../utils/response";
+import {
+  calculateSupplierStats,
+  formatCompanyResponse,
+  validateFiscalData,
+} from "../utils/company";
+import { formatPaginatedResponse, sendCreated, sendDeleted, sendFail, sendSuccess } from "../utils/response";
 import { AuthenticatedValidatedRequest } from "@/types/validate";
 
 import { prisma } from "../config/prisma-client";
 import { buildPagination } from "@/utils/query";
 import asyncHandler from "@/middleware/async-handler";
-import { SupplierIdParam, UpdateSupplierCompanyInput, UpdateSupplierInput } from "@mini-erp/shared";
-import { Prisma } from "@/generated/prisma/client";
+import {
+  CreateSupplierInput,
+  SupplierIdParam,
+  UpdateSupplierCompanyInput,
+  UpdateSupplierInput,
+} from "@mini-erp/shared";
+import { AddressType, Prisma } from "@/generated/prisma/client";
+import { clean, connectOrDisconnectById } from "@/helpers/prisma";
+import {
+  buildAddressCreateData,
+  buildCompanyCreateData,
+  buildSupplierCreateData,
+  buildSupplierUpdateData,
+} from "@/services/company/company";
 
 // ============================================================================
 // SUPPLIER CONTROLLERS
@@ -89,82 +105,29 @@ export const getSupplierById = async (
  * @route   POST /api/suppliers
  * @access  Private (supplier:create)
  */
-export const createSupplier = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const { company: companyData, ...supplierData } = req.validatedBody;
+export const createSupplier = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
+  const { company: companyData, ...supplierData } = req.validatedBody as CreateSupplierInput;
 
-    // Genera codice company
-    companyData.code = await generateCompanyCode(prisma, "SUP");
+  // Verifica country esiste
+  const country = await prisma.country.findUnique({
+    where: { code: companyData.countryCode },
+  });
 
-    // Valida dati fiscali
-    const fiscalValidation = validateFiscalData({
-      entityType: companyData.entityType,
-      countryCode: companyData.countryCode,
-      vatNumber: companyData.vatNumber,
-      taxCode: companyData.taxCode,
-      sdiCode: companyData.sdiCode,
-      pec: companyData.pec,
-    });
+  if (!country) {
+    sendFail(res, { statusCode: 404, message: "Paese non trovato" });
+    return;
+  }
 
-    if (!fiscalValidation.valid) {
-      res.status(400).json({
-        success: false,
-        message: "Dati fiscali non validi",
-        errors: fiscalValidation.errors,
-      });
-      return;
-    }
-
-    // Verifica unicità codice
-    const existingCode = await prisma.company.findUnique({
-      where: { code: companyData.code },
-    });
-
-    if (existingCode) {
-      res.status(400).json({
-        success: false,
-        message: "Codice company già esistente",
-      });
-      return;
-    }
-
-    // Verifica country esiste
-    const country = await prisma.country.findUnique({
-      where: { code: companyData.countryCode },
-    });
-
-    if (!country) {
-      res.status(404).json({
-        success: false,
-        message: "Paese non trovato",
-      });
-      return;
-    }
-
-    // Crea company e supplier in transazione
-    const supplier = await prisma.supplier.create({
-      data: {
-        ...supplierData,
-        company: {
-          create: companyData,
-        },
-      },
+  const supplier = await prisma.$transaction(async (tx) => {
+    const code = await generateUniqueCompanyCode("supplier", tx);
+    return tx.supplier.create({
+      data: buildSupplierCreateData(supplierData, buildCompanyCreateData(companyData, code)),
       include: getSupplierInclude(true),
     });
+  });
 
-    res.status(201).json({
-      success: true,
-      message: "Supplier creato con successo",
-      data: supplier,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  sendCreated(res, formatCompanyResponse(supplier), "Supplier creato con successo");
+});
 
 /**
  * @desc    Aggiorna supplier
@@ -175,9 +138,23 @@ export const updateSupplier = asyncHandler<AuthenticatedValidatedRequest>(async 
   const { id } = req.validatedParams as SupplierIdParam;
   const data = req.validatedBody as UpdateSupplierInput;
 
-  const existing = await prisma.supplier.findUnique({
-    where: { id },
-  });
+  const [existing, taxRule, parent] = await Promise.all([
+    prisma.supplier.findUnique({
+      where: { id },
+    }),
+    data.supplierTaxRuleId
+      ? prisma.taxRule.findUnique({
+          where: { id: data.supplierTaxRuleId },
+          select: { id: true },
+        })
+      : Promise.resolve(true),
+    data.parentSupplierId
+      ? prisma.supplier.findUnique({
+          where: { id: data.parentSupplierId },
+          select: { id: true },
+        })
+      : Promise.resolve(true),
+  ]);
 
   if (!existing) {
     sendFail(res, {
@@ -186,10 +163,18 @@ export const updateSupplier = asyncHandler<AuthenticatedValidatedRequest>(async 
     });
     return;
   }
+  if (!taxRule) {
+    sendFail(res, { statusCode: 404, message: "Tax Rule non trovata" });
+    return;
+  }
+  if (!parent) {
+    sendFail(res, { statusCode: 404, message: "ParentId non valido" });
+    return;
+  }
 
   const supplier = await prisma.supplier.update({
     where: { id },
-    data,
+    data: buildSupplierUpdateData(data),
     include: getSupplierInclude(true),
   });
 
@@ -254,47 +239,51 @@ export const updateSupplierCompany = asyncHandler<AuthenticatedValidatedRequest>
       });
       return;
     }
-    const { addresses: addressesData, ...companyScalarData } = companyData;
+    const { legalAddress, ...companyScalarData } = companyData;
 
     const updatedSupplier = await prisma.$transaction(async (tx) => {
-      await tx.company.update({
-        where: { id: supplier.companyId },
-        data: companyScalarData as Prisma.CompanyUpdateInput,
-      });
+      // 1. Aggiorna i campi scalari della company
+      if (Object.keys(companyScalarData).length > 0) {
+        await tx.company.update({
+          where: { id: supplier.companyId },
+          data: companyScalarData as Prisma.CompanyUpdateInput,
+        });
+      }
 
-      if (addressesData && addressesData.length > 0) {
-        const legalAddressData = addressesData[0];
+      // 2. Upsert indirizzo legale tramite buildAddressCreateData
+      if (legalAddress) {
+        const addressData = buildAddressCreateData(legalAddress, {
+          addressType: AddressType.LEGAL,
+          isPrimary: true,
+        });
 
         const existingLegal = await tx.companyAddress.findFirst({
           where: {
             companyId: supplier.companyId,
-            isLegal: true,
+            addressType: AddressType.LEGAL,
           },
+          select: { id: true },
         });
 
         if (existingLegal) {
           await tx.companyAddress.update({
             where: { id: existingLegal.id },
-            data: legalAddressData,
+            data: addressData,
           });
         } else {
           await tx.companyAddress.create({
-            data: {
-              ...legalAddressData,
-              companyId: supplier.companyId,
-              isLegal: true,
-              isPrimary: true,
-              addressType: "LEGAL",
-            },
+            data: { ...addressData, companyId: supplier.companyId },
           });
         }
       }
 
+      // 3. Ritorna il customer aggiornato con tutti i dati
       return tx.supplier.findUnique({
         where: { id },
         include: getSupplierInclude(true),
       });
     });
+
     sendSuccess(res, updatedSupplier, {
       message: "Supplier Company aggiornata con successo",
     });
@@ -306,12 +295,8 @@ export const updateSupplierCompany = asyncHandler<AuthenticatedValidatedRequest>
  * @route   PATCH /api/suppliers/:id/rating
  * @access  Private (supplier:update)
  */
-export const updateSupplierRating = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
+export const updateSupplierRating = asyncHandler<AuthenticatedValidatedRequest>(
+  async (req, res) => {
     const { id } = req.validatedParams;
     const { rating, notes } = req.validatedBody;
 
@@ -320,8 +305,8 @@ export const updateSupplierRating = async (
     });
 
     if (!supplier) {
-      res.status(404).json({
-        success: false,
+      sendFail(res, {
+        statusCode: 404,
         message: "Supplier non trovato",
       });
       return;
@@ -344,176 +329,158 @@ export const updateSupplierRating = async (
         },
       });
     }
-
-    res.json({
-      success: true,
+    sendSuccess(res, updatedSupplier, {
       message: "Rating aggiornato",
-      data: updatedSupplier,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+  },
+);
 
 /**
  * @desc    Ottieni statistiche supplier
  * @route   GET /api/suppliers/:id/stats
  * @access  Private (supplier:read)
  */
-export const getSupplierStats = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const getSupplierStats = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
+  const { id } = req.validatedParams;
 
-    const supplier = await prisma.supplier.findUnique({
-      where: { id: parseInt(id) },
-      include: {
+  const supplier = await prisma.supplier.findUnique({
+    where: { id: parseInt(id) },
+    include: {
+      _count: {
+        select: {
+          documentsIn: true,
+          products: true,
+        },
+      },
+    },
+  });
+
+  if (!supplier) {
+    sendFail(res, {
+      statusCode: 404,
+      message: "Supplier non trovato",
+    });
+    return;
+  }
+
+  const [recentOrders, topProducts] = await Promise.all([
+    // Ultimi ordini
+    prisma.document.findMany({
+      where: {
+        supplierId: supplier.id,
+        documentType: { in: ["SUPPLIER_ORDER", "INVOICE"] },
+      },
+      orderBy: { documentDate: "desc" },
+      take: 10,
+      select: {
+        id: true,
+        documentNumber: true,
+        documentType: true,
+        documentDate: true,
+        totalAmount: true,
+        status: true,
+      },
+    }),
+
+    // Prodotti forniti più ordinati
+    prisma.product.findMany({
+      where: {
+        supplierId: supplier.id,
+      },
+      select: {
+        id: true,
+        reference: true,
+        translations: {
+          take: 1,
+          select: { name: true },
+        },
         _count: {
           select: {
-            documentsIn: true,
-            products: true,
+            documentLines: true,
           },
         },
       },
-    });
-
-    if (!supplier) {
-      res.status(404).json({
-        success: false,
-        message: "Supplier non trovato",
-      });
-      return;
-    }
-
-    const [recentOrders, topProducts] = await Promise.all([
-      // Ultimi ordini
-      prisma.document.findMany({
-        where: {
-          supplierId: supplier.id,
-          documentType: { in: ["SUPPLIER_ORDER", "INVOICE"] },
-        },
-        orderBy: { documentDate: "desc" },
-        take: 10,
-        select: {
-          id: true,
-          documentNumber: true,
-          documentType: true,
-          documentDate: true,
-          totalAmount: true,
-          status: true,
-        },
-      }),
-
-      // Prodotti forniti più ordinati
-      prisma.product.findMany({
-        where: {
-          supplierId: supplier.id,
-        },
-        select: {
-          id: true,
-          reference: true,
-          translations: {
-            take: 1,
-            select: { name: true },
-          },
-          _count: {
-            select: {
-              documentLines: true,
-            },
-          },
-        },
-        orderBy: {
-          documentLines: {
-            _count: "desc",
-          },
-        },
-        take: 10,
-      }),
-    ]);
-
-    const stats = calculateSupplierStats(supplier);
-
-    res.json({
-      success: true,
-      data: {
-        summary: stats,
-        recentOrders,
-        topProducts: topProducts.map((p) => ({
-          productId: p.id,
-          productName: p.translations[0]?.name || p.reference,
-          orderCount: p._count.documentLines,
-        })),
-        totals: {
-          orders: supplier._count.documentsIn,
-          products: supplier._count.products,
+      orderBy: {
+        documentLines: {
+          _count: "desc",
         },
       },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      take: 10,
+    }),
+  ]);
+
+  const stats = calculateSupplierStats(supplier);
+
+  const result = {
+    summary: stats,
+    recentOrders,
+    topProducts: topProducts.map((p) => ({
+      productId: p.id,
+      productName: p.translations[0]?.name || p.reference,
+      orderCount: p._count.documentLines,
+    })),
+    totals: {
+      orders: supplier._count.documentsIn,
+      products: supplier._count.products,
+    },
+  };
+
+  sendSuccess(res, result);
+});
 
 /**
  * @desc    Elimina supplier
  * @route   DELETE /api/suppliers/:id
  * @access  Private (supplier:delete)
  */
-export const deleteSupplier = async (
-  req: AuthenticatedValidatedRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const { id } = req.validatedParams;
+export const deleteSupplier = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
+  const { id } = req.validatedParams as SupplierIdParam;
+  const { userId } = req.user!;
 
-    const supplier = await prisma.supplier.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        _count: {
-          select: {
-            documentsIn: true,
-            products: true,
-          },
+  const supplier = await prisma.supplier.findUnique({
+    where: { id },
+    include: {
+      _count: {
+        select: {
+          documentsIn: true,
+          products: true,
         },
       },
+    },
+  });
+
+  if (!supplier) {
+    sendFail(res, {
+      statusCode: 404,
+      message: "Supplier non trovato",
     });
+    return;
+  }
 
-    if (!supplier) {
-      res.status(404).json({
-        success: false,
-        message: "Supplier non trovato",
-      });
-      return;
-    }
+  const totalRelations = supplier._count.documentsIn + supplier._count.products;
 
-    const totalRelations = supplier._count.documentsIn + supplier._count.products;
-
-    if (totalRelations > 0) {
-      res.status(400).json({
-        success: false,
-        message: `Impossibile eliminare: Supplier ha ${totalRelations} relazioni attive`,
+  if (totalRelations > 0) {
+    sendFail(res, {
+      message: `Impossibile eliminare: Supplier ha ${totalRelations} relazioni attive`,
+    });
+    /*
         details: {
           documents: supplier._count.documentsIn,
           products: supplier._count.products,
         },
       });
-      return;
-    }
-
-    // Elimina supplier (cascade elimina anche company)
-    await prisma.supplier.delete({
-      where: { id: parseInt(id) },
-    });
-
-    res.json({
-      success: true,
-      message: "Supplier eliminato con successo",
-    });
-  } catch (error) {
-    next(error);
+      */
+    return;
   }
-};
+
+  // Elimina supplier (cascade elimina anche company)
+  await prisma.supplier.update({
+    where: { id },
+    data: {
+      deletedBy: userId,
+      deletedAt: new Date(),
+    },
+  });
+
+  sendDeleted(res, "Supplier eliminato con successo");
+});

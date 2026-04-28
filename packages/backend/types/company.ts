@@ -18,11 +18,13 @@ export interface CustomerFilters extends CompanyFilters {
   segment?: string;
   leadStatus?: string;
   creditStatus?: string;
+  isDeleted?: boolean;
 }
 
 export interface SupplierFilters extends CompanyFilters {
   minRating?: number;
   hasProducts?: boolean;
+  isDeleted?: boolean;
 }
 
 export interface AddressFilters {

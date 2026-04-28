@@ -11,7 +11,7 @@ import {
 } from "./business/italian-codes";
 import { emailSchema, phoneSchema } from "./primitives/string";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
-import { createAddressSchema } from "./address";
+import { createNestedAddressSchema } from "./address";
 
 // ============================================================================
 // ENUMS - Shared across all company types
@@ -87,7 +87,7 @@ const baseCompanyShape = z.object({
   openingHours: inputJsonValueSchema.optional().nullable(),
 
   // supporto per nested addresses al momento della creazione
-  legalAddress: createAddressSchema.omit({ companyId: true }),
+  legalAddress: createNestedAddressSchema,
 });
 
 // ============================================================================
