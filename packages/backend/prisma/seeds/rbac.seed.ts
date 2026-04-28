@@ -1,7 +1,7 @@
 
 import bcrypt from 'bcryptjs';
 
-import { prisma } from '../../config/prisma-client'
+import { prisma } from '../../config/prisma-config'
 
 async function seedRBAC() {
   console.log('🌱 Starting RBAC seed...');

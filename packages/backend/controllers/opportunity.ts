@@ -1,8 +1,8 @@
 import { Response } from "express";
-import { prisma } from "../config/prisma-client";
+import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
-import asyncHandler from "@/middleware/async-handler";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
+import asyncHandler from "@/middleware/async-handler-middleware";
 import {
   OpportunityQueryInput,
   OpportunityIdParam,
@@ -28,7 +28,7 @@ import {
   sendFail,
   sendPaginatedResponse,
   sendSuccess,
-} from "@/utils/response";
+} from "@/utils/response-utils";
 
 // ============================================================================
 // HELPERS

@@ -1,7 +1,6 @@
 // types/user.ts
-import { UserPayload } from "@mini-erp/shared";
-import { Request } from "express";
-export { UserPayload } from "@mini-erp/shared";
+import type { UserPayload } from "@mini-erp/shared";
+export type { UserPayload } from "@mini-erp/shared";
 
 // ============================================================================
 // JWT & Token Types
@@ -10,13 +9,31 @@ export { UserPayload } from "@mini-erp/shared";
 export interface TokenPair {
   accessToken: string;
   refreshToken: string;
-  jti?: string;           // JWT ID per access token
+  jti?: string; // JWT ID per access token
   refreshTokenId?: string; // JWT ID per refresh token
 }
 
+// ============================================================================
+// Hono Auth Context Types
+// ============================================================================
 
-export interface AuthRequest extends Request {
-  user?: UserPayload;
+/**
+ * Authenticated request user stored inside the Hono context.
+ */
+export interface AuthContextUser extends UserPayload {}
+
+/**
+ * JWT payload stored in the Hono context after token validation.
+ */
+export interface AuthJwtPayload {
+  sub: string;
+  email: string;
+  type: "access" | "refresh";
+  jti?: string;
+  refreshTokenId?: string;
+  exp?: number;
+  iat?: number;
+  [key: string]: unknown;
 }
 
 // ============================================================================

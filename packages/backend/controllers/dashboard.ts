@@ -3,9 +3,9 @@
 // ============================================================================
 
 import { Response } from "express";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
-import asyncHandler from "@/middleware/async-handler";
-import { sendSuccess, sendFail } from "@/utils/response";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
+import asyncHandler from "@/middleware/async-handler-middleware";
+import { sendSuccess, sendFail } from "@/utils/response-utils";
 import {
   DashboardQueryInput,
   UpdateLayoutInput,
@@ -14,7 +14,7 @@ import {
   DASHBOARD_LAYOUT_SETTING_KEY,
   DashboardScope,
 } from "@mini-erp/shared";
-import { prisma } from "@/config/prisma-client";
+import { prisma } from "@/config/prisma-config";
 import {
   periodToDateRange,
   isScopeAllowedForRoles,

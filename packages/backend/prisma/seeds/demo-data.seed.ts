@@ -1,4 +1,4 @@
-import { prisma } from "@/config/prisma-client";
+import { prisma } from "@/config/prisma-config";
 import { ProductType } from "@/generated/prisma/enums";
 import bcrypt from "bcryptjs";
 import { create } from "node:domain";

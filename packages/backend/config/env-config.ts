@@ -1,4 +1,4 @@
-import logger from "./logger";
+import logger from "./logger-config";
 
 // config/validate-env.ts
 const validateEnv = () => {

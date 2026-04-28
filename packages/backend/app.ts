@@ -3,12 +3,12 @@ import helmet from "helmet";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import limiter from "./middleware/rate-limit";
-import logger from "./config/logger";
+import logger from "./config/logger-config";
 import errorHandler, { notFoundHandler } from "./middleware/error-handler";
-import { prisma } from "./config/prisma-client";
+import { prisma } from "./config/prisma-config";
 import { prismaVersion } from "./generated/prisma/internal/prismaNamespace";
 import apiRouter from "./routes/index";
-import validateEnv from "./config/validate-env";
+import validateEnv from "./config/env-config";
 import morgan from "morgan";
 validateEnv();
 
@@ -31,7 +31,7 @@ export const initApp = async (): Promise<Application> => {
 
   // 2. Inizializzazione Redis
   try {
-    const { connectRedis } = await import("./config/redis");
+    const { connectRedis } = await import("./config/redis-config");
     await connectRedis();
     logger.info("✅ Redis connected successfully.");
   } catch (err: any) {
@@ -78,7 +78,7 @@ export const initApp = async (): Promise<Application> => {
 
     // Check Redis
     try {
-      const { redisClient } = await import("./config/redis");
+      const { redisClient } = await import("./config/redis-config");
       await redisClient.ping();
       health.services.redis = "connected";
     } catch (error: any) {

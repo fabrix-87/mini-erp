@@ -1,6 +1,6 @@
 // packages/backend/prisma/seeds/vatNatures.seed.ts
 
-import { prisma } from '@/config/prisma-client';
+import { prisma } from '@/config/prisma-config';
 import { VatNatureCategory } from '@/generated/prisma/enums';
 
 const vatNatures = [

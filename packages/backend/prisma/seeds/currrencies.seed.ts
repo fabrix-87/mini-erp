@@ -1,5 +1,5 @@
 // prisma/seeds/currencies.seed.ts
-import { prisma } from "@/config/prisma-client";
+import { prisma } from "@/config/prisma-config";
 
 const CURRENCY_DATA = [
   {

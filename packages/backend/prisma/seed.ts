@@ -1,5 +1,5 @@
 // seed.ts
-import { prisma } from '../config/prisma-client'
+import { prisma } from '../config/prisma-config'
 import bcrypt from 'bcryptjs';
 
 // Assunzione: L'ID per le lingue è sequenziale e parte da 1.

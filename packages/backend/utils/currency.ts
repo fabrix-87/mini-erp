@@ -1,6 +1,6 @@
 // utils/currency.utils.ts
 
-import { prisma } from "@/config/prisma-client";
+import { prisma } from "@/config/prisma-config";
 import { Currency } from "@/generated/prisma/client";
 
 /**

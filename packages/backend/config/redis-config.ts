@@ -1,6 +1,6 @@
 // config/redis.ts
 import { createClient } from 'redis';
-import logger from './logger';
+import logger from './logger-config';
 
 // Tipizzazione del client Redis
 export type RedisClient = ReturnType<typeof createClient>;

@@ -2,7 +2,7 @@
 // DOCUMENTS WIDGET SERVICE
 // ============================================================================
 
-import { prisma } from "@/config/prisma-client";
+import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
 import { DashboardScope } from "@mini-erp/shared";
 

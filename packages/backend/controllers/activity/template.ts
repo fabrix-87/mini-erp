@@ -1,14 +1,14 @@
 import { Response } from "express";
 import { Prisma } from "../../generated/prisma/client";
-import { prisma } from "../../config/prisma-client";
-import asyncHandler from "../../middleware/async-handler";
+import { prisma } from "../../config/prisma-config";
+import asyncHandler from "../../middleware/async-handler-middleware";
 import {
   sendSuccess,
   sendCreated,
   sendDeleted,
   sendError,
-} from "../../utils/response";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
+} from "../../utils/response-utils";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
 import {
   CreateActivityTemplateInput,
   UpdateActivityTemplateInput,

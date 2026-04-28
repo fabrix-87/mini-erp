@@ -2,7 +2,7 @@
 // DOCUMENT FULFILLMENT SERVICE
 // ============================================================================
 
-import { prisma } from "@/config/prisma-client";
+import { prisma } from "@/config/prisma-config";
 import { DocumentStatus } from "@/generated/prisma/client";
 
 /**

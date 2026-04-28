@@ -1,8 +1,8 @@
-import { prisma } from "@/config/prisma-client";
+import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
-import asyncHandler from "@/middleware/async-handler";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
-import { sendSuccess } from "@/utils/response";
+import asyncHandler from "@/middleware/async-handler-middleware";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
+import { sendSuccess } from "@/utils/response-utils";
 import { Response } from "express";
 
 // ============================================================================

@@ -1,21 +1,21 @@
 import { Response } from "express";
-import asyncHandler from "../middleware/async-handler";
+import asyncHandler from "../middleware/async-handler-middleware";
 import {
   NotFoundError,
   BadRequestError,
   ConflictError,
-} from "../utils/app-error";
-import { prisma } from "../config/prisma-client";
+} from "../utils/app-error-utils";
+import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
 import { generateVariantCode, getProductSelection } from "../helpers/product";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
 
 import {
   sendCreated,
   sendDeleted,
   sendPaginatedResponse,
   sendSuccess,
-} from "@/utils/response";
+} from "@/utils/response-utils";
 
 import {
   CreateManufacturerInput,

@@ -3,7 +3,7 @@ import {
   getCustomerInclude,
   generateUniqueCompanyCode,
 } from "../helpers/company";
-import { prisma } from "../config/prisma-client";
+import { prisma } from "../config/prisma-config";
 import {
   calculateCustomerStats,
   formatCompanyResponse,
@@ -15,8 +15,8 @@ import {
   sendFail,
   sendPaginatedResponse,
   sendSuccess,
-} from "../utils/response";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
+} from "../utils/response-utils";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
 import {
   CreateCustomerInput,
   CustomerIdParam,
@@ -24,7 +24,7 @@ import {
   UpdateCustomerCompanyInput,
   UpdateCustomerInput,
 } from "@mini-erp/shared";
-import asyncHandler from "@/middleware/async-handler";
+import asyncHandler from "@/middleware/async-handler-middleware";
 import { AddressType, Prisma } from "@/generated/prisma/client";
 import { buildPagination } from "@/utils/query";
 import { CustomerFilters } from "@/types/company";

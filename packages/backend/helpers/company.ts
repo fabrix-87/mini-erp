@@ -1,4 +1,4 @@
-import { prisma as prismaGlobal } from "../config/prisma-client";
+import { prisma as prismaGlobal } from "../config/prisma-config";
 import { AddressType, Prisma, PrismaClient } from "../generated/prisma/client";
 
 import { CompanyFilters, CustomerFilters, SupplierFilters, AddressFilters } from "../types/company";

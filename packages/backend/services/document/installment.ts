@@ -1,4 +1,4 @@
-import { prisma } from "@/config/prisma-client";
+import { prisma } from "@/config/prisma-config";
 
 /**
  * Helper: Update document total paid amount based on installments

@@ -1,7 +1,7 @@
 // controllers/addresses.ts
 import { Response } from "express";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
-import { prisma } from "../config/prisma-client";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
+import { prisma } from "../config/prisma-config";
 import { normalizeAddress } from "../utils/company";
 import {
   buildAddressWhereClause,
@@ -10,7 +10,7 @@ import {
   setPrimaryAddressAtomic,
 } from "../helpers/company";
 
-import asyncHandler from "@/middleware/async-handler";
+import asyncHandler from "@/middleware/async-handler-middleware";
 import {
   AddressIdParam,
   AddressQueryInput,

@@ -1,10 +1,10 @@
 import { Response, NextFunction } from "express";
-import { prisma } from "../config/prisma-client";
+import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
-import asyncHandler from "@/middleware/async-handler";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
+import asyncHandler from "@/middleware/async-handler-middleware";
 import { CalculateDueDatesInput, CreatePaymentMethodInput, PaymentMethodIdParam, PaymentQueryInput, TogglePaymentStatusInput, UpdatePaymentMethodInput, UpdatePaymentTermDetailsInput } from "@mini-erp/shared";
-import { formatPaginatedResponse } from "@/utils/response";
+import { formatPaginatedResponse } from "@/utils/response-utils";
 
 // ============================================================================
 // PAYMENT METHOD CONTROLLER

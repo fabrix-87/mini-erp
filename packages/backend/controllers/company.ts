@@ -1,9 +1,9 @@
 // src/controllers/company.ts
 import { Request, Response } from "express";
-import { prisma } from "../config/prisma-client";
-import { formatPaginatedResponse } from "../utils/response";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
-import asyncHandler from "@/middleware/async-handler";
+import { prisma } from "../config/prisma-config";
+import { formatPaginatedResponse } from "../utils/response-utils";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
+import asyncHandler from "@/middleware/async-handler-middleware";
 import { CompanyQueryInput } from "@mini-erp/shared/types";
 
 /**

@@ -1,14 +1,14 @@
 import { Response } from "express";
-import { prisma } from "../config/prisma-client";
+import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
-import asyncHandler from "@/middleware/async-handler";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
+import asyncHandler from "@/middleware/async-handler-middleware";
 import {
   NotFoundError,
   BadRequestError,
   ConflictError,
-} from "@/utils/app-error";
-import { sendCreated, sendDeleted, sendSuccess } from "@/utils/response";
+} from "@/utils/app-error-utils";
+import { sendCreated, sendDeleted, sendSuccess } from "@/utils/response-utils";
 import {
   // Tax Rule
   CreateTaxRuleInput,

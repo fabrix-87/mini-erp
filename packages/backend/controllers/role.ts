@@ -1,12 +1,12 @@
 import { Response } from "express";
-import asyncHandler from "../middleware/async-handler";
-import { NotFoundError, BadRequestError, ConflictError } from "../utils/app-error";
-import { prisma } from "../config/prisma-client";
+import asyncHandler from "../middleware/async-handler-middleware";
+import { NotFoundError, BadRequestError, ConflictError } from "../utils/app-error-utils";
+import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
-import { AuthenticatedValidatedRequest } from "../types/validate";
+import { AuthenticatedValidatedRequest } from "../types/validate-types";
 import { RoleQueryInput, UpdateRoleInput } from "@mini-erp/shared";
 import { buildPagination } from "@/utils/query";
-import { sendPaginatedResponse, sendSuccess } from "@/utils/response";
+import { sendPaginatedResponse, sendSuccess } from "@/utils/response-utils";
 
 // ============================================================================
 // HELPER FUNCTIONS

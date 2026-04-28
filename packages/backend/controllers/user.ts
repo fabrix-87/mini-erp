@@ -1,21 +1,21 @@
 // controllers/user.ts
 import { Response } from "express";
-import asyncHandler from "../middleware/async-handler";
+import asyncHandler from "../middleware/async-handler-middleware";
 import {
   NotFoundError,
   BadRequestError,
   ConflictError,
   UnauthorizedError,
-} from "../utils/app-error";
-import { prisma } from "../config/prisma-client";
+} from "../utils/app-error-utils";
+import { prisma } from "../config/prisma-config";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { UserPayload } from "../types/user";
+import { UserPayload } from "../types/user-types";
 import {
   AuthenticatedValidatedRequest,
   ValidatedRequest,
-} from "../types/validate";
+} from "../types/validate-types";
 import {
   clearTokenCookies,
   formatUserRoles,
@@ -31,15 +31,15 @@ import {
   invalidateUserPermissionsCache,
   destroyAllUserSessions,
   calculateLockUntil,
-} from "../helpers/user";
-import authConfig from "../config/auth";
-import { formatPaginatedResponse, sendSuccess } from "../utils/response";
+} from "../helpers/user-helper";
+import authConfig from "../config/auth-config";
+import { formatPaginatedResponse, sendSuccess } from "../utils/response-utils";
 import {
   LoginInput,
   UserIdInput,
   UserQueryInput,
 } from "@mini-erp/shared/types";
-import { redisClient } from "@/config/redis";
+import { redisClient } from "@/config/redis-config";
 
 // ============================================================================
 // PUBLIC ROUTES - Authentication

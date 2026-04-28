@@ -1,20 +1,22 @@
-// helpers/user.ts
+// helpers/user-helper.ts
 
 import jwt from "jsonwebtoken";
-import { TokenPair, UserPayload, SessionData } from "../types/user";
-import { Response, Request } from "express";
+import { getCookie, setCookie, deleteCookie } from "hono/cookie";
+import type { Context } from "hono";
+import { TokenPair, UserPayload, SessionData } from "../types/user-types";
 import crypto from "crypto";
-import authConfig from "../config/auth";
-import { redisClient, sessionKeys, RedisTTL } from "../config/redis";
+import authConfig from "../config/auth-config";
+import { redisClient, sessionKeys, RedisTTL } from "../config/redis-config";
 import { v4 as uuidv4 } from "uuid";
-import { prisma } from "../config/prisma-client";
+import { prisma } from "../config/prisma-config";
+import type { AppBindings } from "../lib/hono-app";
 
 // ============================================================================
 // USER SELECTION
 // ============================================================================
 
 /**
- * Selezione standard per query User con relazioni
+ * Returns the standard Prisma user selection with roles and permissions.
  */
 export const getUserSelection = () => ({
   id: true,
@@ -50,27 +52,24 @@ export const getUserSelection = () => ({
 // ============================================================================
 
 /**
- * Estrae fingerprint dalla richiesta
- * Se viene da Next.js server, usa l'header X-Device-Fingerprint
- * Se viene direttamente dal browser, lo genera localmente
+ * Extracts the device fingerprint from Hono context headers.
+ * Priority: X-Device-Fingerprint header > locally generated hash.
  */
-export const extractFingerprint = (req: Request): string => {
+export const extractFingerprint = (c: Context<AppBindings>): string => {
   if (!authConfig.fingerprint.enabled) {
     return "fingerprint-disabled";
   }
 
-  // PRIORITÀ 1: Header X-Device-Fingerprint (da Next.js)
-  const headerFingerprint = req.headers["x-device-fingerprint"];
-  if (headerFingerprint && typeof headerFingerprint === "string") {
+  const headerFingerprint = c.req.header("x-device-fingerprint");
+  if (headerFingerprint) {
     return headerFingerprint;
   }
 
-  // PRIORITÀ 2: Genera localmente (se chiamata diretta da browser)
   const components = [
-    req.headers["user-agent"] || "",
-    req.headers["accept-language"] || "",
-    req.headers["accept-encoding"] || "",
-    req.headers["x-forwarded-for"] || req.ip || req.socket.remoteAddress || "",
+    c.req.header("user-agent") || "",
+    c.req.header("accept-language") || "",
+    c.req.header("accept-encoding") || "",
+    c.req.header("x-forwarded-for") || "",
   ].join("|");
 
   return crypto
@@ -81,18 +80,11 @@ export const extractFingerprint = (req: Request): string => {
 };
 
 /**
- * Verifica fingerprint dalla richiesta
+ * Verifies that the request fingerprint matches the one stored in the token.
  */
-export const verifyFingerprint = (
-  req: Request,
-  tokenFingerprint: string,
-): boolean => {
-  if (!authConfig.fingerprint.enabled) {
-    return true;
-  }
-
-  const currentFingerprint = extractFingerprint(req);
-  return currentFingerprint === tokenFingerprint;
+export const verifyFingerprint = (c: Context<AppBindings>, tokenFingerprint: string): boolean => {
+  if (!authConfig.fingerprint.enabled) return true;
+  return extractFingerprint(c) === tokenFingerprint;
 };
 
 // ============================================================================
@@ -100,12 +92,9 @@ export const verifyFingerprint = (
 // ============================================================================
 
 /**
- * Genera coppia di token (access + refresh) con JWT claims completi
+ * Generates a signed access + refresh token pair for the given user.
  */
-export const generateTokenPair = (
-  user: UserPayload,
-  fingerprint: string,
-): TokenPair => {
+export const generateTokenPair = (user: UserPayload, fingerprint: string): TokenPair => {
   const jti = uuidv4(); // JWT ID univoco
   const now = Math.floor(Date.now() / 1000);
 
@@ -147,7 +136,7 @@ export const generateTokenPair = (
 // ============================================================================
 
 /**
- * Salva sessione in Redis (atomico)
+ * Saves the user session and refresh token to Redis atomically.
  */
 export const saveSession = async (
   userId: number,
@@ -170,11 +159,7 @@ export const saveSession = async (
   } else {
     // Aggiungi alla lista (max N token contemporanei)
     multi.lPush(sessionKeys.refreshToken(userId), refreshTokenId);
-    multi.lTrim(
-      sessionKeys.refreshToken(userId),
-      0,
-      authConfig.security.maxConcurrentSessions - 1,
-    );
+    multi.lTrim(sessionKeys.refreshToken(userId), 0, authConfig.security.maxConcurrentSessions - 1);
     multi.expire(sessionKeys.refreshToken(userId), RedisTTL.SESSION);
   }
 
@@ -182,11 +167,9 @@ export const saveSession = async (
 };
 
 /**
- * Recupera sessione da Redis
+ * Retrieves a user session from Redis.
  */
-export const getSession = async (
-  userId: number,
-): Promise<SessionData | null> => {
+export const getSession = async (userId: number): Promise<SessionData | null> => {
   try {
     const data = await redisClient.get(sessionKeys.session(userId));
     if (!data) return null;
@@ -203,7 +186,7 @@ export const getSession = async (
 };
 
 /**
- * Aggiorna TTL sessione (sliding session)
+ * Extends session and refresh token TTL (sliding session).
  */
 export const refreshSessionTTL = async (userId: number): Promise<void> => {
   if (!authConfig.session.sliding) return;
@@ -216,7 +199,7 @@ export const refreshSessionTTL = async (userId: number): Promise<void> => {
 };
 
 /**
- * Aggiorna lastActivity nella sessione
+ * Updates the lastActivity timestamp in the session.
  */
 export const updateSessionActivity = async (userId: number): Promise<void> => {
   const session = await getSession(userId);
@@ -235,7 +218,7 @@ export const updateSessionActivity = async (userId: number): Promise<void> => {
 // ============================================================================
 
 /**
- * Verifica se refresh token è nella whitelist
+ * Checks whether the given refresh token ID is still valid in Redis.
  */
 export const isRefreshTokenValid = async (
   userId: number,
@@ -246,11 +229,7 @@ export const isRefreshTokenValid = async (
       const storedId = await redisClient.get(sessionKeys.refreshToken(userId));
       return storedId === refreshTokenId;
     } else {
-      const tokens = await redisClient.lRange(
-        sessionKeys.refreshToken(userId),
-        0,
-        -1,
-      );
+      const tokens = await redisClient.lRange(sessionKeys.refreshToken(userId), 0, -1);
       return tokens.includes(refreshTokenId);
     }
   } catch (error) {
@@ -259,20 +238,14 @@ export const isRefreshTokenValid = async (
 };
 
 /**
- * Recupera refreshTokenId dalla whitelist (helper per aggiornamenti)
+ * Retrieves the current refresh token ID for the user from Redis.
  */
-export const getRefreshTokenId = async (
-  userId: number,
-): Promise<string | null> => {
+export const getRefreshTokenId = async (userId: number): Promise<string | null> => {
   try {
     if (authConfig.security.singleRefreshToken) {
       return await redisClient.get(sessionKeys.refreshToken(userId));
     } else {
-      const tokens = await redisClient.lRange(
-        sessionKeys.refreshToken(userId),
-        0,
-        0,
-      );
+      const tokens = await redisClient.lRange(sessionKeys.refreshToken(userId), 0, 0);
       return tokens[0] || null;
     }
   } catch (error) {
@@ -281,7 +254,7 @@ export const getRefreshTokenId = async (
 };
 
 /**
- * Ruota refresh token (invalida il vecchio, genera nuovo)
+ * Rotates the refresh token by replacing the old ID with a new one.
  */
 export const rotateRefreshToken = async (
   userId: number,
@@ -310,19 +283,16 @@ export const rotateRefreshToken = async (
 // ============================================================================
 
 /**
- * Aggiungi JTI alla blacklist (per logout)
+ * Adds a token JTI to the Redis blacklist.
  */
-export const blacklistToken = async (
-  jti: string,
-  expiresInSeconds: number,
-): Promise<void> => {
+export const blacklistToken = async (jti: string, expiresInSeconds: number): Promise<void> => {
   await redisClient.set(sessionKeys.blacklist(jti), "blacklisted", {
     EX: expiresInSeconds,
   });
 };
 
 /**
- * Verifica se JTI è nella blacklist
+ * Returns true if the given JTI is blacklisted (token was revoked).
  */
 export const isTokenBlacklisted = async (jti: string): Promise<boolean> => {
   const result = await redisClient.get(sessionKeys.blacklist(jti));
@@ -334,13 +304,9 @@ export const isTokenBlacklisted = async (jti: string): Promise<boolean> => {
 // ============================================================================
 
 /**
- * Distruggi sessione completa (logout)
+ * Destroys the full user session and blacklists the current access token.
  */
-export const destroySession = async (
-  userId: number,
-  jti: string,
-  ttl: number,
-): Promise<void> => {
+export const destroySession = async (userId: number, jti: string, ttl: number): Promise<void> => {
   const multi = redisClient.multi();
 
   // 1. Rimuovi sessione
@@ -361,7 +327,7 @@ export const destroySession = async (
 };
 
 /**
- * Distruggi tutte le sessioni di un utente (es. dopo reset password)
+ * Destroys all active sessions for a user (e.g. after password reset).
  */
 export const destroyAllUserSessions = async (userId: number): Promise<void> => {
   const multi = redisClient.multi();
@@ -378,8 +344,7 @@ export const destroyAllUserSessions = async (userId: number): Promise<void> => {
 // ============================================================================
 
 /**
- * Recupera permessi utente da cache Redis
- * Se non in cache, li recupera dal DB e li salva
+ * Returns the user's permission codes from Redis cache or database.
  */
 export const getUserPermissions = async (userId: number): Promise<string[]> => {
   // 1. Prova a recuperare da cache
@@ -424,26 +389,22 @@ export const getUserPermissions = async (userId: number): Promise<string[]> => {
   const permissionArray = Array.from(permissions);
 
   // 4. Salva in cache con TTL
-  await redisClient.set(
-    sessionKeys.permissions(userId),
-    JSON.stringify(permissionArray),
-    { EX: RedisTTL.PERMISSIONS },
-  );
+  await redisClient.set(sessionKeys.permissions(userId), JSON.stringify(permissionArray), {
+    EX: RedisTTL.PERMISSIONS,
+  });
 
   return permissionArray;
 };
 
 /**
- * Invalida cache permessi utente (chiamare dopo modifica ruoli)
+ * Invalidates the cached permissions for a user (call after role changes).
  */
-export const invalidateUserPermissionsCache = async (
-  userId: number,
-): Promise<void> => {
+export const invalidateUserPermissionsCache = async (userId: number): Promise<void> => {
   await redisClient.del(sessionKeys.permissions(userId));
 };
 
 /**
- * Verifica se un utente ha uno dei permessi richiesti (con cache)
+ * Returns true if the user has at least one of the required permissions.
  */
 export const hasPermission = async (
   userId: number,
@@ -458,45 +419,41 @@ export const hasPermission = async (
 // ============================================================================
 
 /**
- * Imposta cookie sicuri per i token
+ * Sets the access and refresh token cookies in the Hono response.
  */
-export const setTokenCookies = (res: Response, tokens: TokenPair) => {
-  res.cookie("accessToken", tokens.accessToken, {
+export const setTokenCookies = (c: Context<AppBindings>, tokens: TokenPair): void => {
+  const cookieBase = {
     httpOnly: true,
     secure: authConfig.isProduction,
-    sameSite: authConfig.isProduction ? "strict" : "lax",
-    maxAge: authConfig.jwt.expiresInMs,
+    sameSite: (authConfig.isProduction ? "strict" : "lax") as "strict" | "lax",
     path: "/",
+  };
+
+  setCookie(c, "accessToken", tokens.accessToken, {
+    ...cookieBase,
+    maxAge: authConfig.jwt.expiresInMs / 1000,
   });
 
-  res.cookie("refreshToken", tokens.refreshToken, {
-    httpOnly: true,
-    secure: authConfig.isProduction,
-    sameSite: authConfig.isProduction ? "strict" : "lax",
-    maxAge: authConfig.jwt.refreshExpiresInMs,
-    path: "/",
+  setCookie(c, "refreshToken", tokens.refreshToken, {
+    ...cookieBase,
+    maxAge: authConfig.jwt.refreshExpiresInMs / 1000,
   });
 };
 
 /**
- * Rimuove i cookie dei token (per logout)
+ * Clears the access and refresh token cookies (logout).
  */
-export const clearTokenCookies = (res: Response) => {
-  res.cookie("accessToken", "", {
+export const clearTokenCookies = (c: Context<AppBindings>): void => {
+  const cookieBase = {
     httpOnly: true,
     secure: authConfig.isProduction,
-    sameSite: "strict",
-    maxAge: 0,
+    sameSite: "strict" as const,
     path: "/",
-  });
+    maxAge: 0,
+  };
 
-  res.cookie("refreshToken", "", {
-    httpOnly: true,
-    secure: authConfig.isProduction,
-    sameSite: "strict",
-    maxAge: 0,
-    path: "/",
-  });
+  deleteCookie(c, "accessToken", cookieBase);
+  deleteCookie(c, "refreshToken", cookieBase);
 };
 
 // ============================================================================
@@ -524,7 +481,7 @@ type RoleDTO = {
 };
 
 /**
- * Formatta i ruoli per la risposta, estraendo i permessi dalla struttura annidata
+ * Formats role objects into flat DTOs with permission code arrays.
  */
 export const formatUserRoles = (roles: RoleWithPermissions[]): RoleDTO[] => {
   return roles.map((role) => ({
@@ -536,8 +493,7 @@ export const formatUserRoles = (roles: RoleWithPermissions[]): RoleDTO[] => {
 };
 
 /**
- * Genera token di reset password sicuro
- * @returns token (da inviare via email), hashedToken (da salvare su DB), expiresAt
+ * Generates a secure reset token with its hashed counterpart and expiry.
  */
 export function generateResetToken(): {
   token: string;
@@ -557,7 +513,7 @@ export function generateResetToken(): {
 }
 
 /**
- * Genera token di verifica email
+ * Generates a secure email verification token with expiry.
  */
 export function generateEmailVerificationToken(): {
   token: string;
@@ -574,7 +530,7 @@ export function generateEmailVerificationToken(): {
 }
 
 /**
- * Verifica se account è bloccato per troppi tentativi
+ * Returns true if the account is currently locked.
  */
 export function isAccountLocked(user: {
   lockedUntil: Date | null;
@@ -586,7 +542,7 @@ export function isAccountLocked(user: {
 }
 
 /**
- * Calcola quando sbloccare account (exponential backoff)
+ * Calculates the lock expiry time using exponential backoff.
  */
 export function calculateLockUntil(failedAttempts: number): Date {
   // 5 tentativi = 5 min, 10 = 30 min, 15 = 2 ore

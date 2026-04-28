@@ -10,12 +10,12 @@ import {
   formatCompanyResponse,
   validateFiscalData,
 } from "../utils/company";
-import { formatPaginatedResponse, sendCreated, sendDeleted, sendFail, sendSuccess } from "../utils/response";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
+import { formatPaginatedResponse, sendCreated, sendDeleted, sendFail, sendSuccess } from "../utils/response-utils";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
 
-import { prisma } from "../config/prisma-client";
+import { prisma } from "../config/prisma-config";
 import { buildPagination } from "@/utils/query";
-import asyncHandler from "@/middleware/async-handler";
+import asyncHandler from "@/middleware/async-handler-middleware";
 import {
   CreateSupplierInput,
   SupplierIdParam,

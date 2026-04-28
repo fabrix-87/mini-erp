@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { redisClient } from "@/config/redis";
+import { redisClient } from "@/config/redis-config";
 
 /**
  * Cache options

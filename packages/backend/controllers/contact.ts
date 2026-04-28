@@ -1,8 +1,8 @@
 import { NextFunction, Response } from "express";
-import { prisma } from "../config/prisma-client";
-import { formatPaginatedResponse } from "../utils/response";
-import asyncHandler from "../middleware/async-handler";
-import { AuthenticatedValidatedRequest } from "../types/validate";
+import { prisma } from "../config/prisma-config";
+import { formatPaginatedResponse } from "../utils/response-utils";
+import asyncHandler from "../middleware/async-handler-middleware";
+import { AuthenticatedValidatedRequest } from "../types/validate-types";
 import {
   CheckMailInput,
   CompanyIdAsCompanyIdParam,

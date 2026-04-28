@@ -1,8 +1,8 @@
 import { Response } from "express";
 import { Prisma } from "../../generated/prisma/client";
-import { prisma } from "../../config/prisma-client";
-import asyncHandler from "../../middleware/async-handler";
-import { AuthenticatedValidatedRequest } from "../../types/validate";
+import { prisma } from "../../config/prisma-config";
+import asyncHandler from "../../middleware/async-handler-middleware";
+import { AuthenticatedValidatedRequest } from "../../types/validate-types";
 import {
   ActivityIdParam,
   ActivityQueryInput,
@@ -19,7 +19,7 @@ import {
   sendError,
   sendPaginatedResponse,
   sendSuccess,
-} from "@/utils/response";
+} from "@/utils/response-utils";
 import { clean, ifDefined, parseOptionalDate, toDate } from "@/helpers/prisma";
 import { completeActivity as completeActivityService } from "../../services/activity/activity-service";
 

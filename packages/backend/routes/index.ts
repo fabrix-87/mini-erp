@@ -1,3 +1,19 @@
+import { createHonoApp } from "../lib/hono-app";
+import authRoutes from "./auth-routes";
+import healthRoutes from "./health-routes";
+import userRoutes from "./user-routes";
+
+const apiRoutes = createHonoApp();
+
+/**
+ * Registers all API route groups.
+ */
+apiRoutes.route("/health", healthRoutes);
+apiRoutes.route("/auth", authRoutes);
+apiRoutes.route("/users", userRoutes);
+
+export default apiRoutes;
+/*
 import { Router } from "express";
 
 import activitiesRouter from "./activity";
@@ -43,3 +59,4 @@ apiRouter.use("/leads", leadRouter);
 apiRouter.use("/languages", languagesRouter);
 
 export default apiRouter;
+*/

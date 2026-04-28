@@ -1,4 +1,4 @@
-import { prisma } from "../../config/prisma-client";
+import { prisma } from "../../config/prisma-config";
 
 async function main() {
   console.log("🌱 Inizio seeding Country & Language...");

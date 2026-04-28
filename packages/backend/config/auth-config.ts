@@ -1,7 +1,12 @@
 // config/auth.ts
-import { AuthConfig } from "../types/user";
-import { safeMs } from "../helpers/auth"
+import type { AuthConfig } from "../types/user-types";
+import { safeMs } from "../helpers/auth-helper"
 
+/**
+ * Central authentication and JWT configuration.
+ * All auth-related settings are derived from environment variables
+ * with safe fallbacks for development.
+ */
 const authConfig: AuthConfig = {
   jwt: {
     secret: process.env.JWT_SECRET || "default-secret-change-me",
@@ -17,8 +22,8 @@ const authConfig: AuthConfig = {
     ),
     
     // JWT Claims standard
-    issuer: process.env.JWT_ISSUER || "your-app-backend",
-    audience: process.env.JWT_AUDIENCE || "your-app-frontend",
+    issuer: process.env.JWT_ISSUER || "mini-erp-backend",
+    audience: process.env.JWT_AUDIENCE || "mini-erp-frontend",
     
     // Token rotation: refresh automatico se < 5 minuti alla scadenza
     refreshThresholdMs: 5 * 60 * 1000, // 5 minuti

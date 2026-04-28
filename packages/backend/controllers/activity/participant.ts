@@ -1,13 +1,13 @@
 import { Response, NextFunction } from "express";
-import { prisma } from "../../config/prisma-client";
-import { AuthenticatedValidatedRequest } from "@/types/validate";
+import { prisma } from "../../config/prisma-config";
+import { AuthenticatedValidatedRequest } from "@/types/validate-types";
 import {
   sendCreated,
   sendDeleted,
   sendError,
   sendSuccess,
-} from "@/utils/response";
-import asyncHandler from "@/middleware/async-handler";
+} from "@/utils/response-utils";
+import asyncHandler from "@/middleware/async-handler-middleware";
 import {
   ActivityIdAsActivityIdParam,
   CreateActivityParticipantInput,

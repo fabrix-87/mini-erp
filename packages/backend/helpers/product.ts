@@ -2,7 +2,7 @@
 // HELPER FUNCTIONS
 // ============================================================================
 
-import { prisma } from "../config/prisma-client";
+import { prisma } from "../config/prisma-config";
 
 /**
  * Selezione standard per query Product con relazioni
