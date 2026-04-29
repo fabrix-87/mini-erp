@@ -53,9 +53,9 @@ export type CompanyMinAggregateOutputType = {
   countryCode: string | null
   mainEmail: string | null
   mainPhone: string | null
+  assignedUserId: number | null
   createdAt: Date | null
   updatedAt: Date | null
-  assignedUserId: number | null
 }
 
 export type CompanyMaxAggregateOutputType = {
@@ -75,9 +75,9 @@ export type CompanyMaxAggregateOutputType = {
   countryCode: string | null
   mainEmail: string | null
   mainPhone: string | null
+  assignedUserId: number | null
   createdAt: Date | null
   updatedAt: Date | null
-  assignedUserId: number | null
 }
 
 export type CompanyCountAggregateOutputType = {
@@ -97,10 +97,10 @@ export type CompanyCountAggregateOutputType = {
   countryCode: number
   mainEmail: number
   mainPhone: number
-  createdAt: number
-  updatedAt: number
   assignedUserId: number
   customFields: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -132,9 +132,9 @@ export type CompanyMinAggregateInputType = {
   countryCode?: true
   mainEmail?: true
   mainPhone?: true
+  assignedUserId?: true
   createdAt?: true
   updatedAt?: true
-  assignedUserId?: true
 }
 
 export type CompanyMaxAggregateInputType = {
@@ -154,9 +154,9 @@ export type CompanyMaxAggregateInputType = {
   countryCode?: true
   mainEmail?: true
   mainPhone?: true
+  assignedUserId?: true
   createdAt?: true
   updatedAt?: true
-  assignedUserId?: true
 }
 
 export type CompanyCountAggregateInputType = {
@@ -176,10 +176,10 @@ export type CompanyCountAggregateInputType = {
   countryCode?: true
   mainEmail?: true
   mainPhone?: true
-  createdAt?: true
-  updatedAt?: true
   assignedUserId?: true
   customFields?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -286,10 +286,10 @@ export type CompanyGroupByOutputType = {
   countryCode: string
   mainEmail: string | null
   mainPhone: string | null
-  createdAt: Date
-  updatedAt: Date
   assignedUserId: number | null
   customFields: runtime.JsonValue | null
+  createdAt: Date
+  updatedAt: Date
   _count: CompanyCountAggregateOutputType | null
   _avg: CompanyAvgAggregateOutputType | null
   _sum: CompanySumAggregateOutputType | null
@@ -332,10 +332,10 @@ export type CompanyWhereInput = {
   countryCode?: Prisma.StringFilter<"Company"> | string
   mainEmail?: Prisma.StringNullableFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableFilter<"Company"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   assignedUserId?: Prisma.IntNullableFilter<"Company"> | number | null
   customFields?: Prisma.JsonNullableFilter<"Company">
+  createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   country?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   activities?: Prisma.ActivityListRelationFilter
@@ -365,10 +365,10 @@ export type CompanyOrderByWithRelationInput = {
   countryCode?: Prisma.SortOrder
   mainEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   mainPhone?: Prisma.SortOrderInput | Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   customFields?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   country?: Prisma.CountryOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   activities?: Prisma.ActivityOrderByRelationAggregateInput
@@ -401,10 +401,10 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   countryCode?: Prisma.StringFilter<"Company"> | string
   mainEmail?: Prisma.StringNullableFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableFilter<"Company"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   assignedUserId?: Prisma.IntNullableFilter<"Company"> | number | null
   customFields?: Prisma.JsonNullableFilter<"Company">
+  createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   country?: Prisma.XOR<Prisma.CountryScalarRelationFilter, Prisma.CountryWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   activities?: Prisma.ActivityListRelationFilter
@@ -434,10 +434,10 @@ export type CompanyOrderByWithAggregationInput = {
   countryCode?: Prisma.SortOrder
   mainEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   mainPhone?: Prisma.SortOrderInput | Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   customFields?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.CompanyCountOrderByAggregateInput
   _avg?: Prisma.CompanyAvgOrderByAggregateInput
   _max?: Prisma.CompanyMaxOrderByAggregateInput
@@ -465,10 +465,10 @@ export type CompanyScalarWhereWithAggregatesInput = {
   countryCode?: Prisma.StringWithAggregatesFilter<"Company"> | string
   mainEmail?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableWithAggregatesFilter<"Company"> | string | null
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Company"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Company"> | Date | string
   assignedUserId?: Prisma.IntNullableWithAggregatesFilter<"Company"> | number | null
   customFields?: Prisma.JsonNullableWithAggregatesFilter<"Company">
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Company"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Company"> | Date | string
 }
 
 export type CompanyCreateInput = {
@@ -486,9 +486,9 @@ export type CompanyCreateInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
@@ -518,10 +518,10 @@ export type CompanyUncheckedCreateInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutCompanyInput
@@ -547,9 +547,9 @@ export type CompanyUpdateInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
@@ -579,10 +579,10 @@ export type CompanyUncheckedUpdateInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.CompanyContactUncheckedUpdateManyWithoutCompanyNestedInput
@@ -610,10 +610,10 @@ export type CompanyCreateManyInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type CompanyUpdateManyMutationInput = {
@@ -631,9 +631,9 @@ export type CompanyUpdateManyMutationInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type CompanyUncheckedUpdateManyInput = {
@@ -653,10 +653,10 @@ export type CompanyUncheckedUpdateManyInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CompanyNullableScalarRelationFilter = {
@@ -681,10 +681,10 @@ export type CompanyCountOrderByAggregateInput = {
   countryCode?: Prisma.SortOrder
   mainEmail?: Prisma.SortOrder
   mainPhone?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
   assignedUserId?: Prisma.SortOrder
   customFields?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type CompanyAvgOrderByAggregateInput = {
@@ -709,9 +709,9 @@ export type CompanyMaxOrderByAggregateInput = {
   countryCode?: Prisma.SortOrder
   mainEmail?: Prisma.SortOrder
   mainPhone?: Prisma.SortOrder
+  assignedUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  assignedUserId?: Prisma.SortOrder
 }
 
 export type CompanyMinOrderByAggregateInput = {
@@ -731,9 +731,9 @@ export type CompanyMinOrderByAggregateInput = {
   countryCode?: Prisma.SortOrder
   mainEmail?: Prisma.SortOrder
   mainPhone?: Prisma.SortOrder
+  assignedUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  assignedUserId?: Prisma.SortOrder
 }
 
 export type CompanySumOrderByAggregateInput = {
@@ -979,9 +979,9 @@ export type CompanyCreateWithoutActivitiesInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
@@ -1010,10 +1010,10 @@ export type CompanyUncheckedCreateWithoutActivitiesInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
@@ -1054,9 +1054,9 @@ export type CompanyUpdateWithoutActivitiesInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
@@ -1085,10 +1085,10 @@ export type CompanyUncheckedUpdateWithoutActivitiesInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.CompanyContactUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1113,9 +1113,9 @@ export type CompanyCreateWithoutCustomersInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
@@ -1144,10 +1144,10 @@ export type CompanyUncheckedCreateWithoutCustomersInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutCompanyInput
@@ -1188,9 +1188,9 @@ export type CompanyUpdateWithoutCustomersInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
@@ -1219,10 +1219,10 @@ export type CompanyUncheckedUpdateWithoutCustomersInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.CompanyContactUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1247,9 +1247,9 @@ export type CompanyCreateWithoutSuppliersInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
@@ -1278,10 +1278,10 @@ export type CompanyUncheckedCreateWithoutSuppliersInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutCompanyInput
@@ -1322,9 +1322,9 @@ export type CompanyUpdateWithoutSuppliersInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
@@ -1353,10 +1353,10 @@ export type CompanyUncheckedUpdateWithoutSuppliersInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.CompanyContactUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1381,9 +1381,9 @@ export type CompanyCreateWithoutAddressesInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
@@ -1412,10 +1412,10 @@ export type CompanyUncheckedCreateWithoutAddressesInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
@@ -1456,9 +1456,9 @@ export type CompanyUpdateWithoutAddressesInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
@@ -1487,10 +1487,10 @@ export type CompanyUncheckedUpdateWithoutAddressesInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.CompanyContactUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1515,9 +1515,9 @@ export type CompanyCreateWithoutContactsInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
@@ -1546,10 +1546,10 @@ export type CompanyUncheckedCreateWithoutContactsInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCompanyInput
@@ -1590,9 +1590,9 @@ export type CompanyUpdateWithoutContactsInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
@@ -1621,10 +1621,10 @@ export type CompanyUncheckedUpdateWithoutContactsInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1649,9 +1649,9 @@ export type CompanyCreateWithoutNotesInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
@@ -1680,10 +1680,10 @@ export type CompanyUncheckedCreateWithoutNotesInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutCompanyInput
@@ -1724,9 +1724,9 @@ export type CompanyUpdateWithoutNotesInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
@@ -1755,10 +1755,10 @@ export type CompanyUncheckedUpdateWithoutNotesInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.CompanyContactUncheckedUpdateManyWithoutCompanyNestedInput
@@ -1783,9 +1783,9 @@ export type CompanyCreateWithoutCountryInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
@@ -1813,10 +1813,10 @@ export type CompanyUncheckedCreateWithoutCountryInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutCompanyInput
@@ -1873,10 +1873,10 @@ export type CompanyScalarWhereInput = {
   countryCode?: Prisma.StringFilter<"Company"> | string
   mainEmail?: Prisma.StringNullableFilter<"Company"> | string | null
   mainPhone?: Prisma.StringNullableFilter<"Company"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Company"> | Date | string
   assignedUserId?: Prisma.IntNullableFilter<"Company"> | number | null
   customFields?: Prisma.JsonNullableFilter<"Company">
+  createdAt?: Prisma.DateTimeFilter<"Company"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Company"> | Date | string
 }
 
 export type CompanyCreateWithoutDocumentsInput = {
@@ -1894,9 +1894,9 @@ export type CompanyCreateWithoutDocumentsInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
@@ -1925,10 +1925,10 @@ export type CompanyUncheckedCreateWithoutDocumentsInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutCompanyInput
@@ -1969,9 +1969,9 @@ export type CompanyUpdateWithoutDocumentsInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
@@ -2000,10 +2000,10 @@ export type CompanyUncheckedUpdateWithoutDocumentsInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.CompanyContactUncheckedUpdateManyWithoutCompanyNestedInput
@@ -2028,9 +2028,9 @@ export type CompanyCreateWithoutTenantsInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
   user?: Prisma.UserCreateNestedOneWithoutAssignedCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
@@ -2059,10 +2059,10 @@ export type CompanyUncheckedCreateWithoutTenantsInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutCompanyInput
@@ -2103,9 +2103,9 @@ export type CompanyUpdateWithoutTenantsInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
@@ -2134,10 +2134,10 @@ export type CompanyUncheckedUpdateWithoutTenantsInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.CompanyContactUncheckedUpdateManyWithoutCompanyNestedInput
@@ -2162,9 +2162,9 @@ export type CompanyCreateWithoutUserInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryCreateNestedOneWithoutCompaniesInput
   activities?: Prisma.ActivityCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressCreateNestedManyWithoutCompanyInput
@@ -2193,9 +2193,9 @@ export type CompanyUncheckedCreateWithoutUserInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutCompanyInput
   addresses?: Prisma.CompanyAddressUncheckedCreateNestedManyWithoutCompanyInput
   contacts?: Prisma.CompanyContactUncheckedCreateNestedManyWithoutCompanyInput
@@ -2248,10 +2248,10 @@ export type CompanyCreateManyCountryInput = {
   vatId?: string | null
   mainEmail?: string | null
   mainPhone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   assignedUserId?: number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type CompanyUpdateWithoutCountryInput = {
@@ -2269,9 +2269,9 @@ export type CompanyUpdateWithoutCountryInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   user?: Prisma.UserUpdateOneWithoutAssignedCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
@@ -2299,10 +2299,10 @@ export type CompanyUncheckedUpdateWithoutCountryInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.CompanyContactUncheckedUpdateManyWithoutCompanyNestedInput
@@ -2329,10 +2329,10 @@ export type CompanyUncheckedUpdateManyWithoutCountryInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignedUserId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CompanyCreateManyUserInput = {
@@ -2352,9 +2352,9 @@ export type CompanyCreateManyUserInput = {
   countryCode?: string
   mainEmail?: string | null
   mainPhone?: string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type CompanyUpdateWithoutUserInput = {
@@ -2372,9 +2372,9 @@ export type CompanyUpdateWithoutUserInput = {
   vatId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   country?: Prisma.CountryUpdateOneRequiredWithoutCompaniesNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUpdateManyWithoutCompanyNestedInput
@@ -2403,9 +2403,9 @@ export type CompanyUncheckedUpdateWithoutUserInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutCompanyNestedInput
   addresses?: Prisma.CompanyAddressUncheckedUpdateManyWithoutCompanyNestedInput
   contacts?: Prisma.CompanyContactUncheckedUpdateManyWithoutCompanyNestedInput
@@ -2433,9 +2433,9 @@ export type CompanyUncheckedUpdateManyWithoutUserInput = {
   countryCode?: Prisma.StringFieldUpdateOperationsInput | string
   mainEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mainPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customFields?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 
@@ -2549,10 +2549,10 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   countryCode?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
   assignedUserId?: boolean
   customFields?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Company$userArgs<ExtArgs>
   activities?: boolean | Prisma.Company$activitiesArgs<ExtArgs>
@@ -2583,10 +2583,10 @@ export type CompanySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   countryCode?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
   assignedUserId?: boolean
   customFields?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Company$userArgs<ExtArgs>
 }, ExtArgs["result"]["company"]>
@@ -2608,10 +2608,10 @@ export type CompanySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   countryCode?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
   assignedUserId?: boolean
   customFields?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Company$userArgs<ExtArgs>
 }, ExtArgs["result"]["company"]>
@@ -2633,13 +2633,13 @@ export type CompanySelectScalar = {
   countryCode?: boolean
   mainEmail?: boolean
   mainPhone?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
   assignedUserId?: boolean
   customFields?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "companyName" | "tradeName" | "legalForm" | "status" | "entityType" | "vatNumber" | "taxCode" | "sdiCode" | "pec" | "eoriNumber" | "vatId" | "countryCode" | "mainEmail" | "mainPhone" | "createdAt" | "updatedAt" | "assignedUserId" | "customFields", ExtArgs["result"]["company"]>
+export type CompanyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "companyName" | "tradeName" | "legalForm" | "status" | "entityType" | "vatNumber" | "taxCode" | "sdiCode" | "pec" | "eoriNumber" | "vatId" | "countryCode" | "mainEmail" | "mainPhone" | "assignedUserId" | "customFields" | "createdAt" | "updatedAt", ExtArgs["result"]["company"]>
 export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   country?: boolean | Prisma.CountryDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Company$userArgs<ExtArgs>
@@ -2693,10 +2693,10 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     countryCode: string
     mainEmail: string | null
     mainPhone: string | null
-    createdAt: Date
-    updatedAt: Date
     assignedUserId: number | null
     customFields: runtime.JsonValue | null
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["company"]>
   composites: {}
 }
@@ -3146,10 +3146,10 @@ export interface CompanyFieldRefs {
   readonly countryCode: Prisma.FieldRef<"Company", 'String'>
   readonly mainEmail: Prisma.FieldRef<"Company", 'String'>
   readonly mainPhone: Prisma.FieldRef<"Company", 'String'>
-  readonly createdAt: Prisma.FieldRef<"Company", 'DateTime'>
-  readonly updatedAt: Prisma.FieldRef<"Company", 'DateTime'>
   readonly assignedUserId: Prisma.FieldRef<"Company", 'Int'>
   readonly customFields: Prisma.FieldRef<"Company", 'Json'>
+  readonly createdAt: Prisma.FieldRef<"Company", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Company", 'DateTime'>
 }
     
 

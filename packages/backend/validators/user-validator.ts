@@ -18,7 +18,7 @@ import {
 // VALIDATION MIDDLEWARE
 // ============================================================================
 
-import { validateBody, validateParams, validateQuery } from "../middleware/validation";
+import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 
 /**
  * Middleware per la creazione di un utente (Admin)

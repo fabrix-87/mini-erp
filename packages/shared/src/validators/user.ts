@@ -9,23 +9,13 @@ import {
 } from "./primitives";
 import { countryCodeBaseSchema, userIdSchema } from "./base";
 import { roleIdSchema, userRoleSchema } from "./role";
-import {
-  limitSchema,
-  pageSchema,
-  queryBooleanSchema,
-  sortOrderSchema,
-} from "./query";
+import { limitSchema, pageSchema, queryBooleanSchema, sortOrderSchema } from "./query";
 
 // ============================================================================
 // ENUMS
 // ============================================================================
 
-export const genderSchema = z.enum([
-  "MALE",
-  "FEMALE",
-  "OTHER",
-  "PREFER_NOT_TO_SAY",
-]);
+export const genderSchema = z.enum(["MALE", "FEMALE", "OTHER", "PREFER_NOT_TO_SAY"]);
 
 export const userSortFieldSchema = z.enum(["createdAt", "username", "email", "lastLogin"]);
 
@@ -38,10 +28,7 @@ export const usernameSchema = z
   .trim()
   .min(3, "Username deve essere almeno 3 caratteri")
   .max(50, "Username troppo lungo")
-  .regex(
-    /^[a-zA-Z0-9_]+$/,
-    "Username può contenere solo lettere, numeri e underscore",
-  );
+  .regex(/^[a-zA-Z0-9_]+$/, "Username può contenere solo lettere, numeri e underscore");
 
 export const passwordSchema = z
   .string()
@@ -68,7 +55,7 @@ export const userBaseSchema = z.object({
 // ============================================================================
 
 export const userDetailsSchema = z.object({
-  firstName: z.string().max(100, "Nome troppo lungo").optional(),
+  firstName: z.string().max(100, "Nome troppo lungo"),
   lastName: z.string().max(100, "Cognome troppo lungo").optional(),
   profilePicture: urlSchema(),
   phone: phoneSchema,
@@ -121,8 +108,8 @@ export const userFormSchema = z.object({
   username: usernameSchema,
   email: emailSchema(),
   password: passwordSchema.optional().or(z.literal("")),
-  roleIds: z.array(z.number()).optional(),
-  preferredLanguageId: createIdSchema('Language ID obbligatorio'),
+  roleIds: z.array(roleIdSchema).min(1, "Deve essere assegnato almeno un ruolo").optional(),
+  preferredLanguageId: createIdSchema("Language ID obbligatorio"),
   ...userDetailsSchema.shape,
 });
 
@@ -252,11 +239,8 @@ export const regenerateBackupCodesSchema = z.object({
  * Schema per la creazione di un nuovo utente
  */
 export const createUserSchema = userBaseSchema.extend({
-  details: userDetailsSchema.partial(),
-  roleIds: z
-    .array(roleIdSchema)
-    .min(1, "Deve essere assegnato almeno un ruolo")
-    .optional(),
+  details: userDetailsSchema.partial().required({ firstName: true }),
+  roleIds: z.array(roleIdSchema).min(1, "Deve essere assegnato almeno un ruolo"),
 });
 
 /**
@@ -285,22 +269,20 @@ export const registerUserSchema = userBaseSchema
 // ============================================================================
 
 /**
+ * Schema per l'aggiornamento solo dei dettagli personali
+ */
+export const updateUserDetailsSchema = userDetailsSchema.partial().required({ firstName: true });
+
+/**
  * Schema per l'aggiornamento completo del profilo utente
  */
 export const updateUserProfileSchema = z.object({
   username: userBaseSchema.shape.username.optional(),
   email: userBaseSchema.shape.email.optional(),
   active: z.boolean().optional(),
-  preferredLanguageId: createIdSchema("Language ID non valido")
-    .optional()
-    .nullable(),
-  details: userDetailsSchema.partial().optional(),
+  preferredLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
+  details: updateUserDetailsSchema,
 });
-
-/**
- * Schema per l'aggiornamento solo dei dettagli personali
- */
-export const updateUserDetailsSchema = userDetailsSchema.partial();
 
 /**
  * Schema per il cambio password
@@ -324,9 +306,7 @@ export const changePasswordSchema = z
  * Schema per l'aggiornamento dei ruoli (solo Admin)
  */
 export const updateUserRolesSchema = z.object({
-  roleIds: z
-    .array(roleIdSchema)
-    .min(1, "Deve essere assegnato almeno un ruolo"),
+  roleIds: z.array(roleIdSchema).min(1, "Deve essere assegnato almeno un ruolo"),
 });
 
 /**

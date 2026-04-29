@@ -83,7 +83,7 @@ model UserDetails {
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   firstName String @db.VarChar(100)
-  lastName  String @db.VarChar(100)
+  lastName  String? @db.VarChar(100)
 
   profilePicture String? @db.VarChar(500)
 

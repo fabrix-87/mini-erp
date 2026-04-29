@@ -65,25 +65,31 @@ const SENSITIVE_FIELDS = new Set([
 
 /**
  * Recursively redacts sensitive fields from any object.
- * Safe to use before passing data to any external logger or error tracker.
- * Does NOT mutate the original object.
+ * MUTATES the object in-place to preserve non-enumerable properties
+ * (e.g. Winston's Symbol.for('level') used in log format pipelines).
  *
  * @param data - Any value to sanitize
  */
 export const sanitizeForLogging = (data: unknown): unknown => {
   if (typeof data !== "object" || data === null) return data;
 
-  if (Array.isArray(data)) return data.map(sanitizeForLogging);
-
-  const result: Record<string, unknown> = {};
-
-  for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
-    result[key] = SENSITIVE_FIELDS.has(key.toLowerCase())
-      ? "***REDACTED***"
-      : sanitizeForLogging(value);
+  if (Array.isArray(data)) {
+    data.forEach((item, i) => {
+      data[i] = sanitizeForLogging(item);
+    });
+    return data;
   }
 
-  return result;
+  const obj = data as Record<string, unknown>;
+  for (const key of Object.keys(obj)) {
+    if (SENSITIVE_FIELDS.has(key.toLowerCase())) {
+      obj[key] = "***REDACTED***";
+    } else {
+      sanitizeForLogging(obj[key]);
+    }
+  }
+
+  return data; 
 };
 
 // ============================================================================

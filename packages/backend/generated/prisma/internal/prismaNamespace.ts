@@ -5325,10 +5325,10 @@ export const CompanyScalarFieldEnum = {
   countryCode: 'countryCode',
   mainEmail: 'mainEmail',
   mainPhone: 'mainPhone',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
   assignedUserId: 'assignedUserId',
-  customFields: 'customFields'
+  customFields: 'customFields',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]

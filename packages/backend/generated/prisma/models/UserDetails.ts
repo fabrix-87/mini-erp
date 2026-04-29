@@ -265,7 +265,7 @@ export type UserDetailsGroupByOutputType = {
   id: number
   userId: number
   firstName: string
-  lastName: string
+  lastName: string | null
   profilePicture: string | null
   phone: string | null
   address: string | null
@@ -309,7 +309,7 @@ export type UserDetailsWhereInput = {
   id?: Prisma.IntFilter<"UserDetails"> | number
   userId?: Prisma.IntFilter<"UserDetails"> | number
   firstName?: Prisma.StringFilter<"UserDetails"> | string
-  lastName?: Prisma.StringFilter<"UserDetails"> | string
+  lastName?: Prisma.StringNullableFilter<"UserDetails"> | string | null
   profilePicture?: Prisma.StringNullableFilter<"UserDetails"> | string | null
   phone?: Prisma.StringNullableFilter<"UserDetails"> | string | null
   address?: Prisma.StringNullableFilter<"UserDetails"> | string | null
@@ -331,7 +331,7 @@ export type UserDetailsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
-  lastName?: Prisma.SortOrder
+  lastName?: Prisma.SortOrderInput | Prisma.SortOrder
   profilePicture?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -356,7 +356,7 @@ export type UserDetailsWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.UserDetailsWhereInput[]
   NOT?: Prisma.UserDetailsWhereInput | Prisma.UserDetailsWhereInput[]
   firstName?: Prisma.StringFilter<"UserDetails"> | string
-  lastName?: Prisma.StringFilter<"UserDetails"> | string
+  lastName?: Prisma.StringNullableFilter<"UserDetails"> | string | null
   profilePicture?: Prisma.StringNullableFilter<"UserDetails"> | string | null
   phone?: Prisma.StringNullableFilter<"UserDetails"> | string | null
   address?: Prisma.StringNullableFilter<"UserDetails"> | string | null
@@ -378,7 +378,7 @@ export type UserDetailsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
-  lastName?: Prisma.SortOrder
+  lastName?: Prisma.SortOrderInput | Prisma.SortOrder
   profilePicture?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -407,7 +407,7 @@ export type UserDetailsScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"UserDetails"> | number
   userId?: Prisma.IntWithAggregatesFilter<"UserDetails"> | number
   firstName?: Prisma.StringWithAggregatesFilter<"UserDetails"> | string
-  lastName?: Prisma.StringWithAggregatesFilter<"UserDetails"> | string
+  lastName?: Prisma.StringNullableWithAggregatesFilter<"UserDetails"> | string | null
   profilePicture?: Prisma.StringNullableWithAggregatesFilter<"UserDetails"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"UserDetails"> | string | null
   address?: Prisma.StringNullableWithAggregatesFilter<"UserDetails"> | string | null
@@ -426,7 +426,7 @@ export type UserDetailsScalarWhereWithAggregatesInput = {
 
 export type UserDetailsCreateInput = {
   firstName: string
-  lastName: string
+  lastName?: string | null
   profilePicture?: string | null
   phone?: string | null
   address?: string | null
@@ -448,7 +448,7 @@ export type UserDetailsUncheckedCreateInput = {
   id?: number
   userId: number
   firstName: string
-  lastName: string
+  lastName?: string | null
   profilePicture?: string | null
   phone?: string | null
   address?: string | null
@@ -467,7 +467,7 @@ export type UserDetailsUncheckedCreateInput = {
 
 export type UserDetailsUpdateInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profilePicture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -489,7 +489,7 @@ export type UserDetailsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profilePicture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -510,7 +510,7 @@ export type UserDetailsCreateManyInput = {
   id?: number
   userId: number
   firstName: string
-  lastName: string
+  lastName?: string | null
   profilePicture?: string | null
   phone?: string | null
   address?: string | null
@@ -529,7 +529,7 @@ export type UserDetailsCreateManyInput = {
 
 export type UserDetailsUpdateManyMutationInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profilePicture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -550,7 +550,7 @@ export type UserDetailsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profilePicture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -683,7 +683,7 @@ export type EnumGenderFieldUpdateOperationsInput = {
 
 export type UserDetailsCreateWithoutUserInput = {
   firstName: string
-  lastName: string
+  lastName?: string | null
   profilePicture?: string | null
   phone?: string | null
   address?: string | null
@@ -703,7 +703,7 @@ export type UserDetailsCreateWithoutUserInput = {
 export type UserDetailsUncheckedCreateWithoutUserInput = {
   id?: number
   firstName: string
-  lastName: string
+  lastName?: string | null
   profilePicture?: string | null
   phone?: string | null
   address?: string | null
@@ -738,7 +738,7 @@ export type UserDetailsUpdateToOneWithWhereWithoutUserInput = {
 
 export type UserDetailsUpdateWithoutUserInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profilePicture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -758,7 +758,7 @@ export type UserDetailsUpdateWithoutUserInput = {
 export type UserDetailsUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profilePicture?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -884,7 +884,7 @@ export type $UserDetailsPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: number
     userId: number
     firstName: string
-    lastName: string
+    lastName: string | null
     profilePicture: string | null
     phone: string | null
     address: string | null

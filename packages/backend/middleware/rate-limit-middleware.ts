@@ -108,7 +108,7 @@ export const apiRateLimiter = createRedisRateLimiter({
  * Only counts failed attempts (skipSuccessfulRequests: true).
  */
 export const loginRateLimiter = createRedisRateLimiter({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 5 * 60 * 1000,
   maxRequests: 5,
   keyGenerator: (c) =>
     `login:${c.req.header("x-forwarded-for")?.split(",")[0].trim() ?? "unknown"}`,
