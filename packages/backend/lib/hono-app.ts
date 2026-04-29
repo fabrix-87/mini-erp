@@ -7,12 +7,14 @@ import { Hono } from "hono";
 // ============================================================================
 
 /**
- * Hono environment bindings shared across the entire application.
- * Add Bindings (e.g. Cloudflare env) here if needed in the future.
+ * Application-level Hono environment type.
+ * Bindings: empty for Bun backend (no Cloudflare Workers env needed).
+ * Variables: typed context variables set/get via c.set() / c.get().
  */
-export type AppBindings = {
+export interface AppBindings {
+  Bindings: Record<string, never>;
   Variables: AppContextVariables;
-};
+}
 
 // ============================================================================
 // Typed App Factory

@@ -1,5 +1,4 @@
-import crypto from "node:crypto";
-import { redisClient } from "@/config/redis-config";
+import { redisClient } from "../config/redis-config";
 
 /**
  * Cache options
@@ -9,28 +8,19 @@ interface CacheSetOptions {
 }
 
 /**
- * Build deterministic hash key
+ * Builds a deterministic cache key using Bun's native hash function.
+ * Falls back to namespace only if no payload is provided.
  */
-export const buildCacheKey = (
-  namespace: string,
-  payload?: unknown,
-): string => {
+export const buildCacheKey = (namespace: string, payload?: unknown): string => {
   if (!payload) return namespace;
-
-  const hash = crypto
-    .createHash("sha256")
-    .update(JSON.stringify(payload))
-    .digest("hex");
-
+  const hash = Bun.hash(JSON.stringify(payload)).toString(16);
   return `${namespace}:${hash}`;
 };
 
 /**
  * Get cached value
  */
-export const getCache = async <T>(
-  key: string,
-): Promise<T | null> => {
+export const getCache = async <T>(key: string): Promise<T | null> => {
   const cached = await redisClient.get(key);
 
   if (!cached) return null;
@@ -61,9 +51,7 @@ export const setCache = async <T>(
 /**
  * Delete a single key
  */
-export const deleteCacheKey = async (
-  key: string,
-): Promise<void> => {
+export const deleteCacheKey = async (key: string): Promise<void> => {
   await redisClient.del(key);
 };
 
@@ -71,9 +59,7 @@ export const deleteCacheKey = async (
  * Delete all keys by namespace
  * ⚠️ Uses SCAN to avoid blocking Redis
  */
-export const deleteCacheByNamespace = async (
-  namespace: string,
-): Promise<void> => {
+export const deleteCacheByNamespace = async (namespace: string): Promise<void> => {
   const pattern = `${namespace}:*`;
 
   for await (const keys of redisClient.scanIterator({

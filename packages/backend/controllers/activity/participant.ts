@@ -13,7 +13,7 @@ import {
   CreateActivityParticipantInput,
   UpdateActivityParticipantInput,
 } from "@mini-erp/shared";
-import { clean } from "@/helpers/prisma";
+import { clean } from "@/helpers/prisma-helper";
 
 // ============================================================================
 // ACTIVITY PARTICIPANT CONTROLLER

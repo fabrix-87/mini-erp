@@ -1,7 +1,7 @@
 import { Prisma } from "../../generated/prisma/client";
 import { prisma } from "../../config/prisma-config";
 import { CompleteActivityInput } from "@mini-erp/shared/types";
-import { clean } from "@/helpers/prisma";
+import { clean } from "@/helpers/prisma-helper";
 
 // ============================================================================
 // ACTIVITY SERVICE

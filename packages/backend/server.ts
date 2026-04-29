@@ -1,4 +1,3 @@
-import "dotenv/config";
 import logger from "./config/logger-config";
 import { disconnectRedis } from "./config/redis-config";
 import { prisma } from "./config/prisma-config";

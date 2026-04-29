@@ -2,4 +2,4 @@
 // DOCUMENT HELPERS - MAIN EXPORT
 // ============================================================================
 
-export * from "./selection";
+export * from "./selection-helper";

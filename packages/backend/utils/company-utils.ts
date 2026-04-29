@@ -1,5 +1,5 @@
 import { ValidationError } from "@mini-erp/shared";
-import { ValidationResult } from "../types/company";
+import { ValidationResult } from "../types/company-types";
 import { AddressType } from "@/generated/prisma/enums";
 import { CompanyAddress } from "@/generated/prisma/client";
 

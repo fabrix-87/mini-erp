@@ -20,7 +20,7 @@ import {
   sendPaginatedResponse,
   sendSuccess,
 } from "@/utils/response-utils";
-import { clean, ifDefined, parseOptionalDate, toDate } from "@/helpers/prisma";
+import { clean, ifDefined, parseOptionalDate, toDate } from "@/helpers/prisma-helper";
 import { completeActivity as completeActivityService } from "../../services/activity/activity-service";
 
 // ============================================================================

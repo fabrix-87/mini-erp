@@ -20,7 +20,7 @@ import {
   isScopeAllowedForRoles,
   getPrimaryRole,
   getAllowedWidgets,
-} from "@/helpers/dashboard";
+} from "@/helpers/dashboard-helper";
 import { Prisma } from "@/generated/prisma/client";
 import * as dashboardServices from "@/services/dashboard";
 

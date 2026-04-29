@@ -19,7 +19,7 @@ import {
   connectOrDisconnectById,
   toDate,
   toRequiredDate,
-} from "../../helpers/prisma";
+} from "../../helpers/prisma-helper";
 
 // ============================================================================
 // ACTIVITY TEMPLATE CONTROLLER

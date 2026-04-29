@@ -1,9 +1,17 @@
+import { sanitizeForLogging } from '@/helpers/error-helper';
 import winston, { createLogger } from 'winston';
 import 'winston-daily-rotate-file';
-import { sanitizeMetadata } from '../helpers/error'
 
 const { format, transports } = winston;
-const { combine, timestamp, label, printf, errors, json, prettyPrint, colorize } = format;
+const { combine, timestamp, label, printf, errors, json,  colorize } = format;
+
+/**
+ * Sanitize metadata for logging.
+ * @param info - Winston log information.
+ */
+const sanitizeMetadata = winston.format((info) => {
+  return sanitizeForLogging(info) as winston.Logform.TransformableInfo;
+});
 
 // =========================================================================
 // FORMATO DEVELOPMENT (Leggibile con oggetti espansi)

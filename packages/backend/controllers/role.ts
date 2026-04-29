@@ -5,7 +5,7 @@ import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
 import { AuthenticatedValidatedRequest } from "../types/validate-types";
 import { RoleQueryInput, UpdateRoleInput } from "@mini-erp/shared";
-import { buildPagination } from "@/utils/query";
+import { buildPagination } from "@/utils/query-utils";
 import { sendPaginatedResponse, sendSuccess } from "@/utils/response-utils";
 
 // ============================================================================

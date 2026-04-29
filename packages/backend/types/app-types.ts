@@ -8,9 +8,9 @@ import { AuthContextUser, AuthJwtPayload } from "./user-types";
  * Shared Hono context variables used across auth middleware and routes.
  */
 export interface AppContextVariables {
-  user: AuthContextUser | null;
-  jwtPayload: AuthJwtPayload | null;
-  validatedBody: unknown;
-  validatedQuery: unknown;
-  validatedParams: unknown;
+  user?: AuthContextUser;
+  jwtPayload?: AuthJwtPayload;
+  validatedBody?: unknown;
+  validatedQuery?: unknown;
+  validatedParams?: unknown;
 }

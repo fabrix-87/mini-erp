@@ -10,7 +10,7 @@ import {
   CountryQueryInput,
   PaginatedResponse,
 } from "@mini-erp/shared";
-import { buildCacheKey, getCache, setCache } from "@/utils/cache";
+import { buildCacheKey, getCache, setCache } from "@/utils/cache-utils";
 
 /**
  * @desc    Lista tutti i Paesi con filtri

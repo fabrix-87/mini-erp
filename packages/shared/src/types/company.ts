@@ -40,18 +40,16 @@ export type Company = Omit<CreateCompanyInput, "legalAddress"> & {
   addresses: Address[];
   legalAddress: Address;
   contacts: Contact[];
-  customers: Customer[];
-  suppliers: Supplier[];
   tenants: TenantSettings[];
   documents: Document[];
   notes: CompanyNote[];
   createdAt: Date;
   updatedAt: Date;
-  firstOrderDate: Date | null;
-  totalOrders: number;
-  totalRevenue: Decimal;
 };
 
+/**
+ * TODO: Refactor this to use a single schema for Customer and Supplier
+ */
 export type CompanyFormData = z.input<typeof baseCompanySchema> &
   Omit<z.input<typeof createCustomerSchema>, "company"> &
   Omit<z.input<typeof createSupplierSchema>, "company">;
@@ -144,7 +142,3 @@ export type CompanySearchResult = {
   city: string | null;
   countryCode: string;
 };
-
-// Forward declarations for circular dependencies
-type Customer = any; // Will be defined in customer.ts
-type Supplier = any; // Will be defined in supplier.ts

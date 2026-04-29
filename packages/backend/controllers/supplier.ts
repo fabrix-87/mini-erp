@@ -3,18 +3,18 @@ import {
   buildSupplierWhereClause,
   generateUniqueCompanyCode,
   getSupplierInclude,
-} from "../helpers/company";
+} from "../helpers/company-helper";
 
 import {
   calculateSupplierStats,
   formatCompanyResponse,
   validateFiscalData,
-} from "../utils/company";
+} from "../utils/company-utils";
 import { formatPaginatedResponse, sendCreated, sendDeleted, sendFail, sendSuccess } from "../utils/response-utils";
 import { AuthenticatedValidatedRequest } from "@/types/validate-types";
 
 import { prisma } from "../config/prisma-config";
-import { buildPagination } from "@/utils/query";
+import { buildPagination } from "@/utils/query-utils";
 import asyncHandler from "@/middleware/async-handler-middleware";
 import {
   CreateSupplierInput,
@@ -23,7 +23,7 @@ import {
   UpdateSupplierInput,
 } from "@mini-erp/shared";
 import { AddressType, Prisma } from "@/generated/prisma/client";
-import { clean, connectOrDisconnectById } from "@/helpers/prisma";
+import { clean, connectOrDisconnectById } from "@/helpers/prisma-helper";
 import {
   buildAddressCreateData,
   buildCompanyCreateData,

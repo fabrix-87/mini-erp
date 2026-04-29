@@ -17,7 +17,7 @@ import {
 } from "@mini-erp/shared";
 import { generateDocumentNumber } from "./numbering";
 import { Decimal } from "@prisma/client/runtime/client";
-import { toJsonField } from "@/helpers/prisma";
+import { toJsonField } from "@/helpers/prisma-helper";
 
 // ============================================================================
 // TYPES

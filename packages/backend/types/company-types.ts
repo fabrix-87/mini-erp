@@ -39,3 +39,6 @@ export interface ValidationResult {
   valid: boolean;
   errors: ValidationError[];
 }
+
+// Tipo per i campi di ordinamento supportati
+export type CompanySortField = "id" | "code" | "name" | "country" | "status" | "createdAt";

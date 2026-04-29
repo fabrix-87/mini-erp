@@ -2,13 +2,13 @@ import {
   buildCustomerWhereClause,
   getCustomerInclude,
   generateUniqueCompanyCode,
-} from "../helpers/company";
+} from "../helpers/company-helper";
 import { prisma } from "../config/prisma-config";
 import {
   calculateCustomerStats,
   formatCompanyResponse,
   validateFiscalData,
-} from "../utils/company";
+} from "../utils/company-utils";
 import {
   sendCreated,
   sendDeleted,
@@ -26,9 +26,9 @@ import {
 } from "@mini-erp/shared";
 import asyncHandler from "@/middleware/async-handler-middleware";
 import { AddressType, Prisma } from "@/generated/prisma/client";
-import { buildPagination } from "@/utils/query";
-import { CustomerFilters } from "@/types/company";
-import { connectOrDisconnectById, parseOptionalDecimal } from "@/helpers/prisma";
+import { buildPagination } from "@/utils/query-utils";
+import { CustomerFilters } from "@/types/company-types";
+import { connectOrDisconnectById, parseOptionalDecimal } from "@/helpers/prisma-helper";
 import {
   buildAddressCreateData,
   buildCompanyCreateData,

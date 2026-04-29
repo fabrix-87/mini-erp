@@ -8,7 +8,7 @@ import {
   PaginatedResponse,
 } from "@mini-erp/shared";
 import { formatPaginatedResponse } from "@/utils/response-utils";
-import { buildCacheKey, getCache, setCache } from "@/utils/cache";
+import { buildCacheKey, getCache, setCache } from "@/utils/cache-utils";
 
 /**
  * @desc    Lista tutte le valute con filtri

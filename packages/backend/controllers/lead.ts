@@ -25,7 +25,7 @@ import {
   sendSuccess,
 } from "@/utils/response-utils";
 import { startOfWeek, startOfMonth } from "date-fns";
-import { parseOptionalDate, parseOptionalDecimal } from "@/helpers/prisma";
+import { parseOptionalDate, parseOptionalDecimal } from "@/helpers/prisma-helper";
 
 // ============================================================================
 // HELPERS

@@ -7,7 +7,7 @@ import {
 } from "../utils/app-error-utils";
 import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
-import { generateVariantCode, getProductSelection } from "../helpers/product";
+import { generateVariantCode, getProductSelection } from "../helpers/product-helper";
 import { AuthenticatedValidatedRequest } from "@/types/validate-types";
 
 import {

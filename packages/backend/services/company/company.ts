@@ -3,7 +3,7 @@
 // ============================================================================
 
 import { Prisma } from "@/generated/prisma/client";
-import { connectOrDisconnectById, parseOptionalDecimal, toJsonField } from "@/helpers/prisma";
+import { connectOrDisconnectById, parseOptionalDecimal, toJsonField } from "@/helpers/prisma-helper";
 import {
   CreateCompanyInput,
   CreateCustomerInput,

@@ -37,7 +37,7 @@ import {
   ifDefined,
   toDate,
   toRequiredDate,
-} from "@/helpers/prisma";
+} from "@/helpers/prisma-helper";
 
 // ============================================================================
 // TAX RULE CONTROLLER

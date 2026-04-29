@@ -2,13 +2,13 @@
 import { Response } from "express";
 import { AuthenticatedValidatedRequest } from "@/types/validate-types";
 import { prisma } from "../config/prisma-config";
-import { normalizeAddress } from "../utils/company";
+import { normalizeAddress } from "../utils/company-utils";
 import {
   buildAddressWhereClause,
   getAddressInclude,
   clearPrimaryAddresses,
   setPrimaryAddressAtomic,
-} from "../helpers/company";
+} from "../helpers/company-helper";
 
 import asyncHandler from "@/middleware/async-handler-middleware";
 import {
