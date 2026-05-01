@@ -27,8 +27,6 @@ import { authenticateToken, authorize } from "@/middleware/auth-middleware";
 
 const userRoutes = createHonoApp();
 
-
-
 // ============================================================================
 // PRIVATE ROUTES - Current User (Authenticated)
 // ============================================================================

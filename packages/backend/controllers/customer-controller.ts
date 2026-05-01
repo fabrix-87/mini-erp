@@ -12,11 +12,11 @@ import {
 import {
   sendCreated,
   sendDeleted,
-  sendFail,
+  sendNotFound,
   sendPaginatedResponse,
   sendSuccess,
 } from "../utils/response-utils";
-import { AuthenticatedValidatedRequest } from "@/types/validate-types";
+
 import {
   CreateCustomerInput,
   CustomerIdParam,
@@ -24,17 +24,22 @@ import {
   UpdateCustomerCompanyInput,
   UpdateCustomerInput,
 } from "@mini-erp/shared";
-import asyncHandler from "@/middleware/async-handler-middleware";
 import { AddressType, Prisma } from "@/generated/prisma/client";
 import { buildPagination } from "@/utils/query-utils";
 import { CustomerFilters } from "@/types/company-types";
-import { connectOrDisconnectById, parseOptionalDecimal } from "@/helpers/prisma-helper";
 import {
   buildAddressCreateData,
   buildCompanyCreateData,
   buildCustomerCreateData,
   buildCustomerUpdateData,
 } from "@/services/company/company";
+import { Context } from "hono";
+import { AppBindings } from "@/lib/hono-app";
+import {
+  getValidatedBody,
+  getValidatedParams,
+  getValidatedQuery,
+} from "@/helpers/validated-context";
 
 // ============================================================================
 // CUSTOMER CONTROLLERS
@@ -45,14 +50,14 @@ import {
  * @route   GET /api/customers
  * @access  Private (customer:read)
  */
-export const getAllCustomers = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
+export const getAllCustomers = async (c: Context<AppBindings>) => {
   const {
     page = 1,
     limit = 10,
     sortBy = "id",
     sortOrder = "desc",
     ...filters
-  } = req.validatedQuery as CustomerQueryInput;
+  } = getValidatedQuery<CustomerQueryInput>(c);
 
   const where = buildCustomerWhereClause(filters as CustomerFilters);
   const { skip, take } = buildPagination(page, limit);
@@ -67,16 +72,16 @@ export const getAllCustomers = asyncHandler<AuthenticatedValidatedRequest>(async
     }),
     prisma.customer.count({ where }),
   ]);
-  sendPaginatedResponse(res, customers, total, page, limit);
-});
+  return sendPaginatedResponse(c, customers, total, page, limit);
+};
 
 /**
  * @desc    Ottieni customer per ID
  * @route   GET /api/customers/:id
  * @access  Private (customer:read)
  */
-export const getCustomerById = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
-  const { id } = req.validatedParams as CustomerIdParam;
+export const getCustomerById = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<CustomerIdParam>(c);
 
   const customer = await prisma.customer.findUnique({
     where: { id },
@@ -84,27 +89,24 @@ export const getCustomerById = asyncHandler<AuthenticatedValidatedRequest>(async
   });
 
   if (!customer) {
-    sendFail(res, {
-      message: "Customer non trovato",
-    });
-    return;
+    return sendNotFound(c, "Customer non trovato");
   }
 
   const stats = calculateCustomerStats(customer);
 
-  sendSuccess(res, {
+  return sendSuccess(c, {
     ...customer,
     stats,
   });
-});
+};
 
 /**
  * @desc    Crea nuovo customer (con company e indirizzo legale)
  * @route   POST /api/customers
  * @access  Private (customer:create)
  */
-export const createCustomer = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
-  const { company: companyData, ...customerData } = req.validatedBody as CreateCustomerInput;
+export const createCustomer = async (c: Context<AppBindings>) => {
+  const { company: companyData, ...customerData } = getValidatedBody<CreateCustomerInput>(c);
 
   // -------------------------------------------------------------------------
   // 1. Verifica esistenza relazioni — in parallelo per minimizzare la latenza
@@ -135,20 +137,16 @@ export const createCustomer = asyncHandler<AuthenticatedValidatedRequest>(async 
   ]);
 
   if (!country) {
-    sendFail(res, { statusCode: 404, message: "Paese non trovato" });
-    return;
+    return sendNotFound(c, "Paese non trovato");
   }
   if (!priceList) {
-    sendFail(res, { statusCode: 404, message: "Price List non trovata" });
-    return;
+    return sendNotFound(c, "Price List non trovata");
   }
   if (!taxRule) {
-    sendFail(res, { statusCode: 404, message: "Tax Rule non trovata" });
-    return;
+    return sendNotFound(c, "Tax Rule non trovata");
   }
   if (!paymentMethod) {
-    sendFail(res, { statusCode: 404, message: "Payment Method non trovato" });
-    return;
+    return sendNotFound(c, "Payment Method non trovata");
   }
 
   // -------------------------------------------------------------------------
@@ -164,28 +162,24 @@ export const createCustomer = asyncHandler<AuthenticatedValidatedRequest>(async 
     });
   });
 
-  sendCreated(res, formatCompanyResponse(customer), "Customer creato con successo");
-});
+  return sendCreated(c, formatCompanyResponse(customer), "Customer creato con successo");
+};
 
 /**
  * @desc    Aggiorna customer
  * @route   PUT /api/customers/:id
  * @access  Private (customer:update)
  */
-export const updateCustomer = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
-  const { id } = req.validatedParams as CustomerIdParam;
-  const data = req.validatedBody as UpdateCustomerInput;
+export const updateCustomer = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<CustomerIdParam>(c);
+  const data = getValidatedBody<UpdateCustomerInput>(c);
 
   const existing = await prisma.customer.findUnique({
     where: { id },
   });
 
   if (!existing) {
-    sendFail(res, {
-      statusCode: 404,
-      message: "Customer non trovato",
-    });
-    return;
+    return sendNotFound(c, "Customer non trovato");
   }
 
   // Verifica relazioni se modificate
@@ -194,11 +188,7 @@ export const updateCustomer = asyncHandler<AuthenticatedValidatedRequest>(async 
       where: { id: data.defaultPriceListId },
     });
     if (!priceList) {
-      sendFail(res, {
-        statusCode: 404,
-        message: "Price List non trovato",
-      });
-      return;
+      return sendNotFound(c, "Price List non trovata");
     }
   }
 
@@ -208,122 +198,116 @@ export const updateCustomer = asyncHandler<AuthenticatedValidatedRequest>(async 
     include: getCustomerInclude(true),
   });
 
-  sendSuccess(res, customer, {
+  return sendSuccess(c, customer, {
     message: "Customer aggiornato con successo",
   });
-});
+};
 
 /**
  * @desc    Aggiorna company del customer
  * @route   PUT /api/customers/:id/company
  * @access  Private (customer:update)
  */
-export const updateCustomerCompany = asyncHandler<AuthenticatedValidatedRequest>(
-  async (req, res) => {
-    const { id } = req.validatedParams as CustomerIdParam;
-    const companyData = req.validatedBody as UpdateCustomerCompanyInput;
+export const updateCustomerCompany = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<CustomerIdParam>(c);
+  const companyData = getValidatedBody<UpdateCustomerCompanyInput>(c);
 
-    const customer = await prisma.customer.findUnique({ where: { id } });
+  const customer = await prisma.customer.findUnique({ where: { id } });
 
-    if (!customer) {
-      sendFail(res, { statusCode: 404, message: "Customer non trovato" });
-      return;
+  if (!customer) {
+    return sendNotFound(c, "Customer non trovato");
+  }
+
+  const { legalAddress, ...companyScalarData } = companyData;
+
+  const updatedCustomer = await prisma.$transaction(async (tx) => {
+    // 1. Aggiorna i campi scalari della company
+    if (Object.keys(companyScalarData).length > 0) {
+      await tx.company.update({
+        where: { id: customer.companyId },
+        data: companyScalarData as Prisma.CompanyUpdateInput,
+      });
     }
 
-    const { legalAddress, ...companyScalarData } = companyData;
-
-    const updatedCustomer = await prisma.$transaction(async (tx) => {
-      // 1. Aggiorna i campi scalari della company
-      if (Object.keys(companyScalarData).length > 0) {
-        await tx.company.update({
-          where: { id: customer.companyId },
-          data: companyScalarData as Prisma.CompanyUpdateInput,
-        });
-      }
-
-      // 2. Upsert indirizzo legale tramite buildAddressCreateData
-      if (legalAddress) {
-        const addressData = buildAddressCreateData(legalAddress, {
-          addressType: AddressType.LEGAL,
-          isPrimary: true,
-        });
-
-        const existingLegal = await tx.companyAddress.findFirst({
-          where: {
-            companyId: customer.companyId,
-            addressType: AddressType.LEGAL,
-          },
-          select: { id: true },
-        });
-
-        if (existingLegal) {
-          await tx.companyAddress.update({
-            where: { id: existingLegal.id },
-            data: addressData,
-          });
-        } else {
-          await tx.companyAddress.create({
-            data: { ...addressData, companyId: customer.companyId },
-          });
-        }
-      }
-
-      // 3. Ritorna il customer aggiornato con tutti i dati
-      return tx.customer.findUnique({
-        where: { id },
-        include: getCustomerInclude(true),
+    // 2. Upsert indirizzo legale tramite buildAddressCreateData
+    if (legalAddress) {
+      const addressData = buildAddressCreateData(legalAddress, {
+        addressType: AddressType.LEGAL,
+        isPrimary: true,
       });
-    });
 
-    sendSuccess(res, updatedCustomer, {
-      message: "Company aggiornata con successo",
+      const existingLegal = await tx.companyAddress.findFirst({
+        where: {
+          companyId: customer.companyId,
+          addressType: AddressType.LEGAL,
+        },
+        select: { id: true },
+      });
+
+      if (existingLegal) {
+        await tx.companyAddress.update({
+          where: { id: existingLegal.id },
+          data: addressData,
+        });
+      } else {
+        await tx.companyAddress.create({
+          data: { ...addressData, companyId: customer.companyId },
+        });
+      }
+    }
+
+    // 3. Ritorna il customer aggiornato con tutti i dati
+    return tx.customer.findUnique({
+      where: { id },
+      include: getCustomerInclude(true),
     });
-  },
-);
+  });
+
+  return sendSuccess(c, updatedCustomer, {
+    message: "Company aggiornata con successo",
+  });
+};
 
 /**
  * @desc    Valida i dati fiscali della company del customer
  * @route   POST /api/customers/:id/validate-fiscal
  * @access  Private (customer:read)
  */
-export const validateCustomerFiscal = asyncHandler<AuthenticatedValidatedRequest>(
-  async (req, res) => {
-    const { id } = req.validatedParams as CustomerIdParam;
+export const validateCustomerFiscal = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<CustomerIdParam>(c);
 
-    const customer = await prisma.customer.findUnique({
-      where: { id },
-      include: { company: true },
-    });
+  const customer = await prisma.customer.findUnique({
+    where: { id },
+    include: { company: true },
+  });
 
-    if (!customer) {
-      sendFail(res, { statusCode: 404, message: "Customer non trovato" });
-      return;
-    }
+  if (!customer) {
+    return sendNotFound(c, "Customer non trovato");
+  }
 
-    const fiscalValidation = validateFiscalData({
-      entityType: customer.company.entityType,
-      countryCode: customer.company.countryCode,
-      vatNumber: customer.company.vatNumber,
-      taxCode: customer.company.taxCode,
-      sdiCode: customer.company.sdiCode,
-      pec: customer.company.pec,
-    });
+  const fiscalValidation = validateFiscalData({
+    entityType: customer.company.entityType,
+    countryCode: customer.company.countryCode,
+    vatNumber: customer.company.vatNumber,
+    taxCode: customer.company.taxCode,
+    sdiCode: customer.company.sdiCode,
+    pec: customer.company.pec,
+  });
 
-    sendSuccess(res, {
-      valid: fiscalValidation.valid,
-      errors: fiscalValidation.errors ?? [],
-    });
-  },
-);
+  return sendSuccess(c, {
+    valid: fiscalValidation.valid,
+    errors: fiscalValidation.errors ?? [],
+  });
+};
 
 /**
  * @desc    Ottieni statistiche customer
  * @route   GET /api/customers/:id/stats
  * @access  Private (customer:read)
  */
-export const getCustomerStats = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
-  const { id } = req.validatedParams as CustomerIdParam;
-  const { preferredLanguageId } = req.user!;
+export const getCustomerStats = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<CustomerIdParam>(c);
+  const { preferredLanguageId } = c.get("user")!;
 
   const customer = await prisma.customer.findUnique({
     where: { id },
@@ -338,11 +322,7 @@ export const getCustomerStats = asyncHandler<AuthenticatedValidatedRequest>(asyn
   });
 
   if (!customer) {
-    res.status(404).json({
-      success: false,
-      message: "Customer non trovato",
-    });
-    return;
+    return sendNotFound(c, "Customer non trovato");
   }
 
   const [recentOrders, topProducts] = await Promise.all([
@@ -427,7 +407,7 @@ export const getCustomerStats = asyncHandler<AuthenticatedValidatedRequest>(asyn
 
   const stats = calculateCustomerStats(customer);
 
-  sendSuccess(res, {
+  return sendSuccess(c, {
     summary: stats,
     recentOrders,
     topProducts: enrichedProducts,
@@ -436,16 +416,16 @@ export const getCustomerStats = asyncHandler<AuthenticatedValidatedRequest>(asyn
       opportunities: customer._count.opportunities,
     },
   });
-});
+};
 
 /**
  * @desc    Elimina customer
  * @route   DELETE /api/customers/:id
  * @access  Private (customer:delete)
  */
-export const deleteCustomer = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
-  const { id } = req.validatedParams as CustomerIdParam;
-  const { userId } = req.user!;
+export const deleteCustomer = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<CustomerIdParam>(c);
+  const { userId } = c.get("user")!;
 
   const customer = await prisma.customer.findUnique({
     where: { id },
@@ -460,17 +440,15 @@ export const deleteCustomer = asyncHandler<AuthenticatedValidatedRequest>(async 
   });
 
   if (!customer) {
-    sendFail(res, {
-      statusCode: 404,
-      message: "Customer non trovato",
-    });
-    return;
+    return sendNotFound(c, "Customer non trovato");
   }
 
   const totalRelations = customer._count.documentsOut + customer._count.opportunities;
 
   if (totalRelations > 0) {
-    sendFail(res, {
+    return c.json({
+      success: false,
+      statusCode: 409,
       message: `Impossibile eliminare: Customer ha ${totalRelations} relazioni attive`,
       errors: [
         {
@@ -483,7 +461,6 @@ export const deleteCustomer = asyncHandler<AuthenticatedValidatedRequest>(async 
         },
       ],
     });
-    return;
   }
 
   // Elimina customer (cascade elimina anche company)
@@ -495,5 +472,5 @@ export const deleteCustomer = asyncHandler<AuthenticatedValidatedRequest>(async 
     },
   });
 
-  sendDeleted(res, "Customer eliminato con successo");
-});
+  return sendDeleted(c, "Customer eliminato con successo");
+};

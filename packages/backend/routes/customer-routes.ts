@@ -1,12 +1,10 @@
-import express from 'express';
-import { authenticateToken, authorize } from '../middleware/auth';
 import {
   validateCreateCustomer,
   validateUpdateCustomer,
   validateUpdateCustomerCompany,
   validateCustomerId,
   validateCustomerQuery,
-} from '../validators/customer';
+} from '../validators/customer-validator';
 
 import {
   getAllCustomers,
@@ -17,9 +15,11 @@ import {
   getCustomerStats,
   deleteCustomer,
   validateCustomerFiscal,
-} from '../controllers/customer';
+} from '../controllers/customer-controller';
+import { createHonoApp } from '@/lib/hono-app';
+import { authenticateToken, authorize } from '@/middleware/auth-middleware';
 
-const router = express.Router();
+const customerRoutes = createHonoApp()
 
 // ============================================================================
 // CUSTOMER ROUTES
@@ -31,7 +31,7 @@ const router = express.Router();
  * @access  Private (customer:read)
  * @query   page, limit, search, type, priority, segment, leadStatus, creditStatus, size
  */
-router.get(
+customerRoutes.get(
   '/',
   authenticateToken,
   authorize(['customer:read', 'customer:manage']),
@@ -44,7 +44,7 @@ router.get(
  * @desc    Ottieni statistiche avanzate customer
  * @access  Private (customer:read)
  */
-router.get(
+customerRoutes.get(
   '/:id/stats',
   authenticateToken,
   authorize(['customer:read', 'customer:manage']),
@@ -57,7 +57,7 @@ router.get(
  * @desc    Crea nuovo customer (con company nested)
  * @access  Private (customer:create)
  */
-router.post(
+customerRoutes.post(
   '/',
   authenticateToken,
   authorize(['customer:create', 'customer:manage']),
@@ -70,7 +70,7 @@ router.post(
  * @desc    Aggiorna dati anagrafici company del customer
  * @access  Private (customer:update)
 */
-router.put(
+customerRoutes.put(
   '/:id/company',
   authenticateToken,
   authorize(['customer:update', 'customer:manage']),
@@ -84,7 +84,7 @@ router.put(
  * @desc    Aggiorna dati CRM customer
  * @access  Private (customer:update)
  */
-router.put(
+customerRoutes.put(
   '/:id',
   authenticateToken,
   authorize(['customer:update', 'customer:manage']),
@@ -98,7 +98,7 @@ router.put(
  * @desc    Elimina customer (se non ha relazioni)
  * @access  Private (customer:delete)
  */
-router.delete(
+customerRoutes.delete(
   '/:id',
   authenticateToken,
   authorize(['customer:delete', 'customer:manage']),
@@ -111,7 +111,7 @@ router.delete(
  * @desc    Ottieni dettagli customer con statistiche
  * @access  Private (customer:read)
  */
-router.get(
+customerRoutes.get(
   '/:id',
   authenticateToken,
   authorize(['customer:read', 'customer:manage']),
@@ -124,7 +124,7 @@ router.get(
  * @route   POST /api/customers/:id/validate-fiscal
  * @access  Private (customer:read)
  */
-router.get(
+customerRoutes.get(
   '/:id',
   authenticateToken,
   authorize(['customer:read', 'customer:manage']),
@@ -137,4 +137,4 @@ router.get(
 // EXPORT
 // ============================================================================
 
-export default router;
+export default customerRoutes;

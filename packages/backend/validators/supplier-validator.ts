@@ -7,25 +7,15 @@ import {
   updateSupplierSchema,
 } from "@mini-erp/shared/validators";
 
-import {
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "../middleware/validation";
+import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 
 // ============================================================================
 // VALIDATION MIDDLEWARE EXPORTS
 // ============================================================================
 
-export const validateCreateSupplier = validateBody(
-  createSupplierSchema,
-  "Supplier creation",
-);
+export const validateCreateSupplier = validateBody(createSupplierSchema, "Supplier creation");
 
-export const validateUpdateSupplier = validateBody(
-  updateSupplierSchema,
-  "Supplier update",
-);
+export const validateUpdateSupplier = validateBody(updateSupplierSchema, "Supplier update");
 
 export const validateUpdateSupplierCompany = validateBody(
   updateSupplierCompanySchema,
@@ -37,12 +27,6 @@ export const validateUpdateSupplierRating = validateBody(
   "Supplier rating update",
 );
 
-export const validateSupplierId = validateParams(
-  supplierIdSchema,
-  "Supplier ID",
-);
+export const validateSupplierId = validateParams(supplierIdSchema, "Supplier ID");
 
-export const validateSupplierQuery = validateQuery(
-  supplierQuerySchema,
-  "Supplier query",
-);
+export const validateSupplierQuery = validateQuery(supplierQuerySchema, "Supplier query");

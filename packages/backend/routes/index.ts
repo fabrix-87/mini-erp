@@ -1,6 +1,9 @@
 import { createHonoApp } from "../lib/hono-app";
 import authRoutes from "./auth-routes";
-
+import companyRoutes from "./company-routes";
+import customerRoutes from "./customer-routes";
+import leadRoutes from "./lead-routes";
+import roleRoutes from "./role-routes";
 import userRoutes from "./user-routes";
 
 const apiRoutes = createHonoApp();
@@ -10,6 +13,10 @@ const apiRoutes = createHonoApp();
  */
 apiRoutes.route("/auth", authRoutes);
 apiRoutes.route("/users", userRoutes);
+apiRoutes.route("/roles", roleRoutes);
+apiRoutes.route("/leads", leadRoutes);
+apiRoutes.route("/customers", customerRoutes);
+apiRoutes.route("/companies", companyRoutes);
 
 export default apiRoutes;
 /*

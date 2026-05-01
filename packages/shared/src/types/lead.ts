@@ -74,6 +74,7 @@ export type BulkAssignLeadsInput = z.infer<typeof bulkAssignLeadsSchema>;
 export type BulkUpdateLeadStatusInput = z.infer<
   typeof bulkUpdateLeadStatusSchema
 >;
+
 export type AssignUserIdFormValues = z.input<typeof assignedUserIdSchema>;
 
 // ============================================================================
@@ -82,6 +83,7 @@ export type AssignUserIdFormValues = z.input<typeof assignedUserIdSchema>;
 
 export type LeadQueryInput = z.infer<typeof leadQuerySchema>;
 export type LeadStatsInput = z.infer<typeof leadStatsSchema>;
+export type AssignUserIdInput = z.infer<typeof assignedUserIdSchema>;
 
 // ============================================================================
 // PARAM TYPES (using z.infer)

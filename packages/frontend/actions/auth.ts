@@ -22,7 +22,7 @@ export async function loginAction(prevState: any, formData: FormData) {
 
     // Output atteso: AuthResponse
     const data = await serverApi.post<AuthResponse>(
-      "/users/login",
+      "/auth/login",
       credentials
     );
 

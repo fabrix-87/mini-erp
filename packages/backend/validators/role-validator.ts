@@ -1,8 +1,4 @@
-import {
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "../middleware/validation";
+import { validateBody, validateParams, validateQuery } from "@/middleware/validation-middleware";
 import {
   assignPermissionsSchema,
   assignRolesToUserSchema,
@@ -23,62 +19,41 @@ import {
 // ============================================================================
 
 // ROLES
-export const validateCreateRole = validateBody(
-  createRoleSchema,
-  "Role creation"
-);
+export const validateCreateRole = validateBody(createRoleSchema, "Role creation");
 
 export const validateUpdateRole = validateBody(createRoleSchema, "Role update");
 
-export const validateRoleId = validateParams(
-  roleIdParamSchema,
-  "Role ID validation"
-);
+export const validateRoleId = validateParams(roleIdParamSchema, "Role ID validation");
 
-export const validateRoleCode = validateParams(
-  roleCodeParamSchema,
-  "Role code validation"
-);
+export const validateRoleCode = validateParams(roleCodeParamSchema, "Role code validation");
 
 export const validateRoleQuery = validateQuery(roleQuerySchema, "Role query");
 
 export const validateAssignPermissions = validateBody(
   assignPermissionsSchema,
-  "Assign permissions"
+  "Assign permissions",
 );
 
 export const validateRemovePermissions = validateBody(
   removePermissionsSchema,
-  "Remove permissions"
+  "Remove permissions",
 );
 
 // PERMISSIONS
-export const validateCreatePermission = validateBody(
-  createPermissionSchema,
-  "Permission creation",
-);
+export const validateCreatePermission = validateBody(createPermissionSchema, "Permission creation");
 
-export const validateUpdatePermission = validateBody(
-  updatePermissionSchema,
-  "Permission update"
-);
+export const validateUpdatePermission = validateBody(updatePermissionSchema, "Permission update");
 
 export const validatePermissionId = validateParams(
   permissionIdParamSchema,
-  "Permission ID validation"
+  "Permission ID validation",
 );
 
-export const validatePermissionQuery = validateQuery(
-  permissionQuerySchema,
-  "Permission query"
-);
+export const validatePermissionQuery = validateQuery(permissionQuerySchema, "Permission query");
 
 export const validateAssignRolesToUser = validateBody(
   assignRolesToUserSchema,
-  "Assign roles to user"  
+  "Assign roles to user",
 );
 
-export const validateCheckPermission = validateBody(
-  checkPermissionSchema,
-  "Check permission",
-);
+export const validateCheckPermission = validateBody(checkPermissionSchema, "Check permission");

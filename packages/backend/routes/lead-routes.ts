@@ -1,5 +1,3 @@
-import express from "express";
-import { authenticateToken, authorize } from "../middleware/auth";
 import {
   validateLeadId,
   validateLeadQuery,
@@ -12,7 +10,7 @@ import {
   validateConvertLead,
   validateBulkAssignLeads,
   validateBulkUpdateLeadStatus,
-} from "../validators/lead";
+} from "../validators/lead-validator";
 import {
   getAllLeads,
   getLeadById,
@@ -27,9 +25,11 @@ import {
   bulkUpdateLeadStatus,
   deleteLead,
   getLeadStats,
-} from "../controllers/lead";
+} from "../controllers/lead-controller";
+import { authenticateToken, authorize } from "@/middleware/auth-middleware";
+import { createHonoApp } from "@/lib/hono-app";
 
-const router = express.Router();
+const leadRoutes = createHonoApp();
 
 // ============================================================================
 // STATS (before :id to avoid param conflicts)
@@ -39,7 +39,7 @@ const router = express.Router();
  * @route  GET /api/leads/stats
  * @access Private (lead:read)
  */
-router.get(
+leadRoutes.get(
   "/stats",
   authenticateToken,
   authorize(["lead:read", "lead:manage"]),
@@ -55,7 +55,7 @@ router.get(
  * @route  POST /api/leads/bulk/assign
  * @access Private (lead:update)
  */
-router.post(
+leadRoutes.post(
   "/bulk/assign",
   authenticateToken,
   authorize(["lead:update", "lead:manage"]),
@@ -67,7 +67,7 @@ router.post(
  * @route  POST /api/leads/bulk/status
  * @access Private (lead:update)
  */
-router.post(
+leadRoutes.post(
   "/bulk/status",
   authenticateToken,
   authorize(["lead:update", "lead:manage"]),
@@ -83,7 +83,7 @@ router.post(
  * @route  GET /api/leads
  * @access Private (lead:read)
  */
-router.get(
+leadRoutes.get(
   "/",
   authenticateToken,
   authorize(["lead:read", "lead:manage"]),
@@ -95,7 +95,7 @@ router.get(
  * @route  POST /api/leads
  * @access Private (lead:create)
  */
-router.post(
+leadRoutes.post(
   "/",
   authenticateToken,
   authorize(["lead:create", "lead:manage"]),
@@ -107,7 +107,7 @@ router.post(
  * @route  GET /api/leads/:id
  * @access Private (lead:read)
  */
-router.get(
+leadRoutes.get(
   "/:id",
   authenticateToken,
   authorize(["lead:read", "lead:manage"]),
@@ -119,7 +119,7 @@ router.get(
  * @route  PUT /api/leads/:id
  * @access Private (lead:update)
  */
-router.put(
+leadRoutes.put(
   "/:id",
   authenticateToken,
   authorize(["lead:update", "lead:manage"]),
@@ -132,7 +132,7 @@ router.put(
  * @route  PATCH /api/leads/:id/status
  * @access Private (lead:update)
  */
-router.patch(
+leadRoutes.patch(
   "/:id/status",
   authenticateToken,
   authorize(["lead:update", "lead:manage"]),
@@ -145,7 +145,7 @@ router.patch(
  * @route  PATCH /api/leads/:id/score
  * @access Private (lead:update)
  */
-router.patch(
+leadRoutes.patch(
   "/:id/score",
   authenticateToken,
   authorize(["lead:update", "lead:manage"]),
@@ -158,7 +158,7 @@ router.patch(
  * @route  PATCH /api/leads/:id/qualify
  * @access Private (lead:update)
  */
-router.patch(
+leadRoutes.patch(
   "/:id/qualify",
   authenticateToken,
   authorize(["lead:update", "lead:manage"]),
@@ -171,7 +171,7 @@ router.patch(
  * @route  POST /api/leads/:id/convert
  * @access Private (lead:convert)
  */
-router.post(
+leadRoutes.post(
   "/:id/convert",
   authenticateToken,
   authorize(["lead:convert", "lead:manage"]),
@@ -184,7 +184,7 @@ router.post(
  * @route  PATCH /api/leads/:id/assign
  * @access Private (lead:update)
  */
-router.patch(
+leadRoutes.patch(
   "/:id/assign",
   authenticateToken,
   authorize(["lead:update", "lead:manage"]),
@@ -197,7 +197,7 @@ router.patch(
  * @route  DELETE /api/leads/:id
  * @access Private (lead:delete)
  */
-router.delete(
+leadRoutes.delete(
   "/:id",
   authenticateToken,
   authorize(["lead:delete", "lead:manage"]),
@@ -205,4 +205,4 @@ router.delete(
   deleteLead,
 );
 
-export default router;
+export default leadRoutes;

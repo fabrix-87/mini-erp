@@ -1,4 +1,4 @@
-import { validateQuery } from "../middleware/validation";
+import { validateQuery } from "../middleware/validation-middleware";
 import { companyQueryBaseSchema } from "@mini-erp/shared/validators";
 
 // ============================================================================

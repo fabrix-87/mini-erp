@@ -19,7 +19,7 @@ export async function performTokenRefresh(): Promise<AuthResponse | null> {
 
   try {    
     // Backend restituisce token nel body (come per login)
-    const data = await serverApi.post<AuthResponse>('/users/refresh-token', {});
+    const data = await serverApi.post<AuthResponse>('/auth/refresh-token', {});
 
     if (!data.accessToken || !data.refreshToken) {
       console.error('❌ Tokens missing in refresh response');
@@ -42,7 +42,7 @@ export async function performTokenRefresh(): Promise<AuthResponse | null> {
  */
 export async function logoutUser(): Promise<void> {
   try {
-    await serverApi.post('/users/logout', {}); 
+    await serverApi.post('/auth/logout', {}); 
   } catch (error) {
     // Logghiamo l'errore ma non blocchiamo il flusso.
     // Se il token è scaduto o il server è giù, vogliamo comunque

@@ -2,7 +2,7 @@ import {
   validateBody,
   validateParams,
   validateQuery,
-} from "../middleware/validation";
+} from "../middleware/validation-middleware";
 import {
   createCustomerSchema,
   customerIdSchema,

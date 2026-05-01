@@ -184,3 +184,13 @@ export const sendDeleted = (
 ) => {
   return sendSuccess(c, null, { statusCode: 200, message });
 };
+
+/**
+ * Sends a 404 response - resource not found.
+ */
+export const sendNotFound = (
+  c: Context<AppBindings>,
+  message = "Risorsa non trovata",
+) => {
+  return sendSuccess(c, null, { statusCode: 404, message });
+};

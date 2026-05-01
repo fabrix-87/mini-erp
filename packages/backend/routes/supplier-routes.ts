@@ -1,5 +1,5 @@
-import express from 'express';
-import { authenticateToken, authorize } from '../middleware/auth';
+
+import { authenticateToken, authorize } from '../middleware/auth-middleware';
 import {
   validateCreateSupplier,
   validateUpdateSupplier,
@@ -7,7 +7,7 @@ import {
   validateUpdateSupplierRating,
   validateSupplierId,
   validateSupplierQuery,
-} from '../validators/supplier';
+} from '../validators/supplier-validator';
 
 import {
   getAllSuppliers,
@@ -19,9 +19,10 @@ import {
   getSupplierStats,
   deleteSupplier,
   validateSupplierFiscal,
-} from '../controllers/supplier';
+} from '../controllers/supplier-controller';
+import { createHonoApp } from '@/lib/hono-app';
 
-const router = express.Router();
+const supplierRoutes = createHonoApp();
 
 // ============================================================================
 // SUPPLIER ROUTES
@@ -33,7 +34,7 @@ const router = express.Router();
  * @access  Private (supplier:read)
  * @query   page, limit, search, minRating, hasProducts, status, countryCode
  */
-router.get(
+supplierRoutes.get(
   '/',
   authenticateToken,
   authorize(['supplier:read', 'supplier:manage']),
@@ -46,7 +47,7 @@ router.get(
  * @desc    Ottieni statistiche avanzate supplier
  * @access  Private (supplier:read)
  */
-router.get(
+supplierRoutes.get(
   '/:id/stats',
   authenticateToken,
   authorize(['supplier:read', 'supplier:manage']),
@@ -59,7 +60,7 @@ router.get(
  * @desc    Crea nuovo supplier (con company nested)
  * @access  Private (supplier:create)
  */
-router.post(
+supplierRoutes.post(
   '/',
   authenticateToken,
   authorize(['supplier:create', 'supplier:manage']),
@@ -72,7 +73,7 @@ router.post(
  * @desc    Aggiorna dati anagrafici company del supplier
  * @access  Private (supplier:update)
 */
-router.put(
+supplierRoutes.put(
   '/:id/company',
   authenticateToken,
   authorize(['supplier:update', 'supplier:manage']),
@@ -86,7 +87,7 @@ router.put(
  * @desc    Aggiorna dati supplier
  * @access  Private (supplier:update)
  */
-router.put(
+supplierRoutes.put(
   '/:id',
   authenticateToken,
   authorize(['supplier:update', 'supplier:manage']),
@@ -100,7 +101,7 @@ router.put(
  * @desc    Aggiorna rating supplier con note
  * @access  Private (supplier:update)
  */
-router.patch(
+supplierRoutes.patch(
   '/:id/rating',
   authenticateToken,
   authorize(['supplier:update', 'supplier:manage']),
@@ -114,7 +115,7 @@ router.patch(
  * @desc    Elimina supplier (se non ha relazioni)
  * @access  Private (supplier:delete)
  */
-router.delete(
+supplierRoutes.delete(
   '/:id',
   authenticateToken,
   authorize(['supplier:delete', 'supplier:manage']),
@@ -127,7 +128,7 @@ router.delete(
  * @route   POST /api/suppliers/:id/validate-fiscal
  * @access  Private (supplier:read)
  */
-router.post(
+supplierRoutes.post(
   '/:id/validate-fiscal',
   authenticateToken,
   authorize(['supplier:read', 'supplier:manage']),
@@ -140,7 +141,7 @@ router.post(
  * @desc    Ottieni dettagli supplier con statistiche
  * @access  Private (supplier:read)
  */
-router.get(
+supplierRoutes.get(
   '/:id',
   authenticateToken,
   authorize(['supplier:read', 'supplier:manage']),
@@ -151,4 +152,4 @@ router.get(
 // EXPORT
 // ============================================================================
 
-export default router;
+export default supplierRoutes;
