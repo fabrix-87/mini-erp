@@ -1,8 +1,7 @@
-// packages/frontend/components/dashboard/dashboard-header.tsx
+// packages/frontend/components/dashboard/dashboard-filter-bar.tsx
 "use client";
 
-import { RefreshCw, RotateCcw, LayoutGrid } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { DashboardPeriod, DashboardScope } from "@mini-erp/shared";
 import {
   Select,
   SelectContent,
@@ -10,11 +9,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DashboardPeriod, DashboardScope } from "@mini-erp/shared";
-import type { DashboardQueryParams } from "@/types/dashboard";
+import { Button } from "@/components/ui/button";
+import { RotateCcw, LayoutGrid } from "lucide-react";
+import { DashboardQueryParams } from "@/types/dashboard";
 
-// ─── Labels ──────────────────────────────────────────────────────────────────
-
+/** Human-readable labels for period enum values */
 const PERIOD_LABELS: Record<DashboardPeriod, string> = {
   [DashboardPeriod.CURRENT_MONTH]: "Mese corrente",
   [DashboardPeriod.LAST_MONTH]: "Mese scorso",
@@ -26,53 +25,39 @@ const PERIOD_LABELS: Record<DashboardPeriod, string> = {
   [DashboardPeriod.CUSTOM]: "Personalizzato",
 };
 
+/** Human-readable labels for scope enum values */
 const SCOPE_LABELS: Record<DashboardScope, string> = {
   [DashboardScope.OWN]: "Solo miei",
   [DashboardScope.TEAM]: "Team",
   [DashboardScope.ALL]: "Tutti",
 };
 
-// ─── Props ────────────────────────────────────────────────────────────────────
-
-interface DashboardHeaderProps {
+interface DashboardFilterBarProps {
   params: DashboardQueryParams;
+  /** Scopes visibili all'utente corrente (filtrati per ruolo) */
   allowedScopes: DashboardScope[];
-  isEditMode: boolean;
-  isSaving: boolean;
-  isLoading: boolean;
-  onChange: (patch: Partial<DashboardQueryParams>) => void;
-  onRefresh: () => void;
+  onChange: (params: Partial<DashboardQueryParams>) => void;
   onResetLayout: () => void;
   onToggleEditMode: () => void;
+  isEditMode: boolean;
+  isSaving: boolean;
 }
 
 /**
- * Dashboard page header: title, period/scope selectors, layout controls.
- * Replaces the old date-range-based header.
+ * Dashboard header bar with period/scope selectors and layout controls.
  */
-export function DashboardHeader({
+export function DashboardFilterBar({
   params,
   allowedScopes,
-  isEditMode,
-  isSaving,
-  isLoading,
   onChange,
-  onRefresh,
   onResetLayout,
   onToggleEditMode,
-}: DashboardHeaderProps) {
+  isEditMode,
+  isSaving,
+}: DashboardFilterBarProps) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      {/* Title */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">
-          Panoramica generale delle performance aziendali
-        </p>
-      </div>
-
-      {/* Controls */}
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
+      <div className="flex items-center gap-2">
         {/* Period selector */}
         <Select
           value={params.period ?? DashboardPeriod.CURRENT_MONTH}
@@ -82,7 +67,7 @@ export function DashboardHeader({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {(Object.entries(PERIOD_LABELS) as [DashboardPeriod, string][]).map(([val, label]) => (
+            {Object.entries(PERIOD_LABELS).map(([val, label]) => (
               <SelectItem key={val} value={val}>
                 {label}
               </SelectItem>
@@ -90,13 +75,13 @@ export function DashboardHeader({
           </SelectContent>
         </Select>
 
-        {/* Scope selector — only when user has access to more than OWN */}
+        {/* Scope selector — only shown if user has access to more than OWN */}
         {allowedScopes.length > 1 && (
           <Select
             value={params.scope ?? DashboardScope.OWN}
             onValueChange={(val) => onChange({ scope: val as DashboardScope })}
           >
-            <SelectTrigger className="w-32.5">
+            <SelectTrigger className="w-35">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -108,31 +93,17 @@ export function DashboardHeader({
             </SelectContent>
           </Select>
         )}
+      </div>
 
-        {/* Refresh */}
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={onRefresh}
-          disabled={isLoading}
-          aria-label="Aggiorna dati"
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-        </Button>
-
+      <div className="flex items-center gap-2">
         {/* Reset layout */}
         <Button variant="outline" size="sm" onClick={onResetLayout} disabled={isSaving}>
           <RotateCcw className="h-4 w-4 mr-1.5" />
           Reset layout
         </Button>
 
-        {/* Toggle edit / save layout */}
-        <Button
-          variant={isEditMode ? "default" : "outline"}
-          size="sm"
-          onClick={onToggleEditMode}
-          disabled={isSaving}
-        >
+        {/* Toggle edit/drag mode */}
+        <Button variant={isEditMode ? "default" : "outline"} size="sm" onClick={onToggleEditMode}>
           <LayoutGrid className="h-4 w-4 mr-1.5" />
           {isEditMode ? "Salva layout" : "Personalizza"}
         </Button>

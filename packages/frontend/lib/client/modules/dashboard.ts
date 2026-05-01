@@ -1,26 +1,24 @@
-import { ApiResponse } from "@/types/api";
-import api from "../api";
-import {
-  OverviewData,
-  DataRangeProps,
-  DocumentDashboardStats,
-} from "@/types/dashboard";
+// packages/frontend/lib/client/modules/dashboard.ts
 
-export const getDashboardOverview = async (
-  dateRange: DataRangeProps
-): Promise<ApiResponse<OverviewData>> => {
-  const response = await api.get("/dashboard/overview", {
-    params: {
-      startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
-    },
-  });
-  return response.data;
-};
+import { default as apiClient } from "../api";
+import { DashboardQueryParams } from "@/types/dashboard";
+import { WidgetPositionInput, DashboardApiResponse } from "@mini-erp/shared";
 
-export const getDashboardDocumentsStats = async (): Promise<
-  ApiResponse<DocumentDashboardStats>
-> => {
-  const response = await api.get("/dashboard/documents");
-  return response.data;
+// ============================================================================
+// CLIENT DASHBOARD SERVICES (Browser only - React Query)
+// ============================================================================
+
+export const clientDashboardService = {
+  async getDashboard(params: DashboardQueryParams): Promise<DashboardApiResponse> {
+    const response = await apiClient.get<DashboardApiResponse>("/dashboard", { params });
+    return response.data;
+  },
+
+  async saveLayout(widgets: WidgetPositionInput[]): Promise<void> {
+    await apiClient.put("/dashboard/layout", { widgets });
+  },
+
+  async resetLayout(): Promise<void> {
+    await apiClient.delete("/dashboard/layout");
+  }
 };

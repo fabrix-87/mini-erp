@@ -1,12 +1,8 @@
 // ============================================================================
-// DASHBOARD TYPES
+// DASHBOARD TYPES — aligned with actual API response shapes
 // ============================================================================
 
-import type Decimal from "decimal.js";
-
 import type { DocumentType, DocumentStatus } from "./document";
-import type { LeadStatus, LeadQuality } from "../constants/lead";
-import type { OpportunityStatus, SalesStage } from "../constants/opportunity";
 import {
   DashboardWidgetType,
   DashboardScope,
@@ -19,7 +15,7 @@ import {
   widgetPositionSchema,
   updateLayoutSchema,
 } from "../validators/dashboard";
-import { ActivityType } from "../constants";
+import type { ApiResponse } from "./api";
 
 // ============================================================================
 // QUERY / INPUT TYPES
@@ -28,230 +24,141 @@ import { ActivityType } from "../constants";
 /** Input parameters for a dashboard data request */
 export type DashboardQueryInput = z.infer<typeof dashboardQuerySchema>;
 
-/** Single widget position in the grid */
+/** Single widget position in the grid (12-col layout) */
 export type WidgetPositionInput = z.infer<typeof widgetPositionSchema>;
 
 /** Payload to save a user's custom layout */
 export type UpdateLayoutInput = z.infer<typeof updateLayoutSchema>;
 
 // ============================================================================
-// WIDGET LAYOUT
+// SHARED PRIMITIVES
 // ============================================================================
 
 /**
- * Persisted configuration for a single widget in the user's layout.
- * Stored as JSON in a future UserDashboardLayout table or user settings.
+ * Generic "widget not yet implemented" placeholder.
+ * Returned by the backend for unimplemented widget types.
  */
-export interface DashboardWidgetConfig {
-  /** Unique widget type identifier */
-  widgetType: DashboardWidgetType;
-  /** Column start (0-indexed, 12-col grid) */
-  col: number;
-  /** Row start (0-indexed) */
-  row: number;
-  /** Width in grid units */
-  w: number;
-  /** Height in grid units */
-  h: number;
-  /** Whether the widget is visible */
-  visible: boolean;
-  /** Optional widget-level overrides (e.g. custom period) */
-  overrides?: {
-    period?: DashboardPeriod;
-    limit?: number;
-  };
+export interface WidgetNotImplemented {
+  message: string;
 }
 
-/**
- * Complete saved layout for a user.
- * One row per user in UserDashboardLayout (future table).
- */
-export interface DashboardLayout {
-  userId: number;
-  roleCode: DashboardRoleCode;
-  widgets: DashboardWidgetConfig[];
-  /** ISO timestamp of last manual save */
-  savedAt: Date;
+/** Checks whether a widget response is the "not implemented" placeholder */
+export function isWidgetNotImplemented(val: unknown): val is WidgetNotImplemented {
+  return (
+    typeof val === "object" &&
+    val !== null &&
+    "message" in val &&
+    typeof (val as WidgetNotImplemented).message === "string"
+  );
 }
 
-// ============================================================================
-// KPI DOMAIN TYPES
-// ============================================================================
-
-/** Period metadata returned with every KPI block */
-export interface PeriodMeta {
-  period: DashboardPeriod;
-  from: Date;
-  to: Date;
-  /** Optional comparison with previous equivalent period */
-  comparison?: {
-    from: Date;
-    to: Date;
-  };
-}
-
-/** Generic trend delta */
+/** Generic trend delta — used in KPI blocks that support period comparison */
 export interface TrendDelta {
-  current: number | Decimal;
-  previous: number | Decimal;
-  /** Change in absolute value */
-  delta: number | Decimal;
-  /** Percentage change — positive = growth */
+  current: number | string;
+  previous: number | string;
+  delta: number | string;
   percentageChange: number;
   trend: "up" | "down" | "stable";
 }
 
-// ─── SALES KPIs ────────────────────────────────────────────────────────────
+// ============================================================================
+// CRM / SALES WIDGETS
+// ============================================================================
 
-/** KPI block for leads — widget LEADS_KPI */
-export interface LeadsKpi {
+/**
+ * Leads KPI summary — widget LEADS_KPI.
+ * Numeric values are plain numbers; rates are stringified decimals.
+ */
+export interface LeadsKpiData {
   total: number;
-  newThisPeriod: number;
+  active: number;
+  new: number;
+  contacted: number;
+  qualified: number;
+  nurturing: number;
   converted: number;
-  conversionRate: number;
   lost: number;
-  needFollowUp: number;
-  overdueFollowUp: number;
-  averageScore: number;
-  byStatus: Partial<Record<LeadStatus, number>>;
-  byQuality: Partial<Record<LeadQuality, number>>;
-  trend: TrendDelta;
+  unqualified: number;
+  /** Stringified decimal, e.g. "33.3" */
+  conversionRate: string;
 }
 
-/** KPI block for opportunities — widget OPPORTUNITIES_KPI */
-export interface OpportunitiesKpi {
-  totalOpen: number;
-  totalPipelineValue: Decimal;
-  weightedPipelineValue: Decimal;
-  wonThisPeriod: number;
-  wonValue: Decimal;
-  winRate: number;
-  averageDealSize: Decimal;
-  averageSalesCycle: number; // days
-  byStatus: Partial<Record<OpportunityStatus, number>>;
-  trend: TrendDelta;
-}
-
-/** Pipeline data by stage — widget OPPORTUNITIES_PIPELINE */
-export interface PipelineStageSnapshot {
-  stage: SalesStage;
+/**
+ * Single stage entry in the leads funnel — widget LEADS_FUNNEL.
+ * stage values match LeadStatus enum from the backend.
+ */
+export interface LeadsFunnelItem {
+  stage: string; // LeadStatus enum value
   count: number;
-  totalValue: Decimal;
-  weightedValue: Decimal;
-  averageDaysInStage: number;
-  stagnantCount: number; // >30 days in stage without activity
+  /** Stringified decimal percentage, e.g. "25.0" */
+  percentage: string;
 }
 
-/** Forecast block — widget OPPORTUNITIES_FORECAST */
-export interface ForecastKpi {
-  period: string;
-  bestCase: Decimal;
-  mostLikely: Decimal;
-  worstCase: Decimal;
-  closingThisMonth: number;
-  closingThisQuarter: number;
-}
-
-/** Activities summary — widget ACTIVITIES_KPI */
-export interface ActivitiesKpi {
-  totalScheduled: number;
-  dueToday: number;
-  overdue: number;
-  completedThisPeriod: number;
-  completionRate: number;
-  byType: Partial<Record<ActivityType, number>>;
-}
-
-// ─── ACCOUNTING KPIs ────────────────────────────────────────────────────────
-
-/** Revenue KPIs — widget REVENUE_KPI */
-export interface RevenueKpi {
-  invoicedAmount: Decimal; // Fatturato emesso nel periodo
-  collectedAmount: Decimal; // Effettivamente incassato
-  outstandingAmount: Decimal; // Da incassare (non scaduto)
-  overdueAmount: Decimal; // Scaduto e non pagato
-  creditNotesAmount: Decimal; // Note credito emesse
-  netRevenue: Decimal; // invoicedAmount - creditNotesAmount
-  trend: TrendDelta;
-}
-
-/** Invoice status breakdown — widget INVOICES_STATUS */
-export interface InvoicesStatusKpi {
-  byStatus: Partial<Record<DocumentStatus, number>>;
-  totalCount: number;
-  totalAmount: Decimal;
-  overdueCount: number;
-  overdueAmount: Decimal;
-}
-
-/** Overdue installment alert — widget OVERDUE_INSTALLMENTS */
-export interface OverdueInstallmentItem {
-  documentId: number;
-  documentNumber: string | null;
-  customerName: string;
-  installmentNumber: number;
-  dueDate: Date;
-  amount: Decimal;
+/**
+ * Lead requiring follow-up — widget LEADS_FOLLOWUP.
+ */
+export interface LeadsFollowUpItem {
+  leadId: number;
+  code: string;
+  companyName: string;
+  nextFollowUpDate: string; // ISO date string
   daysPastDue: number;
 }
 
-/** Revenue trend per time bucket — widget REVENUE_TREND */
-export interface RevenueTrendPoint {
-  label: string; // e.g. "Gen 2026", "W10"
-  invoicedAmount: Decimal;
-  collectedAmount: Decimal;
-  creditNotesAmount: Decimal;
+/**
+ * Lead source distribution entry — widget LEADS_SOURCE.
+ */
+export interface LeadsSourceItem {
+  source: string;
+  count: number;
+  percentage: string;
 }
 
-// ─── LOGISTICS KPIs ─────────────────────────────────────────────────────────
-
-/** Deliveries summary — widget DELIVERIES_KPI */
-export interface DeliveriesKpi {
-  inTransit: number;
-  deliveredThisPeriod: number;
-  pendingPreparation: number; // Status PREPARING
-  lateDeliveries: number; // Past deliveryDate and not DELIVERED
-  onTimeRate: number;
+/**
+ * Opportunities KPI summary — widget OPPORTUNITIES_KPI.
+ */
+export interface OpportunitiesKpiData {
+  total: number;
+  open: number;
+  won: number;
+  lost: number;
+  pending: number;
+  /** Stringified decimal */
+  totalWonValue: string;
+  /** Stringified decimal */
+  totalPipelineValue: string;
+  /** Stringified decimal, e.g. "0.0" */
+  winRate: string;
 }
 
-/** Orders to fulfill — widget DOCUMENTS_FULFILLMENT */
-export interface DocumentFulfillmentItem {
-  documentId: number;
-  documentNumber: string | null;
-  documentType: DocumentType;
-  customerName: string;
-  status: DocumentStatus;
-  expectedDate: Date | null;
-  totalLines: number;
-  fulfilledLines: number;
+/**
+ * Single pipeline stage entry — widget OPPORTUNITIES_PIPELINE.
+ */
+export interface OpportunitiesPipelineItem {
+  stage: string; // SalesStage enum value
+  count: number;
+  totalValue: string;
+  weightedValue: string;
 }
 
-// ─── PURCHASING KPIs ────────────────────────────────────────────────────────
-
-/** Supplier orders summary — widget SUPPLIER_ORDERS_KPI */
-export interface SupplierOrdersKpi {
-  openOrders: number;
-  totalOpenValue: Decimal;
-  expectedThisWeek: number;
-  overdueOrders: number;
-  receivedThisPeriod: number;
+/**
+ * Revenue forecast summary — widget OPPORTUNITIES_FORECAST.
+ */
+export interface OpportunitiesForecastData {
+  totalPipelineValue: string;
+  weightedValue: string;
+  expectedCloseThisMonth: string;
+  expectedCloseThisQuarter: string;
 }
 
-/** Purchase trend point — widget PURCHASE_TREND */
-export interface PurchaseTrendPoint {
-  label: string;
-  purchasedAmount: Decimal;
-  receivedAmount: Decimal;
-}
-
-// ─── CROSS-CUTTING ──────────────────────────────────────────────────────────
-
-/** Activity feed item — widget ACTIVITIES_FEED */
+/**
+ * Single activity in the feed — widget ACTIVITIES_FEED.
+ */
 export interface ActivityFeedItem {
   activityId: number;
-  type: ActivityType;
+  type: string; // ActivityType enum value
   subject: string;
-  scheduledStart: Date;
+  scheduledStart: string; // ISO date string
   isOverdue: boolean;
   relatedEntity: {
     type: "lead" | "opportunity" | "customer" | "company";
@@ -262,101 +169,474 @@ export interface ActivityFeedItem {
   assignedUserName: string;
 }
 
-/** Stock alert item — widget STOCK_ALERTS */
-export interface StockAlertItem {
-  productId: number;
-  productCode: string;
-  productName: string;
-  warehouseId: number;
-  warehouseName: string;
-  currentStock: Decimal;
-  minimumStock: Decimal;
-  shortage: Decimal;
+/**
+ * Activities KPI summary — widget ACTIVITIES_KPI.
+ */
+export interface ActivitiesKpiData {
+  total: number;
+  overdue: number;
+  today: number;
+  thisWeek: number;
+  completed: number;
+  scheduled: number;
+  inProgress: number;
 }
 
-/** Recent document entry — widget RECENT_DOCUMENTS */
+/**
+ * Activity type distribution entry — widget ACTIVITIES_BY_TYPE.
+ */
+export interface ActivitiesByTypeItem {
+  type: string; // ActivityType enum value
+  count: number;
+  percentage: string;
+}
+
+/**
+ * Customers KPI summary — widget CUSTOMERS_KPI.
+ */
+export interface CustomersKpiData {
+  total: number;
+  active: number;
+  inactive: number;
+  prospect: number;
+  vip: number;
+  newCustomers: number;
+}
+
+/**
+ * Top customer entry — widget TOP_CUSTOMERS.
+ */
+export interface TopCustomerItem {
+  customerId: number;
+  customerName: string;
+  totalRevenue: string;
+  invoicesCount: number;
+}
+
+/**
+ * Customer lifecycle stage entry — widget CUSTOMERS_LIFECYCLE.
+ */
+export interface CustomerLifecycleItem {
+  stage: string;
+  count: number;
+  percentage: string;
+}
+
+// ============================================================================
+// FINANCE / ACCOUNTING WIDGETS
+// ============================================================================
+
+/**
+ * Revenue KPI summary — widget REVENUE_KPI.
+ * All monetary values are stringified decimals.
+ */
+export interface RevenueKpiData {
+  totalRevenue: string;
+  paidRevenue: string;
+  pendingRevenue: string;
+  invoicesCount: number;
+  averageInvoiceValue: string;
+  /** Stringified decimal, e.g. "0.0" */
+  growthRate: string;
+}
+
+/**
+ * Invoice status distribution entry — widget INVOICES_STATUS.
+ */
+export interface InvoicesStatusItem {
+  status: DocumentStatus;
+  count: number;
+  totalAmount: string;
+}
+
+/**
+ * Overdue installment entry — widget OVERDUE_INSTALLMENTS.
+ */
+export interface OverdueInstallmentItem {
+  documentId: number;
+  documentNumber: string | null;
+  customerName: string;
+  installmentNumber: number;
+  dueDate: string; // ISO date string
+  amount: string;
+  daysPastDue: number;
+}
+
+/**
+ * Revenue trend data point — widget REVENUE_TREND.
+ */
+export interface RevenueTrendPoint {
+  label: string; // e.g. "Gen 2026", "W10"
+  invoicedAmount: string;
+  collectedAmount: string;
+  creditNotesAmount?: string;
+}
+
+/**
+ * Supplier orders KPI summary — widget SUPPLIER_ORDERS_KPI.
+ */
+export interface SupplierOrdersKpiData {
+  totalOrders: number;
+  pendingOrders: number;
+  completedOrders: number;
+  totalValue: string;
+  averageOrderValue: string;
+}
+
+/**
+ * Purchase trend data point — widget PURCHASE_TREND.
+ */
+export interface PurchaseTrendPoint {
+  label: string;
+  purchasedAmount: string;
+  receivedAmount: string;
+}
+
+/**
+ * Cash flow summary — widget CASH_FLOW.
+ */
+export interface CashFlowData {
+  cashIn: string;
+  cashOut: string;
+  netCashFlow: string;
+  openingBalance: string;
+  closingBalance: string;
+}
+
+/**
+ * Profit margin summary — widget PROFIT_MARGIN.
+ */
+export interface ProfitMarginData {
+  revenue: string;
+  costs: string;
+  grossProfit: string;
+  /** Stringified decimal percentage */
+  profitMargin: string;
+  trend: Array<{ label: string; margin: string }>;
+}
+
+/**
+ * Accounts payable/receivable summary — widgets ACCOUNTS_PAYABLE / ACCOUNTS_RECEIVABLE.
+ */
+export interface AccountsData {
+  total: string;
+  current: string;
+  overdue: string;
+  overdueCount: number;
+}
+
+// ============================================================================
+// DOCUMENTS WIDGETS
+// ============================================================================
+
+/**
+ * Documents KPI summary — widget DOCUMENTS_KPI.
+ */
+export interface DocumentsKpiData {
+  total: number;
+  draft: number;
+  sent: number;
+  accepted: number;
+  paid: number;
+  overdue: number;
+  totalValue: string;
+  paidValue: string;
+}
+
+/**
+ * Document type distribution entry — widget DOCUMENTS_BY_TYPE.
+ */
+export interface DocumentsByTypeItem {
+  type: DocumentType;
+  count: number;
+  totalAmount: string;
+}
+
+/**
+ * Recent document entry — widget RECENT_DOCUMENTS.
+ */
 export interface RecentDocumentItem {
   documentId: number;
   documentNumber: string | null;
   documentType: DocumentType;
   status: DocumentStatus;
   customerName: string;
-  totalAmount: Decimal;
-  documentDate: Date;
+  totalAmount: string;
+  documentDate: string; // ISO date string
 }
 
-/** Generic system alert — widget ALERTS */
-export interface DashboardAlert {
-  id: string; // deterministic key (e.g. "overdue_invoice_123")
-  severity: "info" | "warning" | "error";
-  category: DashboardWidgetType;
-  message: string;
-  entityId?: number;
-  entityType?: string;
-  actionUrl?: string;
-  createdAt: Date;
+/**
+ * Document fulfillment summary — widget DOCUMENTS_FULFILLMENT.
+ */
+export interface DocumentsFulfillmentData {
+  totalOrders: number;
+  fullyFulfilled: number;
+  partiallyFulfilled: number;
+  pending: number;
+  fulfillmentRate: string;
+  totalQuantity: number;
+  deliveredQuantity: number;
+}
+
+/**
+ * Expiring quote entry — widget EXPIRING_QUOTES.
+ */
+export interface ExpiringQuoteItem {
+  documentId: number;
+  documentNumber: string | null;
+  customerName: string;
+  expiryDate: string; // ISO date string
+  daysUntilExpiry: number;
+  totalAmount: string;
 }
 
 // ============================================================================
-// AGGREGATED DASHBOARD RESPONSE
+// WAREHOUSE / LOGISTICS WIDGETS
 // ============================================================================
 
 /**
- * Full dashboard data payload returned by GET /api/dashboard.
- * Each key is optional — only widgets in the user's allowlist are populated.
+ * Stock alert entry — widget STOCK_ALERTS.
+ * Shape from actual backend response.
  */
-export interface DashboardData {
-  meta: {
-    userId: number;
-    roleCode: DashboardRoleCode;
-    scope: DashboardScope;
-    periodMeta: PeriodMeta;
-    generatedAt: Date;
-  };
-
-  // Sales
-  leadsKpi?: LeadsKpi;
-  leadsFunnel?: Array<{
-    status: LeadStatus;
-    count: number;
-    percentage: number;
-  }>;
-  leadsFollowUp?: Array<{
-    leadId: number;
-    code: string;
-    companyName: string;
-    nextFollowUpDate: Date;
-    daysPastDue: number;
-  }>;
-  opportunitiesKpi?: OpportunitiesKpi;
-  pipeline?: PipelineStageSnapshot[];
-  forecast?: ForecastKpi;
-  activitiesKpi?: ActivitiesKpi;
-  activitiesFeed?: ActivityFeedItem[];
-
-  // Accounting
-  revenueKpi?: RevenueKpi;
-  invoicesStatus?: InvoicesStatusKpi;
-  overdueInstallments?: OverdueInstallmentItem[];
-  revenueTrend?: RevenueTrendPoint[];
-
-  // Logistics
-  deliveriesKpi?: DeliveriesKpi;
-  documentsFulfillment?: DocumentFulfillmentItem[];
-
-  // Purchasing
-  supplierOrdersKpi?: SupplierOrdersKpi;
-  purchaseTrend?: PurchaseTrendPoint[];
-
-  // Cross-cutting
-  stockAlerts?: StockAlertItem[];
-  recentDocuments?: RecentDocumentItem[];
-  alerts?: DashboardAlert[];
+export interface StockAlertItem {
+  variantId: number;
+  variantCode: string;
+  productReference: string;
+  productName: string;
+  currentStock: number;
+  alertType: "OUT_OF_STOCK" | "LOW_STOCK";
 }
 
-/** API response wrapper for GET /api/dashboard */
-export interface DashboardResponse {
-  success: true;
-  data: DashboardData;
-  layout: DashboardLayout;
+/**
+ * Stock value summary — widget STOCK_VALUE.
+ */
+export interface StockValueData {
+  totalValue: string;
+  activeProducts: number;
+  totalUnits: number;
+}
+
+/**
+ * Stock movement entry — widget STOCK_MOVEMENTS.
+ */
+export interface StockMovementItem {
+  movementId: number;
+  variantCode: string;
+  productName: string;
+  type: "IN" | "OUT" | "ADJUSTMENT";
+  quantity: number;
+  date: string; // ISO date string
+  warehouseName: string;
+}
+
+/**
+ * Deliveries KPI summary — widget DELIVERIES_KPI.
+ */
+export interface DeliveriesKpiData {
+  totalDeliveries: number;
+  pending: number;
+  inTransit: number;
+  delivered: number;
+  onTime: number;
+  delayed: number;
+}
+
+/**
+ * Delivery performance summary — widget DELIVERY_PERFORMANCE.
+ */
+export interface DeliveryPerformanceData {
+  totalDeliveries: number;
+  onTimeCount: number;
+  delayedCount: number;
+  onTimeRate: string;
+  averageDeliveryTime: string;
+}
+
+// ============================================================================
+// PRODUCTS WIDGETS
+// ============================================================================
+
+/**
+ * Products KPI summary — widget PRODUCTS_KPI.
+ */
+export interface ProductsKpiData {
+  total: number;
+  active: number;
+  inactive: number;
+  lowStock: number;
+  outOfStock: number;
+  totalValue: string;
+}
+
+/**
+ * Top selling product entry — widget TOP_SELLING_PRODUCTS.
+ */
+export interface TopSellingProductItem {
+  productId: number;
+  productCode: string;
+  productName: string;
+  quantitySold: number;
+  totalRevenue: string;
+}
+
+/**
+ * Product by category distribution entry — widget PRODUCTS_BY_CATEGORY.
+ */
+export interface ProductsByCategoryItem {
+  categoryName: string;
+  count: number;
+  percentage: string;
+}
+
+/**
+ * Products performance summary — widget PRODUCTS_PERFORMANCE.
+ */
+export interface ProductsPerformanceData {
+  bestPerformer: { productName: string; revenue: string } | null;
+  worstPerformer: { productName: string; revenue: string } | null;
+  averageRevenue: string;
+}
+
+// ============================================================================
+// TEAM / COLLABORATION WIDGETS
+// ============================================================================
+
+/**
+ * Team member performance entry — widget TEAM_PERFORMANCE.
+ */
+export interface TeamPerformanceItem {
+  userId: number;
+  username: string;
+  leadsCount: number;
+  opportunitiesCount: number;
+  activitiesCompleted: number;
+  revenue: string;
+}
+
+// ============================================================================
+// ALERTS WIDGET
+// ============================================================================
+
+/**
+ * System alert entry — widget ALERTS.
+ * severity uses HIGH/MEDIUM/LOW from backend (not info/warning/error).
+ */
+export interface DashboardAlertItem {
+  id: string;
+  type: string; // e.g. "LOW_STOCK", "OVERDUE_INVOICE"
+  severity: "HIGH" | "MEDIUM" | "LOW";
+  message: string;
+  createdAt: string; // ISO date string
+  relatedId?: number;
+}
+
+// ============================================================================
+// WIDGET DATA MAP — maps each DashboardWidgetType to its data type
+// ============================================================================
+
+/**
+ * Complete type map from widget type to its data shape.
+ * Used to strongly type widget props without casting to `any`.
+ */
+export interface DashboardWidgetDataMap {
+  [DashboardWidgetType.LEADS_KPI]: LeadsKpiData;
+  [DashboardWidgetType.LEADS_FUNNEL]: LeadsFunnelItem[];
+  [DashboardWidgetType.LEADS_FOLLOWUP]: LeadsFollowUpItem[];
+  [DashboardWidgetType.LEADS_SOURCE]: LeadsSourceItem[];
+
+  [DashboardWidgetType.OPPORTUNITIES_KPI]: OpportunitiesKpiData;
+  [DashboardWidgetType.OPPORTUNITIES_PIPELINE]: OpportunitiesPipelineItem[];
+  [DashboardWidgetType.OPPORTUNITIES_FORECAST]: OpportunitiesForecastData;
+
+  [DashboardWidgetType.ACTIVITIES_FEED]: ActivityFeedItem[];
+  [DashboardWidgetType.ACTIVITIES_KPI]: ActivitiesKpiData;
+  [DashboardWidgetType.ACTIVITIES_BY_TYPE]: ActivitiesByTypeItem[];
+
+  [DashboardWidgetType.CUSTOMERS_KPI]: CustomersKpiData;
+  [DashboardWidgetType.TOP_CUSTOMERS]: TopCustomerItem[];
+  [DashboardWidgetType.CUSTOMERS_LIFECYCLE]: CustomerLifecycleItem[];
+
+  [DashboardWidgetType.REVENUE_KPI]: RevenueKpiData;
+  [DashboardWidgetType.INVOICES_STATUS]: InvoicesStatusItem[];
+  [DashboardWidgetType.OVERDUE_INSTALLMENTS]: OverdueInstallmentItem[];
+  [DashboardWidgetType.REVENUE_TREND]: RevenueTrendPoint[];
+
+  [DashboardWidgetType.SUPPLIER_ORDERS_KPI]: SupplierOrdersKpiData;
+  [DashboardWidgetType.PURCHASE_TREND]: PurchaseTrendPoint[];
+
+  [DashboardWidgetType.CASH_FLOW]: CashFlowData;
+  [DashboardWidgetType.PROFIT_MARGIN]: ProfitMarginData;
+  [DashboardWidgetType.ACCOUNTS_PAYABLE]: AccountsData;
+  [DashboardWidgetType.ACCOUNTS_RECEIVABLE]: AccountsData;
+
+  [DashboardWidgetType.DOCUMENTS_KPI]: DocumentsKpiData;
+  [DashboardWidgetType.DOCUMENTS_BY_TYPE]: DocumentsByTypeItem[];
+  [DashboardWidgetType.RECENT_DOCUMENTS]: RecentDocumentItem[];
+  [DashboardWidgetType.DOCUMENTS_FULFILLMENT]: DocumentsFulfillmentData;
+  [DashboardWidgetType.EXPIRING_QUOTES]: ExpiringQuoteItem[];
+
+  [DashboardWidgetType.STOCK_ALERTS]: StockAlertItem[];
+  [DashboardWidgetType.STOCK_VALUE]: StockValueData;
+  [DashboardWidgetType.STOCK_MOVEMENTS]: StockMovementItem[];
+
+  [DashboardWidgetType.DELIVERIES_KPI]: DeliveriesKpiData;
+  [DashboardWidgetType.DELIVERY_PERFORMANCE]: DeliveryPerformanceData;
+
+  [DashboardWidgetType.PRODUCTS_KPI]: ProductsKpiData;
+  [DashboardWidgetType.TOP_SELLING_PRODUCTS]: TopSellingProductItem[];
+  [DashboardWidgetType.PRODUCTS_BY_CATEGORY]: ProductsByCategoryItem[];
+  [DashboardWidgetType.PRODUCTS_PERFORMANCE]: ProductsPerformanceData;
+
+  [DashboardWidgetType.TEAM_PERFORMANCE]: TeamPerformanceItem[];
+
+  [DashboardWidgetType.ALERTS]: DashboardAlertItem[];
+
+  // Not yet implemented — placeholder
+  [DashboardWidgetType.USER_ACTIVITY]: WidgetNotImplemented;
+  [DashboardWidgetType.TASKS_OVERVIEW]: WidgetNotImplemented;
+  [DashboardWidgetType.REMINDERS]: WidgetNotImplemented;
+  [DashboardWidgetType.SALES_ANALYTICS]: WidgetNotImplemented;
+  [DashboardWidgetType.CUSTOMER_ANALYTICS]: WidgetNotImplemented;
+  [DashboardWidgetType.PERFORMANCE_SUMMARY]: WidgetNotImplemented;
+}
+
+// ============================================================================
+// API RESPONSE TYPE
+// ============================================================================
+
+/**
+ * Shape of the data payload from GET /api/dashboard.
+ * layout contains the active widget grid (custom or role default).
+ * widgets is a partial map — only enabled widgets are populated.
+ */
+export interface DashboardResponseData {
+  period: DashboardPeriod;
+  scope: DashboardScope;
+  dateFrom: string | null;
+  dateTo: string | null;
+  /** Active layout — custom user layout or role default */
+  layout: WidgetPositionInput[];
+  /** Partial map: only widgets enabled for this user are present */
+  widgets: Partial<DashboardWidgetDataMap>;
+}
+
+/**
+ * Full API response for GET /api/dashboard.
+ * Wraps DashboardResponseData in the standard ApiResponse envelope.
+ */
+export type DashboardApiResponse = ApiResponse<DashboardResponseData>;
+
+// ============================================================================
+// LEGACY / UNUSED — kept for reference, to be removed
+// ============================================================================
+
+/**
+ * @deprecated Use DashboardResponseData instead.
+ * The old DashboardData/DashboardResponse types had incorrect field names.
+ */
+export interface DashboardLayout {
+  userId: number;
+  roleCode: DashboardRoleCode;
+  widgets: WidgetPositionInput[];
+  savedAt: Date;
 }
