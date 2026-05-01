@@ -1,16 +1,15 @@
 import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
-import asyncHandler from "@/middleware/async-handler-middleware";
-import { AuthenticatedValidatedRequest } from "@/types/validate-types";
+import { AppBindings } from "@/lib/hono-app";
 import { sendSuccess } from "@/utils/response-utils";
-import { Response } from "express";
+import { Context } from "hono";
 
 // ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
 
 /**
- * Selezione standard per Role con relazioni
+ * Selezione standard per language
  */
 export const languageSelect = {
   id: true,
@@ -28,15 +27,15 @@ export const languageSelect = {
  * @route   GET /api/languages
  * @access  Private (language:read)
  */
-export const getAllLanguages = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const [languages, total] = await Promise.all([
-      prisma.language.findMany({
-        select: languageSelect,
-      }),
-      prisma.language.count(),
-    ]);
+export const getAllLanguages = async (c: Context<AppBindings>) => {
+  const [languages, total] = await Promise.all([
+    prisma.language.findMany({
+      select: languageSelect,
+    }),
+    prisma.language.count(),
+  ]);
 
-    sendSuccess(res, languages);
-  },
-);
+  return sendSuccess(c, languages, {
+    results: total,
+  });
+};
