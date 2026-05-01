@@ -11,7 +11,7 @@ import { useActivities } from "@/hooks/use-activity";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { it } from "date-fns/locale";
 import { useRouter } from "next/navigation";
-import { formatDateForUrl } from "@/helpers/date";
+import { formatDateForUrl } from "@/helpers/date-helper";
 
 const activityTypeLabels: Record<string, string> = {
   CALL: "Chiamata",

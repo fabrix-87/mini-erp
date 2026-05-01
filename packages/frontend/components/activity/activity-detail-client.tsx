@@ -40,7 +40,7 @@ import { toast } from "sonner";
 import { Activity } from "@/types/activitiy";
 import { deleteActivity } from "@/actions/activity";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
-import { formatDateIT } from "@/helpers/date";
+import { formatDateIT } from "@/helpers/date-helper";
 import Link from "next/link";
 
 const activityTypeIcons: Record<string, any> = {

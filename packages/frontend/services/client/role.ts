@@ -1,6 +1,6 @@
 "use client";
 
-import { buildQueryString } from "@/helpers/role";
+import { buildQueryString } from "@/helpers/role-helper";
 import api from "@/lib/client/api";
 import {
   PermissionDeleteApiResponse,

@@ -16,7 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Activity } from "@/types/activitiy";
 import { cn } from "@/lib/utils";
-import { formatDateIT } from "@/helpers/date";
+import { formatDateIT } from "@/helpers/date-helper";
 
 const activityTypeIcons: Record<string, any> = {
   CALL: Phone,

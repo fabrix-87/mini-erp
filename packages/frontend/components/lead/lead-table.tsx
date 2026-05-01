@@ -43,7 +43,7 @@ import { toast } from "sonner";
 import { deleteLeadAction } from "@/actions/lead";
 import type { Lead, LeadQueryInput } from "@/types/lead";
 import type { ApiResponse, PaginationInfo } from "@/types/api";
-import { formatDateIT } from "@/helpers/date";
+import { formatDateIT } from "@/helpers/date-helper";
 
 // ============================================================================
 // Sort field type — matches leadQuerySchema sortBy enum

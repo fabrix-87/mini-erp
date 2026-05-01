@@ -2,25 +2,25 @@
 // UNIFIED DASHBOARD ROUTES
 // ============================================================================
 
-import { Router } from "express";
-import { authenticateToken } from "@/middleware/auth";
+import { authenticateToken } from "@/middleware/auth-middleware";
 import {
   validateDashboardQuery,
   validateUpdateLayout,
-} from "@/validators/dashboard";
+} from "@/validators/dashboard-validator";
 import {
   getUnifiedDashboard,
   updateDashboardLayout,
   resetDashboardLayout,
-} from "@/controllers/dashboard";
+} from "@/controllers/dashboard-controller";
+import { createHonoApp } from "@/lib/hono-app";
 
-const router = Router();
+const dashboardRoutes = createHonoApp();
 
 /**
  * GET /api/dashboard
  * Fetch unified dashboard data with all authorized widgets
  */
-router.get(
+dashboardRoutes.get(
   "/",
   authenticateToken,
   validateDashboardQuery,
@@ -31,7 +31,7 @@ router.get(
  * PUT /api/dashboard/layout
  * Save user's custom widget layout
  */
-router.put(
+dashboardRoutes.put(
   "/layout",
   authenticateToken,
   validateUpdateLayout,
@@ -42,10 +42,10 @@ router.put(
  * DELETE /api/dashboard/layout
  * Reset layout to role default
  */
-router.delete(
+dashboardRoutes.delete(
   "/layout",
   authenticateToken,
   resetDashboardLayout,
 );
 
-export default router;
+export default dashboardRoutes;

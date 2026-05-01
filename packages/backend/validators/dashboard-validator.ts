@@ -7,11 +7,7 @@ import {
   updateLayoutSchema,
   dashboardUserParamSchema,
 } from "@mini-erp/shared";
-import {
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "../middleware/validation";
+import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 
 // ============================================================================
 // VALIDATION MIDDLEWARE EXPORTS
@@ -21,19 +17,13 @@ import {
  * Validates GET /dashboard query string.
  * Covers period, scope, targetUserId, customFrom, customTo, feedLimit.
  */
-export const validateDashboardQuery = validateQuery(
-  dashboardQuerySchema,
-  "Dashboard query",
-);
+export const validateDashboardQuery = validateQuery(dashboardQuerySchema, "Dashboard query");
 
 /**
  * Validates PUT /dashboard/layout body.
  * Payload contains the array of widget configurations.
  */
-export const validateUpdateLayout = validateBody(
-  updateLayoutSchema,
-  "Dashboard layout update",
-);
+export const validateUpdateLayout = validateBody(updateLayoutSchema, "Dashboard layout update");
 
 /**
  * Validates route parameter :userId for admin-scoped dashboard endpoints.

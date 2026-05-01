@@ -27,7 +27,7 @@ import { LeadScoreDisplay } from "@/components/lead/lead-score-display";
 import { getLeadByIdServer } from "@/services/server/lead";
 import { LeadDetailActions } from "../components/lead-detail-actions";
 import { LeadActivityList } from "@/components/lead/lead-activity-list";
-import { daysSince, formatDateIT } from "@/helpers/date";
+import { daysSince, formatDateIT } from "@/helpers/date-helper";
 
 // ============================================================================
 // Page — Server Component

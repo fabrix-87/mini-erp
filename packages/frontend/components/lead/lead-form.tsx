@@ -32,7 +32,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
-import { toDateInput } from "@/helpers/date";
+import { toDateInput } from "@/helpers/date-helper";
 import { CountryCombobox } from "../ui/country-combobox";
 
 // ============================================================================

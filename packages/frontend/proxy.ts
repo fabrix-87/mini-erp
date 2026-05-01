@@ -5,7 +5,7 @@ import {
   getAccessToken, 
   isAdmin, 
   redirectToLogin 
-} from "./helpers/auth";
+} from "./helpers/auth-helper";
 import { isPublicRoute, isAdminRoute } from './lib/constants/routes'; 
 
 // ============================================================================

@@ -2,6 +2,7 @@ import { createHonoApp } from "../lib/hono-app";
 import authRoutes from "./auth-routes";
 import companyRoutes from "./company-routes";
 import customerRoutes from "./customer-routes";
+import dashboardRoutes from "./dashboard-routes";
 import leadRoutes from "./lead-routes";
 import roleRoutes from "./role-routes";
 import userRoutes from "./user-routes";
@@ -17,6 +18,7 @@ apiRoutes.route("/roles", roleRoutes);
 apiRoutes.route("/leads", leadRoutes);
 apiRoutes.route("/customers", customerRoutes);
 apiRoutes.route("/companies", companyRoutes);
+apiRoutes.route("/dashboard", dashboardRoutes);
 
 export default apiRoutes;
 /*
@@ -49,7 +51,7 @@ apiRouter.use("/addresses", addressesRouter);
 apiRouter.use("/companies", companiesRouter);
 apiRouter.use("/contacts", contactsRouter);
 apiRouter.use("/customers", customersRouter);
-apiRouter.use("/dashboard", dashboardsRouter);
+
 apiRouter.use("/documents", documentsRouter);
 apiRouter.use("/opportunities", opportunitiesRouter);
 apiRouter.use("/payments", paymentsRouter);
