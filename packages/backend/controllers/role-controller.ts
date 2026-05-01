@@ -7,7 +7,6 @@ import {
   CheckUserPermissionInput,
   CreatePermissionInput,
   CreateRoleInput,
-  PermissionIdParam,
   PermissionQueryInput,
   RoleCodeParam,
   RoleIdParam,
