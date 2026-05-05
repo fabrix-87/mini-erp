@@ -159,7 +159,7 @@ export async function fetchOverdueInstallments(
 
   const where: Prisma.DocumentPaymentInstallmentWhereInput = {
     dueDate: { lt: now },
-    status: { in: ["PENDING", "PARTIALLY_PAID"] },
+    status: { in: ["PENDING", "PARTIAL"] },
   };
 
   if (scope === DashboardScope.OWN) {

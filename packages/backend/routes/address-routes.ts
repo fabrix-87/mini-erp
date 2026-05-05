@@ -1,12 +1,11 @@
-import express from "express";
-import { authenticateToken, authorize } from "../middleware/auth";
+import { authenticateToken, authorize } from "../middleware/auth-middleware";
 import {
   validateAddressId,
   validateAddressQuery,
   validateCreateAddress,
   validateSetPrimaryAddress,
   validateUpdateAddress,
-} from "../validators/address";
+} from "../validators/address-validator";
 import {
   createAddress,
   deleteAddress,
@@ -14,53 +13,54 @@ import {
   getAllAddresses,
   setPrimaryAddress,
   updateAddress,
-} from "../controllers/address";
+} from "../controllers/address-controller";
+import { createHonoApp } from "@/lib/hono-app";
 
-const router = express.Router();
+const addressRoutes = createHonoApp();
 
-router.get(
+addressRoutes.get(
   "/",
   authenticateToken,
   authorize(["address:read", "address:manage"]),
   validateAddressQuery,
-  getAllAddresses
+  getAllAddresses,
 );
-router.get(
+addressRoutes.get(
   "/:id",
   authenticateToken,
   authorize(["address:read", "address:manage"]),
   validateAddressId,
-  getAddressById
+  getAddressById,
 );
-router.post(
+addressRoutes.post(
   "/",
   authenticateToken,
   authorize(["address:create", "address:manage"]),
   validateCreateAddress,
-  createAddress
+  createAddress,
 );
-router.put(
+addressRoutes.put(
   "/:id",
   authenticateToken,
   authorize(["address:update", "address:manage"]),
   validateAddressId,
   validateUpdateAddress,
-  updateAddress
+  updateAddress,
 );
-router.patch(
+addressRoutes.patch(
   "/:id/set-primary",
   authenticateToken,
   authorize(["address:update", "address:manage"]),
   validateAddressId,
-  setPrimaryAddress
+  setPrimaryAddress,
 );
-router.delete(
+addressRoutes.delete(
   "/:id",
   authenticateToken,
   authorize(["address:delete", "address:manage"]),
   validateAddressId,
   validateSetPrimaryAddress,
-  deleteAddress
+  deleteAddress,
 );
 
-export default router;
+export default addressRoutes;

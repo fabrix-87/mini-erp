@@ -1,5 +1,4 @@
-import express from 'express';
-import { authenticateToken, authorize } from '../middleware/auth';
+import { authenticateToken, authorize } from '../middleware/auth-middleware';
 import {  
   validateContactQuery,
   validateContactId,
@@ -7,7 +6,7 @@ import {
   validateUpdateContact,
   validateCheckEmail,
   validateCompanyId,
-} from '../validators/contact';
+} from '../validators/contact-validator';
 import {
   getAllContacts,
   getContactById,
@@ -19,9 +18,10 @@ import {
   checkEmail,
   getPrimaryContactByCompany,
   getContactsByCompany,
-} from '../controllers/contact';
+} from '../controllers/contact-controller';
+import { createHonoApp } from '@/lib/hono-app';
 
-const router = express.Router();
+const contactRoutes = createHonoApp();
 
 // ============================================================================
 // CONTACT ROUTES
@@ -33,7 +33,7 @@ const router = express.Router();
  * @access  Private (contact:read)
  * @query   page, limit, search, companyId, active, isPrimaryContact, sortBy, sortOrder
  */
-router.get(
+contactRoutes.get(
   '/',
   authenticateToken,
   authorize(['contact:read', 'contact:manage']),
@@ -47,7 +47,7 @@ router.get(
  * @access  Private (contact:read)
  * @query   contactId, email
  */
-router.get(
+contactRoutes.get(
   '/check-email',
   authenticateToken,
   authorize(['contact:read', 'contact:manage']),
@@ -61,7 +61,7 @@ router.get(
  * @access  Private (contact:read)
  * @query   active
  */
-router.get(
+contactRoutes.get(
   '/company/:companyId',
   authenticateToken,
   authorize(['contact:read', 'contact:manage']),
@@ -74,7 +74,7 @@ router.get(
  * @desc    Ottieni il contatto primario di una company
  * @access  Private (contact:read)
  */
-router.get(
+contactRoutes.get(
   '/company/:companyId/primary',
   authenticateToken,
   authorize(['contact:read', 'contact:manage']),
@@ -87,7 +87,7 @@ router.get(
  * @desc    Ottieni dettagli di un contatto specifico
  * @access  Private (contact:read)
  */
-router.get(
+contactRoutes.get(
   '/:id',
   authenticateToken,
   authorize(['contact:read', 'contact:manage']),
@@ -100,7 +100,7 @@ router.get(
  * @desc    Crea nuovo contatto
  * @access  Private (contact:create)
  */
-router.post(
+contactRoutes.post(
   '/',
   authenticateToken,
   authorize(['contact:create', 'contact:manage']),
@@ -113,7 +113,7 @@ router.post(
  * @desc    Aggiorna contatto esistente
  * @access  Private (contact:update)
  */
-router.put(
+contactRoutes.put(
   '/:id',
   authenticateToken,
   authorize(['contact:update', 'contact:manage']),
@@ -127,7 +127,7 @@ router.put(
  * @desc    Attiva/Disattiva un contatto
  * @access  Private (contact:update)
  */
-router.patch(
+contactRoutes.patch(
   '/:id/toggle-active',
   authenticateToken,
   authorize(['contact:update', 'contact:manage']),
@@ -140,7 +140,7 @@ router.patch(
  * @desc    Imposta contatto come primario per la company
  * @access  Private (contact:update)
  */
-router.patch(
+contactRoutes.patch(
   '/:id/set-primary',
   authenticateToken,
   authorize(['contact:update', 'contact:manage']),
@@ -153,7 +153,7 @@ router.patch(
  * @desc    Elimina un contatto
  * @access  Private (contact:delete)
  */
-router.delete(
+contactRoutes.delete(
   '/:id',
   authenticateToken,
   authorize(['contact:delete', 'contact:manage']),
@@ -165,4 +165,4 @@ router.delete(
 // EXPORT
 // ============================================================================
 
-export default router;
+export default contactRoutes;
