@@ -17,6 +17,7 @@ import {
   updatePriceListItemSchema,
   updatePriceListSchema,
 } from "../validators";
+import { ProductVariant } from "./product";
 
 // ============================================================================
 // ENTITY TYPES
@@ -41,7 +42,7 @@ export type PriceList = CreatePriceListItemInput & {
 export type PriceListItem = CreatePriceListItemInput & {
   id: number;
   PriceList: PriceList;
-  variant?: any; // TODO PRODUCT
+  variant?: ProductVariant;
 
   createdAt: Date;
   updatedAt: Date;
@@ -52,12 +53,8 @@ export type PriceListItem = CreatePriceListItemInput & {
 // ============================================================================
 export type CreatePriceListInput = z.infer<typeof createPriceListSchema>;
 export type UpdatePriceListInput = z.infer<typeof updatePriceListSchema>;
-export type CreatePriceListItemInput = z.infer<
-  typeof createPriceListItemSchema
->;
-export type UpdatePriceListItemInput = z.infer<
-  typeof updatePriceListItemSchema
->;
+export type CreatePriceListItemInput = z.infer<typeof createPriceListItemSchema>;
+export type UpdatePriceListItemInput = z.infer<typeof updatePriceListItemSchema>;
 export type BulkImportInput = z.infer<typeof bulkImportBodySchema>;
 export type CalculatePriceInput = z.infer<typeof calculatePriceBodySchema>;
 

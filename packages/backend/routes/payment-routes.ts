@@ -1,14 +1,5 @@
-import express from "express";
-import { authenticateToken, authorize } from "../middleware/auth";
-import { validate } from "../middleware/validation";
-import {
-  CreatePaymentMethodSchema,
-  UpdatePaymentMethodSchema,
-  UpdatePaymentTermDetailsSchema,
-  CalculateDueDatesSchema,
-  PaymentMethodIdSchema,
-  TogglePaymentStatusSchema,
-} from "@mini-erp/shared/validators";
+import { authenticateToken, authorize } from "../middleware/auth-middleware";
+
 import {
   getAllPaymentMethods,
   getPaymentMethodById,
@@ -18,7 +9,7 @@ import {
   togglePaymentMethodActive,
   deletePaymentMethod,
   calculateDueDates,
-} from "../controllers/payment";
+} from "../controllers/payment-controller";
 import {
   validatePaymentQuery,
   validatePaymentMethodIdParam,
@@ -27,9 +18,10 @@ import {
   validateUpdatePaymentTermDetails,
   validateTogglePaymentMethod,
   validateCalcolateDueDates,
-} from "@/validators/payment";
+} from "@/validators/payment-validator";
+import { createHonoApp } from "@/lib/hono-app";
 
-const router = express.Router();
+const paymentRoutes = createHonoApp();
 
 // ============================================================================
 // PAYMENT METHOD ROUTES
@@ -41,7 +33,7 @@ const router = express.Router();
  * @access  Private (payment:read)
  * @query   active, sortBy, sortOrder
  */
-router.get(
+paymentRoutes.get(
   "/",
   authenticateToken,
   authorize(["payment:read", "payment:manage"]),
@@ -54,7 +46,7 @@ router.get(
  * @desc    Ottieni dettagli di un Payment Method specifico
  * @access  Private (payment:read)
  */
-router.get(
+paymentRoutes.get(
   "/:id",
   authenticateToken,
   authorize(["payment:read", "payment:manage"]),
@@ -67,7 +59,7 @@ router.get(
  * @desc    Crea nuovo Payment Method
  * @access  Private (payment:create)
  */
-router.post(
+paymentRoutes.post(
   "/",
   authenticateToken,
   authorize(["payment:create", "payment:manage"]),
@@ -80,7 +72,7 @@ router.post(
  * @desc    Aggiorna Payment Method esistente
  * @access  Private (payment:update)
  */
-router.put(
+paymentRoutes.put(
   "/:id",
   authenticateToken,
   authorize(["payment:update", "payment:manage"]),
@@ -94,7 +86,7 @@ router.put(
  * @desc    Aggiorna Payment Term Details (rate di pagamento)
  * @access  Private (payment:update)
  */
-router.put(
+paymentRoutes.put(
   "/:id/details",
   authenticateToken,
   authorize(["payment:update", "payment:manage"]),
@@ -108,7 +100,7 @@ router.put(
  * @desc    Attiva/Disattiva un Payment Method
  * @access  Private (payment:update)
  */
-router.patch(
+paymentRoutes.patch(
   "/:id/toggle-active",
   authenticateToken,
   authorize(["payment:update", "payment:manage"]),
@@ -123,7 +115,7 @@ router.patch(
  * @access  Private (payment:read)
  * @body    invoiceDate, totalAmount
  */
-router.post(
+paymentRoutes.post(
   "/:id/calculate-due-dates",
   authenticateToken,
   authorize(["payment:read", "payment:manage"]),
@@ -137,7 +129,7 @@ router.post(
  * @desc    Elimina un Payment Method
  * @access  Private (payment:delete)
  */
-router.delete(
+paymentRoutes.delete(
   "/:id",
   authenticateToken,
   authorize(["payment:delete", "payment:manage"]),
@@ -149,4 +141,4 @@ router.delete(
 // EXPORT
 // ============================================================================
 
-export default router;
+export default paymentRoutes;

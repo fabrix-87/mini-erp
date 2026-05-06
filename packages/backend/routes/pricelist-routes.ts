@@ -1,5 +1,5 @@
-import express from 'express';
-import { authenticateToken, authorize } from '../middleware/auth';
+import { createHonoApp } from "@/lib/hono-app";
+import { authenticateToken, authorize } from "../middleware/auth-middleware";
 import {
   validateCreatePriceList,
   validateUpdatePriceList,
@@ -12,7 +12,7 @@ import {
   validatePriceListQuery,
   validatePriceListItemQuery,
   validateBulkPriceListId,
-} from '../validators/pricelist';
+} from "../validators/pricelist-validator";
 import {
   getAllPriceLists,
   getPriceListById,
@@ -25,9 +25,9 @@ import {
   deletePriceListItem,
   bulkImportItems,
   calculatePrice,
-} from '../controllers/pricelist';
+} from "../controllers/pricelist-controller";
 
-const router = express.Router();
+const pricelistRoutes = createHonoApp();
 
 // ============================================================================
 // PRICE LIST ROUTES
@@ -39,12 +39,12 @@ const router = express.Router();
  * @access  Private (pricelist:read)
  * @body    priceListId, variantId, quantity
  */
-router.post(
-  '/calculate-price',
+pricelistRoutes.post(
+  "/calculate-price",
   authenticateToken,
-  authorize(['pricelist:read', 'pricelist:manage']),
+  authorize(["pricelist:read", "pricelist:manage"]),
   validateCalculatePrice,
-  calculatePrice
+  calculatePrice,
 );
 
 /**
@@ -53,12 +53,12 @@ router.post(
  * @access  Private (pricelist:read)
  * @query   active, type, currency, validAt, sortBy, sortOrder
  */
-router.get(
-  '/',
+pricelistRoutes.get(
+  "/",
   authenticateToken,
-  authorize(['pricelist:read', 'pricelist:manage']),
+  authorize(["pricelist:read", "pricelist:manage"]),
   validatePriceListQuery,
-  getAllPriceLists
+  getAllPriceLists,
 );
 
 /**
@@ -66,12 +66,12 @@ router.get(
  * @desc    Ottieni dettagli di un Price List specifico
  * @access  Private (pricelist:read)
  */
-router.get(
-  '/:id',
+pricelistRoutes.get(
+  "/:id",
   authenticateToken,
-  authorize(['pricelist:read', 'pricelist:manage']),
+  authorize(["pricelist:read", "pricelist:manage"]),
   validatePriceListId,
-  getPriceListById
+  getPriceListById,
 );
 
 /**
@@ -79,12 +79,12 @@ router.get(
  * @desc    Crea nuovo Price List
  * @access  Private (pricelist:create)
  */
-router.post(
-  '/',
+pricelistRoutes.post(
+  "/",
   authenticateToken,
-  authorize(['pricelist:create', 'pricelist:manage']),
+  authorize(["pricelist:create", "pricelist:manage"]),
   validateCreatePriceList,
-  createPriceList
+  createPriceList,
 );
 
 /**
@@ -92,12 +92,12 @@ router.post(
  * @desc    Aggiorna Price List esistente
  * @access  Private (pricelist:update)
  */
-router.put(
-  '/:id',
+pricelistRoutes.put(
+  "/:id",
   authenticateToken,
-  authorize(['pricelist:update', 'pricelist:manage']),
+  authorize(["pricelist:update", "pricelist:manage"]),
   validateUpdatePriceList,
-  updatePriceList
+  updatePriceList,
 );
 
 /**
@@ -105,12 +105,12 @@ router.put(
  * @desc    Elimina un Price List
  * @access  Private (pricelist:delete)
  */
-router.delete(
-  '/:id',
+pricelistRoutes.delete(
+  "/:id",
   authenticateToken,
-  authorize(['pricelist:delete', 'pricelist:manage']),
+  authorize(["pricelist:delete", "pricelist:manage"]),
   validatePriceListId,
-  deletePriceList
+  deletePriceList,
 );
 
 // ============================================================================
@@ -123,13 +123,13 @@ router.delete(
  * @access  Private (pricelist:read)
  * @query   variantId, minPrice, maxPrice
  */
-router.get(
-  '/:priceListId/items',
+pricelistRoutes.get(
+  "/:priceListId/items",
   authenticateToken,
-  authorize(['pricelist:read', 'pricelist:manage']),
+  authorize(["pricelist:read", "pricelist:manage"]),
   validatePriceListId,
   validatePriceListItemQuery,
-  getPriceListItems
+  getPriceListItems,
 );
 
 /**
@@ -138,13 +138,13 @@ router.get(
  * @access  Private (pricelist:create)
  * @body    items: [{ variantId, minQuantity, price, discountPercent }]
  */
-router.post(
-  '/:priceListId/items/bulk',
+pricelistRoutes.post(
+  "/:priceListId/items/bulk",
   authenticateToken,
-  authorize(['pricelist:create', 'pricelist:manage']),
+  authorize(["pricelist:create", "pricelist:manage"]),
   validateBulkPriceListId,
   validateBulkImportItems,
-  bulkImportItems
+  bulkImportItems,
 );
 
 /**
@@ -152,12 +152,12 @@ router.post(
  * @desc    Crea nuovo Price List Item
  * @access  Private (pricelist:create)
  */
-router.post(
-  '/items',
+pricelistRoutes.post(
+  "/items",
   authenticateToken,
-  authorize(['pricelist:create', 'pricelist:manage']),
+  authorize(["pricelist:create", "pricelist:manage"]),
   validateCreatePriceListItem,
-  createPriceListItem
+  createPriceListItem,
 );
 
 /**
@@ -165,12 +165,12 @@ router.post(
  * @desc    Aggiorna Price List Item esistente
  * @access  Private (pricelist:update)
  */
-router.put(
-  '/items/:id',
+pricelistRoutes.put(
+  "/items/:id",
   authenticateToken,
-  authorize(['pricelist:update', 'pricelist:manage']),
+  authorize(["pricelist:update", "pricelist:manage"]),
   validateUpdatePriceListItem,
-  updatePriceListItem
+  updatePriceListItem,
 );
 
 /**
@@ -178,16 +178,16 @@ router.put(
  * @desc    Elimina un Price List Item
  * @access  Private (pricelist:delete)
  */
-router.delete(
-  '/items/:id',
+pricelistRoutes.delete(
+  "/items/:id",
   authenticateToken,
-  authorize(['pricelist:delete', 'pricelist:manage']),
+  authorize(["pricelist:delete", "pricelist:manage"]),
   validatePriceListItemId,
-  deletePriceListItem
+  deletePriceListItem,
 );
 
 // ============================================================================
 // EXPORT
 // ============================================================================
 
-export default router;
+export default pricelistRoutes;

@@ -1,8 +1,4 @@
-// ============================================================================
-// VALIDATION HELPERS
-// ============================================================================
-
-import { validateBody, validateParams } from "@/middleware/validation";
+import { validateBody, validateParams } from "@/middleware/validation-middleware";
 import {
   calculateDueDatesSchema,
   createPaymentMethodSchema,
@@ -13,10 +9,7 @@ import {
   updatePaymentTermDetailsSchema,
 } from "@mini-erp/shared/validators";
 
-export const validatePaymentQuery = validateParams(
-  paymentQuerySchema,
-  "Payment query",
-);
+export const validatePaymentQuery = validateParams(paymentQuerySchema, "Payment query");
 
 /**
  * Valida i dati per la creazione di un Payment Method
@@ -47,10 +40,7 @@ export const validatePaymentMethodIdParam = validateParams(
   "Payment Method ID",
 );
 
-export const validateTogglePaymentMethod = validateBody(
-  togglePaymentStatusSchema,
-  "Toggle status",
-);
+export const validateTogglePaymentMethod = validateBody(togglePaymentStatusSchema, "Toggle status");
 
 export const validateCalcolateDueDates = validateBody(
   calculateDueDatesSchema,

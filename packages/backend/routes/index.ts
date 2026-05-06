@@ -9,7 +9,10 @@ import customerRoutes from "./customer-routes";
 import dashboardRoutes from "./dashboard-routes";
 import languageRoutes from "./languages-routes";
 import leadRoutes from "./lead-routes";
+import paymentRoutes from "./payment-routes";
+import pricelistRoutes from "./pricelist-routes";
 import roleRoutes from "./role-routes";
+import taxRoutes from "./tax-routes";
 import userRoutes from "./user-routes";
 
 const apiRoutes = createHonoApp();
@@ -29,6 +32,9 @@ apiRoutes.route("/languages", languageRoutes);
 apiRoutes.route("/currencies", currencyRoutes);
 apiRoutes.route("/addresses", addressRoutes);
 apiRoutes.route("/contacts", contactRoutes);
+apiRoutes.route("/payments", paymentRoutes);
+apiRoutes.route("/pricelists", pricelistRoutes);
+apiRoutes.route("/tax", taxRoutes);
 
 export default apiRoutes;
 /*

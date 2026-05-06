@@ -11,25 +11,15 @@ import {
   updatePriceListItemSchema,
   updatePriceListSchema,
 } from "@mini-erp/shared";
-import {
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "../middleware/validation";
+import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 
 // ============================================================================
 // VALIDATION MIDDLEWARE
 // ============================================================================
 
-export const validateCreatePriceList = validateBody(
-  createPriceListSchema,
-  "Price list creation",
-);
+export const validateCreatePriceList = validateBody(createPriceListSchema, "Price list creation");
 
-export const validateUpdatePriceList = validateBody(
-  updatePriceListSchema,
-  "Price list update",
-);
+export const validateUpdatePriceList = validateBody(updatePriceListSchema, "Price list update");
 
 export const validateCreatePriceListItem = validateBody(
   createPriceListItemSchema,
@@ -41,20 +31,11 @@ export const validateUpdatePriceListItem = validateBody(
   "Price list item update",
 );
 
-export const validateBulkImportItems = validateBody(
-  bulkImportBodySchema,
-  "Bulk import items",
-);
+export const validateBulkImportItems = validateBody(bulkImportBodySchema, "Bulk import items");
 
-export const validateCalculatePrice = validateBody(
-  calculatePriceBodySchema,
-  "Calculate price",
-);
+export const validateCalculatePrice = validateBody(calculatePriceBodySchema, "Calculate price");
 
-export const validatePriceListId = validateParams(
-  priceListIdParamSchema,
-  "Price List ID",
-);
+export const validatePriceListId = validateParams(priceListIdParamSchema, "Price List ID");
 
 export const validatePriceListItemId = validateParams(
   priceListItemIdParamSchema,
@@ -66,10 +47,7 @@ export const validateBulkPriceListId = validateParams(
   "Bulk Price List ID",
 );
 
-export const validatePriceListQuery = validateQuery(
-  priceListQuerySchema,
-  "Price List query",
-);
+export const validatePriceListQuery = validateQuery(priceListQuerySchema, "Price List query");
 
 export const validatePriceListItemQuery = validateQuery(
   priceListItemQuerySchema,

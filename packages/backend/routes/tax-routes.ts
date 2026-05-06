@@ -1,5 +1,4 @@
-import express from "express";
-import { authenticateToken, authorize } from "../middleware/auth";
+import { authenticateToken, authorize } from "../middleware/auth-middleware";
 import {
   // Tax Rule
   validateCreateTaxRule,
@@ -18,7 +17,7 @@ import {
   validateVatNatureTranslationId,
   validateCreateVatNatureTranslation,
   validateUpdateVatNatureTranslation,
-} from "../validators/tax";
+} from "../validators/tax-validator";
 import {
   // Tax Rule
   getAllTaxRules,
@@ -42,15 +41,16 @@ import {
   createVatNatureTranslation,
   updateVatNatureTranslation,
   deleteVatNatureTranslation,
-} from "../controllers/tax";
+} from "../controllers/tax-controller";
+import { createHonoApp } from "@/lib/hono-app";
 
-const router = express.Router();
+const taxRoutes = createHonoApp();
 
 // ============================================================================
 // TAX RULE ROUTES
 // ============================================================================
 
-router.get(
+taxRoutes.get(
   "/rules",
   authenticateToken,
   authorize(["tax:read", "tax:manage"]),
@@ -58,7 +58,7 @@ router.get(
   getAllTaxRules,
 );
 
-router.get(
+taxRoutes.get(
   "/rules/:id",
   authenticateToken,
   authorize(["tax:read", "tax:manage"]),
@@ -66,7 +66,7 @@ router.get(
   getTaxRuleById,
 );
 
-router.post(
+taxRoutes.post(
   "/rules",
   authenticateToken,
   authorize(["tax:create", "tax:manage"]),
@@ -74,7 +74,7 @@ router.post(
   createTaxRule,
 );
 
-router.put(
+taxRoutes.put(
   "/rules/:id",
   authenticateToken,
   authorize(["tax:update", "tax:manage"]),
@@ -83,7 +83,7 @@ router.put(
   updateTaxRule,
 );
 
-router.patch(
+taxRoutes.patch(
   "/rules/:id/toggle-active",
   authenticateToken,
   authorize(["tax:update", "tax:manage"]),
@@ -92,7 +92,7 @@ router.patch(
   toggleTaxRuleActive,
 );
 
-router.delete(
+taxRoutes.delete(
   "/rules/:id",
   authenticateToken,
   authorize(["tax:delete", "tax:manage"]),
@@ -104,7 +104,7 @@ router.delete(
 // TAX RULE TRANSLATION ROUTES
 // ============================================================================
 
-router.post(
+taxRoutes.post(
   "/rules/:id/translations",
   authenticateToken,
   authorize(["tax:update", "tax:manage"]),
@@ -113,7 +113,7 @@ router.post(
   createTaxRuleTranslation,
 );
 
-router.put(
+taxRoutes.put(
   "/rules/:taxRuleId/translations/:languageId",
   authenticateToken,
   authorize(["tax:update", "tax:manage"]),
@@ -122,7 +122,7 @@ router.put(
   updateTaxRuleTranslation,
 );
 
-router.delete(
+taxRoutes.delete(
   "/rules/:taxRuleId/translations/:languageId",
   authenticateToken,
   authorize(["tax:delete", "tax:manage"]),
@@ -134,7 +134,7 @@ router.delete(
 // VAT NATURE ROUTES
 // ============================================================================
 
-router.get(
+taxRoutes.get(
   "/vat-natures",
   authenticateToken,
   authorize(["tax:read", "tax:manage"]),
@@ -142,7 +142,7 @@ router.get(
   getAllVatNatures,
 );
 
-router.get(
+taxRoutes.get(
   "/vat-natures/:id",
   authenticateToken,
   authorize(["tax:read", "tax:manage"]),
@@ -150,7 +150,7 @@ router.get(
   getVatNatureById,
 );
 
-router.post(
+taxRoutes.post(
   "/vat-natures",
   authenticateToken,
   authorize(["tax:create", "tax:manage"]),
@@ -158,7 +158,7 @@ router.post(
   createVatNature,
 );
 
-router.put(
+taxRoutes.put(
   "/vat-natures/:id",
   authenticateToken,
   authorize(["tax:update", "tax:manage"]),
@@ -167,7 +167,7 @@ router.put(
   updateVatNature,
 );
 
-router.patch(
+taxRoutes.patch(
   "/vat-natures/:id/toggle-active",
   authenticateToken,
   authorize(["tax:update", "tax:manage"]),
@@ -176,7 +176,7 @@ router.patch(
   toggleVatNatureActive,
 );
 
-router.delete(
+taxRoutes.delete(
   "/vat-natures/:id",
   authenticateToken,
   authorize(["tax:delete", "tax:manage"]),
@@ -188,7 +188,7 @@ router.delete(
 // VAT NATURE TRANSLATION ROUTES
 // ============================================================================
 
-router.post(
+taxRoutes.post(
   "/vat-natures/:id/translations",
   authenticateToken,
   authorize(["tax:update", "tax:manage"]),
@@ -197,7 +197,7 @@ router.post(
   createVatNatureTranslation,
 );
 
-router.put(
+taxRoutes.put(
   "/vat-natures/:vatNatureId/translations/:languageId",
   authenticateToken,
   authorize(["tax:update", "tax:manage"]),
@@ -206,7 +206,7 @@ router.put(
   updateVatNatureTranslation,
 );
 
-router.delete(
+taxRoutes.delete(
   "/vat-natures/:vatNatureId/translations/:languageId",
   authenticateToken,
   authorize(["tax:delete", "tax:manage"]),
@@ -214,4 +214,4 @@ router.delete(
   deleteVatNatureTranslation,
 );
 
-export default router;
+export default taxRoutes;
