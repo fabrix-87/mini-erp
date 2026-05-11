@@ -1,19 +1,21 @@
-import { Response, NextFunction } from "express";
 import { prisma } from "../../config/prisma-config";
-import { AuthenticatedValidatedRequest } from "@/types/validate-types";
 import {
   sendCreated,
   sendDeleted,
   sendError,
+  sendNotFound,
   sendSuccess,
 } from "@/utils/response-utils";
-import asyncHandler from "@/middleware/async-handler-middleware";
 import {
   ActivityIdAsActivityIdParam,
+  ActivityIdParam,
   CreateActivityParticipantInput,
   UpdateActivityParticipantInput,
 } from "@mini-erp/shared";
 import { clean } from "@/helpers/prisma-helper";
+import { Context } from "hono";
+import { AppBindings } from "@/lib/hono-app";
+import { getValidatedBody, getValidatedParams } from "@/helpers/validated-context";
 
 // ============================================================================
 // ACTIVITY PARTICIPANT CONTROLLER
@@ -24,259 +26,228 @@ import { clean } from "@/helpers/prisma-helper";
  * @route   GET /api/activities/:activityId/participants
  * @access  Private (activity:read)
  */
-export const getActivityParticipants = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { activityId } = req.validatedParams as ActivityIdAsActivityIdParam;
+export const getActivityParticipants = async (c: Context<AppBindings>) => {
+  const { activityId } = getValidatedParams<ActivityIdAsActivityIdParam>(c);
 
-    const activity = await prisma.activity.findUnique({
-      where: { id: Number(activityId) },
-    });
-    if (!activity) {
-      sendError(res, { statusCode: 404, message: "Activity non trovata" });
-      return;
-    }
+  const activity = await prisma.activity.findUnique({
+    where: { id: Number(activityId) },
+  });
+  if (!activity) {
+    return sendNotFound(c, "Activity non trovata");
+  }
 
-    const participants = await prisma.activityParticipant.findMany({
-      where: { activityId: Number(activityId) },
-      include: {
-        user: {
-          select: { id: true, username: true, email: true, details: true },
-        },
-        contact: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-            phone: true,
-            position: true,
-          },
+  const participants = await prisma.activityParticipant.findMany({
+    where: { activityId: Number(activityId) },
+    include: {
+      user: {
+        select: { id: true, username: true, email: true, details: true },
+      },
+      contact: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          position: true,
         },
       },
-      orderBy: [{ role: "asc" }, { createdAt: "asc" }],
-    });
+    },
+    orderBy: [{ role: "asc" }, { createdAt: "asc" }],
+  });
 
-    sendSuccess(res, participants, { results: participants.length });
-  },
-);
+  return sendSuccess(c, participants, { results: participants.length });
+};
 
 /**
  * @desc    Add participant to an Activity
  * @route   POST /api/activities/:activityId/participants
  * @access  Private (activity:update)
  */
-export const addActivityParticipant = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const data = req.validatedBody as CreateActivityParticipantInput;
+export const addActivityParticipant = async (c: Context<AppBindings>) => {
+  const data = getValidatedBody<CreateActivityParticipantInput>(c);
 
-    const activity = await prisma.activity.findUnique({
-      where: { id: data.activityId },
+  const activity = await prisma.activity.findUnique({
+    where: { id: data.activityId },
+  });
+  if (!activity) {
+    return sendNotFound(c, "Activity non trovata");
+  }
+
+  if (data.userId) {
+    const user = await prisma.user.findUnique({ where: { id: data.userId } });
+    if (!user) {
+      return sendNotFound(c, "Utente non trovato");
+    }
+
+    const existing = await prisma.activityParticipant.findFirst({
+      where: { activityId: data.activityId, userId: data.userId },
     });
-    if (!activity) {
-      sendError(res, { statusCode: 404, message: "Activity non trovata" });
-      return;
+    if (existing) {
+      return sendError(c, {
+        statusCode: 400,
+        status: "fail",
+        message: "Utente già presente come partecipante",
+      });
+    }
+  }
+
+  if (data.contactId) {
+    const contact = await prisma.contact.findUnique({
+      where: { id: data.contactId },
+    });
+    if (!contact) {
+      return sendNotFound(c, "Contact non trovato");
     }
 
-    if (data.userId) {
-      const user = await prisma.user.findUnique({ where: { id: data.userId } });
-      if (!user) {
-        sendError(res, { statusCode: 404, message: "Utente non trovato" });
-        return;
-      }
-
-      const existing = await prisma.activityParticipant.findFirst({
-        where: { activityId: data.activityId, userId: data.userId },
+    const existing = await prisma.activityParticipant.findFirst({
+      where: { activityId: data.activityId, contactId: data.contactId },
+    });
+    if (existing) {
+      return sendError(c, {
+        statusCode: 400,
+        status: "fail",
+        message: "Contact già presente come partecipante",
       });
-      if (existing) {
-        sendError(res, {
-          statusCode: 400,
-          status: "fail",
-          message: "Utente già presente come partecipante",
-        });
-        return;
-      }
     }
+  }
 
-    if (data.contactId) {
-      const contact = await prisma.contact.findUnique({
-        where: { id: data.contactId },
-      });
-      if (!contact) {
-        sendError(res, { statusCode: 404, message: "Contact non trovato" });
-        return;
-      }
-
-      const existing = await prisma.activityParticipant.findFirst({
-        where: { activityId: data.activityId, contactId: data.contactId },
-      });
-      if (existing) {
-        sendError(res, {
-          statusCode: 400,
-          status: "fail",
-          message: "Contact già presente come partecipante",
-        });
-        return;
-      }
-    }
-
-    const participant = await prisma.activityParticipant.create({
-      data,
-      include: {
-        user: { select: { id: true, username: true, email: true } },
-        contact: {
-          select: { id: true, firstName: true, lastName: true, email: true },
-        },
+  const participant = await prisma.activityParticipant.create({
+    data,
+    include: {
+      user: { select: { id: true, username: true, email: true } },
+      contact: {
+        select: { id: true, firstName: true, lastName: true, email: true },
       },
-    });
+    },
+  });
 
-    sendCreated(res, participant, "Partecipante aggiunto con successo");
-  },
-);
+  return sendCreated(c, participant, "Partecipante aggiunto con successo");
+};
 
 /**
  * @desc    Update participant
  * @route   PUT /api/activities/participants/:id
  * @access  Private (activity:update)
  */
-export const updateActivityParticipant = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams;
-    const data = req.validatedBody as UpdateActivityParticipantInput;
+export const updateActivityParticipant = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityIdParam>(c);
+  const data = getValidatedBody<UpdateActivityParticipantInput>(c);
 
-    const existing = await prisma.activityParticipant.findUnique({
-      where: { id: Number(id) },
-    });
-    if (!existing) {
-      sendError(res, { statusCode: 404, message: "Partecipante non trovato" });
-      return;
-    }
+  const existing = await prisma.activityParticipant.findUnique({
+    where: { id: Number(id) },
+  });
+  if (!existing) {
+    return sendNotFound(c, "Partecipante non trovato");
+  }
 
-    // Auto-set responseDate when status changes
-    const updateData = clean({
-      ...data,
-      responseDate:
-        data.status && data.status !== existing.status ? new Date() : undefined,
-    });
+  // Auto-set responseDate when status changes
+  const updateData = clean({
+    ...data,
+    responseDate: data.status && data.status !== existing.status ? new Date() : undefined,
+  });
 
-    const participant = await prisma.activityParticipant.update({
-      where: { id: Number(id) },
-      data: updateData,
-      include: {
-        user: { select: { id: true, username: true, email: true } },
-        contact: {
-          select: { id: true, firstName: true, lastName: true, email: true },
-        },
+  const participant = await prisma.activityParticipant.update({
+    where: { id: Number(id) },
+    data: updateData,
+    include: {
+      user: { select: { id: true, username: true, email: true } },
+      contact: {
+        select: { id: true, firstName: true, lastName: true, email: true },
       },
-    });
+    },
+  });
 
-    sendSuccess(res, participant, {
-      message: "Partecipante aggiornato con successo",
-    });
-  },
-);
+  return sendSuccess(c, participant, {
+    message: "Partecipante aggiornato con successo",
+  });
+};
 
 /**
  * @desc    Remove participant
  * @route   DELETE /api/activities/participants/:id
  * @access  Private (activity:update)
  */
-export const removeActivityParticipant = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams;
+export const removeActivityParticipant = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityIdParam>(c);
 
-    const participant = await prisma.activityParticipant.findUnique({
-      where: { id: Number(id) },
+  const participant = await prisma.activityParticipant.findUnique({
+    where: { id: Number(id) },
+  });
+  if (!participant) {
+    return sendNotFound(c, "Partecipante non trovato");
+  }
+
+  if (participant.role === "organizer") {
+    return sendError(c, {
+      statusCode: 400,
+      status: "fail",
+      message: "Impossibile rimuovere l'organizer",
     });
-    if (!participant) {
-      sendError(res, { statusCode: 404, message: "Partecipante non trovato" });
-      return;
-    }
+  }
 
-    if (participant.role === "organizer") {
-      sendError(res, {
-        statusCode: 400,
-        status: "fail",
-        message: "Impossibile rimuovere l'organizer",
-      });
-      return;
-    }
+  await prisma.activityParticipant.delete({ where: { id: Number(id) } });
 
-    await prisma.activityParticipant.delete({ where: { id: Number(id) } });
-
-    sendDeleted(res, "Partecipante rimosso con successo");
-  },
-);
+  return sendDeleted(c, "Partecipante rimosso con successo");
+};
 
 /**
  * @desc    Add multiple participants to an Activity
  * @route   POST /api/activities/:activityId/participants/bulk
  * @access  Private (activity:update)
  */
-export const addBulkParticipants = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { activityId } = req.validatedParams as ActivityIdAsActivityIdParam;
-    const { participants } = req.validatedBody as {
-      participants: Array<
-        Pick<
-          CreateActivityParticipantInput,
-          | "userId"
-          | "contactId"
-          | "externalEmail"
-          | "externalName"
-          | "role"
-          | "status"
-        >
-      >;
-    };
+export const addBulkParticipants = async (c: Context<AppBindings>) => {
+  const { activityId } = getValidatedParams<ActivityIdAsActivityIdParam>(c);
+  const { participants } = getValidatedBody<{
+    participants: Array<
+      Pick<
+        CreateActivityParticipantInput,
+        "userId" | "contactId" | "externalEmail" | "externalName" | "role" | "status"
+      >
+    >;
+  }>(c);
 
-    if (!Array.isArray(participants) || participants.length === 0) {
-      sendError(res, {
-        statusCode: 400,
-        status: "fail",
-        message: "Array di partecipanti obbligatorio",
-      });
-      return;
-    }
-
-    const activity = await prisma.activity.findUnique({
-      where: { id: Number(activityId) },
+  if (!Array.isArray(participants) || participants.length === 0) {
+    return sendError(c, {
+      statusCode: 400,
+      status: "fail",
+      message: "Array di partecipanti obbligatorio",
     });
-    if (!activity) {
-      sendError(res, { statusCode: 404, message: "Activity non trovata" });
-      return;
-    }
+  }
 
-    const created = await prisma.$transaction(
-      participants.map((p) =>
-        prisma.activityParticipant.create({
-          data: clean({
-            activityId: Number(activityId),
-            userId: p.userId,
-            contactId: p.contactId,
-            externalEmail: p.externalEmail,
-            externalName: p.externalName,
-            role: p.role ?? "participant",
-            status: p.status ?? "invited",
-          }),
-          include: {
-            user: { select: { id: true, username: true, email: true } },
-            contact: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-              },
+  const activity = await prisma.activity.findUnique({
+    where: { id: Number(activityId) },
+  });
+  if (!activity) {
+    return sendNotFound(c, "Activity non trovata");
+  }
+
+  const created = await prisma.$transaction(
+    participants.map((p) =>
+      prisma.activityParticipant.create({
+        data: clean({
+          activityId: Number(activityId),
+          userId: p.userId,
+          contactId: p.contactId,
+          externalEmail: p.externalEmail,
+          externalName: p.externalName,
+          role: p.role ?? "participant",
+          status: p.status ?? "invited",
+        }),
+        include: {
+          user: { select: { id: true, username: true, email: true } },
+          contact: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
             },
           },
-        }),
-      ),
-    );
+        },
+      }),
+    ),
+  );
 
-    sendCreated(
-      res,
-      created,
-      `${created.length} partecipanti aggiunti con successo`,
-    );
-  },
-);
+  return sendCreated(c, created, `${created.length} partecipanti aggiunti con successo`);
+};

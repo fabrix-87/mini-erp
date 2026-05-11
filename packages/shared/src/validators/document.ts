@@ -4,11 +4,7 @@ import { createDecimalSchema } from "./primitives/decimal";
 import { isoDateSchema } from "./primitives/date";
 
 import { emailSchema, phoneSchema } from "./primitives/string";
-import {
-  countryCodeBaseSchema,
-  currencyCodeBaseSchema,
-  inputJsonValueSchema,
-} from "./base";
+import { countryCodeBaseSchema, currencyCodeBaseSchema, inputJsonValueSchema } from "./base";
 import { sortOrderSchema, pageSchema, limitSchema } from "./query/pagination";
 import { queryBooleanSchema, queryNumberSchema } from "./query/params";
 import {
@@ -28,6 +24,8 @@ import {
 } from "../constants/document";
 import { priceSchema } from "./business";
 import Decimal from "decimal.js";
+import { supplierIdSchema } from "./supplier";
+import { customerIdSchema } from "./customer";
 
 // ============================================================================
 // ENUMS
@@ -95,7 +93,7 @@ export const installmentStatusSchema = z.enum([
   INSTALLMENT_STATUSES.PAID,
   INSTALLMENT_STATUSES.OVERDUE,
   INSTALLMENT_STATUSES.CANCELLED,
-  INSTALLMENT_STATUSES.PARTIAL
+  INSTALLMENT_STATUSES.PARTIAL,
 ]);
 
 // ============================================================================
@@ -145,25 +143,18 @@ const installmentPercentSchema = createDecimalSchema(2, {
 // DOCUMENT LINE SCHEMAS
 // ============================================================================
 
-export const documentLineIdSchema = createIdSchema(
-  "ID Document Line non valido",
-);
+export const documentLineIdSchema = createIdSchema("ID Document Line non valido");
 
 /**
  * Raw object shape for DocumentLine — no strict, used for omit/partial.
  */
 const documentLineShape = z.object({
-  productVariantId: createIdSchema("Product Variant ID non valido")
-    .optional()
-    .nullable(),
+  productVariantId: createIdSchema("Product Variant ID non valido").optional().nullable(),
   productId: createIdSchema("Product ID non valido").optional().nullable(),
   lineNumber: z.number().int().positive("Line number deve essere positivo"),
   lineType: documentLineTypeSchema.default(DOCUMENT_LINE_TYPES.PRODUCT),
   code: z.string().max(100).optional().nullable(),
-  nameSystem: z
-    .string()
-    .min(1, "Nome sistema obbligatorio")
-    .max(255, "Nome max 255 caratteri"),
+  nameSystem: z.string().min(1, "Nome sistema obbligatorio").max(255, "Nome max 255 caratteri"),
   descriptionSystem: z.string().max(5000).optional().nullable(),
   nameCustomer: z.string().max(255).optional().nullable(),
   descriptionCustomer: z.string().max(5000).optional().nullable(),
@@ -217,9 +208,7 @@ const installmentShape = z.object({
   dueDate: isoDateSchema(),
   status: installmentStatusSchema.default("PENDING"),
   notes: z.string().max(500).optional().nullable(),
-  paymentMethodId: createIdSchema("Payment Method ID non valido")
-    .optional()
-    .nullable(),
+  paymentMethodId: createIdSchema("Payment Method ID non valido").optional().nullable(),
 });
 
 /** Schema for creating an Installment. */
@@ -231,13 +220,10 @@ export const updateInstallmentSchema = installmentShape.partial().strict();
 export const payInstallmentSchema = z
   .object({
     paidAmount: moneySchema,
-
+    paymentMethodId: createIdSchema("Payment Method ID non valido"),
     paidDate: isoDateSchema().default(() => new Date().toISOString()),
-
     paymentReference: z.string().max(100).optional().nullable(),
-
     bankTransactionId: z.string().max(100).optional().nullable(),
-
     notes: z.string().max(500).optional().nullable(),
   })
   .strict();
@@ -253,9 +239,7 @@ export const documentIdSchema = createIdSchema("ID Document non valido");
  */
 const documentShape = z.object({
   documentType: documentTypeSchema,
-  statusCategory: documentStatusCategorySchema.default(
-    DOCUMENT_STATUS_CATEGORIES.DRAFT_PHASE,
-  ),
+  statusCategory: documentStatusCategorySchema.default(DOCUMENT_STATUS_CATEGORIES.DRAFT_PHASE),
   status: documentStatusSchema.default(DOCUMENT_STATUSES.DRAFT),
   documentYear: z
     .number()
@@ -269,9 +253,7 @@ const documentShape = z.object({
   supplierId: createIdSchema("Supplier ID non valido").optional().nullable(),
   contactId: createIdSchema("Contact ID non valido").optional().nullable(),
   assignedUserId: createIdSchema("User ID non valido").optional().nullable(),
-  opportunityId: createIdSchema("Opportunity ID non valido")
-    .optional()
-    .nullable(),
+  opportunityId: createIdSchema("Opportunity ID non valido").optional().nullable(),
   leadId: createIdSchema("Lead ID non valido").optional().nullable(),
   warehouseId: createIdSchema("Warehouse ID non valido").optional().nullable(),
 
@@ -285,11 +267,7 @@ const documentShape = z.object({
   customerName: z.string().min(1, "Nome cliente obbligatorio").max(255),
   customerVatNumber: z.string().max(20).optional().nullable(),
   customerTaxCode: z.string().max(20).optional().nullable(),
-  customerPec: z
-    .email("PEC non valida")
-    .max(255)
-    .optional()
-    .nullable(),
+  customerPec: z.email("PEC non valida").max(255).optional().nullable(),
   customerSdiCode: z.string().max(7).optional().nullable(),
   customerAddress: z.string().max(255).optional().nullable(),
   customerCity: z.string().max(100).optional().nullable(),
@@ -323,9 +301,7 @@ const documentShape = z.object({
   baseCurrencyCode: currencyCodeBaseSchema.default("EUR"),
 
   // Payment
-  paymentMethodId: createIdSchema("Payment Method ID non valido")
-    .optional()
-    .nullable(),
+  paymentMethodId: createIdSchema("Payment Method ID non valido").optional().nullable(),
   paymentMethod: z.string().max(50).default("bank_transfer"),
   paymentTerms: z.string().max(100).optional().nullable(),
   bankName: z.string().max(100).optional().nullable(),
@@ -359,10 +335,7 @@ export const createDocumentSchema = documentShape
   .strict()
   .refine(
     (data) => {
-      if (
-        DOCUMENTS_REQUIRING_CUSTOMER.includes(data.documentType as any) &&
-        !data.customerId
-      ) {
+      if (DOCUMENTS_REQUIRING_CUSTOMER.includes(data.documentType as any) && !data.customerId) {
         return false;
       }
       return true;
@@ -374,10 +347,7 @@ export const createDocumentSchema = documentShape
   )
   .refine(
     (data) => {
-      if (
-        DOCUMENTS_REQUIRING_CUSTOMER.includes(data.documentType as any) &&
-        !data.supplierId
-      ) {
+      if (DOCUMENTS_REQUIRING_CUSTOMER.includes(data.documentType as any) && !data.supplierId) {
         return false;
       }
       return true;
@@ -430,19 +400,16 @@ const documentStatusUpdateShape = z.object({
 /**
  * Schema for updating Document status — voidedReason required when VOIDED.
  */
-export const updateDocumentStatusSchema = documentStatusUpdateShape
-  .strict()
-  .refine(
-    (data) => {
-      if (data.status === DOCUMENT_STATUSES.VOIDED && !data.voidedReason)
-        return false;
-      return true;
-    },
-    {
-      message: "Motivo annullamento obbligatorio per documenti annullati",
-      path: ["voidedReason"],
-    },
-  );
+export const updateDocumentStatusSchema = documentStatusUpdateShape.strict().refine(
+  (data) => {
+    if (data.status === DOCUMENT_STATUSES.VOIDED && !data.voidedReason) return false;
+    return true;
+  },
+  {
+    message: "Motivo annullamento obbligatorio per documenti annullati",
+    path: ["voidedReason"],
+  },
+);
 
 export const approveDocumentSchema = z
   .object({
@@ -458,19 +425,19 @@ export const rejectDocumentSchema = z
 
 export const sendDocumentSchema = z
   .object({
-    email: emailSchema(),
+    recipientEmail: emailSchema(),
 
     subject: z.string().min(1, "Oggetto obbligatorio").max(255),
 
-    body: z.string().min(1, "Corpo email obbligatorio").max(10000),
+    message: z.string().min(1, "Corpo email obbligatorio").max(10000),
 
     cc: z.array(emailSchema()).optional(),
 
     bcc: z.array(emailSchema()).optional(),
 
-    attachPdf: z.boolean().default(true),
+    attachPDF: z.boolean().default(true),
 
-    attachXml: z.boolean().default(false),
+    attachXML: z.boolean().default(false),
   })
   .strict();
 
@@ -500,9 +467,7 @@ export const createDocumentRelationSchema = documentRelationShape
 
 export const bulkUpdateDocumentsStatusSchema = z
   .object({
-    documentIds: z
-      .array(documentIdSchema)
-      .min(1, "Seleziona almeno un documento"),
+    documentIds: z.array(documentIdSchema).min(1, "Seleziona almeno un documento"),
 
     status: documentStatusSchema,
 
@@ -512,9 +477,7 @@ export const bulkUpdateDocumentsStatusSchema = z
 
 export const bulkDeleteDocumentsSchema = z
   .object({
-    documentIds: z
-      .array(documentIdSchema)
-      .min(1, "Seleziona almeno un documento"),
+    documentIds: z.array(documentIdSchema).min(1, "Seleziona almeno un documento"),
 
     reason: z.string().max(500).optional().nullable(),
   })
@@ -522,9 +485,7 @@ export const bulkDeleteDocumentsSchema = z
 
 export const bulkSendDocumentsSchema = z
   .object({
-    documentIds: z
-      .array(documentIdSchema)
-      .min(1, "Seleziona almeno un documento"),
+    documentIds: z.array(documentIdSchema).min(1, "Seleziona almeno un documento"),
 
     emailTemplate: z.string().optional(),
   })
@@ -585,14 +546,7 @@ export const documentLineQuerySchema = z.object({
   warehouseId: createIdSchema("Warehouse ID non valido").optional(),
   isComponent: queryBooleanSchema,
   sortBy: z
-    .enum([
-      "lineNumber",
-      "code",
-      "nameSystem",
-      "quantity",
-      "unitPrice",
-      "lineTotal",
-    ])
+    .enum(["lineNumber", "code", "nameSystem", "quantity", "unitPrice", "lineTotal"])
     .default("lineNumber"),
   sortOrder: sortOrderSchema,
 });
@@ -606,10 +560,12 @@ export const installmentQuerySchema = z.object({
   dueDateTo: isoDateSchema(),
   overdue: queryBooleanSchema,
   unpaid: queryBooleanSchema,
-  sortBy: z
-    .enum(["installmentNumber", "dueDate", "amount", "status"])
-    .default("dueDate"),
+  sortBy: z.enum(["installmentNumber", "dueDate", "amount", "status"]).default("dueDate"),
   sortOrder: sortOrderSchema,
+});
+
+export const quantityDeliveredSchema = z.object({
+  quantityDelivered: quantitySchema(0),
 });
 
 // ============================================================================
@@ -640,6 +596,14 @@ export const installmentIdParamSchema = z.object({
   installmentId: installmentIdSchema,
 });
 
+export const supplierIdParamSchema = z.object({
+  supplierId: supplierIdSchema,
+});
+
+export const customerIdParamSchema = z.object({
+  customerId: customerIdSchema,
+});
+
 // ============================================================================
 // STATISTICS & REPORTS SCHEMAS
 // ============================================================================
@@ -659,9 +623,7 @@ export const salesReportSchema = z.object({
   dateTo: isoDateSchema(),
   customerId: createIdSchema("Customer ID non valido").optional(),
   productId: createIdSchema("Product ID non valido").optional(),
-  groupBy: z
-    .enum(["customer", "product", "category", "day", "week", "month"])
-    .default("month"),
+  groupBy: z.enum(["customer", "product", "category", "day", "week", "month","year"]).default("month"),
   includeVoided: z.boolean().default(false),
 });
 

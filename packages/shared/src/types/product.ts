@@ -19,7 +19,7 @@ import {
   updateProductSchema,
   updateProductVariantSchema,
   updateProductTranslationSchema,
-  productIdLanguageIdSchema, 
+  productIdLanguageIdSchema,
 } from "../validators/product";
 import { ProductCondition, ProductType, ProductStatus } from "../constants";
 import { Supplier } from "./supplier";
@@ -28,8 +28,6 @@ import { Attribute, AttributeGroup } from "./attribute";
 import { Category } from "./category";
 import { Language } from "./language";
 import { StockMovement, VirtualStock } from "./warehouse";
-
-
 
 // ============================================================================
 // TYPE EXPORTS
@@ -168,43 +166,31 @@ export type ProductTranslation = {
 export interface ProductImage {
   id: number;
   productId: number;
-  variantId: number | null; 
+  variantId: number | null;
   imageUrl: string;
   imageType: "main" | "extra" | string;
   position: number;
   isCover: boolean;
-  altText: Record<string, any> | null; 
+  altText: Record<string, any> | null;
   width: number | null;
-  height: number | null; 
-  fileSize: number | null; 
-  mimeType: string | null; 
-  createdAt: Date; 
-  updatedAt: Date; 
+  height: number | null;
+  fileSize: number | null;
+  mimeType: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Type Input
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 export type UpdateProductInput = z.infer<typeof updateProductSchema>;
-export type CreateProductVariantInput = z.infer<
-  typeof createProductVariantSchema
->;
-export type UpdateProductVariantInput = z.infer<
-  typeof updateProductVariantSchema
->;
-export type CreateProductTranslationInput = z.infer<
-  typeof createProductTranslationSchema
->;
-export type UpdateProductTranslationInput = z.infer<
-  typeof updateProductTranslationSchema
->;
+export type CreateProductVariantInput = z.infer<typeof createProductVariantSchema>;
+export type UpdateProductVariantInput = z.infer<typeof updateProductVariantSchema>;
+export type CreateProductTranslationInput = z.infer<typeof createProductTranslationSchema>;
+export type UpdateProductTranslationInput = z.infer<typeof updateProductTranslationSchema>;
 export type CreateProductImageInput = z.infer<typeof createProductImageSchema>;
 export type UpdateProductImageInput = z.infer<typeof updateProductImageSchema>;
-export type CreateProductCategoryInput = z.infer<
-  typeof createProductCategorySchema
->;
-export type UpdateProductCategoryInput = z.infer<
-  typeof updateProductCategorySchema
->;
+export type CreateProductCategoryInput = z.infer<typeof createProductCategorySchema>;
+export type UpdateProductCategoryInput = z.infer<typeof updateProductCategorySchema>;
 export type CreateManufacturerInput = z.infer<typeof createManufacturerSchema>;
 export type UpdateManufacturerInput = z.infer<typeof updateManufacturerSchema>;
 

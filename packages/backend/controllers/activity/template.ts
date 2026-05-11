@@ -7,12 +7,14 @@ import {
   sendCreated,
   sendDeleted,
   sendError,
+  sendNotFound,
 } from "../../utils/response-utils";
-import { AuthenticatedValidatedRequest } from "@/types/validate-types";
 import {
   CreateActivityTemplateInput,
   UpdateActivityTemplateInput,
   CreateActivityFromTemplateInput,
+  ActivityTemplateQueryInput,
+  ActivityTemplateIdParam,
 } from "@mini-erp/shared/types";
 import {
   clean,
@@ -20,6 +22,13 @@ import {
   toDate,
   toRequiredDate,
 } from "../../helpers/prisma-helper";
+import { Context } from "hono";
+import { AppBindings } from "@/lib/hono-app";
+import {
+  getValidatedBody,
+  getValidatedParams,
+  getValidatedQuery,
+} from "@/helpers/validated-context";
 
 // ============================================================================
 // ACTIVITY TEMPLATE CONTROLLER
@@ -30,248 +39,217 @@ import {
  * @route   GET /api/activity-templates
  * @access  Private (activity:read)
  */
-export const getAllActivityTemplates = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const {
-      active,
-      type,
-      sortBy = "name",
-      sortOrder = "asc",
-    } = req.validatedQuery ?? {};
+export const getAllActivityTemplates = async (c: Context<AppBindings>) => {
+  const {
+    active,
+    type,
+    sortBy = "name",
+    sortOrder = "asc",
+  } = getValidatedQuery<ActivityTemplateQueryInput>(c);
 
-    const where: Prisma.ActivityTemplateWhereInput = {};
-    if (active !== undefined)
-      where.active = active === true || active === "true";
-    if (type) where.type = type as any;
+  const where: Prisma.ActivityTemplateWhereInput = {};
+  if (active !== undefined) where.active = active;
+  if (type) where.type = type;
 
-    const templates = await prisma.activityTemplate.findMany({
-      where,
-      orderBy: { [sortBy as string]: sortOrder },
-    });
+  const templates = await prisma.activityTemplate.findMany({
+    where,
+    orderBy: { [sortBy as string]: sortOrder },
+  });
 
-    sendSuccess(res, templates, { results: templates.length });
-  },
-);
+  return sendSuccess(c, templates, { results: templates.length });
+};
 
 /**
  * @desc    Get Activity Template by ID
  * @route   GET /api/activity-templates/:id
  * @access  Private (activity:read)
  */
-export const getActivityTemplateById = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams;
+export const getActivityTemplateById = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityTemplateIdParam>(c);
 
-    const template = await prisma.activityTemplate.findUnique({
-      where: { id: Number(id) },
-    });
-    if (!template) {
-      sendError(res, { statusCode: 404, message: "Template non trovato" });
-      return;
-    }
+  const template = await prisma.activityTemplate.findUnique({
+    where: { id: Number(id) },
+  });
+  if (!template) {
+    return sendNotFound(c, "Template non trovato");
+  }
 
-    sendSuccess(res, template);
-  },
-);
+  return sendSuccess(c, template);
+};
 
 /**
  * @desc    Create new Activity Template
  * @route   POST /api/activity-templates
  * @access  Private (activity:manage)
  */
-export const createActivityTemplate = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const data = req.validatedBody as CreateActivityTemplateInput;
+export const createActivityTemplate = async (c: Context<AppBindings>) => {
+  const data = getValidatedBody<CreateActivityTemplateInput>(c);
 
-    const template = await prisma.activityTemplate.create({ data });
+  const template = await prisma.activityTemplate.create({ data });
 
-    sendCreated(res, template, "Template creato con successo");
-  },
-);
+  return sendCreated(c, template, "Template creato con successo");
+};
 
 /**
  * @desc    Update Activity Template
  * @route   PUT /api/activity-templates/:id
  * @access  Private (activity:manage)
  */
-export const updateActivityTemplate = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams;
-    const data = req.validatedBody as UpdateActivityTemplateInput;
+export const updateActivityTemplate = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityTemplateIdParam>(c);
+  const data = getValidatedBody<UpdateActivityTemplateInput>(c);
 
-    const existing = await prisma.activityTemplate.findUnique({
-      where: { id: Number(id) },
-    });
-    if (!existing) {
-      sendError(res, { statusCode: 404, message: "Template non trovato" });
-      return;
-    }
+  const existing = await prisma.activityTemplate.findUnique({
+    where: { id: Number(id) },
+  });
+  if (!existing) {
+    return sendNotFound(c, "Template non trovato");
+  }
 
-    const template = await prisma.activityTemplate.update({
-      where: { id: Number(id) },
-      data: clean({ ...(data as any) }),
-    });
+  const template = await prisma.activityTemplate.update({
+    where: { id: Number(id) },
+    data: clean({ ...(data as any) }),
+  });
 
-    sendSuccess(res, template, { message: "Template aggiornato con successo" });
-  },
-);
+  return sendSuccess(c, template, { message: "Template aggiornato con successo" });
+};
 
 /**
  * @desc    Delete Activity Template
  * @route   DELETE /api/activity-templates/:id
  * @access  Private (activity:manage)
  */
-export const deleteActivityTemplate = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams;
+export const deleteActivityTemplate = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityTemplateIdParam>(c);
 
-    const template = await prisma.activityTemplate.findUnique({
-      where: { id: Number(id) },
-    });
-    if (!template) {
-      sendError(res, { statusCode: 404, message: "Template non trovato" });
-      return;
-    }
+  const template = await prisma.activityTemplate.findUnique({
+    where: { id: Number(id) },
+  });
+  if (!template) {
+    return sendNotFound(c, "Template non trovato");
+  }
 
-    await prisma.activityTemplate.delete({ where: { id: Number(id) } });
+  await prisma.activityTemplate.delete({ where: { id: Number(id) } });
 
-    sendDeleted(res, "Template eliminato con successo");
-  },
-);
+  return sendDeleted(c, "Template eliminato con successo");
+};
 
 /**
  * @desc    Create Activity from Template
  * @route   POST /api/activity-templates/:id/create-activity
  * @access  Private (activity:create)
  */
-export const createActivityFromTemplate = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams;
-    const {
-      scheduledStart,
-      scheduledEnd,
-      subject,
-      description,
-      companyId,
-      customerId,
-      opportunityId,
-      assignedUserId,
-    } = req.validatedBody as CreateActivityFromTemplateInput;
+export const createActivityFromTemplate = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityTemplateIdParam>(c);
+  const {
+    scheduledStart,
+    scheduledEnd,
+    subject,
+    description,
+    companyId,
+    customerId,
+    opportunityId,
+    assignedUserId,
+  } = getValidatedBody<CreateActivityFromTemplateInput>(c);
 
-    const userId = req.user!.userId;
+  const userId = c.get("user")!.userId;
 
-    const template = await prisma.activityTemplate.findUnique({
-      where: { id: Number(id) },
+  const template = await prisma.activityTemplate.findUnique({
+    where: { id: Number(id) },
+  });
+  if (!template) {
+    return sendNotFound(c, "Template non trovato");
+  }
+
+  if (!template.active) {
+    return sendError(c, {
+      statusCode: 400,
+      status: "fail",
+      message: "Template non attivo",
     });
-    if (!template) {
-      sendError(res, { statusCode: 404, message: "Template non trovato" });
-      return;
-    }
+  }
 
-    if (!template.active) {
-      sendError(res, {
-        statusCode: 400,
-        status: "fail",
-        message: "Template non attivo",
-      });
-      return;
-    }
-
-    if (!companyId && !customerId && !opportunityId) {
-      sendError(res, {
-        statusCode: 400,
-        status: "fail",
-        message:
-          "Almeno una relazione (company, customer o opportunity) è obbligatoria",
-      });
-      return;
-    }
-
-    const assignedUser = await prisma.user.findUnique({
-      where: { id: assignedUserId },
+  if (!companyId && !customerId && !opportunityId) {
+    return sendError(c, {
+      statusCode: 400,
+      status: "fail",
+      message: "Almeno una relazione (company, customer o opportunity) è obbligatoria",
     });
-    if (!assignedUser) {
-      sendError(res, {
-        statusCode: 404,
-        message: "Utente assegnato non trovato",
-      });
-      return;
-    }
+  }
 
-    // Auto-calculate scheduledEnd from defaultDuration if not provided
-    let calculatedEnd: string | undefined = scheduledEnd ?? undefined;
-    if (!scheduledEnd && template.defaultDuration) {
-      const start = new Date(scheduledStart as any);
-      calculatedEnd = new Date(
-        start.getTime() + template.defaultDuration * 60_000,
-      ).toISOString();
-    }
+  const assignedUser = await prisma.user.findUnique({
+    where: { id: assignedUserId },
+  });
+  if (!assignedUser) {
+    return sendNotFound(c, "Utente assegnato non trovato");
+  }
 
-    const prismaData: Prisma.ActivityCreateInput = clean({
-      type: template.type,
-      priority: template.priority,
-      status: "SCHEDULED",
-      subject: subject ?? template.defaultSubject,
-      description: description ?? template.defaultDescription,
+  // Auto-calculate scheduledEnd from defaultDuration if not provided
+  let calculatedEnd: string | undefined = scheduledEnd ?? undefined;
+  if (!scheduledEnd && template.defaultDuration) {
+    const start = new Date(scheduledStart as any);
+    calculatedEnd = new Date(start.getTime() + template.defaultDuration * 60_000).toISOString();
+  }
 
-      // Date
-      scheduledStart: toRequiredDate(scheduledStart as string)!,
-      scheduledEnd: toDate(calculatedEnd as string),
-      duration: template.defaultDuration,
+  const prismaData: Prisma.ActivityCreateInput = clean({
+    type: template.type,
+    priority: template.priority,
+    status: "SCHEDULED",
+    subject: subject ?? template.defaultSubject,
+    description: description ?? template.defaultDescription,
 
-      // Relazioni obbligatorie
-      createdBy: { connect: { id: userId } },
-      assignedUser: { connect: { id: assignedUserId } },
+    // Date
+    scheduledStart: toRequiredDate(scheduledStart as string)!,
+    scheduledEnd: toDate(calculatedEnd as string),
+    duration: template.defaultDuration,
 
-      // Relazioni opzionali
-      company: connectOrDisconnectById(companyId),
-      customer: connectOrDisconnectById(customerId),
-      opportunity: connectOrDisconnectById(opportunityId),
+    // Relazioni obbligatorie
+    createdBy: { connect: { id: userId } },
+    assignedUser: { connect: { id: assignedUserId } },
 
-      customFields: template.checklist
-        ? { checklist: template.checklist }
-        : undefined,
-    });
+    // Relazioni opzionali
+    company: connectOrDisconnectById(companyId),
+    customer: connectOrDisconnectById(customerId),
+    opportunity: connectOrDisconnectById(opportunityId),
 
-    const activity = await prisma.activity.create({
-      data: prismaData,
-      include: {
-        company: true,
-        customer: true,
-        opportunity: true,
-        assignedUser: { select: { id: true, username: true, email: true } },
-      },
-    });
+    customFields: template.checklist ? { checklist: template.checklist } : undefined,
+  });
 
-    sendCreated(res, activity, "Activity creata da template con successo");
-  },
-);
+  const activity = await prisma.activity.create({
+    data: prismaData,
+    include: {
+      company: true,
+      customer: true,
+      opportunity: true,
+      assignedUser: { select: { id: true, username: true, email: true } },
+    },
+  });
+
+  return sendCreated(c, activity, "Activity creata da template con successo");
+};
 
 /**
  * @desc    Toggle active status of a Template
  * @route   PATCH /api/activity-templates/:id/toggle-active
  * @access  Private (activity:manage)
  */
-export const toggleTemplateActive = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams;
-    const { active } = req.validatedBody as { active: boolean };
+export const toggleTemplateActive = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityTemplateIdParam>(c);
+  const { active } = getValidatedBody<{ active: boolean }>(c);
 
-    const template = await prisma.activityTemplate.findUnique({
-      where: { id: Number(id) },
-    });
-    if (!template) {
-      sendError(res, { statusCode: 404, message: "Template non trovato" });
-      return;
-    }
+  const template = await prisma.activityTemplate.findUnique({
+    where: { id: Number(id) },
+  });
+  if (!template) {
+    return sendNotFound(c, "Template non trovato");
+  }
 
-    const updated = await prisma.activityTemplate.update({
-      where: { id: Number(id) },
-      data: { active },
-    });
+  const updated = await prisma.activityTemplate.update({
+    where: { id: Number(id) },
+    data: { active },
+  });
 
-    sendSuccess(res, updated, {
-      message: `Template ${active ? "attivato" : "disattivato"} con successo`,
-    });
-  },
-);
+  return sendSuccess(c, updated, {
+    message: `Template ${active ? "attivato" : "disattivato"} con successo`,
+  });
+};

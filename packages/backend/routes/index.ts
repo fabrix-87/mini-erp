@@ -7,10 +7,13 @@ import countryRoutes from "./country-routes";
 import currencyRoutes from "./currency-routes";
 import customerRoutes from "./customer-routes";
 import dashboardRoutes from "./dashboard-routes";
+import documentRoutes from "./document-routes";
 import languageRoutes from "./languages-routes";
 import leadRoutes from "./lead-routes";
+import opportunityRoutes from "./opportunity-routes";
 import paymentRoutes from "./payment-routes";
 import pricelistRoutes from "./pricelist-routes";
+import productRoutes from "./product-routes";
 import roleRoutes from "./role-routes";
 import taxRoutes from "./tax-routes";
 import userRoutes from "./user-routes";
@@ -35,52 +38,8 @@ apiRoutes.route("/contacts", contactRoutes);
 apiRoutes.route("/payments", paymentRoutes);
 apiRoutes.route("/pricelists", pricelistRoutes);
 apiRoutes.route("/tax", taxRoutes);
+apiRoutes.route("/opportunity", opportunityRoutes);
+apiRoutes.route("/products", productRoutes);
+apiRoutes.route("/documents", documentRoutes);
 
 export default apiRoutes;
-/*
-import { Router } from "express";
-
-import activitiesRouter from "./activity";
-import addressesRouter from "./address";
-import contactsRouter from "./contact";
-import customersRouter from "./customer";
-import dashboardsRouter from "./dashboard";
-import documentsRouter from "./document";
-import opportunitiesRouter from "./opportunity";
-import paymentsRouter from "./payment";
-import pricelistsRouter from "./pricelist";
-import productsRouter from "./product";
-import rolesRouter from "./role";
-import suppliersRouter from "./supplier";
-import taxesRouter from "./tax";
-import usersRouter from "./user";
-import companiesRouter from "./company";
-import countryRouter from "./country";
-import currencyRouter from "./currency";
-import leadRouter from "./lead";
-import languagesRouter from "./languages";
-
-const apiRouter = Router();
-
-apiRouter.use("/activities", activitiesRouter);
-apiRouter.use("/addresses", addressesRouter);
-apiRouter.use("/companies", companiesRouter);
-apiRouter.use("/contacts", contactsRouter);
-apiRouter.use("/customers", customersRouter);
-
-apiRouter.use("/documents", documentsRouter);
-apiRouter.use("/opportunities", opportunitiesRouter);
-apiRouter.use("/payments", paymentsRouter);
-apiRouter.use("/pricelists", pricelistsRouter);
-apiRouter.use("/products", productsRouter);
-apiRouter.use("/roles", rolesRouter);
-apiRouter.use("/suppliers", suppliersRouter);
-apiRouter.use("/taxes", taxesRouter);
-apiRouter.use("/users", usersRouter);
-
-apiRouter.use("/currencies", currencyRouter);
-apiRouter.use("/leads", leadRouter);
-apiRouter.use("/languages", languagesRouter);
-
-export default apiRouter;
-*/

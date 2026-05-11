@@ -56,10 +56,7 @@ export const participantStatusSchema = z.enum([
   "no_show",
 ]);
 
-export const activitySortFieldsSchema = z.enum([
-  "scheduledStart",
-  "priority"
-])
+export const activitySortFieldsSchema = z.enum(["scheduledStart", "priority"]);
 
 export const participantRoleSchema = z.enum(["organizer", "required", "optional"]);
 
@@ -342,6 +339,16 @@ export const createActivityFromTemplateSchema = z
       path: ["companyId"],
     },
   );
+
+/**
+ * Schema per query activity template
+ */
+export const activityTemplateQuerySchema = z.object({
+  active: queryBooleanSchema,
+  type: activityTypeSchema,
+  sortBy: z.enum(["name"]),
+  sortOrder: sortOrderSchema,
+});
 
 /**
  * Schema per le statistiche utente

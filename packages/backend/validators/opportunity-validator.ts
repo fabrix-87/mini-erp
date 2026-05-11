@@ -17,49 +17,30 @@ import {
   opportunityStatsSchema,
   salesFunnelAnalysisSchema,
 } from "@mini-erp/shared";
-import {
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "../middleware/validation";
+import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 
 // ============================================================================
 // OPPORTUNITY PARAM VALIDATORS
 // ============================================================================
 
 /** Validates opportunity :id param */
-export const validateOpportunityId = validateParams(
-  opportunityIdParamSchema,
-  "Opportunity ID",
-);
+export const validateOpportunityId = validateParams(opportunityIdParamSchema, "Opportunity ID");
 
 /** Validates customer :customerId param */
-export const validateCustomerIdParam = validateParams(
-  customerIdParamSchema,
-  "Customer ID",
-);
+export const validateCustomerIdParam = validateParams(customerIdParamSchema, "Customer ID");
 
 /** Validates closed-reason :id param */
-export const validateClosedReasonId = validateParams(
-  closedReasonIdParamSchema,
-  "Closed Reason ID",
-);
+export const validateClosedReasonId = validateParams(closedReasonIdParamSchema, "Closed Reason ID");
 
 // ============================================================================
 // OPPORTUNITY QUERY VALIDATORS
 // ============================================================================
 
 /** Validates GET /opportunities query string */
-export const validateOpportunityQuery = validateQuery(
-  opportunityQuerySchema,
-  "Opportunity query",
-);
+export const validateOpportunityQuery = validateQuery(opportunityQuerySchema, "Opportunity query");
 
 /** Validates GET /opportunities/stats query string */
-export const validateOpportunityStats = validateQuery(
-  opportunityStatsSchema,
-  "Opportunity stats",
-);
+export const validateOpportunityStats = validateQuery(opportunityStatsSchema, "Opportunity stats");
 
 /** Validates GET /opportunities/stats/funnel query string */
 export const validateSalesFunnelQuery = validateQuery(
@@ -102,10 +83,7 @@ export const validateUpdateOpportunityStatus = validateBody(
 );
 
 /** Validates PATCH /opportunities/:id/close-won body */
-export const validateWinOpportunity = validateBody(
-  winOpportunitySchema,
-  "Opportunity close won",
-);
+export const validateWinOpportunity = validateBody(winOpportunitySchema, "Opportunity close won");
 
 /** Validates PATCH /opportunities/:id/close-lost body */
 export const validateLoseOpportunity = validateBody(
@@ -120,10 +98,7 @@ export const validateBulkAssignOpportunities = validateBody(
 );
 
 /** Validates POST /opportunities/bulk/stage body */
-export const validateBulkUpdateStage = validateBody(
-  bulkUpdateStageSchema,
-  "Bulk stage update",
-);
+export const validateBulkUpdateStage = validateBody(bulkUpdateStageSchema, "Bulk stage update");
 
 // ============================================================================
 // CLOSED REASON BODY VALIDATORS

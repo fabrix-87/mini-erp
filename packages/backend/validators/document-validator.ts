@@ -3,7 +3,7 @@ import {
   validateBody,
   validateParams,
   validateQuery,
-} from "../middleware/validation";
+} from "../middleware/validation-middleware";
 import {
   bulkSendDocumentsSchema,
   bulkUpdateDocumentsStatusSchema,
@@ -32,25 +32,13 @@ import {
 // ============================================================================
 
 // DOCUMENTS
-export const validateCreateDocument = validateBody(
-  createDocumentSchema,
-  "Document creation",
-);
+export const validateCreateDocument = validateBody(createDocumentSchema, "Document creation");
 
-export const validateUpdateDocument = validateBody(
-  updateDocumentSchema,
-  "Document update",
-);
+export const validateUpdateDocument = validateBody(updateDocumentSchema, "Document update");
 
-export const validateDocumentId = validateParams(
-  documentIdParamSchema,
-  "Document ID validation",
-);
+export const validateDocumentId = validateParams(documentIdParamSchema, "Document ID validation");
 
-export const validateDocumentQuery = validate(
-  documentQuerySchema,
-  "Document query",
-);
+export const validateDocumentQuery = validate(documentQuerySchema, "Document query");
 
 export const validateUpdateDocumentStatus = validate(
   updateDocumentStatusSchema,
@@ -63,10 +51,7 @@ export const validateDocumentLineId = validateParams(
   "Document line ID validation",
 );
 
-export const validateAddDocumentLine = validateBody(
-  createDocumentLineSchema,
-  "Add document line",
-);
+export const validateAddDocumentLine = validateBody(createDocumentLineSchema, "Add document line");
 
 export const validateUpdateDocumentLine = validateBody(
   updateDocumentLineSchema,
@@ -74,10 +59,7 @@ export const validateUpdateDocumentLine = validateBody(
 );
 
 // CONVERSIONS
-export const validateConvertDocument = validateBody(
-  convertDocumentSchema,
-  "Convert document",
-);
+export const validateConvertDocument = validateBody(convertDocumentSchema, "Convert document");
 
 export const validateDuplicateDocument = validateBody(
   duplicateDocumentSchema,
@@ -137,5 +119,5 @@ export const validateBulkSendDocuments = validateBody(
 // REPORTS
 export const validateTopProductsReportQuery = validateQuery(
   topProductsReportSchema,
-  "Top Products Report"
-)
+  "Top Products Report",
+);

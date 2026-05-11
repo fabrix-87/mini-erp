@@ -4,6 +4,7 @@
 
 import { prisma } from "@/config/prisma-config";
 import { DocumentStatus } from "@/generated/prisma/client";
+import { Decimal } from "@prisma/client/runtime/client";
 
 /**
  * Calculate fulfillment status based on DocumentLine quantities
@@ -141,7 +142,7 @@ export async function getDocumentFulfillmentDetails(documentId: number): Promise
  */
 export async function updateLineDeliveredQuantity(
   lineId: number,
-  quantityDelivered: number,
+  quantityDelivered: Decimal,
 ): Promise<void> {
   const line = await prisma.documentLine.update({
     where: { id: lineId },

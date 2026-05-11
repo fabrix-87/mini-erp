@@ -1,5 +1,4 @@
-import express from "express";
-import { authenticateToken, authorize } from "../middleware/auth";
+import { authenticateToken, authorize } from "../middleware/auth-middleware";
 import {
   // Document validators
   validateCreateDocument,
@@ -29,7 +28,7 @@ import {
   // Attachment validators
   validateDocumentAttachmentIdParam,
   validateTopProductsReportQuery,
-} from "../validators/document";
+} from "../validators/document-validator";
 import {
   // Documents CRUD
   getAllDocuments,
@@ -97,9 +96,10 @@ import {
   sendDocumentByEmail,
   // Export batch
   exportDocumentsBatch,
-} from "../controllers/document";
+} from "../controllers/document-controller";
+import { createHonoApp } from "@/lib/hono-app";
 
-const router = express.Router();
+const documentRoutes = createHonoApp();
 
 // ============================================================================
 // DOCUMENTS - List & Search
@@ -111,7 +111,7 @@ const router = express.Router();
  * @access  Private (document:read)
  * @query   page, limit, search, documentType, status, customerId, supplierId, dateFrom, dateTo, sortBy, sortOrder
  */
-router.get(
+documentRoutes.get(
   "/",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -124,7 +124,7 @@ router.get(
  * @desc    Statistiche documenti
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/statistics",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -136,7 +136,7 @@ router.get(
  * @desc    Lista preventivi
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/quotes",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -148,7 +148,7 @@ router.get(
  * @desc    Lista ordini
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/orders",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -160,7 +160,7 @@ router.get(
  * @desc    Lista fatture
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/invoices",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -172,7 +172,7 @@ router.get(
  * @desc    Lista DDT
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/delivery-notes",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -184,7 +184,7 @@ router.get(
  * @desc    Documenti per cliente
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/customer/:customerId",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -197,7 +197,7 @@ router.get(
  * @desc    Documenti per fornitore
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/supplier/:supplierId",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -210,7 +210,7 @@ router.get(
  * @desc    Ottieni dettagli documento
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/:id",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -228,7 +228,7 @@ router.get(
  * @desc    Crea un nuovo documento
  * @access  Private (document:create)
  */
-router.post(
+documentRoutes.post(
   "/",
   authenticateToken,
   authorize(["document:create", "document:manage"]),
@@ -241,7 +241,7 @@ router.post(
  * @desc    Aggiorna un documento
  * @access  Private (document:update)
  */
-router.put(
+documentRoutes.put(
   "/:id",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -255,7 +255,7 @@ router.put(
  * @desc    Elimina un documento
  * @access  Private (document:delete)
  */
-router.delete(
+documentRoutes.delete(
   "/:id",
   authenticateToken,
   authorize(["document:delete", "document:manage"]),
@@ -272,7 +272,7 @@ router.delete(
  * @desc    Aggiorna status documento
  * @access  Private (document:update)
  */
-router.patch(
+documentRoutes.patch(
   "/:id/status",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -286,7 +286,7 @@ router.patch(
  * @desc    Invia documento al cliente
  * @access  Private (document:update)
  */
-router.post(
+documentRoutes.post(
   "/:id/send",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -299,7 +299,7 @@ router.post(
  * @desc    Approva documento
  * @access  Private (document:update)
  */
-router.post(
+documentRoutes.post(
   "/:id/approve",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -312,7 +312,7 @@ router.post(
  * @desc    Rifiuta documento
  * @access  Private (document:update)
  */
-router.post(
+documentRoutes.post(
   "/:id/reject",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -325,7 +325,7 @@ router.post(
  * @desc    Annulla documento
  * @access  Private (document:update)
  */
-router.post(
+documentRoutes.post(
   "/:id/void",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -342,7 +342,7 @@ router.post(
  * @desc    Lista righe documento
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/:id/lines",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -355,7 +355,7 @@ router.get(
  * @desc    Aggiungi riga a documento
  * @access  Private (document:update)
  */
-router.post(
+documentRoutes.post(
   "/:id/lines",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -369,7 +369,7 @@ router.post(
  * @desc    Aggiorna riga documento
  * @access  Private (document:update)
  */
-router.put(
+documentRoutes.put(
   "/:id/lines/:lineId",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -384,7 +384,7 @@ router.put(
  * @desc    Elimina riga documento
  * @access  Private (document:update)
  */
-router.delete(
+documentRoutes.delete(
   "/:id/lines/:lineId",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -402,7 +402,7 @@ router.delete(
  * @desc    Converti documento (es. Quote → Order)
  * @access  Private (document:create)
  */
-router.post(
+documentRoutes.post(
   "/:id/convert",
   authenticateToken,
   authorize(["document:create", "document:manage"]),
@@ -416,7 +416,7 @@ router.post(
  * @desc    Duplica documento
  * @access  Private (document:create)
  */
-router.post(
+documentRoutes.post(
   "/:id/duplicate",
   authenticateToken,
   authorize(["document:create", "document:manage"]),
@@ -434,7 +434,7 @@ router.post(
  * @desc    Ricalcola totali documento
  * @access  Private (document:update)
  */
-router.post(
+documentRoutes.post(
   "/:id/recalculate",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -452,7 +452,7 @@ router.post(
  * @desc    Lista rate pagamento documento
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/:id/installments",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -466,7 +466,7 @@ router.get(
  * @desc    Aggiorna rata pagamento
  * @access  Private (document:update)
  */
-router.put(
+documentRoutes.put(
   "/:id/installments/:installmentId",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -485,7 +485,7 @@ router.put(
  * @desc    Esporta documento in PDF
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/:id/export/pdf",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -498,7 +498,7 @@ router.get(
  * @desc    Esporta documento in Excel
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/:id/export/excel",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -511,7 +511,7 @@ router.get(
  * @desc    Stampa documento
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/:id/print",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -528,7 +528,7 @@ router.get(
  * @desc    Crea template da documento esistente
  * @access  Private (document:manage)
  */
-router.post(
+documentRoutes.post(
   "/:id/create-template",
   authenticateToken,
   authorize(["document:manage"]),
@@ -541,7 +541,7 @@ router.post(
  * @desc    Crea documento da template
  * @access  Private (document:create)
  */
-router.post(
+documentRoutes.post(
   "/from-template",
   authenticateToken,
   authorize(["document:create", "document:manage"]),
@@ -557,7 +557,7 @@ router.post(
  * @desc    Aggiorna multipli documenti
  * @access  Private (document:update)
  */
-router.post(
+documentRoutes.post(
   "/bulk-update",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -569,7 +569,7 @@ router.post(
  * @desc    Cambia status multipli documenti
  * @access  Private (document:update)
  */
-router.post(
+documentRoutes.post(
   "/bulk-change-status",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -582,7 +582,7 @@ router.post(
  * @desc    Invia multipli documenti
  * @access  Private (document:update)
  */
-router.post(
+documentRoutes.post(
   "/bulk-send",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -600,7 +600,7 @@ router.post(
  * @access  Private (document:read)
  * @query   days (default: 7)
  */
-router.get(
+documentRoutes.get(
   "/expiring",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -612,7 +612,7 @@ router.get(
  * @desc    Fatture scadute non pagate
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/overdue",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -629,7 +629,7 @@ router.get(
  * @access  Private (report:read)
  * @query   dateFrom, dateTo, groupBy (day/month/year)
  */
-router.get(
+documentRoutes.get(
   "/reports/sales",
   authenticateToken,
   authorize(["report:read", "document:manage"]),
@@ -642,7 +642,7 @@ router.get(
  * @access  Private (report:read)
  * @query   limit, dateFrom, dateTo
  */
-router.get(
+documentRoutes.get(
   "/reports/top-customers",
   authenticateToken,
   authorize(["report:read", "document:manage"]),
@@ -655,7 +655,7 @@ router.get(
  * @access  Private (report:read)
  * @query   limit, dateFrom, dateTo
  */
-router.get(
+documentRoutes.get(
   "/reports/top-products",
   authenticateToken,
   authorize(["report:read", "document:manage"]),
@@ -672,7 +672,7 @@ router.get(
  * @desc    Genera movimenti magazzino da documento
  * @access  Private (warehouse:update)
  */
-router.post(
+documentRoutes.post(
   "/:id/generate-stock-movements",
   authenticateToken,
   authorize(["warehouse:update", "document:manage"]),
@@ -689,7 +689,7 @@ router.post(
  * @desc    Verifica validità fiscale documento
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/:id/validate-fiscal",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -706,7 +706,7 @@ router.get(
  * @desc    Carica allegato documento
  * @access  Private (document:update)
  */
-router.post(
+documentRoutes.post(
   "/:id/attachments",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -720,7 +720,7 @@ router.post(
  * @desc    Lista allegati documento
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/:id/attachments",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -733,7 +733,7 @@ router.get(
  * @desc    Elimina allegato
  * @access  Private (document:update)
  */
-router.delete(
+documentRoutes.delete(
   "/:id/attachments/:attachmentId",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -751,7 +751,7 @@ router.delete(
  * @desc    Storia modifiche documento
  * @access  Private (document:read)
  */
-router.get(
+documentRoutes.get(
   "/:id/history",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -768,7 +768,7 @@ router.get(
  * @desc    Invia documento via email
  * @access  Private (document:update)
  */
-router.post(
+documentRoutes.post(
   "/:id/send-email",
   authenticateToken,
   authorize(["document:update", "document:manage"]),
@@ -785,7 +785,7 @@ router.post(
  * @desc    Export multipli documenti (PDF/Excel)
  * @access  Private (document:read)
  */
-router.post(
+documentRoutes.post(
   "/export-batch",
   authenticateToken,
   authorize(["document:read", "document:manage"]),
@@ -824,4 +824,4 @@ router.post(
 // EXPORT
 // ============================================================================
 
-export default router;
+export default documentRoutes;

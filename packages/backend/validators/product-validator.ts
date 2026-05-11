@@ -19,7 +19,7 @@ import {
   updateProductTranslationSchema,
   productIdLanguageIdSchema,
 } from "@mini-erp/shared";
-import { validateBody, validateParams } from "../middleware/validation";
+import { validateBody, validateParams } from "../middleware/validation-middleware";
 
 // ============================================================================
 // VALIDATION MIDDLEWARE
@@ -28,18 +28,12 @@ import { validateBody, validateParams } from "../middleware/validation";
 /**
  * Middleware per la creazione di un prodotto
  */
-export const validateCreateProduct = validateBody(
-  createProductSchema,
-  "Product creation",
-);
+export const validateCreateProduct = validateBody(createProductSchema, "Product creation");
 
 /**
  * Middleware per l'aggiornamento di un prodotto
  */
-export const validateUpdateProduct = validateBody(
-  updateProductSchema,
-  "Product update",
-);
+export const validateUpdateProduct = validateBody(updateProductSchema, "Product update");
 
 /**
  * Middleware per la creazione di una variante
@@ -60,10 +54,7 @@ export const validateUpdateVariant = validateBody(
 /**
  * Middleware per la validazione dell'ID prodotto (params)
  */
-export const validateProductId = validateParams(
-  productIdSchema,
-  "Product ID validation",
-);
+export const validateProductId = validateParams(productIdSchema, "Product ID validation");
 
 /**
  * Middleware per la validazione dell'ID prodotto come productId (params)
@@ -102,16 +93,13 @@ export const validateUpdateTranslation = validateBody(
  */
 export const validateProductIdLanguageId = validateParams(
   productIdLanguageIdSchema,
-  "Product ID, Language ID"
-)
+  "Product ID, Language ID",
+);
 
 /**
  * Middleware per la creazione di un'immagine
  */
-export const validateCreateImage = validateBody(
-  createProductImageSchema,
-  "Product image creation",
-);
+export const validateCreateImage = validateBody(createProductImageSchema, "Product image creation");
 
 /**
  * Middleware per la validazione dell'ID immagine (params)
@@ -124,10 +112,7 @@ export const validateProductImageId = validateParams(
 /**
  * Middleware per l'aggiornamento di un'immagine
  */
-export const validateUpdateImage = validateBody(
-  updateProductImageSchema,
-  "Product image update",
-);
+export const validateUpdateImage = validateBody(updateProductImageSchema, "Product image update");
 
 /**
  * Middleware per l'associazione Product-Category
@@ -164,15 +149,9 @@ export const validateUpdateManufacturer = validateBody(
 /**
  * Middleware per la validazione dell'ID di un manufacturer (params)
  */
-export const validateManufacturerId = validateParams(
-  manufacturerIdSchema,
-  "Product ID validation",
-);
+export const validateManufacturerId = validateParams(manufacturerIdSchema, "Product ID validation");
 
 /**
  * Middleware per i filtri e paginazione ricerca prodotti
  */
-export const validateProductQuery = validateBody(
-  productQuerySchema,
-  "Product Query"
-)
+export const validateProductQuery = validateBody(productQuerySchema, "Product Query");

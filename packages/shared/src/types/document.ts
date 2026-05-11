@@ -50,17 +50,19 @@ import {
   salesReportSchema,
   agingReportSchema,
   topProductsReportSchema,
+  quantityDeliveredSchema,
+  supplierIdParamSchema,
+  documentAttachmentIdParamSchema,
 } from "../validators/document";
 import { DOCUMENT_LINE_TYPES, DOCUMENT_STATUSES, DOCUMENT_TYPES } from "../constants";
+import { customerIdParamSchema } from "../validators";
 
 // ============================================================================
 // ENUM TYPES
 // ============================================================================
 
 export type DocumentType = keyof typeof DOCUMENT_TYPES;
-export type DocumentStatusCategory = z.infer<
-  typeof documentStatusCategorySchema
->;
+export type DocumentStatusCategory = z.infer<typeof documentStatusCategorySchema>;
 export type DocumentStatus = keyof typeof DOCUMENT_STATUSES;
 export type DocumentRelationType = z.infer<typeof documentRelationTypeSchema>;
 export type DocumentLineType = (typeof DOCUMENT_LINE_TYPES)[keyof typeof DOCUMENT_LINE_TYPES];
@@ -279,6 +281,7 @@ export type DocumentRelation = {
 
 export type CreateDocumentLineInput = z.infer<typeof createDocumentLineSchema>;
 export type UpdateDocumentLineInput = z.infer<typeof updateDocumentLineSchema>;
+export type UpdateLineDeliveredQuantity = z.infer<typeof quantityDeliveredSchema>;
 
 export type CreateInstallmentInput = z.infer<typeof createInstallmentSchema>;
 export type UpdateInstallmentInput = z.infer<typeof updateInstallmentSchema>;
@@ -286,25 +289,17 @@ export type PayInstallmentInput = z.infer<typeof payInstallmentSchema>;
 
 export type CreateDocumentInput = z.infer<typeof createDocumentSchema>;
 export type UpdateDocumentInput = z.infer<typeof updateDocumentSchema>;
-export type UpdateDocumentStatusInput = z.infer<
-  typeof updateDocumentStatusSchema
->;
+export type UpdateDocumentStatusInput = z.infer<typeof updateDocumentStatusSchema>;
 export type ApproveDocumentInput = z.infer<typeof approveDocumentSchema>;
 export type RejectDocumentInput = z.infer<typeof rejectDocumentSchema>;
 export type SendDocumentInput = z.infer<typeof sendDocumentSchema>;
 export type ConvertDocumentInput = z.infer<typeof convertDocumentSchema>;
 export type CloneDocumentInput = z.infer<typeof cloneDocumentSchema>;
 
-export type CreateDocumentRelationInput = z.infer<
-  typeof createDocumentRelationSchema
->;
+export type CreateDocumentRelationInput = z.infer<typeof createDocumentRelationSchema>;
 
-export type BulkUpdateDocumentsStatusInput = z.infer<
-  typeof bulkUpdateDocumentsStatusSchema
->;
-export type BulkDeleteDocumentsInput = z.infer<
-  typeof bulkDeleteDocumentsSchema
->;
+export type BulkUpdateDocumentsStatusInput = z.infer<typeof bulkUpdateDocumentsStatusSchema>;
+export type BulkDeleteDocumentsInput = z.infer<typeof bulkDeleteDocumentsSchema>;
 export type BulkSendDocumentsInput = z.infer<typeof bulkSendDocumentsSchema>;
 
 // ============================================================================
@@ -324,8 +319,12 @@ export type TopProductsReportInput = z.infer<typeof topProductsReportSchema>;
 // ============================================================================
 
 export type DocumentIdParam = z.infer<typeof documentIdParamSchema>;
-export type DocumentLineIdParam = z.infer<typeof documentLineIdParamSchema>;
-export type InstallmentIdParam = z.infer<typeof installmentIdParamSchema>;
+export type DocumentLineIdParam = DocumentIdParam & z.infer<typeof documentLineIdParamSchema>;
+export type DocumentIdLineIdParams = DocumentIdParam & DocumentLineIdParam;
+export type InstallmentIdParam = DocumentIdParam & z.infer<typeof installmentIdParamSchema>;
+export type DocumentSupplierIdParam = z.infer<typeof supplierIdParamSchema>;
+export type DocumentCustomerIdParam = z.infer<typeof customerIdParamSchema>;
+export type DocumentAttachmentIdParam = DocumentIdParam & z.infer<typeof documentAttachmentIdParamSchema>;
 
 // ============================================================================
 // UTILITY TYPES

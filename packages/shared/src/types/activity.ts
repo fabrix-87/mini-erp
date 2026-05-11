@@ -12,6 +12,7 @@ import {
   activityPrioritySchema,
   activityQuerySchema,
   activityStatsSchema,
+  activityTemplateQuerySchema,
   bulkActivityActionSchema,
   completeActivitySchema,
   createActivityFromTemplateSchema,
@@ -54,9 +55,7 @@ export type Activity = z.infer<typeof createActivitySchema> & {
 /**
  * Type ActivityPartecipant
  */
-export type ActivityParticipant = z.infer<
-  typeof createActivityParticipantSchema
-> & {
+export type ActivityParticipant = z.infer<typeof createActivityParticipantSchema> & {
   id: number;
 
   // Relazioni
@@ -112,25 +111,15 @@ export type CreateActivityInput = z.infer<typeof createActivitySchema>;
 export type UpdateActivityInput = z.infer<typeof updateActivitySchema>;
 export type ActivityQueryInput = z.infer<typeof activityQuerySchema>;
 export type ActivityStatsInput = z.infer<typeof activityStatsSchema>;
-export type UpdateActivityStatusInput = z.infer<
-  typeof updateActivityStatusSchema
->;
+export type UpdateActivityStatusInput = z.infer<typeof updateActivityStatusSchema>;
 export type CompleteActivityInput = z.infer<typeof completeActivitySchema>;
-export type CreateActivityParticipantInput = z.infer<
-  typeof createActivityParticipantSchema
->;
-export type UpdateActivityParticipantInput = z.infer<
-  typeof updateActivityParticipantSchema
->;
-export type CreateActivityTemplateInput = z.infer<
-  typeof createActivityTemplateSchema
->;
-export type UpdateActivityTemplateInput = z.infer<
-  typeof updateActivityTemplateSchema
->;
-export type CreateActivityFromTemplateInput = z.infer<
-  typeof createActivityFromTemplateSchema
->;
+export type CreateActivityParticipantInput = z.infer<typeof createActivityParticipantSchema>;
+export type UpdateActivityParticipantInput = z.infer<typeof updateActivityParticipantSchema>;
+export type CreateActivityTemplateInput = z.infer<typeof createActivityTemplateSchema>;
+export type UpdateActivityTemplateInput = z.infer<typeof updateActivityTemplateSchema>;
+export type CreateActivityFromTemplateInput = z.infer<typeof createActivityFromTemplateSchema>;
 export type BulkActivityActionInput = z.infer<typeof bulkActivityActionSchema>;
 export type ActivityIdParam = z.infer<typeof activityIdSchema>;
+export type ActivityTemplateIdParam = z.infer<typeof activityIdSchema>;
 export type ActivityIdAsActivityIdParam = z.infer<typeof activityIdAsActivityIdSchema>;
+export type ActivityTemplateQueryInput = z.infer<typeof activityTemplateQuerySchema>;

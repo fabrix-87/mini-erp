@@ -1,8 +1,5 @@
-import { Response } from "express";
 import { Prisma } from "../../generated/prisma/client";
 import { prisma } from "../../config/prisma-config";
-import asyncHandler from "../../middleware/async-handler-middleware";
-import { AuthenticatedValidatedRequest } from "../../types/validate-types";
 import {
   ActivityIdParam,
   ActivityQueryInput,
@@ -13,15 +10,21 @@ import {
   UpdateActivityStatusInput,
 } from "@mini-erp/shared/types";
 import {
-  formatPaginatedResponse,
   sendCreated,
   sendDeleted,
-  sendError,
+  sendNotFound,
   sendPaginatedResponse,
   sendSuccess,
 } from "@/utils/response-utils";
-import { clean, ifDefined, parseOptionalDate, toDate } from "@/helpers/prisma-helper";
+import { clean, parseOptionalDate } from "@/helpers/prisma-helper";
 import { completeActivity as completeActivityService } from "../../services/activity/activity-service";
+import { Context } from "hono";
+import { AppBindings } from "@/lib/hono-app";
+import {
+  getValidatedBody,
+  getValidatedParams,
+  getValidatedQuery,
+} from "@/helpers/validated-context";
 
 // ============================================================================
 // ACTIVITY CONTROLLER
@@ -32,237 +35,232 @@ import { completeActivity as completeActivityService } from "../../services/acti
  * @route   GET /api/activities
  * @access  Private (activity:read)
  */
-export const getAllActivities = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const {
-      page = 1,
-      limit = 20,
-      search,
-      type,
-      status,
-      priority,
-      outcome,
-      companyId,
-      customerId,
-      opportunityId,
-      assignedUserId,
-      startDate,
-      endDate,
-      overdue,
-      hasFollowUpActivity,
-      myActivities,
-      sortBy = "scheduledStart",
-      sortOrder = "asc",
-    } = req.validatedQuery as ActivityQueryInput;
+export const getAllActivities = async (c: Context<AppBindings>) => {
+  const {
+    page = 1,
+    limit = 20,
+    search,
+    type,
+    status,
+    priority,
+    outcome,
+    companyId,
+    customerId,
+    opportunityId,
+    assignedUserId,
+    startDate,
+    endDate,
+    overdue,
+    hasFollowUpActivity,
+    myActivities,
+    sortBy = "scheduledStart",
+    sortOrder = "asc",
+  } = getValidatedQuery<ActivityQueryInput>(c);
 
-    const skip = (page - 1) * limit;
-    const where: Prisma.ActivityWhereInput = {};
+  const skip = (page - 1) * limit;
+  const where: Prisma.ActivityWhereInput = {};
 
-    // Filtro ricerca
-    if (search) {
-      where.OR = [
-        { subject: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } },
-      ];
-    }
+  // Filtro ricerca
+  if (search) {
+    where.OR = [
+      { subject: { contains: search, mode: "insensitive" } },
+      { description: { contains: search, mode: "insensitive" } },
+    ];
+  }
 
-    // Filtri enum
-    if (type) where.type = type;
-    if (status) where.status = status;
-    if (priority) where.priority = priority;
-    if (outcome) where.outcome = outcome;
+  // Filtri enum
+  if (type) where.type = type;
+  if (status) where.status = status;
+  if (priority) where.priority = priority;
+  if (outcome) where.outcome = outcome;
 
-    // Filtri relazioni
-    if (companyId) where.companyId = companyId;
-    if (customerId) where.customerId = customerId;
-    if (opportunityId) where.opportunityId = opportunityId;
+  // Filtri relazioni
+  if (companyId) where.companyId = companyId;
+  if (customerId) where.customerId = customerId;
+  if (opportunityId) where.opportunityId = opportunityId;
 
-    // Filtro utente assegnato o "le mie attività"
-    if (myActivities) {
-      where.assignedUserId = req.user!.userId;
-    } else if (assignedUserId) {
-      where.assignedUserId = assignedUserId;
-    }
+  // Filtro utente assegnato o "le mie attività"
+  if (myActivities) {
+    where.assignedUserId = c.get("user")!.userId;
+  } else if (assignedUserId) {
+    where.assignedUserId = assignedUserId;
+  }
 
-    // Filtri data
-    if (startDate || endDate) {
-      where.scheduledStart = {};
-      if (startDate) where.scheduledStart.gte = new Date(startDate);
-      if (endDate) where.scheduledStart.lte = new Date(endDate);
-    }
+  // Filtri data
+  if (startDate || endDate) {
+    where.scheduledStart = {};
+    if (startDate) where.scheduledStart.gte = new Date(startDate);
+    if (endDate) where.scheduledStart.lte = new Date(endDate);
+  }
 
-    // Filtro attività scadute
-    if (overdue) {
-      where.AND = [
-        { scheduledStart: { lt: new Date() } },
-        { status: { in: ["SCHEDULED", "IN_PROGRESS"] } },
-      ];
-    }
+  // Filtro attività scadute
+  if (overdue) {
+    where.AND = [
+      { scheduledStart: { lt: new Date() } },
+      { status: { in: ["SCHEDULED", "IN_PROGRESS"] } },
+    ];
+  }
 
-    // Filtro follow-up necessario
-    if (hasFollowUpActivity) {
-      where.followUpActivityId = { not: null };
-    }
+  // Filtro follow-up necessario
+  if (hasFollowUpActivity) {
+    where.followUpActivityId = { not: null };
+  }
 
-    const [activities, total] = await Promise.all([
-      prisma.activity.findMany({
-        where,
-        skip,
-        take: Number(limit),
-        orderBy: { [sortBy]: sortOrder },
-        include: {
-          company: {
-            select: {
-              id: true,
-              code: true,
-              companyName: true,
-            },
+  const [activities, total] = await Promise.all([
+    prisma.activity.findMany({
+      where,
+      skip,
+      take: Number(limit),
+      orderBy: { [sortBy]: sortOrder },
+      include: {
+        company: {
+          select: {
+            id: true,
+            code: true,
+            companyName: true,
           },
-          customer: {
-            select: {
-              id: true,
-              company: {
-                select: {
-                  companyName: true,
-                },
+        },
+        customer: {
+          select: {
+            id: true,
+            company: {
+              select: {
+                companyName: true,
               },
-            },
-          },
-          lead: {
-            select: {
-              code: true,
-              companyName: true,
-              contactFirstName: true,
-              contactLastName: true,
-              contactEmail: true,
-              contactPhone: true,
-              contactMobile: true,
-            },
-          },
-          contact: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true,
-            },
-          },
-          opportunity: {
-            select: {
-              id: true,
-              title: true,
-              status: true,
-            },
-          },
-          assignedUser: {
-            select: {
-              id: true,
-              username: true,
-              email: true,
-            },
-          },
-          createdBy: {
-            select: {
-              id: true,
-              username: true,
-            },
-          },
-          participants: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  username: true,
-                  email: true,
-                },
-              },
-              contact: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                },
-              },
-            },
-          },
-          followUpActivity: {
-            select: {
-              id: true,
-              subject: true,
-              scheduledStart: true,
             },
           },
         },
-      }),
-      prisma.activity.count({ where }),
-    ]);
+        lead: {
+          select: {
+            code: true,
+            companyName: true,
+            contactFirstName: true,
+            contactLastName: true,
+            contactEmail: true,
+            contactPhone: true,
+            contactMobile: true,
+          },
+        },
+        contact: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+        opportunity: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+          },
+        },
+        assignedUser: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+        createdBy: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        participants: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                email: true,
+              },
+            },
+            contact: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+        followUpActivity: {
+          select: {
+            id: true,
+            subject: true,
+            scheduledStart: true,
+          },
+        },
+      },
+    }),
+    prisma.activity.count({ where }),
+  ]);
 
-    sendPaginatedResponse(res, activities, total, page, limit);
-  },
-);
+  return sendPaginatedResponse(c, activities, total, page, limit);
+};
 
 /**
  * @desc    Get Activity by ID
  * @route   GET /api/activities/:id
  * @access  Private (activity:read)
  */
-export const getActivityById = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as ActivityIdParam;
+export const getActivityById = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityIdParam>(c);
 
-    const activity = await prisma.activity.findUnique({
-      where: { id: Number(id) },
-      include: {
-        company: { include: { country: true } },
-        customer: { include: { company: { include: { country: true } } } },
-        lead: true,
-        contact: true,
-        opportunity: true,
-        assignedUser: {
-          select: { id: true, username: true, email: true, details: true },
-        },
-        createdBy: {
-          select: { id: true, username: true, email: true },
-        },
-        participants: {
-          include: {
-            user: {
-              select: { id: true, username: true, email: true, details: true },
-            },
-            contact: true,
+  const activity = await prisma.activity.findUnique({
+    where: { id: Number(id) },
+    include: {
+      company: { include: { country: true } },
+      customer: { include: { company: { include: { country: true } } } },
+      lead: true,
+      contact: true,
+      opportunity: true,
+      assignedUser: {
+        select: { id: true, username: true, email: true, details: true },
+      },
+      createdBy: {
+        select: { id: true, username: true, email: true },
+      },
+      participants: {
+        include: {
+          user: {
+            select: { id: true, username: true, email: true, details: true },
           },
-        },
-        followUpActivity: true,
-        followedUpBy: {
-          select: {
-            id: true,
-            subject: true,
-            type: true,
-            status: true,
-            scheduledStart: true,
-          },
+          contact: true,
         },
       },
-    });
+      followUpActivity: true,
+      followedUpBy: {
+        select: {
+          id: true,
+          subject: true,
+          type: true,
+          status: true,
+          scheduledStart: true,
+        },
+      },
+    },
+  });
 
-    if (!activity) {
-      sendError(res, { statusCode: 404, message: "Activity non trovata" });
-      return;
-    }
+  if (!activity) {
+    return sendNotFound(c, "Activity non trovata");
+  }
 
-    sendSuccess(res, activity);
-  },
-);
+  return sendSuccess(c, activity);
+};
 
 /**
  * @desc    Crea nuova Activity
  * @route   POST /api/activities
  * @access  Private (activity:create)
  */
-export const createActivity = asyncHandler<AuthenticatedValidatedRequest>(async (req, res) => {
-  const data = req.validatedBody as CreateActivityInput;
-  const userId = req.user!.userId;
+export const createActivity = async (c: Context<AppBindings>) => {
+  const data = getValidatedBody<CreateActivityInput>(c);
+  const userId = c.get("user")!.userId;
 
   // Validazioni relazioni
   if (data.companyId) {
@@ -270,8 +268,7 @@ export const createActivity = asyncHandler<AuthenticatedValidatedRequest>(async 
       where: { id: data.companyId },
     });
     if (!company) {
-      sendError(res, { statusCode: 404, message: "Company non trovata" });
-      return;
+      return sendNotFound(c, "Company non trovata");
     }
   }
 
@@ -280,8 +277,7 @@ export const createActivity = asyncHandler<AuthenticatedValidatedRequest>(async 
       where: { id: data.customerId },
     });
     if (!customer) {
-      sendError(res, { statusCode: 404, message: "Customer non trovato" });
-      return;
+      return sendNotFound(c, "Customer non trovato");
     }
   }
 
@@ -290,16 +286,14 @@ export const createActivity = asyncHandler<AuthenticatedValidatedRequest>(async 
       where: { id: data.opportunityId },
     });
     if (!opportunity) {
-      sendError(res, { statusCode: 404, message: "Opportunity non trovata" });
-      return;
+      return sendNotFound(c, "Opportunity non trovata");
     }
   }
 
   if (data.leadId) {
     const lead = await prisma.lead.findUnique({ where: { id: data.leadId } });
     if (!lead) {
-      sendError(res, { statusCode: 404, message: "Lead non trovata" });
-      return;
+      return sendNotFound(c, "Lead non trovata");
     }
   }
 
@@ -308,8 +302,7 @@ export const createActivity = asyncHandler<AuthenticatedValidatedRequest>(async 
       where: { id: data.contactId },
     });
     if (!contact) {
-      sendError(res, { statusCode: 404, message: "Contact non trovato" });
-      return;
+      return sendNotFound(c, "Contact non trovato");
     }
   }
 
@@ -325,203 +318,188 @@ export const createActivity = asyncHandler<AuthenticatedValidatedRequest>(async 
     },
   });
 
-  sendCreated(res, activity, "Activity creata con successo");
-});
+  return sendCreated(c, activity, "Activity creata con successo");
+};
 
 /**
  * @desc    Update Activity
  * @route   PUT /api/activities/:id
  * @access  Private (activity:update)
  */
-export const updateActivity = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as ActivityIdParam;
-    const data = req.validatedBody as UpdateActivityInput;
+export const updateActivity = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityIdParam>(c);
+  const data = getValidatedBody<UpdateActivityInput>(c);
 
-    const existing = await prisma.activity.findUnique({
-      where: { id: Number(id) },
-    });
-    if (!existing) {
-      sendError(res, { statusCode: 404, message: "Activity non trovata" });
-      return;
-    }
+  const existing = await prisma.activity.findUnique({
+    where: { id: Number(id) },
+  });
+  if (!existing) {
+    return sendNotFound(c, "Activity non trovata");
+  }
 
-    const activity = await prisma.activity.update({
-      where: { id: Number(id) },
-      data,
-      include: {
-        company: true,
-        customer: true,
-        contact: true,
-        opportunity: true,
-        assignedUser: { select: { id: true, username: true, email: true } },
-        participants: true,
-      },
-    });
+  const activity = await prisma.activity.update({
+    where: { id: Number(id) },
+    data,
+    include: {
+      company: true,
+      customer: true,
+      contact: true,
+      opportunity: true,
+      assignedUser: { select: { id: true, username: true, email: true } },
+      participants: true,
+    },
+  });
 
-    sendSuccess(res, activity, { message: "Activity aggiornata con successo" });
-  },
-);
+  return sendSuccess(c, activity, { message: "Activity aggiornata con successo" });
+};
 
 /**
  * @desc    Update Activity status
  * @route   PATCH /api/activities/:id/status
  * @access  Private (activity:update)
  */
-export const updateActivityStatus = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as ActivityIdParam;
-    const { status, outcome, result, actualStart, actualEnd } =
-      req.validatedBody as UpdateActivityStatusInput;
+export const updateActivityStatus = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityIdParam>(c);
+  const { status, outcome, result, actualStart, actualEnd } =
+    getValidatedBody<UpdateActivityStatusInput>(c);
 
-    const activity = await prisma.activity.findUnique({
-      where: { id: Number(id) },
-    });
-    if (!activity) {
-      sendError(res, { statusCode: 404, message: "Activity non trovata" });
-      return;
-    }
+  const activity = await prisma.activity.findUnique({
+    where: { id: Number(id) },
+  });
+  if (!activity) {
+    return sendNotFound(c, "Activity non trovata");
+  }
 
-    const parsedStart = parseOptionalDate(actualStart);
-    const parsedEnd = parseOptionalDate(actualEnd);
+  const parsedStart = parseOptionalDate(actualStart);
+  const parsedEnd = parseOptionalDate(actualEnd);
 
-    /**
-     * Auto timestamp transizioni di stato
-     */
-    const shouldAutoStart =
-      status === "IN_PROGRESS" && !activity.actualStart && parsedStart === undefined;
+  /**
+   * Auto timestamp transizioni di stato
+   */
+  const shouldAutoStart =
+    status === "IN_PROGRESS" && !activity.actualStart && parsedStart === undefined;
 
-    const shouldAutoEnd = status === "COMPLETED" && !activity.actualEnd && parsedEnd === undefined;
+  const shouldAutoEnd = status === "COMPLETED" && !activity.actualEnd && parsedEnd === undefined;
 
-    const updateData = clean({
-      status,
-      outcome,
-      result,
-      actualStart:
-        parsedStart !== undefined ? parsedStart : shouldAutoStart ? new Date() : undefined,
-      actualEnd: parsedEnd !== undefined ? parsedEnd : shouldAutoEnd ? new Date() : undefined,
-    }) satisfies Prisma.ActivityUpdateInput;
+  const updateData = clean({
+    status,
+    outcome,
+    result,
+    actualStart: parsedStart !== undefined ? parsedStart : shouldAutoStart ? new Date() : undefined,
+    actualEnd: parsedEnd !== undefined ? parsedEnd : shouldAutoEnd ? new Date() : undefined,
+  }) satisfies Prisma.ActivityUpdateInput;
 
-    const updated = await prisma.activity.update({
-      where: { id: Number(id) },
-      data: updateData,
-      include: {
-        company: true,
-        assignedUser: { select: { id: true, username: true, email: true } },
-      },
-    });
+  const updated = await prisma.activity.update({
+    where: { id: Number(id) },
+    data: updateData,
+    include: {
+      company: true,
+      assignedUser: { select: { id: true, username: true, email: true } },
+    },
+  });
 
-    sendSuccess(res, updated, { message: "Status aggiornato con successo" });
-  },
-);
+  return sendSuccess(c, updated, { message: "Status aggiornato con successo" });
+};
 
 /**
  * @desc    Complete Activity with optional follow-up creation
  * @route   PATCH /api/activities/:id/complete
  * @access  Private (activity:update)
  */
-export const completeActivity = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as ActivityIdParam;
-    const input = req.validatedBody as CompleteActivityInput;
-    const userId = req.user!.userId;
+export const completeActivity = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityIdParam>(c);
+  const input = getValidatedBody<CompleteActivityInput>(c);
+  const userId = c.get("user")!.userId;
 
-    const updated = await completeActivityService(Number(id), input, userId);
+  const updated = await completeActivityService(Number(id), input, userId);
 
-    if (!updated) {
-      sendError(res, { statusCode: 404, message: "Activity non trovata" });
-      return;
-    }
+  if (!updated) {
+    return sendNotFound(c, "Activity non trovata");
+  }
 
-    sendSuccess(res, updated, { message: "Activity completata con successo" });
-  },
-);
+  return sendSuccess(c, updated, { message: "Activity completata con successo" });
+};
 
 /**
  * @desc    Delete Activity
  * @route   DELETE /api/activities/:id
  * @access  Private (activity:delete)
  */
-export const deleteActivity = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { id } = req.validatedParams as ActivityIdParam;
+export const deleteActivity = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<ActivityIdParam>(c);
 
-    const activity = await prisma.activity.findUnique({
-      where: { id: Number(id) },
-    });
-    if (!activity) {
-      sendError(res, { statusCode: 404, message: "Activity non trovata" });
-      return;
-    }
+  const activity = await prisma.activity.findUnique({
+    where: { id: Number(id) },
+  });
+  if (!activity) {
+    return sendNotFound(c, "Activity non trovata");
+  }
 
-    await prisma.activity.delete({ where: { id: Number(id) } });
+  await prisma.activity.delete({ where: { id: Number(id) } });
 
-    sendDeleted(res, "Activity eliminata con successo");
-  },
-);
+  return sendDeleted(c, "Activity eliminata con successo");
+};
 
 /**
  * @desc    Get Activity statistics
  * @route   GET /api/activities/stats
  * @access  Private (activity:read)
  */
-export const getActivityStats = asyncHandler(
-  async (req: AuthenticatedValidatedRequest, res: Response): Promise<void> => {
-    const { startDate, endDate, userId } = req.validatedQuery as ActivityStatsInput;
-    const currentUserId = req.user!.userId;
+export const getActivityStats = async (c: Context<AppBindings>) => {
+  const { startDate, endDate, userId } = getValidatedQuery<ActivityStatsInput>(c);
+  const currentUserId = c.get("user")!.userId;
 
-    const where: Prisma.ActivityWhereInput = {
-      assignedUserId: userId ? Number(userId) : currentUserId,
-    };
+  const where: Prisma.ActivityWhereInput = {
+    assignedUserId: userId ? Number(userId) : currentUserId,
+  };
 
-    if (startDate || endDate) {
-      where.scheduledStart = {};
-      if (startDate) where.scheduledStart.gte = new Date(startDate);
-      if (endDate) where.scheduledStart.lte = new Date(endDate);
-    }
+  if (startDate || endDate) {
+    where.scheduledStart = {};
+    if (startDate) where.scheduledStart.gte = new Date(startDate);
+    if (endDate) where.scheduledStart.lte = new Date(endDate);
+  }
 
-    const [byType, byStatus, byPriority, byOutcome, overdueCount, todayCount, followUpCount] =
-      await Promise.all([
-        prisma.activity.groupBy({ by: ["type"], where, _count: true }),
-        prisma.activity.groupBy({ by: ["status"], where, _count: true }),
-        prisma.activity.groupBy({ by: ["priority"], where, _count: true }),
-        prisma.activity.groupBy({
-          by: ["outcome"],
-          where: { ...where, outcome: { not: null } },
-          _count: true,
-        }),
-        prisma.activity.count({
-          where: {
-            assignedUserId: where.assignedUserId,
-            scheduledStart: { lt: new Date() },
-            status: { in: ["SCHEDULED", "IN_PROGRESS"] },
+  const [byType, byStatus, byPriority, byOutcome, overdueCount, todayCount, followUpCount] =
+    await Promise.all([
+      prisma.activity.groupBy({ by: ["type"], where, _count: true }),
+      prisma.activity.groupBy({ by: ["status"], where, _count: true }),
+      prisma.activity.groupBy({ by: ["priority"], where, _count: true }),
+      prisma.activity.groupBy({
+        by: ["outcome"],
+        where: { ...where, outcome: { not: null } },
+        _count: true,
+      }),
+      prisma.activity.count({
+        where: {
+          assignedUserId: where.assignedUserId,
+          scheduledStart: { lt: new Date() },
+          status: { in: ["SCHEDULED", "IN_PROGRESS"] },
+        },
+      }),
+      prisma.activity.count({
+        where: {
+          assignedUserId: where.assignedUserId,
+          scheduledStart: {
+            gte: new Date(new Date().setHours(0, 0, 0, 0)),
+            lt: new Date(new Date().setHours(24, 0, 0, 0)),
           },
-        }),
-        prisma.activity.count({
-          where: {
-            assignedUserId: where.assignedUserId,
-            scheduledStart: {
-              gte: new Date(new Date().setHours(0, 0, 0, 0)),
-              lt: new Date(new Date().setHours(24, 0, 0, 0)),
-            },
-          },
-        }),
-        prisma.activity.count({
-          where: {
-            assignedUserId: where.assignedUserId,
-            followUpActivityId: { not: null },
-          },
-        }),
-      ]);
+        },
+      }),
+      prisma.activity.count({
+        where: {
+          assignedUserId: where.assignedUserId,
+          followUpActivityId: { not: null },
+        },
+      }),
+    ]);
 
-    sendSuccess(res, {
-      byType,
-      byStatus,
-      byPriority,
-      byOutcome,
-      overdue: overdueCount,
-      today: todayCount,
-      followUp: followUpCount,
-    });
-  },
-);
+  return sendSuccess(c, {
+    byType,
+    byStatus,
+    byPriority,
+    byOutcome,
+    overdue: overdueCount,
+    today: todayCount,
+    followUp: followUpCount,
+  });
+};

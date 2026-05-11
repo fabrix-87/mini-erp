@@ -1,5 +1,4 @@
-import express from 'express';
-import { authenticateToken, authorize } from '../middleware/auth';
+import { authenticateToken, authorize } from "../middleware/auth-middleware";
 import {
   validateCreateProduct,
   validateUpdateProduct,
@@ -20,13 +19,12 @@ import {
   validateProductIdLanguageId,
   validatProductCategoryId,
   validateProductIdAsProductId,
-} from '../validators/product';
+} from "../validators/product-validator";
 import {
   // Products
   getAllProducts,
   getProductById,
   createProduct,
-  createSimpleProduct,
   updateProduct,
   deleteProduct,
   // Variants
@@ -60,9 +58,10 @@ import {
   // Bulk operations
   bulkUpdateProducts,
   bulkDeleteProducts,
-} from '../controllers/product';
+} from "../controllers/product-controller";
+import { createHonoApp } from "@/lib/hono-app";
 
-const router = express.Router();
+const productRoutes = createHonoApp();
 
 // ============================================================================
 // PUBLIC ROUTES - Products
@@ -74,42 +73,42 @@ const router = express.Router();
  * @access  Public
  * @query   page, limit, search, active, categoryId, manufacturerId, minPrice, maxPrice, sortBy, sortOrder
  */
-router.get('/', validateProductQuery, getAllProducts);
+productRoutes.get("/", validateProductQuery, getAllProducts);
 
 /**
  * @route   GET /api/products/:id
  * @desc    Ottieni dettagli prodotto con varianti, traduzioni e immagini
  * @access  Public
  */
-router.get('/:id', validateProductId, getProductById);
+productRoutes.get("/:id", validateProductId, getProductById);
 
 /**
  * @route   GET /api/products/:id/variants
  * @desc    Lista varianti di un prodotto
  * @access  Public
  */
-router.get('/:id/variants', validateProductId, getProductVariants);
+productRoutes.get("/:id/variants", validateProductId, getProductVariants);
 
 /**
  * @route   GET /api/products/:id/images
  * @desc    Lista immagini di un prodotto
  * @access  Public
  */
-router.get('/:id/images', validateProductId, getProductImages);
+productRoutes.get("/:id/images", validateProductId, getProductImages);
 
 /**
  * @route   GET /api/products/:id/categories
  * @desc    Lista categorie di un prodotto
  * @access  Public
  */
-router.get('/:id/categories', validateProductId, getProductCategories);
+productRoutes.get("/:id/categories", validateProductId, getProductCategories);
 
 /**
  * @route   GET /api/products/:id/translations
  * @desc    Lista traduzioni di un prodotto
  * @access  Public
  */
-router.get('/:id/translations', validateProductId, getProductTranslations);
+productRoutes.get("/:id/translations", validateProductId, getProductTranslations);
 
 // ============================================================================
 // ADMIN ROUTES - Product Management
@@ -120,24 +119,12 @@ router.get('/:id/translations', validateProductId, getProductTranslations);
  * @desc    Crea un nuovo prodotto
  * @access  Private (Admin, Product Manager)
  */
-router.post(
-  '/',
+productRoutes.post(
+  "/",
   authenticateToken,
-  authorize(['product:create', 'product:manage']),
+  authorize(["product:create", "product:manage"]),
   validateCreateProduct,
-  createProduct
-);
-
-/**
- * @route   POST /api/products/simple
- * @desc    Crea un prodotto semplice (con variante default automatica)
- * @access  Private (Admin, Product Manager)
- */
-router.post(
-  '/simple',
-  authenticateToken,
-  authorize(['product:create', 'product:manage']),
-  createSimpleProduct
+  createProduct,
 );
 
 /**
@@ -145,13 +132,13 @@ router.post(
  * @desc    Aggiorna un prodotto
  * @access  Private (Admin, Product Manager)
  */
-router.put(
-  '/:id',
+productRoutes.put(
+  "/:id",
   authenticateToken,
-  authorize(['product:update', 'product:manage']),
+  authorize(["product:update", "product:manage"]),
   validateProductId,
   validateUpdateProduct,
-  updateProduct
+  updateProduct,
 );
 
 /**
@@ -159,12 +146,12 @@ router.put(
  * @desc    Elimina un prodotto
  * @access  Private (Admin)
  */
-router.delete(
-  '/:id',
+productRoutes.delete(
+  "/:id",
   authenticateToken,
-  authorize(['product:delete', 'product:manage']),
+  authorize(["product:delete", "product:manage"]),
   validateProductId,
-  deleteProduct
+  deleteProduct,
 );
 
 /**
@@ -172,11 +159,11 @@ router.delete(
  * @desc    Aggiorna multipli prodotti
  * @access  Private (Admin, Product Manager)
  */
-router.post(
-  '/bulk-update',
+productRoutes.post(
+  "/bulk-update",
   authenticateToken,
-  authorize(['product:update', 'product:manage']),
-  bulkUpdateProducts
+  authorize(["product:update", "product:manage"]),
+  bulkUpdateProducts,
 );
 
 /**
@@ -184,11 +171,11 @@ router.post(
  * @desc    Elimina multipli prodotti
  * @access  Private (Admin)
  */
-router.post(
-  '/bulk-delete',
+productRoutes.post(
+  "/bulk-delete",
   authenticateToken,
-  authorize(['product:delete', 'product:manage']),
-  bulkDeleteProducts
+  authorize(["product:delete", "product:manage"]),
+  bulkDeleteProducts,
 );
 
 // ============================================================================
@@ -200,23 +187,19 @@ router.post(
  * @desc    Ottieni dettagli variante
  * @access  Public
  */
-router.get(
-  '/:productId/variants/:id',
-  validateVariantId,
-  getVariantById
-);
+productRoutes.get("/:productId/variants/:id", validateVariantId, getVariantById);
 
 /**
  * @route   POST /api/products/:id/variants
  * @desc    Crea una nuova variante
  * @access  Private (Admin, Product Manager)
  */
-router.post(
-  '/:id/variants',
+productRoutes.post(
+  "/:id/variants",
   authenticateToken,
-  authorize(['product:create', 'product:manage']),
+  authorize(["product:create", "product:manage"]),
   validateCreateVariant,
-  createVariant
+  createVariant,
 );
 
 /**
@@ -224,13 +207,13 @@ router.post(
  * @desc    Aggiorna una variante
  * @access  Private (Admin, Product Manager)
  */
-router.put(
-  '/:productId/variants/:id',
+productRoutes.put(
+  "/:productId/variants/:id",
   authenticateToken,
-  authorize(['product:update', 'product:manage']),
+  authorize(["product:update", "product:manage"]),
   validateVariantId,
   validateUpdateVariant,
-  updateVariant
+  updateVariant,
 );
 
 /**
@@ -238,13 +221,13 @@ router.put(
  * @desc    Elimina una variante
  * @access  Private (Admin)
  */
-router.delete(
-  '/:productId/variants/:id',
+productRoutes.delete(
+  "/:productId/variants/:id",
   authenticateToken,
-  authorize(['product:delete', 'product:manage']),
+  authorize(["product:delete", "product:manage"]),
   validateProductIdAsProductId,
   validateVariantId,
-  deleteVariant
+  deleteVariant,
 );
 
 // ============================================================================
@@ -256,12 +239,12 @@ router.delete(
  * @desc    Crea una traduzione per un prodotto
  * @access  Private (Admin, Product Manager)
  */
-router.post(
-  '/:id/translations',
+productRoutes.post(
+  "/:id/translations",
   authenticateToken,
-  authorize(['product:create', 'product:manage']),
+  authorize(["product:create", "product:manage"]),
   validateCreateTranslation,
-  createProductTranslation
+  createProductTranslation,
 );
 
 /**
@@ -269,13 +252,13 @@ router.post(
  * @desc    Aggiorna una traduzione
  * @access  Private (Admin, Product Manager)
  */
-router.put(
-  '/:id/translations/:languageId',
+productRoutes.put(
+  "/:id/translations/:languageId",
   authenticateToken,
-  authorize(['product:update', 'product:manage']),
+  authorize(["product:update", "product:manage"]),
   validateProductIdLanguageId,
   validateUpdateTranslation,
-  updateProductTranslation
+  updateProductTranslation,
 );
 
 /**
@@ -283,12 +266,12 @@ router.put(
  * @desc    Elimina una traduzione
  * @access  Private (Admin, Product Manager)
  */
-router.delete(
-  '/:id/translations/:languageId',
+productRoutes.delete(
+  "/:id/translations/:languageId",
   authenticateToken,
-  authorize(['product:delete', 'product:manage']),
+  authorize(["product:delete", "product:manage"]),
   validateProductIdLanguageId,
-  deleteProductTranslation
+  deleteProductTranslation,
 );
 
 // ============================================================================
@@ -300,13 +283,13 @@ router.delete(
  * @desc    Aggiungi un'immagine al prodotto
  * @access  Private (Admin, Product Manager)
  */
-router.post(
-  '/:id/images',
+productRoutes.post(
+  "/:id/images",
   authenticateToken,
-  authorize(['product:create', 'product:manage']),
+  authorize(["product:create", "product:manage"]),
   validateProductId,
   validateCreateImage,
-  createImage
+  createImage,
 );
 
 /**
@@ -314,13 +297,13 @@ router.post(
  * @desc    Aggiorna un'immagine
  * @access  Private (Admin, Product Manager)
  */
-router.put(
-  '/:productId/images/:id',
+productRoutes.put(
+  "/:productId/images/:id",
   authenticateToken,
-  authorize(['product:update', 'product:manage']),
+  authorize(["product:update", "product:manage"]),
   validateProductImageId,
   validateUpdateImage,
-  updateImage
+  updateImage,
 );
 
 /**
@@ -328,12 +311,12 @@ router.put(
  * @desc    Elimina un'immagine
  * @access  Private (Admin, Product Manager)
  */
-router.delete(
-  '/:productId/images/:id',
+productRoutes.delete(
+  "/:productId/images/:id",
   authenticateToken,
-  authorize(['product:delete', 'product:manage']),
+  authorize(["product:delete", "product:manage"]),
   validateProductImageId,
-  deleteImage
+  deleteImage,
 );
 
 /**
@@ -341,12 +324,12 @@ router.delete(
  * @desc    Imposta un'immagine come cover
  * @access  Private (Admin, Product Manager)
  */
-router.patch(
-  '/:productId/images/:id/set-cover',
+productRoutes.patch(
+  "/:productId/images/:id/set-cover",
   authenticateToken,
-  authorize(['product:update', 'product:manage']),
+  authorize(["product:update", "product:manage"]),
   validateProductImageId,
-  setCoverImage
+  setCoverImage,
 );
 
 // ============================================================================
@@ -358,13 +341,13 @@ router.patch(
  * @desc    Associa una categoria al prodotto
  * @access  Private (Admin, Product Manager)
  */
-router.post(
-  '/:id/categories',
+productRoutes.post(
+  "/:id/categories",
   authenticateToken,
-  authorize(['product:update', 'product:manage']),
+  authorize(["product:update", "product:manage"]),
   validateProductId,
   validateCreateProductCategory,
-  addCategory
+  addCategory,
 );
 
 /**
@@ -372,12 +355,12 @@ router.post(
  * @desc    Rimuovi categoria dal prodotto
  * @access  Private (Admin, Product Manager)
  */
-router.delete(
-  '/:productId/categories/:categoryId',
+productRoutes.delete(
+  "/:productId/categories/:categoryId",
   authenticateToken,
-  authorize(['product:update', 'product:manage']),
+  authorize(["product:update", "product:manage"]),
   validatProductCategoryId,
-  removeCategory
+  removeCategory,
 );
 
 /**
@@ -385,12 +368,12 @@ router.delete(
  * @desc    Aggiorna posizione categoria
  * @access  Private (Admin, Product Manager)
  */
-router.patch(
-  '/:productId/categories/:categoryId/position',
+productRoutes.patch(
+  "/:productId/categories/:categoryId/position",
   authenticateToken,
-  authorize(['product:update', 'product:manage']),
+  authorize(["product:update", "product:manage"]),
   validatProductCategoryId,
-  updateCategoryPosition
+  updateCategoryPosition,
 );
 
 // ============================================================================
@@ -402,26 +385,26 @@ router.patch(
  * @desc    Lista tutti i produttori
  * @access  Public
  */
-router.get('/manufacturers', getAllManufacturers);
+productRoutes.get("/manufacturers", getAllManufacturers);
 
 /**
  * @route   GET /api/products/manufacturers/:id
  * @desc    Ottieni dettagli produttore
  * @access  Public
  */
-router.get('/manufacturers/:id', validateManufacturerId, getManufacturerById);
+productRoutes.get("/manufacturers/:id", validateManufacturerId, getManufacturerById);
 
 /**
  * @route   POST /api/products/manufacturers
  * @desc    Crea un nuovo produttore
  * @access  Private (Admin, Product Manager)
  */
-router.post(
-  '/manufacturers',
+productRoutes.post(
+  "/manufacturers",
   authenticateToken,
-  authorize(['product:create', 'product:manage']),
+  authorize(["product:create", "product:manage"]),
   validateCreateManufacturer,
-  createManufacturer
+  createManufacturer,
 );
 
 /**
@@ -429,13 +412,13 @@ router.post(
  * @desc    Aggiorna un produttore
  * @access  Private (Admin, Product Manager)
  */
-router.put(
-  '/manufacturers/:id',
+productRoutes.put(
+  "/manufacturers/:id",
   authenticateToken,
-  authorize(['product:update', 'product:manage']),
+  authorize(["product:update", "product:manage"]),
   validateManufacturerId,
   validateUpdateManufacturer,
-  updateManufacturer
+  updateManufacturer,
 );
 
 /**
@@ -443,16 +426,16 @@ router.put(
  * @desc    Elimina un produttore
  * @access  Private (Admin)
  */
-router.delete(
-  '/manufacturers/:id',
+productRoutes.delete(
+  "/manufacturers/:id",
   authenticateToken,
-  authorize(['product:delete', 'product:manage']),
+  authorize(["product:delete", "product:manage"]),
   validateManufacturerId,
-  deleteManufacturer
+  deleteManufacturer,
 );
 
 // ============================================================================
 // EXPORT
 // ============================================================================
 
-export default router;
+export default productRoutes;

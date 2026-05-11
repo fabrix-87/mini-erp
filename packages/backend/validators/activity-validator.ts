@@ -14,20 +14,13 @@ import {
   updateActivityStatusSchema,
   updateActivityTemplateSchema,
 } from "@mini-erp/shared";
-import {
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "../middleware/validation";
+import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 
 // ============================================================================
 // MIDDLEWARE
 // ============================================================================
 
-export const validateActivityId = validateParams(
-  activityIdSchema,
-  "Activity ID",
-);
+export const validateActivityId = validateParams(activityIdSchema, "Activity ID");
 export const validateActivityIdAsActivityId = validateQuery(
   activityIdAsActivityIdSchema,
   "Activity query",
@@ -36,30 +29,15 @@ export const validateActivityPartecipantId = validateQuery(
   activityParticipantIdSchema,
   "Activity query",
 );
-export const validateActivityTemplateId = validateQuery(
-  activityTemplateIdSchema,
-  "Activity query",
-);
+export const validateActivityTemplateId = validateQuery(activityTemplateIdSchema, "Activity query");
 
-export const validateActivityStatsQuery = validateQuery(
-  activityStatsSchema,
-  "Activity stats",
-);
+export const validateActivityStatsQuery = validateQuery(activityStatsSchema, "Activity stats");
 
-export const validateCreateActivity = validateBody(
-  createActivitySchema,
-  "Activity creation",
-);
+export const validateCreateActivity = validateBody(createActivitySchema, "Activity creation");
 
-export const validateUpdateActivity = validateBody(
-  updateActivitySchema,
-  "Activity modification",
-);
+export const validateUpdateActivity = validateBody(updateActivitySchema, "Activity modification");
 
-export const validateActivityQuery = validateQuery(
-  activityQuerySchema,
-  "Activity query",
-);
+export const validateActivityQuery = validateQuery(activityQuerySchema, "Activity query");
 
 export const validateUpdateActivityStatus = validateBody(
   updateActivityStatusSchema,

@@ -1,5 +1,4 @@
-import express from "express";
-import { authenticateToken, authorize } from "../middleware/auth";
+import { authenticateToken, authorize } from "../middleware/auth-middleware";
 import {
   validateActivityStatsQuery,
   validateCreateActivity,
@@ -15,7 +14,7 @@ import {
   validateCreateActivityTemplate,
   validateCreateActivityFromTemplate,
   validateUpdateActivityTemplate,
-} from "../validators/activity";
+} from "../validators/activity-validator";
 import {
   getAllActivities,
   getActivityById,
@@ -39,9 +38,10 @@ import {
   deleteActivityTemplate,
   createActivityFromTemplate,
   toggleTemplateActive,
-} from "../controllers/activity";
+} from "../controllers/activity-controller";
+import { createHonoApp } from "@/lib/hono-app";
 
-const router = express.Router();
+const activityRoutes = createHonoApp();
 
 // ============================================================================
 // ACTIVITY STATS ROUTES
@@ -53,12 +53,12 @@ const router = express.Router();
  * @access  Private (activity:read)
  * @query   startDate, endDate, userId
  */
-router.get(
+activityRoutes.get(
   "/stats",
   authenticateToken,
   authorize(["activity:read", "activity:manage"]),
   validateActivityStatsQuery,
-  getActivityStats
+  getActivityStats,
 );
 
 // ============================================================================
@@ -71,12 +71,12 @@ router.get(
  * @access  Private (activity:read)
  * @query   page, limit, search, type, status, priority, outcome, companyId, customerId, opportunityId, assignedUserId, startDate, endDate, overdue, requiresFollowUp, myActivities, sortBy, sortOrder
  */
-router.get(
+activityRoutes.get(
   "/",
   authenticateToken,
   authorize(["activity:read", "activity:manage"]),
   validateActivityQuery,
-  getAllActivities
+  getAllActivities,
 );
 
 /**
@@ -84,12 +84,12 @@ router.get(
  * @desc    Ottieni dettagli di un'activity specifica
  * @access  Private (activity:read)
  */
-router.get(
+activityRoutes.get(
   "/:id",
   authenticateToken,
   authorize(["activity:read", "activity:manage"]),
   validateActivityId,
-  getActivityById
+  getActivityById,
 );
 
 /**
@@ -97,12 +97,12 @@ router.get(
  * @desc    Crea nuova activity
  * @access  Private (activity:create)
  */
-router.post(
+activityRoutes.post(
   "/",
   authenticateToken,
   authorize(["activity:create", "activity:manage"]),
   validateCreateActivity,
-  createActivity
+  createActivity,
 );
 
 /**
@@ -110,13 +110,13 @@ router.post(
  * @desc    Aggiorna activity esistente
  * @access  Private (activity:update)
  */
-router.put(
+activityRoutes.put(
   "/:id",
   authenticateToken,
   authorize(["activity:update", "activity:manage"]),
   validateActivityId,
   validateUpdateActivity,
-  updateActivity
+  updateActivity,
 );
 
 /**
@@ -124,13 +124,13 @@ router.put(
  * @desc    Aggiorna status dell'activity
  * @access  Private (activity:update)
  */
-router.patch(
+activityRoutes.patch(
   "/:id/status",
   authenticateToken,
   authorize(["activity:update", "activity:manage"]),
   validateActivityId,
   validateUpdateActivityStatus,
-  updateActivityStatus
+  updateActivityStatus,
 );
 
 /**
@@ -138,13 +138,13 @@ router.patch(
  * @desc    Completa un'activity
  * @access  Private (activity:update)
  */
-router.patch(
+activityRoutes.patch(
   "/:id/complete",
   authenticateToken,
   authorize(["activity:update", "activity:manage"]),
   validateActivityId,
   validateCompleteActivityStatus,
-  completeActivity
+  completeActivity,
 );
 
 /**
@@ -152,12 +152,12 @@ router.patch(
  * @desc    Elimina un'activity
  * @access  Private (activity:delete)
  */
-router.delete(
+activityRoutes.delete(
   "/:id",
   authenticateToken,
   authorize(["activity:delete", "activity:manage"]),
   validateActivityId,
-  deleteActivity
+  deleteActivity,
 );
 
 // ============================================================================
@@ -169,12 +169,12 @@ router.delete(
  * @desc    Ottieni partecipanti di un'activity
  * @access  Private (activity:read)
  */
-router.get(
+activityRoutes.get(
   "/:activityId/participants",
   authenticateToken,
   authorize(["activity:read", "activity:manage"]),
   validateActivityIdAsActivityId,
-  getActivityParticipants
+  getActivityParticipants,
 );
 
 /**
@@ -182,12 +182,12 @@ router.get(
  * @desc    Aggiungi partecipante ad activity
  * @access  Private (activity:update)
  */
-router.post(
+activityRoutes.post(
   "/:activityId/participants",
   authenticateToken,
   authorize(["activity:update", "activity:manage"]),
   validateActivityIdAsActivityId,
-  addActivityParticipant
+  addActivityParticipant,
 );
 
 /**
@@ -195,12 +195,12 @@ router.post(
  * @desc    Aggiungi partecipanti multipli
  * @access  Private (activity:update)
  */
-router.post(
+activityRoutes.post(
   "/:activityId/participants/bulk",
   authenticateToken,
   authorize(["activity:update", "activity:manage"]),
   validateActivityIdAsActivityId,
-  addBulkParticipants
+  addBulkParticipants,
 );
 
 /**
@@ -208,13 +208,13 @@ router.post(
  * @desc    Aggiorna partecipante
  * @access  Private (activity:update)
  */
-router.put(
+activityRoutes.put(
   "/participants/:id",
   authenticateToken,
   authorize(["activity:update", "activity:manage"]),
   validateActivityPartecipantId,
   validateUpdateActivityPartecipant,
-  updateActivityParticipant
+  updateActivityParticipant,
 );
 
 /**
@@ -222,12 +222,12 @@ router.put(
  * @desc    Rimuovi partecipante
  * @access  Private (activity:update)
  */
-router.delete(
+activityRoutes.delete(
   "/participants/:id",
   authenticateToken,
   authorize(["activity:update", "activity:manage"]),
   validateActivityPartecipantId,
-  removeActivityParticipant
+  removeActivityParticipant,
 );
 
 // ============================================================================
@@ -240,11 +240,11 @@ router.delete(
  * @access  Private (activity:read)
  * @query   active, type, sortBy, sortOrder
  */
-router.get(
+activityRoutes.get(
   "/templates",
   authenticateToken,
   authorize(["activity:read", "activity:manage"]),
-  getAllActivityTemplates
+  getAllActivityTemplates,
 );
 
 /**
@@ -252,12 +252,12 @@ router.get(
  * @desc    Ottieni template per ID
  * @access  Private (activity:read)
  */
-router.get(
+activityRoutes.get(
   "/templates/:id",
   authenticateToken,
   authorize(["activity:read", "activity:manage"]),
   validateActivityTemplateId,
-  getActivityTemplateById
+  getActivityTemplateById,
 );
 
 /**
@@ -265,12 +265,12 @@ router.get(
  * @desc    Crea nuovo template
  * @access  Private (activity:manage)
  */
-router.post(
+activityRoutes.post(
   "/templates",
   authenticateToken,
   authorize(["activity:manage"]),
   validateCreateActivityTemplate,
-  createActivityTemplate
+  createActivityTemplate,
 );
 
 /**
@@ -278,13 +278,13 @@ router.post(
  * @desc    Crea activity da template
  * @access  Private (activity:create)
  */
-router.post(
+activityRoutes.post(
   "/templates/:id/create-activity",
   authenticateToken,
   authorize(["activity:create", "activity:manage"]),
   validateActivityTemplateId,
   validateCreateActivityFromTemplate,
-  createActivityFromTemplate
+  createActivityFromTemplate,
 );
 
 /**
@@ -292,13 +292,13 @@ router.post(
  * @desc    Aggiorna template
  * @access  Private (activity:manage)
  */
-router.put(
+activityRoutes.put(
   "/templates/:id",
   authenticateToken,
   authorize(["activity:manage"]),
   validateActivityTemplateId,
   validateUpdateActivityTemplate,
-  updateActivityTemplate
+  updateActivityTemplate,
 );
 
 /**
@@ -306,12 +306,12 @@ router.put(
  * @desc    Attiva/Disattiva template
  * @access  Private (activity:manage)
  */
-router.patch(
+activityRoutes.patch(
   "/templates/:id/toggle-active",
   authenticateToken,
   authorize(["activity:manage"]),
   validateActivityTemplateId,
-  toggleTemplateActive
+  toggleTemplateActive,
 );
 
 /**
@@ -319,16 +319,16 @@ router.patch(
  * @desc    Elimina template
  * @access  Private (activity:manage)
  */
-router.delete(
+activityRoutes.delete(
   "/templates/:id",
   authenticateToken,
   authorize(["activity:manage"]),
   validateActivityTemplateId,
-  deleteActivityTemplate
+  deleteActivityTemplate,
 );
 
 // ============================================================================
 // EXPORT
 // ============================================================================
 
-export default router;
+export default activityRoutes;

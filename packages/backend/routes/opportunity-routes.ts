@@ -1,5 +1,4 @@
-import express from "express";
-import { authenticateToken, authorize } from "../middleware/auth";
+import { authenticateToken, authorize } from "../middleware/auth-middleware";
 import {
   validateOpportunityId,
   validateCustomerIdParam,
@@ -18,7 +17,7 @@ import {
   validateBulkUpdateStage,
   validateCreateClosedReason,
   validateUpdateClosedReason,
-} from "../validators/opportunity";
+} from "../validators/opportunity-validator";
 import {
   getAllOpportunities,
   getOpportunitiesByCustomer,
@@ -39,9 +38,10 @@ import {
   createClosedReason,
   updateClosedReason,
   deleteClosedReason,
-} from "../controllers/opportunity";
+} from "../controllers/opportunity-controller";
+import { createHonoApp } from "@/lib/hono-app";
 
-const router = express.Router();
+const opportunityRoutes = createHonoApp();
 
 // ============================================================================
 // STATS (before :id to avoid param conflicts)
@@ -51,7 +51,7 @@ const router = express.Router();
  * @route  GET /api/opportunities/stats/pipeline
  * @access Private (opportunity:read)
  */
-router.get(
+opportunityRoutes.get(
   "/stats/pipeline",
   authenticateToken,
   authorize(["opportunity:read", "opportunity:manage"]),
@@ -63,7 +63,7 @@ router.get(
  * @route  GET /api/opportunities/stats/funnel
  * @access Private (opportunity:read)
  */
-router.get(
+opportunityRoutes.get(
   "/stats/funnel",
   authenticateToken,
   authorize(["opportunity:read", "opportunity:manage"]),
@@ -79,7 +79,7 @@ router.get(
  * @route  POST /api/opportunities/bulk/assign
  * @access Private (opportunity:update)
  */
-router.post(
+opportunityRoutes.post(
   "/bulk/assign",
   authenticateToken,
   authorize(["opportunity:update", "opportunity:manage"]),
@@ -91,7 +91,7 @@ router.post(
  * @route  POST /api/opportunities/bulk/stage
  * @access Private (opportunity:update)
  */
-router.post(
+opportunityRoutes.post(
   "/bulk/stage",
   authenticateToken,
   authorize(["opportunity:update", "opportunity:manage"]),
@@ -107,7 +107,7 @@ router.post(
  * @route  GET /api/opportunities/closed-reasons
  * @access Private (opportunity:read)
  */
-router.get(
+opportunityRoutes.get(
   "/closed-reasons",
   authenticateToken,
   authorize(["opportunity:read", "opportunity:manage"]),
@@ -119,7 +119,7 @@ router.get(
  * @route  POST /api/opportunities/closed-reasons
  * @access Private (opportunity:manage)
  */
-router.post(
+opportunityRoutes.post(
   "/closed-reasons",
   authenticateToken,
   authorize(["opportunity:manage"]),
@@ -131,7 +131,7 @@ router.post(
  * @route  PUT /api/opportunities/closed-reasons/:id
  * @access Private (opportunity:manage)
  */
-router.put(
+opportunityRoutes.put(
   "/closed-reasons/:id",
   authenticateToken,
   authorize(["opportunity:manage"]),
@@ -144,7 +144,7 @@ router.put(
  * @route  DELETE /api/opportunities/closed-reasons/:id
  * @access Private (opportunity:manage)
  */
-router.delete(
+opportunityRoutes.delete(
   "/closed-reasons/:id",
   authenticateToken,
   authorize(["opportunity:manage"]),
@@ -160,7 +160,7 @@ router.delete(
  * @route  GET /api/opportunities/customer/:customerId
  * @access Private (opportunity:read)
  */
-router.get(
+opportunityRoutes.get(
   "/customer/:customerId",
   authenticateToken,
   authorize(["opportunity:read", "opportunity:manage"]),
@@ -177,7 +177,7 @@ router.get(
  * @route  GET /api/opportunities
  * @access Private (opportunity:read)
  */
-router.get(
+opportunityRoutes.get(
   "/",
   authenticateToken,
   authorize(["opportunity:read", "opportunity:manage"]),
@@ -189,7 +189,7 @@ router.get(
  * @route  POST /api/opportunities
  * @access Private (opportunity:create)
  */
-router.post(
+opportunityRoutes.post(
   "/",
   authenticateToken,
   authorize(["opportunity:create", "opportunity:manage"]),
@@ -201,7 +201,7 @@ router.post(
  * @route  GET /api/opportunities/:id
  * @access Private (opportunity:read)
  */
-router.get(
+opportunityRoutes.get(
   "/:id",
   authenticateToken,
   authorize(["opportunity:read", "opportunity:manage"]),
@@ -213,7 +213,7 @@ router.get(
  * @route  PUT /api/opportunities/:id
  * @access Private (opportunity:update)
  */
-router.put(
+opportunityRoutes.put(
   "/:id",
   authenticateToken,
   authorize(["opportunity:update", "opportunity:manage"]),
@@ -226,7 +226,7 @@ router.put(
  * @route  PATCH /api/opportunities/:id/stage
  * @access Private (opportunity:update)
  */
-router.patch(
+opportunityRoutes.patch(
   "/:id/stage",
   authenticateToken,
   authorize(["opportunity:update", "opportunity:manage"]),
@@ -239,7 +239,7 @@ router.patch(
  * @route  PATCH /api/opportunities/:id/status
  * @access Private (opportunity:update)
  */
-router.patch(
+opportunityRoutes.patch(
   "/:id/status",
   authenticateToken,
   authorize(["opportunity:update", "opportunity:manage"]),
@@ -252,7 +252,7 @@ router.patch(
  * @route  PATCH /api/opportunities/:id/close-won
  * @access Private (opportunity:update)
  */
-router.patch(
+opportunityRoutes.patch(
   "/:id/close-won",
   authenticateToken,
   authorize(["opportunity:update", "opportunity:manage"]),
@@ -265,7 +265,7 @@ router.patch(
  * @route  PATCH /api/opportunities/:id/close-lost
  * @access Private (opportunity:update)
  */
-router.patch(
+opportunityRoutes.patch(
   "/:id/close-lost",
   authenticateToken,
   authorize(["opportunity:update", "opportunity:manage"]),
@@ -278,7 +278,7 @@ router.patch(
  * @route  PATCH /api/opportunities/:id/assign
  * @access Private (opportunity:update)
  */
-router.patch(
+opportunityRoutes.patch(
   "/:id/assign",
   authenticateToken,
   authorize(["opportunity:update", "opportunity:manage"]),
@@ -291,7 +291,7 @@ router.patch(
  * @route  DELETE /api/opportunities/:id
  * @access Private (opportunity:delete)
  */
-router.delete(
+opportunityRoutes.delete(
   "/:id",
   authenticateToken,
   authorize(["opportunity:delete", "opportunity:manage"]),
@@ -299,4 +299,4 @@ router.delete(
   deleteOpportunity,
 );
 
-export default router;
+export default opportunityRoutes;
