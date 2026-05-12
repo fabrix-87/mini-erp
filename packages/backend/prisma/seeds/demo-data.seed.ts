@@ -441,8 +441,6 @@ async function seedDemoData() {
   // ============================================================================
   console.log("📦 Creating products with variants...");
 
-  
-
   // Prodotto 1: Cavo elettrico
   const productCavo = await prisma.product.create({
     data: {
@@ -458,6 +456,19 @@ async function seedDemoData() {
       // Prezzo base "A partire da..."
       price: 2.5,
       wholesalePrice: 1.2,
+
+      translations: {
+        create: {
+          languageId: italianLanguage.id,
+          name: "Cavo elettrico 3x1.5 mm²",
+          description:
+            "Cavo elettrico flessibile tripolare 3x1.5mm² per impianti civili e industriali",
+          shortDescription: "Cavo tripolare 3x1.5mm²",
+          metaTitle: "Cavo elettrico 3x1.5 mm² - Materiale Elettrico",
+          metaDescription: "Cavo elettrico flessibile tripolare 3x1.5mm² per impianti",
+          linkRewrite: "cavo-elettrico-3x15mm",
+        },
+      },
 
       variants: {
         create: [
@@ -477,20 +488,6 @@ async function seedDemoData() {
             minimalQuantity: 10,
             lowStockThreshold: 50,
             lowStockAlertEnabled: true,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Cavo elettrico 3x1.5 mm²",
-                description:
-                  "Cavo elettrico flessibile tripolare 3x1.5mm² per impianti civili e industriali",
-                shortDescription: "Cavo tripolare 3x1.5mm²",
-                metaTitle: "Cavo elettrico 3x1.5 mm² - Materiale Elettrico",
-                metaDescription:
-                  "Cavo elettrico flessibile tripolare 3x1.5mm² per impianti",
-                linkRewrite: "cavo-elettrico-3x15mm",
-              },
-            },
           },
           {
             variantCode: "CAV-001-3X2.5",
@@ -506,18 +503,6 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 10,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Cavo elettrico 3x2.5 mm²",
-                description:
-                  "Cavo elettrico flessibile tripolare 3x2.5mm² per impianti civili e industriali",
-                shortDescription: "Cavo tripolare 3x2.5mm²",
-                metaTitle: "Cavo elettrico 3x2.5 mm² - Materiale Elettrico",
-                linkRewrite: "cavo-elettrico-3x25mm",
-              },
-            },
           },
           {
             variantCode: "CAV-001-3X4",
@@ -533,28 +518,13 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 10,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Cavo elettrico 3x4 mm²",
-                description:
-                  "Cavo elettrico flessibile tripolare 3x4mm² per impianti civili e industriali",
-                shortDescription: "Cavo tripolare 3x4mm²",
-                metaTitle: "Cavo elettrico 3x4 mm² - Materiale Elettrico",
-                linkRewrite: "cavo-elettrico-3x4mm",
-              },
-            },
           },
         ],
       },
     },
     include: {
-      variants: {
-        include: {
-          translations: true,
-        },
-      },
+      variants: true,
+      translations: true,
     },
   });
 
@@ -572,6 +542,17 @@ async function seedDemoData() {
 
       price: 52.0,
       wholesalePrice: 25.0,
+
+      translations: {
+        create: {
+          languageId: italianLanguage.id,
+          name: "Interruttore differenziale 16A 2P",
+          description: "Interruttore magnetotermico differenziale salvavita bipolare 16A 30mA",
+          shortDescription: "Differenziale bipolare 16A 30mA",
+          metaTitle: "Interruttore Differenziale 16A 2P - Salvavita",
+          linkRewrite: "interruttore-differenziale-16a-2p",
+        },
+      },
 
       variants: {
         create: [
@@ -591,18 +572,6 @@ async function seedDemoData() {
             minimalQuantity: 1,
             lowStockThreshold: 10,
             lowStockAlertEnabled: true,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Interruttore differenziale 16A 2P",
-                description:
-                  "Interruttore magnetotermico differenziale salvavita bipolare 16A 30mA",
-                shortDescription: "Differenziale bipolare 16A 30mA",
-                metaTitle: "Interruttore Differenziale 16A 2P - Salvavita",
-                linkRewrite: "interruttore-differenziale-16a-2p",
-              },
-            },
           },
           {
             variantCode: "INT-001-25A",
@@ -618,28 +587,13 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 1,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Interruttore differenziale 25A 2P",
-                description:
-                  "Interruttore magnetotermico differenziale salvavita bipolare 25A 30mA",
-                shortDescription: "Differenziale bipolare 25A 30mA",
-                metaTitle: "Interruttore Differenziale 25A 2P - Salvavita",
-                linkRewrite: "interruttore-differenziale-25a-2p",
-              },
-            },
           },
         ],
       },
     },
     include: {
-      variants: {
-        include: {
-          translations: true,
-        },
-      },
+      variants: true,
+      translations: true,
     },
   });
 
@@ -658,6 +612,17 @@ async function seedDemoData() {
       price: 0.12,
       wholesalePrice: 0.05,
 
+      translations: {
+        create: {
+          languageId: italianLanguage.id,
+          name: "Resistenza 1KΩ 1% 0.25W",
+          description: "Resistenza a film metallico 1000 Ohm tolleranza 1% potenza 0.25W",
+          shortDescription: "Resistenza 1KΩ di precisione",
+          metaTitle: "Resistenza 1KΩ 1% 0.25W - Componenti Elettronici",
+          linkRewrite: "resistenza-1kohm-1-025w",
+        },
+      },
+
       variants: {
         create: [
           {
@@ -674,18 +639,6 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 100,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Resistenza 1KΩ 1% 0.25W",
-                description:
-                  "Resistenza a film metallico 1000 Ohm tolleranza 1% potenza 0.25W",
-                shortDescription: "Resistenza 1KΩ di precisione",
-                metaTitle: "Resistenza 1KΩ 1% 0.25W - Componenti Elettronici",
-                linkRewrite: "resistenza-1kohm-1-025w",
-              },
-            },
           },
           {
             variantCode: "RES-001-10K",
@@ -701,17 +654,6 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 100,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Resistenza 10KΩ 1% 0.25W",
-                description:
-                  "Resistenza a film metallico 10000 Ohm tolleranza 1% potenza 0.25W",
-                shortDescription: "Resistenza 10KΩ di precisione",
-                linkRewrite: "resistenza-10kohm-1-025w",
-              },
-            },
           },
           {
             variantCode: "RES-001-100K",
@@ -727,27 +669,13 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 100,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Resistenza 100KΩ 1% 0.25W",
-                description:
-                  "Resistenza a film metallico 100000 Ohm tolleranza 1% potenza 0.25W",
-                shortDescription: "Resistenza 100KΩ di precisione",
-                linkRewrite: "resistenza-100kohm-1-025w",
-              },
-            },
           },
         ],
       },
     },
     include: {
-      variants: {
-        include: {
-          translations: true,
-        },
-      },
+      variants: true,
+      translations: true,
     },
   });
 
@@ -766,6 +694,17 @@ async function seedDemoData() {
       price: 7.5,
       wholesalePrice: 3.5,
 
+      translations: {
+        create: {
+          languageId: italianLanguage.id,
+          name: 'Raccordo a T 1/2" in ottone',
+          description: "Raccordo idraulico a T filettato 1/2 pollice in ottone cromato",
+          shortDescription: 'Raccordo T 1/2" ottone cromato',
+          metaTitle: 'Raccordo a T 1/2" in Ottone - Idraulica',
+          linkRewrite: "raccordo-t-12-ottone",
+        },
+      },
+
       variants: {
         create: [
           {
@@ -782,18 +721,6 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 5,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: 'Raccordo a T 1/2" in ottone',
-                description:
-                  "Raccordo idraulico a T filettato 1/2 pollice in ottone cromato",
-                shortDescription: 'Raccordo T 1/2" ottone cromato',
-                metaTitle: 'Raccordo a T 1/2" in Ottone - Idraulica',
-                linkRewrite: "raccordo-t-12-ottone",
-              },
-            },
           },
           {
             variantCode: "RAC-001-3/4",
@@ -809,17 +736,6 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 5,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: 'Raccordo a T 3/4" in ottone',
-                description:
-                  "Raccordo idraulico a T filettato 3/4 pollice in ottone cromato",
-                shortDescription: 'Raccordo T 3/4" ottone cromato',
-                linkRewrite: "raccordo-t-34-ottone",
-              },
-            },
           },
           {
             variantCode: "RAC-001-1",
@@ -835,27 +751,13 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 5,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: 'Raccordo a T 1" in ottone',
-                description:
-                  "Raccordo idraulico a T filettato 1 pollice in ottone cromato",
-                shortDescription: 'Raccordo T 1" ottone cromato',
-                linkRewrite: "raccordo-t-1-ottone",
-              },
-            },
           },
         ],
       },
     },
     include: {
-      variants: {
-        include: {
-          translations: true,
-        },
-      },
+      variants: true,
+      translations: true,
     },
   });
 
@@ -873,6 +775,18 @@ async function seedDemoData() {
 
       price: 175.0,
       wholesalePrice: 85.0,
+
+      translations: {
+        create: {
+          languageId: italianLanguage.id,
+          name: "Trapano avvitatore 18V Base",
+          description:
+            "Trapano avvitatore professionale a batteria 18V Li-Ion con 1 batteria 2Ah e caricabatterie",
+          shortDescription: "Trapano 18V con 1 batteria 2Ah",
+          metaTitle: "Trapano Avvitatore 18V Base - Utensili Professionali",
+          linkRewrite: "trapano-avvitatore-18v-base",
+        },
+      },
 
       variants: {
         create: [
@@ -892,19 +806,6 @@ async function seedDemoData() {
             minimalQuantity: 1,
             lowStockThreshold: 5,
             lowStockAlertEnabled: true,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Trapano avvitatore 18V Base",
-                description:
-                  "Trapano avvitatore professionale a batteria 18V Li-Ion con 1 batteria 2Ah e caricabatterie",
-                shortDescription: "Trapano 18V con 1 batteria 2Ah",
-                metaTitle:
-                  "Trapano Avvitatore 18V Base - Utensili Professionali",
-                linkRewrite: "trapano-avvitatore-18v-base",
-              },
-            },
           },
           {
             variantCode: "UTN-001-PRO",
@@ -920,28 +821,13 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 1,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Trapano avvitatore 18V Professional",
-                description:
-                  "Trapano avvitatore professionale a batteria 18V Li-Ion con 2 batterie 4Ah, caricabatterie e valigetta",
-                shortDescription: "Trapano 18V con 2 batterie 4Ah + valigetta",
-                metaTitle: "Trapano Avvitatore 18V Professional - Utensili",
-                linkRewrite: "trapano-avvitatore-18v-professional",
-              },
-            },
           },
         ],
       },
     },
     include: {
-      variants: {
-        include: {
-          translations: true,
-        },
-      },
+      variants: true,
+      translations: true,
     },
   });
 
@@ -960,6 +846,18 @@ async function seedDemoData() {
       price: 38.0,
       wholesalePrice: 18.0,
 
+      translations: {
+        create: {
+          languageId: italianLanguage.id,
+          name: "Set 6 cacciaviti professionali",
+          description:
+            "Set di 6 cacciaviti di precisione con impugnatura ergonomica: 3 piatti + 3 a croce",
+          shortDescription: "Set 6 pezzi: 3 piatti + 3 croce",
+          metaTitle: "Set 6 Cacciaviti Professionali - Utensili",
+          linkRewrite: "set-6-cacciaviti-professionali",
+        },
+      },
+
       variants: {
         create: [
           {
@@ -976,18 +874,6 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 1,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Set 6 cacciaviti professionali",
-                description:
-                  "Set di 6 cacciaviti di precisione con impugnatura ergonomica: 3 piatti + 3 a croce",
-                shortDescription: "Set 6 pezzi: 3 piatti + 3 croce",
-                metaTitle: "Set 6 Cacciaviti Professionali - Utensili",
-                linkRewrite: "set-6-cacciaviti-professionali",
-              },
-            },
           },
           {
             variantCode: "UTN-002-12PZ",
@@ -1003,28 +889,13 @@ async function seedDemoData() {
 
             quantity: 0,
             minimalQuantity: 1,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Set 12 cacciaviti professionali",
-                description:
-                  "Set di 12 cacciaviti di precisione con impugnatura ergonomica e valigetta: 6 piatti + 6 a croce",
-                shortDescription: "Set 12 pezzi con valigetta",
-                metaTitle: "Set 12 Cacciaviti Professionali - Utensili",
-                linkRewrite: "set-12-cacciaviti-professionali",
-              },
-            },
           },
         ],
       },
     },
     include: {
-      variants: {
-        include: {
-          translations: true,
-        },
-      },
+      variants: true,
+      translations: true,
     },
   });
 
@@ -1042,6 +913,18 @@ async function seedDemoData() {
       price: 45.0,
       wholesalePrice: 0.0,
 
+      translations: {
+        create: {
+          languageId: italianLanguage.id,
+          name: "Servizio installazione standard",
+          description:
+            "Servizio di installazione e configurazione impianto elettrico con 1 tecnico specializzato",
+          shortDescription: "Installazione standard con 1 tecnico",
+          metaTitle: "Servizio Installazione Impianto Standard",
+          linkRewrite: "servizio-installazione-standard",
+        },
+      },
+
       variants: {
         create: [
           {
@@ -1057,18 +940,6 @@ async function seedDemoData() {
 
             quantity: 999, // Servizio sempre disponibile
             minimalQuantity: 1,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Servizio installazione standard",
-                description:
-                  "Servizio di installazione e configurazione impianto elettrico con 1 tecnico specializzato",
-                shortDescription: "Installazione standard con 1 tecnico",
-                metaTitle: "Servizio Installazione Impianto Standard",
-                linkRewrite: "servizio-installazione-standard",
-              },
-            },
           },
           {
             variantCode: "SRV-001-URGENZA",
@@ -1083,28 +954,13 @@ async function seedDemoData() {
 
             quantity: 999,
             minimalQuantity: 1,
-
-            translations: {
-              create: {
-                languageId: italianLanguage.id,
-                name: "Servizio installazione urgenza",
-                description:
-                  "Servizio di installazione urgente in giornata con priorità massima",
-                shortDescription: "Installazione urgente in giornata",
-                metaTitle: "Servizio Installazione Impianto Urgenza",
-                linkRewrite: "servizio-installazione-urgenza",
-              },
-            },
           },
         ],
       },
     },
     include: {
-      variants: {
-        include: {
-          translations: true,
-        },
-      },
+      variants: true,
+      translations: true,
     },
   });
 

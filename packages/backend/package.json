@@ -11,7 +11,8 @@
     "start": "bun dist/server.js",
     "dev": "bun --watch --no-clear-screen run-server.ts",
     "dev:debug": "bun --inspect-wait --watch --no-clear-screen run-server.ts",
-    "dev:break": "bun --inspect-brk --watch --no-clear-screen run-server.ts"
+    "dev:break": "bun --inspect-brk --watch --no-clear-screen run-server.ts",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
