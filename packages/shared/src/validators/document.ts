@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createIdSchema } from "./primitives/id";
+import { createIdSchema, positiveNumbersSchema } from "./primitives/id";
 import { createDecimalSchema } from "./primitives/decimal";
 import { isoDateSchema } from "./primitives/date";
 
@@ -206,7 +206,7 @@ const installmentShape = z.object({
   installmentNumber: z.number().int().positive().default(1),
   percentage: installmentPercentSchema,
   amount: moneySchema,
-  dueDate: isoDateSchema(),
+  dueDate: isoDateSchema({required: true}),
   status: installmentStatusSchema.default("PENDING"),
   notes: z.string().max(500).optional().nullable(),
   paymentMethodId: createIdSchema("Payment Method ID non valido").optional().nullable(),
@@ -222,12 +222,19 @@ export const payInstallmentSchema = z
   .object({
     paidAmount: moneySchema,
     paymentMethodId: createIdSchema("Payment Method ID non valido"),
-    paidDate: isoDateSchema().default(() => new Date().toISOString()),
+    paidDate: isoDateSchema({required: true}).default(() => new Date().toISOString()),
     paymentReference: z.string().max(100).optional().nullable(),
     bankTransactionId: z.string().max(100).optional().nullable(),
     notes: z.string().max(500).optional().nullable(),
   })
   .strict();
+
+  export const generateInstallmentPlanSchema = z.object({
+    count: positiveNumbersSchema,
+    firstDueDate: isoDateSchema({ required: true }),
+    intervalDays: positiveNumbersSchema,
+    paymentMethodId: createIdSchema("Payment Method ID non valido"),
+  })
 
 // ============================================================================
 // DOCUMENT SCHEMAS

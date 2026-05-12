@@ -9,17 +9,12 @@ import {
 } from "@/utils/response-utils";
 import {
   calculateDocumentTotals,
-  calculateLineTotals,
   CreateDocumentInput,
-  CreateDocumentLineInput,
   DOCUMENT_TYPE_CONFIG,
-  DocumentIdLineIdParams,
   DocumentIdParam,
-  DocumentLineIdParam,
   DocumentQueryInput,
   DocumentType,
   UpdateDocumentInput,
-  UpdateDocumentLineInput,
 } from "@mini-erp/shared";
 import { getDocumentSelection } from "@/helpers/document";
 import { buildDocumentCreateData, buildDocumentUpdateData } from "@/services/document";
@@ -220,127 +215,6 @@ export const deleteDocument = async (c: Context<AppBindings>) => {
   });
 
   return sendDeleted(c, "Documento eliminato");
-};
-
-// ============================================================================
-// DOCUMENT LINES
-// ============================================================================
-
-/**
- * Lists all lines for a document.
- * @route GET /api/documents/:id/lines
- * @access Private
- */
-export const getDocumentLines = async (c: Context<AppBindings>) => {
-  const { id } = getValidatedParams<DocumentIdParam>(c);
-
-  const lines = await prisma.documentLine.findMany({
-    where: { documentId: toIntId(id) },
-    orderBy: { lineNumber: "asc" },
-  });
-
-  return sendSuccess(c, lines, { results: lines.length });
-};
-
-/**
- * Adds a line to an existing document.
- * Recalculates line totals automatically.
- * @route POST /api/documents/:id/lines
- * @access Private
- */
-export const addDocumentLine = async (c: Context<AppBindings>) => {
-  const { id } = getValidatedParams<DocumentIdParam>(c);
-  const lineData = getValidatedBody<CreateDocumentLineInput>(c);
-
-  const document = await prisma.document.findUnique({
-    where: withSoftDelete({ id: toIntId(id) }) as Prisma.DocumentWhereUniqueInput,
-    include: { lines: true },
-  });
-
-  if (!document) {
-    throw new NotFoundError("Documento non trovato");
-  }
-
-  if (document.status !== "DRAFT" && document.status !== "PENDING_APPROVAL") {
-    throw new BadRequestError("Impossibile modificare righe di un documento non in bozza");
-  }
-
-  const maxLineNumber = document.lines.reduce((max, line) => Math.max(max, line.lineNumber), 0);
-
-  const lineTotals = calculateLineTotals(
-    lineData.quantity || 0,
-    lineData.unitPrice,
-    lineData.discountPercent,
-    lineData.taxPercent,
-  );
-
-  const line = await prisma.documentLine.create({
-    data: {
-      ...lineData,
-      documentId: toIntId(id),
-      lineNumber: maxLineNumber + 1,
-      ...lineTotals,
-    },
-  });
-
-  return sendCreated(c, line, "Riga aggiunta con successo");
-};
-
-/**
- * Updates a document line, recalculating totals when pricing fields change.
- * @route PUT /api/documents/:id/lines/:lineId
- * @access Private
- */
-export const updateDocumentLine = async (c: Context<AppBindings>) => {
-  const { id, lineId } = getValidatedParams<DocumentLineIdParam>(c);
-  const updateData = getValidatedBody<UpdateDocumentLineInput>(c);
-
-  const needsRecalc =
-    updateData.quantity !== undefined ||
-    updateData.unitPrice !== undefined ||
-    updateData.discountPercent !== undefined ||
-    updateData.taxPercent !== undefined;
-
-  if (needsRecalc) {
-    const existingLine = await prisma.documentLine.findUnique({
-      where: { id: toIntId(lineId), documentId: toIntId(id) },
-    });
-
-    if (!existingLine) {
-      throw new NotFoundError("Riga non trovata");
-    }
-
-    const lineTotals = calculateLineTotals(
-      updateData.quantity ?? existingLine.quantity,
-      updateData.unitPrice ?? existingLine.unitPrice,
-      updateData.discountPercent ?? existingLine.discountPercent,
-      updateData.taxPercent ?? existingLine.taxPercent,
-    );
-
-    Object.assign(updateData, lineTotals);
-  }
-
-  const line = await prisma.documentLine.update({
-    where: { id: toIntId(lineId) },
-    data: updateData,
-  });
-
-  return sendSuccess(c, line, { message: "Riga aggiornata con successo" });
-};
-
-/**
- * Deletes a document line by ID.
- * @route DELETE /api/documents/:id/lines/:lineId
- * @access Private
- */
-export const deleteDocumentLine = async (c: Context<AppBindings>) => {
-  const { id, lineId } = getValidatedParams<DocumentIdLineIdParams>(c);
-
-  await prisma.documentLine.delete({
-    where: { id: toIntId(lineId), documentId: toIntId(id) },
-  });
-
-  return sendDeleted(c, "Riga eliminata");
 };
 
 // ============================================================================

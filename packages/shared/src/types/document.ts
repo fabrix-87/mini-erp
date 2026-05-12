@@ -53,6 +53,7 @@ import {
   quantityDeliveredSchema,
   supplierIdParamSchema,
   documentAttachmentIdParamSchema,
+  generateInstallmentPlanSchema,
 } from "../validators/document";
 import { DOCUMENT_LINE_TYPES, DOCUMENT_STATUSES, DOCUMENT_TYPES } from "../constants";
 import { customerIdParamSchema } from "../validators";
@@ -286,6 +287,7 @@ export type UpdateLineDeliveredQuantity = z.infer<typeof quantityDeliveredSchema
 export type CreateInstallmentInput = z.infer<typeof createInstallmentSchema>;
 export type UpdateInstallmentInput = z.infer<typeof updateInstallmentSchema>;
 export type PayInstallmentInput = z.infer<typeof payInstallmentSchema>;
+export type GenerateInstallmentPlanInput = z.infer<typeof generateInstallmentPlanSchema>;
 
 export type CreateDocumentInput = z.infer<typeof createDocumentSchema>;
 export type UpdateDocumentInput = z.infer<typeof updateDocumentSchema>;

@@ -54,36 +54,27 @@ export const dateStringSchema = (options?: DateStringOptions) => {
  * @param options.required - If true, null/undefined are rejected
  * @param options.message  - Custom error message
  */
-export const isoDateSchema = (options?: { required?: boolean; message?: string }) => {
-  const baseSchema = z
-    .string()
-    .transform((val, ctx) => {
-      if (!val || val.trim() === "") return undefined;
-
-      // Formato YYYY-MM-DD da <input type="date"> → converti a ISO
-      const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(val);
-      const normalized = dateOnly ? `${val}T00:00:00.000Z` : val;
-
-      // Valida come ISO datetime
-      const result = z.iso.datetime().safeParse(normalized);
-      if (!result.success) {
-        ctx.addIssue({
-          code: "custom",
-          message: options?.message ?? "Data non valida",
-        });
-        return z.NEVER;
-      }
-
-      return normalized;
-    })
-    .optional()
-    .nullable();
+export function isoDateSchema(options: { required: true; message?: string }): z.ZodType<string>;
+export function isoDateSchema(options?: { required?: false; message?: string }): z.ZodType<string | null | undefined>;
+export function isoDateSchema(options?: { required?: boolean; message?: string }): z.ZodType<string> | z.ZodType<string | null | undefined> {
+  const transform = z.string().transform((val, ctx) => {
+    if (!val || val.trim() === "") return undefined;
+    const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(val);
+    const normalized = dateOnly ? `${val}T00:00:00.000Z` : val;
+    const result = z.iso.datetime().safeParse(normalized);
+    if (!result.success) {
+      ctx.addIssue({ code: "custom", message: options?.message ?? "Data non valida" });
+      return z.NEVER;
+    }
+    return normalized;
+  });
 
   if (options?.required) {
-    return baseSchema.refine((val) => val !== null && val !== undefined, {
-      message: options?.message ?? "Data obbligatoria",
-    });
+    return z
+      .string({ message: options.message ?? "Data obbligatoria" })
+      .min(1, options.message ?? "Data obbligatoria")
+      .pipe(transform) as z.ZodType<string>;
   }
 
-  return baseSchema;
-};
+  return transform.optional().nullable() as z.ZodType<string | null | undefined>;
+}

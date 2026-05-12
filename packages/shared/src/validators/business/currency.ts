@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import { createDecimalSchema, createDecimalSchemaRequired } from "../primitives/decimal";
+import { createDecimalSchema } from "../primitives/decimal";
 import { z } from "zod";
 
 /**
@@ -11,10 +11,11 @@ export const priceSchema = (options?: {
   precision?: number;
   defaultValue?: Decimal.Value;
 }) =>
-  createDecimalSchemaRequired(options?.precision ?? 2, {
+  createDecimalSchema(options?.precision ?? 2, {
     positiveOnly: true,
     min: options?.min ?? 0,
     max: options?.max,
+    required: true,
     defaultValue: options?.defaultValue,
     messages: {
       invalid: "Prezzo non valido",

@@ -6,8 +6,9 @@ type DecimalSchemaOptions = {
   max?: Decimal.Value;
   positiveOnly?: boolean;
   error?: string;
-  rounding?: Decimal.Rounding; // modalità arrotondamento
+  rounding?: Decimal.Rounding;
   defaultValue?: Decimal.Value;
+  required?: boolean;
   messages?: {
     invalid?: string;
     positive?: string;
@@ -17,35 +18,44 @@ type DecimalSchemaOptions = {
   };
 };
 
-/**
- * Schema factory for configurable-precision Decimal fields.
- * Supports optional defaultValue, positiveOnly, min/max constraints and custom messages.
- *
- * @param precision - Number of decimal places allowed (default: 2)
- * @param options   - DecimalSchemaOptions
- */
-export const createDecimalSchema = (precision: number = 2, options?: DecimalSchemaOptions) => {
-  return z
-    .union([z.string(), z.number(), z.instanceof(Decimal)])
-    .optional()
-    .nullable()
+export function createDecimalSchema(
+  precision: number,
+  options: DecimalSchemaOptions & { required: true }
+): z.ZodType<Decimal>;
+export function createDecimalSchema(
+  precision?: number,
+  options?: DecimalSchemaOptions & { required?: false }
+): z.ZodType<Decimal | undefined>;
+export function createDecimalSchema(
+  precision: number = 2,
+  options?: DecimalSchemaOptions
+): z.ZodType<Decimal> | z.ZodType<Decimal | undefined> {
+  const required = options?.required ?? false;
+
+  const baseUnion = z.union([z.string(), z.number(), z.instanceof(Decimal)]);
+  const input = required ? baseUnion : baseUnion.optional().nullable();
+
+  const schema = (input as z.ZodType<unknown>)
     .transform((val, ctx) => {
-      // ── Default value ───────────────────────────────────────────────────────
+      // ── Vuoto / assente ─────────────────────────────────────────────────────
       if (val === null || val === undefined || val === "") {
         if (options?.defaultValue !== undefined) {
           try {
             return new Decimal(options.defaultValue);
           } catch {
-            ctx.addIssue({
-              code: "custom",
-              message: "Default value non valido",
-            });
+            ctx.addIssue({ code: "custom", message: "Default value non valido" });
             return z.NEVER;
           }
         }
+        if (required) {
+          ctx.addIssue({
+            code: "custom",
+            message: options?.messages?.required ?? "Valore obbligatorio",
+          });
+          return z.NEVER;
+        }
         return undefined;
       }
-
       // ── Parse ───────────────────────────────────────────────────────────────
       try {
         return new Decimal(val as Decimal.Value);
@@ -57,87 +67,25 @@ export const createDecimalSchema = (precision: number = 2, options?: DecimalSche
         return z.NEVER;
       }
     })
-    .transform((val) => {
+    .transform((val: Decimal | undefined) => {
       if (!val) return val;
       return val.toDecimalPlaces(precision, options?.rounding ?? Decimal.ROUND_HALF_UP);
     })
-    .refine((val) => !val || !options?.positiveOnly || !val.isNegative(), {
-      message: options?.messages?.positive ?? "Il valore deve essere positivo",
-    })
-    .refine((val) => !val || options?.min === undefined || !val.lessThan(options.min), {
-      message: options?.messages?.min ?? `Il valore deve essere almeno ${options?.min}`,
-    })
-    .refine((val) => !val || options?.max === undefined || !val.greaterThan(options.max), {
-      message: options?.messages?.max ?? `Il valore non può superare ${options?.max}`,
-    });
-};
-
-export const createDecimalSchemaRequired = (
-  precision: number = 2,
-  options?: DecimalSchemaOptions
-) => {
-  return z
-    .union([z.string(), z.number(), z.instanceof(Decimal)])
-    .transform((val, ctx) => {
-      if (val === null || val === undefined || val === "") {
-        if (options?.defaultValue !== undefined) {
-          try {
-            return new Decimal(options.defaultValue);
-          } catch {
-            ctx.addIssue({
-              code: "custom",
-              message: "Default value non valido",
-            });
-            return z.NEVER;
-          }
-        }
-
-        ctx.addIssue({
-          code: "custom",
-          message: options?.messages?.required ?? "Valore obbligatorio",
-        });
-        return z.NEVER;
-      }
-
-      try {
-        return new Decimal(val as Decimal.Value);
-      } catch {
-        ctx.addIssue({
-          code: "custom",
-          message:
-            options?.messages?.invalid ??
-            options?.error ??
-            "Valore decimale non valido",
-        });
-        return z.NEVER;
-      }
-    })
-    .transform((val) =>
-      val.toDecimalPlaces(
-        precision,
-        options?.rounding ?? Decimal.ROUND_HALF_UP
-      )
-    )
-    .refine((val) => !options?.positiveOnly || !val.isNegative(), {
-      message: options?.messages?.positive ?? "Il valore deve essere positivo",
-    })
     .refine(
-      (val) => options?.min === undefined || !val.lessThan(options.min),
-      {
-        message:
-          options?.messages?.min ??
-          `Il valore deve essere almeno ${options?.min}`,
-      }
+      (val: Decimal | undefined) => !val || !options?.positiveOnly || !val.isNegative(),
+      { message: options?.messages?.positive ?? "Il valore deve essere positivo" }
     )
     .refine(
-      (val) => options?.max === undefined || !val.greaterThan(options.max),
-      {
-        message:
-          options?.messages?.max ??
-          `Il valore non può superare ${options?.max}`,
-      }
+      (val: Decimal | undefined) => !val || options?.min === undefined || !val.lessThan(options.min),
+      { message: options?.messages?.min ?? `Il valore deve essere almeno ${options?.min}` }
+    )
+    .refine(
+      (val: Decimal | undefined) => !val || options?.max === undefined || !val.greaterThan(options.max),
+      { message: options?.messages?.max ?? `Il valore non può superare ${options?.max}` }
     );
-};
+
+  return schema as z.ZodType<Decimal> | z.ZodType<Decimal | undefined>;
+}
 
 
 /**

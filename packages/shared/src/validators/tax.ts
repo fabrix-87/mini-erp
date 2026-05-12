@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {
-  createDecimalSchemaRequired,
+  createDecimalSchema,
   createIdSchema,
   isoDateSchema,
 } from "./primitives";
@@ -40,10 +40,11 @@ export const taxRuleApplicabilitySchema = z.enum([
 /**
  * Schema for Tax Rate (0-100 with 2 decimals)
  */
-export const taxRateSchema = createDecimalSchemaRequired(2, {
+export const taxRateSchema = createDecimalSchema(2, {
   positiveOnly: true,
   min: 0,
   max: 100,
+  required: true,
   messages: {
     min: "L'aliquota deve essere tra 0 e 100",
     max: "L'aliquota deve essere tra 0 e 100",
@@ -53,10 +54,11 @@ export const taxRateSchema = createDecimalSchemaRequired(2, {
 /**
  * Schema for deductibility percentage (0-100 with 2 decimals)
  */
-export const deductibilityPercentSchema = createDecimalSchemaRequired(2, {
+export const deductibilityPercentSchema = createDecimalSchema(2, {
   positiveOnly: true,
   min: 0,
   max: 100,
+  required: true,
   defaultValue: "100",
 });
 
