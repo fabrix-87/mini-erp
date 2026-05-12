@@ -1,58 +1,14 @@
 // ============================================================================
-// SETTINGS - Configurazione della MIA azienda (chi emette le fatture)
-// ============================================================================
-
-model TenantSettings {
-  id Int @id @default(autoincrement())
-  
-  // Se multi-tenant
-  tenantCode String? @unique @db.VarChar(20)
-  
-  // Riferimento alla Company che rappresenta il tenant
-  companyId Int? @unique
-  company   Company? @relation("TenantCompany", fields: [companyId], references: [id])
-  
-  // RIMUOVI: companyName, vatNumber, taxCode, sdiCode, pec, fiscalAddress, countryCode
-  // Questi dati ora vengono presi da Company
-  
-  // === REGIME FISCALE DELLA MIA AZIENDA ===
-  taxRegime String? @db.VarChar(50)
-  
-  defaultSalesTaxRuleId Int?
-  defaultSalesTaxRule   TaxRule? @relation("TenantDefaultSalesTaxRule", fields: [defaultSalesTaxRuleId], references: [id])
-  
-  defaultPurchasesTaxRuleId Int?
-  defaultPurchasesTaxRule   TaxRule? @relation("TenantDefaultPurchasesTaxRule", fields: [defaultPurchasesTaxRuleId], references: [id])
-  
-  // Configurazioni
-  defaultCurrency       String  @default("EUR") @db.Char(3)
-  defaultLanguageId     Int?
-  defaultLanguage       Language? @relation(fields: [defaultLanguageId], references: [id])
-  
-  // Configurazioni fatturazione elettronica
-  sdiTransmissionFormat String? @db.VarChar(10)
-  sdiCertificatePath    String? @db.VarChar(500)
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@index([companyId])
-  @@index([defaultSalesTaxRuleId])
-  @@index([defaultPurchasesTaxRuleId])
-}
-
-
-// ============================================================================
 // USER SETTINGS - Per-user key/value store (dashboard layout, preferences, etc.)
 // ============================================================================
 
 model UserSetting {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  user      User     @relation("UserSettings", fields: [userId], references: [id], onDelete: Cascade)
+  id     Int  @id @default(autoincrement())
+  userId Int
+  user   User @relation("UserSettings", fields: [userId], references: [id], onDelete: Cascade)
 
-  key       String   @db.VarChar(100) // e.g. "dashboard.layout"
-  value     Json
+  key   String @db.VarChar(100) // e.g. "dashboard.layout"
+  value Json
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

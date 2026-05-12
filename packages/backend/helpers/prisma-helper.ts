@@ -138,3 +138,38 @@ export function toJsonField(value: unknown): typeof Prisma.JsonNull | Prisma.Inp
  */
 export const nullToUndefined = <T extends Record<string, unknown>>(obj: T): T =>
   Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, v === null ? undefined : v])) as T;
+
+// In packages/backend/helpers/prisma-helper.ts
+
+/**
+ * Builds a Prisma-safe soft-delete filter.
+ * Adds deletedAt: null unless `includeDeleted` is true.
+ */
+export const withSoftDelete = (
+  where: Record<string, unknown>,
+  includeDeleted = false,
+): Record<string, unknown> => (includeDeleted ? where : { ...where, deletedAt: null });
+
+/**
+ * Converts a numeric string or number to a Prisma-safe integer.
+ * Throws if the value is not a valid integer.
+ */
+export const toIntId = (value: string | number, fieldName = "id"): number => {
+  const n = Number(value);
+  if (!Number.isInteger(n) || n <= 0) {
+    throw new Error(`Invalid ${fieldName}: ${value}`);
+  }
+  return n;
+};
+
+/**
+ * Builds pagination skip/take from page and limit.
+ */
+export const toPagination = (
+  page: number | string = 1,
+  limit: number | string = 20,
+): { skip: number; take: number } => {
+  const p = Math.max(1, Number(page));
+  const l = Math.min(100, Math.max(1, Number(limit)));
+  return { skip: (p - 1) * l, take: l };
+};

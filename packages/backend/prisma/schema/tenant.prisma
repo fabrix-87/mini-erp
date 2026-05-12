@@ -1,0 +1,80 @@
+// ============================================================================
+// TENANT — Identità operativa di chi usa il sistema (emittente documenti)
+// Tenant è l'entità SaaS che possiede dati e sequenze numeriche.
+// ============================================================================
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  TRIAL
+  CANCELLED
+}
+
+enum TenantPlan {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum TaxRegime {
+  RF01 // Ordinario
+  RF02 // Contribuenti minimi (ex art. 27, DL 98/2011)
+  RF04 // Agricoltura / attività connesse
+  RF05 // Vendita sali e tabacchi
+  RF06 // Commercio fiammiferi
+  RF07 // Editoria
+  RF08 // Gestione servizi telefonia pubblica
+  RF09 // Rivendita documenti di trasporto pubblico
+  RF10 // Intrattenimenti / giochi / altre attività
+  RF11 // Agenzie viaggi e turismo
+  RF12 // Agriturismo
+  RF13 // Vendite a domicilio
+  RF14 // Rivenditore beni usati / oggetti arte
+  RF15 // Agenzie vendite all'asta
+  RF16 // IVA per cassa (art. 32-bis DL 83/2012)
+  RF17 // IVA per cassa (art. 6, comma 5, DPR 633/1972)
+  RF18 // Altro
+  RF19 // Regime forfettario (L. 190/2014)
+}
+
+model Tenant {
+  id   Int          @id @default(autoincrement())
+  code String       @unique @db.VarChar(20) // slug univoco, es. "acme-srl"
+
+  status TenantStatus @default(ACTIVE)
+  plan   TenantPlan   @default(FREE)
+
+  // Azienda legale emittente — NON nullable: senza Company non si emettono documenti
+  companyId Int     @unique
+  company   Company @relation("TenantOwnedCompany", fields: [companyId], references: [id])
+
+  // === REGIME FISCALE ===
+  taxRegime TaxRegime @default(RF01) // es. "RF01" (ordinario), "RF19" (forfettario)
+
+  defaultSalesTaxRuleId Int?
+  defaultSalesTaxRule   TaxRule? @relation("TenantDefaultSalesTaxRule", fields: [defaultSalesTaxRuleId], references: [id])
+
+  defaultPurchasesTaxRuleId Int?
+  defaultPurchasesTaxRule   TaxRule? @relation("TenantDefaultPurchasesTaxRule", fields: [defaultPurchasesTaxRuleId], references: [id])
+
+  // === CONFIGURAZIONI GENERALI ===
+  defaultCurrency   String    @default("EUR") @db.Char(3)
+  defaultLanguageId Int?
+  defaultLanguage   Language? @relation(fields: [defaultLanguageId], references: [id])
+
+  // === FATTURAZIONE ELETTRONICA SdI ===
+  sdiTransmissionFormat String? @db.VarChar(10)  // es. "FPR12" (privati), "FPA12" (PA)
+  sdiCertificatePath    String? @db.VarChar(500)
+
+  // === RELAZIONI OPERATIVE ===
+  users             User[]
+  documents         Document[]         @relation("TenantDocuments")
+  documentSequences DocumentSequence[] @relation("TenantSequences")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([status])
+}

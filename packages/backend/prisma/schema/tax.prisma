@@ -123,8 +123,8 @@ model TaxRule {
   translations     TaxRuleTranslation[]
   customers        Customer[]           @relation("CustomerTaxRule")
   suppliers        Supplier[]           @relation("SupplierTaxRule")
-  tenantsSales     TenantSettings[]     @relation("TenantDefaultSalesTaxRule")
-  tenantsPurchases TenantSettings[]     @relation("TenantDefaultPurchasesTaxRule")
+  tenantsSales     Tenant[]             @relation("TenantDefaultSalesTaxRule")
+  tenantsPurchases Tenant[]             @relation("TenantDefaultPurchasesTaxRule")
   priceListItems   PriceListItem[]      @relation("PriceListTaxRule")
   documentLines    DocumentLine[]       @relation("DocumentLineTaxRule")
   products         Product[]            @relation("ProductTaxRule")

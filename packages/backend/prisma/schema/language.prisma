@@ -13,7 +13,7 @@ model Language {
   attributeTranslations      AttributeTranslation[]
   attributeGroupTranslations AttributeGroupTranslation[]
   vatNatureTranslations      VatNatureTranslation[]
-  tenant                     TenantSettings[]
+  tenant                     Tenant[]
   countries                  Country[]
   currencyTranslations       CurrencyTranslation[]
 

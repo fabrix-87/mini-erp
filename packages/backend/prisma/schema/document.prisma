@@ -62,13 +62,21 @@ enum DocumentRelationType {
 }
 
 enum InstallmentStatus {
-  PENDING     // In attesa di pagamento
-  PAID        // Pagato completamente
-  OVERDUE     // Scaduto
-  CANCELLED   // Annullato
-  PARTIAL     // Pagato parzialmente (opzionale)
+    PENDING // In attesa di pagamento
+    PAID // Pagato completamente
+    OVERDUE // Scaduto
+    CANCELLED // Annullato
+    PARTIAL // Pagato parzialmente (opzionale)
 }
 
+enum DocumentLineType {
+    PRODUCT
+    SERVICE
+    DISCOUNT
+    SUBTOTAL
+    TEXT
+    PAGE_BREAK
+}
 
 model Document {
     id Int @id @default(autoincrement())
@@ -84,8 +92,8 @@ model Document {
     documentYear   Int
 
     // Soggetti
-    companyId Int
-    company   Company @relation(fields: [companyId], references: [id])
+    tenantId Int
+    tenant   Tenant @relation("TenantDocuments", fields: [tenantId], references: [id])
 
     // RUOLO COMMERCIALE (Se è un documento di Vendita)
     customerId Int?
@@ -170,7 +178,7 @@ model Document {
     // Snapshot tasso cambio al momento documento (per storicizzazione)
     exchangeRate     Decimal  @default(1.0) @db.Decimal(12, 6)
     exchangeRateDate DateTime @default(now())
-    baseCurrencyCode String   @default("EUR") @db.Char(3) // Valuta contabile aziendale
+    baseCurrencyCode String   @default("EUR") @db.Char(3)
 
     // Pagamento
     // FK al set di regole usate per calcolare la scadenza
@@ -227,7 +235,9 @@ model Document {
     @@index([deletedAt])
     @@index([documentType])
     @@index([status])
-    @@index([companyId])
+    @@index([tenantId])
+    @@index([tenantId, documentType])
+    @@index([tenantId, status])
     @@index([customerId])
     @@index([supplierId])
     @@index([opportunityId])
@@ -236,6 +246,10 @@ model Document {
     @@index([customerCountryCode])
     @@index([shippingCountryCode])
     @@index([documentType, documentYear, documentNumber])
+    @@index([deletedAt, documentType])
+    @@index([deletedAt, customerId])
+    @@index([deletedAt, supplierId])
+    @@index([deletedAt, status])
 }
 
 model DocumentLine {
@@ -253,7 +267,7 @@ model DocumentLine {
     product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 
     lineNumber Int
-    lineType   String @default("product") @db.VarChar(20)
+    lineType   DocumentLineType @default(PRODUCT)
 
     code String?
 
@@ -321,6 +335,9 @@ model DocumentLine {
     originalUnitPrice   Decimal? @db.Decimal(20, 6)
     priceOverrideReason String?  @db.Text
 
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     @@index([warehouseId])
     @@index([parentLineId])
     @@index([documentId, lineNumber]) // Ordinamento righe
@@ -336,13 +353,13 @@ model DocumentPaymentInstallment {
     // Dati della rata
     installmentNumber Int     @default(1)
     percentage        Decimal @db.Decimal(5, 2) // 30.00, 40.00, etc.
-    amount            Decimal @db.Decimal(15, 2) // Importo effettivo in valuta
+    amount            Decimal @default(0) @db.Decimal(15, 2) // Importo effettivo in valuta
 
     // Date e Status (Snapshot)
     dueDate    DateTime // La data di scadenza CALCOLATA
     paidDate   DateTime? // Data di pagamento effettivo
-    paidAmount Decimal   @default(0) @db.Decimal(15, 2)
-    status     InstallmentStatus  @default(PENDING)
+    paidAmount Decimal           @default(0) @db.Decimal(15, 2)
+    status     InstallmentStatus @default(PENDING)
 
     notes String? @db.Text
 
@@ -377,10 +394,13 @@ model DocumentSequence {
     year         Int
     lastNumber   Int          @default(0)
     prefix       String?      @db.VarChar(10) // Es. "FT", "DDT", "PRV" 
+    tenantId     Int
+    tenant       Tenant       @relation("TenantSequences", fields: [tenantId], references: [id])
 
     updatedAt DateTime @updatedAt
 
-    @@unique([documentType, year])
+    @@unique([tenantId, documentType, year])
+    @@index([tenantId])
 }
 
 // gestione relazioni complesse

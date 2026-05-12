@@ -7,48 +7,48 @@ model Currency {
   code String @unique @db.Char(3) // ISO 4217: EUR, USD, CHF, GBP, JPY
 
   // Identificazione
-  symbol       String @db.VarChar(10)  // "€", "$", "CHF", "£", "¥"
-  symbolNative String @db.VarChar(10)  // Simbolo nella locale nativa
+  symbol       String @db.VarChar(10) // "€", "$", "CHF", "£", "¥"
+  symbolNative String @db.VarChar(10) // Simbolo nella locale nativa
 
   // Formattazione
-  decimalDigits     Int     @default(2)         // Numero decimali (0 per JPY, 2 per EUR)
+  decimalDigits     Int     @default(2) // Numero decimali (0 per JPY, 2 per EUR)
   rounding          Decimal @default(0) @db.Decimal(5, 4) // 0.0000 = no rounding, 0.0500 = arrotonda a 5 centesimi
   symbolPosition    String  @default("before") @db.VarChar(10) // "before" (€100) o "after" (100€)
-  decimalSeparator  String  @default(",") @db.VarChar(1)  // "," o "."
-  thousandSeparator String  @default(".") @db.VarChar(1)  // "." o "," o " "
+  decimalSeparator  String  @default(",") @db.VarChar(1) // "," o "."
+  thousandSeparator String  @default(".") @db.VarChar(1) // "." o "," o " "
 
   // Tasso di cambio (verso valuta base)
-  isBaseCurrency      Boolean @default(false) // true solo per EUR (o la tua valuta base)
-  exchangeRate        Decimal @default(1.0) @db.Decimal(12, 6) // Tasso verso base currency
+  isBaseCurrency      Boolean  @default(false) // true solo per EUR (o la tua valuta base)
+  exchangeRate        Decimal  @default(1.0) @db.Decimal(12, 6) // Tasso verso base currency
   exchangeRateUpdated DateTime @default(now())
-  
+
   // Provider tasso cambio
   exchangeRateSource String? @db.VarChar(50) // "ECB", "manual", "openexchangerates.org"
 
   // Stato
   active Boolean @default(true)
-  
+
   // Metadata
-  priority     Int @default(0) // Ordine visualizzazione
-  countryCode  String? @db.Char(2) // Paese principale (EUR → IT, USD → US)
-  
+  priority    Int     @default(0) // Ordine visualizzazione
+  countryCode String? @db.Char(2) // Paese principale (EUR → IT, USD → US)
+
   // === RELAZIONI ===
-  
+
   // Paesi che usano questa valuta
   countries Country[] @relation("CountryCurrency")
-  
+
   // Documenti in questa valuta
   documents Document[] @relation("DocumentCurrency")
-  
+
   // Listini prezzi in questa valuta
   priceLists PriceList[] @relation("PriceListCurrency")
-  
+
   // Virtual stock con prezzo fornitore
   virtualStocks VirtualStock[] @relation("VirtualStockCurrency")
-  
+
   // Storico tassi cambio
   exchangeRateHistory ExchangeRateHistory[]
-  
+
   // Traduzioni
   translations CurrencyTranslation[]
 
@@ -67,8 +67,8 @@ model ExchangeRateHistory {
   currency   Currency @relation(fields: [currencyId], references: [id], onDelete: Cascade)
 
   rate   Decimal  @db.Decimal(12, 6) // Tasso verso base currency
-  date   DateTime @default(now())      // Data del tasso
-  source String?  @db.VarChar(50)     // Provider
+  date   DateTime @default(now()) // Data del tasso
+  source String?  @db.VarChar(50) // Provider
 
   createdAt DateTime @default(now())
 

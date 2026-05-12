@@ -105,10 +105,7 @@ model Company {
     contacts  CompanyContact[]
     customers Customer[]
     suppliers Supplier[]
-    tenants   TenantSettings[] @relation("TenantCompany")
-
-    // Documenti
-    documents Document[]
+    tenant    Tenant?          @relation("TenantOwnedCompany")
 
     // Note
     notes CompanyNote[]
