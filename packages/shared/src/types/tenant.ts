@@ -17,7 +17,42 @@ import {
   tenantCodeParamSchema,
   testSdiConfigSchema,
 } from "../validators/tenant";
-import { SdiTransmissionFormat } from "../constants";
+import type { SdiTransmissionFormat, TenantStatus, TenantPlan, TaxRegime } from "../constants";
+
+// ============================================================================
+// BASE ENTITY TYPE  (mirrors Prisma model Tenant)
+// ============================================================================
+
+/**
+ * Core Tenant entity — mirrors the Prisma `Tenant` model.
+ * Represents the SaaS operational identity that owns documents and numeric sequences.
+ */
+export interface Tenant {
+  id: number;
+  code: string;
+  status: TenantStatus;
+  plan: TenantPlan;
+  companyId: number;
+  taxRegime: TaxRegime;
+  defaultSalesTaxRuleId: number | null;
+  defaultPurchasesTaxRuleId: number | null;
+  defaultCurrency: string;
+  defaultLanguageId: number | null;
+  sdiTransmissionFormat: SdiTransmissionFormat | null;
+  sdiCertificatePath: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Tenant with all related entities eagerly loaded.
+ */
+export interface TenantWithRelations extends Tenant {
+  company: Company;
+  defaultSalesTaxRule: TaxRule | null;
+  defaultPurchasesTaxRule: TaxRule | null;
+  defaultLanguage: Language | null;
+}
 
 // ============================================================================
 // ENTITY TYPES
@@ -41,26 +76,18 @@ export type TenantSettings = Omit<CreateTenantSettingsInput, "tenantCode"> & {
 // INPUT TYPES (using z.infer)
 // ============================================================================
 
-export type CreateTenantSettingsInput = z.infer<
-  typeof createTenantSettingsSchema
->;
-export type UpdateTenantSettingsInput = z.infer<
-  typeof updateTenantSettingsSchema
->;
+export type CreateTenantSettingsInput = z.infer<typeof createTenantSettingsSchema>;
+export type UpdateTenantSettingsInput = z.infer<typeof updateTenantSettingsSchema>;
 export type UpdateTaxDefaultsInput = z.infer<typeof updateTaxDefaultsSchema>;
 export type UpdateSdiConfigInput = z.infer<typeof updateSdiConfigSchema>;
-export type UpdateRegionalSettingsInput = z.infer<
-  typeof updateRegionalSettingsSchema
->;
+export type UpdateRegionalSettingsInput = z.infer<typeof updateRegionalSettingsSchema>;
 export type TestSdiConfigInput = z.infer<typeof testSdiConfigSchema>;
 
 // ============================================================================
 // QUERY TYPES (using z.infer)
 // ============================================================================
 
-export type TenantSettingsQueryInput = z.infer<
-  typeof tenantSettingsQuerySchema
->;
+export type TenantSettingsQueryInput = z.infer<typeof tenantSettingsQuerySchema>;
 
 // ============================================================================
 // PARAM TYPES (using z.infer)
@@ -102,7 +129,7 @@ export interface TenantConfigSummary {
   countryCode: string;
   defaultCurrency: string;
   defaultLanguage: string | null;
-  taxRegime: string | null;
+  taxRegime: TaxRegime | null;
   hasSdiConfiguration: boolean;
   hasDefaultSalesTaxRule: boolean;
   hasDefaultPurchasesTaxRule: boolean;
@@ -240,7 +267,7 @@ export interface TenantFeatureFlags {
     maxStorageGB: number;
     maxApiCallsPerDay: number;
   };
-  plan: "free" | "starter" | "professional" | "enterprise";
+  plan: TenantPlan;
 }
 
 /**

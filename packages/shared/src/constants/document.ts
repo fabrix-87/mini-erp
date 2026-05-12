@@ -111,21 +111,9 @@ export const DOCUMENT_STATUS_TRANSITIONS = {
   DRAFT: ["PENDING_APPROVAL", "SENT", "VOIDED"],
   PENDING_APPROVAL: ["DRAFT", "SENT", "REJECTED", "VOIDED"],
   SENT: ["ACCEPTED", "REJECTED", "VOIDED"],
-  ACCEPTED: [
-    "PREPARING",
-    "PARTIALLY_FULFILLED",
-    "FULFILLED",
-    "UNPAID",
-    "VOIDED",
-  ],
+  ACCEPTED: ["PREPARING", "PARTIALLY_FULFILLED", "FULFILLED", "UNPAID", "VOIDED"],
   REJECTED: ["DRAFT", "VOIDED"],
-  PREPARING: [
-    "PARTIALLY_FULFILLED",
-    "FULFILLED",
-    "IN_TRANSIT",
-    "DELIVERED",
-    "VOIDED",
-  ],
+  PREPARING: ["PARTIALLY_FULFILLED", "FULFILLED", "IN_TRANSIT", "DELIVERED", "VOIDED"],
   PARTIALLY_FULFILLED: ["FULFILLED", "IN_TRANSIT", "VOIDED"],
   FULFILLED: ["IN_TRANSIT", "DELIVERED", "VOIDED"],
   IN_TRANSIT: ["DELIVERED", "VOIDED"],
@@ -369,13 +357,7 @@ export const STATUS_CATEGORIES = {
   DRAFT_PHASE: ["DRAFT", "PENDING_APPROVAL"],
   APPROVAL_PHASE: ["SENT"],
   ACTIVE_PHASE: ["ACCEPTED", "REJECTED"],
-  FULFILLMENT_PHASE: [
-    "PREPARING",
-    "PARTIALLY_FULFILLED",
-    "FULFILLED",
-    "IN_TRANSIT",
-    "DELIVERED",
-  ],
+  FULFILLMENT_PHASE: ["PREPARING", "PARTIALLY_FULFILLED", "FULFILLED", "IN_TRANSIT", "DELIVERED"],
   PAYMENT_PHASE: ["UNPAID", "PARTIALLY_PAID", "PAID", "OVERDUE"],
   CLOSED_PHASE: ["VOIDED", "CLOSED"],
 } as const;
@@ -438,9 +420,7 @@ export const DOCUMENTS_REQUIRING_CUSTOMER: readonly DocumentType[] = [
 /**
  * Documents requiring supplier
  */
-export const DOCUMENTS_REQUIRING_SUPPLIER: readonly DocumentType[] = [
-  "SUPPLIER_ORDER",
-] as const;
+export const DOCUMENTS_REQUIRING_SUPPLIER: readonly DocumentType[] = ["SUPPLIER_ORDER"] as const;
 
 /**
  * Documents affecting stock
@@ -461,12 +441,12 @@ export const DOCUMENTS_AFFECTING_STOCK: readonly DocumentType[] = [
  * Document line types
  */
 export const DOCUMENT_LINE_TYPES = {
-  PRODUCT: "product",
-  SERVICE: "service",
-  DISCOUNT: "discount",
-  SUBTOTAL: "subtotal",
-  TEXT: "text",
-  PAGE_BREAK: "page_break",
+  PRODUCT: "PRODUCT",
+  SERVICE: "SERVICE",
+  DISCOUNT: "DISCOUNT",
+  SUBTOTAL: "SUBTOTAL",
+  TEXT: "TEXT",
+  PAGE_BREAK: "PAGE_BREAK",
 } as const;
 
 // ============================================================================
@@ -487,10 +467,7 @@ export const INSTALLMENT_STATUSES = {
 /**
  * Allowed status transitions for installments
  */
-export const INSTALLMENT_STATUS_TRANSITIONS: Record<
-  InstallmentStatus,
-  InstallmentStatus[]
-> = {
+export const INSTALLMENT_STATUS_TRANSITIONS: Record<InstallmentStatus, InstallmentStatus[]> = {
   PENDING: ["PAID", "OVERDUE", "PARTIAL", "CANCELLED"],
   PARTIAL: ["PAID", "OVERDUE", "CANCELLED"],
   OVERDUE: ["PAID", "PARTIAL", "CANCELLED"],

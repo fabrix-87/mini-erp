@@ -6,7 +6,6 @@
 import { Prisma, DocumentType, PrismaClient } from "@/generated/prisma/client";
 import { DOCUMENT_NUMBER_PADDING, DOCUMENT_PREFIXES } from "@mini-erp/shared";
 
-
 /**
  * Genera il numero documento in modo atomico usando DocumentSequence
  *
@@ -34,14 +33,15 @@ import { DOCUMENT_NUMBER_PADDING, DOCUMENT_PREFIXES } from "@mini-erp/shared";
  * ```
  */
 interface GeneratedDocumentNumber {
-    sequenceNumber: number;
-    documentNumber: string;
-    year: number;
-    prefix: string;
+  sequenceNumber: number;
+  documentNumber: string;
+  year: number;
+  prefix: string;
 }
 
 export async function generateDocumentNumber(
   documentType: DocumentType,
+  tenantId: number,
   year: number,
   tx: Prisma.TransactionClient,
 ): Promise<GeneratedDocumentNumber> {
@@ -51,7 +51,8 @@ export async function generateDocumentNumber(
   // 1. Trova o crea sequenza per questo tipo+anno
   let sequence = await tx.documentSequence.findUnique({
     where: {
-      documentType_year: {
+      tenantId_documentType_year: {
+        tenantId,
         documentType,
         year,
       },
@@ -63,6 +64,7 @@ export async function generateDocumentNumber(
     sequence = await tx.documentSequence.create({
       data: {
         documentType,
+        tenantId,
         year,
         lastNumber: 0,
         prefix,
@@ -94,15 +96,12 @@ export async function generateDocumentNumber(
 /**
  * Assegna numero a un documento in DRAFT
  * Usa questa funzione quando approvi/invii un documento
- * 
+ *
  * @param documentId - ID del documento
  * @param prisma - PrismaClient
  * @returns Documento aggiornato con numero
  */
-export async function assignDocumentNumber(
-  documentId: number,
-  prisma: PrismaClient
-) {
+export async function assignDocumentNumber(documentId: number, prisma: PrismaClient) {
   return prisma.$transaction(async (tx) => {
     // 1. Recupera documento
     const document = await tx.document.findUnique({
@@ -115,18 +114,19 @@ export async function assignDocumentNumber(
 
     // 2. Verifica che sia in bozza
     if (document.documentNumber) {
-      throw new Error('Documento già numerato');
+      throw new Error("Documento già numerato");
     }
 
-    if (!['DRAFT', 'PENDING_APPROVAL'].includes(document.status)) {
-      throw new Error('Solo bozze possono essere numerate');
+    if (!["DRAFT", "PENDING_APPROVAL"].includes(document.status)) {
+      throw new Error("Solo bozze possono essere numerate");
     }
 
     // 3. Genera numero
     const numbering = await generateDocumentNumber(
       document.documentType,
+      document.tenantId,
       document.documentYear,
-      tx
+      tx,
     );
 
     // 4. Aggiorna documento

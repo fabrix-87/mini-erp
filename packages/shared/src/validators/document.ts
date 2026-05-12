@@ -21,6 +21,7 @@ import {
   MAX_LINE_QUANTITY,
   MAX_DOCUMENT_AMOUNT,
   DOCUMENTS_REQUIRING_CUSTOMER,
+  DOCUMENTS_REQUIRING_SUPPLIER,
 } from "../constants/document";
 import { priceSchema } from "./business";
 import Decimal from "decimal.js";
@@ -258,9 +259,9 @@ const documentShape = z.object({
   warehouseId: createIdSchema("Warehouse ID non valido").optional().nullable(),
 
   documentDate: isoDateSchema().default(() => new Date().toISOString()),
-  dueDate: isoDateSchema(),
-  deliveryDate: isoDateSchema(),
-  validUntil: isoDateSchema(),
+  dueDate: isoDateSchema().optional().nullable(),
+  deliveryDate: isoDateSchema().optional().nullable(),
+  validUntil: isoDateSchema().optional().nullable(),
   parentDocumentId: documentIdSchema.optional().nullable(),
 
   // Customer snapshot
@@ -347,15 +348,12 @@ export const createDocumentSchema = documentShape
   )
   .refine(
     (data) => {
-      if (DOCUMENTS_REQUIRING_CUSTOMER.includes(data.documentType as any) && !data.supplierId) {
+      if (DOCUMENTS_REQUIRING_SUPPLIER.includes(data.documentType as any) && !data.supplierId) {
         return false;
       }
       return true;
     },
-    {
-      message: "Fornitore obbligatorio per ordini fornitore",
-      path: ["supplierId"],
-    },
+    { message: "Fornitore obbligatorio per ordini fornitore", path: ["supplierId"] },
   )
   .refine(
     (data) => {
@@ -623,7 +621,9 @@ export const salesReportSchema = z.object({
   dateTo: isoDateSchema(),
   customerId: createIdSchema("Customer ID non valido").optional(),
   productId: createIdSchema("Product ID non valido").optional(),
-  groupBy: z.enum(["customer", "product", "category", "day", "week", "month","year"]).default("month"),
+  groupBy: z
+    .enum(["customer", "product", "category", "day", "week", "month", "year"])
+    .default("month"),
   includeVoided: z.boolean().default(false),
 });
 

@@ -4,6 +4,43 @@ import { sortOrderSchema } from "./query/pagination";
 import { urlSchema } from "./primitives";
 import { currencyCodeBaseSchema } from "./base";
 
+/**
+ * Schema for tenant operational status.
+ */
+export const tenantStatusSchema = z.enum(["ACTIVE", "SUSPENDED", "TRIAL", "CANCELLED"]);
+
+/**
+ * Schema for tenant subscription plan.
+ */
+export const tenantPlanSchema = z.enum(["FREE", "STARTER", "PROFESSIONAL", "ENTERPRISE"]);
+
+/**
+ * Schema for Italian tax regime codes (Regimi Fiscali SDI).
+ * Codes follow AdE (Agenzia delle Entrate) specification RF01–RF19.
+ *
+ * @see {@link https://www.agenziaentrate.gov.it} AdE Fatturazione Elettronica
+ */
+export const taxRegimeSchema = z.enum([
+  "RF01", // Ordinario
+  "RF02", // Contribuenti minimi (ex art. 27, DL 98/2011)
+  "RF04", // Agricoltura e attività connesse
+  "RF05", // Vendita sali e tabacchi
+  "RF06", // Commercio fiammiferi
+  "RF07", // Editoria
+  "RF08", // Gestione servizi telefonia pubblica
+  "RF09", // Rivendita documenti di trasporto pubblico
+  "RF10", // Intrattenimenti, giochi e altre attività
+  "RF11", // Agenzie viaggi e turismo
+  "RF12", // Agriturismo
+  "RF13", // Vendite a domicilio
+  "RF14", // Rivenditore beni usati e oggetti d'arte
+  "RF15", // Agenzie di vendite all'asta
+  "RF16", // IVA per cassa (art. 32-bis DL 83/2012)
+  "RF17", // IVA per cassa (art. 6 c.5 DPR 633/1972)
+  "RF18", // Altro
+  "RF19", // Regime forfettario (L. 190/2014)
+]);
+
 // ============================================================================
 // TENANT SETTINGS SCHEMAS
 // ============================================================================
@@ -34,25 +71,15 @@ const tenantSettingsShape = z.object({
 
   companyId: createIdSchema("Company ID non valido").optional().nullable(),
 
-  taxRegime: z
-    .string()
-    .max(50, "Tax regime non può superare 50 caratteri")
-    .optional()
-    .nullable(),
+  taxRegime: taxRegimeSchema.optional().nullable(),
 
-  defaultSalesTaxRuleId: createIdSchema("Tax Rule ID non valido")
-    .optional()
-    .nullable(),
+  defaultSalesTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
 
-  defaultPurchasesTaxRuleId: createIdSchema("Tax Rule ID non valido")
-    .optional()
-    .nullable(),
+  defaultPurchasesTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
 
   defaultCurrency: currencyCodeBaseSchema.default("EUR"),
 
-  defaultLanguageId: createIdSchema("Language ID non valido")
-    .optional()
-    .nullable(),
+  defaultLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
 
   sdiTransmissionFormat: sdiTransmissionFormatSchema.optional().nullable(),
 
@@ -92,15 +119,11 @@ export const updateTenantSettingsSchema = tenantSettingsShape
  */
 export const updateTaxDefaultsSchema = z
   .object({
-    defaultSalesTaxRuleId: createIdSchema("Tax Rule ID non valido")
-      .optional()
-      .nullable(),
+    defaultSalesTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
 
-    defaultPurchasesTaxRuleId: createIdSchema("Tax Rule ID non valido")
-      .optional()
-      .nullable(),
+    defaultPurchasesTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
 
-    taxRegime: z.string().max(50).optional().nullable(),
+    taxRegime: taxRegimeSchema.optional().nullable(),
   })
   .strict();
 
@@ -130,9 +153,7 @@ export const updateRegionalSettingsSchema = z
   .object({
     defaultCurrency: currencyCodeBaseSchema,
 
-    defaultLanguageId: createIdSchema("Language ID non valido")
-      .optional()
-      .nullable(),
+    defaultLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
   })
   .strict();
 
@@ -146,6 +167,8 @@ export const updateRegionalSettingsSchema = z
 export const tenantSettingsQuerySchema = z.object({
   tenantCode: z.string().optional(),
   companyId: createIdSchema("Company ID non valido").optional(),
+  status: tenantStatusSchema.optional(),
+  plan: tenantPlanSchema.optional(),
   sortBy: z.enum(["id", "tenantCode", "createdAt"]).default("id"),
   sortOrder: sortOrderSchema,
 });

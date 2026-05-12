@@ -84,7 +84,7 @@ export type DocumentLine = {
   productId: number | null;
   product?: Product | null;
   lineNumber: number;
-  lineType: string;
+  lineType: DocumentLineType;
   code: string | null;
   nameSystem: string;
   descriptionSystem: string | null;

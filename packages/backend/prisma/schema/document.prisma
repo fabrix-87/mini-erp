@@ -390,7 +390,7 @@ model DocumentPaymentInstallment {
 // tabella per gestire sequenze
 model DocumentSequence {
     id           Int          @id @default(autoincrement())
-    documentType DocumentType @unique
+    documentType DocumentType 
     year         Int
     lastNumber   Int          @default(0)
     prefix       String?      @db.VarChar(10) // Es. "FT", "DDT", "PRV" 
