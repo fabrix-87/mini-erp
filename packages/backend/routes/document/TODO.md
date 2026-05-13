@@ -69,6 +69,5 @@ Stato: ⬜ Da fare · 🔄 In corso · ✅ Fatto
 
 | Priorità | Task | Note |
 |----------|------|------|
-| 🟡 | `getAllDocuments` — gestire `documentType` iniettato da route `/quotes`, `/orders`, etc. | Attualmente il filtro è delegato alla query string — va automatizzato nel controller |
 | 🟡 | `bulkExportDocuments` in `document-bulk-controller.ts` — attualmente stub | Implementare ZIP con `archiver` + chiamata a export PDF |
 | 🟢 | Separare `document-validator.ts` in sotto-file per specchio dei controller | Es. `document-lines-validator.ts`, `document-bulk-validator.ts` |

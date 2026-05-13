@@ -1,7 +1,7 @@
 import { BadRequestError, NotFoundError } from "@/utils/app-error-utils";
 import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
-import { sendSuccess } from "@/utils/response-utils";
+import { sendFail, sendSuccess } from "@/utils/response-utils";
 import {
   ApproveDocumentInput,
   DocumentIdParam,
@@ -14,7 +14,7 @@ import {
 } from "@mini-erp/shared";
 import { getDocumentSelection } from "@/helpers/document";
 import { generateDocumentNumber, resolveAllowedTransitions } from "@/services/document";
-import { toIntId, withSoftDelete } from "@/helpers/prisma-helper";
+import { connectOrDisconnectById, toIntId, withSoftDelete } from "@/helpers/prisma-helper";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import { getValidatedBody, getValidatedParams } from "@/helpers/validated-context";
@@ -145,6 +145,7 @@ export const approveDocument = async (c: Context<AppBindings>) => {
     data: {
       status: "ACCEPTED",
       approvedAt: new Date(),
+      assignedUser: connectOrDisconnectById(userId),
       ...(notes && { internalNotes: notes }),
     },
     select: getDocumentSelection(),
@@ -162,6 +163,7 @@ export const approveDocument = async (c: Context<AppBindings>) => {
 export const rejectDocument = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<DocumentIdParam>(c);
   const { reason } = getValidatedBody<RejectDocumentInput>(c);
+  const userId = c.get("user")!.userId;
 
   const document = await prisma.document.findUnique({
     where: withSoftDelete({ id: toIntId(id) }) as Prisma.DocumentWhereUniqueInput,
@@ -186,6 +188,7 @@ export const rejectDocument = async (c: Context<AppBindings>) => {
     data: {
       status: "REJECTED",
       voidedReason: reason,
+      assignedUser: connectOrDisconnectById(userId),
     },
     select: getDocumentSelection(),
   });
@@ -201,7 +204,12 @@ export const rejectDocument = async (c: Context<AppBindings>) => {
  */
 export const voidDocument = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<DocumentIdParam>(c);
-  const { voidedReason } = getValidatedBody<UpdateDocumentStatusInput>(c);
+  const data = getValidatedBody<UpdateDocumentStatusInput>(c);
+  const userId = c.get("user")!.userId;
+
+  if(data.status !== "VOIDED"){
+    throw new NotFoundError("Status non valido");
+  }
 
   const document = await prisma.document.findUnique({
     where: withSoftDelete({ id: toIntId(id) }) as Prisma.DocumentWhereUniqueInput,
@@ -226,7 +234,8 @@ export const voidDocument = async (c: Context<AppBindings>) => {
     data: {
       status: "VOIDED",
       voidedAt: new Date(),
-      voidedReason: voidedReason ?? null,
+      voidedReason: data.voidedReason,
+      assignedUser: connectOrDisconnectById(userId),
     },
     select: getDocumentSelection(),
   });
@@ -273,6 +282,11 @@ export const sendDocument = async (c: Context<AppBindings>) => {
     throw new BadRequestError(`Invio non permesso dallo stato: ${document.status}`);
   }
 
+  return sendFail(c, {
+    statusCode: 501,
+    message: "Non ancora implementato"
+  });
+  /*
   const updated = await prisma.$transaction(async (tx) => {
     const updateData: Prisma.DocumentUpdateInput = {
       status: "SENT",
@@ -304,6 +318,7 @@ export const sendDocument = async (c: Context<AppBindings>) => {
   return sendSuccess(c, updated, {
     message: `Documento inviato a ${sendData.recipientEmail}`,
   });
+  */
 };
 
 // ============================================================================

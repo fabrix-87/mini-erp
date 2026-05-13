@@ -22,6 +22,7 @@ import {
   deleteDocument,
   recalculateDocument,
 } from "../../controllers/document";
+import { getAllDeliveryNotes, getAllInvoices, getAllOrders, getAllQuotes } from "@/controllers/document/document-crud-controller";
 
 const crudRoutes = createHonoApp();
 
@@ -48,7 +49,7 @@ crudRoutes.get(
   authenticateToken,
   authorize(["document:read", "document:manage"]),
   validateDocumentQuery,
-  getAllDocuments,
+  getAllQuotes,
 );
 
 /**
@@ -61,7 +62,7 @@ crudRoutes.get(
   authenticateToken,
   authorize(["document:read", "document:manage"]),
   validateDocumentQuery,
-  getAllDocuments,
+  getAllOrders,
 );
 
 /**
@@ -74,7 +75,7 @@ crudRoutes.get(
   authenticateToken,
   authorize(["document:read", "document:manage"]),
   validateDocumentQuery,
-  getAllDocuments,
+  getAllInvoices,
 );
 
 /**
@@ -87,7 +88,7 @@ crudRoutes.get(
   authenticateToken,
   authorize(["document:read", "document:manage"]),
   validateDocumentQuery,
-  getAllDocuments,
+  getAllDeliveryNotes,
 );
 
 /**

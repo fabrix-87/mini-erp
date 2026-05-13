@@ -321,7 +321,6 @@ export type TopProductsReportInput = z.infer<typeof topProductsReportSchema>;
 
 export type DocumentIdParam = z.infer<typeof documentIdParamSchema>;
 export type DocumentLineIdParam = DocumentIdParam & z.infer<typeof documentLineIdParamSchema>;
-export type DocumentIdLineIdParams = DocumentIdParam & DocumentLineIdParam;
 export type InstallmentIdParam = DocumentIdParam & z.infer<typeof installmentIdParamSchema>;
 export type DocumentSupplierIdParam = z.infer<typeof supplierIdParamSchema>;
 export type DocumentCustomerIdParam = z.infer<typeof customerIdParamSchema>;

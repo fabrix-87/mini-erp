@@ -55,6 +55,7 @@ enum DocumentStatus {
 
 enum DocumentRelationType {
     CONVERTS_TO
+    CLONED_FROM
     SPLITS_FROM
     MERGES_INTO
     CREDITS

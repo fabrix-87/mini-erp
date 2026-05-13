@@ -6,7 +6,6 @@ import { getValidatedBody, getValidatedParams } from "@/helpers/validated-contex
 import {
   calculateLineTotals,
   CreateDocumentLineInput,
-  DocumentIdLineIdParams,
   DocumentIdParam,
   DocumentLineIdParam,
   UpdateDocumentLineInput,
@@ -48,7 +47,7 @@ export const getDocumentLines = async (c: Context<AppBindings>) => {
  * @access Private
  */
 export const getDocumentLineById = async (c: Context<AppBindings>) => {
-  const { id, lineId } = getValidatedParams<DocumentIdLineIdParams>(c);
+  const { id, lineId } = getValidatedParams<DocumentLineIdParam>(c);
 
   const line = await prisma.documentLine.findUnique({
     where: { id: toIntId(lineId, "lineId") },
@@ -164,7 +163,7 @@ export const updateDocumentLine = async (c: Context<AppBindings>) => {
  * @access Private
  */
 export const deleteDocumentLine = async (c: Context<AppBindings>) => {
-  const { id, lineId } = getValidatedParams<DocumentIdLineIdParams>(c);
+  const { id, lineId } = getValidatedParams<DocumentLineIdParam>(c);
 
   const line = await prisma.documentLine.findUnique({
     where: { id: toIntId(lineId, "lineId") },

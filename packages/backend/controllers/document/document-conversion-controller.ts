@@ -3,26 +3,22 @@ import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
 import { sendCreated, sendSuccess } from "@/utils/response-utils";
 import {
+  calculateDocumentTotals,
+  calculateLineTotals,
   CloneDocumentInput,
   ConvertDocumentInput,
   CreateDocumentRelationInput,
   DocumentIdParam,
 } from "@mini-erp/shared";
 import { getDocumentSelection } from "@/helpers/document";
-import {
-  buildDocumentCreateData,
-  buildDocumentLine,
-} from "@/services/document/builder";
+import { buildDocumentCreateData, buildDocumentLine } from "@/services/document/builder";
 import { generateDocumentNumber } from "@/services/document/numbering";
 import { toIntId, withSoftDelete, toJsonField } from "@/helpers/prisma-helper";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import { getValidatedBody, getValidatedParams } from "@/helpers/validated-context";
 import { Decimal } from "@prisma/client/runtime/client";
-import {
-  DOCUMENT_CONVERSION_MAP,
-  STATUSES_REQUIRING_NUMBER,
-} from "@mini-erp/shared";
+import { DOCUMENT_CONVERSION_MAP, STATUSES_REQUIRING_NUMBER } from "@mini-erp/shared";
 import type { DocumentRelationType, DocumentStatus, DocumentType } from "@mini-erp/shared";
 
 // ============================================================================
@@ -64,8 +60,8 @@ export const cloneDocument = async (c: Context<AppBindings>) => {
 
   const cloned = await prisma.$transaction(async (tx) => {
     // Build cloned lines
-    const clonedLines: Prisma.DocumentLineUncheckedCreateWithoutDocumentInput[] =
-      source.lines.map((line, index) => ({
+    const clonedLines: Prisma.DocumentLineUncheckedCreateWithoutDocumentInput[] = source.lines.map(
+      (line, index) => ({
         lineNumber: index + 1,
         lineType: line.lineType,
         code: line.code,
@@ -98,7 +94,8 @@ export const cloneDocument = async (c: Context<AppBindings>) => {
         isComponent: line.isComponent,
         originalUnitPrice: line.originalUnitPrice,
         priceOverrideReason: line.priceOverrideReason,
-      }));
+      }),
+    );
 
     // Build cloned installments (reset payment state)
     const clonedInstallments: Prisma.DocumentPaymentInstallmentUncheckedCreateWithoutDocumentInput[] =
@@ -190,7 +187,7 @@ export const cloneDocument = async (c: Context<AppBindings>) => {
       data: {
         sourceDocumentId: sourceId,
         targetDocumentId: newDocument.id,
-        relationType: "CONVERTS_TO",
+        relationType: "CLONED_FROM",
       },
     });
 
@@ -238,17 +235,13 @@ export const convertDocument = async (c: Context<AppBindings>) => {
     DOCUMENT_CONVERSION_MAP[source.documentType as DocumentType] ?? [];
 
   if (!allowedTargets.includes(targetType)) {
-    throw new BadRequestError(
-      `Conversione non consentita: ${source.documentType} → ${targetType}`,
-    );
+    throw new BadRequestError(`Conversione non consentita: ${source.documentType} → ${targetType}`);
   }
 
   // Source must be in a convertible status
   const convertibleStatuses = ["ACCEPTED", "CONFIRMED", "PARTIALLY_FULFILLED", "SENT"];
   if (!convertibleStatuses.includes(source.status)) {
-    throw new BadRequestError(
-      `Stato documento non convertibile: ${source.status}`,
-    );
+    throw new BadRequestError(`Stato documento non convertibile: ${source.status}`);
   }
 
   const currentYear = new Date().getFullYear();
@@ -269,9 +262,7 @@ export const convertDocument = async (c: Context<AppBindings>) => {
     const eligibleLines = source.lines.filter((line) => {
       const delivered = line.quantityDelivered ?? new Decimal(0);
       const invoiced = line.quantityInvoiced ?? new Decimal(0);
-      const remaining = line.quantity
-        .sub(delivered)
-        .sub(invoiced);
+      const remaining = line.quantity.sub(delivered).sub(invoiced);
       return remaining.greaterThan(0);
     });
 
@@ -288,44 +279,50 @@ export const convertDocument = async (c: Context<AppBindings>) => {
         const invoiced = line.quantityInvoiced ?? new Decimal(0);
         const remainingQty = line.quantity.sub(delivered).sub(invoiced);
 
+        const lineTotals = calculateLineTotals(
+          remainingQty,
+          line.unitPrice,
+          line.discountPercent,
+          line.taxPercent,
+        );
+
         // Recompute line totals for the remaining quantity
         return {
-            lineType: line.lineType,
-            lineNumber: index + 1,
-            code: line.code ?? undefined,
-            productId: line.productId ?? undefined,
-            productVariantId: line.productVariantId ?? undefined,
-            nameSystem: line.nameSystem,
-            descriptionSystem: line.descriptionSystem ?? undefined,
-            nameCustomer: line.nameCustomer ?? undefined,
-            descriptionCustomer: line.descriptionCustomer ?? undefined,
-            quantity: remainingQty,
-            unit: line.unit,
-            unitPrice: line.unitPrice,
-            unitCost: line.unitCost,
-            discountPercent: line.discountPercent,
-            taxPercent: line.taxPercent,
-            taxRuleId: line.taxRuleId ?? undefined,
-            vatNatureCode: line.vatNatureCode ?? undefined,
-            vatNormReference: line.vatNormReference ?? undefined,
-            notes: line.notes ?? undefined,
-            customFields: toJsonField(line.customFields),
-            warehouseId: line.warehouseId ?? undefined,
-            isComponent: line.isComponent,
-            originalUnitPrice: line.originalUnitPrice ?? undefined,
-            priceOverrideReason: line.priceOverrideReason ?? undefined,
-          } satisfies Prisma.DocumentLineUncheckedCreateWithoutDocumentInput
+          lineType: line.lineType,
+          lineNumber: index + 1,
+          code: line.code ?? undefined,
+          productId: line.productId ?? undefined,
+          productVariantId: line.productVariantId ?? undefined,
+          nameSystem: line.nameSystem,
+          descriptionSystem: line.descriptionSystem ?? undefined,
+          nameCustomer: line.nameCustomer ?? undefined,
+          descriptionCustomer: line.descriptionCustomer ?? undefined,
+          quantity: remainingQty,
+          unit: line.unit,
+          unitPrice: line.unitPrice,
+          unitCost: line.unitCost,
+          discountPercent: line.discountPercent,
+          taxPercent: line.taxPercent,
+          taxRuleId: line.taxRuleId ?? undefined,
+          vatNatureCode: line.vatNatureCode ?? undefined,
+          vatNormReference: line.vatNormReference ?? undefined,
+          notes: line.notes ?? undefined,
+          customFields: toJsonField(line.customFields),
+          warehouseId: line.warehouseId ?? undefined,
+          isComponent: line.isComponent,
+          originalUnitPrice: line.originalUnitPrice ?? undefined,
+          priceOverrideReason: line.priceOverrideReason ?? undefined,
+          ...lineTotals,
+        } satisfies Prisma.DocumentLineUncheckedCreateWithoutDocumentInput;
       });
 
-    // Recompute document totals from converted lines
-    const lineTotalsForCalc = convertedLines.map((l) => ({
-      lineTotal: new Decimal(l.lineTotal as number),
-      taxAmount: new Decimal(l.taxAmount as number),
-    }));
-
-    const { calculateDocumentTotals } = await import("@mini-erp/shared");
     const totals = calculateDocumentTotals(
-      lineTotalsForCalc,
+      convertedLines
+        .filter((l) => l.lineTotal !== undefined && l.taxAmount !== undefined)
+        .map((l) => ({
+          lineTotal: l.lineTotal as Decimal,
+          taxAmount: l.taxAmount as Decimal,
+        })),
       source.discountPercent.toNumber(),
       source.shippingCost.toNumber(),
     );
@@ -397,7 +394,7 @@ export const convertDocument = async (c: Context<AppBindings>) => {
       data: {
         sourceDocumentId: sourceId,
         targetDocumentId: newDocument.id,
-        relationType: "CONVERTS_TO",
+        relationType: "CLONED_FROM",
       },
     });
 
@@ -454,9 +451,7 @@ export const createDocumentRelation = async (c: Context<AppBindings>) => {
   });
 
   if (existing) {
-    throw new BadRequestError(
-      `Relazione ${input.relationType} già esistente tra questi documenti`,
-    );
+    throw new BadRequestError(`Relazione ${input.relationType} già esistente tra questi documenti`);
   }
 
   const relation = await prisma.documentRelation.create({
@@ -533,17 +528,12 @@ export const getDocumentRelations = async (c: Context<AppBindings>) => {
  */
 export const deleteDocumentRelation = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<DocumentIdParam>(c);
-  const targetId = toIntId(
-    c.req.param("targetId"),
-    "targetId",
-  );
+  const targetId = toIntId(c.req.param("targetId"), "targetId");
   const { relationType } = getValidatedBody<{ relationType: DocumentRelationType }>(c);
 
-  const systemRelations = ["CONVERTS_TO"];
+  const systemRelations = ["CLONED_FROM"];
   if (systemRelations.includes(relationType)) {
-    throw new BadRequestError(
-      `Impossibile eliminare una relazione di sistema: ${relationType}`,
-    );
+    throw new BadRequestError(`Impossibile eliminare una relazione di sistema: ${relationType}`);
   }
 
   const sourceId = toIntId(id);

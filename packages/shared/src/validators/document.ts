@@ -206,7 +206,7 @@ const installmentShape = z.object({
   installmentNumber: z.number().int().positive().default(1),
   percentage: installmentPercentSchema,
   amount: moneySchema,
-  dueDate: isoDateSchema({required: true}),
+  dueDate: isoDateSchema({ required: true }),
   status: installmentStatusSchema.default("PENDING"),
   notes: z.string().max(500).optional().nullable(),
   paymentMethodId: createIdSchema("Payment Method ID non valido").optional().nullable(),
@@ -222,19 +222,19 @@ export const payInstallmentSchema = z
   .object({
     paidAmount: moneySchema,
     paymentMethodId: createIdSchema("Payment Method ID non valido"),
-    paidDate: isoDateSchema({required: true}).default(() => new Date().toISOString()),
+    paidDate: isoDateSchema({ required: true }).default(() => new Date().toISOString()),
     paymentReference: z.string().max(100).optional().nullable(),
     bankTransactionId: z.string().max(100).optional().nullable(),
     notes: z.string().max(500).optional().nullable(),
   })
   .strict();
 
-  export const generateInstallmentPlanSchema = z.object({
-    count: positiveNumbersSchema,
-    firstDueDate: isoDateSchema({ required: true }),
-    intervalDays: positiveNumbersSchema,
-    paymentMethodId: createIdSchema("Payment Method ID non valido"),
-  })
+export const generateInstallmentPlanSchema = z.object({
+  count: positiveNumbersSchema,
+  firstDueDate: isoDateSchema({ required: true }),
+  intervalDays: positiveNumbersSchema,
+  paymentMethodId: createIdSchema("Payment Method ID non valido"),
+});
 
 // ============================================================================
 // DOCUMENT SCHEMAS
@@ -395,26 +395,40 @@ export const updateDocumentSchema = documentShape
   .partial()
   .strict();
 
-const documentStatusUpdateShape = z.object({
-  status: documentStatusSchema,
+const baseFields = {
   statusCategory: documentStatusCategorySchema.optional(),
   reason: z.string().max(500).optional().nullable(),
-  voidedReason: z.string().max(1000).optional().nullable(),
-});
+};
 
 /**
- * Schema for updating Document status — voidedReason required when VOIDED.
+ * Schema for updating a Document's status.
+ *
+ * The schema is a discriminated union on `status`:
+ * - `VOIDED`  → `voidedReason` is required and non-nullable.
+ * - all other statuses → `voidedReason` is optional and nullable.
+ *
+ * @example
+ * // TypeScript narrows automatically after checking `status`:
+ * if (data.status === DOCUMENT_STATUSES.VOIDED) {
+ *   data.voidedReason // → string (never undefined)
+ * }
  */
-export const updateDocumentStatusSchema = documentStatusUpdateShape.strict().refine(
-  (data) => {
-    if (data.status === DOCUMENT_STATUSES.VOIDED && !data.voidedReason) return false;
-    return true;
-  },
-  {
-    message: "Motivo annullamento obbligatorio per documenti annullati",
-    path: ["voidedReason"],
-  },
-);
+export const updateDocumentStatusSchema = z.discriminatedUnion("status", [
+  z
+    .object({
+      ...baseFields,
+      status: z.literal(DOCUMENT_STATUSES.VOIDED),
+      voidedReason: z.string().trim().min(1).max(1000),
+    })
+    .strict(),
+  z
+    .object({
+      ...baseFields,
+      status: documentStatusSchema.exclude([DOCUMENT_STATUSES.VOIDED]),
+      voidedReason: z.string().max(1000).optional().nullable(),
+    })
+    .strict(),
+]);
 
 export const approveDocumentSchema = z
   .object({
@@ -685,7 +699,7 @@ export const convertDocumentSchema = z
     documentDate: isoDateSchema(),
     notes: z.string().max(500).optional().nullable(),
     status: documentStatusSchema.default("DRAFT"),
-    dueDate: isoDateSchema(),   
+    dueDate: isoDateSchema(),
   })
   .strict();
 

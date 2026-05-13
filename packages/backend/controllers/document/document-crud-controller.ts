@@ -101,6 +101,50 @@ export const getAllDocuments = async (c: Context<AppBindings>) => {
   return sendPaginatedResponse(c, documents, total, page, limit);
 };
 
+// ============================================================================
+// DOCUMENT TYPE FILTERS — thin wrappers over getAllDocuments
+// ============================================================================
+
+/**
+ * Lists all QUOTE documents. Forces documentType=QUOTE before delegating.
+ * @route GET /api/documents/quotes
+ * @access Private
+ */
+export const getAllQuotes = async (c: Context<AppBindings>) => {
+  c.set("validatedQuery", { ...getValidatedQuery<DocumentQueryInput>(c), documentType: "QUOTE" });
+  return getAllDocuments(c);
+};
+
+/**
+ * Lists all ORDER documents. Forces documentType=ORDER before delegating.
+ * @route GET /api/documents/orders
+ * @access Private
+ */
+export const getAllOrders = async (c: Context<AppBindings>) => {
+  c.set("validatedQuery", { ...getValidatedQuery<DocumentQueryInput>(c), documentType: "ORDER" });
+  return getAllDocuments(c);
+};
+
+/**
+ * Lists all INVOICE documents. Forces documentType=INVOICE before delegating.
+ * @route GET /api/documents/invoices
+ * @access Private
+ */
+export const getAllInvoices = async (c: Context<AppBindings>) => {
+  c.set("validatedQuery", { ...getValidatedQuery<DocumentQueryInput>(c), documentType: "INVOICE" });
+  return getAllDocuments(c);
+};
+
+/**
+ * Lists all DELIVERY_NOTE documents. Forces documentType=DELIVERY_NOTE before delegating.
+ * @route GET /api/documents/delivery-notes
+ * @access Private
+ */
+export const getAllDeliveryNotes = async (c: Context<AppBindings>) => {
+  c.set("validatedQuery", { ...getValidatedQuery<DocumentQueryInput>(c), documentType: "DELIVERY_NOTE" });
+  return getAllDocuments(c);
+};
+
 /**
  * Returns a single document by ID.
  * @route GET /api/documents/:id
@@ -236,6 +280,10 @@ export const recalculateDocument = async (c: Context<AppBindings>) => {
 
   if (!document) {
     throw new NotFoundError("Documento non trovato");
+  }
+
+  if (document.status !== "DRAFT" && document.status !== "PENDING_APPROVAL") {
+    throw new BadRequestError("Impossibile ricalcolare un documento già confermato o inviato");
   }
 
   const totals = calculateDocumentTotals(
