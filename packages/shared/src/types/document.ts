@@ -160,8 +160,6 @@ export type Document = {
   documentNumber: string | null;
   sequenceNumber: number | null;
   documentYear: number;
-  companyId: number;
-  company: Company;
   customerId: number | null;
   customer?: Customer | null;
   supplierId: number | null;
@@ -242,6 +240,7 @@ export type Document = {
   closedAt: Date | null;
   voidedAt: Date | null;
   voidedReason: string | null;
+  tenantId: number;
   lines: DocumentLine[];
   installments: DocumentPaymentInstallment[];
   stockMovement: StockMovement[];

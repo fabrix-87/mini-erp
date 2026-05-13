@@ -23,7 +23,7 @@ import {
   DOCUMENT_CONVERSION_MAP,
   STATUSES_REQUIRING_NUMBER,
 } from "@mini-erp/shared";
-import type { DocumentStatus, DocumentType } from "@mini-erp/shared";
+import type { DocumentRelationType, DocumentStatus, DocumentType } from "@mini-erp/shared";
 
 // ============================================================================
 // CLONE
@@ -46,7 +46,7 @@ export const cloneDocument = async (c: Context<AppBindings>) => {
   const source = await prisma.document.findUnique({
     where: withSoftDelete({ id: sourceId }) as Prisma.DocumentWhereUniqueInput,
     include: {
-      lines: { where: { deletedAt: null }, orderBy: { lineNumber: "asc" } },
+      lines: { orderBy: { lineNumber: "asc" } },
       installments: { orderBy: { installmentNumber: "asc" } },
     },
   });
@@ -126,7 +126,7 @@ export const cloneDocument = async (c: Context<AppBindings>) => {
         dueDate: source.dueDate,
         deliveryDate: source.deliveryDate,
         validUntil: null,
-        companyId: source.companyId,
+        tenantId: source.tenantId,
         customerId: input.customerId ?? source.customerId,
         supplierId: source.supplierId,
         contactId: source.contactId,
@@ -190,7 +190,7 @@ export const cloneDocument = async (c: Context<AppBindings>) => {
       data: {
         sourceDocumentId: sourceId,
         targetDocumentId: newDocument.id,
-        relationType: "CLONE",
+        relationType: "CONVERTS_TO",
       },
     });
 
@@ -218,13 +218,12 @@ export const convertDocument = async (c: Context<AppBindings>) => {
   const userId = c.get("user")!.userId;
 
   const sourceId = toIntId(id);
-  const targetType = input.targetType as DocumentType;
+  const targetType = input.targetDocumentType as DocumentType;
 
   const source = await prisma.document.findUnique({
     where: withSoftDelete({ id: sourceId }) as Prisma.DocumentWhereUniqueInput,
     include: {
       lines: {
-        where: { deletedAt: null },
         orderBy: { lineNumber: "asc" },
       },
     },
@@ -261,7 +260,7 @@ export const convertDocument = async (c: Context<AppBindings>) => {
     let sequenceNumber: number | null = null;
 
     if (STATUSES_REQUIRING_NUMBER.includes(targetStatus)) {
-      const generated = await generateDocumentNumber(targetType, currentYear, tx);
+      const generated = await generateDocumentNumber(targetType, source.tenantId, currentYear, tx);
       documentNumber = generated.documentNumber;
       sequenceNumber = generated.sequenceNumber;
     }
@@ -290,9 +289,8 @@ export const convertDocument = async (c: Context<AppBindings>) => {
         const remainingQty = line.quantity.sub(delivered).sub(invoiced);
 
         // Recompute line totals for the remaining quantity
-        const processed = buildDocumentLine(
-          {
-            lineType: line.lineType as "product" | "service" | "note" | "subtotal",
+        return {
+            lineType: line.lineType,
             lineNumber: index + 1,
             code: line.code ?? undefined,
             productId: line.productId ?? undefined,
@@ -301,26 +299,22 @@ export const convertDocument = async (c: Context<AppBindings>) => {
             descriptionSystem: line.descriptionSystem ?? undefined,
             nameCustomer: line.nameCustomer ?? undefined,
             descriptionCustomer: line.descriptionCustomer ?? undefined,
-            quantity: remainingQty.toNumber(),
+            quantity: remainingQty,
             unit: line.unit,
-            unitPrice: line.unitPrice.toNumber(),
-            unitCost: line.unitCost.toNumber(),
-            discountPercent: line.discountPercent.toNumber(),
-            taxPercent: line.taxPercent.toNumber(),
+            unitPrice: line.unitPrice,
+            unitCost: line.unitCost,
+            discountPercent: line.discountPercent,
+            taxPercent: line.taxPercent,
             taxRuleId: line.taxRuleId ?? undefined,
             vatNatureCode: line.vatNatureCode ?? undefined,
             vatNormReference: line.vatNormReference ?? undefined,
             notes: line.notes ?? undefined,
-            customFields: line.customFields as Record<string, unknown> | undefined,
+            customFields: toJsonField(line.customFields),
             warehouseId: line.warehouseId ?? undefined,
             isComponent: line.isComponent,
-            originalUnitPrice: line.originalUnitPrice?.toNumber() ?? undefined,
+            originalUnitPrice: line.originalUnitPrice ?? undefined,
             priceOverrideReason: line.priceOverrideReason ?? undefined,
-          },
-          index,
-        );
-
-        return processed.prismaInput;
+          } satisfies Prisma.DocumentLineUncheckedCreateWithoutDocumentInput
       });
 
     // Recompute document totals from converted lines
@@ -347,7 +341,7 @@ export const convertDocument = async (c: Context<AppBindings>) => {
         dueDate: input.dueDate ? new Date(input.dueDate) : source.dueDate,
         deliveryDate: source.deliveryDate,
         validUntil: null,
-        companyId: source.companyId,
+        tenantId: source.tenantId,
         customerId: source.customerId,
         supplierId: source.supplierId,
         contactId: source.contactId,
@@ -403,7 +397,7 @@ export const convertDocument = async (c: Context<AppBindings>) => {
       data: {
         sourceDocumentId: sourceId,
         targetDocumentId: newDocument.id,
-        relationType: "CONVERTED_TO",
+        relationType: "CONVERTS_TO",
       },
     });
 
@@ -543,9 +537,9 @@ export const deleteDocumentRelation = async (c: Context<AppBindings>) => {
     c.req.param("targetId"),
     "targetId",
   );
-  const { relationType } = getValidatedBody<{ relationType: string }>(c);
+  const { relationType } = getValidatedBody<{ relationType: DocumentRelationType }>(c);
 
-  const systemRelations = ["CLONE", "CONVERTED_TO"];
+  const systemRelations = ["CONVERTS_TO"];
   if (systemRelations.includes(relationType)) {
     throw new BadRequestError(
       `Impossibile eliminare una relazione di sistema: ${relationType}`,

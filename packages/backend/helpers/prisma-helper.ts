@@ -154,7 +154,10 @@ export const withSoftDelete = (
  * Converts a numeric string or number to a Prisma-safe integer.
  * Throws if the value is not a valid integer.
  */
-export const toIntId = (value: string | number, fieldName = "id"): number => {
+export const toIntId = (value: string | number | undefined, fieldName = "id"): number => {
+  if(!value){
+    throw new Error(`Undefined ${fieldName}`);
+  }
   const n = Number(value);
   if (!Number.isInteger(n) || n <= 0) {
     throw new Error(`Invalid ${fieldName}: ${value}`);

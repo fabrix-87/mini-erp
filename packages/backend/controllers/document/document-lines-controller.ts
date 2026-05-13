@@ -42,6 +42,26 @@ export const getDocumentLines = async (c: Context<AppBindings>) => {
 };
 
 /**
+ * Returns a single document line by ID.
+ * Verifies the line belongs to the specified document.
+ * @route GET /api/documents/:id/lines/:lineId
+ * @access Private
+ */
+export const getDocumentLineById = async (c: Context<AppBindings>) => {
+  const { id, lineId } = getValidatedParams<DocumentIdLineIdParams>(c);
+
+  const line = await prisma.documentLine.findUnique({
+    where: { id: toIntId(lineId, "lineId") },
+  });
+
+  if (!line) throw new NotFoundError("Riga non trovata");
+  if (line.documentId !== toIntId(id))
+    throw new BadRequestError("La riga non appartiene a questo documento");
+
+  return sendSuccess(c, line);
+};
+
+/**
  * Adds a line to an existing document.
  * Recalculates line totals automatically.
  * @route POST /api/documents/:id/lines

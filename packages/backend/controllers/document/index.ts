@@ -29,8 +29,7 @@ export {
   addDocumentLine,
   updateDocumentLine,
   deleteDocumentLine,
-  reorderDocumentLines,
-  bulkAddDocumentLines,
+  reorderDocumentLines,  
 } from "./document-lines-controller";
 
 // FULFILLMENT — status, per-line delivered qty, delivery note

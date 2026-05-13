@@ -582,6 +582,7 @@ export const documentIdParamSchema = z.object({
 });
 
 export const documentLineIdParamSchema = z.object({
+  id: documentIdSchema,
   lineId: documentLineIdSchema,
 });
 
@@ -681,8 +682,10 @@ export const convertDocumentSchema = z
     copyLines: z.boolean().default(true),
     copyInstallments: z.boolean().default(true),
     copyNotes: z.boolean().default(true),
-    documentDate: isoDateSchema().optional(),
+    documentDate: isoDateSchema(),
     notes: z.string().max(500).optional().nullable(),
+    status: documentStatusSchema.default("DRAFT"),
+    dueDate: isoDateSchema(),   
   })
   .strict();
 
@@ -691,5 +694,7 @@ export const cloneDocumentSchema = z
     documentDate: isoDateSchema().default(() => new Date().toISOString()),
     resetStatus: z.boolean().default(true),
     notes: z.string().max(500).optional().nullable(),
+    warehouseId: createIdSchema("Warehouse ID non valido").optional().nullable(),
+    customerId: createIdSchema("Customer ID non valido").optional().nullable(),
   })
   .strict();

@@ -7,7 +7,7 @@ import countryRoutes from "./country-routes";
 import currencyRoutes from "./currency-routes";
 import customerRoutes from "./customer-routes";
 import dashboardRoutes from "./dashboard-routes";
-import documentRoutes from "./document-routes";
+import documentRoutes from "./document";
 import languageRoutes from "./languages-routes";
 import leadRoutes from "./lead-routes";
 import opportunityRoutes from "./opportunity-routes";

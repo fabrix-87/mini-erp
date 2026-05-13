@@ -46,13 +46,13 @@ export const dashboardQuerySchema = z
      * Maximum number of items in feed/list widgets (activities, alerts, documents).
      * Accepted range: 5–50.
      */
-    feedLimit: queryNumberRangeSchema(5, 50, "feedLimit deve essere tra 5 e 50")
-      .transform((val) => val ?? 10),
+    feedLimit: queryNumberRangeSchema(5, 50, {
+      range: "feedLimit deve essere tra 5 e 50",
+    }).transform((val) => val ?? 10),
   })
   .refine(
     (data) =>
-      data.period !== DashboardPeriod.CUSTOM ||
-      (data.customFrom != null && data.customTo != null),
+      data.period !== DashboardPeriod.CUSTOM || (data.customFrom != null && data.customTo != null),
     {
       message: "customFrom e customTo sono obbligatori quando period è CUSTOM",
       path: ["customFrom"],
@@ -88,8 +88,10 @@ export const widgetPositionSchema = z.object({
    */
   overrides: z
     .object({
-      period:    z.enum(DashboardPeriod).optional(),
-      feedLimit: queryNumberRangeSchema(5, 50, "feedLimit deve essere tra 5 e 50").optional(),
+      period: z.enum(DashboardPeriod).optional(),
+      feedLimit: queryNumberRangeSchema(5, 50, {
+        range: "feedLimit deve essere tra 5 e 50",
+      }).optional(),
     })
     .optional(),
 });
