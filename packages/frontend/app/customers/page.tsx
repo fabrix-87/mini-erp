@@ -144,25 +144,6 @@ export default function CustomersPage() {
           </SelectContent>
         </Select>
 
-        <Select
-          value={params.leadStatus}
-          onValueChange={(value) => handleFilterChange("leadStatus", value)}
-        >
-          <SelectTrigger className="w-45">
-            <SelectValue placeholder="Lead Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Tutti gli status</SelectItem>
-            <SelectItem value="NEW">Nuovo</SelectItem>
-            <SelectItem value="CONTACTED">Contattato</SelectItem>
-            <SelectItem value="QUALIFIED">Qualificato</SelectItem>
-            <SelectItem value="PROPOSAL">Proposta</SelectItem>
-            <SelectItem value="NEGOTIATION">Negoziazione</SelectItem>
-            <SelectItem value="CLOSED_WON">Chiuso Vinto</SelectItem>
-            <SelectItem value="CLOSED_LOST">Chiuso Perso</SelectItem>
-          </SelectContent>
-        </Select>
-
         <Button variant="outline" size="icon">
           <Filter className="h-4 w-4" />
         </Button>

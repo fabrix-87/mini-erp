@@ -39,6 +39,10 @@ prisma.$on("warn", (event) => {
   console.warn("Prisma Client Warning:", event);
 });
 
+prisma.$on("info", (event) => {
+  console.info("Prisma Client Info:", event);
+});
+/*
 prisma.$on("query", (e) => {
   if (process.env.NODE_ENV === "development") {
     console.log(`Query[${new Date().toISOString()}]: ${e.query}`);
@@ -46,5 +50,5 @@ prisma.$on("query", (e) => {
     console.log("Duration: " + e.duration + "ms");
   }
 });
-
+*/
 export { prisma };

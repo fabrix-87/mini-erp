@@ -10,6 +10,7 @@ import { redisClient, sessionKeys, RedisTTL } from "../config/redis-config";
 import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../config/prisma-config";
 import type { AppBindings } from "../lib/hono-app";
+import { Prisma } from "@/generated/prisma/client";
 
 // ============================================================================
 // USER SELECTION
@@ -45,7 +46,7 @@ export const getUserSelection = () => ({
   preferredLanguageId: true,
   createdAt: true,
   updatedAt: true,
-});
+}) satisfies Prisma.UserSelect;
 
 // ============================================================================
 // FINGERPRINTING

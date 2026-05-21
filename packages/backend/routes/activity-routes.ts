@@ -38,7 +38,7 @@ import {
   deleteActivityTemplate,
   createActivityFromTemplate,
   toggleTemplateActive,
-} from "../controllers/activity-controller";
+} from "../controllers/activity";
 import { createHonoApp } from "@/lib/hono-app";
 
 const activityRoutes = createHonoApp();

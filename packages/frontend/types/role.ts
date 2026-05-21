@@ -40,6 +40,7 @@ export const defaultParams: RoleQueryInput = {
   sortOrder: "asc",
   page: 1,
   limit: 20,
+  isDefault: undefined,
 };
 
 export const defaultPermissionParams: PermissionQueryInput = {

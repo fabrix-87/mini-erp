@@ -24,10 +24,6 @@ export async function fetchCustomersKPI(
 }> {
   const where: Prisma.CustomerWhereInput = {};
 
-  // Note: Customer model doesn't have direct assignedUserId
-  // For scope filtering, we'd need to filter via related opportunities/documents
-  // For now, scope OWN will show all customers (adjust based on business logic)
-
   if (dateFrom || dateTo) {
     where.createdAt = {};
     if (dateFrom) where.createdAt.gte = dateFrom;
@@ -37,15 +33,15 @@ export async function fetchCustomersKPI(
   const [total, active, inactive, prospect, vip] = await Promise.all([
     prisma.customer.count({ where }),
     prisma.customer.count({
-      where: { ...where, company: { status: "ACTIVE" } },
+      where: { ...where, company: { status: "ACTIVE", assignedUserId: userId } },
     }),
     prisma.customer.count({
-      where: { ...where, company: { status: "INACTIVE" } },
+      where: { ...where, company: { status: "INACTIVE", assignedUserId: userId } },
     }),
     prisma.customer.count({
-      where: { ...where, type: "PROSPECT" },
+      where: { ...where, type: "PROSPECT", company: { assignedUserId: userId } },
     }),
-    prisma.customer.count({ where: { ...where, segment: "VIP" } }),
+    prisma.customer.count({ where: { ...where, segment: "VIP", company: { assignedUserId: userId } } }),
   ]);
 
   // Count customers created in the period

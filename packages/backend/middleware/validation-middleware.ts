@@ -31,7 +31,7 @@ const VALIDATED_PARAMS_KEY = "validatedParams" as const;
  * // Query with options
  * app.get("/products", validate(ProductQuerySchema, "Product query", { source: ["query"], stripUnknown: true }), handler);
  */
-export const validate = (
+const validate = (
   schema: ZodType | RequestValidationSchema,
   context: string,
   options: ValidateOptions = {},

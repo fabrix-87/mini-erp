@@ -26,6 +26,7 @@ import {
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
+import logger from "@/config/logger-config";
 
 // ============================================================================
 // DOCUMENT CRUD - Base operations
@@ -53,6 +54,8 @@ export const getAllDocuments = async (c: Context<AppBindings>) => {
     sortBy = "documentDate",
     sortOrder = "desc",
   } = getValidatedQuery<DocumentQueryInput>(c);
+
+  logger.info("Ci sono!")
 
   const { skip, take } = toPagination(page, limit);
 
@@ -85,7 +88,7 @@ export const getAllDocuments = async (c: Context<AppBindings>) => {
   }
 
   // Applica soft-delete filter tramite helper
-  const where = withSoftDelete(baseWhere) as Prisma.DocumentWhereInput;
+  const where = withSoftDelete(baseWhere) as Prisma.DocumentWhereInput;  
 
   const [documents, total] = await Promise.all([
     prisma.document.findMany({

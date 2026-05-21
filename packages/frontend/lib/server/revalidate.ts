@@ -206,6 +206,15 @@ export const documentRevalidation = {
 };
 
 /**
+ * Revalidate customer-related cache
+ */
+export const customerRevalidation = {
+  customer: (id: number) => revalidateEntity("customer", id),
+  list: () => revalidateEntity("customer"),
+  customerWithList: (id: number) => revalidateEntityWithList("customer", id),
+};
+
+/**
  * Revalidate role-related cache
  */
 export const roleRevalidation = {

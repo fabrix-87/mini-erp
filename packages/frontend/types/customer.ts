@@ -9,6 +9,7 @@ export type {
   CustomerSize,
 } from "@mini-erp/shared/constants";
 
+import { ApiResponse, Customer } from "@mini-erp/shared";
 import { CustomerQueryInput as BaseQuery  } from "@mini-erp/shared/types";
 
 export type CustomerQueryInput = Omit<
@@ -21,7 +22,7 @@ export type CustomerQueryInput = Omit<
 };
 
 // ============================================================================
-// QUERY KEYS
+// Client Query Keys
 // ============================================================================
 
 export const customerKeys = {
@@ -31,3 +32,21 @@ export const customerKeys = {
   detail: (id: number) => [...customerKeys.all, "detail", id] as const,
   stats: () => [...customerKeys.all, "stats"] as const,
 };
+
+
+// ============================================================================
+// Server Cache Tags
+// ============================================================================
+
+export const CUSTOMER_TAGS = {
+  list: "customer-list",
+  detail: (id: number) => `customer-${id}`,
+};
+
+// ============================================================================
+// RESPONSE TYPES
+// ============================================================================
+
+export interface CustomerListApiResponse extends ApiResponse<Customer[]> {}
+export interface CustomerSingleApiResponse extends ApiResponse<Customer> {}
+export interface CustomerDeleteApiResponse extends ApiResponse<null> {}

@@ -40,6 +40,20 @@ customerRoutes.get(
 );
 
 /**
+ * @route   GET /api/customers/stats
+ * @desc    Statistiche generali customer
+ * @access  Private (customer:read)
+ * @query   page, limit, search, type, priority, segment, leadStatus, creditStatus, size
+ */
+customerRoutes.get(
+  '/stats',
+  authenticateToken,
+  authorize(['customer:read', 'customer:manage']),
+  validateCustomerQuery,
+  getAllCustomers
+);
+
+/**
  * @route   GET /api/customers/:id/stats
  * @desc    Ottieni statistiche avanzate customer
  * @access  Private (customer:read)
@@ -107,6 +121,19 @@ customerRoutes.delete(
 );
 
 /**
+ * @desc    Valida i dati fiscali della company del customer
+ * @route   POST /api/customers/:id/validate-fiscal
+ * @access  Private (customer:read)
+ */
+customerRoutes.get(
+  '/:id/validate-fiscal',
+  authenticateToken,
+  authorize(['customer:read', 'customer:manage']),
+  validateCustomerId,
+  validateCustomerFiscal
+);
+
+/**
  * @route   GET /api/customers/:id
  * @desc    Ottieni dettagli customer con statistiche
  * @access  Private (customer:read)
@@ -119,18 +146,6 @@ customerRoutes.get(
   getCustomerById
 );
 
-/**
- * @desc    Valida i dati fiscali della company del customer
- * @route   POST /api/customers/:id/validate-fiscal
- * @access  Private (customer:read)
- */
-customerRoutes.get(
-  '/:id',
-  authenticateToken,
-  authorize(['customer:read', 'customer:manage']),
-  validateCustomerId,
-  validateCustomerFiscal
-);
 
 
 // ============================================================================

@@ -1,5 +1,4 @@
 import {
-  validate,
   validateBody,
   validateParams,
   validateQuery,
@@ -54,13 +53,13 @@ export const validateDocumentId = validateParams(documentIdParamSchema, "Documen
  * (pagination, filters, sorting).
  * Delegates to the shared {@link documentQuerySchema}.
  */
-export const validateDocumentQuery = validate(documentQuerySchema, "Document query");
+export const validateDocumentQuery = validateQuery(documentQuerySchema, "Document query");
 
 /**
  * Validates the request body for a document status transition.
  * Delegates to the shared {@link updateDocumentStatusSchema}.
  */
-export const validateUpdateDocumentStatus = validate(
+export const validateUpdateDocumentStatus = validateBody(
   updateDocumentStatusSchema,
   "Document status update",
 );

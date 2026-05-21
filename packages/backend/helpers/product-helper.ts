@@ -2,6 +2,7 @@
 // HELPER FUNCTIONS
 // ============================================================================
 
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "../config/prisma-config";
 
 /**
@@ -94,7 +95,7 @@ export const getProductSelection = () => ({
       },
     },
   },
-});
+}) satisfies Prisma.ProductSelect;
 
 
 /**
