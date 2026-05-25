@@ -5,7 +5,7 @@ import { useRouter, useParams, usePathname } from "next/navigation";
 import { ArrowLeft, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CompanyFormData, CompanyType } from "@/types/company";
+import { CompanyFormData, CompanyType } from "@/types/company-types";
 import { CompanyFormTabs } from "@/components/company/company-form-tab";
 import {
   mapApiToForm,
@@ -23,7 +23,15 @@ import {
   useUpdateCustomer,
   useUpdateSupplier,
 } from "@/hooks/use-company";
-import { CompanyStatus, CompanyTypeEntity, CreditCheckStatus, CustomerPriority, CustomerSegment, CustomerSize, CustomerType } from "@mini-erp/shared";
+import {
+  CompanyStatus,
+  CompanyTypeEntity,
+  CreditCheckStatus,
+  CustomerPriority,
+  CustomerSegment,
+  CustomerSize,
+  CustomerType,
+} from "@mini-erp/shared";
 
 export default function CompanyFormPage() {
   const router = useRouter();

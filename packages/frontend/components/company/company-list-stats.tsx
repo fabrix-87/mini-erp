@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, Users, DollarSign, Star } from "lucide-react";
 import { useCustomerStats, useSupplierStats } from "@/hooks/use-company";
-import { CompanyType } from "@/types/company";
+import { CompanyType } from "@/types/company-types";
 
 interface CompanyListStatsProps {
   type: CompanyType;

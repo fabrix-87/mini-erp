@@ -16,7 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, FileText, Eye, Calendar } from "lucide-react";
-import { CompanyType } from "@/types/company";
+import { CompanyType } from "@/types/company-types";
 import { getDocuments } from "@/lib/client/modules/document";
 
 interface CompanyDocumentsTabProps {

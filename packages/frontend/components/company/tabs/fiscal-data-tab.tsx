@@ -4,7 +4,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CompanyFormData } from "@/types/company";
+import { CompanyFormData } from "@/types/company-types";
 
 interface FiscalDataTabProps {
   formData: CompanyFormData;

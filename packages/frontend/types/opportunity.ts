@@ -1,6 +1,6 @@
 // types/opportunity.ts
 
-import { Company } from "./company";
+import { Company } from "./company-types";
 import { Contact } from "./contact";
 // Assicurati di avere un tipo Contact. Se non lo hai, definiscilo qui.
 

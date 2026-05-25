@@ -6,7 +6,7 @@ import {
   DocumentLineDTO,
   DocumentType,
 } from "@/types/document";
-import { Company } from "@/types/company";
+import { Company } from "@/types/company-types";
 import { Contact } from "@/types/contact";
 import { createDocument, updateDocument } from "@/lib/client/modules/document";
 // import { createDocument, updateDocument } from "@/services/documentService"; // I tuoi service reali

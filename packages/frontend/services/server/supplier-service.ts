@@ -3,10 +3,16 @@
 import { serverApi } from "@/lib/server/api";
 import {
   SUPPLIER_TAGS,
+  SupplierDeleteApiResponse,
   SupplierListApiResponse,
   SupplierSingleApiResponse,
 } from "@/types/supplier-types";
-import { SupplierQueryInput } from "@mini-erp/shared";
+import {
+  CreateSupplierInput,
+  SupplierQueryInput,
+  UpdateSupplierCompanyInput,
+  UpdateSupplierInput,
+} from "@mini-erp/shared";
 
 // ============================================================================
 // READ
@@ -72,4 +78,48 @@ export async function getSupplierById(
     tags: [SUPPLIER_TAGS.detail(id)],
     unwrapData: false,
   });
+}
+
+// ============================================================================
+// MUTATIONS
+// ============================================================================
+
+/**
+ * Create a new supplier with nested company data
+ */
+export async function createSupplier(
+  data: CreateSupplierInput,
+): Promise<SupplierSingleApiResponse> {
+  return serverApi.post<SupplierSingleApiResponse>("/suppliers", data);
+}
+
+/**
+ * Update supplier procurement-specific fields
+ * @route PUT /api/suppliers/:id
+ */
+export async function updateSupplier(
+  id: number,
+  data: UpdateSupplierInput,
+): Promise<SupplierSingleApiResponse> {
+  return serverApi.put<SupplierSingleApiResponse>(`/suppliers/${id}`, data);
+}
+
+/**
+ * Update the company data belonging to a supplier
+ * @route PUT /api/suppliers/:id/company
+ */
+export async function updateSupplierCompany(
+  id: number,
+  data: UpdateSupplierCompanyInput,
+): Promise<SupplierSingleApiResponse> {
+  return serverApi.put<SupplierSingleApiResponse>(`/suppliers/${id}/company`, data);
+}
+
+/**
+ * Delete a supplier by ID
+ */
+export async function deleteSupplier(
+  id: number,
+): Promise<SupplierDeleteApiResponse> {
+  return serverApi.delete<SupplierDeleteApiResponse>(`/suppliers/${id}`);
 }

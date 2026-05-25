@@ -1,4 +1,5 @@
-import type { CompanyFormData, CompanyType } from "@/types/company";
+import type { CompanyFormData, CompanyType } from "@/types/company-types";
+import { AddressType, CompanyStatus, CompanyTypeEntity, CreateCompanyInput } from "@mini-erp/shared";
 import {
   CreateCompanyForm,
   CreateCustomerForm,
@@ -47,6 +48,13 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
       provinceCode: company.legalAddress.provinceCode ?? "",
       zipCode: company.legalAddress.zipCode ?? "",
       countryCode: company.legalAddress.countryCode ?? "IT",
+      addressType: AddressType.LEGAL,
+      isPrimary: true,
+      phone: '', 
+      latitude: null, 
+      longitude: null, 
+      openingHours: null, 
+      notes: ''
     },
 
     // Campi customer (default — sovrascritti sotto se type === CUSTOMER)
@@ -67,6 +75,7 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
     leadTimeDays: 0,
     transportCost: null,
     rating: 5,
+    supplierTaxRuleId: null, 
 
     // creditLimit presente su entrambi
     creditLimit: null,
@@ -97,6 +106,7 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
     bankAccount: s.bankAccount ?? null,
     leadTimeDays: s.leadTimeDays ?? 0,
     transportCost: s.transportCost ?? null,
+    supplierTaxRuleId: s.supplierTaxRuleId ?? null,
     rating: s.rating ?? 5,
     creditLimit: s.creditLimit ?? null,
   };
@@ -110,23 +120,23 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
  * Extracts company fields from form data and maps them to CompanyInput.
  * Converts legalAddress to the nested addresses array expected by the API.
  */
-export function extractCompanyData(data: CompanyFormData): CreateCompanyForm {
+export function extractCompanyData(data: CompanyFormData): CreateCompanyInput {
   return {
     companyName: data.companyName,
     tradeName: data.tradeName,
     legalForm: data.legalForm,
-    status: data.status,
-    entityType: data.entityType,
+    status: data.status ?? CompanyStatus.ACTIVE,         
+    entityType: data.entityType ?? CompanyTypeEntity.JURIDICAL, 
+    countryCode: data.countryCode ?? "IT",     
     vatNumber: data.vatNumber,
     taxCode: data.taxCode,
     sdiCode: data.sdiCode,
     pec: data.pec,
     vatId: data.vatId,
     eoriNumber: data.eoriNumber,
-    countryCode: data.countryCode,
     mainEmail: data.mainEmail,
     mainPhone: data.mainPhone,
-    assignedUserId: data.assignedUserId,
+    assignedUserId: Number(data.assignedUserId),
     customFields: data.customFields,
     openingHours: data.openingHours,
     legalAddress: data.legalAddress,
@@ -159,10 +169,11 @@ export function extractSupplierData(data: CompanyFormData): Omit<CreateSupplierF
     parentSupplierId: data.parentSupplierId,
     paymentTerms: data.paymentTerms,
     bankAccount: data.bankAccount,
-    leadTimeDays: data.leadTimeDays,
+    leadTimeDays: data.leadTimeDays ?? 0,
     transportCost: data.transportCost,
-    rating: data.rating,
+    rating: data.rating ?? 5,
     creditLimit: data.creditLimit,
+    supplierTaxRuleId: data.supplierTaxRuleId ?? null,
   };
 }
 

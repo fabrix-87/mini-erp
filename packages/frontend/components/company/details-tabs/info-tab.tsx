@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Customer } from "@/types/customer-types";
 import { Supplier } from "@/types/supplier-types";
-import { CompanyType } from "@/types/company";
+import { CompanyType } from "@/types/company-types";
 import {
   Building2,
   FileText,

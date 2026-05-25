@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Customer } from "@/types/customer-types";
 import { Supplier } from "@/types/supplier-types";
-import { CompanyType } from "@/types/company";
+import { CompanyType } from "@/types/company-types";
 import { CompanyInfoTab } from "./details-tabs/info-tab";
 import { CompanyContactsTab } from "./details-tabs/contacts-tab";
 import { CompanyAddressesTab } from "./details-tabs/addresses-tab";

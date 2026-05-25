@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Company } from "@/types/company";
+import { Company } from "@/types/company-types";
 import { Contact } from "@/types/contact";
 // Importa i tuoi tipi Company e Contact
 // import { Company, Contact } from "@/types/data"; 

@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { Building2, FileText, CreditCard, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CompanyFormData, CompanyType } from "@/types/company";
+import { CompanyFormData, CompanyType } from "@/types/company-types";
 import { BasicInfoTab } from "./tabs/basic-info-tab";
 import { FiscalDataTab } from "./tabs/fiscal-data-tab";
 import { CommercialTab } from "./tabs/commercial-tab";

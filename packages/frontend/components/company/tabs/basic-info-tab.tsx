@@ -17,7 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CompanyFormData } from "@/types/company";
+import { CompanyFormData } from "@/types/company-types";
 import { CountryCombobox } from "@/components/ui/country-combobox";
 import { CompanyTypeEntity } from "@mini-erp/shared";
 

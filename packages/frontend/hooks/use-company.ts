@@ -23,9 +23,9 @@ import { updateCustomerCompany, updateSupplierCompany } from "@/lib/client/modul
 import { createAddress, updateAddress, getAddressByType } from "@/lib/client/modules/address";
 import type { CustomerQueryInput } from "@/types/customer-types";
 import type { SupplierQueryInput } from "@/types/supplier-types";
-import type { CompanyQueryInput } from "@/types/company";
+import type { CompanyQueryInput } from "@/types/company-types";
 import { CreateCustomerInput } from "@mini-erp/shared/types";
-import { AddressTypeEnum } from "@mini-erp/shared/constants";
+import { AddressType } from "@mini-erp/shared/constants";
 
 // ============================================================================
 // COMPANY HOOKS
@@ -115,7 +115,7 @@ export function useCreateCustomer() {
       if (legalAddress && companyId) {
         await createAddress(companyId, {
           ...legalAddress,
-          addressType: AddressTypeEnum.LEGAL,
+          addressType: AddressType.LEGAL,
           isPrimary: true,
         });
       }
@@ -162,7 +162,7 @@ export function useUpdateCustomer(id: number) {
 
         if (companyId) {
           // Cerca l'indirizzo legale esistente
-          const existing = await getAddressByType(companyId, AddressTypeEnum.LEGAL);
+          const existing = await getAddressByType(companyId, AddressType.LEGAL);
 
           if (existing?.data?.id) {
             // Aggiorna il legale esistente
@@ -171,7 +171,7 @@ export function useUpdateCustomer(id: number) {
             // Crea il legale se non esiste ancora
             await createAddress(companyId, {
               ...legalAddress,
-              addressType: AddressTypeEnum.LEGAL,
+              addressType: AddressType.LEGAL,
               isPrimary: true,
             });
           }
@@ -274,7 +274,7 @@ export function useCreateSupplier() {
       if (legalAddress && companyId) {
         await createAddress(companyId, {
           ...legalAddress,
-          addressType: AddressTypeEnum.LEGAL,
+          addressType: AddressType.LEGAL,
           isPrimary: true,
         });
       }
@@ -317,14 +317,14 @@ export function useUpdateSupplier(id: number) {
         const companyId = companyData?.companyId ?? supplierResponse?.data?.companyId;
 
         if (companyId) {
-          const existing = await getAddressByType(companyId, AddressTypeEnum.LEGAL);
+          const existing = await getAddressByType(companyId, AddressType.LEGAL);
 
           if (existing?.data?.id) {
             await updateAddress(existing.data.id, legalAddress);
           } else {
             await createAddress(companyId, {
               ...legalAddress,
-              addressType: AddressTypeEnum.LEGAL,
+              addressType: AddressType.LEGAL,
               isPrimary: true,
             });
           }

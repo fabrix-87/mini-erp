@@ -215,6 +215,15 @@ export const customerRevalidation = {
 };
 
 /**
+ * Revalidate supplier-related cache
+ */
+export const supplierRevalidation = {
+  supplier: (id: number) => revalidateEntity("supplier", id),
+  list: () => revalidateEntity("supplier"),
+  supplierWithList: (id: number) => revalidateEntityWithList("supplier", id),
+};
+
+/**
  * Revalidate role-related cache
  */
 export const roleRevalidation = {

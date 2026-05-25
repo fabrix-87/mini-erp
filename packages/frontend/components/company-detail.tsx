@@ -30,7 +30,7 @@ import { useSupplier, useDeleteSupplier } from "@/hooks/use-company";
 import { CompanyDetailHeader } from "@/components/company/company-detail-header";
 import { CompanyDetailTabs } from "@/components/company/company-detail-tabs";
 import { BreadcrumbSetter } from "./ui/breadcrumb-setter";
-import { CompanyType } from "@/types/company";
+import { CompanyType } from "@/types/company-types";
 import { BreadcrumbItem } from "@/lib/stores/breadcrumb-store";
 
 export default function CompanyDetailPage() {

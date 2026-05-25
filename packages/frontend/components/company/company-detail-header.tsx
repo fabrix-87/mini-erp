@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { Customer } from "@/types/customer-types";
 import { Supplier } from "@/types/supplier-types";
-import { CompanyType } from "@/types/company";
+import { CompanyType } from "@/types/company-types";
 
 interface CompanyDetailHeaderProps {
   data: Customer | Supplier;
