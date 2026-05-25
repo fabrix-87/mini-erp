@@ -2,7 +2,7 @@
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { requirePermission } from "@/lib/server/auth";
-import { getUserById } from "@/services/server/user";
+import { getUserById } from "@/services/server/user-service";
 import { ServerApiError } from "@/types/server-client";
 import { UserForm } from "@/components/users/user-form";
 import { Skeleton } from "@/components/ui/skeleton";

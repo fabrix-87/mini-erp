@@ -1,6 +1,9 @@
 import CompanyFormPage from "@/components/company-form";
+import { requirePermission } from "@/lib/server/auth";
 
-export default function newCompany() {
+export default async function newCompany() {
+  await requirePermission("customer:create");
+
   return (
     <CompanyFormPage/>
   )

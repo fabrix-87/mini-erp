@@ -14,8 +14,8 @@ import {
   ShoppingCart,
   DollarSign,
 } from "lucide-react";
-import { Customer } from "@/types/customer";
-import { Supplier } from "@/types/supplier";
+import { Customer } from "@/types/customer-types";
+import { Supplier } from "@/types/supplier-types";
 import { CompanyType } from "@/types/company";
 
 interface CompanyDetailHeaderProps {

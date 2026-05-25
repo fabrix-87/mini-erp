@@ -23,6 +23,7 @@ import {
   useUpdateCustomer,
   useUpdateSupplier,
 } from "@/hooks/use-company";
+import { CompanyStatus, CompanyTypeEntity, CreditCheckStatus, CustomerPriority, CustomerSegment, CustomerSize, CustomerType } from "@mini-erp/shared";
 
 export default function CompanyFormPage() {
   const router = useRouter();
@@ -40,8 +41,8 @@ export default function CompanyFormPage() {
     companyName: "",
     tradeName: null,
     legalForm: null,
-    entityType: "JURIDICAL",
-    status: "ACTIVE",
+    entityType: CompanyTypeEntity.JURIDICAL,
+    status: CompanyStatus.ACTIVE,
     vatNumber: "",
     taxCode: "",
     sdiCode: "",
@@ -66,11 +67,11 @@ export default function CompanyFormPage() {
 
     // Customer fields
     parentCustomerId: null,
-    priority: "MEDIUM",
-    segment: "STANDARD",
-    size: "SMALL",
-    type: "CUSTOMER",
-    creditStatus: "PENDING",
+    priority: CustomerPriority.MEDIUM,
+    segment: CustomerSegment.STANDARD,
+    size: CustomerSize.SMALL,
+    type: CustomerType.CUSTOMER,
+    creditStatus: CreditCheckStatus.PENDING,
     defaultPriceListId: null,
     customerTaxRuleId: null,
     paymentMethodId: null,

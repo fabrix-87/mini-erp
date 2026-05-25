@@ -1,8 +1,8 @@
 // @/lib/api/modules/company.ts
-import { Customer } from "@/types/customer";
+import { Customer } from "@/types/customer-types";
 import api from "../api";
 import { ApiResponse } from "@/types/api";
-import { Supplier } from "@/types/supplier";
+import { Supplier } from "@/types/supplier-types";
 
 
 /**

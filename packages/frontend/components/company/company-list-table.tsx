@@ -29,8 +29,8 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Customer } from "@/types/customer";
-import { Supplier } from "@/types/supplier";
+import { Customer } from "@/types/customer-types";
+import { Supplier } from "@/types/supplier-types";
 import { CompanyType } from "@/types/company";
 import { id } from "date-fns/locale";
 

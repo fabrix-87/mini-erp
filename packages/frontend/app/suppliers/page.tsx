@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useSuppliers } from "@/hooks/use-company";
-import { SupplierQueryInput } from "@/types/supplier";
+import { SupplierQueryInput } from "@/types/supplier-types";
 import { CompanyListTable } from "@/components/company/company-list-table";
 import { CompanyListSkeleton } from "@/components/company/company-list-skeleton";
 import { CompanyListStats } from "@/components/company/company-list-stats";

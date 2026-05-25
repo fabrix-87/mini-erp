@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Activity, ActivityFormData } from "@/types/activitiy";
 import { useCustomer } from "@/hooks/use-company";
 import { useContactsByCompany } from "@/hooks/use-contact";
-import { Customer, CustomerQueryInput } from "@/types/customer";
+import { Customer, CustomerQueryInput } from "@/types/customer-types";
 import { getCustomers } from "@/services/client/company";
 import { Lead, LeadQueryInput } from "@mini-erp/shared";
 import { getLeads } from "@/services/client/lead";

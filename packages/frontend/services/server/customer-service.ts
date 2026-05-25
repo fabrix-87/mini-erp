@@ -1,7 +1,7 @@
 // services/server/customer-service.ts
 
 import { serverApi } from "@/lib/server/api";
-import { CUSTOMER_TAGS, CustomerListApiResponse } from "@/types/customer";
+import { CUSTOMER_TAGS, CustomerListApiResponse, CustomerSingleApiResponse } from "@/types/customer-types";
 import { CustomerQueryInput } from "@mini-erp/shared";
 
 // ============================================================================
@@ -44,10 +44,24 @@ export async function searchCustomers(
     {
       search: query,
       limit: options?.limit ?? 10,
-      page: options?.limit ?? 1,
+      page: options?.page ?? 1,
       sortBy: "code",
       sortOrder: options?.sortOrder ?? "asc",
     },
     options?.revalidate ?? false,
   );
+}
+
+/**
+ * Get customer by ID
+ */
+export async function getCustomerById(
+  id: number,
+  revalidate?: number | false
+): Promise<CustomerSingleApiResponse> {
+  return serverApi.get<CustomerSingleApiResponse>(`/customers/${id}`, {
+    revalidate: revalidate ?? false,
+    tags: [CUSTOMER_TAGS.detail(id)],
+    unwrapData: false,
+  });
 }

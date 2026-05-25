@@ -21,8 +21,8 @@ import {
 } from "@/lib/client/modules/supplier";
 import { updateCustomerCompany, updateSupplierCompany } from "@/lib/client/modules/company";
 import { createAddress, updateAddress, getAddressByType } from "@/lib/client/modules/address";
-import type { CustomerQueryInput } from "@/types/customer";
-import type { SupplierQueryInput } from "@/types/supplier";
+import type { CustomerQueryInput } from "@/types/customer-types";
+import type { SupplierQueryInput } from "@/types/supplier-types";
 import type { CompanyQueryInput } from "@/types/company";
 import { CreateCustomerInput } from "@mini-erp/shared/types";
 import { AddressTypeEnum } from "@mini-erp/shared/constants";

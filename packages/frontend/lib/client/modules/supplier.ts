@@ -2,7 +2,7 @@
 
 import { ApiResponse, PaginatedResponse } from "@/types/api";
 import api from "../api";
-import { Supplier, SupplierQueryInput, SupplierStats } from "@/types/supplier";
+import { Supplier, SupplierQueryInput, SupplierStats } from "@/types/supplier-types";
 
 /**
  * Recupera la lista dei fornitori con filtri e paginazione

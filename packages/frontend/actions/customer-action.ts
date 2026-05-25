@@ -3,7 +3,7 @@
 // ============================================================================
 
 import { withAuth } from "@/lib/server/action";
-import { searchCustomers } from "@/services/server/customer-service";
+import { searchCustomers, getCustomerById } from "@/services/server/customer-service";
 import { ActionResult } from "next/dist/shared/lib/app-router-types";
 
 /**
@@ -16,10 +16,20 @@ export async function searchCustomerAction(
   }
 ): Promise<ActionResult> {
   return withAuth(async () => {
-    const result = await searchCustomers(query, {
+    return await searchCustomers(query, {
       limit: options?.limit ?? 10,
       revalidate: 30,
     });
-    return result;
+  }, 'customer:read');
+}
+
+/**
+ * Get customer by ID
+ */
+export async function getCustomerByIdAction(
+  id: number
+): Promise<ActionResult> {
+  return withAuth(async () => {
+    return await getCustomerById(id, false)
   }, 'customer:read');
 }

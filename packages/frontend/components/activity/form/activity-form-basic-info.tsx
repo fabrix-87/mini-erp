@@ -22,7 +22,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Combobox, ComboboxOption } from "@/components/ui/combobox";
 import { ActivityFormData } from "@/types/activitiy";
-import { Customer } from "@/types/customer";
+import { Customer } from "@/types/customer-types";
 import { Contact } from "@/types/contact";
 import { useMemo } from "react";
 import { Lead } from "@mini-erp/shared";

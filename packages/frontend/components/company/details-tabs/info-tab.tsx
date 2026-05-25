@@ -4,8 +4,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Customer } from "@/types/customer";
-import { Supplier } from "@/types/supplier";
+import { Customer } from "@/types/customer-types";
+import { Supplier } from "@/types/supplier-types";
 import { CompanyType } from "@/types/company";
 import {
   Building2,

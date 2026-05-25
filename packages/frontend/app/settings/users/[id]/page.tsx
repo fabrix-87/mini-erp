@@ -2,7 +2,7 @@
 import { Suspense } from 'react';
 import { notFound, redirect } from 'next/navigation';
 import { requireAdmin, requirePermission } from '@/lib/server/auth';
-import { getUserById } from '@/services/server/user';
+import { getUserById } from '@/services/server/user-service';
 import { ServerApiError } from '@/types/server-client';
 import { UserDetailHeader } from '@/components/users/user-detail-header';
 import { UserDetailInfo } from '@/components/users/user-detail-info';

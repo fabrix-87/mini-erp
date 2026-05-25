@@ -1,5 +1,5 @@
 import { ApiResponse } from "@/types/api";
-import { Customer, CustomerQueryInput, CustomerStats } from "@/types/customer";
+import { Customer, CustomerQueryInput, CustomerStats } from "@/types/customer-types";
 import api from "@/lib/client/api";
 import { Company, CompanyQueryInput } from "@/types/company";
 import { CreateCustomerForm } from "@mini-erp/shared/types";

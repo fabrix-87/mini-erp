@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCustomers } from "@/hooks/use-company";
-import { CustomerQueryInput } from "@/types/customer";
+import { CustomerQueryInput } from "@/types/customer-types";
 import { CompanyListTable } from "@/components/company/company-list-table";
 import { CompanyListSkeleton } from "@/components/company/company-list-skeleton";
 import { CompanyListStats } from "@/components/company/company-list-stats";

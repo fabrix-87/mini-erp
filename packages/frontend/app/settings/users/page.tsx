@@ -1,7 +1,7 @@
 // app/settings/users/page.tsx
 import { redirect } from "next/navigation";
 import { checkUserPermission, requirePermission } from "@/lib/server/auth";
-import { getAllUsers, getUserStats } from "@/services/server/user";
+import { getAllUsers, getUserStats } from "@/services/server/user-service";
 import { ServerApiError } from "@/types/server-client";
 import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 import { Button } from "@/components/ui/button";
