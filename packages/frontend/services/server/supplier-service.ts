@@ -9,6 +9,7 @@ import {
 } from "@/types/supplier-types";
 import {
   CreateSupplierInput,
+  Supplier,
   SupplierQueryInput,
   UpdateSupplierCompanyInput,
   UpdateSupplierInput,
@@ -89,8 +90,8 @@ export async function getSupplierById(
  */
 export async function createSupplier(
   data: CreateSupplierInput,
-): Promise<SupplierSingleApiResponse> {
-  return serverApi.post<SupplierSingleApiResponse>("/suppliers", data);
+): Promise<Supplier> {
+  return serverApi.post<Supplier>("/suppliers", data);
 }
 
 /**
@@ -100,8 +101,8 @@ export async function createSupplier(
 export async function updateSupplier(
   id: number,
   data: UpdateSupplierInput,
-): Promise<SupplierSingleApiResponse> {
-  return serverApi.put<SupplierSingleApiResponse>(`/suppliers/${id}`, data);
+): Promise<Supplier> {
+  return serverApi.put<Supplier>(`/suppliers/${id}`, data);
 }
 
 /**
@@ -111,8 +112,8 @@ export async function updateSupplier(
 export async function updateSupplierCompany(
   id: number,
   data: UpdateSupplierCompanyInput,
-): Promise<SupplierSingleApiResponse> {
-  return serverApi.put<SupplierSingleApiResponse>(`/suppliers/${id}/company`, data);
+): Promise<Supplier> {
+  return serverApi.put<Supplier>(`/suppliers/${id}/company`, data);
 }
 
 /**

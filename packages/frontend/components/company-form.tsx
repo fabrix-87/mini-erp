@@ -7,15 +7,34 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Save } from "lucide-react";
 import { toast } from "sonner";
-import { companyFormSchema, companyFormDefaultValues, CompanyFormValues } from "@mini-erp/shared";
+import {
+  companyFormSchema,
+  companyFormDefaultValues,
+  CompanyFormValues,
+  CompanyFormInput,
+} from "@mini-erp/shared";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CompanyFormTabs } from "@/components/company/company-form-tab";
 import { CompanyType } from "@/types/company-types";
-import { mapApiToForm, mapFormToCreateApi, extractCustomerData, extractSupplierData, mapFormToUpdateCompanyApi } from "@/lib/utils/company-mapper";
+import {
+  mapApiToForm,
+  mapFormToCreateApi,
+  extractCustomerData,
+  extractSupplierData,
+  mapFormToUpdateCompanyApi,
+} from "@/lib/utils/company-mapper";
 import { useCustomer, useSupplier } from "@/hooks/use-company";
-import { createCustomerAction, updateCustomerAction, updateCustomerCompanyAction } from "@/actions/customer-actions";
-import { createSupplierAction, updateSupplierAction, updateSupplierCompanyAction } from "@/actions/supplier-actions";
+import {
+  createCustomerAction,
+  updateCustomerAction,
+  updateCustomerCompanyAction,
+} from "@/actions/customer-actions";
+import {
+  createSupplierAction,
+  updateSupplierAction,
+  updateSupplierCompanyAction,
+} from "@/actions/supplier-actions";
 
 export default function CompanyFormPage() {
   const router = useRouter();
@@ -28,10 +47,10 @@ export default function CompanyFormPage() {
 
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<CompanyFormValues>({
+  const form = useForm<CompanyFormInput>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: companyFormDefaultValues,
-    mode: "onTouched", // validate on blur, revalidate on change after first touch
+    mode: "onTouched",
   });
 
   const { data: customerData, isLoading: isLoadingCustomer } = useCustomer(
@@ -49,19 +68,22 @@ export default function CompanyFormPage() {
   // Populate form once API data is loaded in edit mode
   useEffect(() => {
     if (!isEditMode || isLoading) return;
-    const apiData = companyType === "CUSTOMER" ? customerData?.data : supplierData?.data;
-    if (apiData) {
-      form.reset(mapApiToForm(apiData, companyType));
+
+    if (companyType === "CUSTOMER" && customerData?.data) {
+      form.reset(mapApiToForm(customerData.data, "CUSTOMER"));
+    } else if (companyType === "SUPPLIER" && supplierData?.data) {
+      form.reset(mapApiToForm(supplierData.data, "SUPPLIER"));
     }
   }, [customerData, supplierData, isEditMode, isLoading, companyType, form]);
 
-  const onSubmit = form.handleSubmit((data: CompanyFormValues) => {
+  const onSubmit = form.handleSubmit((data: CompanyFormInput) => {
+    const values = data as CompanyFormValues;
     startTransition(async () => {
       if (companyType === "CUSTOMER") {
         if (isEditMode && entityId) {
           const [companyRes, customerRes] = await Promise.all([
-            updateCustomerCompanyAction(entityId, mapFormToUpdateCompanyApi(data)),
-            updateCustomerAction(entityId, extractCustomerData(data)),
+            updateCustomerCompanyAction(entityId, mapFormToUpdateCompanyApi(values)),
+            updateCustomerAction(entityId, extractCustomerData(values)),
           ]);
           if (!companyRes.success || !customerRes.success) {
             toast.error(companyRes.error ?? customerRes.error ?? "Errore nell'aggiornamento");
@@ -70,16 +92,19 @@ export default function CompanyFormPage() {
           toast.success("Cliente aggiornato con successo");
           router.push(`/customers/${entityId}`);
         } else {
-          const result = await createCustomerAction(mapFormToCreateApi(data, "CUSTOMER"));
-          if (!result.success) { toast.error(result.error ?? "Errore nella creazione"); return; }
+          const result = await createCustomerAction(mapFormToCreateApi(values, "CUSTOMER"));
+          if (!result.success) {
+            toast.error(result.error ?? "Errore nella creazione");
+            return;
+          }
           toast.success("Cliente creato con successo");
           router.push(`/customers/${result.data?.id}`);
         }
       } else {
         if (isEditMode && entityId) {
           const [companyRes, supplierRes] = await Promise.all([
-            updateSupplierCompanyAction(entityId, mapFormToUpdateCompanyApi(data)),
-            updateSupplierAction(entityId, extractSupplierData(data)),
+            updateSupplierCompanyAction(entityId, mapFormToUpdateCompanyApi(values)),
+            updateSupplierAction(entityId, extractSupplierData(values)),
           ]);
           if (!companyRes.success || !supplierRes.success) {
             toast.error(companyRes.error ?? supplierRes.error ?? "Errore nell'aggiornamento");
@@ -88,8 +113,11 @@ export default function CompanyFormPage() {
           toast.success("Fornitore aggiornato con successo");
           router.push(`/suppliers/${entityId}`);
         } else {
-          const result = await createSupplierAction(mapFormToCreateApi(data, "SUPPLIER"));
-          if (!result.success) { toast.error(result.error ?? "Errore nella creazione"); return; }
+          const result = await createSupplierAction(mapFormToCreateApi(values, "SUPPLIER"));
+          if (!result.success) {
+            toast.error(result.error ?? "Errore nella creazione");
+            return;
+          }
           toast.success("Fornitore creato con successo");
           router.push(`/suppliers/${result.data?.id}`);
         }
@@ -128,7 +156,9 @@ export default function CompanyFormPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => router.back()}>Annulla</Button>
+            <Button variant="outline" onClick={() => router.back()}>
+              Annulla
+            </Button>
             <Button onClick={onSubmit} disabled={isPending}>
               <Save className="mr-2 h-4 w-4" />
               {isPending ? "Salvataggio..." : isEditMode ? "Aggiorna" : "Crea"}
@@ -139,7 +169,9 @@ export default function CompanyFormPage() {
         <CompanyFormTabs companyType={companyType} />
 
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => router.back()}>Annulla</Button>
+          <Button variant="outline" onClick={() => router.back()}>
+            Annulla
+          </Button>
           <Button onClick={onSubmit} disabled={isPending}>
             <Save className="mr-2 h-4 w-4" />
             {isPending ? "Salvataggio..." : isEditMode ? "Aggiorna" : "Crea"}

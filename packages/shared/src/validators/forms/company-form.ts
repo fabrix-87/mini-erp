@@ -12,10 +12,7 @@ import {
 } from "../business/italian-codes";
 import { emailSchema, phoneSchema } from "../primitives/string";
 import { creditLimitSchema } from "../business/currency";
-import {
-  companyStatusSchema,
-  companyTypeEntitySchema,
-} from "../company";
+import { companyStatusSchema, companyTypeEntitySchema } from "../company";
 import {
   customerTypeSchema,
   customerPrioritySchema,
@@ -23,9 +20,7 @@ import {
   creditCheckStatusSchema,
   customerSizeSchema,
 } from "../customer";
-import {
-  supplierRatingSchema,
-} from "../supplier";
+import { supplierRatingSchema } from "../supplier";
 import { createNestedAddressSchema } from "../address";
 import { AddressType } from "../../constants";
 
@@ -60,7 +55,7 @@ export const companyFormSchema = z.object({
   mainPhone: phoneSchema.optional().nullable(),
   assignedUserId: userIdSchema.optional().nullable(),
   customFields: inputJsonValueSchema.optional().nullable(),
-  
+
   legalAddress: createNestedAddressSchema,
 
   // ── Customer fields ───────────────────────────────────────────
@@ -84,5 +79,9 @@ export const companyFormSchema = z.object({
   supplierTaxRuleId: createIdSchema("Supplier Tax Rule ID non valido").optional().nullable(),
 
   // ── Shared commercial ─────────────────────────────────────────
-  creditLimit: creditLimitSchema.optional().nullable(),
+  creditLimit: z
+    .number("Inserire un valore numerico")
+    .min(0, "Il fido non può essere negativo")
+    .optional()
+    .nullable(),
 });

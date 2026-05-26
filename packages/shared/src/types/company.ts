@@ -47,8 +47,11 @@ export type Company = Omit<CreateCompanyInput, "legalAddress"> & {
   updatedAt: Date;
 };
 
-/** Inferred type — use this everywhere instead of the manual CompanyFormData */
-export type CompanyFormValues = z.infer<typeof companyFormSchema>;
+/** Input type — use with zodResolver in useForm<> generic */
+export type CompanyFormInput = z.input<typeof companyFormSchema>;
+
+/** Output type — use everywhere else (mapper, tabs, actions) */
+export type CompanyFormValues = z.output<typeof companyFormSchema>;
 
 /**
  * Company Note entity

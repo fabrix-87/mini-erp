@@ -16,6 +16,7 @@ import type {
   CreateSupplierInput,
   UpdateSupplierInput,
   UpdateSupplierCompanyInput,
+  Supplier,
 } from "@mini-erp/shared";
 import { SupplierSingleApiResponse } from "@/types/supplier-types";
 
@@ -56,7 +57,7 @@ export async function getSupplierByIdAction(id: number): Promise<ActionResult> {
  */
 export async function createSupplierAction(
   data: CreateSupplierInput,
-): Promise<ActionResult<SupplierSingleApiResponse>> {
+): Promise<ActionResult<Supplier>> {
   const result = await withAuth(async () => {
     const response = await createSupplier(data);
     supplierRevalidation.list();
@@ -71,7 +72,7 @@ export async function createSupplierAction(
 export async function updateSupplierAction(
   id: number,
   data: UpdateSupplierInput,
-): Promise<ActionResult<SupplierSingleApiResponse>> {
+): Promise<ActionResult<Supplier>> {
   const result = await withAuth(async () => {
     const response = await updateSupplier(id, data);
     supplierRevalidation.supplierWithList(id);
@@ -87,7 +88,7 @@ export async function updateSupplierAction(
 export async function updateSupplierCompanyAction(
   id: number,
   data: UpdateSupplierCompanyInput,
-): Promise<ActionResult<SupplierSingleApiResponse>> {
+): Promise<ActionResult<Supplier>> {
   const result = await withAuth(async () => {
     const response = await updateSupplierCompany(id, data);
     supplierRevalidation.supplierWithList(id);

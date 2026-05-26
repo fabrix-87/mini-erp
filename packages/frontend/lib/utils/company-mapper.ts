@@ -1,5 +1,22 @@
 import type { CompanyFormValues, CompanyType } from "@/types/company-types";
-import { AddressType, CompanyStatus, CompanyTypeEntity, CreateCompanyInput, CreditCheckStatus, CustomerPriority, CustomerSegment, CustomerSize, CustomerType } from "@mini-erp/shared";
+import {
+  AddressType,
+  CompanyStatus,
+  CompanyTypeEntity,
+  CreateCompanyInput,
+  CreateCustomerInput,
+  CreateSupplierInput,
+  CreditCheckStatus,
+  CustomerPriority,
+  CustomerSegment,
+  CustomerSize,
+  CustomerType,
+  Decimal,
+  UpdateCustomerCompanyInput,
+  UpdateCustomerInput,
+  UpdateSupplierCompanyInput,
+  UpdateSupplierInput,
+} from "@mini-erp/shared";
 import {
   CreateCompanyForm,
   CreateCustomerForm,
@@ -49,11 +66,11 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
       countryCode: company.legalAddress.countryCode ?? "IT",
       addressType: AddressType.LEGAL,
       isPrimary: true,
-      phone: '', 
-      latitude: null, 
-      longitude: null, 
-      openingHours: null, 
-      notes: ''
+      phone: "",
+      latitude: null,
+      longitude: null,
+      openingHours: null,
+      notes: "",
     },
 
     // Campi customer (default — sovrascritti sotto se type === CUSTOMER)
@@ -74,7 +91,7 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
     leadTimeDays: 0,
     transportCost: null,
     rating: 5,
-    supplierTaxRuleId: null, 
+    supplierTaxRuleId: null,
 
     // creditLimit presente su entrambi
     creditLimit: null,
@@ -93,7 +110,7 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
       defaultPriceListId: c.defaultPriceListId ?? null,
       customerTaxRuleId: c.customerTaxRuleId ?? null,
       paymentMethodId: c.paymentMethodId ?? null,
-      creditLimit: c.creditLimit ?? null,
+      creditLimit: c.creditLimit != null ? Number(c.creditLimit) : null,
     };
   }
 
@@ -107,7 +124,7 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
     transportCost: s.transportCost ?? null,
     supplierTaxRuleId: s.supplierTaxRuleId ?? null,
     rating: s.rating ?? 5,
-    creditLimit: s.creditLimit ?? null,
+    creditLimit: s.creditLimit != null ? Number(s.creditLimit) : null,
   };
 }
 
@@ -124,9 +141,9 @@ export function extractCompanyData(data: CompanyFormValues): CreateCompanyInput 
     companyName: data.companyName,
     tradeName: data.tradeName,
     legalForm: data.legalForm,
-    status: data.status ?? CompanyStatus.ACTIVE,         
-    entityType: data.entityType ?? CompanyTypeEntity.JURIDICAL, 
-    countryCode: data.countryCode ?? "IT",     
+    status: data.status ?? CompanyStatus.ACTIVE,
+    entityType: data.entityType ?? CompanyTypeEntity.JURIDICAL,
+    countryCode: data.countryCode ?? "IT",
     vatNumber: data.vatNumber,
     taxCode: data.taxCode,
     sdiCode: data.sdiCode,
@@ -144,7 +161,7 @@ export function extractCompanyData(data: CompanyFormValues): CreateCompanyInput 
 /**
  * Extracts customer-specific fields from form data.
  */
-export function extractCustomerData(data: CompanyFormValues): Omit<CreateCustomerForm, "company"> {
+export function extractCustomerData(data: CompanyFormValues): UpdateCustomerInput {
   return {
     parentCustomerId: data.parentCustomerId,
     priority: data.priority,
@@ -155,14 +172,14 @@ export function extractCustomerData(data: CompanyFormValues): Omit<CreateCustome
     defaultPriceListId: data.defaultPriceListId,
     customerTaxRuleId: data.customerTaxRuleId,
     paymentMethodId: data.paymentMethodId,
-    creditLimit: data.creditLimit,
+    creditLimit: data.creditLimit != null ? new Decimal(data.creditLimit) : null,
   };
 }
 
 /**
  * Extracts supplier-specific fields from form data.
  */
-export function extractSupplierData(data: CompanyFormValues): Omit<CreateSupplierForm, "company"> {
+export function extractSupplierData(data: CompanyFormValues): UpdateSupplierInput {
   return {
     parentSupplierId: data.parentSupplierId,
     paymentTerms: data.paymentTerms,
@@ -170,7 +187,7 @@ export function extractSupplierData(data: CompanyFormValues): Omit<CreateSupplie
     leadTimeDays: data.leadTimeDays ?? 0,
     transportCost: data.transportCost,
     rating: data.rating ?? 5,
-    creditLimit: data.creditLimit,
+    creditLimit: data.creditLimit != null ? new Decimal(data.creditLimit) : null,
     supplierTaxRuleId: data.supplierTaxRuleId ?? null,
   };
 }
@@ -179,12 +196,12 @@ export function extractSupplierData(data: CompanyFormValues): Omit<CreateSupplie
  * Maps form data to the create API payload.
  * Overloaded to return the correct type based on CompanyType.
  */
-export function mapFormToCreateApi(data: CompanyFormValues, type: "CUSTOMER"): CreateCustomerForm;
-export function mapFormToCreateApi(data: CompanyFormValues, type: "SUPPLIER"): CreateSupplierForm;
+export function mapFormToCreateApi(data: CompanyFormValues, type: "CUSTOMER"): CreateCustomerInput;
+export function mapFormToCreateApi(data: CompanyFormValues, type: "SUPPLIER"): CreateSupplierInput;
 export function mapFormToCreateApi(
   data: CompanyFormValues,
   type: CompanyType,
-): CreateCustomerForm | CreateSupplierForm {
+): CreateCustomerInput | CreateSupplierInput {
   const company = extractCompanyData(data);
 
   if (type === "CUSTOMER") {
@@ -199,7 +216,7 @@ export function mapFormToCreateApi(
  */
 export function mapFormToUpdateCompanyApi(
   data: CompanyFormValues,
-): Omit<CreateCompanyForm, "legalAddress"> & { legalAddress?: CreateCompanyForm["legalAddress"] } {
+): UpdateCustomerCompanyInput | UpdateSupplierCompanyInput {
   return extractCompanyData(data);
 }
 
