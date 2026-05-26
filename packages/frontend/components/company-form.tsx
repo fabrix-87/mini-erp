@@ -4,7 +4,7 @@
 import { useEffect, useTransition } from "react";
 import { useRouter, useParams, usePathname } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { ArrowLeft, Save } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -48,7 +48,7 @@ export default function CompanyFormPage() {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<CompanyFormInput>({
-    resolver: zodResolver(companyFormSchema),
+    resolver: standardSchemaResolver(companyFormSchema),
     defaultValues: companyFormDefaultValues,
     mode: "onTouched",
   });

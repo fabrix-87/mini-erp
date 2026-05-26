@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { toOptionalField } from "../utils";
 
 // ============================================================================
 // VALIDATION REGEX
@@ -11,7 +12,7 @@ const sdiCodeRegex = /^[A-Z0-9]{7}$/;
 /**
  * Validates Italian VAT number (Partita IVA)
  * Complies with Agenzia delle Entrate algorithm
- * 
+ *
  * Format: 11 numeric digits
  * - First 7 digits: progressive number
  * - Digits 8-10: province code (001-100, 120-121)
@@ -25,36 +26,39 @@ export const vatNumberSchema = (required = false) => {
     .refine(
       (vat) => {
         if (vat.length !== 11) return false;
-        
+
         // Check province code (positions 8-10)
         const provinceCode = parseInt(vat.substring(7, 10), 10);
-        if (provinceCode < 1 || (provinceCode > 100 && provinceCode !== 120 && provinceCode !== 121)) {
+        if (
+          provinceCode < 1 ||
+          (provinceCode > 100 && provinceCode !== 120 && provinceCode !== 121)
+        ) {
           return false;
         }
-        
+
         // Validate check digit (11th position) using official algorithm
         let sum = 0;
         for (let i = 0; i < 10; i++) {
           let digit = parseInt(vat[i], 10);
-          
+
           // Odd positions (1st, 3rd, 5th, 7th, 9th) - index 0, 2, 4, 6, 8
           if (i % 2 === 0) {
             sum += digit;
-          } 
+          }
           // Even positions (2nd, 4th, 6th, 8th, 10th) - index 1, 3, 5, 7, 9
           else {
             digit *= 2;
             sum += digit > 9 ? digit - 9 : digit;
           }
         }
-        
+
         const checkDigit = (10 - (sum % 10)) % 10;
         return checkDigit === parseInt(vat[10], 10);
       },
       { message: "Partita IVA non valida" },
     );
 
-  return required ? baseSchema : baseSchema.optional().nullable();
+  return required ? baseSchema : toOptionalField(baseSchema);
 };
 
 /**
@@ -63,20 +67,17 @@ export const vatNumberSchema = (required = false) => {
 export const fiscalCodeSchema = (required = false) => {
   const baseSchema = z
     .string()
-    .regex(
-      italianTaxCodeRegex,
-      "Formato codice fiscale non valido",
-    )
+    .regex(italianTaxCodeRegex, "Formato codice fiscale non valido")
     .length(16, "Il codice fiscale deve contenere 16 caratteri")
     .toUpperCase();
 
-  return required ? baseSchema : baseSchema.optional().nullable();
+  return required ? baseSchema : toOptionalField(baseSchema);
 };
 
 /**
  * Validates Italian SDI code (Codice Destinatario/Recipient Code)
  * Used for electronic invoicing (Fatturazione Elettronica)
- * 
+ *
  * Valid formats:
  * - 7 alphanumeric characters (standard)
  * - "0000000" (PEC required)
@@ -88,23 +89,20 @@ export const sdiCodeSchema = (required = false) => {
     .trim()
     .toUpperCase()
     .length(7, "Il codice SDI deve contenere esattamente 7 caratteri")
-    .regex(
-      sdiCodeRegex,
-      "Il codice SDI deve contenere solo lettere maiuscole e numeri",
-    )
+    .regex(sdiCodeRegex, "Il codice SDI deve contenere solo lettere maiuscole e numeri")
     .refine(
       (code) => {
         // Valida "0000000" (PEC obbligatoria) e "XXXXXXX" (esteri/casi speciali)
         const validSpecialCodes = ["0000000", "XXXXXXX"];
         if (validSpecialCodes.includes(code)) return true;
-        
+
         // Per codici standard, verifica che non sia tutto zero o tutto X
         return code !== "0000000" || code === "0000000";
       },
       { message: "Codice SDI non valido" },
     );
 
-  return required ? baseSchema : baseSchema.optional().nullable();
+  return required ? baseSchema : toOptionalField(baseSchema);
 };
 
 /**
@@ -127,18 +125,45 @@ export const internationalVatIdSchema = (required = false) => {
         // Extract country code (2 or 3 chars)
         const countryMatch = vatId.match(/^([A-Z]{2,3})/);
         if (!countryMatch) return false;
-        
+
         const country = countryMatch[1];
         const number = vatId.substring(country.length);
-        
+
         // EU + Norway + Switzerland (strict validation)
         const euCountries = [
-          'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DE', 'DK', 'EE', 
-          'EL', 'GR', 'ES', 'FI', 'FR', 'GB', 'HU', 'IE', 'IT', 
-          'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 
-          'SI', 'SK', 'CHE', 'NO'
+          "AT",
+          "BE",
+          "BG",
+          "HR",
+          "CY",
+          "CZ",
+          "DE",
+          "DK",
+          "EE",
+          "EL",
+          "GR",
+          "ES",
+          "FI",
+          "FR",
+          "GB",
+          "HU",
+          "IE",
+          "IT",
+          "LT",
+          "LU",
+          "LV",
+          "MT",
+          "NL",
+          "PL",
+          "PT",
+          "RO",
+          "SE",
+          "SI",
+          "SK",
+          "CHE",
+          "NO",
         ];
-        
+
         if (euCountries.includes(country)) {
           // Use strict EU validation
           const patterns: Record<string, RegExp> = {
@@ -174,29 +199,29 @@ export const internationalVatIdSchema = (required = false) => {
             CHE: /^[0-9]{9}(MWST|TVA|IVA)?$/,
             NO: /^[0-9]{9}MVA$/,
           };
-          
+
           const pattern = patterns[country];
           return pattern ? pattern.test(number) : false;
         }
-        
+
         // Extra-EU countries: generic validation
         // Must have at least 4 alphanumeric characters after country code
         return number.length >= 4 && /^[A-Z0-9]+$/.test(number);
       },
-      { 
+      {
         message: "VAT ID non valido. Verificare formato e paese",
       },
     );
 
-  return required ? baseSchema : baseSchema.optional().nullable();
+  return required ? baseSchema : toOptionalField(baseSchema);
 };
 
 /**
  * Validates EORI number (Economic Operators Registration and Identification)
  * Used for customs and extra-EU trade
- * 
+ *
  * Format: Country code (2 letters) + unique identifier (up to 15 chars)
- * Examples: 
+ * Examples:
  * - IT12345678901 (Italian)
  * - DE123456789012345 (German)
  * - GB123456789000 (UK)
@@ -213,5 +238,5 @@ export const eoriNumberSchema = (required = false) => {
     .min(3, "Codice EORI troppo corto")
     .max(17, "Codice EORI troppo lungo");
 
-  return required ? baseSchema : baseSchema.optional().nullable();
+  return required ? baseSchema : toOptionalField(baseSchema);
 };

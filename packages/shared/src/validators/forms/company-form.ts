@@ -11,7 +11,6 @@ import {
   vatNumberSchema,
 } from "../business/italian-codes";
 import { emailSchema, phoneSchema } from "../primitives/string";
-import { creditLimitSchema } from "../business/currency";
 import { companyStatusSchema, companyTypeEntitySchema } from "../company";
 import {
   customerTypeSchema,
@@ -22,7 +21,7 @@ import {
 } from "../customer";
 import { supplierRatingSchema } from "../supplier";
 import { createNestedAddressSchema } from "../address";
-import { AddressType } from "../../constants";
+import { toOptionalField } from "../utils";
 
 /**
  * Flat Zod schema for the company form UI.
@@ -46,7 +45,7 @@ export const companyFormSchema = z.object({
   vatNumber: vatNumberSchema(),
   taxCode: fiscalCodeSchema(),
   sdiCode: sdiCodeSchema(),
-  pec: emailSchema().optional().nullable(),
+  pec: toOptionalField(emailSchema()),
   vatId: internationalVatIdSchema(),
   eoriNumber: eoriNumberSchema(),
 

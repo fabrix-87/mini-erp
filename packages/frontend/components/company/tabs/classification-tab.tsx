@@ -2,7 +2,7 @@
 "use client";
 
 import { useFormContext, Controller } from "react-hook-form";
-import { CompanyFormValues } from "@mini-erp/shared";
+import { CompanyFormInput, CompanyFormValues } from "@mini-erp/shared";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,7 +15,7 @@ interface ClassificationTabProps {
 }
 
 export function ClassificationTab({ companyType }: ClassificationTabProps) {
-  const { control, register, formState: { errors } } = useFormContext<CompanyFormValues>();
+  const { control, register, formState: { errors } } = useFormContext<CompanyFormInput>();
 
   return (
     <>

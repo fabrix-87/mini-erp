@@ -2,7 +2,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { CompanyFormValues } from "@mini-erp/shared";
+import { CompanyFormInput, CompanyFormValues } from "@mini-erp/shared";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +12,7 @@ export function FiscalDataTab() {
   const {
     register,
     formState: { errors },
-  } = useFormContext<CompanyFormValues>();
+  } = useFormContext<CompanyFormInput>();
 
   return (
     <Card>

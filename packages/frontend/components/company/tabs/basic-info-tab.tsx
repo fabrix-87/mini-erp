@@ -2,7 +2,7 @@
 "use client";
 
 import { useFormContext, Controller } from "react-hook-form";
-import { CompanyFormValues } from "@mini-erp/shared";
+import { CompanyFormInput, CompanyFormValues } from "@mini-erp/shared";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -21,7 +21,7 @@ export function BasicInfoTab() {
     control,
     register,
     formState: { errors },
-  } = useFormContext<CompanyFormValues>();
+  } = useFormContext<CompanyFormInput>();
 
   return (
     <>
