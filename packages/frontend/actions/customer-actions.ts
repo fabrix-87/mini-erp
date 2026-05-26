@@ -14,6 +14,7 @@ import {
 import { CustomerSingleApiResponse } from "@/types/customer-types";
 import {
   CreateCustomerInput,
+  Customer,
   UpdateCustomerCompanyInput,
   UpdateCustomerInput,
 } from "@mini-erp/shared";
@@ -54,7 +55,7 @@ export async function getCustomerByIdAction(id: number): Promise<ActionResult> {
  */
 export async function createCustomerAction(
   data: CreateCustomerInput,
-): Promise<ActionResult<CustomerSingleApiResponse>> {
+): Promise<ActionResult<Customer>> {
   const result = await withAuth(async () => {
     const response = await createCustomer(data);
     customerRevalidation.list();
@@ -69,7 +70,7 @@ export async function createCustomerAction(
 export async function updateCustomerAction(
   id: number,
   data: UpdateCustomerInput,
-): Promise<ActionResult<CustomerSingleApiResponse>> {
+): Promise<ActionResult<Customer>> {
   const result = await withAuth(async () => {
     const response = await updateCustomer(id, data);
     customerRevalidation.customerWithList(id);
@@ -85,7 +86,7 @@ export async function updateCustomerAction(
 export async function updateCustomerCompanyAction(
   id: number,
   data: UpdateCustomerCompanyInput,
-): Promise<ActionResult<CustomerSingleApiResponse>> {
+): Promise<ActionResult<Customer>> {
   const result = await withAuth(async () => {
     const response = await updateCustomerCompany(id, data);
     customerRevalidation.customerWithList(id);

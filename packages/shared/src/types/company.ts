@@ -22,7 +22,7 @@ import {
 import { Address } from "./address";
 import { Contact } from "./contact";
 import { CompanyStatus, CompanyTypeEntity } from "../constants";
-import { createCustomerSchema, createSupplierSchema } from "../validators";
+import { companyFormSchema, createCustomerSchema, createSupplierSchema } from "../validators";
 
 // ============================================================================
 // ENTITY TYPES
@@ -47,12 +47,8 @@ export type Company = Omit<CreateCompanyInput, "legalAddress"> & {
   updatedAt: Date;
 };
 
-/**
- * TODO: Refactor this to use a single schema for Customer and Supplier
- */
-export type CompanyFormData = z.input<typeof baseCompanySchema> &
-  Omit<z.input<typeof createCustomerSchema>, "company"> &
-  Omit<z.input<typeof createSupplierSchema>, "company">;
+/** Inferred type — use this everywhere instead of the manual CompanyFormData */
+export type CompanyFormValues = z.infer<typeof companyFormSchema>;
 
 /**
  * Company Note entity

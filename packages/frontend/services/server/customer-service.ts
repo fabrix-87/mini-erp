@@ -9,6 +9,7 @@ import {
 } from "@/types/customer-types";
 import {
   CreateCustomerInput,
+  Customer,
   CustomerQueryInput,
   UpdateCustomerCompanyInput,
   UpdateCustomerInput,
@@ -83,21 +84,16 @@ export async function getCustomerById(
 /**
  * Create a new customer with nested company data
  */
-export async function createCustomer(
-  data: CreateCustomerInput,
-): Promise<CustomerSingleApiResponse> {
-  return serverApi.post<CustomerSingleApiResponse>("/customers", data);
+export async function createCustomer(data: CreateCustomerInput): Promise<Customer> {
+  return serverApi.post<Customer>("/customers", data);
 }
 
 /**
  * Update customer CRM-specific fields (priority, segment, taxRule, etc.)
  * @route PUT /api/customers/:id
  */
-export async function updateCustomer(
-  id: number,
-  data: UpdateCustomerInput,
-): Promise<CustomerSingleApiResponse> {
-  return serverApi.put<CustomerSingleApiResponse>(`/customers/${id}`, data);
+export async function updateCustomer(id: number, data: UpdateCustomerInput): Promise<Customer> {
+  return serverApi.put<Customer>(`/customers/${id}`, data);
 }
 
 /**
@@ -107,8 +103,8 @@ export async function updateCustomer(
 export async function updateCustomerCompany(
   id: number,
   data: UpdateCustomerCompanyInput,
-): Promise<CustomerSingleApiResponse> {
-  return serverApi.put<CustomerSingleApiResponse>(`/customers/${id}/company`, data);
+): Promise<Customer> {
+  return serverApi.put<Customer>(`/customers/${id}/company`, data);
 }
 
 /**

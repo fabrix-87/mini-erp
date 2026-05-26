@@ -41,3 +41,6 @@ export * from "./tenant";
 export * from "./intrastat";
 export * from "./category";
 export * from "./dashboard";
+
+// Forms
+export * from "./forms/company-form";

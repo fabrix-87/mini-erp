@@ -1,5 +1,5 @@
-import type { CompanyFormData, CompanyType } from "@/types/company-types";
-import { AddressType, CompanyStatus, CompanyTypeEntity, CreateCompanyInput } from "@mini-erp/shared";
+import type { CompanyFormValues, CompanyType } from "@/types/company-types";
+import { AddressType, CompanyStatus, CompanyTypeEntity, CreateCompanyInput, CreditCheckStatus, CustomerPriority, CustomerSegment, CustomerSize, CustomerType } from "@mini-erp/shared";
 import {
   CreateCompanyForm,
   CreateCustomerForm,
@@ -13,21 +13,21 @@ import {
 // ============================================================================
 
 /**
- * Maps API response data (Customer | Supplier) to CompanyFormData shape.
+ * Maps API response data (Customer | Supplier) to CompanyFormValues shape.
  * Extracts nested company fields and type-specific fields into a flat form object.
  */
-export function mapApiToForm(data: Customer, type: "CUSTOMER"): CompanyFormData;
-export function mapApiToForm(data: Supplier, type: "SUPPLIER"): CompanyFormData;
-export function mapApiToForm(data: Customer | Supplier, type: CompanyType): CompanyFormData {
+export function mapApiToForm(data: Customer, type: "CUSTOMER"): CompanyFormValues;
+export function mapApiToForm(data: Supplier, type: "SUPPLIER"): CompanyFormValues;
+export function mapApiToForm(data: Customer | Supplier, type: CompanyType): CompanyFormValues {
   const company = data.company;
 
-  const base: CompanyFormData = {
+  const base: CompanyFormValues = {
     // Dati base company
     companyName: company.companyName ?? "",
     tradeName: company.tradeName ?? null,
     legalForm: company.legalForm ?? null,
-    status: company.status ?? "ACTIVE",
-    entityType: company.entityType ?? "JURIDICAL",
+    status: company.status ?? CompanyStatus.ACTIVE,
+    entityType: company.entityType ?? CompanyTypeEntity.JURIDICAL,
     vatNumber: company.vatNumber ?? "",
     taxCode: company.taxCode ?? "",
     sdiCode: company.sdiCode ?? "",
@@ -39,7 +39,6 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
     mainPhone: company.mainPhone ?? null,
     assignedUserId: company.assignedUserId ?? null,
     customFields: company.customFields ?? null,
-    openingHours: company.openingHours ?? null,
 
     // Mappa legalAddress dalla response API
     legalAddress: {
@@ -59,11 +58,11 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
 
     // Campi customer (default — sovrascritti sotto se type === CUSTOMER)
     parentCustomerId: null,
-    priority: "MEDIUM",
-    segment: "STANDARD",
-    size: "SMALL",
-    type: "CUSTOMER",
-    creditStatus: "PENDING",
+    priority: CustomerPriority.MEDIUM,
+    segment: CustomerSegment.STANDARD,
+    size: CustomerSize.SMALL,
+    type: CustomerType.CUSTOMER,
+    creditStatus: CreditCheckStatus.PENDING,
     defaultPriceListId: null,
     customerTaxRuleId: null,
     paymentMethodId: null,
@@ -86,11 +85,11 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
     return {
       ...base,
       parentCustomerId: c.parentCustomerId ?? null,
-      priority: c.priority ?? "MEDIUM",
-      segment: c.segment ?? "STANDARD",
-      size: c.size ?? "SMALL",
-      type: c.type ?? "CUSTOMER",
-      creditStatus: c.creditStatus ?? "PENDING",
+      priority: c.priority ?? CustomerPriority.MEDIUM,
+      segment: c.segment ?? CustomerSegment.STANDARD,
+      size: c.size ?? CustomerSize.SMALL,
+      type: c.type ?? CustomerType.CUSTOMER,
+      creditStatus: c.creditStatus ?? CreditCheckStatus.PENDING,
       defaultPriceListId: c.defaultPriceListId ?? null,
       customerTaxRuleId: c.customerTaxRuleId ?? null,
       paymentMethodId: c.paymentMethodId ?? null,
@@ -120,7 +119,7 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
  * Extracts company fields from form data and maps them to CompanyInput.
  * Converts legalAddress to the nested addresses array expected by the API.
  */
-export function extractCompanyData(data: CompanyFormData): CreateCompanyInput {
+export function extractCompanyData(data: CompanyFormValues): CreateCompanyInput {
   return {
     companyName: data.companyName,
     tradeName: data.tradeName,
@@ -138,7 +137,6 @@ export function extractCompanyData(data: CompanyFormData): CreateCompanyInput {
     mainPhone: data.mainPhone,
     assignedUserId: Number(data.assignedUserId),
     customFields: data.customFields,
-    openingHours: data.openingHours,
     legalAddress: data.legalAddress,
   };
 }
@@ -146,7 +144,7 @@ export function extractCompanyData(data: CompanyFormData): CreateCompanyInput {
 /**
  * Extracts customer-specific fields from form data.
  */
-export function extractCustomerData(data: CompanyFormData): Omit<CreateCustomerForm, "company"> {
+export function extractCustomerData(data: CompanyFormValues): Omit<CreateCustomerForm, "company"> {
   return {
     parentCustomerId: data.parentCustomerId,
     priority: data.priority,
@@ -164,7 +162,7 @@ export function extractCustomerData(data: CompanyFormData): Omit<CreateCustomerF
 /**
  * Extracts supplier-specific fields from form data.
  */
-export function extractSupplierData(data: CompanyFormData): Omit<CreateSupplierForm, "company"> {
+export function extractSupplierData(data: CompanyFormValues): Omit<CreateSupplierForm, "company"> {
   return {
     parentSupplierId: data.parentSupplierId,
     paymentTerms: data.paymentTerms,
@@ -181,10 +179,10 @@ export function extractSupplierData(data: CompanyFormData): Omit<CreateSupplierF
  * Maps form data to the create API payload.
  * Overloaded to return the correct type based on CompanyType.
  */
-export function mapFormToCreateApi(data: CompanyFormData, type: "CUSTOMER"): CreateCustomerForm;
-export function mapFormToCreateApi(data: CompanyFormData, type: "SUPPLIER"): CreateSupplierForm;
+export function mapFormToCreateApi(data: CompanyFormValues, type: "CUSTOMER"): CreateCustomerForm;
+export function mapFormToCreateApi(data: CompanyFormValues, type: "SUPPLIER"): CreateSupplierForm;
 export function mapFormToCreateApi(
-  data: CompanyFormData,
+  data: CompanyFormValues,
   type: CompanyType,
 ): CreateCustomerForm | CreateSupplierForm {
   const company = extractCompanyData(data);
@@ -200,7 +198,7 @@ export function mapFormToCreateApi(
  * Addresses are managed via dedicated /addresses endpoints.
  */
 export function mapFormToUpdateCompanyApi(
-  data: CompanyFormData,
+  data: CompanyFormValues,
 ): Omit<CreateCompanyForm, "legalAddress"> & { legalAddress?: CreateCompanyForm["legalAddress"] } {
   return extractCompanyData(data);
 }
@@ -213,7 +211,7 @@ export function mapFormToUpdateCompanyApi(
  * Validates required company form fields before submission.
  * Fiscal validation is handled server-side via /validate-fiscal endpoint.
  */
-export function validateCompanyForm(data: CompanyFormData): string[] {
+export function validateCompanyForm(data: CompanyFormValues): string[] {
   const errors: string[] = [];
 
   if (!data.companyName?.trim()) {

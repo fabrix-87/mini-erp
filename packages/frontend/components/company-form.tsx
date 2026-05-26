@@ -1,102 +1,39 @@
+// packages/frontend/components/company-form.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useTransition } from "react";
 import { useRouter, useParams, usePathname } from "next/navigation";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, Save } from "lucide-react";
+import { toast } from "sonner";
+import { companyFormSchema, companyFormDefaultValues, CompanyFormValues } from "@mini-erp/shared";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CompanyFormData, CompanyType } from "@/types/company-types";
 import { CompanyFormTabs } from "@/components/company/company-form-tab";
-import {
-  mapApiToForm,
-  mapFormToCreateApi,
-  extractCompanyData,
-  extractCustomerData,
-  extractSupplierData,
-  mapFormToUpdateCompanyApi,
-} from "@/lib/utils/company-mapper";
-import {
-  useCustomer,
-  useSupplier,
-  useCreateCustomer,
-  useCreateSupplier,
-  useUpdateCustomer,
-  useUpdateSupplier,
-} from "@/hooks/use-company";
-import {
-  CompanyStatus,
-  CompanyTypeEntity,
-  CreditCheckStatus,
-  CustomerPriority,
-  CustomerSegment,
-  CustomerSize,
-  CustomerType,
-} from "@mini-erp/shared";
+import { CompanyType } from "@/types/company-types";
+import { mapApiToForm, mapFormToCreateApi, extractCustomerData, extractSupplierData, mapFormToUpdateCompanyApi } from "@/lib/utils/company-mapper";
+import { useCustomer, useSupplier } from "@/hooks/use-company";
+import { createCustomerAction, updateCustomerAction, updateCustomerCompanyAction } from "@/actions/customer-actions";
+import { createSupplierAction, updateSupplierAction, updateSupplierCompanyAction } from "@/actions/supplier-actions";
 
 export default function CompanyFormPage() {
   const router = useRouter();
   const params = useParams();
   const pathname = usePathname();
 
-  // Determina il tipo di entità dal path
   const companyType: CompanyType = pathname.includes("/customers") ? "CUSTOMER" : "SUPPLIER";
-
   const isEditMode = !!params?.id;
   const entityId = params?.id ? parseInt(params.id as string) : undefined;
 
-  const [formData, setFormData] = useState<CompanyFormData>({
-    // Company base
-    companyName: "",
-    tradeName: null,
-    legalForm: null,
-    entityType: CompanyTypeEntity.JURIDICAL,
-    status: CompanyStatus.ACTIVE,
-    vatNumber: "",
-    taxCode: "",
-    sdiCode: "",
-    pec: null,
-    eoriNumber: null,
-    vatId: null,
-    countryCode: "IT",
-    mainEmail: null,
-    mainPhone: null,
-    assignedUserId: null,
-    customFields: null,
-    openingHours: null,
+  const [isPending, startTransition] = useTransition();
 
-    // Legal address — sempre inizializzato per evitare uncontrolled inputs
-    legalAddress: {
-      address: "",
-      city: "",
-      provinceCode: "",
-      zipCode: "",
-      countryCode: "IT",
-    },
-
-    // Customer fields
-    parentCustomerId: null,
-    priority: CustomerPriority.MEDIUM,
-    segment: CustomerSegment.STANDARD,
-    size: CustomerSize.SMALL,
-    type: CustomerType.CUSTOMER,
-    creditStatus: CreditCheckStatus.PENDING,
-    defaultPriceListId: null,
-    customerTaxRuleId: null,
-    paymentMethodId: null,
-
-    // Supplier fields
-    parentSupplierId: null,
-    paymentTerms: null,
-    bankAccount: null,
-    leadTimeDays: 0,
-    transportCost: null,
-    rating: 5,
-
-    // Presente su entrambi
-    creditLimit: null,
+  const form = useForm<CompanyFormValues>({
+    resolver: zodResolver(companyFormSchema),
+    defaultValues: companyFormDefaultValues,
+    mode: "onTouched", // validate on blur, revalidate on change after first touch
   });
 
-  // Fetch existing data usando gli hook specifici
   const { data: customerData, isLoading: isLoadingCustomer } = useCustomer(
     companyType === "CUSTOMER" ? entityId : undefined,
     isEditMode && companyType === "CUSTOMER",
@@ -109,72 +46,56 @@ export default function CompanyFormPage() {
 
   const isLoading = isLoadingCustomer || isLoadingSupplier;
 
-  // Popola il form quando i dati sono caricati
+  // Populate form once API data is loaded in edit mode
   useEffect(() => {
-    if (isEditMode && !isLoading) {
-      if (customerData?.data || supplierData?.data) {
-        const mappedData =
-          companyType === "CUSTOMER"
-            ? mapApiToForm(customerData!.data, companyType)
-            : mapApiToForm(supplierData!.data, companyType);
-        setFormData(mappedData);
-      }
+    if (!isEditMode || isLoading) return;
+    const apiData = companyType === "CUSTOMER" ? customerData?.data : supplierData?.data;
+    if (apiData) {
+      form.reset(mapApiToForm(apiData, companyType));
     }
-  }, [customerData, supplierData, isEditMode, isLoading, companyType]);
+  }, [customerData, supplierData, isEditMode, isLoading, companyType, form]);
 
-  // Hooks per le mutations
-  const createCustomerMutation = useCreateCustomer();
-  const createSupplierMutation = useCreateSupplier();
-  const updateCustomerMutation = useUpdateCustomer(entityId || 0);
-  const updateSupplierMutation = useUpdateSupplier(entityId || 0);
-
-  const handleSubmit = async () => {
-    if (companyType === "CUSTOMER") {
-      if (isEditMode) {
-        // UPDATE: usa mapFormToUpdateCompanyApi per i dati company
-        updateCustomerMutation.mutate(
-          {
-            companyData: mapFormToUpdateCompanyApi(formData),
-            customerData: extractCustomerData(formData),
-          },
-          {
-            onSuccess: () => router.push(`/customers/${entityId}`),
-          },
-        );
+  const onSubmit = form.handleSubmit((data: CompanyFormValues) => {
+    startTransition(async () => {
+      if (companyType === "CUSTOMER") {
+        if (isEditMode && entityId) {
+          const [companyRes, customerRes] = await Promise.all([
+            updateCustomerCompanyAction(entityId, mapFormToUpdateCompanyApi(data)),
+            updateCustomerAction(entityId, extractCustomerData(data)),
+          ]);
+          if (!companyRes.success || !customerRes.success) {
+            toast.error(companyRes.error ?? customerRes.error ?? "Errore nell'aggiornamento");
+            return;
+          }
+          toast.success("Cliente aggiornato con successo");
+          router.push(`/customers/${entityId}`);
+        } else {
+          const result = await createCustomerAction(mapFormToCreateApi(data, "CUSTOMER"));
+          if (!result.success) { toast.error(result.error ?? "Errore nella creazione"); return; }
+          toast.success("Cliente creato con successo");
+          router.push(`/customers/${result.data?.id}`);
+        }
       } else {
-        // CREATE: payload completo con nested company + legalAddress
-        createCustomerMutation.mutate(mapFormToCreateApi(formData, "CUSTOMER"), {
-          onSuccess: (response) => {
-            router.push(`/customers/${response.data?.id}`);
-          },
-        });
+        if (isEditMode && entityId) {
+          const [companyRes, supplierRes] = await Promise.all([
+            updateSupplierCompanyAction(entityId, mapFormToUpdateCompanyApi(data)),
+            updateSupplierAction(entityId, extractSupplierData(data)),
+          ]);
+          if (!companyRes.success || !supplierRes.success) {
+            toast.error(companyRes.error ?? supplierRes.error ?? "Errore nell'aggiornamento");
+            return;
+          }
+          toast.success("Fornitore aggiornato con successo");
+          router.push(`/suppliers/${entityId}`);
+        } else {
+          const result = await createSupplierAction(mapFormToCreateApi(data, "SUPPLIER"));
+          if (!result.success) { toast.error(result.error ?? "Errore nella creazione"); return; }
+          toast.success("Fornitore creato con successo");
+          router.push(`/suppliers/${result.data?.id}`);
+        }
       }
-    } else {
-      if (isEditMode) {
-        updateSupplierMutation.mutate(
-          {
-            companyData: mapFormToUpdateCompanyApi(formData),
-            supplierData: extractSupplierData(formData),
-          },
-          {
-            onSuccess: () => router.push(`/suppliers/${entityId}`),
-          },
-        );
-      } else {
-        createSupplierMutation.mutate(mapFormToCreateApi(formData, "SUPPLIER"), {
-          onSuccess: (response) => {
-            router.push(`/suppliers/${response.data?.id}`);
-          },
-        });
-      }
-    }
-  };
-
-  const isSaving =
-    createCustomerMutation.isPending ||
-    createSupplierMutation.isPending ||
-    updateCustomerMutation.isPending ||
-    updateSupplierMutation.isPending;
+    });
+  });
 
   if (isLoading) {
     return (
@@ -185,52 +106,46 @@ export default function CompanyFormPage() {
     );
   }
 
+  const entityLabel = companyType === "CUSTOMER" ? "Cliente" : "Fornitore";
+
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">
-              {isEditMode
-                ? `Modifica ${
-                    companyType === "CUSTOMER" ? "Cliente" : "Fornitore"
-                  } - ${formData.companyName}`
-                : `Nuovo ${companyType === "CUSTOMER" ? "Cliente" : "Fornitore"}`}
-            </h1>
-            <p className="text-muted-foreground">
-              {isEditMode ? "Aggiorna le informazioni" : "Crea una nuova anagrafica"}
-            </p>
+    <FormProvider {...form}>
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => router.back()}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold">
+                {isEditMode
+                  ? `Modifica ${entityLabel} — ${form.watch("companyName") || "..."}`
+                  : `Nuovo ${entityLabel}`}
+              </h1>
+              <p className="text-muted-foreground">
+                {isEditMode ? "Aggiorna le informazioni" : "Crea una nuova anagrafica"}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => router.back()}>Annulla</Button>
+            <Button onClick={onSubmit} disabled={isPending}>
+              <Save className="mr-2 h-4 w-4" />
+              {isPending ? "Salvataggio..." : isEditMode ? "Aggiorna" : "Crea"}
+            </Button>
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.back()}>
-            Annulla
-          </Button>
-          <Button onClick={handleSubmit} disabled={isSaving}>
+        <CompanyFormTabs companyType={companyType} />
+
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => router.back()}>Annulla</Button>
+          <Button onClick={onSubmit} disabled={isPending}>
             <Save className="mr-2 h-4 w-4" />
-            {isSaving ? "Salvataggio..." : "Salva"}
+            {isPending ? "Salvataggio..." : isEditMode ? "Aggiorna" : "Crea"}
           </Button>
         </div>
       </div>
-
-      {/* Form Tabs */}
-      <CompanyFormTabs formData={formData} setFormData={setFormData} companyType={companyType} />
-
-      {/* Footer Actions */}
-      <div className="flex justify-end gap-2">
-        <Button variant="outline" onClick={() => router.back()}>
-          Annulla
-        </Button>
-        <Button onClick={handleSubmit} disabled={isSaving}>
-          <Save className="mr-2 h-4 w-4" />
-          {isSaving ? "Salvataggio..." : isEditMode ? "Aggiorna" : "Crea"}
-        </Button>
-      </div>
-    </div>
+    </FormProvider>
   );
 }

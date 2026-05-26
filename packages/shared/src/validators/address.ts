@@ -64,20 +64,14 @@ export const createAddressSchema = z
     phone: phoneSchema,
     isPrimary: z.boolean().default(false),
     openingHours: inputJsonValueSchema.optional().nullable(),
-    notes: z
-      .string()
-      .max(500, "Note non possono superare 500 caratteri")
-      .optional()
-      .nullable(),
+    notes: z.string().max(500, "Note non possono superare 500 caratteri").optional().nullable(),
   })
   .strict();
 
 /**
  * Schema per l'aggiornamento di un Address
  */
-export const updateAddressSchema = createAddressSchema.omit({ companyId: true })
-  .partial()
-  .strict();
+export const updateAddressSchema = createAddressSchema.omit({ companyId: true }).partial().strict();
 
 /**
  * Schema per ID Address
@@ -107,9 +101,10 @@ export const setPrimaryAddressSchema = z
   })
   .strict();
 
-
 /**
  * Schema for nested address creation (inside company create/update).
  * companyId is omitted because it is injected automatically by Prisma.
  */
-export const createNestedAddressSchema = createAddressSchema.omit({ companyId: true }).required('addressType');
+export const createNestedAddressSchema = createAddressSchema
+  .omit({ companyId: true })
+  .required("addressType");

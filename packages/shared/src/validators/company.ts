@@ -84,7 +84,6 @@ const baseCompanyShape = z.object({
 
   // ===== Campi Custom =====
   customFields: inputJsonValueSchema.optional().nullable(),
-  openingHours: inputJsonValueSchema.optional().nullable(),
 
   // supporto per nested addresses al momento della creazione
   legalAddress: createNestedAddressSchema,

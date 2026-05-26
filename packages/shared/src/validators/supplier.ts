@@ -86,17 +86,16 @@ export const updateSupplierSchema = z
  */
 export const updateSupplierCompanySchema = updateCompanySchema;
 
+export const supplierRatingSchema = z.number().int("Rating deve essere un intero")
+      .min(1, "Rating minimo è 1")
+      .max(5, "Rating massimo è 5");
+
 /**
  * Schema per aggiornamento Rating con note
  */
 export const updateSupplierRatingSchema = z
   .object({
-    rating: z
-      .number()
-      .int("Rating deve essere un intero")
-      .min(1, "Rating minimo è 1")
-      .max(5, "Rating massimo è 5"),
-
+    rating: supplierRatingSchema,
     notes: z.string().max(1000, "Note non possono superare 1000 caratteri").optional().nullable(),
   })
   .strict();
