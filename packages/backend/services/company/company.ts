@@ -3,7 +3,7 @@
 // ============================================================================
 
 import { Prisma } from "@/generated/prisma/client";
-import { connectOrDisconnectById, parseOptionalDecimal, toJsonField } from "@/helpers/prisma-helper";
+import { connectById, connectOrDisconnectById, parseOptionalDecimal, toJsonField } from "@/helpers/prisma-helper";
 import {
   CreateCompanyInput,
   CreateCustomerInput,
@@ -46,7 +46,7 @@ export const buildCompanyCreateData = (
   companyData: CreateCompanyInput,
   code: string,
 ): Prisma.CompanyCreateInput => {
-  const { legalAddress, assignedUserId, customFields, openingHours, ...scalars } = companyData;
+  const { legalAddress, assignedUserId, customFields, ...scalars } = companyData;
 
   return {
     ...scalars,
@@ -82,7 +82,7 @@ export const buildCompanyCreateData = (
 export const buildCompanyUpdateData = (
   companyData: UpdateCompanyInput,
 ): Prisma.CompanyUpdateInput => {
-  const { assignedUserId, customFields, openingHours, ...scalars } = companyData;
+  const { assignedUserId, customFields, ...scalars } = companyData;
 
   return {
     ...scalars,
@@ -105,10 +105,10 @@ export const buildCustomerCreateData = (
   type: customerData.type ?? undefined,
   creditStatus: customerData.creditStatus ?? undefined,
   creditLimit: parseOptionalDecimal(customerData.creditLimit) ?? undefined,
-  parentCustomer: connectOrDisconnectById(customerData.parentCustomerId),
-  defaultPriceList: connectOrDisconnectById(customerData.defaultPriceListId),
-  customerTaxRule: connectOrDisconnectById(customerData.customerTaxRuleId),
-  paymentMethod: connectOrDisconnectById(customerData.paymentMethodId),
+  parentCustomer: connectById(customerData.parentCustomerId),
+  defaultPriceList: connectById(customerData.defaultPriceListId),
+  customerTaxRule: connectById(customerData.customerTaxRuleId),
+  paymentMethod: connectById(customerData.paymentMethodId),
   company: { create: companyCreate },
 });
 
@@ -137,8 +137,8 @@ export const buildSupplierCreateData = (
 ): Prisma.SupplierCreateInput => ({
   rating: supplierData.rating ?? undefined,
   paymentTerms: supplierData.paymentTerms ?? undefined,
-  parentSupplier: connectOrDisconnectById(supplierData.parentSupplierId),
-  supplierTaxRule: connectOrDisconnectById(supplierData.supplierTaxRuleId),
+  parentSupplier: connectById(supplierData.parentSupplierId),
+  supplierTaxRule: connectById(supplierData.supplierTaxRuleId),
   company: { create: companyCreate },
 });
 

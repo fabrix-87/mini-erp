@@ -70,11 +70,11 @@ export const companyFormSchema = z.object({
 
   // ── Supplier fields ───────────────────────────────────────────
   parentSupplierId: createIdSchema("Parent Supplier ID non valido").optional().nullable(),
-  paymentTerms: z.string().max(255).optional().nullable(),
-  bankAccount: z.string().max(255).optional().nullable(),
-  leadTimeDays: z.number().int().min(0).default(0),
+  paymentTerms: z.string().max(100).optional().nullable(),
+  bankAccount: z.string().max(100).optional().nullable(),
+  leadTimeDays: z.number().int().min(0).default(0).optional().nullable(),
   transportCost: z.number().optional().nullable(),
-  rating: supplierRatingSchema.default(5),
+  rating: supplierRatingSchema.default(5).optional().nullable(),
   supplierTaxRuleId: createIdSchema("Supplier Tax Rule ID non valido").optional().nullable(),
 
   // ── Shared commercial ─────────────────────────────────────────

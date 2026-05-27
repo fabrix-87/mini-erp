@@ -95,7 +95,7 @@ export const getCustomerById = async (c: Context<AppBindings>) => {
   const stats = calculateCustomerStats(customer);
 
   return sendSuccess(c, {
-    ...customer,
+    ...formatCompanyResponse(customer),
     stats,
   });
 };

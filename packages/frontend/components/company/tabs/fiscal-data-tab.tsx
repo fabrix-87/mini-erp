@@ -24,7 +24,7 @@ export function FiscalDataTab() {
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="vatNumber">Partita IVA</Label>
-            <Input id="vatNumber" {...register("vatNumber")} placeholder="IT12345678901" />
+            <Input id="vatNumber" {...register("vatNumber")} placeholder="12345678901" />
             <FormFieldError error={errors.vatNumber} />
           </div>
           <div className="space-y-2">

@@ -66,7 +66,7 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
       countryCode: company.legalAddress.countryCode ?? "IT",
       addressType: AddressType.LEGAL,
       isPrimary: true,
-      phone: "",
+      phone: company.legalAddress.phone ?? "",
       latitude: null,
       longitude: null,
       openingHours: null,
@@ -152,7 +152,7 @@ export function extractCompanyData(data: CompanyFormValues): CreateCompanyInput 
     eoriNumber: data.eoriNumber,
     mainEmail: data.mainEmail,
     mainPhone: data.mainPhone,
-    assignedUserId: Number(data.assignedUserId),
+    assignedUserId: data.assignedUserId != null ? Number(data.assignedUserId) : undefined,
     customFields: data.customFields,
     legalAddress: data.legalAddress,
   };
@@ -161,7 +161,7 @@ export function extractCompanyData(data: CompanyFormValues): CreateCompanyInput 
 /**
  * Extracts customer-specific fields from form data.
  */
-export function extractCustomerData(data: CompanyFormValues): UpdateCustomerInput {
+export function extractCustomerData(data: CompanyFormValues): Omit<CreateCustomerInput, "company"> {
   return {
     parentCustomerId: data.parentCustomerId,
     priority: data.priority,
@@ -218,64 +218,4 @@ export function mapFormToUpdateCompanyApi(
   data: CompanyFormValues,
 ): UpdateCustomerCompanyInput | UpdateSupplierCompanyInput {
   return extractCompanyData(data);
-}
-
-// ============================================================================
-// VALIDAZIONE FORM (lato client — pre-submit)
-// ============================================================================
-
-/**
- * Validates required company form fields before submission.
- * Fiscal validation is handled server-side via /validate-fiscal endpoint.
- */
-export function validateCompanyForm(data: CompanyFormValues): string[] {
-  const errors: string[] = [];
-
-  if (!data.companyName?.trim()) {
-    errors.push("La ragione sociale è obbligatoria");
-  }
-
-  if (!data.entityType) {
-    errors.push("Il tipo di entità è obbligatorio");
-  }
-
-  if (!data.countryCode || data.countryCode.length !== 2) {
-    errors.push("Il codice paese deve essere di 2 caratteri");
-  }
-
-  if (!data.legalAddress?.address?.trim()) {
-    errors.push("L'indirizzo legale è obbligatorio");
-  }
-
-  if (!data.legalAddress?.city?.trim()) {
-    errors.push("La città dell'indirizzo legale è obbligatoria");
-  }
-
-  if (!data.legalAddress?.zipCode?.trim()) {
-    errors.push("Il CAP dell'indirizzo legale è obbligatorio");
-  }
-
-  // Formato P.IVA italiana
-  if (data.vatNumber && !/^IT\d{11}$/.test(data.vatNumber)) {
-    errors.push("Formato Partita IVA non valido (es: IT12345678901)");
-  }
-
-  // Codice Fiscale persona giuridica
-  if (data.taxCode && data.entityType === "JURIDICAL" && !/^\d{11}$/.test(data.taxCode)) {
-    errors.push("Formato Codice Fiscale non valido per persona giuridica");
-  }
-
-  if (data.sdiCode && data.sdiCode.length !== 7) {
-    errors.push("Il codice SDI deve essere di 7 caratteri");
-  }
-
-  if (data.mainEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.mainEmail)) {
-    errors.push("Formato email non valido");
-  }
-
-  if (data.rating !== undefined && (data.rating < 1 || data.rating > 5)) {
-    errors.push("Il rating deve essere compreso tra 1 e 5");
-  }
-
-  return errors;
 }

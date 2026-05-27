@@ -43,7 +43,7 @@ export const createSupplierSchema = z
       .nullable(),
 
     // ===== Logistica =====
-    leadTimeDays: z.number().int().nonnegative().default(0).optional(),
+    leadTimeDays: z.number().int().nonnegative().default(0).optional().nullable(),
 
     transportCost: z
       .number()
@@ -58,7 +58,8 @@ export const createSupplierSchema = z
       .min(1, "Rating minimo è 1")
       .max(5, "Rating massimo è 5")
       .default(5)
-      .optional(),
+      .optional()
+      .nullable(),
   })
   .strict();
 
@@ -74,9 +75,9 @@ export const updateSupplierSchema = z
     paymentTerms: z.string().max(100).optional().nullable(),
     creditLimit: creditLimitSchema.optional().nullable(),
     bankAccount: z.string().max(100).optional().nullable(),
-    leadTimeDays: z.number().int().nonnegative().optional(),
+    leadTimeDays: z.number().int().nonnegative().optional().nullable(),
     transportCost: z.number().int().nonnegative().optional().nullable(),
-    rating: z.number().int().min(1).max(5).optional(),
+    rating: z.number().int().min(1).max(5).optional().nullable(),
   })
   .strict();
 

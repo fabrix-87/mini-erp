@@ -212,7 +212,7 @@ export const getCompanyFullInclude = () => ({
     take: 5,
   },
   _count: {
-    select: { addresses: true, contacts: true, documents: true, notes: true },
+    select: { addresses: true, contacts: true, notes: true },
   },
 });
 

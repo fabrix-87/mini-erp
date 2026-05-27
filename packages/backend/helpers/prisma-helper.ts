@@ -96,6 +96,16 @@ export const connectOrDisconnectById = (id: number | null | undefined) =>
   id === undefined ? undefined : id ? { connect: { id } } : { disconnect: true as const };
 
 /**
+ * Handles nullable Prisma relations on CREATE operations.
+ * Returns connect if id is provided, undefined otherwise (null is not valid on create).
+ *
+ * @param id - Numeric ID of the relation
+ * @returns Prisma connect object or undefined
+ */
+export const connectById = (id: number | null | undefined) =>
+  id ? { connect: { id } } : undefined;
+
+/**
  * Handles nullable Prisma relations connected via a string `code` field.
  *
  * @param code - Unique string code of the relation
@@ -155,7 +165,7 @@ export const withSoftDelete = (
  * Throws if the value is not a valid integer.
  */
 export const toIntId = (value: string | number | undefined, fieldName = "id"): number => {
-  if(!value){
+  if (!value) {
     throw new Error(`Undefined ${fieldName}`);
   }
   const n = Number(value);
