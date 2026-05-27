@@ -17,6 +17,8 @@ import type {
   UpdateSupplierInput,
   UpdateSupplierCompanyInput,
   Supplier,
+  UpdateSupplierForm,
+  CreateSupplierForm,
 } from "@mini-erp/shared";
 import { SupplierSingleApiResponse } from "@/types/supplier-types";
 
@@ -42,7 +44,7 @@ export async function searchSupplierAction(
 /**
  * Get supplier by ID
  */
-export async function getSupplierByIdAction(id: number): Promise<ActionResult> {
+export async function getSupplierByIdAction(id: number): Promise<ActionResult<Supplier>> {
   return withAuth(async () => {
     return await getSupplierById(id, false);
   }, "supplier:read");
@@ -56,7 +58,7 @@ export async function getSupplierByIdAction(id: number): Promise<ActionResult> {
  * Create a new supplier
  */
 export async function createSupplierAction(
-  data: CreateSupplierInput,
+  data: CreateSupplierForm,
 ): Promise<ActionResult<Supplier>> {
   const result = await withAuth(async () => {
     const response = await createSupplier(data);
@@ -71,7 +73,7 @@ export async function createSupplierAction(
  */
 export async function updateSupplierAction(
   id: number,
-  data: UpdateSupplierInput,
+  data: UpdateSupplierForm,
 ): Promise<ActionResult<Supplier>> {
   const result = await withAuth(async () => {
     const response = await updateSupplier(id, data);

@@ -15,6 +15,7 @@ import paymentRoutes from "./payment-routes";
 import pricelistRoutes from "./pricelist-routes";
 import productRoutes from "./product-routes";
 import roleRoutes from "./role-routes";
+import supplierRoutes from "./supplier-routes";
 import taxRoutes from "./tax-routes";
 import userRoutes from "./user-routes";
 
@@ -41,5 +42,6 @@ apiRoutes.route("/tax", taxRoutes);
 apiRoutes.route("/opportunity", opportunityRoutes);
 apiRoutes.route("/products", productRoutes);
 apiRoutes.route("/documents", documentRoutes);
+apiRoutes.route("/suppliers", supplierRoutes);
 
 export default apiRoutes;

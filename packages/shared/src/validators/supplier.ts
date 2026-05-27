@@ -76,7 +76,7 @@ export const updateSupplierSchema = z
     creditLimit: creditLimitSchema.optional().nullable(),
     bankAccount: z.string().max(100).optional().nullable(),
     leadTimeDays: z.number().int().nonnegative().optional().nullable(),
-    transportCost: z.number().int().nonnegative().optional().nullable(),
+    transportCost: z.number().nonnegative().optional().nullable(),
     rating: z.number().int().min(1).max(5).optional().nullable(),
   })
   .strict();

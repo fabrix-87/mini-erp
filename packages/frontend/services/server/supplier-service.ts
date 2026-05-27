@@ -8,10 +8,12 @@ import {
   SupplierSingleApiResponse,
 } from "@/types/supplier-types";
 import {
+  CreateSupplierForm,
   CreateSupplierInput,
   Supplier,
   SupplierQueryInput,
   UpdateSupplierCompanyInput,
+  UpdateSupplierForm,
   UpdateSupplierInput,
 } from "@mini-erp/shared";
 
@@ -73,11 +75,11 @@ export async function searchSuppliers(
 export async function getSupplierById(
   id: number,
   revalidate?: number | false,
-): Promise<SupplierSingleApiResponse> {
-  return serverApi.get<SupplierSingleApiResponse>(`/suppliers/${id}`, {
+): Promise<Supplier> {
+  return serverApi.get<Supplier>(`/suppliers/${id}`, {
     revalidate: revalidate ?? false,
     tags: [SUPPLIER_TAGS.detail(id)],
-    unwrapData: false,
+    //unwrapData: false,
   });
 }
 
@@ -89,7 +91,7 @@ export async function getSupplierById(
  * Create a new supplier with nested company data
  */
 export async function createSupplier(
-  data: CreateSupplierInput,
+  data: CreateSupplierForm,
 ): Promise<Supplier> {
   return serverApi.post<Supplier>("/suppliers", data);
 }
@@ -100,7 +102,7 @@ export async function createSupplier(
  */
 export async function updateSupplier(
   id: number,
-  data: UpdateSupplierInput,
+  data: UpdateSupplierForm,
 ): Promise<Supplier> {
   return serverApi.put<Supplier>(`/suppliers/${id}`, data);
 }

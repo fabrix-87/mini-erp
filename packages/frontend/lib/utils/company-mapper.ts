@@ -179,15 +179,15 @@ export function extractCustomerData(data: CompanyFormValues): Omit<CreateCustome
 /**
  * Extracts supplier-specific fields from form data.
  */
-export function extractSupplierData(data: CompanyFormValues): UpdateSupplierInput {
+export function extractSupplierData(data: CompanyFormValues): Omit<CreateSupplierForm, "company"> {
   return {
     parentSupplierId: data.parentSupplierId,
     paymentTerms: data.paymentTerms,
     bankAccount: data.bankAccount,
     leadTimeDays: data.leadTimeDays ?? 0,
-    transportCost: data.transportCost,
+    transportCost: toNumber(data.transportCost),
     rating: data.rating ?? 5,
-    creditLimit: data.creditLimit != null ? new Decimal(data.creditLimit) : null,
+    creditLimit: toNumber(data.creditLimit),
     supplierTaxRuleId: data.supplierTaxRuleId ?? null,
   };
 }
@@ -197,11 +197,11 @@ export function extractSupplierData(data: CompanyFormValues): UpdateSupplierInpu
  * Overloaded to return the correct type based on CompanyType.
  */
 export function mapFormToCreateApi(data: CompanyFormValues, type: "CUSTOMER"): CreateCustomerInput;
-export function mapFormToCreateApi(data: CompanyFormValues, type: "SUPPLIER"): CreateSupplierInput;
+export function mapFormToCreateApi(data: CompanyFormValues, type: "SUPPLIER"): CreateSupplierForm;
 export function mapFormToCreateApi(
   data: CompanyFormValues,
   type: CompanyType,
-): CreateCustomerInput | CreateSupplierInput {
+): CreateCustomerInput | CreateSupplierForm {
   const company = extractCompanyData(data);
 
   if (type === "CUSTOMER") {
@@ -219,3 +219,9 @@ export function mapFormToUpdateCompanyApi(
 ): UpdateCustomerCompanyInput | UpdateSupplierCompanyInput {
   return extractCompanyData(data);
 }
+
+const toNumber = (val: unknown): number | null => {
+  if (val == null) return null;
+  const n = Number(val); // funziona con string, number e Decimal.js
+  return isNaN(n) ? null : n;
+};

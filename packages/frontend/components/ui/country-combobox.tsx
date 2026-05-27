@@ -23,7 +23,7 @@ export function CountryCombobox({
   className,
   isEU,
 }: CountryComboboxProps) {
-  const [debouncedSearch, setDebouncedSearch] = React.useState("");
+  const [debouncedSearch, setDebouncedSearch] = React.useState(value ?? "");
 
   // Debounce della ricerca
   const debouncedSetSearch = React.useMemo(

@@ -3,7 +3,12 @@
 // ============================================================================
 
 import { Prisma } from "@/generated/prisma/client";
-import { connectById, connectOrDisconnectById, parseOptionalDecimal, toJsonField } from "@/helpers/prisma-helper";
+import {
+  connectById,
+  connectOrDisconnectById,
+  parseOptionalDecimal,
+  toJsonField,
+} from "@/helpers/prisma-helper";
 import {
   CreateCompanyInput,
   CreateCustomerInput,
@@ -148,6 +153,10 @@ export const buildSupplierCreateData = (
 export const buildSupplierUpdateData = (data: UpdateSupplierInput): Prisma.SupplierUpdateInput => ({
   rating: data.rating ?? undefined,
   paymentTerms: data.paymentTerms ?? undefined,
+  bankAccount: data.bankAccount ?? undefined,
+  leadTimeDays: data.leadTimeDays ?? undefined,
+  transportCost: data.transportCost ?? undefined,
+  creditLimit: data.creditLimit ?? undefined,
   parentSupplier: connectOrDisconnectById(data.parentSupplierId),
   supplierTaxRule: connectOrDisconnectById(data.supplierTaxRuleId),
 });

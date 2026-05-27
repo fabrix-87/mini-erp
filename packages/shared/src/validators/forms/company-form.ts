@@ -22,6 +22,7 @@ import {
 import { supplierRatingSchema } from "../supplier";
 import { createNestedAddressSchema } from "../address";
 import { toOptionalField } from "../utils";
+import { toNumberSchema } from "../primitives";
 
 /**
  * Flat Zod schema for the company form UI.
@@ -72,15 +73,11 @@ export const companyFormSchema = z.object({
   parentSupplierId: createIdSchema("Parent Supplier ID non valido").optional().nullable(),
   paymentTerms: z.string().max(100).optional().nullable(),
   bankAccount: z.string().max(100).optional().nullable(),
-  leadTimeDays: z.number().int().min(0).default(0).optional().nullable(),
-  transportCost: z.number().optional().nullable(),
+  leadTimeDays: toNumberSchema({ min: 0, required: true }), 
+  transportCost: toNumberSchema(),  
   rating: supplierRatingSchema.default(5).optional().nullable(),
   supplierTaxRuleId: createIdSchema("Supplier Tax Rule ID non valido").optional().nullable(),
 
   // ── Shared commercial ─────────────────────────────────────────
-  creditLimit: z
-    .number("Inserire un valore numerico")
-    .min(0, "Il fido non può essere negativo")
-    .optional()
-    .nullable(),
+  creditLimit: toNumberSchema(),
 });

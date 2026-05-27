@@ -94,7 +94,7 @@ export const getSupplierById = async (c: Context<AppBindings>) => {
   const stats = calculateSupplierStats(supplier);
 
   return sendSuccess(c, {
-    ...supplier,
+    ...formatCompanyResponse(supplier),
     stats,
   });
 };
@@ -225,7 +225,7 @@ export const updateSupplierCompany = async (c: Context<AppBindings>) => {
   }
   const { legalAddress, ...companyScalarData } = companyData;
 
-  const updatedSupplier = await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx) => {
     // 1. Aggiorna i campi scalari della company
     if (Object.keys(companyScalarData).length > 0) {
       await tx.company.update({
@@ -260,12 +260,11 @@ export const updateSupplierCompany = async (c: Context<AppBindings>) => {
         });
       }
     }
+  });
 
-    // 3. Ritorna il customer aggiornato con tutti i dati
-    return tx.supplier.findUnique({
-      where: { id },
-      include: getSupplierInclude(true),
-    });
+  const updatedSupplier = await prisma.supplier.findUnique({
+    where: { id },
+    include: getSupplierInclude(true),
   });
 
   return sendSuccess(c, updatedSupplier, {

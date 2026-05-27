@@ -131,6 +131,15 @@ export function CommercialTab({ companyType }: CommercialTabProps) {
                 <FormFieldError error={errors.paymentTerms} />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="bankAccount">Coordinate bancarie</Label>
+                <Input
+                  id="bankAccount"
+                  {...register("bankAccount")}
+                  placeholder=""
+                />
+                <FormFieldError error={errors.bankAccount} />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="creditLimit">Fido Fornitore (€)</Label>
                 <Input
                   id="creditLimit"
@@ -176,6 +185,15 @@ export function CommercialTab({ companyType }: CommercialTabProps) {
                   )}
                 />
                 <FormFieldError error={errors.rating} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="transportCost">Spese di trasporto</Label>
+                <Input
+                  id="transportCost"
+                  {...register("transportCost")}
+                  placeholder="0"
+                />
+                <FormFieldError error={errors.transportCost} />
               </div>
             </>
           )}

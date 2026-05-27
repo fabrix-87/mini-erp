@@ -1,8 +1,8 @@
 // packages/frontend/components/company-form.tsx
 "use client";
 
-import { useEffect, useTransition } from "react";
-import { useRouter, useParams, usePathname } from "next/navigation";
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { ArrowLeft, Save } from "lucide-react";
@@ -12,9 +12,10 @@ import {
   companyFormDefaultValues,
   CompanyFormValues,
   CompanyFormInput,
+  Customer,
+  Supplier,
 } from "@mini-erp/shared";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { CompanyFormTabs } from "@/components/company/company-form-tab";
 import { CompanyType } from "@/types/company-types";
 import {
@@ -24,7 +25,6 @@ import {
   extractSupplierData,
   mapFormToUpdateCompanyApi,
 } from "@/lib/utils/company-mapper";
-import { useCustomer, useSupplier } from "@/hooks/use-company";
 import {
   createCustomerAction,
   updateCustomerAction,
@@ -36,103 +36,83 @@ import {
   updateSupplierCompanyAction,
 } from "@/actions/supplier-actions";
 
-export default function CompanyFormPage() {
-  const router = useRouter();
-  const params = useParams();
-  const pathname = usePathname();
+interface CompanyFormProps {
+  initialData?: Customer | Supplier;
+  companyType: CompanyType;
+}
 
-  const companyType: CompanyType = pathname.includes("/customers") ? "CUSTOMER" : "SUPPLIER";
-  const isEditMode = !!params?.id;
-  const entityId = params?.id ? parseInt(params.id as string) : undefined;
+export default function CompanyFormPage({ initialData, companyType }: CompanyFormProps) {
+  const router = useRouter();
+
+  const isEditMode = !!initialData;
+  const entityId = initialData ? (initialData as { id: number }).id : undefined;
 
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<CompanyFormInput>({
     resolver: standardSchemaResolver(companyFormSchema),
-    defaultValues: companyFormDefaultValues,
+    defaultValues: initialData
+      ? companyType === "CUSTOMER"
+        ? mapApiToForm(initialData as Customer, "CUSTOMER")
+        : mapApiToForm(initialData as Supplier, "SUPPLIER")
+      : companyFormDefaultValues,
     mode: "onTouched",
   });
 
-  const { data: customerData, isLoading: isLoadingCustomer } = useCustomer(
-    companyType === "CUSTOMER" ? entityId : undefined,
-    isEditMode && companyType === "CUSTOMER",
-  );
-
-  const { data: supplierData, isLoading: isLoadingSupplier } = useSupplier(
-    companyType === "SUPPLIER" ? entityId : undefined,
-    isEditMode && companyType === "SUPPLIER",
-  );
-
-  const isLoading = isLoadingCustomer || isLoadingSupplier;
-
-  // Populate form once API data is loaded in edit mode
-  useEffect(() => {
-    if (!isEditMode || isLoading) return;
-
-    if (companyType === "CUSTOMER" && customerData?.data) {
-      form.reset(mapApiToForm(customerData.data, "CUSTOMER"));
-    } else if (companyType === "SUPPLIER" && supplierData?.data) {
-      form.reset(mapApiToForm(supplierData.data, "SUPPLIER"));
-    }
-  }, [customerData, supplierData, isEditMode, isLoading, companyType, form]);
-
-  const onSubmit = form.handleSubmit((data: CompanyFormInput) => {
-    const values = data as CompanyFormValues;
-    startTransition(async () => {
-      if (companyType === "CUSTOMER") {
-        if (isEditMode && entityId) {
-          const [companyRes, customerRes] = await Promise.all([
-            updateCustomerCompanyAction(entityId, mapFormToUpdateCompanyApi(values)),
-            updateCustomerAction(entityId, extractCustomerData(values)),
-          ]);
-          if (!companyRes.success || !customerRes.success) {
-            toast.error(companyRes.error ?? customerRes.error ?? "Errore nell'aggiornamento");
-            return;
+  const onSubmit = form.handleSubmit(
+    (data) => {
+      const values = data as CompanyFormValues;
+      startTransition(async () => {
+        if (companyType === "CUSTOMER") {
+          if (isEditMode && entityId) {
+            const [companyRes, customerRes] = await Promise.all([
+              updateCustomerCompanyAction(entityId, mapFormToUpdateCompanyApi(values)),
+              updateCustomerAction(entityId, extractCustomerData(values)),
+            ]);
+            if (!companyRes.success || !customerRes.success) {
+              toast.error(companyRes.error ?? customerRes.error ?? "Errore nell'aggiornamento");
+              return;
+            }
+            toast.success("Cliente aggiornato con successo");
+            router.push(`/customers/${entityId}`);
+          } else {
+            const result = await createCustomerAction(mapFormToCreateApi(values, "CUSTOMER"));
+            if (!result.success) {
+              toast.error(result.error ?? "Errore nella creazione");
+              return;
+            }
+            toast.success("Cliente creato con successo");
+            router.push(`/customers/${result.data?.id}`);
           }
-          toast.success("Cliente aggiornato con successo");
-          router.push(`/customers/${entityId}`);
         } else {
-          const result = await createCustomerAction(mapFormToCreateApi(values, "CUSTOMER"));
-          if (!result.success) {
-            toast.error(result.error ?? "Errore nella creazione");
-            return;
+          if (isEditMode && entityId) {
+            const [companyRes, supplierRes] = await Promise.all([
+              updateSupplierCompanyAction(entityId, mapFormToUpdateCompanyApi(values)),
+              updateSupplierAction(entityId, extractSupplierData(values)),
+            ]);
+            if (!companyRes.success || !supplierRes.success) {
+              toast.error(companyRes.error ?? supplierRes.error ?? "Errore nell'aggiornamento");
+              return;
+            }
+            toast.success("Fornitore aggiornato con successo");
+            router.push(`/suppliers/${entityId}`);
+          } else {
+            const result = await createSupplierAction(mapFormToCreateApi(values, "SUPPLIER"));
+            if (!result.success) {
+              toast.error(result.error ?? "Errore nella creazione");
+              return;
+            }
+            toast.success("Fornitore creato con successo");
+            router.push(`/suppliers/${result.data?.id}`);
           }
-          toast.success("Cliente creato con successo");
-          router.push(`/customers/${result.data?.id}`);
         }
-      } else {
-        if (isEditMode && entityId) {
-          const [companyRes, supplierRes] = await Promise.all([
-            updateSupplierCompanyAction(entityId, mapFormToUpdateCompanyApi(values)),
-            updateSupplierAction(entityId, extractSupplierData(values)),
-          ]);
-          if (!companyRes.success || !supplierRes.success) {
-            toast.error(companyRes.error ?? supplierRes.error ?? "Errore nell'aggiornamento");
-            return;
-          }
-          toast.success("Fornitore aggiornato con successo");
-          router.push(`/suppliers/${entityId}`);
-        } else {
-          const result = await createSupplierAction(mapFormToCreateApi(values, "SUPPLIER"));
-          if (!result.success) {
-            toast.error(result.error ?? "Errore nella creazione");
-            return;
-          }
-          toast.success("Fornitore creato con successo");
-          router.push(`/suppliers/${result.data?.id}`);
-        }
-      }
-    });
-  });
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-6 space-y-6">
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-96 w-full" />
-      </div>
-    );
-  }
+      });
+    },
+    (errors) => {
+      // Questo callback viene chiamato quando la validazione fallisce
+      console.log("🔴 Submit blocked by errors:", errors);
+    },
+  );
 
   const entityLabel = companyType === "CUSTOMER" ? "Cliente" : "Fornitore";
 

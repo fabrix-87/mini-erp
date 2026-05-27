@@ -40,7 +40,7 @@ export async function searchCustomerAction(
 /**
  * Get customer by ID
  */
-export async function getCustomerByIdAction(id: number): Promise<ActionResult> {
+export async function getCustomerByIdAction(id: number): Promise<ActionResult<Customer>> {
   return withAuth(async () => {
     return await getCustomerById(id, false);
   }, "customer:read");

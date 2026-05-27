@@ -127,23 +127,23 @@ export function BasicInfoTab() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="address">Indirizzo</Label>
+            <Label htmlFor="address">Indirizzo *</Label>
             <Input id="address" {...register("legalAddress.address")} placeholder="Via Roma 123" />
             <FormFieldError error={errors.legalAddress?.address} />
           </div>
           <div className="grid gap-4 md:grid-cols-4">
             <div className="space-y-2">
-              <Label htmlFor="zipCode">CAP</Label>
+              <Label htmlFor="zipCode">CAP *</Label>
               <Input id="zipCode" {...register("legalAddress.zipCode")} placeholder="20121" />
               <FormFieldError error={errors.legalAddress?.zipCode} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="city">Città</Label>
+              <Label htmlFor="city">Città *</Label>
               <Input id="city" {...register("legalAddress.city")} placeholder="Milano" />
               <FormFieldError error={errors.legalAddress?.city} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="provinceCode">Provincia</Label>
+              <Label htmlFor="provinceCode">Provincia * (usa EE per l'estero)</Label>
               <Input
                 id="provinceCode"
                 {...register("legalAddress.provinceCode")}
@@ -153,7 +153,7 @@ export function BasicInfoTab() {
               <FormFieldError error={errors.legalAddress?.provinceCode} />
             </div>
             <div className="space-y-2">
-              <Label>Stato *</Label>
+              <Label>Stato *</Label>              
               <Controller
                 name="legalAddress.countryCode"
                 control={control}

@@ -57,6 +57,7 @@ export type Supplier = Omit<CreateSupplierInput, "company"> & {
 export type CreateSupplierInput = z.infer<typeof createSupplierSchema>;
 export type CreateSupplierForm = z.input<typeof createSupplierSchema>;
 export type UpdateSupplierInput = z.infer<typeof updateSupplierSchema>;
+export type UpdateSupplierForm = z.input<typeof updateSupplierSchema>;
 export type UpdateSupplierCompanyInput = z.infer<typeof updateSupplierCompanySchema>;
 export type UpdateSupplierRatingInput = z.infer<typeof updateSupplierRatingSchema>;
 

@@ -20,15 +20,15 @@ type DecimalSchemaOptions = {
 
 export function createDecimalSchema(
   precision: number,
-  options: DecimalSchemaOptions & { required: true }
+  options: DecimalSchemaOptions & { required: true },
 ): z.ZodType<Decimal>;
 export function createDecimalSchema(
   precision?: number,
-  options?: DecimalSchemaOptions & { required?: false }
+  options?: DecimalSchemaOptions & { required?: false },
 ): z.ZodType<Decimal | undefined>;
 export function createDecimalSchema(
   precision: number = 2,
-  options?: DecimalSchemaOptions
+  options?: DecimalSchemaOptions,
 ): z.ZodType<Decimal> | z.ZodType<Decimal | undefined> {
   const required = options?.required ?? false;
 
@@ -71,22 +71,22 @@ export function createDecimalSchema(
       if (!val) return val;
       return val.toDecimalPlaces(precision, options?.rounding ?? Decimal.ROUND_HALF_UP);
     })
+    .refine((val: Decimal | undefined) => !val || !options?.positiveOnly || !val.isNegative(), {
+      message: options?.messages?.positive ?? "Il valore deve essere positivo",
+    })
     .refine(
-      (val: Decimal | undefined) => !val || !options?.positiveOnly || !val.isNegative(),
-      { message: options?.messages?.positive ?? "Il valore deve essere positivo" }
+      (val: Decimal | undefined) =>
+        !val || options?.min === undefined || !val.lessThan(options.min),
+      { message: options?.messages?.min ?? `Il valore deve essere almeno ${options?.min}` },
     )
     .refine(
-      (val: Decimal | undefined) => !val || options?.min === undefined || !val.lessThan(options.min),
-      { message: options?.messages?.min ?? `Il valore deve essere almeno ${options?.min}` }
-    )
-    .refine(
-      (val: Decimal | undefined) => !val || options?.max === undefined || !val.greaterThan(options.max),
-      { message: options?.messages?.max ?? `Il valore non può superare ${options?.max}` }
+      (val: Decimal | undefined) =>
+        !val || options?.max === undefined || !val.greaterThan(options.max),
+      { message: options?.messages?.max ?? `Il valore non può superare ${options?.max}` },
     );
 
   return schema as z.ZodType<Decimal> | z.ZodType<Decimal | undefined>;
 }
-
 
 /**
  * Calculates the sum of Decimal percentages
@@ -104,4 +104,27 @@ export const isValidPercentageTotal = (
 ): boolean => {
   const total = details.reduce((acc, d) => acc.plus(d.percentage), new Decimal(0));
   return total.minus(100).abs().lessThan(tolerance);
+};
+
+/**
+ * Coerces Decimal/string values from API into number for form fields.
+ * Zod v4 compatible — uses z.pipe instead of deprecated z.preprocess.
+ */
+export const toNumberSchema = (options?: { min?: number; required?: boolean }) => {
+  const coerced = z.union([z.number(), z.string(), z.null(), z.undefined()])
+    .transform((val): number | null | undefined => {
+      if (val == null || val === "") return null;
+      const n = Number(val);
+      return isNaN(n) ? undefined : n;
+    });
+
+  if (options?.required) {
+    return coerced.pipe(
+      z.number({ error: "Inserire un valore numerico" }).min(options?.min ?? 0)
+    );
+  }
+
+  return coerced.pipe(
+    z.number({ error: "Inserire un valore numerico" }).min(options?.min ?? 0).optional().nullable()
+  );
 };

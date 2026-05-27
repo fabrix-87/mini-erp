@@ -69,11 +69,11 @@ export async function searchCustomers(
 export async function getCustomerById(
   id: number,
   revalidate?: number | false,
-): Promise<CustomerSingleApiResponse> {
-  return serverApi.get<CustomerSingleApiResponse>(`/customers/${id}`, {
+): Promise<Customer> {
+  return serverApi.get<Customer>(`/customers/${id}`, { // usare CustomerSingleApiResponse con unwrapData: false
     revalidate: revalidate ?? false,
     tags: [CUSTOMER_TAGS.detail(id)],
-    unwrapData: false,
+    //unwrapData: false,
   });
 }
 

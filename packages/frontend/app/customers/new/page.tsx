@@ -5,6 +5,6 @@ export default async function newCompany() {
   await requirePermission("customer:create");
 
   return (
-    <CompanyFormPage/>
+    <CompanyFormPage companyType="CUSTOMER"/>
   )
 }
