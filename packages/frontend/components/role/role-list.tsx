@@ -7,9 +7,9 @@ import { useMemo, useState } from "react";
 import { DataPagination } from "../ui/data-pagination";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
 import RoleTable from "./role-list/table";
-import { mergeSearchParams } from "@/lib/utils/url";
 import RoleToolbar from "./role-list/toolbar";
 import DeleteDialog from "../dialog/delete-dialog";
+import { useUpdateURL } from "@/hooks/use-update-url";
 
 export default function RoleListPage() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function RoleListPage() {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [selectedRoleId, setSelectedRoleId] = useState<number|null>(null);
+  const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
   const [selectedRoleName, setSelectedRoleName] = useState("");
 
   // Memoizza params per evitare re-render
@@ -40,13 +40,10 @@ export default function RoleListPage() {
     order: params.sortOrder || "asc",
   };
 
-  const updateURL = (newParams: Partial<RoleQueryInput>) => {
-    const qs = mergeSearchParams(params, newParams);
-    router.push(`/settings/roles?${qs}`, { scroll: false });
-  };
+  const updateURL = useUpdateURL("/settings/roles");
 
   const handleSearch = (searchTerm: string) => {
-    updateURL({ search: searchTerm, page: 1 });
+    updateURL({ search: searchTerm }, { replace: true });
   };
 
   const handleSort = (field: RoleSortField) => {

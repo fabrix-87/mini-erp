@@ -6,27 +6,31 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, Users, DollarSign, Star } from "lucide-react";
 import { useCustomerStats, useSupplierStats } from "@/hooks/use-company";
 import { CompanyType } from "@/types/company-types";
+import { Decimal } from "@mini-erp/shared";
 
 interface CompanyListStatsProps {
   type: CompanyType;
 }
 
 export function CompanyListStats({ type }: CompanyListStatsProps) {
-  const customerStatsQuery = useCustomerStats();
-  const supplierStatsQuery = useSupplierStats();
+  const stats =
+    type === "CUSTOMER"
+      ? { type: "CUSTOMER" as const, ...useCustomerStats() }
+      : { type: "SUPPLIER" as const, ...useSupplierStats() };
 
-  const { data: customerStats, isLoading: customerLoading } = customerStatsQuery;
-  const { data: supplierStats, isLoading: supplierLoading } = supplierStatsQuery;
+  const { isLoading } = stats;
 
-  const isLoading = type === "CUSTOMER" ? customerLoading : supplierLoading;
+  const formatCurrency = (value: number | Decimal | string | null | undefined): string => {
+    const numericValue = Number(value);
 
-  const formatCurrency = (value: number) => {
+    if (value == null || isNaN(numericValue)) return "—";
+
     return new Intl.NumberFormat("it-IT", {
       style: "currency",
       currency: "EUR",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(value);
+    }).format(numericValue);
   };
 
   if (isLoading) {
@@ -43,17 +47,16 @@ export function CompanyListStats({ type }: CompanyListStatsProps) {
     );
   }
 
-  if (type === "CUSTOMER" && customerStats) {
+  if (stats.type === "CUSTOMER" && stats.data) {
+    const data = stats.data;
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Totale Clienti
-                </p>
-                <p className="text-2xl font-bold">{customerStats.data?.total || 0}</p>
+                <p className="text-sm font-medium text-muted-foreground">Totale Clienti</p>
+                <p className="text-2xl font-bold">{data.data.totalCustomers || 0}</p>
               </div>
               <Users className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -64,12 +67,8 @@ export function CompanyListStats({ type }: CompanyListStatsProps) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Revenue Totale
-                </p>
-                <p className="text-2xl font-bold">
-                  {formatCurrency(customerStats.data?.totalRevenue || 0)}
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Revenue Totale</p>
+                <p className="text-2xl font-bold">{formatCurrency(data.data?.totalRevenue || 0)}</p>
               </div>
               <DollarSign className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -80,11 +79,9 @@ export function CompanyListStats({ type }: CompanyListStatsProps) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Valore Medio Ordine
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Valore Medio Ordine</p>
                 <p className="text-2xl font-bold">
-                  {formatCurrency(customerStats.data?.avgOrderValue || 0)}
+                  {formatCurrency(data.data?.averageOrderValue || 0)}
                 </p>
               </div>
               <TrendingUp className="h-8 w-8 text-muted-foreground" />
@@ -95,19 +92,15 @@ export function CompanyListStats({ type }: CompanyListStatsProps) {
         <Card>
           <CardContent className="p-6">
             <div>
-              <p className="text-sm font-medium text-muted-foreground mb-2">
-                Per Segmento
-              </p>
+              <p className="text-sm font-medium text-muted-foreground mb-2">Per Segmento</p>
               <div className="space-y-1">
-                {customerStats.data?.bySegment &&
-                  Object.entries(customerStats.data.bySegment).map(
-                    ([segment, count]) => (
-                      <div key={segment} className="flex justify-between text-sm">
-                        <span>{segment}</span>
-                        <span className="font-medium">{count as number}</span>
-                      </div>
-                    )
-                  )}
+                {data.data?.bySegment &&
+                  Object.entries(data.data.bySegment).map(([segment, count]) => (
+                    <div key={segment} className="flex justify-between text-sm">
+                      <span>{segment}</span>
+                      <span className="font-medium">{count as number}</span>
+                    </div>
+                  ))}
               </div>
             </div>
           </CardContent>
@@ -116,17 +109,17 @@ export function CompanyListStats({ type }: CompanyListStatsProps) {
     );
   }
 
-  if (type === "SUPPLIER" && supplierStats) {
+  if (stats.type === "SUPPLIER" && stats.data) {
+    const data = stats.data;
+
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Totale Fornitori
-                </p>
-                <p className="text-2xl font-bold">{supplierStats.data?.total || 0}</p>
+                <p className="text-sm font-medium text-muted-foreground">Totale Fornitori</p>
+                <p className="text-2xl font-bold">{data.data?.totalSuppliers || 0}</p>
               </div>
               <Users className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -137,12 +130,8 @@ export function CompanyListStats({ type }: CompanyListStatsProps) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Spesa Totale
-                </p>
-                <p className="text-2xl font-bold">
-                  {formatCurrency(supplierStats.data?.totalSpent || 0)}
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Spesa Totale</p>
+                <p className="text-2xl font-bold">{formatCurrency(data.data?.totalSpent || 0)}</p>
               </div>
               <DollarSign className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -153,12 +142,10 @@ export function CompanyListStats({ type }: CompanyListStatsProps) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Rating Medio
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Rating Medio</p>
                 <div className="flex items-center gap-2">
                   <p className="text-2xl font-bold">
-                    {supplierStats.data?.avgRating?.toFixed(1) || "0.0"}
+                    {data.data?.averageRating || "0.0"}
                   </p>
                   <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                 </div>
@@ -171,12 +158,10 @@ export function CompanyListStats({ type }: CompanyListStatsProps) {
         <Card>
           <CardContent className="p-6">
             <div>
-              <p className="text-sm font-medium text-muted-foreground mb-2">
-                Per Rating
-              </p>
+              <p className="text-sm font-medium text-muted-foreground mb-2">Per Rating</p>
               <div className="space-y-1">
-                {supplierStats.data?.byRating &&
-                  Object.entries(supplierStats.data.byRating)
+                {data.data?.byRating &&
+                  Object.entries(data.data.byRating)
                     .sort(([a], [b]) => parseInt(b) - parseInt(a))
                     .map(([rating, count]) => (
                       <div key={rating} className="flex justify-between text-sm">

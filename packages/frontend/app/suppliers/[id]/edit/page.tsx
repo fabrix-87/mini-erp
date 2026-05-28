@@ -1,13 +1,10 @@
 import { getSupplierByIdAction } from "@/actions/supplier-actions";
 import CompanyForm from "@/components/company-form";
 import { requirePermission } from "@/lib/server/auth";
+import { PageIdProps } from "@/types/page-types";
 import { notFound } from "next/navigation";
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
-
-export default async function EditSupplierPage({ params }: Props) {
+export default async function EditSupplierPage({ params }: PageIdProps) {
   await requirePermission("supplier:update");
 
   const { id } = await params;

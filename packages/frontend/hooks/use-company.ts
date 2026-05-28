@@ -5,8 +5,6 @@ import { toast } from "sonner";
 import {
   getCustomers,
   getCustomerById,
-  createCustomer,
-  updateCustomer,
   deleteCustomer,
   getDashboardStats as getCustomerStats,
   getCompanies,
@@ -14,18 +12,12 @@ import {
 import {
   getSuppliers,
   getSupplierById,
-  createSupplier,
-  updateSupplier,
   deleteSupplier,
   getDashboardStats as getSupplierStats,
 } from "@/lib/client/modules/supplier";
-import { updateCustomerCompany, updateSupplierCompany } from "@/lib/client/modules/company";
-import { createAddress, updateAddress, getAddressByType } from "@/lib/client/modules/address";
 import type { CustomerQueryInput } from "@/types/customer-types";
 import type { SupplierQueryInput } from "@/types/supplier-types";
-import type { CompanyQueryInput } from "@/types/company-types";
-import { CreateCustomerInput } from "@mini-erp/shared/types";
-import { AddressType } from "@mini-erp/shared/constants";
+import { CompanyQueryInput } from "@mini-erp/shared";
 
 // ============================================================================
 // COMPANY HOOKS
@@ -90,106 +82,6 @@ export function useCustomerStats() {
   });
 }
 
-/**
- * Creates a new customer with its company and legal address in a single flow.
- * The legal address is created as a separate API call after the customer is created,
- * since addresses are managed via their own endpoint.
- */
-export function useCreateCustomer() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (data: CreateCustomerInput) => {
-      const { company, ...customerData } = data;
-      const { legalAddress, ...companyData } = company;
-
-      // 1. Crea il customer con la company nested
-      const customerResponse = await createCustomer({
-        company: companyData,
-        ...customerData,
-      });
-
-      const companyId = customerResponse.data?.company?.id;
-
-      // 2. Se presente, crea l'indirizzo legale associato alla company
-      if (legalAddress && companyId) {
-        await createAddress(companyId, {
-          ...legalAddress,
-          addressType: AddressType.LEGAL,
-          isPrimary: true,
-        });
-      }
-
-      return customerResponse;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["customers"] });
-      toast.success("Cliente creato con successo");
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Errore nella creazione");
-    },
-  });
-}
-
-/**
- * Updates an existing customer.
- * Company data and legal address are updated via dedicated endpoints.
- * The legal address is upserted: updated if it exists, created otherwise.
- */
-export function useUpdateCustomer(id: number) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (data: {
-      companyData?: CompanyUpdateInput;
-      customerData?: CustomerUpdateInput;
-    }) => {
-      const { companyData, customerData } = data;
-      const { legalAddress, ...companyFields } = companyData ?? {};
-
-      // Esegue le chiamate in parallelo dove possibile
-      const [customerResponse] = await Promise.all([
-        customerData ? updateCustomer(id, customerData) : Promise.resolve(null),
-        Object.keys(companyFields).length > 0
-          ? updateCustomerCompany(id, companyFields)
-          : Promise.resolve(null),
-      ]);
-
-      // Gestione indirizzo legale — upsert tramite API dedicata
-      if (legalAddress) {
-        const companyId = companyData?.companyId ?? customerResponse?.data?.companyId;
-
-        if (companyId) {
-          // Cerca l'indirizzo legale esistente
-          const existing = await getAddressByType(companyId, AddressType.LEGAL);
-
-          if (existing?.data?.id) {
-            // Aggiorna il legale esistente
-            await updateAddress(existing.data.id, legalAddress);
-          } else {
-            // Crea il legale se non esiste ancora
-            await createAddress(companyId, {
-              ...legalAddress,
-              addressType: AddressType.LEGAL,
-              isPrimary: true,
-            });
-          }
-        }
-      }
-
-      return customerResponse;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["customer", id] });
-      queryClient.invalidateQueries({ queryKey: ["customers"] });
-      toast.success("Cliente aggiornato con successo");
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Errore nell'aggiornamento");
-    },
-  });
-}
 
 /**
  * Soft-deletes a customer by ID.
@@ -248,99 +140,6 @@ export function useSupplierStats() {
   return useQuery({
     queryKey: ["supplier-stats"],
     queryFn: getSupplierStats,
-  });
-}
-
-/**
- * Creates a new supplier with its company and legal address in a single flow.
- */
-export function useCreateSupplier() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (data: SupplierCreateInput) => {
-      const { company, ...supplierData } = data;
-      const { legalAddress, ...companyData } = company;
-
-      // 1. Crea il supplier con la company nested
-      const supplierResponse = await createSupplier({
-        company: companyData,
-        ...supplierData,
-      });
-
-      const companyId = supplierResponse.data?.company?.id;
-
-      // 2. Se presente, crea l'indirizzo legale
-      if (legalAddress && companyId) {
-        await createAddress(companyId, {
-          ...legalAddress,
-          addressType: AddressType.LEGAL,
-          isPrimary: true,
-        });
-      }
-
-      return supplierResponse;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
-      toast.success("Fornitore creato con successo");
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Errore nella creazione");
-    },
-  });
-}
-
-/**
- * Updates an existing supplier.
- * Company data and legal address are updated via dedicated endpoints.
- */
-export function useUpdateSupplier(id: number) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (data: {
-      companyData?: CompanyUpdateInput;
-      supplierData?: SupplierUpdateInput;
-    }) => {
-      const { companyData, supplierData } = data;
-      const { legalAddress, ...companyFields } = companyData ?? {};
-
-      const [supplierResponse] = await Promise.all([
-        supplierData ? updateSupplier(id, supplierData) : Promise.resolve(null),
-        Object.keys(companyFields).length > 0
-          ? updateSupplierCompany(id, companyFields)
-          : Promise.resolve(null),
-      ]);
-
-      if (legalAddress) {
-        const companyId = companyData?.companyId ?? supplierResponse?.data?.companyId;
-
-        if (companyId) {
-          const existing = await getAddressByType(companyId, AddressType.LEGAL);
-
-          if (existing?.data?.id) {
-            await updateAddress(existing.data.id, legalAddress);
-          } else {
-            await createAddress(companyId, {
-              ...legalAddress,
-              addressType: AddressType.LEGAL,
-              isPrimary: true,
-            });
-          }
-        }
-      }
-
-      return supplierResponse;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["supplier", id] });
-      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
-      toast.success("Fornitore aggiornato con successo");
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Errore nell'aggiornamento");
-    },
   });
 }
 

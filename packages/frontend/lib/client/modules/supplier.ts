@@ -18,7 +18,7 @@ export const getSuppliers = async (
  * Recupera le statistiche dashboard dei fornitori
  */
 export const getDashboardStats = async (): Promise<ApiResponse<SupplierStats>> => {
-  const response = await api.get('/dashboard/supplier');
+  const response = await api.get('/suppliers/stats');
   return response.data;
 };
 

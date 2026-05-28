@@ -19,6 +19,7 @@ import {
   getSupplierStats,
   deleteSupplier,
   validateSupplierFiscal,
+  getSupplierListStats,
 } from '../controllers/supplier-controller';
 import { createHonoApp } from '@/lib/hono-app';
 
@@ -40,6 +41,20 @@ supplierRoutes.get(
   authorize(['supplier:read', 'supplier:manage']),
   validateSupplierQuery,
   getAllSuppliers
+);
+
+/**
+ * @route   GET /api/suppliers/stats
+ * @desc    Statistiche generali supplier
+ * @access  Private (supplier:read)
+ * @query   page, limit, search, minRating, hasProducts, status, countryCode
+ */
+supplierRoutes.get(
+  '/stats',
+  authenticateToken,
+  authorize(['supplier:read', 'supplier:manage']),
+  validateSupplierQuery,
+  getSupplierListStats
 );
 
 /**

@@ -474,3 +474,50 @@ export const deleteCustomer = async (c: Context<AppBindings>) => {
 
   return sendDeleted(c, "Customer eliminato con successo");
 };
+
+/**
+ * @desc    Statistiche aggregate su tutti i customers (per la list view)
+ * @route   GET /api/customers/stats
+ * @access  Private (customer:read)
+ */
+export const getCustomerListStats = async (c: Context<AppBindings>) => {
+  const filters = getValidatedQuery<CustomerQueryInput>(c);
+  const where = buildCustomerWhereClause(filters as CustomerFilters);
+
+  const [total, revenueAgg, bySegment] = await Promise.all([
+    // Totale customers (rispettando i filtri attivi)
+    prisma.customer.count({ where }),
+
+    // Somma revenue + media valore ordine
+    prisma.customer.aggregate({
+      where,
+      _sum: { totalRevenue: true },
+      _avg: { totalRevenue: true },
+    }),
+
+    // Distribuzione per segmento
+    prisma.customer.groupBy({
+      by: ["segment"],
+      where,
+      _count: { id: true },
+    }),
+  ]);
+
+  const bySegmentMap = Object.fromEntries(bySegment.map((s) => [s.segment ?? "NONE", s._count.id]));
+
+  // Calcolo avgOrderValue aggregando i documenti
+  const orderStats = await prisma.document.aggregate({
+    where: {
+      customer: { ...where },
+      documentType: { in: ["ORDER", "INVOICE"] },
+    },
+    _avg: { totalAmount: true },
+  });
+
+  return sendSuccess(c, {
+    totalCustomers: total,
+    totalRevenue: revenueAgg._sum.totalRevenue ?? 0,
+    averageOrderValue: orderStats._avg.totalAmount ?? 0,
+    bySegment: bySegmentMap,
+  });
+};

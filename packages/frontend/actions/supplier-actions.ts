@@ -10,6 +10,7 @@ import {
   updateSupplier,
   updateSupplierCompany,
   deleteSupplier,
+  getAllSuppliers,
 } from "@/services/server/supplier-service";
 import { redirect } from "next/navigation";
 import type {
@@ -19,6 +20,7 @@ import type {
   Supplier,
   UpdateSupplierForm,
   CreateSupplierForm,
+  SupplierQueryInput,
 } from "@mini-erp/shared";
 import { SupplierSingleApiResponse } from "@/types/supplier-types";
 
@@ -38,6 +40,17 @@ export async function searchSupplierAction(
       limit: options?.limit ?? 10,
       revalidate: 30,
     });
+  }, "supplier:read");
+}
+
+/**
+ * Get all suppliers filtered by params
+ */
+export async function getAllSuppliersAction(
+  params: SupplierQueryInput,
+): Promise<ActionResult> {
+  return withAuth(async () => {
+    return await getAllSuppliers(params, 30);
   }, "supplier:read");
 }
 

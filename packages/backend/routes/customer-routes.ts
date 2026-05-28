@@ -15,6 +15,7 @@ import {
   getCustomerStats,
   deleteCustomer,
   validateCustomerFiscal,
+  getCustomerListStats,
 } from '../controllers/customer-controller';
 import { createHonoApp } from '@/lib/hono-app';
 import { authenticateToken, authorize } from '@/middleware/auth-middleware';
@@ -50,7 +51,7 @@ customerRoutes.get(
   authenticateToken,
   authorize(['customer:read', 'customer:manage']),
   validateCustomerQuery,
-  getAllCustomers
+  getCustomerListStats
 );
 
 /**

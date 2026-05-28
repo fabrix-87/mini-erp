@@ -113,8 +113,8 @@ export const supplierQuerySchema = companyQueryBaseSchema.extend({
   maxRating: queryNumberSchema("Rating deve essere tra 1 e 5").pipe(
     z.number().min(1).max(5).optional(),
   ),
-  hasProducts: queryBooleanSchema,
-  hasOrders: queryBooleanSchema,
+  hasProducts: queryBooleanSchema.optional(),
+  hasOrders: queryBooleanSchema.optional(),
 
   minLeadTime: queryNumberSchema("Lead Time non valido").pipe(
     z.number().int().nonnegative().optional(),

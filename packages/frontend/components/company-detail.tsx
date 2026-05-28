@@ -24,32 +24,27 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { useCustomer, useDeleteCustomer } from "@/hooks/use-company";
-import { useSupplier, useDeleteSupplier } from "@/hooks/use-company";
+import { useDeleteCustomer } from "@/hooks/use-company";
+import { useDeleteSupplier } from "@/hooks/use-company";
 
 import { CompanyDetailHeader } from "@/components/company/company-detail-header";
 import { CompanyDetailTabs } from "@/components/company/company-detail-tabs";
 import { BreadcrumbSetter } from "./ui/breadcrumb-setter";
 import { CompanyType } from "@/types/company-types";
 import { BreadcrumbItem } from "@/lib/stores/breadcrumb-store";
+import { Customer, Supplier } from "@mini-erp/shared";
 
-export default function CompanyDetailPage() {
+interface CompanyFormProps {
+  data: Customer | Supplier;
+  companyType: CompanyType;
+}
+
+export default function CompanyDetailPage({data, companyType}: CompanyFormProps) {
   const router = useRouter();
-  const params = useParams();
-  const pathname = usePathname();
-
+  
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  // Determina il tipo dal path
-  const companyType: CompanyType = pathname.includes("/customers") ? "CUSTOMER" : "SUPPLIER";
-
-  const entityId = parseInt(params.id as string);
-
-  // Fetch data basato sul tipo
-  const customerQuery = useCustomer(entityId, companyType === "CUSTOMER");
-  const supplierQuery = useSupplier(entityId, companyType === "SUPPLIER");
-
-  const { data, isLoading, error } = companyType === "CUSTOMER" ? customerQuery : supplierQuery;
+  const entityId = data.id
 
   const breadcrumbItems: BreadcrumbItem[] = [
     {
@@ -57,7 +52,7 @@ export default function CompanyDetailPage() {
       href: companyType === "CUSTOMER" ? "/customers" : "/suppliers",
     },
     {
-      label: data?.data.company.companyName || "",
+      label: data.company.companyName || "",
     },
   ];
 
@@ -67,7 +62,7 @@ export default function CompanyDetailPage() {
 
   const handleEdit = () => {
     const path = companyType === "CUSTOMER" ? "customers" : "suppliers";
-    router.push(`/${path}/${entityId}/edit`);
+    router.push(`/${path}/${data.id}/edit`);
   };
 
   const handleDelete = async () => {
@@ -88,28 +83,6 @@ export default function CompanyDetailPage() {
     router.push(`/contacts/new?companyId=${entityId}`);
   };
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center h-96">
-        <p className="text-lg text-muted-foreground mb-4">Errore nel caricamento dei dati</p>
-        <Button onClick={() => router.back()}>Torna indietro</Button>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-12 w-64" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-96 w-full" />
-      </div>
-    );
-  }
-
   if (!data) {
     return (
       <div className="flex flex-col items-center justify-center h-96">
@@ -121,7 +94,7 @@ export default function CompanyDetailPage() {
     );
   }
 
-  const companyData = data.data;
+  const companyData = data;
 
   return (
     <div className="space-y-6">

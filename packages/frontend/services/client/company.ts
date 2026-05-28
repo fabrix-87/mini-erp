@@ -1,8 +1,8 @@
 import { ApiResponse } from "@/types/api";
 import { Customer, CustomerQueryInput, CustomerStats } from "@/types/customer-types";
 import api from "@/lib/client/api";
-import { Company, CompanyQueryInput } from "@/types/company-types";
 import { CreateCustomerForm } from "@mini-erp/shared/types";
+import { Company, CompanyQueryInput } from "@mini-erp/shared";
 
 /**
  * Recupera la lista dei clienti con filtri e paginazione
@@ -42,10 +42,10 @@ export const getCustomers = async (
 };
 
 /**
- * Recupera le statistiche dashboard dei clienti
+ * Recupera le statistiche dei clienti
  */
 export const getDashboardStats = async (): Promise<ApiResponse<CustomerStats>> => {
-  const response = await api.get('/dashboard/customers')
+  const response = await api.get('/customers/stats')
   return response.data
 }
 

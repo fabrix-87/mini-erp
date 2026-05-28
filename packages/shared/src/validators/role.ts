@@ -101,7 +101,7 @@ export const removePermissionsSchema = z
  */
 export const roleQuerySchema = z.object({
   search: z.string().optional(),
-  isDefault: queryBooleanSchema,
+  isDefault: queryBooleanSchema.optional(),
   sortBy: roleSortFieldSchema.default("name"),
   sortOrder: sortOrderSchema,
   page: pageSchema,

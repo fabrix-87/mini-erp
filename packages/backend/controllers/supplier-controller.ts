@@ -446,3 +446,47 @@ export const deleteSupplier = async (c: Context<AppBindings>) => {
 
   return sendDeleted(c, "Supplier eliminato con successo");
 };
+
+/**
+ * @desc    Statistiche aggregate su tutti i suppliers (per la list view)
+ * @route   GET /api/suppliers/stats
+ * @access  Private (supplier:read)
+ */
+export const getSupplierListStats = async (c: Context<AppBindings>) => {
+  const filters = getValidatedQuery<SupplierQueryInput>(c);
+  const where = buildSupplierWhereClause(filters as SupplierFilters);
+
+  const [total, spentAgg, byRating] = await Promise.all([
+    prisma.supplier.count({ where }),
+
+    prisma.supplier.aggregate({
+      where,
+      _sum: { totalSpent: true },
+    }),
+
+    // Distribuzione per rating (1–5)
+    prisma.supplier.groupBy({
+      by: ["rating"],
+      where,
+      _count: { id: true },
+    }),
+  ]);
+
+  const byRatingMap = Object.fromEntries(
+    byRating
+      .filter((r) => r.rating !== null)
+      .map((r) => [String(r.rating), r._count.id])
+  );
+
+  const avgRatingAgg = await prisma.supplier.aggregate({
+    where: { ...where, rating: { not: null } },
+    _avg: { rating: true },
+  });
+
+  return sendSuccess(c, {
+    totalSuppliers: total,
+    totalSpent: spentAgg._sum.totalSpent ?? 0,
+    averageRating: avgRatingAgg._avg.rating ?? 0,
+    byRating: byRatingMap,
+  });
+};
