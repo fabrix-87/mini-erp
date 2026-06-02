@@ -6,6 +6,7 @@
 import { Contact, CreateContactInput, UpdateContactInput } from "@mini-erp/shared/types";
 import { ApiResponse, PaginatedResponse, PaginationInfo } from "./api";
 import { ContactSortField, SortOrder } from "@mini-erp/shared/constants";
+import { ContactQueryInput } from "@mini-erp/shared";
 
 export type {
   Contact,
@@ -77,7 +78,7 @@ export interface ContactFormValues {
 /**
  * Filtri per Contact
  */
-export interface ContactFilters {
+export interface ContactFiltersType {
   search?: string;
   companyId?: number;
   active?: boolean;
@@ -86,150 +87,6 @@ export interface ContactFilters {
   position?: string;
   page?: number;
 }
-// ============================================================================
-// UI STATE TYPES
-// ============================================================================
-
-/**
- * Stato tabella contatti
- */
-export interface ContactTableState {
-  contacts: Contact[];
-  loading: boolean;
-  error: string | null;
-  filters: ContactFilters;
-  sort: {
-    field: ContactSortField;
-    order: SortOrder;
-  };
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-  };
-  selectedContacts: number[];
-}
-
-/**
- * Stato form contatto
- */
-export interface ContactFormState {
-  values: ContactFormValues;
-  errors: ContactFormErrors;
-  touched: ContactFormTouched;
-  isSubmitting: boolean;
-  isValid: boolean;
-}
-
-/**
- * Errori form contatto
- */
-export interface ContactFormErrors {
-  companyId?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  mobilePhone?: string;
-  position?: string;
-  department?: string;
-  notes?: string;
-}
-
-/**
- * Touched fields form
- */
-export interface ContactFormTouched {
-  companyId?: boolean;
-  firstName?: boolean;
-  lastName?: boolean;
-  email?: boolean;
-  phone?: boolean;
-  mobilePhone?: boolean;
-  position?: boolean;
-  department?: boolean;
-  notes?: boolean;
-}
-
-// ============================================================================
-// MODAL & DIALOG TYPES
-// ============================================================================
-
-/**
- * Props modale contatto
- */
-export interface ContactModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  contact?: Contact | null;
-  companyId?: number;
-  mode?: ContactModalMode;
-  onSuccess?: (contact: Contact) => void;
-}
-
-/**
- * Modalità modale
- */
-export type ContactModalMode = "create" | "edit" | "view";
-
-/**
- * Props dialog delete
- */
-export interface ContactDeleteDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  contact: Contact;
-  onConfirm: () => void;
-  isDeleting?: boolean;
-}
-
-// ============================================================================
-// COMPONENT PROPS TYPES
-// ============================================================================
-
-/**
- * Props ContactCard
- */
-export interface ContactCardProps {
-  contact: Contact;
-  onEdit?: (contact: Contact) => void;
-  onDelete?: (contact: Contact) => void;
-  onToggleActive?: (contact: Contact) => void;
-  onSetPrimary?: (contact: Contact) => void;
-  showActions?: boolean;
-}
-
-/**
- * Props ContactList
- */
-export interface ContactListProps {
-  contacts: Contact[];
-  loading?: boolean;
-  onEdit?: (contact: Contact) => void;
-  onDelete?: (contact: Contact) => void;
-  onToggleActive?: (contact: Contact) => void;
-  onSetPrimary?: (contact: Contact) => void;
-  showCompany?: boolean;
-}
-
-/**
- * Props ContactTable
- */
-export interface ContactTableProps {
-  contacts: Contact[];
-  loading?: boolean;
-  onSort?: (field: ContactSortField) => void;
-  sortField?: ContactSortField;
-  sortOrder?: SortOrder;
-  onEdit?: (contact: Contact) => void;
-  onDelete?: (contact: Contact) => void;
-  onView?: (contact: Contact) => void;
-  onToggleActive?: (contact: Contact) => void;
-  onSetPrimary?: (contact: Contact) => void;
-  selectable?: boolean;
-  selectedIds?: number[];
-  onSelectionChange?: (ids: number[]) => void;
-}
 
 /**
  * Props ContactForm
@@ -237,18 +94,15 @@ export interface ContactTableProps {
 export interface ContactFormProps {
   contact?: Contact | null;
   isNew?: boolean;
-  //companyId?: number;
-  //onSubmit: (data: CreateContactInput | UpdateContactInput) => Promise<void>;
-  //onCancel: () => void;
-  //isSubmitting?: boolean;
+  companyId?: string;
 }
 
 /**
  * Props ContactFilters
  */
 export interface ContactFiltersProps {
-  filters: ContactFilters;
-  onFiltersChange: (filters: ContactFilters) => void;
+  filters: ContactQueryInput;
+  onFiltersChange: (filters: ContactFiltersType) => void;
   onReset: () => void;
   showCompanyFilter?: boolean;
 }
@@ -264,29 +118,6 @@ export interface ContactSearchProps {
   disabled?: boolean;
 }
 
-// ============================================================================
-// HOOKS TYPES
-// ============================================================================
-
-/**
- * Return type useContacts hook
- */
-export interface UseContactsReturn {
-  contacts: Contact[];
-  loading: boolean;
-  error: string | null;
-  pagination: PaginationInfo | null;
-  filters: ContactFilters;
-  setFilters: (filters: ContactFilters) => void;
-  resetFilters: () => void;
-  refetch: () => Promise<void>;
-  sort: {
-    field: ContactSortField;
-    order: SortOrder;
-  };
-  setSort: (field: ContactSortField, order: SortOrder) => void;
-}
-
 /**
  * Return type useContact hook
  */
@@ -295,21 +126,6 @@ export interface UseContactReturn {
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
-}
-
-/**
- * Return type useContactMutations hook
- */
-export interface UseContactMutationsReturn {
-  createContact: (data: CreateContactInput) => Promise<Contact>;
-  updateContact: (id: number, data: UpdateContactInput) => Promise<Contact>;
-  deleteContact: (id: number) => Promise<void>;
-  toggleActive: (id: number, active: boolean) => Promise<Contact>;
-  setPrimary: (id: number) => Promise<Contact>;
-  isCreating: boolean;
-  isUpdating: boolean;
-  isDeleting: boolean;
-  isToggling: boolean;
 }
 
 // ============================================================================
@@ -368,78 +184,6 @@ export interface ContactExport {
   isPrimary: string;
   status: string;
   createdAt: string;
-}
-
-// ============================================================================
-// ERROR TYPES
-// ============================================================================
-
-/**
- * Errore API Contact
- */
-export interface ContactApiError {
-  success: false;
-  message: string;
-  errors?: {
-    field: string;
-    message: string;
-  }[];
-  statusCode?: number;
-}
-
-/**
- * Tipo errore Contact
- */
-export type ContactErrorType =
-  | "VALIDATION_ERROR"
-  | "NOT_FOUND"
-  | "DUPLICATE_EMAIL"
-  | "PRIMARY_EXISTS"
-  | "NETWORK_ERROR"
-  | "SERVER_ERROR"
-  | "UNKNOWN_ERROR";
-
-/**
- * Errore dettagliato Contact
- */
-export interface ContactError {
-  type: ContactErrorType;
-  message: string;
-  field?: string;
-  statusCode?: number;
-}
-
-// ============================================================================
-// TYPE GUARDS
-// ============================================================================
-
-/**
- * Type guard per verificare se è un Contact valido
- */
-export function isContact(obj: any): obj is Contact {
-  return (
-    obj &&
-    typeof obj === "object" &&
-    typeof obj.id === "number" &&
-    typeof obj.companyId === "number" &&
-    typeof obj.firstName === "string" &&
-    typeof obj.lastName === "string" &&
-    typeof obj.email === "string" &&
-    typeof obj.isPrimaryContact === "boolean" &&
-    typeof obj.active === "boolean"
-  );
-}
-
-/**
- * Type guard per ContactApiError
- */
-export function isContactApiError(obj: any): obj is ContactApiError {
-  return (
-    obj &&
-    typeof obj === "object" &&
-    obj.success === false &&
-    typeof obj.message === "string"
-  );
 }
 
 // ============================================================================

@@ -86,7 +86,8 @@ export type ContactWithStats = Contact & {
 // INPUT TYPES (inferred from validators)
 // ============================================================================
 
-export type CreateContactInput = z.infer<typeof createContactSchema>;
+export type CreateContactInput = z.output<typeof createContactSchema>;
+export type CreateContactForm = z.input<typeof createContactSchema>;
 export type UpdateContactInput = z.infer<typeof updateContactSchema>;
 export type CreateCompanyContactInput = z.infer<typeof createCompanyContactSchema>;
 export type UpdateCompanyContactInput = z.infer<typeof updateCompanyContactSchema>;

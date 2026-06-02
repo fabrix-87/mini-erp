@@ -9,6 +9,7 @@ import {
 import { CompanyIdParam, CompanyQueryInput } from "@mini-erp/shared/types";
 import { AppBindings } from "@/lib/hono-app";
 import { getValidatedParams, getValidatedQuery } from "@/helpers/validated-context";
+import { CompanyWhereInput } from "@/generated/prisma/models";
 
 /**
  * GET /companies
@@ -19,7 +20,7 @@ export const listCompanies = async (c: Context<AppBindings>) => {
   const { search, page, limit, countryCode, status, sortBy, sortOrder } =
     getValidatedQuery<CompanyQueryInput>(c);
 
-  const where: any = {};
+  const where: CompanyWhereInput = {};
 
   if (search) {
     where.OR = [
@@ -48,7 +49,6 @@ export const listCompanies = async (c: Context<AppBindings>) => {
         status: true,
         mainEmail: true,
         mainPhone: true,
-        totalOrders: true,
       },
     }),
   ]);

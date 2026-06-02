@@ -53,6 +53,8 @@ export function useCustomers(
     limit: 20,
     sortBy: "companyName",
     sortOrder: "asc",
+    type: undefined,
+    priority: undefined,
   },
 ) {
   return useQuery({
@@ -114,6 +116,10 @@ export function useSuppliers(
     limit: 20,
     sortBy: "companyName",
     sortOrder: "asc",
+    minRating: undefined,
+    maxRating: undefined,
+    maxLeadTime: undefined,
+    minLeadTime: undefined,
   },
 ) {
   return useQuery({

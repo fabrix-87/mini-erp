@@ -118,23 +118,27 @@ export const getContactById = async (c: Context<AppBindings>) => {
 // ============================================================================
 
 /**
- * Creates a new Contact and its CompanyContact association in a single transaction.
- * If isPrimaryContact is true, resets any existing primary for the same company.
+ * Creates a new Contact with one or more CompanyContact associations in a single transaction.
+ * For each entry in companies[], if isPrimaryContact is true, resets any existing primary
+ * for that company before setting the new one.
  */
 export const createContact = async (c: Context<AppBindings>) => {
-  const {
-    companyId,
-    isPrimaryContact = false,
-    position,
-    department,
-    ...contactData
-  } = getValidatedBody<CreateContactInput>(c);
+  const { companies, ...contactData } = getValidatedBody<CreateContactInput>(c);
 
-  const company = await prisma.company.findUnique({ where: { id: companyId } });
-  if (!company) {
-    return sendNotFound(c, "Company non trovata");
+  // Verifica che tutte le company esistano
+  const companyIds = companies.map((entry) => entry.companyId);
+  const foundCompanies = await prisma.company.findMany({
+    where: { id: { in: companyIds } },
+    select: { id: true },
+  });
+
+  if (foundCompanies.length !== companyIds.length) {
+    const foundIds = foundCompanies.map((c) => c.id);
+    const missing = companyIds.filter((id) => !foundIds.includes(id));
+    return sendNotFound(c, `Company non trovate: ${missing.join(", ")}`);
   }
 
+  // Verifica email duplicata
   if (contactData.email) {
     const existingEmail = await prisma.contact.findFirst({
       where: { email: contactData.email },
@@ -145,9 +149,14 @@ export const createContact = async (c: Context<AppBindings>) => {
   }
 
   const contact = await prisma.$transaction(async (tx) => {
-    if (isPrimaryContact) {
+    // Per ogni entry che dichiara isPrimaryContact, azzera il primario esistente
+    const primaryEntries = companies.filter((entry) => entry.isPrimaryContact);
+    if (primaryEntries.length > 0) {
       await tx.companyContact.updateMany({
-        where: { companyId, isPrimaryContact: true },
+        where: {
+          companyId: { in: primaryEntries.map((e) => e.companyId) },
+          isPrimaryContact: true,
+        },
         data: { isPrimaryContact: false },
       });
     }
@@ -156,15 +165,15 @@ export const createContact = async (c: Context<AppBindings>) => {
       data: {
         ...contactData,
         companies: {
-          create: {
-            companyId,
-            isPrimaryContact,
-            position: position ?? null,
-            department: department ?? null,
-          },
+          create: companies.map((entry) => ({
+            companyId: entry.companyId,
+            isPrimaryContact: entry.isPrimaryContact ?? false,
+            position: entry.position ?? null,
+            department: entry.department ?? null,
+          })),
         },
       },
-      include: getContactCompaniesInclude(companyId),
+      include: getContactCompaniesInclude(),
     });
   });
 
@@ -199,7 +208,7 @@ export const updateContact = async (c: Context<AppBindings>) => {
   }
 
   // Strip CompanyContact fields — non appartengono al modello Contact diretto
-  const { isPrimaryContact, position, department, companyId: _cid, ...contactData } = data as any;
+  const { companies: _companies, ...contactData } = data;
 
   const contact = await prisma.contact.update({
     where: { id },
@@ -316,11 +325,12 @@ export const deleteContact = async (c: Context<AppBindings>) => {
  * Checks whether an email address is already in use globally.
  */
 export const checkEmail = async (c: Context<AppBindings>) => {
-  const { email } = getValidatedQuery<CheckEmailInput>(c);
+  const { email, contactId } = getValidatedQuery<CheckEmailInput>(c);
 
-  const existing = await prisma.contact.findFirst({ where: { email } });
+  const existing = await prisma.contact.findFirst({ where: { email }, select: { id: true } });
 
-  if (existing) {
+  // se sto modificando lo stesso utente, non devo dare errore
+  if (existing && existing.id !== contactId) {
     return sendFail(c, { message: "Email già esistente" });
   }
 

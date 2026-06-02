@@ -22,7 +22,7 @@ import {
 import { Address } from "./address";
 import { Contact } from "./contact";
 import { CompanyStatus, CompanyTypeEntity } from "../constants";
-import { companyFormSchema, createCustomerSchema, createSupplierSchema } from "../validators";
+import { companyFormSchema } from "../validators";
 
 // ============================================================================
 // ENTITY TYPES

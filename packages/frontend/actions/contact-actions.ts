@@ -15,6 +15,7 @@ import type {
   ContactDeleteApiResponse,
   ContactOperationApiResponse,
   ContactQueryInput,
+  ContactSingleApiResponse,
   CreateContactInput,
   UpdateContactInput,
 } from "@/types/contact-types";
@@ -25,28 +26,28 @@ import { contactRevalidation } from "@/lib/server/revalidate";
 /**
  * Server Action per creare contatto
  */
-export async function createContactAction(data: CreateContactInput) {
-  try {
-    const response = await createContact(data);
-    revalidatePath("/contacts");
-    return { success: true, data: response.data };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
+export async function createContactAction(
+  data: CreateContactInput,
+): Promise<ActionResult<ContactSingleApiResponse>> {
+  return withAuth(async () => {
+    const response = createContact(data);
+    contactRevalidation.list();
+    return response;
+  }, "contact:create");
 }
 
 /**
  * Server Action per aggiornare contatto
  */
-export async function updateContactAction(id: number, data: UpdateContactInput) {
-  try {
-    const response = await updateContact(id, data);
-    revalidatePath(`/contacts/${id}`);
-    revalidatePath("/contacts");
-    return { success: true, data: response.data };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
+export async function updateContactAction(
+  id: number,
+  data: UpdateContactInput,
+): Promise<ActionResult<ContactSingleApiResponse>> {
+  return withAuth(async () => {
+    const response = updateContact(id, data);
+    contactRevalidation.contactWithList(id);
+    return response;
+  }, "contact:update");
 }
 
 /**
@@ -57,9 +58,9 @@ export async function deleteContactAction(
 ): Promise<ActionResult<ContactDeleteApiResponse>> {
   return withAuth(async () => {
     const response = deleteContact(id);
-    contactRevalidation.list()
+    contactRevalidation.list();
     return response;
-  }, "contact:delete")
+  }, "contact:delete");
 }
 
 /**

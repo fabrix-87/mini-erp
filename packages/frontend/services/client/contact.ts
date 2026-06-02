@@ -131,13 +131,11 @@ export const clientContactService = {
    */
   async checkEmailUnique(
     email: string,
-    companyId: number,
     contactId?: number
   ): Promise<boolean> {
     try {
       const params = new URLSearchParams({
         email,
-        companyId: companyId.toString(),
         ...(contactId && { contactId: contactId.toString() }),
       });
       const resp = await api.get<ApiResponse<{ unique: boolean }>>(

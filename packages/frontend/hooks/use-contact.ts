@@ -7,15 +7,10 @@ import contactService from "@/services/client/contact";
 import { contactKeys } from "./contact-keys";
 import type {
   ContactQueryInput,
-  ContactFilters,
-  ContactSortField,
   CreateContactInput,
   UpdateContactInput,
-  UseContactsReturn,
   UseContactReturn,
-  UseContactMutationsReturn,
 } from "@/types/contact-types";
-import { SortOrder } from "@mini-erp/shared/constants";
 import {
   createContactAction,
   deleteContactAction,
@@ -351,12 +346,11 @@ export function useContactValidation() {
 
   const validateEmailUnique = async (
     email: string,
-    companyId: number,
     contactId?: number,
   ): Promise<boolean> => {
     setIsValidating(true);
     try {
-      return await contactService.checkEmailUnique(email, companyId, contactId);
+      return await contactService.checkEmailUnique(email, contactId);
     } catch (error) {
       console.error("Email validation error:", error);
       return false;

@@ -15,7 +15,7 @@ export default function ContactDetails() {
   const contactId = params?.id ? parseInt(params.id as string) : null;
 
   const { contact, loading, error, refetch } = useContact(contactId || 0);
-  const { deleteContact, toggleActive, setPrimary, isDeleting, isToggling } = useContactMutations();
+  const { deleteContact, toggleActive, isPending } = useContactMutations();
 
   const handleEdit = () => {
     router.push(`/contacts/${contactId}/edit`);

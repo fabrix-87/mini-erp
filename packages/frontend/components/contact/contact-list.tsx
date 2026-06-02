@@ -1,16 +1,20 @@
 // components/contact/contact-list.tsx
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   useContactMutations,
   useContactExport,
   useContactBulkOperations,
 } from "@/hooks/use-contact";
-import type { ContactSortField, ContactQueryInput, ContactListApiResponse } from "@/types/contact-types";
+import type {
+  ContactSortField,
+  ContactQueryInput,
+  ContactListApiResponse,
+} from "@/types/contact-types";
 import ContactToolbar from "./contact-list/toolbar";
-import ContactFilters from "./contact-list/filters";
+import ContactFiltersComponent from "./contact-list/filters";
 import ContactBulkActions from "./contact-list/bulk-actions";
 import ContactTable from "./contact-list/table";
 import { DataPagination } from "../ui/data-pagination";
@@ -48,7 +52,11 @@ export default function ContactListPage({ data, params }: Props) {
     isPrimaryContact: params.isPrimaryContact,
     department: params.department,
     position: params.position,
-  };
+    page: params.page,
+    limit: params.limit,
+    sortBy: params.sortBy,
+    sortOrder: params.sortOrder,
+  } satisfies ContactQueryInput;
 
   const updateURL = useUpdateURL("/contacts");
 
@@ -94,7 +102,13 @@ export default function ContactListPage({ data, params }: Props) {
         params={params}
       />
 
-      {showFilters && <ContactFilters filters={filters} onFilterChange={handleFilterChange} />}
+      {showFilters && (
+        <ContactFiltersComponent
+          filters={filters}
+          onFiltersChange={handleFilterChange}
+          onReset={handleResetFilters}
+        />
+      )}
 
       <ContactBulkActions
         selectedIds={selectedIds}

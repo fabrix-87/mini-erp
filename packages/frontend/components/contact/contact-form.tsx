@@ -3,143 +3,100 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Save, Loader2, ChevronsUpDown, Check } from "lucide-react";
-import {
-  useContact,
-  useContactMutations,
-  useContactValidation,
-} from "@/hooks/use-contact";
-import type { CreateContactInput, UpdateContactInput } from "@/types/contact-types";
+import { useContact, useContactMutations, useContactValidation } from "@/hooks/use-contact";
+import type {
+  ContactFormProps,
+  CreateContactInput,
+  UpdateContactInput,
+} from "@/types/contact-types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import CompanyCard from "./contact-form/company-card";
+import { Controller, FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { CreateContactForm, createContactSchema } from "@mini-erp/shared";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { register } from "module";
 
-interface ContactFormProps {
-  isNew: boolean;
-}
-
-export default function ContactForm({ isNew }: ContactFormProps) {
+export default function ContactForm({ isNew, contact, companyId }: ContactFormProps) {
   const router = useRouter();
-  const params = useParams();
-  const queryParams = useSearchParams();
-  const contactId = params?.id ? parseInt(params.id as string) : null;
-  const companyId = queryParams.get("companyId") || "";
+
+  const { id: contactId } = contact || { id: undefined };
 
   // Hooks
-  const { contact, loading: loadingContact } = useContact(contactId || 0);
-  const { createContact, updateContact, isCreating, isUpdating } = useContactMutations();
+  const { createContact, updateContact, isPending } = useContactMutations();
   const { validateEmailUnique, isValidating } = useContactValidation();
 
-  const [formData, setFormData] = useState({
-    companyId: companyId,
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    mobilePhone: "",
-    position: "",
-    department: "",
-    isPrimaryContact: false,
-    active: true,
-    notes: "",
+  const form = useForm<CreateContactForm>({
+    resolver: standardSchemaResolver(createContactSchema),
+    defaultValues: contact || {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      mobilePhone: "",
+      active: true,
+      notes: "",
+      companies: [],
+    },
+    mode: "onBlur",
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const onSubmit = form.handleSubmit(
+    (data) => {
+      console.log(data);
+    },
+    (errors) => {
+      // Questo callback viene chiamato quando la validazione fallisce
+      console.log("🔴 Submit blocked by errors:", errors);
+    },
+  );
 
-  // Load contact data quando editing
-  useEffect(() => {
-    if (!isNew && contact) {
-      setFormData({
-        companyId: contact.companyId.toString(),
-        firstName: contact.firstName,
-        lastName: contact.lastName,
-        email: contact.email,
-        phone: contact.phone || "",
-        mobilePhone: contact.mobilePhone || "",
-        position: contact.position || "",
-        department: contact.department || "",
-        isPrimaryContact: contact.isPrimaryContact,
-        active: contact.active,
-        notes: contact.notes || "",
+  const {
+    control,
+    setError,
+    clearErrors,
+    trigger,
+    formState: { errors },
+    register
+  } = form;
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "companies",
+  });
+
+  // Handler da passare al campo email
+  const handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const email = e.target.value;
+
+    // Prima fa scattare la validazione Zod (formato)
+    const isFormatValid = await trigger("email");
+    if (!isFormatValid || !email) return;
+
+    // Poi valida l'unicità
+    const isUnique = await validateEmailUnique(email, isNew ? undefined : contactId || undefined);
+
+    if (!isUnique) {
+      setError("email", {
+        type: "manual",
+        message: "Email già esistente",
       });
+    } else {
+      clearErrors("email");
     }
-  }, [contact, isNew]);
-
-  const handleChange = (field: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Clear error on change
-    if (errors[field]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-    }
-  };
-
-  const handleBlur = async (field: string) => {
-    setTouched((prev) => ({ ...prev, [field]: true }));
-
-    // Validazione email unica
-    if (field === "email" && formData.email && formData.companyId) {
-      const isUnique = await validateEmailUnique(
-        formData.email,
-        parseInt(formData.companyId),
-        isNew ? undefined : contactId || undefined
-      );
-
-      if (!isUnique) {
-        setErrors((prev) => ({
-          ...prev,
-          email: "Email già esistente per questa azienda",
-        }));
-      }
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.companyId) {
-      newErrors.companyId = "Azienda è obbligatoria";
-    }
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "Nome è obbligatorio";
-    }
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Cognome è obbligatorio";
-    }
-    if (!formData.email.trim()) {
-      newErrors.email = "Email è obbligatoria";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Email non valida";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    /*
     if (!validateForm()) {
       return;
     }
-
+    
     const data: CreateContactInput | UpdateContactInput = {
       companyId: parseInt(formData.companyId),
       firstName: formData.firstName,
@@ -165,6 +122,7 @@ export default function ContactForm({ isNew }: ContactFormProps) {
     } catch (error) {
       console.error("Form submit error:", error);
     }
+    */
   };
 
   const handleCancel = () => {
@@ -177,17 +135,8 @@ export default function ContactForm({ isNew }: ContactFormProps) {
     }
   };
 
-  if (!isNew && loadingContact) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-        </div>
-      </div>
-    );
-  }
-
-  const isSubmitting = isCreating || isUpdating;
+  //const isSubmitting = isCreating || isUpdating;
+  const isSubmitting = false;
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
@@ -197,222 +146,177 @@ export default function ContactForm({ isNew }: ContactFormProps) {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Indietro
         </Button>
-        <h1 className="text-3xl font-bold">
-          {isNew ? "Nuovo Contatto" : "Modifica Contatto"}
-        </h1>
+        <h1 className="text-3xl font-bold">{isNew ? "Nuovo Contatto" : "Modifica Contatto"}</h1>
         <p className="text-muted-foreground">
-          {isNew
-            ? "Inserisci i dati del nuovo contatto"
-            : "Aggiorna le informazioni del contatto"}
+          {isNew ? "Inserisci i dati del nuovo contatto" : "Aggiorna le informazioni del contatto"}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Azienda */}
-        <CompanyCard
-          companyId={formData.companyId}
-          onCompanyChange={(id) => handleChange("companyId", id)}
-          error={errors.companyId}
-        />
+      <FormProvider {...form}>
+        <form onSubmit={onSubmit} className="space-y-6">
+          {/* Azienda */}
+          <CompanyCard
+            selectedCompanies={fields}
+            onAddCompany={(companyId) =>
+              append({
+                companyId,
+                position: null,
+                department: null,
+                isPrimaryContact: fields.length === 0,
+              })
+            }
+            onRemoveCompany={(index) => remove(index)}
+            error={errors.companies?.root?.message ?? (errors.companies as any)?.message}
+          />
 
-        {/* Dati Personali */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Dati Personali</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Dati Personali */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Dati Personali</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* firstName */}
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">
+                    Nome <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="firstName"
+                    placeholder="Mario"
+                    aria-invalid={!!errors.firstName}
+                    className={errors.firstName ? "border-red-500" : ""}
+                    {...register("firstName")}
+                  />
+                  {errors.firstName && (
+                    <p className="text-sm text-red-500">{errors.firstName.message}</p>
+                  )}
+                </div>
+
+                {/* lastName */}
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Cognome</Label>
+                  <Input
+                    id="lastName"
+                    placeholder="Rossi"
+                    aria-invalid={!!errors.lastName}
+                    className={errors.lastName ? "border-red-500" : ""}
+                    {...register("lastName")}
+                  />
+                  {errors.lastName && (
+                    <p className="text-sm text-red-500">{errors.lastName.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* email */}
               <div className="space-y-2">
-                <Label htmlFor="firstName">
-                  Nome <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="firstName"
-                  value={formData.firstName}
-                  onChange={(e) => handleChange("firstName", e.target.value)}
-                  onBlur={() => handleBlur("firstName")}
-                  className={errors.firstName ? "border-red-500" : ""}
-                  placeholder="Mario"
-                />
-                {errors.firstName && (
-                  <p className="text-sm text-red-500">{errors.firstName}</p>
-                )}
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Controller
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="mario.rossi@example.com"
+                        aria-invalid={!!errors.email}
+                        className={errors.email ? "border-red-500" : ""}
+                        {...field}
+                        value={field.value ?? ""}
+                        onBlur={async (e) => {
+                          field.onBlur();
+                          await handleEmailBlur(e);
+                        }}
+                      />
+                    )}
+                  />
+                  {isValidating && (
+                    <Loader2 className="absolute right-3 top-3 w-4 h-4 animate-spin text-gray-400" />
+                  )}
+                </div>
+                {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="lastName">
-                  Cognome <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="lastName"
-                  value={formData.lastName}
-                  onChange={(e) => handleChange("lastName", e.target.value)}
-                  onBlur={() => handleBlur("lastName")}
-                  className={errors.lastName ? "border-red-500" : ""}
-                  placeholder="Rossi"
-                />
-                {errors.lastName && (
-                  <p className="text-sm text-red-500">{errors.lastName}</p>
-                )}
-              </div>
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* phone */}
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Telefono</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="+39 02 1234567"
+                    {...register("phone")}
+                  />
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">
-                Email <span className="text-red-500">*</span>
-              </Label>
-              <div className="relative">
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                  onBlur={() => handleBlur("email")}
-                  className={errors.email ? "border-red-500" : ""}
-                  placeholder="mario.rossi@example.com"
-                />
-                {isValidating && touched.email && (
-                  <Loader2 className="absolute right-3 top-3 w-4 h-4 animate-spin text-gray-400" />
-                )}
+                {/* mobilePhone */}
+                <div className="space-y-2">
+                  <Label htmlFor="mobilePhone">Cellulare</Label>
+                  <Input
+                    id="mobilePhone"
+                    type="tel"
+                    placeholder="+39 333 1234567"
+                    {...register("mobilePhone")}
+                  />
+                </div>
               </div>
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email}</p>
-              )}
-            </div>
+            </CardContent>
+          </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone">Telefono</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => handleChange("phone", e.target.value)}
-                  placeholder="+39 02 1234567"
+          {/* Impostazioni */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Impostazioni</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="active">Attivo</Label>
+                  <p className="text-sm text-gray-500">
+                    Il contatto può essere utilizzato nel sistema
+                  </p>
+                </div>
+                <Controller
+                  control={form.control}
+                  name="active"
+                  render={({ field }) => (
+                    <Switch id="active" checked={field.value} onCheckedChange={field.onChange} />
+                  )}
                 />
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="space-y-2">
-                <Label htmlFor="mobilePhone">Cellulare</Label>
-                <Input
-                  id="mobilePhone"
-                  type="tel"
-                  value={formData.mobilePhone}
-                  onChange={(e) => handleChange("mobilePhone", e.target.value)}
-                  placeholder="+39 333 1234567"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Ruolo Aziendale */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Ruolo Aziendale</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="position">Posizione</Label>
-                <Input
-                  id="position"
-                  value={formData.position}
-                  onChange={(e) => handleChange("position", e.target.value)}
-                  placeholder="Responsabile vendite"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="department">Dipartimento</Label>
-                <Input
-                  id="department"
-                  value={formData.department}
-                  onChange={(e) => handleChange("department", e.target.value)}
-                  placeholder="Commerciale"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Impostazioni */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Impostazioni</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="isPrimaryContact">Contatto Primario</Label>
-                <p className="text-sm text-gray-500">
-                  Imposta come contatto principale per l'azienda
-                </p>
-              </div>
-              <Switch
-                id="isPrimaryContact"
-                checked={formData.isPrimaryContact}
-                onCheckedChange={(checked) =>
-                  handleChange("isPrimaryContact", checked)
-                }
+          {/* Note */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Note</CardTitle>
+              <CardDescription>Aggiungi informazioni aggiuntive sul contatto</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                id="notes"
+                placeholder="Inserisci note..."
+                rows={4}
+                {...register("notes")}
               />
-            </div>
+            </CardContent>
+          </Card>
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="active">Attivo</Label>
-                <p className="text-sm text-gray-500">
-                  Il contatto può essere utilizzato nel sistema
-                </p>
-              </div>
-              <Switch
-                id="active"
-                checked={formData.active}
-                onCheckedChange={(checked) => handleChange("active", checked)}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Note */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Note</CardTitle>
-            <CardDescription>
-              Aggiungi informazioni aggiuntive sul contatto
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Textarea
-              id="notes"
-              value={formData.notes}
-              onChange={(e) => handleChange("notes", e.target.value)}
-              placeholder="Inserisci note..."
-              rows={4}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Actions */}
-        <div className="flex justify-end gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCancel}
-            disabled={isSubmitting}
-          >
-            Annulla
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            {isSubmitting
-              ? "Salvataggio..."
-              : isNew
-              ? "Crea Contatto"
-              : "Salva Modifiche"}
-          </Button>
-        </div>
-      </form>
+          {/* Actions */}
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={handleCancel} disabled={isSubmitting}>
+              Annulla
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {isSubmitting ? "Salvataggio..." : isNew ? "Crea Contatto" : "Salva Modifiche"}
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
     </div>
   );
 }

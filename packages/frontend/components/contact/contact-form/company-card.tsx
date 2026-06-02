@@ -3,17 +3,30 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Combobox, ComboboxOption } from "@/components/ui/combobox";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 import { useCompanies } from "@/hooks/use-company";
 
+interface SelectedCompany {
+  id: string; // field id di RHF
+  companyId: string | number;
+  position?: string | null;
+  department?: string | null;
+  isPrimaryContact?: boolean;
+}
+
 interface CompanyCardProps {
-  companyId: string;
-  onCompanyChange: (companyId: string) => void;
+  selectedCompanies: SelectedCompany[];
+  onAddCompany: (companyId: string) => void;
+  onRemoveCompany: (index: number) => void;
   error?: string;
 }
 
 export default function CompanyCard({
-  companyId,
-  onCompanyChange,
+  selectedCompanies,
+  onAddCompany,
+  onRemoveCompany,
   error,
 }: CompanyCardProps) {
   const [searchInput, setSearchInput] = useState("");
@@ -23,46 +36,80 @@ export default function CompanyCard({
     search: debouncedSearch,
     page: 1,
     limit: 10,
+    sortOrder: "asc",
+    sortBy: "code",
   });
   const companies = data?.data || [];
 
-  // Debounce effect
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setDebouncedSearch(searchInput);
-    }, 400);
-
+    const timeoutId = setTimeout(() => setDebouncedSearch(searchInput), 400);
     return () => clearTimeout(timeoutId);
   }, [searchInput]);
 
-  // Trasforma le companies in ComboboxOption
-  const options: ComboboxOption[] = companies.map((company) => ({
-    value: company.id.toString(),
-    label: company.companyName,
-    description: company.code,
-  }));
+  // Escludi le company già selezionate dalle opzioni
+  const selectedIds = selectedCompanies.map((c) => c.companyId.toString());
+
+  const options: ComboboxOption[] = companies
+    .filter((company) => !selectedIds.includes(company.id.toString()))
+    .map((company) => ({
+      value: company.id.toString(),
+      label: company.companyName,
+      description: company.code,
+    }));
+
+  const handleSelect = (companyId: string) => {
+    if (!companyId || selectedIds.includes(companyId)) return;
+    onAddCompany(companyId);
+    setSearchInput(""); // reset ricerca dopo selezione
+  };
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          Azienda <span className="text-red-500">*</span>
+          Aziende <span className="text-red-500">*</span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          <Combobox
-            options={options}
-            value={companyId}
-            onValueChange={onCompanyChange}
-            onSearchChange={setSearchInput}
-            placeholder="Seleziona azienda..."
-            searchPlaceholder="Cerca azienda..."
-            emptyText="Nessuna azienda trovata"
-            isLoading={isLoading}
-          />
-          {error && <p className="text-sm text-red-500">{error}</p>}
-        </div>
+      <CardContent className="space-y-3">
+        {/* Company già selezionate */}
+        {selectedCompanies.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {selectedCompanies.map((company, index) => (
+              <Badge key={company.id} variant="secondary" className="gap-1 pr-1">
+                <span>
+                  {/* Mostra il nome se disponibile, altrimenti l'ID */}
+                  {companies.find((c) => c.id.toString() === company.companyId.toString())
+                    ?.companyName ?? `Company #${company.companyId}`}
+                </span>
+                {company.isPrimaryContact && (
+                  <span className="text-xs text-muted-foreground ml-1">(primario)</span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onRemoveCompany(index)}
+                  className="ml-1 hover:text-destructive"
+                  aria-label="Rimuovi azienda"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {/* Combobox per aggiungere */}
+        <Combobox
+          options={options}
+          value="" // sempre vuoto — è un "aggiungi", non un "seleziona"
+          onValueChange={handleSelect}
+          onSearchChange={setSearchInput}
+          placeholder="Aggiungi azienda..."
+          searchPlaceholder="Cerca azienda..."
+          emptyText="Nessuna azienda trovata"
+          isLoading={isLoading}
+        />
+
+        {error && <p className="text-sm text-red-500">{error}</p>}
       </CardContent>
     </Card>
   );

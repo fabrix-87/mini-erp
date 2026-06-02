@@ -4,14 +4,9 @@ import { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import type { ContactFilters as ContactFiltersType } from '@/types/contact-types';
+import type { ContactFiltersProps } from '@/types/contact-types';
 
-interface ContactFiltersProps {
-  filters: ContactFiltersType;
-  onFilterChange: (filters: Record<string, any>) => void;
-}
-
-export default function ContactFilters({ filters, onFilterChange }: ContactFiltersProps) {
+export default function ContactFiltersComponent({ filters, onFiltersChange, onReset }: ContactFiltersProps) {
   const [activeFilter, setActiveFilter] = useState<string>(
     filters.active === undefined ? 'all' : filters.active ? 'active' : 'inactive'
   );
@@ -27,7 +22,7 @@ export default function ContactFilters({ filters, onFilterChange }: ContactFilte
             onValueChange={(value) => {
               setActiveFilter(value);
               const active = value === 'all' ? undefined : value === 'active';
-              onFilterChange({ active });
+              onFiltersChange({ active });
             }}
           >
             <SelectTrigger id="status-filter">
@@ -49,7 +44,7 @@ export default function ContactFilters({ filters, onFilterChange }: ContactFilte
             value={departmentFilter}
             onChange={(e) => {
               setDepartmentFilter(e.target.value);
-              onFilterChange({ department: e.target.value });
+              onFiltersChange({ department: e.target.value });
             }}
             placeholder="Filtra per dipartimento"
           />
@@ -61,7 +56,7 @@ export default function ContactFilters({ filters, onFilterChange }: ContactFilte
             value={filters.isPrimaryContact === undefined ? 'all' : filters.isPrimaryContact ? 'primary' : 'secondary'}
             onValueChange={(value) => {
               const isPrimaryContact = value === 'all' ? undefined : value === 'primary';
-              onFilterChange({ isPrimaryContact });
+              onFiltersChange({ isPrimaryContact });
             }}
           >
             <SelectTrigger id="primary-filter">

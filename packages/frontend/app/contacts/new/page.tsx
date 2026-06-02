@@ -1,5 +1,15 @@
 import ContactForm from "@/components/contact/contact-form";
+import { requirePermission } from "@/lib/server/auth";
 
-export default function ContactNewPage() {
-  return <ContactForm isNew={true} />;
+interface Props {
+  searchParams: Promise<{
+    companyId: string;
+  }>;
+}
+
+
+export default async function ContactNewPage({ searchParams }: Props) {
+  await requirePermission("contact:create");
+
+  return <ContactForm isNew={true} companyId={(await searchParams).companyId} />;
 }

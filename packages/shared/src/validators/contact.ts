@@ -65,6 +65,17 @@ export const createCompanyContactSchema = companyContactFieldsSchema
  */
 export const updateCompanyContactSchema = companyContactFieldsSchema.partial().strict();
 
+/**
+ * Schema for a single company association entry within a contact creation/update.
+ * Combines company identification with contextual CompanyContact fields.
+ */
+export const contactCompanyEntrySchema = z
+  .object({
+    companyId: createIdSchema("Company ID deve essere positivo"),
+    ...companyContactFieldsSchema.shape,
+  })
+  .strict();
+
 // ============================================================================
 // CONTACT
 // ============================================================================
@@ -76,8 +87,7 @@ export const updateCompanyContactSchema = companyContactFieldsSchema.partial().s
  */
 export const createContactSchema = z
   .object({
-    // Company context — required on creation
-    companyId: createIdSchema("Company ID deve essere positivo"),
+    companies: z.array(contactCompanyEntrySchema).min(1, "Almeno una company è obbligatoria"),
 
     // Pure contact data
     firstName: z
@@ -97,17 +107,20 @@ export const createContactSchema = z
     active: z.boolean().default(true),
 
     notes: z.string().max(2000, "Note non possono superare 2000 caratteri").optional().nullable(),
-
-    // CompanyContact contextual fields (flattened for API ergonomics)
-    ...companyContactFieldsSchema.shape,
   })
   .strict();
 
 /**
  * Schema for updating a Contact.
- * companyId is excluded — the company association cannot change via this endpoint.
+ * companies is optional — associations can be managed separately via CompanyContact endpoints.
  */
-export const updateContactSchema = createContactSchema.omit({ companyId: true }).partial().strict();
+export const updateContactSchema = createContactSchema
+  .omit({ companies: true })
+  .extend({
+    companies: z.array(contactCompanyEntrySchema).min(1).optional(),
+  })
+  .partial()
+  .strict();
 
 // ============================================================================
 // PARAMS & QUERY
@@ -151,4 +164,5 @@ export const toggleContactActiveSchema = z
  */
 export const checkEmailSchema = z.object({
   email: emailSchema("Campo email necessario"),
+  contactId: createIdSchema("Contact ID non valido").optional()
 });
