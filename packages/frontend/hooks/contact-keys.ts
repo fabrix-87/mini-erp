@@ -1,4 +1,4 @@
-import type { ContactQueryInput } from '@/types/contact';
+import type { ContactQueryInput } from '@/types/contact-types';
 
 export const contactKeys = {
   all: ['contacts'] as const,

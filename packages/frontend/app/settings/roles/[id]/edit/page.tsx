@@ -1,6 +1,6 @@
 import { requirePermission } from "@/lib/server/auth";
-import { getRoleById } from "@/services/server/role";
-import { permissionKeys, roleKeys } from "@/types/role";
+import { getRoleById } from "@/services/server/role-service";
+import { permissionKeys, roleKeys } from "@/types/role-types";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { HydrationBoundary } from "@/providers/hydration-boundary";
 import RoleFormPage from "@/components/role/role-form";

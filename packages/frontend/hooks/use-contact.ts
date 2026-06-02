@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import contactService from '@/services/client/contact';
-import { contactKeys } from './contact-keys';
+import { useState, useCallback, useTransition } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import contactService from "@/services/client/contact";
+import { contactKeys } from "./contact-keys";
 import type {
   ContactQueryInput,
   ContactFilters,
@@ -14,12 +14,19 @@ import type {
   UseContactsReturn,
   UseContactReturn,
   UseContactMutationsReturn,
-} from '@/types/contact';
-import { SortOrder } from '@mini-erp/shared/constants';
+} from "@/types/contact-types";
+import { SortOrder } from "@mini-erp/shared/constants";
+import {
+  createContactAction,
+  deleteContactAction,
+  toggleContactActiveAction,
+  updateContactAction,
+} from "@/actions/contact-actions";
 
 // Re-export per comodità
 export { contactKeys };
 
+/*
 // ============================================================================
 // HOOK: useContacts (Lista con filtri e paginazione)
 // ============================================================================
@@ -113,13 +120,19 @@ export function useContacts(initialParams?: ContactQueryInput): UseContactsRetur
     setSort,
   };
 }
+*/
 
 // ============================================================================
 // HOOK: useContact (Singolo contatto)
 // ============================================================================
 
 export function useContact(id: number): UseContactReturn {
-  const { data: response, isLoading, error, refetch } = useQuery({
+  const {
+    data: response,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: contactKeys.detail(id),
     queryFn: () => contactService.getById(id),
     enabled: !!id,
@@ -141,7 +154,12 @@ export function useContact(id: number): UseContactReturn {
 // ============================================================================
 
 export function useContactsByCompany(companyId: number, active?: boolean) {
-  const { data: response, isLoading, error, refetch } = useQuery({
+  const {
+    data: response,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: contactKeys.byCompany(companyId),
     queryFn: () => contactService.getByCompany(companyId, active),
     enabled: !!companyId && companyId > 0, // Disabilita se companyId è 0 o undefined
@@ -160,7 +178,12 @@ export function useContactsByCompany(companyId: number, active?: boolean) {
 // ============================================================================
 
 export function usePrimaryContact(companyId: number) {
-  const { data: response, isLoading, error, refetch } = useQuery({
+  const {
+    data: response,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: contactKeys.primaryByCompany(companyId),
     queryFn: () => contactService.getPrimaryByCompany(companyId),
     enabled: !!companyId,
@@ -179,121 +202,46 @@ export function usePrimaryContact(companyId: number) {
 // HOOK: useContactMutations (CRUD Operations)
 // ============================================================================
 
-export function useContactMutations(): UseContactMutationsReturn {
-  const queryClient = useQueryClient();
+export function useContactMutations() {
+  const [isPending, startTransition] = useTransition();
 
-  const createMutation = useMutation({
-    mutationFn: (data: CreateContactInput) => contactService.create(data),
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: contactKeys.lists() });
-      if (response.data.companyId) {
-        queryClient.invalidateQueries({
-          queryKey: contactKeys.byCompany(response.data.companyId)
-        });
-      }
-      if (response.message) toast.success(response.message);
-    },
-    onError: (error: any) => {
-      console.error('Create contact error:', error);
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateContactInput }) =>
-      contactService.update(id, data),
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: contactKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: contactKeys.detail(response.data.id) });
-      if (response.data.companyId) {
-        queryClient.invalidateQueries({
-          queryKey: contactKeys.byCompany(response.data.companyId)
-        });
-      }
-      if (response.message) toast.success(response.message);
-    },
-    onError: (error: any) => {
-      console.error('Update contact error:', error);
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: number) => contactService.delete(id),
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: contactKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: contactKeys.all });
-      if (response.message) toast.success(response.message);
-    },
-    onError: (error: any) => {
-      console.error('Delete contact error:', error);
-    },
-  });
-
-  const toggleMutation = useMutation({
-    mutationFn: ({ id, active }: { id: number; active: boolean }) =>
-      contactService.toggleActive(id, active),
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: contactKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: contactKeys.detail(response.data.id) });
-      if (response.data.companyId) {
-        queryClient.invalidateQueries({
-          queryKey: contactKeys.byCompany(response.data.companyId)
-        });
-      }
-      if (response.message) toast.success(response.message);
-    },
-    onError: (error: any) => {
-      console.error('Toggle contact error:', error);
-    },
-  });
-
-  const setPrimaryMutation = useMutation({
-    mutationFn: (id: number) => contactService.setPrimary(id),
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: contactKeys.lists() });
-      if (response.data.companyId) {
-        queryClient.invalidateQueries({
-          queryKey: contactKeys.byCompany(response.data.companyId)
-        });
-        queryClient.invalidateQueries({
-          queryKey: contactKeys.primaryByCompany(response.data.companyId)
-        });
-      }
-      if (response.message) toast.success(response.message);
-    },
-    onError: (error: any) => {
-      console.error('Set primary contact error:', error);
-    },
-  });
+  const runAction = <T>(action: () => Promise<T>) =>
+    new Promise<T>((resolve, reject) => {
+      startTransition(() => {
+        action().then(resolve).catch(reject);
+      });
+    });
 
   return {
     createContact: async (data: CreateContactInput) => {
-      const response = await createMutation.mutateAsync(data);
+      const response = await runAction(() => createContactAction(data));
+      if (response.message) toast.success(response.message);
       return response.data;
     },
+
     updateContact: async (id: number, data: UpdateContactInput) => {
-      const response = await updateMutation.mutateAsync({ id, data });
+      const response = await runAction(() => updateContactAction(id, data));
+      if (response.message) toast.success(response.message);
       return response.data;
     },
+
     deleteContact: async (id: number) => {
-      await deleteMutation.mutateAsync(id);
+      const response = await runAction(() => deleteContactAction(id));
+      if (response.success) toast.success("Contatto eliminato");
+      else toast.error(response.message ?? "Errore durante eliminazione contatto");
     },
+
     toggleActive: async (id: number, active: boolean) => {
-      const response = await toggleMutation.mutateAsync({ id, active });
-      return response.data;
+      const response = await runAction(() => toggleContactActiveAction(id, active));
+      if (response.success) toast.success("Stato modificato");
     },
-    setPrimary: async (id: number) => {
-      const response = await setPrimaryMutation.mutateAsync(id);
-      return response.data;
-    },
-    isCreating: createMutation.isPending,
-    isUpdating: updateMutation.isPending,
-    isDeleting: deleteMutation.isPending,
-    isToggling: toggleMutation.isPending,
+
+    isPending: isPending,
   };
 }
 
 // ============================================================================
-// HOOK: useContactExport
+// HOOK: useContactExport ----- TODO
 // ============================================================================
 
 export function useContactExport() {
@@ -303,39 +251,39 @@ export function useContactExport() {
     setIsExporting(true);
     try {
       const blob = await contactService.exportCSV(params);
-      const filename = `contacts_${new Date().toISOString().split('T')[0]}.csv`;
+      const filename = `contacts_${new Date().toISOString().split("T")[0]}.csv`;
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.success('Export CSV completato con successo');
+      toast.success("Export CSV completato con successo");
     } catch (error: any) {
-      console.error('Export CSV error:', error);
+      console.error("Export CSV error:", error);
     } finally {
       setIsExporting(false);
     }
   };
 
-  const exportExcel = async (params: ContactQueryInput) : Promise<void> => {
+  const exportExcel = async (params: ContactQueryInput): Promise<void> => {
     setIsExporting(true);
     try {
       const blob = await contactService.exportExcel(params);
-      const filename = `contacts_${new Date().toISOString().split('T')[0]}.xlsx`;
+      const filename = `contacts_${new Date().toISOString().split("T")[0]}.xlsx`;
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.success('Export Excel completato con successo');
+      toast.success("Export Excel completato con successo");
     } catch (error: any) {
-      console.error('Export Excel error:', error);
+      console.error("Export Excel error:", error);
     } finally {
       setIsExporting(false);
     }
@@ -359,7 +307,7 @@ export function useContactBulkOperations() {
       queryClient.invalidateQueries({ queryKey: contactKeys.lists() });
       if (response.message) toast.success(response.message);
     } catch (error: any) {
-      console.error('Bulk activate error:', error);
+      console.error("Bulk activate error:", error);
     } finally {
       setIsProcessing(false);
     }
@@ -372,7 +320,7 @@ export function useContactBulkOperations() {
       queryClient.invalidateQueries({ queryKey: contactKeys.lists() });
       if (response.message) toast.success(response.message);
     } catch (error: any) {
-      console.error('Bulk deactivate error:', error);
+      console.error("Bulk deactivate error:", error);
     } finally {
       setIsProcessing(false);
     }
@@ -385,7 +333,7 @@ export function useContactBulkOperations() {
       queryClient.invalidateQueries({ queryKey: contactKeys.lists() });
       if (response.message) toast.success(response.message);
     } catch (error: any) {
-      console.error('Bulk delete error:', error);
+      console.error("Bulk delete error:", error);
     } finally {
       setIsProcessing(false);
     }
@@ -404,13 +352,13 @@ export function useContactValidation() {
   const validateEmailUnique = async (
     email: string,
     companyId: number,
-    contactId?: number
+    contactId?: number,
   ): Promise<boolean> => {
     setIsValidating(true);
     try {
       return await contactService.checkEmailUnique(email, companyId, contactId);
     } catch (error) {
-      console.error('Email validation error:', error);
+      console.error("Email validation error:", error);
       return false;
     } finally {
       setIsValidating(false);

@@ -5,7 +5,7 @@ import { ServerApiError } from "@/types/server-client";
 import { UserForm } from "@/components/users/user-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { getAllRoles } from "@/services/server/role";
+import { getAllRoles } from "@/services/server/role-service";
 import { getAllLanguages } from "@/services/server/language";
 
 export default async function NewUserPage() {

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import type { ContactFilters as ContactFiltersType } from '@/types/contact';
+import type { ContactFilters as ContactFiltersType } from '@/types/contact-types';
 
 interface ContactFiltersProps {
   filters: ContactFiltersType;

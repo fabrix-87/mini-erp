@@ -10,13 +10,10 @@ import {
   updateCustomerCompany,
   updateCustomer,
   createCustomer,
-  getAllCustomers,
 } from "@/services/server/customer-service";
-import { CustomerListApiResponse } from "@/types/customer-types";
 import {
   CreateCustomerInput,
   Customer,
-  CustomerQueryInput,
   UpdateCustomerCompanyInput,
   UpdateCustomerInput,
 } from "@mini-erp/shared";
@@ -36,17 +33,6 @@ export async function searchCustomerAction(
       limit: options?.limit ?? 10,
       revalidate: 30,
     });
-  }, "customer:read");
-}
-
-/**
- * Search customers by filters
- */
-export async function getAllCustomersAction(
-  params: CustomerQueryInput,
-): Promise<ActionResult<CustomerListApiResponse>> {
-  return withAuth(async () => {
-    return await getAllCustomers(params, 30);
   }, "customer:read");
 }
 

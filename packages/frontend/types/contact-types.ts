@@ -4,7 +4,7 @@
 // ============================================================================
 
 import { Contact, CreateContactInput, UpdateContactInput } from "@mini-erp/shared/types";
-import { PaginationInfo } from "./api";
+import { ApiResponse, PaginatedResponse, PaginationInfo } from "./api";
 import { ContactSortField, SortOrder } from "@mini-erp/shared/constants";
 
 export type {
@@ -16,6 +16,15 @@ export type {
 } from "@mini-erp/shared/types";
 
 export type { ContactSortField } from "@mini-erp/shared/constants";
+
+// ============================================================================
+// RESPONSE TYPES
+// ============================================================================
+
+export type ContactListApiResponse = PaginatedResponse<Contact>;
+export interface ContactSingleApiResponse extends ApiResponse<Contact> {}
+export interface ContactOperationApiResponse extends ApiResponse<Contact> {}
+export interface ContactDeleteApiResponse extends ApiResponse<null> {}
 
 /**
  * Company info minima per Contact
@@ -451,7 +460,7 @@ export type ContactData = Omit<Contact, "id" | "createdAt" | "updatedAt">;
  * Contatto con campi required
  */
 export type RequiredContact = Required<
-  Pick<Contact, "firstName" | "lastName" | "email" | "companyId">
+  Pick<Contact, "firstName" | "lastName" | "email">
 >;
 
 /**

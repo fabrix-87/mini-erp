@@ -8,7 +8,7 @@ import {
   useContactMutations,
   useContactValidation,
 } from "@/hooks/use-contact";
-import type { CreateContactInput, UpdateContactInput } from "@/types/contact";
+import type { CreateContactInput, UpdateContactInput } from "@/types/contact-types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

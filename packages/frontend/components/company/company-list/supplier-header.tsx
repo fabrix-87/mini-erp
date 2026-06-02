@@ -68,15 +68,12 @@ export default function SupplierHeaderListPage({
 
         <Select
           value={searchParams.minRating?.toString()}
-          onValueChange={(value) =>
-            handleFilterChange("minRating", parseInt(value))
-          }
-        >
+          onValueChange={(value) => handleFilterChange("minRating", value)}>
           <SelectTrigger className="w-45">
             <SelectValue placeholder="Rating minimo" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="0">Tutti</SelectItem>
+            <SelectItem value="all">Tutti</SelectItem>
             <SelectItem value="1">⭐ 1+</SelectItem>
             <SelectItem value="2">⭐⭐ 2+</SelectItem>
             <SelectItem value="3">⭐⭐⭐ 3+</SelectItem>

@@ -4,8 +4,9 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Eye, Edit, Trash2, UserCheck, UserX, Star, Mail, Phone, Building2 } from 'lucide-react';
-import type { Contact } from '@/types/contact';
+import { Eye, Edit, Trash2, UserCheck, UserX, Star, Mail, Phone, Building2, Smartphone, CalendarPlus } from 'lucide-react';
+import type { Contact } from '@/types/contact-types';
+import { toDateInput } from '@/helpers/date-helper';
 
 interface ContactTableRowProps {
   contact: Contact;
@@ -15,7 +16,6 @@ interface ContactTableRowProps {
   onEdit: () => void;
   onDelete: () => void;
   onToggleActive: () => void;
-  onSetPrimary: () => void;
 }
 
 export default function ContactTableRow({
@@ -26,7 +26,6 @@ export default function ContactTableRow({
   onEdit,
   onDelete,
   onToggleActive,
-  onSetPrimary,
 }: ContactTableRowProps) {
   return (
     <TableRow>
@@ -42,12 +41,6 @@ export default function ContactTableRow({
             <div className="font-medium">
               {contact.firstName} {contact.lastName}
             </div>
-            {contact.isPrimaryContact && (
-              <div className="flex items-center gap-1 text-xs text-yellow-600">
-                <Star className="w-3 h-3 fill-current" />
-                Primario
-              </div>
-            )}
           </div>
         </div>
       </TableCell>
@@ -66,20 +59,31 @@ export default function ContactTableRow({
         )}
       </TableCell>
       <TableCell>
-        {contact.company && (
+        {contact.companies.length == 0 ? "Nessuna Azienda" : (
           <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4 text-gray-400" />
-            <span className="text-sm">{contact.company.companyName}</span>
+            <span className="text-sm">{contact.companies[0].company.companyName}</span>
           </div>
         )}
       </TableCell>
       <TableCell>
-        <span className="text-sm">{contact.position}</span>
+        {contact.mobilePhone && (
+          <div className="flex items-center gap-2">
+            <Smartphone className="w-4 h-4 text-gray-400" />
+            <span className="text-sm">{contact.mobilePhone}</span>
+          </div>
+        )}
       </TableCell>
       <TableCell>
         <Badge variant={contact.active ? 'default' : 'secondary'}>
           {contact.active ? 'Attivo' : 'Inattivo'}
         </Badge>
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <CalendarPlus className="w-4 h-4 text-gray-400" />
+          <span className="text-sm">{toDateInput(contact.createdAt)}</span>
+        </div>
       </TableCell>
       <TableCell>
         <div className="flex items-center justify-end gap-1">
@@ -97,16 +101,6 @@ export default function ContactTableRow({
           >
             {contact.active ? <UserX className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
           </Button>
-          {!contact.isPrimaryContact && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onSetPrimary}
-              title="Imposta come primario"
-            >
-              <Star className="w-4 h-4" />
-            </Button>
-          )}
           <Button
             variant="ghost"
             size="icon"

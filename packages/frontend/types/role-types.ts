@@ -12,6 +12,7 @@ import {
   SortOrder,
   UpdatePermissionInput,
   UpdateRoleInput,
+  PaginatedResponse,
 } from "@mini-erp/shared";
 
 export type RoleFilters = Omit<RoleQueryInput, "page" | "limit">;
@@ -21,12 +22,12 @@ export type PermissionFilters = Omit<PermissionQueryInput, "page" | "limit">;
 // RESPONSE TYPES
 // ============================================================================
 
-export interface RoleListApiResponse extends ApiResponse<Role[]> {}
+export type RoleListApiResponse = PaginatedResponse<Role>;
 export interface RoleSingleApiResponse extends ApiResponse<Role> {}
 export interface RoleDeleteApiResponse extends ApiResponse<null> {}
 export interface AssignRemovePermissionsResponse extends ApiResponse<{ permissionIds: number[] }> {}
 
-export interface PermissionListApiResponse extends ApiResponse<Permission[]> {}
+export type PermissionListApiResponse = PaginatedResponse<Permission>;
 export interface PermissionSingleApiResponse extends ApiResponse<Permission> {}
 export interface PermissionDeleteApiResponse extends ApiResponse<null> {}
 

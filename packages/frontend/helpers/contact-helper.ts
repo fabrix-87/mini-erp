@@ -1,4 +1,4 @@
-import type { Contact } from '@/types/contact';
+import type { Contact } from '@/types/contact-types';
 
 /**
  * Formatta nome completo

@@ -1,42 +1,28 @@
-import { dehydrate, QueryClient } from '@tanstack/react-query';
-import { HydrationBoundary } from '@/providers/hydration-boundary';
-import ContactListPage from '@/components/contact/contact-list';
-import { getAllContacts } from '@/services/server/contact';
-import { contactKeys } from '@/hooks/contact-keys';
-import { ContactQueryInput, ContactSortField } from '@/types/contact';
-import { SortOrder } from '@mini-erp/shared/constants';
+import { dehydrate, QueryClient } from "@tanstack/react-query";
+import { HydrationBoundary } from "@/providers/hydration-boundary";
+import ContactListPage from "@/components/contact/contact-list";
+import { getAllContacts } from "@/services/server/contact-service";
+import { contactKeys } from "@/hooks/contact-keys";
+import { ContactQueryInput, ContactSortField } from "@/types/contact-types";
+import { SortOrder } from "@mini-erp/shared/constants";
+import { contactQuerySchema } from "@mini-erp/shared";
+import { requirePermission } from "@/lib/server/auth";
+import { notFound } from "next/navigation";
 
 interface ContactsPageProps {
   searchParams: Promise<ContactQueryInput>;
 }
 
 export default async function ContactsPage({ searchParams }: ContactsPageProps) {
-  const queryClient = new QueryClient();
-  
-  const resolvedSearchParams = await searchParams;
+  await requirePermission("contact:read");
 
-  const params: ContactQueryInput = {
-    page: resolvedSearchParams.page || 1,
-    limit: resolvedSearchParams.limit || 20,
-    search: resolvedSearchParams.search,
-    sortBy: (resolvedSearchParams.sortBy as ContactSortField) || 'firstName',
-    sortOrder: (resolvedSearchParams.sortOrder as SortOrder) || 'asc',
-    companyId: resolvedSearchParams.companyId,
-    active: resolvedSearchParams.active,
-    isPrimaryContact: resolvedSearchParams.isPrimaryContact,
-    department: resolvedSearchParams.department,
-    position: resolvedSearchParams.position,
-  };
+  const params: ContactQueryInput = contactQuerySchema.parse(await searchParams);
 
-  // Prefetch usando contact-services
-  await queryClient.prefetchQuery({
-    queryKey: contactKeys.list(params),
-    queryFn: () => getAllContacts(params),
-  });
+  const result = await getAllContacts(params);
 
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <ContactListPage />
-    </HydrationBoundary>
-  );
+  if (result.status !== "success" || !result.data) {
+    notFound();
+  }
+
+  return <ContactListPage params={params} data={result} />;
 }

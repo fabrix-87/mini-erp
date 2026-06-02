@@ -33,6 +33,7 @@ import { Customer } from "@/types/customer-types";
 import { Supplier } from "@/types/supplier-types";
 import { CompanyType } from "@/types/company-types";
 import { id } from "date-fns/locale";
+import { formatCurrency } from "@mini-erp/shared";
 
 interface CompanyListTableProps {
   data: (Customer | Supplier)[];
@@ -53,15 +54,10 @@ export function CompanyListTable({
 }: CompanyListTableProps) {
   const router = useRouter();
 
-  const formatCurrency = (value: string | number) => {
-    const num = typeof value === "string" ? parseFloat(value) : value;
-    return new Intl.NumberFormat("it-IT", {
-      style: "currency",
-      currency: "EUR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(num);
-  };
+  console.log(data);
+  if(!data){
+    return "ERRORE!!!!";
+  }
 
   const handleView = (id: number) => {
     const path = type === "CUSTOMER" ? "customers" : "suppliers";
@@ -103,7 +99,7 @@ export function CompanyListTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[250px]">
+              <TableHead className="w-62.5">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -128,7 +124,7 @@ export function CompanyListTable({
                 </>
               )}
               <TableHead>Stato</TableHead>
-              <TableHead className="text-right w-[150px]">Azioni</TableHead>
+              <TableHead className="text-right w-37.5">Azioni</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -167,7 +163,7 @@ export function CompanyListTable({
                   <TableCell>
                     <div className="text-sm space-y-1">
                       {company?.mainEmail && (
-                        <p className="truncate max-w-[200px]">
+                        <p className="truncate max-w-50">
                           {company.mainEmail}
                         </p>
                       )}
@@ -191,7 +187,7 @@ export function CompanyListTable({
                         </div>
                       </TableCell>
                       <TableCell className="text-right font-medium">
-                        {formatCurrency((item as Customer).totalRevenue)}
+                        {formatCurrency((item as Customer).totalRevenue.toString())}
                       </TableCell>
                     </>
                   )}
@@ -208,7 +204,7 @@ export function CompanyListTable({
                         </div>
                       </TableCell>
                       <TableCell className="text-right font-medium">
-                        {formatCurrency((item as Supplier).totalSpent)}
+                        {formatCurrency((item as Supplier).totalSpent.toString())}
                       </TableCell>
                     </>
                   )}

@@ -92,3 +92,5 @@ packages/*/.next/
 comandi_utili.md
 TODO_list.md
 .env
+.claude/
+.continue/

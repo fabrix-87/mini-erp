@@ -2,7 +2,7 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { Contact, ContactSortField } from '@/types/contact';
+import type { Contact, ContactSortField } from '@/types/contact-types';
 import ContactTableRow from './table-row';
 import { SortOrder } from '@mini-erp/shared';
 
@@ -18,7 +18,6 @@ interface ContactTableProps {
   onEdit: (id: number) => void;
   onDelete: (id: number) => Promise<void>;
   onToggleActive: (id: number, currentActive: boolean) => Promise<void>;
-  onSetPrimary: (id: number) => Promise<void>;
 }
 
 export default function ContactTable({
@@ -33,7 +32,6 @@ export default function ContactTable({
   onEdit,
   onDelete,
   onToggleActive,
-  onSetPrimary,
 }: ContactTableProps) {
   const SortableHeader = ({ field, children }: { field: ContactSortField; children: React.ReactNode }) => (
     <TableHead
@@ -64,8 +62,9 @@ export default function ContactTable({
             <SortableHeader field="email">Email</SortableHeader>
             <TableHead>Telefono</TableHead>
             <TableHead>Azienda</TableHead>
-            <SortableHeader field="position">Posizione</SortableHeader>
+            <TableHead>Cellulare</TableHead>
             <TableHead>Stato</TableHead>
+            <TableHead>Data creazione</TableHead>
             <TableHead className="text-right">Azioni</TableHead>
           </TableRow>
         </TableHeader>
@@ -93,7 +92,6 @@ export default function ContactTable({
                 onEdit={() => onEdit(contact.id)}
                 onDelete={() => onDelete(contact.id)}
                 onToggleActive={() => onToggleActive(contact.id, contact.active)}
-                onSetPrimary={() => onSetPrimary(contact.id)}
               />
             ))
           )}

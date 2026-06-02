@@ -8,7 +8,7 @@ import {
   deleteRole,
   removePermissions,
   updateRole,
-} from "@/services/server/role";
+} from "@/services/server/role-service";
 import { redirect } from "next/navigation";
 import type { CreateRoleInput, Role, UpdateRoleInput } from "@mini-erp/shared";
 import { type ActionResult, withAuth } from "@/lib/server/action";
@@ -37,13 +37,12 @@ export async function updateRoleAction(
 }
 
 export async function deleteRoleAction(id: number): Promise<ActionResult> {
-  const result = await withAuth(async () => {
-    const response = await deleteRole(id); 
+  await withAuth(async () => {
+    const response = await deleteRole(id);
     roleRevalidation.list();
     return response;
   }, "role:delete");
-  if (result.success) redirect("/settings/roles");
-  return result;
+  return { success: true };
 }
 
 export async function assignPermissionsAction(

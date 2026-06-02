@@ -18,6 +18,7 @@ import {
 import { Plus, FileText, Eye, Calendar } from "lucide-react";
 import { CompanyType } from "@/types/company-types";
 import { getDocuments } from "@/lib/client/modules/document";
+import { formatCurrency } from "@mini-erp/shared";
 
 interface CompanyDocumentsTabProps {
   companyId: number;
@@ -43,14 +44,6 @@ export function CompanyDocumentsTab({
   });
 
   const documents = data?.data || [];
-
-  const formatCurrency = (value: string | number) => {
-    const num = typeof value === "string" ? parseFloat(value) : value;
-    return new Intl.NumberFormat("it-IT", {
-      style: "currency",
-      currency: "EUR",
-    }).format(num);
-  };
 
   const formatDate = (date: string) => {
     return new Intl.DateTimeFormat("it-IT", {

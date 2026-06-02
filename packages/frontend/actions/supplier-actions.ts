@@ -44,17 +44,6 @@ export async function searchSupplierAction(
 }
 
 /**
- * Get all suppliers filtered by params
- */
-export async function getAllSuppliersAction(
-  params: SupplierQueryInput,
-): Promise<ActionResult> {
-  return withAuth(async () => {
-    return await getAllSuppliers(params, 30);
-  }, "supplier:read");
-}
-
-/**
  * Get supplier by ID
  */
 export async function getSupplierByIdAction(id: number): Promise<ActionResult<Supplier>> {

@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { createIdSchema } from "./primitives/id";
 import { emailSchema, phoneSchema } from "./primitives/string";
-import { queryBooleanSchema } from "./query/params";
-import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
+import { queryBooleanOrAllSchema, queryEnumOrAllSchema } from "./query/params";
+import { limitSchema, pageSchema, querySortOrderSchema } from "./query/pagination";
 
 // ============================================================================
 // SORT
@@ -125,15 +125,15 @@ export const contactIdSchema = z.object({
  */
 export const contactQuerySchema = z.object({
   companyId: createIdSchema("Company ID non valido").optional(),
-  active: queryBooleanSchema,
-  isPrimaryContact: queryBooleanSchema,
+  active: queryBooleanOrAllSchema(),
+  isPrimaryContact: queryBooleanOrAllSchema(),
   search: z.string().trim().optional(),
   department: z.string().trim().optional(),
   position: z.string().trim().optional(),
   page: pageSchema,
   limit: limitSchema,
-  sortBy: contactSortFieldSchema.optional(),
-  sortOrder: sortOrderSchema,
+  sortBy: queryEnumOrAllSchema(contactSortFieldSchema.options),
+  sortOrder: querySortOrderSchema(),
 });
 
 /**

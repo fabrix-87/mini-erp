@@ -36,20 +36,6 @@ export const parseDocumentNumber = (
 };
 
 /**
- * Format currency amount
- */
-export const formatCurrency = (
-  amount: number,
-  currency: string = "EUR",
-  locale: string = "it-IT",
-): string => {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-  }).format(amount);
-};
-
-/**
  * Calculate days until due date
  */
 export const getDaysUntilDue = (dueDate: Date | string): number => {

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Plus, Mail, Phone, Star, Edit, Eye } from "lucide-react";
 import contactService from "@/services/client/contact";
-import { Contact } from "@/types/contact";
+import { Contact } from "@/types/contact-types";
 
 interface CompanyContactsTabProps {
   companyId: number;

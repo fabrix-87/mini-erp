@@ -33,7 +33,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-  ],
+, "../shared/src/utils/currency.utils.ts"  ],
   "exclude": [
     "node_modules"
   ]

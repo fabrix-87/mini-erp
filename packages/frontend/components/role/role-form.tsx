@@ -30,14 +30,14 @@ import {
   useRole,
   useRoleMutations,
 } from "@/hooks/use-role";
-import { createRoleAction, updateRoleAction } from "@/actions/role";
+import { createRoleAction, updateRoleAction } from "@/actions/role-actions";
 import {
   createPermissionAction,
   deletePermissionAction,
   updatePermissionAction,
 } from "@/actions/permission";
 import { CreateRoleInput, Permission, UpdateRoleInput } from "@mini-erp/shared";
-import { PermissionDialogState, RoleFormProps, RoleFormValues } from "@/types/role";
+import { PermissionDialogState, RoleFormProps, RoleFormValues } from "@/types/role-types";
 import { PermissionDialog } from "./role-form/permission-dialog";
 
 // ============================================================================

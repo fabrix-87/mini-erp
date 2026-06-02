@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Edit,
@@ -39,10 +39,10 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { usePermissionMutations, usePermissions, useRole } from "@/hooks/use-role";
-import { deleteRoleAction } from "@/actions/role";
+import { deleteRoleAction } from "@/actions/role-actions";
 import { Permission } from "@mini-erp/shared";
 import { formatDate } from "@/utils/format";
-import { RoleDetailProps } from "@/types/role";
+import { RoleDetailProps } from "@/types/role-types";
 import DeleteDialog from "../dialog/delete-dialog";
 
 // ============================================================================
@@ -118,7 +118,10 @@ export default function RoleDetailPage({ roleId }: RoleDetailProps) {
   // ── Delete role ────────────────────────────────────────────────────────────
   const handleDelete = async () => {
     setIsDeleting(true);
-    await deleteRoleAction(roleId); // redirects internally
+    const result = await deleteRoleAction(roleId); // redirects internally
+    if (result.success) {
+      redirect('/settings/roles')
+    }
   };
 
   // ── Grouped permissions for detail view ───────────────────────────────────
@@ -421,7 +424,7 @@ export default function RoleDetailPage({ roleId }: RoleDetailProps) {
       >
         Sei sicuro di voler eliminare il ruolo <strong>{role.name}</strong>? Questa operazione non
         può essere annullata e rimuoverà il ruolo da tutti gli utenti associati.
-      </DeleteDialog>      
+      </DeleteDialog>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import {
   validateUpdateContact,
   validateCheckEmail,
   validateCompanyId,
+  validateToggleContactActive,
 } from '../validators/contact-validator';
 import {
   getAllContacts,
@@ -132,6 +133,7 @@ contactRoutes.patch(
   authenticateToken,
   authorize(['contact:update', 'contact:manage']),
   validateContactId,
+  validateToggleContactActive,
   toggleContactActive
 );
 

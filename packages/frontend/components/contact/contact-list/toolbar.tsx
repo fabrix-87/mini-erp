@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Search, Filter, Download } from "lucide-react";
+import { Plus, Search, Filter, Download, BrushCleaning } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ContactQueryInput } from "@mini-erp/shared";
@@ -10,6 +10,7 @@ interface ContactToolbarProps {
   onSearch: (search: string) => void;
   onToggleFilters: () => void;
   onNewContact: () => void;
+  onReset: () => void;
   onExport: (params: ContactQueryInput) => Promise<void>;
   isExporting: boolean;
   showFilters: boolean;
@@ -22,10 +23,11 @@ export default function ContactToolbar({
   onToggleFilters,
   onNewContact,
   onExport,
+  onReset,
   isExporting,
   showFilters,
   initialSearch,
-  params
+  params,
 }: ContactToolbarProps) {
   const [searchTerm, setSearchTerm] = useState(initialSearch);
 
@@ -62,6 +64,9 @@ export default function ContactToolbar({
         <Button variant="outline" onClick={() => onExport(params)} disabled={isExporting}>
           <Download className="w-4 h-4 mr-2" />
           Export
+        </Button>
+        <Button  variant="destructive" onClick={() => onReset()} title="Resetta filtri">
+          <BrushCleaning className="w-4 h-4" />
         </Button>
       </div>
     </div>

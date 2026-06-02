@@ -44,6 +44,12 @@ export interface UpdateURLOptions {
    * Default: "page"
    */
   pageParam?: string;
+
+  /**
+   * Reset the page params.
+   * Default: false
+   */
+  clearAll?: boolean;
 }
 
 // ============================================================================
@@ -209,12 +215,12 @@ export function useUpdateURL(basePath?: string) {
       }
 
       // -- Navigation logic -----------------------------------------------
-      const { replace = false, scroll = false, resetPage = false, pageParam = "page" } = options;
+      const { replace = false, scroll = false, resetPage = false, pageParam = "page", clearAll = false } = options;
 
       const finalUpdates: URLParamsRecord =
         resetPage && !(pageParam in updates) ? { ...updates, [pageParam]: null } : updates;
 
-      const qs = mergeSearchParams(searchParams, finalUpdates);
+      const qs = clearAll ? "" : mergeSearchParams(searchParams, finalUpdates);
       const targetUrl = qs ? `${path}?${qs}` : path;
 
       if (replace) {

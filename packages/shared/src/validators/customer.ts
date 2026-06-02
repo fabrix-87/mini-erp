@@ -10,7 +10,7 @@ import {
   companyQueryBaseSchema,
   updateCompanySchema,
 } from "./company";
-import { queryBooleanSchema } from "./query/params";
+import { queryBooleanSchema, queryEnumOrAllSchema } from "./query/params";
 import { createIdSchema } from "./primitives/id";
 import { creditLimitSchema } from "./business/currency";
 
@@ -98,9 +98,9 @@ export const updateCustomerCompanySchema = updateCompanySchema;
  */
 export const customerQuerySchema = companyQueryBaseSchema.extend({
   // Filtri Customer-specific
-  type: customerTypeSchema.optional(),
-  priority: customerPrioritySchema.optional(),
-  segment: customerSegmentSchema.optional(),
+  type: queryEnumOrAllSchema(customerTypeSchema.options),
+  priority: queryEnumOrAllSchema(customerPrioritySchema.options),
+  segment: queryEnumOrAllSchema(customerSegmentSchema.options),
   creditStatus: creditCheckStatusSchema.optional(),
   size: customerSizeSchema.optional(),
 

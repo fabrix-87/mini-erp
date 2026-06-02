@@ -34,7 +34,7 @@ import {
   VALID_TYPES,
 } from "@/types/document";
 import { Company, companyFilters } from "@/types/company-types";
-import { Contact } from "@/types/contact";
+import { Contact } from "@/types/contact-types";
 import { getCompanies } from "@/lib/client/modules/company";
 import { getContactParams, getContacts, searchContacts } from "@/lib/api/modules/contact";
 

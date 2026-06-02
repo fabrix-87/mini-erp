@@ -1,50 +1,34 @@
 // components/contact/contact-list.tsx
 "use client";
 
-import { useState, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
-  useContactsList,
   useContactMutations,
   useContactExport,
   useContactBulkOperations,
 } from "@/hooks/use-contact";
-import type { ContactSortField, ContactQueryInput } from "@/types/contact";
+import type { ContactSortField, ContactQueryInput, ContactListApiResponse } from "@/types/contact-types";
 import ContactToolbar from "./contact-list/toolbar";
 import ContactFilters from "./contact-list/filters";
 import ContactBulkActions from "./contact-list/bulk-actions";
 import ContactTable from "./contact-list/table";
-import { SortOrder } from "@mini-erp/shared/constants";
 import { DataPagination } from "../ui/data-pagination";
-import { mergeSearchParams } from "@/lib/utils/url";
+import { useUpdateURL } from "@/hooks/use-update-url";
 
-export default function ContactListPage() {
+interface Props {
+  data: ContactListApiResponse;
+  params: ContactQueryInput;
+}
+
+export default function ContactListPage({ data, params }: Props) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  // Memoizza params per evitare re-render
-  const params = useMemo((): ContactQueryInput => {
-    return {
-      page: Number(searchParams.get("page")) || 1,
-      limit: Number(searchParams.get("limit")) || 20,
-      search: searchParams.get("search") || undefined,
-      sortBy: (searchParams.get("sortBy") as ContactSortField) || "firstName",
-      sortOrder: (searchParams.get("sortOrder") as SortOrder) || "asc",
-      companyId: searchParams.get("companyId") ? Number(searchParams.get("companyId")) : undefined,
-      active: searchParams.get("active") ? searchParams.get("active") === "true" : undefined,
-      isPrimaryContact: searchParams.get("isPrimaryContact")
-        ? searchParams.get("isPrimaryContact") === "true"
-        : undefined,
-      department: searchParams.get("department") || undefined,
-      position: searchParams.get("position") || undefined,
-    };
-  }, [searchParams]);
 
   // Hook semplice per la lista (si sincronizza con SSR)
-  const { contacts, loading, pagination, refetch } = useContactsList(params);
+  const { data: contacts, pagination } = data;
 
   // Hook per mutazioni
-  const { deleteContact, toggleActive, setPrimary } = useContactMutations();
+  const { deleteContact, toggleActive, isPending } = useContactMutations();
   const { exportCSV, exportExcel, isExporting } = useContactExport();
   const { bulkDelete, bulkActivate, bulkDeactivate, isProcessing } = useContactBulkOperations();
 
@@ -66,9 +50,10 @@ export default function ContactListPage() {
     position: params.position,
   };
 
-  const updateURL = (newParams: Partial<ContactQueryInput>) => {
-    const qs = mergeSearchParams(params, newParams);
-    router.push(`/contacts?${qs}`, { scroll: false });
+  const updateURL = useUpdateURL("/contacts");
+
+  const handleResetFilters = () => {
+    updateURL({}, { replace: true, clearAll: true });
   };
 
   const handleSearch = (searchTerm: string) => {
@@ -101,6 +86,7 @@ export default function ContactListPage() {
         onSearch={handleSearch}
         onToggleFilters={() => setShowFilters(!showFilters)}
         onNewContact={() => router.push("/contacts/new")}
+        onReset={handleResetFilters}
         onExport={exportExcel}
         isExporting={isExporting}
         showFilters={showFilters}
@@ -115,24 +101,21 @@ export default function ContactListPage() {
         onActivate={async () => {
           await bulkActivate(selectedIds);
           setSelectedIds([]);
-          await refetch();
         }}
         onDeactivate={async () => {
           await bulkDeactivate(selectedIds);
           setSelectedIds([]);
-          await refetch();
         }}
         onDelete={async () => {
           await bulkDelete(selectedIds);
           setSelectedIds([]);
-          await refetch();
         }}
         isProcessing={isProcessing}
       />
 
       <ContactTable
         contacts={contacts}
-        loading={loading}
+        loading={isPending}
         selectedIds={selectedIds}
         onSelectAll={(checked) => setSelectedIds(checked ? contacts.map((c) => c.id) : [])}
         onSelectOne={(id, checked) => {
@@ -145,16 +128,10 @@ export default function ContactListPage() {
         onDelete={async (id) => {
           if (confirm("Sei sicuro di voler eliminare questo contatto?")) {
             await deleteContact(id);
-            await refetch();
           }
         }}
         onToggleActive={async (id, active) => {
           await toggleActive(id, !active);
-          await refetch();
-        }}
-        onSetPrimary={async (id) => {
-          await setPrimary(id);
-          await refetch();
         }}
       />
 

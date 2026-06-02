@@ -1,12 +1,11 @@
 // services/server/role.ts
 import { serverApi } from "@/lib/server/api";
-import { buildQueryString } from "@/helpers/role-helper";
 import type { ApiResponse } from "@/types/api";
 import type {
   AssignRemovePermissionsResponse,
   RoleListApiResponse,
   RoleSingleApiResponse,
-} from "@/types/role";
+} from "@/types/role-types";
 import type { CreateRoleInput, UpdateRoleInput, RoleQueryInput, Role } from "@mini-erp/shared";
 
 // ============================================================================

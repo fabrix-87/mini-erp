@@ -4,23 +4,15 @@
 import api from '@/lib/client/api';
 import type { ApiResponse, PaginationInfo } from '@/types/api';
 import type {
-  Contact,
   CreateContactInput,
   UpdateContactInput,
   ContactQueryInput,
-} from '@/types/contact';
+  ContactListApiResponse,
+  ContactSingleApiResponse,
+  ContactOperationApiResponse,
+  ContactDeleteApiResponse,
+} from '@/types/contact-types';
 
-// ============================================================================
-// RESPONSE TYPES
-// ============================================================================
-
-interface ContactListApiResponse extends ApiResponse<Contact[]> {}
-
-interface ContactSingleApiResponse extends ApiResponse<Contact> {}
-
-interface ContactOperationApiResponse extends ApiResponse<Contact> {}
-
-interface ContactDeleteApiResponse extends ApiResponse<null> {}
 
 // ============================================================================
 // QUERY BUILDER

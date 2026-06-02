@@ -1,7 +1,7 @@
 // services/server/permission.ts
 import { serverApi } from "@/lib/server/api";
 import type { ApiResponse } from "@/types/api";
-import { PermissionListApiResponse, PermissionSingleApiResponse } from "@/types/role";
+import { PermissionListApiResponse, PermissionSingleApiResponse } from "@/types/role-types";
 import type { CreatePermissionInput, UpdatePermissionInput } from "@mini-erp/shared";
 
 // ============================================================================

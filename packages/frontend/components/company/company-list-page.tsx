@@ -1,7 +1,6 @@
 "use client";
 
 import { CompanyListTable } from "@/components/company/company-list-table";
-import { CompanyType } from "@/types/company-types";
 import { CustomerQueryInput, SupplierQueryInput } from "@mini-erp/shared";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import SupplierHeaderListPage from "./company-list/supplier-header";
@@ -11,11 +10,19 @@ import { SupplierListApiResponse } from "@/types/supplier-types";
 import { useCallback, useState } from "react";
 import { debounce } from "@/lib/utils";
 
-interface Props {
-  paginatedData: CustomerListApiResponse | SupplierListApiResponse;
-  companyType: CompanyType;
-  searchParams: CustomerQueryInput | SupplierQueryInput;
-}
+type CustomerCompanyListPageProps = {
+  companyType: "CUSTOMER";
+  paginatedData: CustomerListApiResponse;
+  searchParams: CustomerQueryInput;
+};
+
+type SupplierCompanyListPageProps = {
+  companyType: "SUPPLIER";
+  paginatedData: SupplierListApiResponse;
+  searchParams: SupplierQueryInput;
+};
+
+type Props = CustomerCompanyListPageProps | SupplierCompanyListPageProps;
 
 export default function CompanyListPage({ searchParams, paginatedData, companyType }: Props) {
   const updateURL = useUpdateURL(`/${companyType.toLowerCase()}s`);

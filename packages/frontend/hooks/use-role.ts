@@ -12,7 +12,7 @@ import {
   UseRoleMutationsReturn,
   UseRoleReturn,
   UseRolesReturn,
-} from "@/types/role";
+} from "@/types/role-types";
 import {
   AssignPermissionsInput,
   CreatePermissionInput,

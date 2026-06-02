@@ -19,17 +19,21 @@ export const queryBooleanSchema = z
     return val === "true";
   });
 
+const normalizeQueryString = (val: string | null | undefined) => {
+  if (val === null || val === undefined) return undefined;
+
+  const trimmed = val.trim();
+  return trimmed === "" ? undefined : trimmed;
+};
+
 /**
- * Base schema factory for numeric query string parameters.
+ * Schema factory for numeric query string parameters.
  * Converts a string to a number, returning `undefined` for empty, `null`, or `undefined` inputs.
  *
  * @param errorMessage - Custom error message when the value cannot be parsed as a number.
- *                       Defaults to `"Valore numerico non valido"`.
- *
  * @example
- * queryNumberSchema().parse("42")        // → 42
- * queryNumberSchema().parse("")          // → undefined
- * queryNumberSchema().parse("abc")       // → ZodError
+ * queryNumberSchema().parse("42")  // → 42
+ * queryNumberSchema().parse("")    // → undefined
  */
 export const queryNumberSchema = (errorMessage = "Valore numerico non valido") =>
   z
@@ -37,12 +41,48 @@ export const queryNumberSchema = (errorMessage = "Valore numerico non valido") =
     .optional()
     .nullable()
     .transform((val, ctx) => {
-      if (val === null || val === undefined || val.trim() === "") return undefined;
-      const n = Number(val);
-      if (isNaN(n)) {
+      const normalized = normalizeQueryString(val);
+      if (normalized === undefined) return undefined;
+
+      const n = Number(normalized);
+      if (Number.isNaN(n)) {
         ctx.addIssue({ code: "custom", message: errorMessage });
         return z.NEVER;
       }
+
+      return n;
+    });
+
+/**
+ * Schema factory for numeric query string parameters that may contain sentinel
+ * values such as `"all"` to represent an empty filter.
+ *
+ * @param errorMessage - Custom error message when the value cannot be parsed as a number.
+ * @param emptyValues - String values treated as empty filters.
+ * @example
+ * queryNumberOrAllSchema().parse("all") // → undefined
+ * queryNumberOrAllSchema().parse("4")   // → 4
+ */
+export const queryNumberOrAllSchema = (
+  errorMessage = "Valore numerico non valido",
+  emptyValues: string[] = ["all"],
+) =>
+  z
+    .string()
+    .optional()
+    .nullable()
+    .transform((val, ctx) => {
+      const normalized = normalizeQueryString(val);
+      if (normalized === undefined || emptyValues.includes(normalized)) {
+        return undefined;
+      }
+
+      const n = Number(normalized);
+      if (Number.isNaN(n)) {
+        ctx.addIssue({ code: "custom", message: errorMessage });
+        return z.NEVER;
+      }
+
       return n;
     });
 
@@ -110,3 +150,109 @@ export const queryNumberRangeSchema = (
     (val) => val === undefined || (val >= min && val <= max),
     { message: messages?.range ?? `Valore deve essere tra ${min} e ${max}` },
   );
+
+/**
+ * Schema factory for enum query string parameters that may contain sentinel
+ * values such as `"all"` to represent an empty filter.
+ *
+ * Converts `null`, `undefined`, empty strings, and configured sentinel values
+ * to `undefined`, then validates the remaining value against the allowed enum values.
+ *
+ * @param values - Allowed string values.
+ * @param emptyValues - String values treated as empty filters.
+ *                      Defaults to `["all"]`.
+ *
+ * @example
+ * queryEnumOrAllSchema(["asc", "desc"]).parse("asc") // → "asc"
+ * queryEnumOrAllSchema(["asc", "desc"]).parse("all") // → undefined
+ * queryEnumOrAllSchema(["asc", "desc"]).parse("")    // → undefined
+ */
+export const queryEnumOrAllSchema = <TValue extends string>(
+  values: readonly TValue[],
+  emptyValues: readonly string[] = ["all"],
+) =>
+  z
+    .string()
+    .optional()
+    .nullable()
+    .transform((val) => {
+      const normalized = normalizeQueryString(val);
+
+      if (normalized === undefined || emptyValues.includes(normalized)) {
+        return undefined;
+      }
+
+      return normalized;
+    })
+    .refine((val) => val === undefined || values.includes(val as TValue), {
+      message: `Value must be one of: ${values.join(", ")}`,
+    })
+    .transform((val) => val as TValue | undefined);
+
+/**
+ * Schema factory for optional enum query string parameters.
+ * Trims the input and converts empty strings, `null`, and `undefined` to `undefined`.
+ * Non-empty values must be included in the provided list.
+ *
+ * @param values - Allowed string values.
+ * @returns A schema that parses an optional enum value.
+ *
+ * @example
+ * queryEnumSchema(["asc", "desc"]).parse("asc") // → "asc"
+ * queryEnumSchema(["asc", "desc"]).parse("")    // → undefined
+ */
+export const queryEnumSchema = <TValue extends string>(values: readonly TValue[]) =>
+  z
+    .string()
+    .optional()
+    .nullable()
+    .transform((val) => {
+      const normalized = normalizeQueryString(val);
+      return normalized;
+    })
+    .refine((val) => val === undefined || values.includes(val as TValue), {
+      message: `Value must be one of: ${values.join(", ")}`,
+    })
+    .transform((val) => val as TValue | undefined);
+
+/**
+ * Schema for boolean query string parameters with support for sentinel values
+ * such as `"all"` to represent an empty filter.
+ *
+ * Accepts `"true"` or `"false"` strings and transforms them to native booleans.
+ * `null`, `undefined`, empty strings, and configured sentinel values are coerced
+ * to `undefined`.
+ *
+ * @param emptyValues - String values treated as empty filters.
+ *                      Defaults to `["all"]`.
+ *
+ * @example
+ * queryBooleanOrAllSchema.parse("true")      // → true
+ * queryBooleanOrAllSchema.parse("false")     // → false
+ * queryBooleanOrAllSchema.parse("all")       // → undefined
+ * queryBooleanOrAllSchema.parse("")          // → undefined
+ * queryBooleanOrAllSchema.parse(undefined)   // → undefined
+ */
+export const queryBooleanOrAllSchema = (emptyValues: readonly string[] = ["all"]) =>
+  z
+    .string()
+    .optional()
+    .nullable()
+    .transform((val) => {
+      if (val === null || val === undefined) return undefined;
+
+      const normalized = val.trim().toLowerCase();
+
+      if (!normalized || emptyValues.includes(normalized)) {
+        return undefined;
+      }
+
+      return normalized;
+    })
+    .refine((val) => val === undefined || val === "true" || val === "false", {
+      message: 'Value must be "true", "false", or an allowed empty sentinel',
+    })
+    .transform((val) => {
+      if (val === undefined) return undefined;
+      return val === "true";
+    });

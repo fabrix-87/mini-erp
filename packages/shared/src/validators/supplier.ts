@@ -6,7 +6,7 @@ import {
   updateCompanySchema,
 } from "./company";
 import { creditLimitSchema } from "./business/currency";
-import { queryBooleanSchema, queryNumberSchema } from "./query/params";
+import { queryBooleanSchema, queryNumberOrAllSchema, queryNumberSchema } from "./query/params";
 import { createIdSchema } from "./primitives";
 
 // ============================================================================
@@ -87,9 +87,11 @@ export const updateSupplierSchema = z
  */
 export const updateSupplierCompanySchema = updateCompanySchema;
 
-export const supplierRatingSchema = z.number().int("Rating deve essere un intero")
-      .min(1, "Rating minimo è 1")
-      .max(5, "Rating massimo è 5");
+export const supplierRatingSchema = z
+  .number()
+  .int("Rating deve essere un intero")
+  .min(1, "Rating minimo è 1")
+  .max(5, "Rating massimo è 5");
 
 /**
  * Schema per aggiornamento Rating con note
@@ -107,21 +109,29 @@ export const updateSupplierRatingSchema = z
  */
 export const supplierQuerySchema = companyQueryBaseSchema.extend({
   // Filtri Supplier-specific
-  minRating: queryNumberSchema("Rating deve essere tra 1 e 5").pipe(
-    z.number().min(1).max(5).optional(),
+
+  // Supporta "all" per indicare nessun filtro
+  minRating: queryNumberOrAllSchema("Rating deve essere tra 1 e 5").refine(
+    (val) => val === undefined || (val >= 1 && val <= 5),
+    { message: "Rating deve essere tra 1 e 5" },
   ),
-  maxRating: queryNumberSchema("Rating deve essere tra 1 e 5").pipe(
-    z.number().min(1).max(5).optional(),
+  maxRating: queryNumberOrAllSchema("Rating deve essere tra 1 e 5").refine(
+    (val) => val === undefined || (val >= 1 && val <= 5),
+    { message: "Rating deve essere tra 1 e 5" },
   ),
+
   hasProducts: queryBooleanSchema.optional(),
   hasOrders: queryBooleanSchema.optional(),
 
-  minLeadTime: queryNumberSchema("Lead Time non valido").pipe(
-    z.number().int().nonnegative().optional(),
+  // Supporta "all" per indicare nessun filtro
+  minLeadTime: queryNumberOrAllSchema("Lead Time non valido").refine(
+    (val) => val === undefined || (Number.isInteger(val) && val >= 0),
+    { message: "Lead Time non valido" },
   ),
 
-  maxLeadTime: queryNumberSchema("Lead Time non valido").pipe(
-    z.number().int().nonnegative().optional(),
+  maxLeadTime: queryNumberOrAllSchema("Lead Time non valido").refine(
+    (val) => val === undefined || (Number.isInteger(val) && val >= 0),
+    { message: "Lead Time non valido" },
   ),
 });
 

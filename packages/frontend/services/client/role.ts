@@ -10,7 +10,7 @@ import {
   RoleListApiResponse,
   RolePermissionsApiResponse,
   RoleSingleApiResponse,
-} from "@/types/role";
+} from "@/types/role-types";
 import {
   AssignPermissionsInput,
   CreatePermissionInput,

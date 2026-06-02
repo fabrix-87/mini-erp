@@ -9,13 +9,10 @@ export type {
   CustomerSize,
 } from "@mini-erp/shared/constants";
 
-import { ApiResponse, Customer } from "@mini-erp/shared";
-import { CustomerQueryInput as BaseQuery  } from "@mini-erp/shared/types";
+import { ApiResponse, Customer, PaginatedResponse } from "@mini-erp/shared";
+import { CustomerQueryInput as BaseQuery } from "@mini-erp/shared/types";
 
-export type CustomerQueryInput = Omit<
-  BaseQuery,
-  "leadStatus" | "type" | "segment"
-> & {
+export type CustomerQueryInput = Omit<BaseQuery, "leadStatus" | "type" | "segment"> & {
   // Ridefinisco ogni campo recuperando il tipo originale e aggiungendo "all"
   type?: BaseQuery["type"] | "all";
   segment?: BaseQuery["segment"] | "all";
@@ -33,7 +30,6 @@ export const customerKeys = {
   stats: () => [...customerKeys.all, "stats"] as const,
 };
 
-
 // ============================================================================
 // Server Cache Tags
 // ============================================================================
@@ -47,6 +43,6 @@ export const CUSTOMER_TAGS = {
 // RESPONSE TYPES
 // ============================================================================
 
-export interface CustomerListApiResponse extends ApiResponse<Customer[]> {}
+export type CustomerListApiResponse = PaginatedResponse<Customer>;
 export interface CustomerSingleApiResponse extends ApiResponse<Customer> {}
 export interface CustomerDeleteApiResponse extends ApiResponse<null> {}

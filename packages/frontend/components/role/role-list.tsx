@@ -1,22 +1,30 @@
 "use client";
 
-import { useRoleMutations, useRoles } from "@/hooks/use-role";
 import { RoleQueryInput, RoleSortField, SortOrder } from "@mini-erp/shared";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { DataPagination } from "../ui/data-pagination";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
 import RoleTable from "./role-list/table";
 import RoleToolbar from "./role-list/toolbar";
 import DeleteDialog from "../dialog/delete-dialog";
 import { useUpdateURL } from "@/hooks/use-update-url";
+import { RoleListApiResponse } from "@/types/role-types";
+import { deleteRoleAction } from "@/actions/role-actions";
+import { toast } from "sonner";
 
-export default function RoleListPage() {
+interface Props {
+  data: RoleListApiResponse;
+}
+
+export default function RoleListPage({ data }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const { data: roles, pagination, results } = data;
+  const [isPending, startTransition] = useTransition();
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
   const [selectedRoleName, setSelectedRoleName] = useState("");
 
@@ -30,9 +38,6 @@ export default function RoleListPage() {
       sortOrder: (searchParams.get("sortOrder") as SortOrder) || "asc",
     };
   }, [searchParams]);
-
-  const { roles, loading, pagination, refetch } = useRoles(params);
-  const { deleteRole } = useRoleMutations();
 
   // Gestisci sort e filters localmente (derivati da params)
   const sort = {
@@ -62,14 +67,20 @@ export default function RoleListPage() {
   // ── Delete role ────────────────────────────────────────────────────────────
   const handleDelete = async () => {
     if (selectedRoleId !== null) {
-      setIsDeleting(true);
-      await deleteRole(selectedRoleId);
-      await refetch();
-      setSelectedRoleId(null);
-      setSelectedRoleName("");
-      setShowDeleteDialog(false);
-      setIsDeleting(false);
+      startTransition(async () => {
+        setSelectedRoleId(null);        
+        setShowDeleteDialog(false);
+        const result = await deleteRoleAction(selectedRoleId);        
+        if (result.success) {
+          router.refresh();
+          toast.success(`Layout ${selectedRoleName} eliminato`);
+        } else {
+          toast.error("Errore eliminazione ruolo");
+        }
+        setSelectedRoleName("");
+      });
     } else {
+      toast.error("Nessun ruolo selezionato");
       console.error("No role selected");
     }
   };
@@ -92,9 +103,9 @@ export default function RoleListPage() {
 
       <RoleTable
         roles={roles}
-        loading={loading}
         onSort={handleSort}
         sort={sort}
+        loading={isPending}
         onView={(id) => router.push(`/settings/roles/${id}`)}
         onEdit={(id) => router.push(`/settings/roles/${id}/edit`)}
         onDelete={async (id, name) => {
@@ -121,10 +132,12 @@ export default function RoleListPage() {
         onOpenChange={setShowDeleteDialog}
         handleDelete={handleDelete}
         title="Elimina ruolo"
-        isDeleting={isDeleting}
+        isDeleting={isPending}
       >
-        Sei sicuro di voler eliminare il ruolo <strong>{selectedRoleName}</strong>? Questa
-        operazione non può essere annullata e rimuoverà il ruolo da tutti gli utenti associati.
+        Sei sicuro di voler eliminare il ruolo <strong>{selectedRoleName}</strong>?
+        <br />
+        Questa operazione non può essere annullata e rimuoverà il ruolo da tutti gli utenti
+        associati.
       </DeleteDialog>
     </div>
   );

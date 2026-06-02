@@ -1,10 +1,6 @@
-import { ApiResponse, Supplier } from '@mini-erp/shared';
+import { ApiResponse, PaginatedResponse, Supplier } from "@mini-erp/shared";
 
-export type {
-  Supplier,
-  SupplierQueryInput,
-  SupplierStats
-} from '@mini-erp/shared/types'
+export type { Supplier, SupplierQueryInput, SupplierStats } from "@mini-erp/shared/types";
 
 // ============================================================================
 // Client Query Keys
@@ -17,7 +13,6 @@ export const supplierKeys = {
   detail: (id: number) => [...supplierKeys.all, "detail", id] as const,
   stats: () => [...supplierKeys.all, "stats"] as const,
 };
-
 
 // ============================================================================
 // Server Cache Tags
@@ -32,6 +27,6 @@ export const SUPPLIER_TAGS = {
 // RESPONSE TYPES
 // ============================================================================
 
-export interface SupplierListApiResponse extends ApiResponse<Supplier[]> {}
+export type SupplierListApiResponse = PaginatedResponse<Supplier>;
 export interface SupplierSingleApiResponse extends ApiResponse<Supplier> {}
 export interface SupplierDeleteApiResponse extends ApiResponse<null> {}
