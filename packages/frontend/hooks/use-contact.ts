@@ -210,7 +210,8 @@ export function useContactMutations() {
   return {
     createContact: async (data: CreateContactInput) => {
       const response = await runAction(() => createContactAction(data));
-      if (response.message) toast.success(response.message);
+      if (response.success) toast.success("Contatto creato");
+      else toast.error(response.message ?? "Errore durante creazione contatto");
       return response.data;
     },
 

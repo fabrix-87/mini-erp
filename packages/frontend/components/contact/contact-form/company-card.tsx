@@ -31,6 +31,7 @@ export default function CompanyCard({
 }: CompanyCardProps) {
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [companyNameMap, setCompanyNameMap] = useState<Record<string, string>>({});
 
   const { data, isLoading } = useCompanies({
     search: debouncedSearch,
@@ -45,6 +46,15 @@ export default function CompanyCard({
     const timeoutId = setTimeout(() => setDebouncedSearch(searchInput), 400);
     return () => clearTimeout(timeoutId);
   }, [searchInput]);
+
+  useEffect(() => {
+    if (companies.length > 0) {
+      setCompanyNameMap((prev) => ({
+        ...prev,
+        ...Object.fromEntries(companies.map((c) => [c.id.toString(), c.companyName])),
+      }));
+    }
+  }, [companies]);
 
   // Escludi le company già selezionate dalle opzioni
   const selectedIds = selectedCompanies.map((c) => c.companyId.toString());
@@ -77,9 +87,7 @@ export default function CompanyCard({
             {selectedCompanies.map((company, index) => (
               <Badge key={company.id} variant="secondary" className="gap-1 pr-1">
                 <span>
-                  {/* Mostra il nome se disponibile, altrimenti l'ID */}
-                  {companies.find((c) => c.id.toString() === company.companyId.toString())
-                    ?.companyName ?? `Company #${company.companyId}`}
+                  {companyNameMap[company.companyId.toString()] ?? `Company #${company.companyId}`}
                 </span>
                 {company.isPrimaryContact && (
                   <span className="text-xs text-muted-foreground ml-1">(primario)</span>

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Save, Loader2, ChevronsUpDown, Check } from "lucide-react";
-import { useContact, useContactMutations, useContactValidation } from "@/hooks/use-contact";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { useContactMutations, useContactValidation } from "@/hooks/use-contact";
 import type {
   ContactFormProps,
   CreateContactInput,
@@ -19,10 +19,11 @@ import CompanyCard from "./contact-form/company-card";
 import { Controller, FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { CreateContactForm, createContactSchema } from "@mini-erp/shared";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { register } from "module";
+import { displayFormErrors } from "@/helpers/form-helper";
 
-export default function ContactForm({ isNew, contact, companyId }: ContactFormProps) {
+export default function ContactForm({ isNew, contact }: ContactFormProps) {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const { id: contactId } = contact || { id: undefined };
 
@@ -46,12 +47,19 @@ export default function ContactForm({ isNew, contact, companyId }: ContactFormPr
   });
 
   const onSubmit = form.handleSubmit(
-    (data) => {
-      console.log(data);
+    async (data) => {
+       if (isNew) {
+        const newContact = await createContact(data as CreateContactInput);
+        router.push(`/contacts/${newContact?.id}`);
+      } else if (contactId) {
+        await updateContact(contactId, data as UpdateContactInput);
+        router.push(`/contacts/${contactId}`);
+      }
     },
     (errors) => {
       // Questo callback viene chiamato quando la validazione fallisce
-      console.log("🔴 Submit blocked by errors:", errors);
+      console.log(errors);
+      displayFormErrors(errors);
     },
   );
 
@@ -61,7 +69,7 @@ export default function ContactForm({ isNew, contact, companyId }: ContactFormPr
     clearErrors,
     trigger,
     formState: { errors },
-    register
+    register,
   } = form;
 
   const { fields, append, remove } = useFieldArray({
@@ -71,6 +79,7 @@ export default function ContactForm({ isNew, contact, companyId }: ContactFormPr
 
   // Handler da passare al campo email
   const handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    setIsLoading(true);
     const email = e.target.value;
 
     // Prima fa scattare la validazione Zod (formato)
@@ -88,41 +97,7 @@ export default function ContactForm({ isNew, contact, companyId }: ContactFormPr
     } else {
       clearErrors("email");
     }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    /*
-    if (!validateForm()) {
-      return;
-    }
-    
-    const data: CreateContactInput | UpdateContactInput = {
-      companyId: parseInt(formData.companyId),
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      phone: formData.phone || null,
-      mobilePhone: formData.mobilePhone || null,
-      position: formData.position || null,
-      department: formData.department || null,
-      isPrimaryContact: formData.isPrimaryContact,
-      active: formData.active,
-      notes: formData.notes || null,
-    };
-
-    try {
-      if (isNew) {
-        const newContact = await createContact(data as CreateContactInput);
-        router.push(`/contacts/${newContact.id}`);
-      } else if (contactId) {
-        await updateContact(contactId, data);
-        router.push(`/contacts/${contactId}`);
-      }
-    } catch (error) {
-      console.error("Form submit error:", error);
-    }
-    */
+    setIsLoading(false);
   };
 
   const handleCancel = () => {
@@ -134,9 +109,6 @@ export default function ContactForm({ isNew, contact, companyId }: ContactFormPr
       }
     }
   };
-
-  //const isSubmitting = isCreating || isUpdating;
-  const isSubmitting = false;
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
@@ -307,12 +279,12 @@ export default function ContactForm({ isNew, contact, companyId }: ContactFormPr
 
           {/* Actions */}
           <div className="flex justify-end gap-3">
-            <Button type="button" variant="outline" onClick={handleCancel} disabled={isSubmitting}>
+            <Button type="button" variant="outline" onClick={handleCancel} disabled={isPending}>
               Annulla
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {isSubmitting ? "Salvataggio..." : isNew ? "Crea Contatto" : "Salva Modifiche"}
+            <Button type="submit" disabled={isPending || isLoading}>
+              {isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {isPending ? "Salvataggio..." : isNew ? "Crea Contatto" : "Salva Modifiche"}
             </Button>
           </div>
         </form>

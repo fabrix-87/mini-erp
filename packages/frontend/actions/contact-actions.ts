@@ -28,7 +28,7 @@ import { contactRevalidation } from "@/lib/server/revalidate";
  */
 export async function createContactAction(
   data: CreateContactInput,
-): Promise<ActionResult<ContactSingleApiResponse>> {
+): Promise<ActionResult<Contact>> {
   return withAuth(async () => {
     const response = createContact(data);
     contactRevalidation.list();
@@ -42,7 +42,7 @@ export async function createContactAction(
 export async function updateContactAction(
   id: number,
   data: UpdateContactInput,
-): Promise<ActionResult<ContactSingleApiResponse>> {
+): Promise<ActionResult<Contact>> {
   return withAuth(async () => {
     const response = updateContact(id, data);
     contactRevalidation.contactWithList(id);

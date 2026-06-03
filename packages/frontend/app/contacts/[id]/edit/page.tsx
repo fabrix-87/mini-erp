@@ -14,6 +14,6 @@ export default async function ContactNewPage({ params }: Props) {
   const { id } = await params;
 
   const data = await getContactById(Number(id));
-
-  return <ContactForm isNew={false} contact={data.data} />;
+  
+  return <ContactForm isNew={false} contact={data} />;
 }

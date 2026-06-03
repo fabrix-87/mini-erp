@@ -6,6 +6,7 @@ export const getContactCompaniesInclude = (filterByCompanyId?: number) =>
     companies: {
       select: {
         id: true,
+        companyId: true,
         isPrimaryContact: true,
         position: true,
         department: true,

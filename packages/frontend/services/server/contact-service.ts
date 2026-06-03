@@ -12,6 +12,7 @@ import type {
   ContactOperationApiResponse,
   ContactDeleteApiResponse,
 } from "@/types/contact-types";
+import { Contact } from "@mini-erp/shared";
 
 // ============================================================================
 // QUERY BUILDER (helper privato, non server action)
@@ -71,8 +72,8 @@ export async function getPrimaryContactByCompany(
 /**
  * Ottieni singolo contatto per ID
  */
-export async function getContactById(id: number): Promise<ContactSingleApiResponse> {
-  return serverApi.get<ContactSingleApiResponse>(`/contacts/${id}`);
+export async function getContactById(id: number): Promise<Contact> {
+  return serverApi.get<Contact>(`/contacts/${id}`);
 }
 
 /**
@@ -80,8 +81,8 @@ export async function getContactById(id: number): Promise<ContactSingleApiRespon
  */
 export async function createContact(
   contactData: CreateContactInput,
-): Promise<ContactSingleApiResponse> {
-  return serverApi.post<ContactSingleApiResponse>("/contacts", contactData);
+): Promise<Contact> {
+  return serverApi.post<Contact>("/contacts", contactData);
 }
 
 /**
@@ -90,8 +91,8 @@ export async function createContact(
 export async function updateContact(
   id: number,
   contactData: UpdateContactInput,
-): Promise<ContactSingleApiResponse> {
-  return serverApi.put<ContactSingleApiResponse>(`/contacts/${id}`, contactData);
+): Promise<Contact> {
+  return serverApi.put<Contact>(`/contacts/${id}`, contactData);
 }
 
 /**
