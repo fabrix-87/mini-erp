@@ -1,15 +1,8 @@
-import { dehydrate, QueryClient } from '@tanstack/react-query';
-import { notFound } from 'next/navigation';
-import { HydrationBoundary } from '@/providers/hydration-boundary';
-import ContactDetailsPage from '@/components/contact/contact-details';
-import contactService from '@/services/client/contact';
-import { contactKeys } from '@/hooks/contact-keys';
-import { z } from 'zod';
-
-const paramsSchema = z.object({
-  id: z.string().regex(/^\d+$/)
-});
-
+import { notFound } from "next/navigation";
+import ContactDetailsPage from "@/components/contact/contact-details";
+import { contactIdSchema } from "@mini-erp/shared";
+import { getContactById } from "@/services/server/contact-service";
+import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 
 interface ContactDetailPageProps {
   params: Promise<{
@@ -17,30 +10,25 @@ interface ContactDetailPageProps {
   }>;
 }
 export default async function ContactDetailPage({ params }: ContactDetailPageProps) {
-  const queryClient = new QueryClient();
   const { id } = await params;
   // Validazione con Zod
-  const validated = paramsSchema.safeParse({ id });
+  const validated = contactIdSchema.safeParse({ id });
   if (!validated.success) {
     notFound();
   }
-  
-  const contactId = parseInt(validated.data.id);
 
-  try {
-    // Prefetch contact sul server
-    await queryClient.prefetchQuery({
-      queryKey: contactKeys.detail(contactId),
-      queryFn: () => contactService.getById(contactId),
-    });
-  } catch (error) {
-    console.error(error)
+  const contactId = Number(validated.data.id);
+
+  const data = await getContactById(Number(contactId));
+
+  if (!data) {
     notFound();
   }
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <ContactDetailsPage />
-    </HydrationBoundary>
+    <>
+      <BreadcrumbSetter items={[{ label: `${data.firstName} ${data.lastName}` }]} />
+      <ContactDetailsPage contact={data} contactId={contactId} />;
+    </>
   );
 }

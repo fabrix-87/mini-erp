@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useContactMutations, useContactValidation } from "@/hooks/use-contact";
@@ -20,6 +20,13 @@ import { Controller, FormProvider, useFieldArray, useForm } from "react-hook-for
 import { CreateContactForm, createContactSchema } from "@mini-erp/shared";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { displayFormErrors } from "@/helpers/form-helper";
+import { useRef } from "react";
+import {
+  createCompanyContactAction,
+  updateCompanyContactAction,
+  deleteCompanyContactAction,
+} from "@/actions/company-contact-actions";
+import type { CompanyContactSummary } from "@mini-erp/shared";
 
 export default function ContactForm({ isNew, contact }: ContactFormProps) {
   const router = useRouter();
@@ -27,37 +34,147 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
 
   const { id: contactId } = contact || { id: undefined };
 
+  /**
+   * Pre-populated name map built from the contact's already-loaded company
+   * associations. Prevents "Company #id" flash while the search fetch completes.
+   */
+  const initialCompanyNameMap = useMemo<Record<string, string>>(
+    () =>
+      Object.fromEntries(
+        (contact?.companies ?? []).map((c) => [c.companyId.toString(), c.company.companyName]),
+      ),
+    // Stable reference: contact viene dal server e non cambia durante il ciclo di vita
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  /**
+   * Snapshot of the original company associations loaded from the API.
+   * Used in edit mode to compute the diff at submit time.
+   */
+  const originalCompaniesRef = useRef<CompanyContactSummary[]>(contact?.companies ?? []);
+
+  /**
+   * Computes and applies the diff between original and submitted company
+   * associations. Runs only in edit mode.
+   *
+   * - New entries (not in original)  → createCompanyContactAction
+   * - Removed entries (not in form)  → deleteCompanyContactAction
+   * - Changed entries (same companyId, different fields) → updateCompanyContactAction
+   *
+   * @param contactId - The contact being edited
+   * @param submitted - Company entries from the submitted form
+   */
+  const syncCompanies = async (contactId: number, submitted: CreateContactForm["companies"]) => {
+    const original = originalCompaniesRef.current;
+
+    const originalMap = new Map(original.map((c) => [c.companyId, c]));
+    const submittedMap = new Map(submitted.map((c) => [Number(c.companyId), c]));
+
+    const promises: Promise<unknown>[] = [];
+
+    // ── Aggiunte: presenti nel form ma non nell'originale ──────────────────────
+    for (const entry of submitted) {
+      const id = Number(entry.companyId);
+      if (!originalMap.has(id)) {
+        promises.push(
+          createCompanyContactAction({
+            contactId,
+            companyId: id,
+            position: entry.position ?? null,
+            department: entry.department ?? null,
+            isPrimaryContact: entry.isPrimaryContact ?? false,
+          }),
+        );
+      }
+    }
+
+    // ── Rimosse: presenti nell'originale ma non nel form ──────────────────────
+    for (const orig of original) {
+      if (!submittedMap.has(orig.companyId)) {
+        promises.push(deleteCompanyContactAction(contactId, orig.companyId));
+      }
+    }
+
+    // ── Modificate: presenti in entrambi ma con campi diversi ─────────────────
+    for (const entry of submitted) {
+      const id = Number(entry.companyId);
+      const orig = originalMap.get(id);
+      if (!orig) continue; // è un'aggiunta, già gestita sopra
+
+      const positionChanged = (entry.position ?? null) !== orig.position;
+      const departmentChanged = (entry.department ?? null) !== orig.department;
+      const primaryChanged = (entry.isPrimaryContact ?? false) !== orig.isPrimaryContact;
+
+      if (positionChanged || departmentChanged || primaryChanged) {
+        promises.push(
+          updateCompanyContactAction(contactId, id, {
+            position: entry.position ?? null,
+            department: entry.department ?? null,
+            isPrimaryContact: entry.isPrimaryContact ?? false,
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
+  };
+
   // Hooks
   const { createContact, updateContact, isPending } = useContactMutations();
   const { validateEmailUnique, isValidating } = useContactValidation();
 
   const form = useForm<CreateContactForm>({
     resolver: standardSchemaResolver(createContactSchema),
-    defaultValues: contact || {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      mobilePhone: "",
-      active: true,
-      notes: "",
-      companies: [],
-    },
+    defaultValues: contact
+      ? {
+          firstName: contact.firstName,
+          lastName: contact.lastName ?? "",
+          email: contact.email ?? "",
+          phone: contact.phone ?? "",
+          mobilePhone: contact.mobilePhone ?? "",
+          active: contact.active,
+          notes: contact.notes ?? "",
+          // Mappa CompanyContactSummary → contactCompanyEntrySchema
+          companies: contact.companies.map((c) => ({
+            companyId: c.companyId,
+            position: c.position ?? null,
+            department: c.department ?? null,
+            isPrimaryContact: c.isPrimaryContact,
+          })),
+        }
+      : {
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          mobilePhone: "",
+          active: true,
+          notes: "",
+          companies: [],
+        },
     mode: "onBlur",
   });
 
   const onSubmit = form.handleSubmit(
     async (data) => {
-       if (isNew) {
+      if (isNew) {
+        // In create mode le company vengono salvate insieme al contatto
         const newContact = await createContact(data as CreateContactInput);
         router.push(`/contacts/${newContact?.id}`);
       } else if (contactId) {
-        await updateContact(contactId, data as UpdateContactInput);
+        // 1. Salva i campi anagrafici del contatto (senza companies —
+        //    updateContactSchema non include companies)
+        const { companies, ...contactFields } = data;
+        await updateContact(contactId, contactFields as UpdateContactInput);
+
+        // 2. Sincronizza le company associations tramite le dedicate action
+        await syncCompanies(contactId, companies);
+
         router.push(`/contacts/${contactId}`);
       }
     },
     (errors) => {
-      // Questo callback viene chiamato quando la validazione fallisce
       console.log(errors);
       displayFormErrors(errors);
     },
@@ -72,7 +189,7 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
     register,
   } = form;
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: "companies",
   });
@@ -110,6 +227,23 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
     }
   };
 
+  /**
+   * Sets isPrimaryContact=true for the given index and
+   * clears the flag on all other company entries.
+   * If the entry is already primary, deselects it (toggle off).
+   */
+  const handleSetPrimary = (index: number) => {
+    const current = fields[index];
+    const willBePrimary = !current.isPrimaryContact;
+
+    fields.forEach((field, i) => {
+      update(i, {
+        ...field,
+        isPrimaryContact: i === index ? willBePrimary : false,
+      });
+    });
+  };
+
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       {/* Header */}
@@ -134,10 +268,12 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
                 companyId,
                 position: null,
                 department: null,
-                isPrimaryContact: fields.length === 0,
+                isPrimaryContact: false,
               })
             }
             onRemoveCompany={(index) => remove(index)}
+            onSetPrimary={handleSetPrimary}
+            initialNameMap={initialCompanyNameMap}
             error={errors.companies?.root?.message ?? (errors.companies as any)?.message}
           />
 

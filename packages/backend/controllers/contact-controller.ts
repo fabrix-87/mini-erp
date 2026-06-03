@@ -193,6 +193,8 @@ export const updateContact = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ContactIdParam>(c);
   const data = getValidatedBody<UpdateContactInput>(c);
 
+  console.log(data);
+
   const existing = await prisma.contact.findUnique({ where: { id } });
   if (!existing) {
     return sendNotFound(c, "Contatto non trovato");

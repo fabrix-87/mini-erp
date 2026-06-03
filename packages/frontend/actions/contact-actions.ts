@@ -30,7 +30,7 @@ export async function createContactAction(
   data: CreateContactInput,
 ): Promise<ActionResult<Contact>> {
   return withAuth(async () => {
-    const response = createContact(data);
+    const response = await createContact(data);
     contactRevalidation.list();
     return response;
   }, "contact:create");
@@ -44,7 +44,7 @@ export async function updateContactAction(
   data: UpdateContactInput,
 ): Promise<ActionResult<Contact>> {
   return withAuth(async () => {
-    const response = updateContact(id, data);
+    const response = await updateContact(id, data);
     contactRevalidation.contactWithList(id);
     return response;
   }, "contact:update");

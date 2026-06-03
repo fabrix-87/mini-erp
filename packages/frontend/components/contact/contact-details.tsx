@@ -1,296 +1,357 @@
-'use client';
+"use client";
 
-import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Edit, Trash2, Mail, Phone, Smartphone, Building2, Briefcase, Users, Star, Calendar, User, MessageSquare, UserCheck, UserX } from 'lucide-react';
-import { useContact, useContactMutations } from '@/hooks/use-contact';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
+  MoreVertical,
+  Mail,
+  Phone,
+  Smartphone,
+  Building2,
+  Briefcase,
+  Users,
+  Star,
+  Calendar,
+  MessageSquare,
+  UserCheck,
+  UserX,
+  ExternalLink,
+} from "lucide-react";
+import { useContactMutations } from "@/hooks/use-contact";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Contact } from "@mini-erp/shared";
+import { formatDateIT } from "@/helpers/date-helper";
 
-export default function ContactDetails() {
+// ============================================================================
+// TYPES
+// ============================================================================
+
+interface Props {
+  contactId: number;
+  contact: Contact;
+}
+
+// ============================================================================
+// HELPERS
+// ============================================================================
+
+/**
+ * Returns up to two uppercase initials from first + last name.
+ */
+function getInitials(firstName: string, lastName?: string | null): string {
+  return [firstName[0], lastName?.[0]].filter(Boolean).join("").toUpperCase();
+}
+
+// ============================================================================
+// SUB-COMPONENTS
+// ============================================================================
+
+/**
+ * A single info row with icon, label and value (or link).
+ */
+function InfoRow({
+  icon: Icon,
+  label,
+  value,
+  href,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+  href?: string;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
+      <div className="min-w-0">
+        <p className="text-xs text-muted-foreground">{label}</p>
+        {href ? (
+          <a
+            href={href}
+            className="text-sm font-medium text-primary hover:underline truncate block"
+          >
+            {value}
+          </a>
+        ) : (
+          <p className="text-sm font-medium truncate">{value}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
+/**
+ * Full contact detail view with header, company associations,
+ * contact info, notes and metadata sidebar.
+ */
+export default function ContactDetails({ contact, contactId }: Props) {
   const router = useRouter();
-  const params = useParams();
-  const contactId = params?.id ? parseInt(params.id as string) : null;
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { contact, loading, error, refetch } = useContact(contactId || 0);
   const { deleteContact, toggleActive, isPending } = useContactMutations();
 
-  const handleEdit = () => {
-    router.push(`/contacts/${contactId}/edit`);
-  };
+  const handleEdit = () => router.push(`/contacts/${contactId}/edit`);
 
   const handleDelete = async () => {
-    if (confirm('Sei sicuro di voler eliminare questo contatto?')) {
-      try {
-        await deleteContact(contactId!);
-        router.push('/contacts');
-      } catch (error) {
-        console.error('Delete error:', error);
-      }
+    try {
+      await deleteContact(contactId);
+      router.push("/contacts");
+    } catch (error) {
+      console.error("Delete error:", error);
     }
   };
 
   const handleToggleActive = async () => {
-    if (!contact) return;
     try {
-      await toggleActive(contactId!, !contact.active);
-      await refetch();
+      await toggleActive(contactId, !contact.active);
     } catch (error) {
-      console.error('Toggle active error:', error);
+      console.error("Toggle active error:", error);
     }
   };
 
-  const handleSetPrimary = async () => {
-    try {
-      await setPrimary(contactId!);
-      await refetch();
-    } catch (error) {
-      console.error('Set primary error:', error);
-    }
-  };
+  const primaryCompany = contact.companies.find((c) => c.isPrimaryContact);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('it-IT', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Caricamento...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !contact) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <Alert variant="destructive">
-          <AlertDescription>
-            {error || 'Il contatto richiesto non esiste'}
-          </AlertDescription>
-        </Alert>
-        <Button onClick={() => router.push('/contacts')} className="mt-4">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Torna ai contatti
-        </Button>
-      </div>
-    );
-  }
+  // ============================================================================
+  // RENDER
+  // ============================================================================
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      {/* Header */}
-      <div className="mb-6">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-4">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Indietro
-        </Button>
+    <div className="space-y-6">
+      {/* ── Header ───────────────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => router.push("/contacts")}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
 
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold">
-                {contact.firstName} {contact.lastName}
-              </h1>
-              <Badge variant={contact.active ? 'default' : 'secondary'}>
-                {contact.active ? 'Attivo' : 'Inattivo'}
-              </Badge>
-              {contact.isPrimaryContact && (
-                <Badge variant="outline" className="border-yellow-500 text-yellow-700">
-                  <Star className="w-3 h-3 mr-1 fill-current" />
-                  Primario
+          {/* Avatar + name */}
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-base shrink-0 select-none">
+              {getInitials(contact.firstName, contact.lastName)}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold leading-tight">
+                  {contact.firstName} {contact.lastName}
+                </h1>
+                <Badge variant={contact.active ? "default" : "secondary"}>
+                  {contact.active ? "Attivo" : "Inattivo"}
                 </Badge>
+              </div>
+              {primaryCompany && (
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {primaryCompany.position && `${primaryCompany.position} · `}
+                  {primaryCompany.company.companyName}
+                </p>
               )}
             </div>
-            {contact.position && (
-              <p className="text-gray-600">
-                {contact.position}
-                {contact.department && ` • ${contact.department}`}
-              </p>
-            )}
           </div>
+        </div>
 
-          <div className="flex gap-2">
-            {!contact.isPrimaryContact && (
-              <Button
-                variant="outline"
-                onClick={handleSetPrimary}
-                disabled={isToggling}
-              >
-                <Star className="w-4 h-4 mr-2" />
-                Imposta Primario
+        {/* Actions */}
+        <div className="flex items-center gap-2">
+          <Button onClick={handleEdit}>
+            <Edit className="w-4 h-4 mr-2" />
+            Modifica
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <MoreVertical className="h-4 w-4" />
               </Button>
-            )}
-            <Button
-              variant="outline"
-              onClick={handleToggleActive}
-              disabled={isToggling}
-            >
-              {contact.active ? (
-                <>
-                  <UserX className="w-4 h-4 mr-2" />
-                  Disattiva
-                </>
-              ) : (
-                <>
-                  <UserCheck className="w-4 h-4 mr-2" />
-                  Attiva
-                </>
-              )}
-            </Button>
-            <Button onClick={handleEdit}>
-              <Edit className="w-4 h-4 mr-2" />
-              Modifica
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={isDeleting}
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              {isDeleting ? 'Eliminazione...' : 'Elimina'}
-            </Button>
-          </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleToggleActive} disabled={isPending}>
+                {contact.active ? (
+                  <>
+                    <UserX className="w-4 h-4 mr-2" />
+                    Disattiva contatto
+                  </>
+                ) : (
+                  <>
+                    <UserCheck className="w-4 h-4 mr-2" />
+                    Attiva contatto
+                  </>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Elimina contatto
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
+      {/* ── Body ─────────────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Info */}
+        {/* Main column */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Contact Info */}
+          {/* Contact info */}
           <Card>
             <CardHeader>
-              <CardTitle>Informazioni di Contatto</CardTitle>
+              <CardTitle className="text-base">Recapiti</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-sm text-gray-500">Email</p>
-                  <a href={`mailto:${contact.email}`} className="text-blue-600 hover:underline">
-                    {contact.email}
-                  </a>
-                </div>
-              </div>
-
-              {contact.phone && (
-                <div className="flex items-center gap-3">
-                  <Phone className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Telefono</p>
-                    <a href={`tel:${contact.phone}`} className="text-blue-600 hover:underline">
-                      {contact.phone}
-                    </a>
-                  </div>
-                </div>
+            <CardContent className="space-y-3">
+              {contact.email && (
+                <InfoRow
+                  icon={Mail}
+                  label="Email"
+                  value={contact.email}
+                  href={`mailto:${contact.email}`}
+                />
               )}
-
+              {contact.phone && (
+                <InfoRow
+                  icon={Phone}
+                  label="Telefono"
+                  value={contact.phone}
+                  href={`tel:${contact.phone}`}
+                />
+              )}
               {contact.mobilePhone && (
-                <div className="flex items-center gap-3">
-                  <Smartphone className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Cellulare</p>
-                    <a href={`tel:${contact.mobilePhone}`} className="text-blue-600 hover:underline">
-                      {contact.mobilePhone}
-                    </a>
-                  </div>
-                </div>
+                <InfoRow
+                  icon={Smartphone}
+                  label="Cellulare"
+                  value={contact.mobilePhone}
+                  href={`tel:${contact.mobilePhone}`}
+                />
+              )}
+              {!contact.email && !contact.phone && !contact.mobilePhone && (
+                <p className="text-sm text-muted-foreground">Nessun recapito inserito</p>
               )}
             </CardContent>
           </Card>
 
-          {/* Company Info */}
-          {contact.company && (
+          {/* Company associations */}
+          {contact.companies.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Azienda</CardTitle>
+                <CardTitle className="text-base">
+                  Aziende associate{" "}
+                  <span className="text-muted-foreground font-normal">
+                    ({contact.companies.length})
+                  </span>
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Building2 className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Ragione Sociale</p>
-                    <p className="font-medium">
-                      {contact.company.companyName}
-                      {contact.company.tradeName && ` (${contact.company.tradeName})`}
-                    </p>
-                  </div>
-                </div>
+                {contact.companies.map((entry, index) => (
+                  <div key={entry.id}>
+                    {index > 0 && <Separator className="mb-4" />}
 
-                <div className="flex items-center gap-3">
-                  <User className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Codice</p>
-                    <p className="font-medium">{contact.company.code}</p>
-                  </div>
-                </div>
+                    <div className="flex items-start justify-between gap-3">
+                      {/* Company identity */}
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 rounded-md bg-muted flex items-center justify-center shrink-0">
+                          <Building2 className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm truncate">
+                              {entry.company.companyName}
+                            </span>
+                            {entry.isPrimaryContact && (
+                              <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-400 shrink-0" />
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {entry.company.code}
+                            {entry.company.tradeName && ` · ${entry.company.tradeName}`}
+                          </p>
+                        </div>
+                      </div>
 
-                {contact.company.mainEmail && (
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-5 h-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-500">Email Aziendale</p>
-                      <a href={`mailto:${contact.company.mainEmail}`} className="text-blue-600 hover:underline">
-                        {contact.company.mainEmail}
-                      </a>
+                      {/* Open company link */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 shrink-0"
+                        title="Apri scheda azienda"
+                        onClick={() => router.push(`/companies/${entry.companyId}`)}
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </Button>
                     </div>
-                  </div>
-                )}
 
-                {contact.company.mainPhone && (
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-5 h-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-500">Telefono Aziendale</p>
-                      <a href={`tel:${contact.company.mainPhone}`} className="text-blue-600 hover:underline">
-                        {contact.company.mainPhone}
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+                    {/* Role details */}
+                    {(entry.position || entry.department) && (
+                      <div className="mt-3 ml-12 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {entry.position && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <Briefcase className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                            <span className="text-muted-foreground">{entry.position}</span>
+                          </div>
+                        )}
+                        {entry.department && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <Users className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                            <span className="text-muted-foreground">{entry.department}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
-          {/* Work Info */}
-          {(contact.position || contact.department) && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Ruolo Aziendale</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {contact.position && (
-                  <div className="flex items-center gap-3">
-                    <Briefcase className="w-5 h-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-500">Posizione</p>
-                      <p className="font-medium">{contact.position}</p>
-                    </div>
+                    {/* Company contact info */}
+                    {(entry.company.mainEmail || entry.company.mainPhone) && (
+                      <div className="mt-3 ml-12 space-y-1.5">
+                        {entry.company.mainEmail && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <Mail className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                            <a
+                              href={`mailto:${entry.company.mainEmail}`}
+                              className="text-primary hover:underline truncate"
+                            >
+                              {entry.company.mainEmail}
+                            </a>
+                          </div>
+                        )}
+                        {entry.company.mainPhone && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <Phone className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                            <a
+                              href={`tel:${entry.company.mainPhone}`}
+                              className="text-primary hover:underline"
+                            >
+                              {entry.company.mainPhone}
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                )}
-
-                {contact.department && (
-                  <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-500">Dipartimento</p>
-                      <p className="font-medium">{contact.department}</p>
-                    </div>
-                  </div>
-                )}
+                ))}
               </CardContent>
             </Card>
           )}
@@ -299,73 +360,51 @@ export default function ContactDetails() {
           {contact.notes && (
             <Card>
               <CardHeader>
-                <CardTitle>Note</CardTitle>
+                <CardTitle className="text-base">Note</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-start gap-3">
-                  <MessageSquare className="w-5 h-5 text-gray-400 mt-1" />
-                  <p className="text-gray-700 whitespace-pre-wrap">{contact.notes}</p>
+                  <MessageSquare className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                    {contact.notes}
+                  </p>
                 </div>
               </CardContent>
             </Card>
           )}
-        </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Metadata */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Dettagli</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div>
-                <p className="text-sm text-gray-500">ID Contatto</p>
-                <p className="font-medium">#{contact.id}</p>
-              </div>
-              <Separator />
-              <div>
-                <p className="text-sm text-gray-500">Creato il</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Calendar className="w-4 h-4 text-gray-400" />
-                  <p className="text-sm">{formatDate(contact.createdAt.toString())}</p>
-                </div>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Ultimo aggiornamento</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Calendar className="w-4 h-4 text-gray-400" />
-                  <p className="text-sm">{formatDate(contact.updatedAt.toString())}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Documents - se disponibili */}
+          {/* Documents */}
           {contact.documents && contact.documents.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Documenti Associati</CardTitle>
-                <CardDescription>
-                  {contact.documents.length} documento{contact.documents.length !== 1 ? 'i' : ''}
-                </CardDescription>
+                <CardTitle className="text-base">
+                  Documenti associati{" "}
+                  <span className="text-muted-foreground font-normal">
+                    ({contact.documents.length})
+                  </span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   {contact.documents.map((doc) => (
-                    <div key={doc.id} className="p-3 border rounded-lg hover:bg-gray-50">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">{doc.documentType}</p>
-                          {doc.documentNumber && (
-                            <p className="text-sm text-gray-500">#{doc.documentNumber}</p>
-                          )}
-                        </div>
-                        <p className="text-sm font-medium">€{doc.totalAmount.toFixed(2)}</p>
+                    <div
+                      key={doc.id}
+                      className="flex items-center justify-between p-3 rounded-md border hover:bg-muted/50 transition-colors"
+                    >
+                      <div>
+                        <p className="text-sm font-medium">{doc.documentType}</p>
+                        {doc.documentNumber && (
+                          <p className="text-xs text-muted-foreground">#{doc.documentNumber}</p>
+                        )}
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {new Date(doc.documentDate).toLocaleDateString('it-IT')}
-                      </p>
+                      <div className="text-right">
+                        <p className="text-sm font-medium tabular-nums">
+                          €{doc.totalAmount.toFixed(2)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(doc.documentDate).toLocaleDateString("it-IT")}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -373,7 +412,66 @@ export default function ContactDetails() {
             </Card>
           )}
         </div>
+
+        {/* ── Sidebar ────────────────────────────────────────────────────────── */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Dettagli</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">ID Contatto</p>
+                <p className="text-sm font-medium font-mono">#{contact.id}</p>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Creato il</p>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
+                    <p className="text-sm">{formatDateIT(contact.createdAt)}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Ultimo aggiornamento</p>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
+                    <p className="text-sm">{formatDateIT(contact.updatedAt)}</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      {/* ── Delete confirmation ───────────────────────────────────────────────── */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Conferma eliminazione</AlertDialogTitle>
+            <AlertDialogDescription>
+              Sei sicuro di voler eliminare{" "}
+              <strong>
+                {contact.firstName} {contact.lastName}
+              </strong>
+              ? Questa azione non può essere annullata.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annulla</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isPending ? "Eliminazione..." : "Elimina"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

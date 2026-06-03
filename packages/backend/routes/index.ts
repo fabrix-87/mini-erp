@@ -1,6 +1,7 @@
 import { createHonoApp } from "../lib/hono-app";
 import addressRoutes from "./address-routes";
 import authRoutes from "./auth-routes";
+import companyContactRoutes from "./company-contact-routes";
 import companyRoutes from "./company-routes";
 import contactRoutes from "./contact-routes";
 import countryRoutes from "./country-routes";
@@ -43,5 +44,6 @@ apiRoutes.route("/opportunity", opportunityRoutes);
 apiRoutes.route("/products", productRoutes);
 apiRoutes.route("/documents", documentRoutes);
 apiRoutes.route("/suppliers", supplierRoutes);
+apiRoutes.route("/company-contacts", companyContactRoutes);
 
 export default apiRoutes;
