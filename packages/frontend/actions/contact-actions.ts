@@ -84,7 +84,7 @@ export async function setContactPrimaryAction(id: number) {
   try {
     const response = await setContactAsPrimary(id);
     revalidatePath("/contacts");
-    revalidatePath(`/contacts/${id}`);
+    revalidatePath(`/crm/contacts/${id}`);
     return { success: true, data: response.data };
   } catch (error: any) {
     return { success: false, error: error.message };

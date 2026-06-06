@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import {
   ArrowLeft,
   Edit,
@@ -26,16 +26,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { usePermissionMutations, usePermissions, useRole } from "@/hooks/use-role";
@@ -44,6 +34,8 @@ import { Permission } from "@mini-erp/shared";
 import { formatDate } from "@/utils/format";
 import { RoleDetailProps } from "@/types/role-types";
 import DeleteDialog from "../dialog/delete-dialog";
+import { useNavigation } from "@/hooks/use-navigation";
+import { useCrumbMap } from "@/hooks/use-breadcrumb";
 
 // ============================================================================
 // HELPER: group by resource
@@ -63,9 +55,10 @@ function groupByResource(permissions: Permission[]): Record<string, Permission[]
 // ============================================================================
 
 export default function RoleDetailPage({ roleId }: RoleDetailProps) {
-  const router = useRouter();
+  const { navigate, navigateToEdit } = useNavigation();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const crumbs = useCrumbMap();
 
   const { role, loading, error } = useRole(roleId);
 
@@ -120,7 +113,7 @@ export default function RoleDetailPage({ roleId }: RoleDetailProps) {
     setIsDeleting(true);
     const result = await deleteRoleAction(roleId); // redirects internally
     if (result.success) {
-      redirect('/settings/roles')
+      redirect("/settings/roles");
     }
   };
 
@@ -150,7 +143,7 @@ export default function RoleDetailPage({ roleId }: RoleDetailProps) {
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
         <p className="text-lg text-muted-foreground">{error ?? "Ruolo non trovato"}</p>
-        <Button onClick={() => router.push("/settings/roles")}>Torna ai ruoli</Button>
+        <Button onClick={() => navigate("roles")}>Torna ai ruoli</Button>
       </div>
     );
   }
@@ -159,12 +152,12 @@ export default function RoleDetailPage({ roleId }: RoleDetailProps) {
 
   return (
     <div className="space-y-6">
-      <BreadcrumbSetter title={`${role.name} (${role.code})`} />
+      <BreadcrumbSetter items={[crumbs.roles, {label: `${role.name} (${role.code})`}]} />
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.push("/settings/roles")}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("roles")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
@@ -185,7 +178,7 @@ export default function RoleDetailPage({ roleId }: RoleDetailProps) {
         </div>
 
         <div className="flex gap-2">
-          <Button onClick={() => router.push(`/settings/roles/${roleId}/edit`)}>
+          <Button onClick={() => navigateToEdit("roles", roleId)}>
             <Edit className="mr-2 h-4 w-4" />
             Modifica
           </Button>
@@ -196,7 +189,7 @@ export default function RoleDetailPage({ roleId }: RoleDetailProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => router.push(`/settings/roles/${roleId}/edit`)}>
+              <DropdownMenuItem onClick={() => navigateToEdit("roles", roleId)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Modifica
               </DropdownMenuItem>
@@ -278,7 +271,7 @@ export default function RoleDetailPage({ roleId }: RoleDetailProps) {
                   <Button
                     variant="outline"
                     className="mt-4"
-                    onClick={() => router.push(`/settings/roles/${roleId}/edit`)}
+                    onClick={() => navigateToEdit("roles", roleId)}
                   >
                     Assegna permessi
                   </Button>
@@ -344,7 +337,7 @@ export default function RoleDetailPage({ roleId }: RoleDetailProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => router.push(`/settings/roles/${roleId}/edit`)}
+                    onClick={() => navigateToEdit("roles", roleId)}
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Gestisci lista permessi

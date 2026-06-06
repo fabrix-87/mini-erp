@@ -1,0 +1,122 @@
+{
+  "actions": {
+    "save": "Salva",
+    "save_changes": "Salva modifiche",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "create": "Crea",
+    "add": "Aggiungi",
+    "remove": "Rimuovi",
+    "search": "Cerca",
+    "filter": "Filtra",
+    "reset": "Reimposta",
+    "export": "Esporta",
+    "import": "Importa",
+    "print": "Stampa",
+    "download": "Scarica",
+    "upload": "Carica",
+    "back": "Indietro",
+    "next": "Avanti",
+    "close": "Chiudi",
+    "open": "Apri",
+    "view": "Visualizza",
+    "duplicate": "Duplica",
+    "archive": "Archivia",
+    "restore": "Ripristina",
+    "send": "Invia",
+    "approve": "Approva",
+    "reject": "Rifiuta",
+    "logout": "Esci"
+  },
+
+  "status": {
+    "active": "Attivo",
+    "inactive": "Inattivo",
+    "pending": "In attesa",
+    "approved": "Approvato",
+    "rejected": "Rifiutato",
+    "draft": "Bozza",
+    "sent": "Inviato",
+    "paid": "Pagato",
+    "unpaid": "Non pagato",
+    "partial": "Parziale",
+    "overdue": "Scaduto",
+    "cancelled": "Annullato",
+    "completed": "Completato",
+    "in_progress": "In corso",
+    "open": "Aperto",
+    "closed": "Chiuso"
+  },
+
+  "table": {
+    "no_results": "Nessun risultato trovato",
+    "loading": "Caricamento...",
+    "rows_per_page": "Righe per pagina",
+    "page_of": "Pagina {current} di {total}",
+    "selected": "{count} selezionati",
+    "select_all": "Seleziona tutti",
+    "columns": "Colonne"
+  },
+
+  "form": {
+    "required": "Campo obbligatorio",
+    "invalid_email": "Email non valida",
+    "invalid_phone": "Telefono non valido",
+    "invalid_url": "URL non valido",
+    "min_length": "Minimo {min} caratteri",
+    "max_length": "Massimo {max} caratteri",
+    "min_value": "Valore minimo: {min}",
+    "max_value": "Valore massimo: {max}",
+    "select_option": "Seleziona un'opzione",
+    "select_date": "Seleziona data",
+    "optional": "Opzionale"
+  },
+
+  "feedback": {
+    "saved": "Salvato con successo",
+    "deleted": "Eliminato con successo",
+    "created": "Creato con successo",
+    "updated": "Aggiornato con successo",
+    "error_generic": "Si è verificato un errore. Riprova.",
+    "error_network": "Errore di rete. Verifica la connessione.",
+    "error_unauthorized": "Non autorizzato",
+    "error_not_found": "Risorsa non trovata",
+    "confirm_delete": "Sei sicuro di voler eliminare questo elemento?",
+    "confirm_delete_description": "Questa azione è irreversibile.",
+    "loading": "Caricamento in corso..."
+  },
+
+  "pagination": {
+    "previous": "Precedente",
+    "next": "Successivo",
+    "first": "Prima pagina",
+    "last": "Ultima pagina",
+    "showing": "Visualizzando {from}–{to} di {total}"
+  },
+
+  "datetime": {
+    "today": "Oggi",
+    "yesterday": "Ieri",
+    "tomorrow": "Domani",
+    "date_format": "dd/MM/yyyy",
+    "datetime_format": "dd/MM/yyyy HH:mm",
+    "at": "alle"
+  },
+
+  "empty_state": {
+    "title": "Nessun elemento",
+    "description": "Non ci sono elementi da visualizzare.",
+    "cta": "Crea il primo"
+  },
+
+  "auth": {
+    "login": "Accedi",
+    "logout": "Esci",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Password dimenticata?",
+    "welcome_back": "Bentornato"
+  }
+}

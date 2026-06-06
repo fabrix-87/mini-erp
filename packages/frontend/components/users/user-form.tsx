@@ -2,7 +2,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -44,6 +43,7 @@ import { Badge } from "../ui/badge";
 import { Checkbox } from "../ui/checkbox";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
 import { CountryCombobox } from "../ui/country-combobox";
+import { useNavigation } from "@/hooks/use-navigation";
 
 // ============================================================================
 // Component Props
@@ -61,7 +61,7 @@ interface UserFormProps {
 // ============================================================================
 
 export function UserForm({ user, mode, roles = [], languages = [] }: UserFormProps) {
-  const router = useRouter();
+  const { navigate, navigateToDetail } = useNavigation()
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState<"profile" | "details" | "address">("profile");
 
@@ -102,21 +102,18 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
           const result = await createUserAction({
             username: createData.username,
             email: createData.email,
-            password: createData.password || "",
+            password: createData.password,
+            gender: createData.gender ?? 'PREFER_NOT_TO_SAY',
             roleIds: createData.roleIds,
             preferredLanguageId: createData.preferredLanguageId ?? 1,
-            active: true,
-            details: {
-              firstName: createData.firstName,
-              lastName: createData.lastName,
-              phone: createData.phone || "",
-            },
+            firstName: createData.firstName,
+            lastName: createData.lastName,
+            phone: createData.phone || "",
           });
 
           if (result.success) {
             toast.success(result.message || "Utente creato con successo");
-            router.push("/settings/users");
-            router.refresh();
+            navigate('users');
           } else {
             toast.error(result.error || "Errore durante la creazione");
           }
@@ -160,7 +157,7 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
 
           // Update details
           const detailsResult = await updateUserDetailsAction(userId, {
-            firstName: updateData.firstName,
+            firstName: updateData.firstName!,
             lastName: updateData.lastName,
             phone: updateData.phone,
             address: updateData.address,
@@ -175,8 +172,7 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
 
           if (detailsResult.success) {
             toast.success(detailsResult.message || "Utente aggiornato con successo");
-            router.push(`/settings/users/${userId}`);
-            router.refresh();
+            navigateToDetail('users', userId);
           } else {
             toast.error(detailsResult.error || "Errore durante l'aggiornamento");
           }
@@ -190,9 +186,9 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
 
   const handleCancel = () => {
     if (mode === "edit" && user) {
-      router.push(`/settings/users/${user.id}`);
+      navigateToDetail('users', user.id);
     } else {
-      router.push("/settings/users");
+      navigate('users')
     }
   };
 

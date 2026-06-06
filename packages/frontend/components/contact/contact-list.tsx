@@ -2,7 +2,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   useContactMutations,
   useContactExport,
@@ -19,6 +18,7 @@ import ContactBulkActions from "./contact-list/bulk-actions";
 import ContactTable from "./contact-list/table";
 import { DataPagination } from "../ui/data-pagination";
 import { useUpdateURL } from "@/hooks/use-update-url";
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface Props {
   data: ContactListApiResponse;
@@ -26,7 +26,8 @@ interface Props {
 }
 
 export default function ContactListPage({ data, params }: Props) {
-  const router = useRouter();
+  const { navigateToNew, navigateToEdit, navigateToDetail, getRoute } = useNavigation();
+  const updateURL = useUpdateURL(getRoute("contacts"));
 
   // Hook semplice per la lista (si sincronizza con SSR)
   const { data: contacts, pagination } = data;
@@ -57,8 +58,6 @@ export default function ContactListPage({ data, params }: Props) {
     sortBy: params.sortBy,
     sortOrder: params.sortOrder,
   } satisfies ContactQueryInput;
-
-  const updateURL = useUpdateURL("/contacts");
 
   const handleResetFilters = () => {
     updateURL({}, { replace: true, clearAll: true });
@@ -93,7 +92,7 @@ export default function ContactListPage({ data, params }: Props) {
       <ContactToolbar
         onSearch={handleSearch}
         onToggleFilters={() => setShowFilters(!showFilters)}
-        onNewContact={() => router.push("/contacts/new")}
+        onNewContact={() => navigateToNew("contacts")}
         onReset={handleResetFilters}
         onExport={exportExcel}
         isExporting={isExporting}
@@ -137,8 +136,8 @@ export default function ContactListPage({ data, params }: Props) {
         }}
         onSort={handleSort}
         sort={sort}
-        onView={(id) => router.push(`/contacts/${id}`)}
-        onEdit={(id) => router.push(`/contacts/${id}/edit`)}
+        onView={(id) => navigateToDetail("contacts", id)}
+        onEdit={(id) => navigateToEdit("contacts", id)}
         onDelete={async (id) => {
           if (confirm("Sei sicuro di voler eliminare questo contatto?")) {
             await deleteContact(id);

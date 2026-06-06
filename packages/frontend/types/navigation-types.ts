@@ -6,7 +6,7 @@ export interface NavigationItem {
   name: string;
   href: string;
   icon?: any;
-  roles?: string[];
+  roles?: readonly string[];
   badge?: string | number;
   description?: string;
   items?: NavigationItem[];

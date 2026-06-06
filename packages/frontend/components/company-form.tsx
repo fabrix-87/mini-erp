@@ -2,7 +2,6 @@
 "use client";
 
 import { useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { ArrowLeft, Save } from "lucide-react";
@@ -35,6 +34,7 @@ import {
   updateSupplierAction,
   updateSupplierCompanyAction,
 } from "@/actions/supplier-actions";
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface CompanyFormProps {
   initialData?: Customer | Supplier;
@@ -42,7 +42,8 @@ interface CompanyFormProps {
 }
 
 export default function CompanyFormPage({ initialData, companyType }: CompanyFormProps) {
-  const router = useRouter();
+  const { navigateToDetail, navigate } = useNavigation();
+  const entityType = companyType === "CUSTOMER" ? "customers" : "suppliers";
 
   const isEditMode = !!initialData;
   const entityId = initialData ? (initialData as { id: number }).id : undefined;
@@ -74,15 +75,15 @@ export default function CompanyFormPage({ initialData, companyType }: CompanyFor
               return;
             }
             toast.success("Cliente aggiornato con successo");
-            router.push(`/customers/${entityId}`);
+            navigateToDetail("customers", entityId);
           } else {
             const result = await createCustomerAction(mapFormToCreateApi(values, "CUSTOMER"));
-            if (!result.success) {
+            if (!result.data) {
               toast.error(result.error ?? "Errore nella creazione");
               return;
             }
             toast.success("Cliente creato con successo");
-            router.push(`/customers/${result.data?.id}`);
+            navigateToDetail("customers", result.data.id);
           }
         } else {
           if (isEditMode && entityId) {
@@ -95,15 +96,15 @@ export default function CompanyFormPage({ initialData, companyType }: CompanyFor
               return;
             }
             toast.success("Fornitore aggiornato con successo");
-            router.push(`/suppliers/${entityId}`);
+            navigateToDetail("suppliers", entityId);
           } else {
             const result = await createSupplierAction(mapFormToCreateApi(values, "SUPPLIER"));
-            if (!result.success) {
+            if (!result.data) {
               toast.error(result.error ?? "Errore nella creazione");
               return;
             }
             toast.success("Fornitore creato con successo");
-            router.push(`/suppliers/${result.data?.id}`);
+            navigateToDetail("suppliers", result.data.id);
           }
         }
       });
@@ -121,7 +122,7 @@ export default function CompanyFormPage({ initialData, companyType }: CompanyFor
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => router.back()}>
+            <Button variant="ghost" size="icon" onClick={() => navigate(entityType)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
@@ -136,7 +137,7 @@ export default function CompanyFormPage({ initialData, companyType }: CompanyFor
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => router.back()}>
+            <Button variant="outline" onClick={() => navigate(entityType)}>
               Annulla
             </Button>
             <Button onClick={onSubmit} disabled={isPending}>
@@ -149,7 +150,7 @@ export default function CompanyFormPage({ initialData, companyType }: CompanyFor
         <CompanyFormTabs companyType={companyType} />
 
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => router.back()}>
+          <Button variant="outline" onClick={() => navigate(entityType)}>
             Annulla
           </Button>
           <Button onClick={onSubmit} disabled={isPending}>

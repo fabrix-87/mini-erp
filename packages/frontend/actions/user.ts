@@ -19,7 +19,7 @@ import {
 import { ServerApiError } from '@/types/server-client';
 import { redirect } from 'next/navigation';
 import type { UpdateUserProfileInput, UpdateUserDetailsInput } from '@/types/user';
-import { CreateUserInput } from '@mini-erp/shared';
+import { CreateUserFormInput, CreateUserInput } from '@mini-erp/shared';
 
 // ============================================================================
 // Types
@@ -86,7 +86,7 @@ async function withAuth<T>(
 /**
  * Create new user
  */
-export async function createUserAction(data: CreateUserInput): Promise<ActionResult> {
+export async function createUserAction(data: CreateUserFormInput): Promise<ActionResult> {
   const result = await withAuth(async () => {
     const user = await createUser(data);
     userRevalidation.list();

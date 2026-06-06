@@ -2,9 +2,9 @@
 "use client";
 
 import { ReactNode, useState } from "react";
-import { Sidebar } from "./Sidebar";
-import { Navbar } from "./Navbar";
-import { Breadcrumbs } from "./Breadcrumbs";
+import { Sidebar } from "./sidebar";
+import { Navbar } from "./navbar";
+import { Breadcrumbs } from "./breadcrumbs";
 
 interface CrmLayoutProps {
   children: ReactNode;

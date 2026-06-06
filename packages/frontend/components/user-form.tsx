@@ -1,22 +1,21 @@
 // components/user-form.tsx
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 import {
   updateUserProfileAction,
   updateUserDetailsAction,
   toggleUserActiveAction,
   deleteUserAction,
-} from '@/actions/user';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from "@/actions/user";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -24,7 +23,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,20 +34,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
+import { useNavigation } from "@/hooks/use-navigation";
 
 // ============================================================================
 // Validation Schema
 // ============================================================================
 
 const profileSchema = z.object({
-  username: z.string().min(3, 'Username deve essere almeno 3 caratteri'),
-  email: z.string().email('Email non valida'),
+  username: z.string().min(3, "Username deve essere almeno 3 caratteri"),
+  email: z.email("Email non valida"),
 });
 
 const detailsSchema = z.object({
-  firstName: z.string().min(1, 'Nome obbligatorio'),
-  lastName: z.string().min(1, 'Cognome obbligatorio'),
+  firstName: z.string().min(1, "Nome obbligatorio"),
+  lastName: z.string().min(1, "Cognome obbligatorio"),
   phone: z.string().optional(),
 });
 
@@ -78,9 +78,9 @@ interface UserFormProps {
 // ============================================================================
 
 export function UserForm({ user }: UserFormProps) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isDeleting, setIsDeleting] = useState(false);
+  const { refresh } = useNavigation();
 
   // Profile form
   const profileForm = useForm<ProfileFormData>({
@@ -95,9 +95,9 @@ export function UserForm({ user }: UserFormProps) {
   const detailsForm = useForm<DetailsFormData>({
     resolver: zodResolver(detailsSchema),
     defaultValues: {
-      firstName: user.details?.firstName || '',
-      lastName: user.details?.lastName || '',
-      phone: user.details?.phone || '',
+      firstName: user.details?.firstName || "",
+      lastName: user.details?.lastName || "",
+      phone: user.details?.phone || "",
     },
   });
 
@@ -110,12 +110,12 @@ export function UserForm({ user }: UserFormProps) {
       const result = await updateUserProfileAction(user.id, data);
 
       if (result.success) {
-        toast.success('Profilo aggiornato', {
-          description: 'Le modifiche sono state salvate',
+        toast.success("Profilo aggiornato", {
+          description: "Le modifiche sono state salvate",
         });
       } else {
-        toast.error('Errore', {
-          description: result.error || 'Impossibile aggiornare il profilo',
+        toast.error("Errore", {
+          description: result.error || "Impossibile aggiornare il profilo",
         });
       }
     });
@@ -126,12 +126,12 @@ export function UserForm({ user }: UserFormProps) {
       const result = await updateUserDetailsAction(user.id, data);
 
       if (result.success) {
-        toast.success('Dettagli aggiornati', {
-          description: 'Le modifiche sono state salvate',
+        toast.success("Dettagli aggiornati", {
+          description: "Le modifiche sono state salvate",
         });
       } else {
-        toast.error('Errore', {
-          description: result.error || 'Impossibile aggiornare i dettagli',
+        toast.error("Errore", {
+          description: result.error || "Impossibile aggiornare i dettagli",
         });
       }
     });
@@ -142,16 +142,13 @@ export function UserForm({ user }: UserFormProps) {
       const result = await toggleUserActiveAction(user.id, !user.active);
 
       if (result.success) {
-        toast.success(
-          user.active ? 'Utente disattivato' : 'Utente attivato',
-          {
-            description: 'Lo stato è stato modificato',
-          }
-        );
-        router.refresh();
+        toast.success(user.active ? "Utente disattivato" : "Utente attivato", {
+          description: "Lo stato è stato modificato",
+        });
+        refresh();
       } else {
-        toast.error('Errore', {
-          description: result.error || 'Impossibile modificare lo stato',
+        toast.error("Errore", {
+          description: result.error || "Impossibile modificare lo stato",
         });
       }
     });
@@ -164,18 +161,18 @@ export function UserForm({ user }: UserFormProps) {
       const result = await deleteUserAction(user.id);
 
       if (result.success) {
-        toast.success('Utente eliminato', {
-          description: 'L\'utente è stato rimosso dal sistema',
+        toast.success("Utente eliminato", {
+          description: "L'utente è stato rimosso dal sistema",
         });
         // deleteUserAction includes redirect, no need to call router.push
       } else {
-        toast.error('Errore', {
-          description: result.error || 'Impossibile eliminare l\'utente',
+        toast.error("Errore", {
+          description: result.error || "Impossibile eliminare l'utente",
         });
         setIsDeleting(false);
       }
     } catch (error) {
-      toast.error('Errore imprevisto');
+      toast.error("Errore imprevisto");
       setIsDeleting(false);
     }
   };
@@ -190,20 +187,14 @@ export function UserForm({ user }: UserFormProps) {
       <Card>
         <CardHeader>
           <CardTitle>Profilo Utente</CardTitle>
-          <CardDescription>
-            Modifica username ed email dell'utente
-          </CardDescription>
+          <CardDescription>Modifica username ed email dell'utente</CardDescription>
         </CardHeader>
 
         <form onSubmit={profileForm.handleSubmit(onProfileSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                {...profileForm.register('username')}
-                disabled={isPending}
-              />
+              <Input id="username" {...profileForm.register("username")} disabled={isPending} />
               {profileForm.formState.errors.username && (
                 <p className="text-sm text-red-500">
                   {profileForm.formState.errors.username.message}
@@ -216,13 +207,11 @@ export function UserForm({ user }: UserFormProps) {
               <Input
                 id="email"
                 type="email"
-                {...profileForm.register('email')}
+                {...profileForm.register("email")}
                 disabled={isPending}
               />
               {profileForm.formState.errors.email && (
-                <p className="text-sm text-red-500">
-                  {profileForm.formState.errors.email.message}
-                </p>
+                <p className="text-sm text-red-500">{profileForm.formState.errors.email.message}</p>
               )}
             </div>
           </CardContent>
@@ -240,9 +229,7 @@ export function UserForm({ user }: UserFormProps) {
       <Card>
         <CardHeader>
           <CardTitle>Dettagli Personali</CardTitle>
-          <CardDescription>
-            Modifica i dati personali dell'utente
-          </CardDescription>
+          <CardDescription>Modifica i dati personali dell'utente</CardDescription>
         </CardHeader>
 
         <form onSubmit={detailsForm.handleSubmit(onDetailsSubmit)}>
@@ -250,11 +237,7 @@ export function UserForm({ user }: UserFormProps) {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="firstName">Nome</Label>
-                <Input
-                  id="firstName"
-                  {...detailsForm.register('firstName')}
-                  disabled={isPending}
-                />
+                <Input id="firstName" {...detailsForm.register("firstName")} disabled={isPending} />
                 {detailsForm.formState.errors.firstName && (
                   <p className="text-sm text-red-500">
                     {detailsForm.formState.errors.firstName.message}
@@ -264,11 +247,7 @@ export function UserForm({ user }: UserFormProps) {
 
               <div className="space-y-2">
                 <Label htmlFor="lastName">Cognome</Label>
-                <Input
-                  id="lastName"
-                  {...detailsForm.register('lastName')}
-                  disabled={isPending}
-                />
+                <Input id="lastName" {...detailsForm.register("lastName")} disabled={isPending} />
                 {detailsForm.formState.errors.lastName && (
                   <p className="text-sm text-red-500">
                     {detailsForm.formState.errors.lastName.message}
@@ -279,11 +258,7 @@ export function UserForm({ user }: UserFormProps) {
 
             <div className="space-y-2">
               <Label htmlFor="phone">Telefono</Label>
-              <Input
-                id="phone"
-                {...detailsForm.register('phone')}
-                disabled={isPending}
-              />
+              <Input id="phone" {...detailsForm.register("phone")} disabled={isPending} />
             </div>
           </CardContent>
 
@@ -300,9 +275,7 @@ export function UserForm({ user }: UserFormProps) {
       <Card>
         <CardHeader>
           <CardTitle>Azioni</CardTitle>
-          <CardDescription>
-            Gestisci lo stato dell'utente
-          </CardDescription>
+          <CardDescription>Gestisci lo stato dell'utente</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
@@ -311,25 +284,23 @@ export function UserForm({ user }: UserFormProps) {
             <div>
               <h4 className="font-medium">Stato Utente</h4>
               <p className="text-sm text-muted-foreground">
-                {user.active ? 'Utente attivo' : 'Utente disattivato'}
+                {user.active ? "Utente attivo" : "Utente disattivato"}
               </p>
             </div>
             <Button
-              variant={user.active ? 'destructive' : 'default'}
+              variant={user.active ? "destructive" : "default"}
               onClick={handleToggleActive}
               disabled={isPending}
             >
               {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {user.active ? 'Disattiva' : 'Attiva'}
+              {user.active ? "Disattiva" : "Attiva"}
             </Button>
           </div>
 
           {/* Delete User */}
           <div className="flex items-center justify-between p-4 border border-red-200 dark:border-red-800 rounded-lg bg-red-50 dark:bg-red-950">
             <div>
-              <h4 className="font-medium text-red-900 dark:text-red-100">
-                Zona Pericolosa
-              </h4>
+              <h4 className="font-medium text-red-900 dark:text-red-100">Zona Pericolosa</h4>
               <p className="text-sm text-red-700 dark:text-red-300">
                 Elimina definitivamente questo utente
               </p>
@@ -338,9 +309,7 @@ export function UserForm({ user }: UserFormProps) {
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" disabled={isDeleting}>
-                  {isDeleting && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
+                  {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Elimina Utente
                 </Button>
               </AlertDialogTrigger>
@@ -349,18 +318,14 @@ export function UserForm({ user }: UserFormProps) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Sei sicuro?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Questa azione non può essere annullata. L'utente{' '}
-                    <strong>{user.username}</strong> verrà eliminato
-                    permanentemente dal sistema.
+                    Questa azione non può essere annullata. L'utente{" "}
+                    <strong>{user.username}</strong> verrà eliminato permanentemente dal sistema.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
 
                 <AlertDialogFooter>
                   <AlertDialogCancel>Annulla</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDelete}
-                    className="bg-red-600 hover:bg-red-700"
-                  >
+                  <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
                     Elimina
                   </AlertDialogAction>
                 </AlertDialogFooter>

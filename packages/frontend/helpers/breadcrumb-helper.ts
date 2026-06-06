@@ -1,4 +1,7 @@
-import { navigationConfig, NavigationItem } from "@/lib/navigation";
+import { buildNavigationConfig } from "@/lib/navigation";
+import { NavigationItem } from "@/types/navigation-types";
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
 /**
  * Recursively scans the navigation configuration tree to find an item matching the href.
@@ -18,14 +21,23 @@ export const findItemRecursive = (items: NavigationItem[], href: string): Naviga
 };
 
 /**
- * Traverses the global navigation config to extract a localized name for a specific path.
- * * @param href - The URL path to search for in the sidebar configuration.
- * @returns The localized configuration name string, or an empty string if unmatched.
+ * Hook that returns a memoized function to look up the localized name
+ * for a given href within the navigation tree.
+ *
+ * @returns A stable `findPageTitle(href)` function bound to the current locale.
  */
-export const findPageTitle = (href: string): string => {
-  for (const section of navigationConfig) {
-    const item = findItemRecursive(section.items, href);
-    if (item) return item.name;
-  }
-  return "";
-};
+export function useFindPageTitle(): (href: string) => string {
+  const t  = useTranslations("nav");
+
+  return useMemo(() => {
+    const config = buildNavigationConfig(t);
+
+    return (href: string): string => {
+      for (const section of config) {
+        const item = findItemRecursive(section.items, href);
+        if (item) return item.name;
+      }
+      return "";
+    };
+  }, [t]);
+}

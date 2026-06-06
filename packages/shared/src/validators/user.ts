@@ -57,7 +57,7 @@ export const userBaseSchema = z.object({
 export const userDetailsSchema = z.object({
   firstName: z.string().max(100, "Nome troppo lungo"),
   lastName: z.string().max(100, "Cognome troppo lungo").optional(),
-  profilePicture: urlSchema(),
+  profilePicture: urlSchema().optional().nullable(),
   phone: phoneSchema,
 
   // Address
@@ -80,7 +80,7 @@ export const userDetailsSchema = z.object({
       max: "La data di nascita non può essere futura",
       min: "La data di nascita non è valida (massimo 120 anni)",
     },
-  }),
+  }).optional().nullable(),
   gender: genderSchema.default("PREFER_NOT_TO_SAY"),
   bio: z.string().max(1000, "Biografia troppo lunga").optional().nullable(),
 });
@@ -281,7 +281,7 @@ export const updateUserProfileSchema = z.object({
   email: userBaseSchema.shape.email.optional(),
   active: z.boolean().optional(),
   preferredLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
-  details: updateUserDetailsSchema,
+  details: updateUserDetailsSchema.optional().nullable(),
 });
 
 /**

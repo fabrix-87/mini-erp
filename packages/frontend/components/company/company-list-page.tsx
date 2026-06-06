@@ -9,6 +9,7 @@ import { CustomerListApiResponse } from "@/types/customer-types";
 import { SupplierListApiResponse } from "@/types/supplier-types";
 import { useCallback, useState } from "react";
 import { debounce } from "@/lib/utils";
+import { useNavigation } from "@/hooks/use-navigation";
 
 type CustomerCompanyListPageProps = {
   companyType: "CUSTOMER";
@@ -25,7 +26,10 @@ type SupplierCompanyListPageProps = {
 type Props = CustomerCompanyListPageProps | SupplierCompanyListPageProps;
 
 export default function CompanyListPage({ searchParams, paginatedData, companyType }: Props) {
-  const updateURL = useUpdateURL(`/${companyType.toLowerCase()}s`);
+  const { getRoute } = useNavigation();
+  const updateURL = useUpdateURL(
+    companyType == "CUSTOMER" ? getRoute("customers") : getRoute("suppliers"),
+  );
 
   const handlePageChange = (page: number) => {
     updateURL({ page });

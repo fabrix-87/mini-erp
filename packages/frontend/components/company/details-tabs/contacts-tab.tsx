@@ -2,7 +2,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,17 +17,29 @@ import {
 import { Plus, Mail, Phone, Star, Edit, Eye } from "lucide-react";
 import contactService from "@/services/client/contact";
 import { Contact } from "@/types/contact-types";
+import { useUpdateURL } from "@/hooks/use-update-url";
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface CompanyContactsTabProps {
   companyId: number;
 }
 
 export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
-  const router = useRouter();
+  const { getNewRoute, navigateToDetail, navigateToEdit } = useNavigation();
+  const updateURL = useUpdateURL();
 
   const { data, isLoading } = useQuery({
     queryKey: ["contacts", { companyId }],
-    queryFn: () => contactService.getAll({ companyId, page: 1, limit: 100 }),
+    queryFn: () =>
+      contactService.getAll({
+        companyId,
+        page: 1,
+        limit: 100,
+        sortOrder: "asc",
+        isPrimaryContact: undefined,
+        active: true,
+        sortBy: "firstName",
+      }),
   });
 
   const contacts = data?.data || [];
@@ -54,12 +65,7 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Contatti ({contacts.length})</CardTitle>
-        <Button
-          size="sm"
-          onClick={() =>
-            router.push(`/contacts/new?companyId=${companyId}`)
-          }
-        >
+        <Button size="sm" onClick={() => updateURL(getNewRoute("contacts"), { companyId })}>
           <Plus className="mr-2 h-4 w-4" />
           Aggiungi Contatto
         </Button>
@@ -67,14 +73,10 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
       <CardContent>
         {contacts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">
-              Nessun contatto associato
-            </p>
+            <p className="text-muted-foreground mb-4">Nessun contatto associato</p>
             <Button
               variant="outline"
-              onClick={() =>
-                router.push(`/contacts/new?companyId=${companyId}`)
-              }
+              onClick={() => updateURL(getNewRoute("contacts"), { companyId })}
             >
               <Plus className="mr-2 h-4 w-4" />
               Crea il primo contatto
@@ -101,7 +103,7 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
                           <p className="font-medium">
                             {contact.firstName} {contact.lastName}
                           </p>
-                          {contact.isPrimaryContact && (
+                          {contact.companies[0]?.isPrimaryContact && (
                             <Badge variant="secondary" className="mt-1">
                               <Star className="mr-1 h-3 w-3" />
                               Principale
@@ -112,10 +114,10 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="text-sm">{contact.position || "N/A"}</p>
-                        {contact.department && (
+                        <p className="text-sm">{contact.companies[0]?.position || "N/A"}</p>
+                        {contact.companies[0]?.department && (
                           <p className="text-xs text-muted-foreground">
-                            {contact.department}
+                            {contact.companies[0]?.department}
                           </p>
                         )}
                       </div>
@@ -125,7 +127,7 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
                         {contact.email && (
                           <div className="flex items-center gap-1 text-sm">
                             <Mail className="h-3 w-3 text-muted-foreground" />
-                            <span className="truncate max-w-[200px]">
+                            <span className="truncate max-w-50">
                               <a href={`mailto:${contact.email}`}>{contact.email}</a>
                             </span>
                           </div>
@@ -139,9 +141,7 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={contact.active ? "default" : "secondary"}
-                      >
+                      <Badge variant={contact.active ? "default" : "secondary"}>
                         {contact.active ? "Attivo" : "Inattivo"}
                       </Badge>
                     </TableCell>
@@ -149,18 +149,14 @@ export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() =>
-                          router.push(`/contacts/${contact.id}`)
-                        }
+                        onClick={() => navigateToDetail("contacts", contact.id)}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() =>
-                          router.push(`/contacts/${contact.id}/edit`)
-                        }
+                        onClick={() => navigateToEdit("contacts", contact.id)}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>

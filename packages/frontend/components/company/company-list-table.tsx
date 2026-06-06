@@ -1,7 +1,6 @@
 // components/company/company-list-table.tsx
 "use client";
 
-import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -32,8 +31,8 @@ import {
 import { Customer } from "@/types/customer-types";
 import { Supplier } from "@/types/supplier-types";
 import { CompanyType } from "@/types/company-types";
-import { id } from "date-fns/locale";
 import { formatCurrency } from "@mini-erp/shared";
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface CompanyListTableProps {
   data: (Customer | Supplier)[];
@@ -52,21 +51,19 @@ export function CompanyListTable({
   totalPages,
   onPageChange,
 }: CompanyListTableProps) {
-  const router = useRouter();
+  const navigateEntity = type === "CUSTOMER" ? 'customers' : 'suppliers';
+  const { navigateToDetail, navigateToEdit, navigateToNew } = useNavigation()
 
-  console.log(data);
   if(!data){
     return "ERRORE!!!!";
   }
 
   const handleView = (id: number) => {
-    const path = type === "CUSTOMER" ? "customers" : "suppliers";
-    router.push(`/${path}/${id}`);
+    navigateToDetail(navigateEntity, id)
   };
 
   const handleEdit = (id: number) => {
-    const path = type === "CUSTOMER" ? "customers" : "suppliers";
-    router.push(`/${path}/${id}/edit`);
+    navigateToEdit(navigateEntity, id)
   };
 
   const handleDelete = (id: number) => {
@@ -83,8 +80,7 @@ export function CompanyListTable({
         <Button
           variant="outline"
           onClick={() => {
-            const path = type === "CUSTOMER" ? "customers" : "suppliers";
-            router.push(`/${path}/new`);
+            navigateToNew(navigateEntity)
           }}
         >
           Crea il primo {type === "CUSTOMER" ? "cliente" : "fornitore"}

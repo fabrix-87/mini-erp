@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useContactMutations, useContactValidation } from "@/hooks/use-contact";
 import type {
@@ -28,11 +27,15 @@ import {
 } from "@/actions/company-contact-actions";
 import type { CompanyContactSummary } from "@mini-erp/shared";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
-import { actionLabels, CRUMB_CONTACTS } from "@/lib/constants/breadcrumbs";
+import { useActionLabels, useCrumbMap } from "@/hooks/use-breadcrumb";
+import { useNavigation } from "@/hooks/use-navigation";
+import { toast } from "sonner";
 
 export default function ContactForm({ isNew, contact }: ContactFormProps) {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const actionLabels = useActionLabels();
+  const crumbs = useCrumbMap();
+  const { navigateToDetail, navigate } = useNavigation();
 
   const { id: contactId } = contact || { id: undefined };
 
@@ -163,7 +166,8 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
       if (isNew) {
         // In create mode le company vengono salvate insieme al contatto
         const newContact = await createContact(data as CreateContactInput);
-        router.push(`/contacts/${newContact?.id}`);
+        if (newContact) navigateToDetail("contacts", newContact.id);
+        else toast.error("Impossibile creare il contatto");
       } else if (contactId) {
         // 1. Salva i campi anagrafici del contatto (senza companies —
         //    updateContactSchema non include companies)
@@ -173,7 +177,7 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
         // 2. Sincronizza le company associations tramite le dedicate action
         await syncCompanies(contactId, companies);
 
-        router.push(`/contacts/${contactId}`);
+        navigateToDetail("contacts", contactId);
       }
     },
     (errors) => {
@@ -222,9 +226,9 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
   const handleCancel = () => {
     if (confirm("Vuoi annullare le modifiche?")) {
       if (isNew) {
-        router.push("/contacts");
+        navigate("contacts");
       } else {
-        router.push(`/contacts/${contactId}`);
+        navigateToDetail("contacts", contactId!);
       }
     }
   };
@@ -252,14 +256,18 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
       {contact && (
         <BreadcrumbSetter
           items={[
-            CRUMB_CONTACTS,
-            { label: `${actionLabels.edit}: ${contact.firstName} ${contact.lastName}` }
+            crumbs.contacts,
+            { label: `${actionLabels.edit}: ${contact.firstName} ${contact.lastName}` },
           ]}
         />
       )}
       {/* Header */}
       <div className="mb-6">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-4">
+        <Button
+          variant="ghost"
+          onClick={() => (isNew ? navigate("contacts") : navigateToDetail("contacts", contactId!))}
+          className="mb-4"
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Indietro
         </Button>

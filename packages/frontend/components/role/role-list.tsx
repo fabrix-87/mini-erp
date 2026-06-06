@@ -12,14 +12,15 @@ import { useUpdateURL } from "@/hooks/use-update-url";
 import { RoleListApiResponse } from "@/types/role-types";
 import { deleteRoleAction } from "@/actions/role-actions";
 import { toast } from "sonner";
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface Props {
   data: RoleListApiResponse;
 }
 
 export default function RoleListPage({ data }: Props) {
-  const router = useRouter();
   const searchParams = useSearchParams();
+  const { refresh, navigateToNew, navigateToDetail, navigateToEdit } = useNavigation();
 
   const { data: roles, pagination, results } = data;
   const [isPending, startTransition] = useTransition();
@@ -68,12 +69,12 @@ export default function RoleListPage({ data }: Props) {
   const handleDelete = async () => {
     if (selectedRoleId !== null) {
       startTransition(async () => {
-        setSelectedRoleId(null);        
+        setSelectedRoleId(null);
         setShowDeleteDialog(false);
-        const result = await deleteRoleAction(selectedRoleId);        
+        const result = await deleteRoleAction(selectedRoleId);
         if (result.success) {
-          router.refresh();
           toast.success(`Layout ${selectedRoleName} eliminato`);
+          refresh();
         } else {
           toast.error("Errore eliminazione ruolo");
         }
@@ -97,7 +98,7 @@ export default function RoleListPage({ data }: Props) {
 
       <RoleToolbar
         onSearch={handleSearch}
-        onNewRole={() => router.push("/settings/roles/new")}
+        onNewRole={() => navigateToNew("roles")}
         initialSearch={params.search || ""}
       />
 
@@ -106,8 +107,8 @@ export default function RoleListPage({ data }: Props) {
         onSort={handleSort}
         sort={sort}
         loading={isPending}
-        onView={(id) => router.push(`/settings/roles/${id}`)}
-        onEdit={(id) => router.push(`/settings/roles/${id}/edit`)}
+        onView={(id) => navigateToDetail("roles", id)}
+        onEdit={(id) => navigateToEdit("roles", id)}
         onDelete={async (id, name) => {
           setSelectedRoleId(id);
           setSelectedRoleName(name);

@@ -507,7 +507,7 @@ flowchart TD
 |------------|----------|----------|
 | **Root** | `/` | Redirect to `/dashboard` if logged in, else `/login` |
 | **Public** | `/login`, `/register` | Accessible without auth. Redirect if already logged |
-| **Protected** | `/dashboard`, `/contacts` | Require valid token |
+| **Protected** | `/dashboard`, `/crm/contacts` | Require valid token |
 | **Admin** | `/users`, `/roles`, `/settings` | Require admin role |
 
 ---

@@ -8,8 +8,15 @@ import { AuthProvider } from "@/providers/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
 import { preloadFingerprint } from "@/lib/client/fingerprint";
+import { AbstractIntlMessages, NextIntlClientProvider } from "next-intl";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+interface ProvidersProps {
+  children: React.ReactNode;
+  locale: string;
+  messages: AbstractIntlMessages;
+}
+
+export function Providers({ children, locale, messages }: ProvidersProps) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -34,11 +41,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="theme">
-        <AuthProvider>
-          {children}
-          <Toaster />
-          {process.env.NODE_ENV === "development" && <ReactQueryDevtools initialIsOpen={false} />}
-        </AuthProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <AuthProvider>
+            {children}
+            <Toaster />
+            {process.env.NODE_ENV === "development" && <ReactQueryDevtools initialIsOpen={false} />}
+          </AuthProvider>
+        </NextIntlClientProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

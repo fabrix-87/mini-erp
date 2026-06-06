@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,6 +38,8 @@ import {
 import { CreateRoleInput, Permission, UpdateRoleInput } from "@mini-erp/shared";
 import { PermissionDialogState, RoleFormProps, RoleFormValues } from "@/types/role-types";
 import { PermissionDialog } from "./role-form/permission-dialog";
+import { useNavigation } from "@/hooks/use-navigation";
+import { useCrumbMap } from "@/hooks/use-breadcrumb";
 
 // ============================================================================
 // HELPER: group permissions by resource
@@ -58,7 +59,8 @@ function groupByResource(permissions: Permission[]): Record<string, Permission[]
 // ============================================================================
 
 export default function RoleFormPage({ mode, roleId }: RoleFormProps) {
-  const router = useRouter();
+  // Navigation
+  const { navigateToDetail, navigate } = useNavigation();
 
   // ── Role data (edit only) ──────────────────────────────────────────────────
   const { role, loading: roleLoading } = useRole(roleId ?? 0);
@@ -149,14 +151,14 @@ export default function RoleFormPage({ mode, roleId }: RoleFormProps) {
     if (mode === "create") {
       const result = await createRoleAction(payload);
       if (result.success && result.data?.id) {
-        router.push(`/settings/roles/${result.data?.id}`);
+        navigateToDetail("roles", result.data.id);
       } else {
         setServerError(result.error ?? "Errore sconosciuto");
       }
     } else if (roleId) {
       const result = await updateRoleAction(roleId, payload);
       if (result.success) {
-        router.push(`/settings/roles/${roleId}`);
+        navigateToDetail("roles", roleId);
       } else {
         setServerError(result.error ?? "Errore sconosciuto");
       }
@@ -203,15 +205,24 @@ export default function RoleFormPage({ mode, roleId }: RoleFormProps) {
 
   const isSaving = isCreating || isUpdating;
   const pageTitle = mode === "create" ? "Nuovo ruolo" : `Modifica ruolo — ${role?.name ?? ""}`;
+  const crumbs = useCrumbMap();
 
   return (
     <div className="space-y-6">
-      <BreadcrumbSetter title={mode === "create" ? "Nuovo ruolo" : "Modifica ruolo"} />
+      <BreadcrumbSetter
+        items={[crumbs.roles, { label: mode === "create" ? "Nuovo ruolo" : `Modifica ruolo: ${role?.name ?? ""}` }]}
+      />
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() =>
+              mode === "create" ? navigate("roles") : navigateToDetail("roles", roleId!)
+            }
+          >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -224,7 +235,12 @@ export default function RoleFormPage({ mode, roleId }: RoleFormProps) {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.back()}>
+          <Button
+            variant="outline"
+            onClick={() =>
+              mode === "create" ? navigate("roles") : navigateToDetail("roles", roleId!)
+            }
+          >
             Annulla
           </Button>
           <Button onClick={handleSubmit} disabled={isSaving}>
@@ -432,7 +448,12 @@ export default function RoleFormPage({ mode, roleId }: RoleFormProps) {
 
       {/* ── Footer actions ── */}
       <div className="flex justify-end gap-2 pb-8">
-        <Button variant="outline" onClick={() => router.back()}>
+        <Button
+          variant="outline"
+          onClick={() =>
+            mode === "create" ? navigate("roles") : navigateToDetail("roles", roleId!)
+          }
+        >
           Annulla
         </Button>
         <Button onClick={handleSubmit} disabled={isSaving}>

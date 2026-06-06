@@ -2,7 +2,6 @@
 // app/suppliers/[id]/page.tsx
 "use client";
 
-import { useRouter } from "next/navigation";
 import { ArrowLeft, Edit, Trash2, MoreVertical, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +31,9 @@ import { BreadcrumbSetter } from "./ui/breadcrumb-setter";
 import { CompanyType } from "@/types/company-types";
 import { Customer, Supplier } from "@mini-erp/shared";
 import { BreadcrumbItem } from "@/types/breadcrumb-types";
-import { CRUMB_CUSTOMERS, CRUMB_SUPPLIERS } from "@/lib/constants/breadcrumbs";
+import { useCrumbMap } from "@/hooks/use-breadcrumb";
+import { useNavigation } from "@/hooks/use-navigation";
+import { useUpdateURL } from "@/hooks/use-update-url";
 
 interface CompanyFormProps {
   data: Customer | Supplier;
@@ -40,14 +41,17 @@ interface CompanyFormProps {
 }
 
 export default function CompanyDetailPage({ data, companyType }: CompanyFormProps) {
-  const router = useRouter();
+  const { navigateToEdit, navigate, getNewRoute } = useNavigation();
+  const updateURL = useUpdateURL();
+  const navigationEntity = companyType === "CUSTOMER" ? "customers" : "suppliers";
+  const crumbs = useCrumbMap();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const entityId = data.id;
 
   const breadcrumbItems: BreadcrumbItem[] = [
-    companyType === "CUSTOMER" ? CRUMB_CUSTOMERS : CRUMB_SUPPLIERS,
+    companyType === "CUSTOMER" ? crumbs.customers : crumbs.suppliers,
     {
       label: data.company.companyName || "",
     },
@@ -58,8 +62,7 @@ export default function CompanyDetailPage({ data, companyType }: CompanyFormProp
   const deleteSupplierMutation = useDeleteSupplier();
 
   const handleEdit = () => {
-    const path = companyType === "CUSTOMER" ? "customers" : "suppliers";
-    router.push(`/${path}/${data.id}/edit`);
+    navigateToEdit(navigationEntity, data.id);
   };
 
   const handleDelete = async () => {
@@ -69,27 +72,15 @@ export default function CompanyDetailPage({ data, companyType }: CompanyFormProp
       } else {
         await deleteSupplierMutation.mutateAsync(entityId);
       }
-      const path = companyType === "CUSTOMER" ? "customers" : "suppliers";
-      router.push(`/${path}`);
+      navigate(navigationEntity);
     } catch (error: any) {
       // Error già gestito nel mutation
     }
   };
 
   const handleAddContact = () => {
-    router.push(`/contacts/new?companyId=${entityId}`);
+    updateURL(getNewRoute("contacts"), { companyId: entityId });
   };
-
-  if (!data) {
-    return (
-      <div className="flex flex-col items-center justify-center h-96">
-        <p className="text-lg text-muted-foreground mb-4">
-          {companyType === "CUSTOMER" ? "Cliente" : "Fornitore"} non trovato
-        </p>
-        <Button onClick={() => router.back()}>Torna indietro</Button>
-      </div>
-    );
-  }
 
   const companyData = data;
 
@@ -103,8 +94,7 @@ export default function CompanyDetailPage({ data, companyType }: CompanyFormProp
             variant="ghost"
             size="icon"
             onClick={() => {
-              const path = companyType === "CUSTOMER" ? "customers" : "suppliers";
-              router.push(`/${path}`);
+              navigate(navigationEntity);
             }}
           >
             <ArrowLeft className="h-4 w-4" />

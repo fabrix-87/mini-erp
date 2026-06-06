@@ -8,7 +8,7 @@ import type {
   UpdateUserProfileInput,
   UserListApiResponse,
 } from "@/types/user";
-import { ApiResponse, CreateUserInput } from "@mini-erp/shared";
+import { ApiResponse, CreateUserFormInput, CreateUserInput } from "@mini-erp/shared";
 import { PaginatedResponse } from "@mini-erp/shared/types";
 
 // ============================================================================
@@ -118,7 +118,7 @@ export async function getUserById(
 /**
  * Create new user (admin only)
  */
-export async function createUser(data: CreateUserInput): Promise<User> {
+export async function createUser(data: CreateUserFormInput): Promise<User> {
   return serverApi.post<User>("/users", data, {
     tags: [USER_TAGS.list],
     revalidate: false,

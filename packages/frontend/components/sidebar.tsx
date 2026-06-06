@@ -20,7 +20,7 @@ import {
 import { Settings, LogOut, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
-import type { NavigationItem } from "@/lib/navigation";
+import { NavigationItem } from "@/types/navigation-types";
 
 interface SidebarProps {
   sidebarOpen: boolean;

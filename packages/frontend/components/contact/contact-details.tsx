@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Edit,
@@ -45,7 +44,8 @@ import {
 import { Contact } from "@mini-erp/shared";
 import { formatDateIT } from "@/helpers/date-helper";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
-import { CRUMB_CONTACTS } from "@/lib/constants/breadcrumbs";
+import { useCrumbMap } from "@/hooks/use-breadcrumb";
+import { useNavigation } from "@/hooks/use-navigation";
 
 // ============================================================================
 // TYPES
@@ -114,17 +114,19 @@ function InfoRow({
  * contact info, notes and metadata sidebar.
  */
 export default function ContactDetails({ contact, contactId }: Props) {
-  const router = useRouter();
+  const { navigate, navigateToEdit, navigateToDetail } = useNavigation();
+  const crumbs = useCrumbMap();
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { deleteContact, toggleActive, isPending } = useContactMutations();
 
-  const handleEdit = () => router.push(`/contacts/${contactId}/edit`);
+  const handleEdit = () => navigateToEdit("contacts", contactId);
 
   const handleDelete = async () => {
     try {
       await deleteContact(contactId);
-      router.push("/contacts");
+      navigate("contacts");
     } catch (error) {
       console.error("Delete error:", error);
     }
@@ -146,12 +148,14 @@ export default function ContactDetails({ contact, contactId }: Props) {
 
   return (
     <div className="space-y-6">
-      <BreadcrumbSetter items={[CRUMB_CONTACTS, { label: `${contact.firstName} ${contact.lastName}` }]} />
+      <BreadcrumbSetter
+        items={[crumbs.contacts, { label: `${contact.firstName} ${contact.lastName}` }]}
+      />
 
       {/* ── Header ───────────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.push("/contacts")}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("contacts")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
 
@@ -303,7 +307,7 @@ export default function ContactDetails({ contact, contactId }: Props) {
                         size="icon"
                         className="h-7 w-7 shrink-0"
                         title="Apri scheda azienda"
-                        onClick={() => router.push(`/companies/${entry.companyId}`)}
+                        onClick={() => navigateToDetail("company", entry.companyId)}
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                       </Button>

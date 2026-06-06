@@ -12,8 +12,7 @@ import {
 } from "@/components/ui/select";
 import { SupplierQueryInput } from "@mini-erp/shared";
 import { CompanyListStats } from "../company-list-stats";
-import { useRouter } from "next/navigation";
-
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface Props {
     searchParams: SupplierQueryInput;
@@ -28,7 +27,8 @@ export default function SupplierHeaderListPage({
   handleSearchChange,
   handleFilterChange
 }: Props) {
-  const router = useRouter();
+
+  const { navigateToNew } = useNavigation()
   
   return (
     <>
@@ -44,7 +44,7 @@ export default function SupplierHeaderListPage({
             <Download className="mr-2 h-4 w-4" />
             Esporta
           </Button>
-          <Button onClick={() => router.push("/suppliers/new")}>
+          <Button onClick={() => navigateToNew('suppliers')}>
             <Plus className="mr-2 h-4 w-4" />
             Nuovo Fornitore
           </Button>
