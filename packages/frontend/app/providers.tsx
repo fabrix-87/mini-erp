@@ -8,7 +8,6 @@ import { AuthProvider } from "@/providers/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
 import { preloadFingerprint } from "@/lib/client/fingerprint";
-import { BreadcrumbProvider } from "@/providers/breadcrumb-provider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -25,7 +24,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             retry: 0,
           },
         },
-      })
+      }),
   );
 
   useEffect(() => {
@@ -34,21 +33,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        storageKey="theme"
-      >
-        <BreadcrumbProvider>
-          <AuthProvider>
-            {children}
-            <Toaster />
-            {process.env.NODE_ENV === "development" && (
-              <ReactQueryDevtools initialIsOpen={false} />
-            )}
-          </AuthProvider>
-        </BreadcrumbProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="theme">
+        <AuthProvider>
+          {children}
+          <Toaster />
+          {process.env.NODE_ENV === "development" && <ReactQueryDevtools initialIsOpen={false} />}
+        </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

@@ -27,6 +27,8 @@ import {
   deleteCompanyContactAction,
 } from "@/actions/company-contact-actions";
 import type { CompanyContactSummary } from "@mini-erp/shared";
+import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
+import { actionLabels, CRUMB_CONTACTS } from "@/lib/constants/breadcrumbs";
 
 export default function ContactForm({ isNew, contact }: ContactFormProps) {
   const router = useRouter();
@@ -246,6 +248,15 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
+      {/* Setter breadcrumb - Solo in modifica*/}
+      {contact && (
+        <BreadcrumbSetter
+          items={[
+            CRUMB_CONTACTS,
+            { label: `${actionLabels.edit}: ${contact.firstName} ${contact.lastName}` }
+          ]}
+        />
+      )}
       {/* Header */}
       <div className="mb-6">
         <Button variant="ghost" onClick={() => router.back()} className="mb-4">

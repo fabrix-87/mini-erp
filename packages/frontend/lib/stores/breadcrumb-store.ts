@@ -1,19 +1,6 @@
 // lib/stores/breadcrumb-store.ts
 
-// ============================================================================
-// Types
-// ============================================================================
-
-export interface BreadcrumbItem {
-  /** Visible label */
-  label: string;
-  /** Optional link — last item is typically not linked */
-  href?: string;
-}
-
-interface BreadcrumbState {
-  items: BreadcrumbItem[];
-}
+import { BreadcrumbItem, BreadcrumbState } from "@/types/breadcrumb-types";
 
 // ============================================================================
 // Store — vanilla pub/sub, no external deps
@@ -21,7 +8,7 @@ interface BreadcrumbState {
 
 type Listener = () => void;
 
-let state: BreadcrumbState = { items: [] };
+let state: BreadcrumbState = { items: [], pathname: "" };
 const listeners = new Set<Listener>();
 
 function emit() {
@@ -42,18 +29,18 @@ export const breadcrumbStore = {
 
   /** Server snapshot — returns empty items (SSR safe) */
   getServerSnapshot(): BreadcrumbState {
-    return { items: [] };
+    return { items: [], pathname: "" };
   },
 
   /** Set a full items array */
-  setItems(items: BreadcrumbItem[]): void {
-    state = { items };
+  setItems(items: BreadcrumbItem[], pathname: string): void {
+    state = { items, pathname };
     emit();
   },
 
   /** Reset to empty */
   clear(): void {
-    state = { items: [] };
+    state = { items: [], pathname: "" };
     emit();
   },
 };

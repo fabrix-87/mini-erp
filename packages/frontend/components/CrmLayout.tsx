@@ -16,10 +16,7 @@ export function CrmLayout({ children }: CrmLayoutProps) {
   return (
     <div className="flex h-screen overflow-hidden bg-sidebar-background">
       {/* Sidebar vive sullo sfondo base */}
-      <Sidebar
-        sidebarOpen={sidebarOpen}
-        onSidebarClose={() => setSidebarOpen(false)}
-      />
+      <Sidebar sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         <Navbar onMenuClick={() => setSidebarOpen(true)} />

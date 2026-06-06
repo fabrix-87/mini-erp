@@ -44,6 +44,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Contact } from "@mini-erp/shared";
 import { formatDateIT } from "@/helpers/date-helper";
+import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
+import { CRUMB_CONTACTS } from "@/lib/constants/breadcrumbs";
 
 // ============================================================================
 // TYPES
@@ -144,6 +146,8 @@ export default function ContactDetails({ contact, contactId }: Props) {
 
   return (
     <div className="space-y-6">
+      <BreadcrumbSetter items={[CRUMB_CONTACTS, { label: `${contact.firstName} ${contact.lastName}` }]} />
+
       {/* ── Header ───────────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">

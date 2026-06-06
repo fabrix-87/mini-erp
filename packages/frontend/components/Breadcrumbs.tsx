@@ -4,163 +4,104 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, Home } from "lucide-react";
-import { navigationConfig, NavigationItem } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-import { useBreadcrumbItems } from "@/hooks/use-breadcrumb";
+import { useBreadcrumbStoreData } from "@/hooks/use-breadcrumb";
+import { actionLabels, entityLabels } from "@/lib/constants/breadcrumbs";
+import { findPageTitle } from "@/helpers/breadcrumb-helper";
+import { useEffect } from "react";
 
 // ============================================================================
-// Constants
+// Types
 // ============================================================================
 
-const actionLabels: Record<string, string> = {
-  new: "Nuovo",
-  edit: "Modifica",
-  create: "Crea",
-  update: "Aggiorna",
-  view: "Visualizza",
-  calendar: "Calendario",
-  stats: "Statistiche",
-  settings: "Impostazioni",
-  profile: "Profilo",
-  general: "Generali",
-  users: "Utenti",
-  roles: "Ruoli",
-};
-
-const entityLabels: Record<string, string> = {
-  activities: "Attività",
-  customers: "Cliente",
-  suppliers: "Fornitore",
-  contacts: "Contatto",
-  leads: "Lead",
-  products: "Prodotto",
-  orders: "Ordine",
-  quotes: "Preventivo",
-  invoices: "Fattura",
-  payments: "Pagamento",
-  warehouses: "Magazzino",
-  inventory: "Articolo",
-  users: "Utente",
-  roles: "Ruolo",
-};
-
-// ============================================================================
-// Helpers (invariati)
-// ============================================================================
-
-interface BreadcrumbSegment {
-  name: string;
+/**
+ * Represents a single processed segment of the breadcrumb trail.
+ */
+interface UnifiedCrumb {
+  /** The text to be displayed in the UI */
+  label: string;
+  /** The target URL for the link. Optional for the last item */
   href: string;
-  isLast?: boolean;
 }
 
-// ============================================================================
-// Component
-// ============================================================================
-
+/**
+ * Breadcrumbs navigation component tailored for enterprise ERP applications.
+ * * It resolves the trail dynamically using a two-tier architectural pattern:
+ * 1. **Store Override (Priority 1):** Uses explicit labels injected via `useBreadcrumbSetter`
+ * (e.g., entity names like "Mario Rossi"), validated against the current route to prevent flashing.
+ * 2. **Automatic Fallback (Priority 2):** Parses the URL pathname segments against localized dictionaries
+ * and structural side-navigation configs for all static pages.
+ * * @component
+ * @returns The rendered breadcrumb navigation bar, or null if on the landing roots.
+ */
 export function Breadcrumbs() {
-  const pathname = usePathname();
+  const currentPathname = usePathname();
+  const { items: storeItems, pathname: storePathname } = useBreadcrumbStoreData();
 
-  // ── Priorità 1: items strutturati dallo store ─────────────────────────────
-  const storeItems = useBreadcrumbItems();
+  // Guard clause: Hide breadcrumbs on home/root dashboard areas
+  if (currentPathname === "/" || currentPathname === "/dashboard") return null;
 
-  if (pathname === "/" || pathname === "/dashboard") return null;
+  // ── 1. UNIFIED DATA PROCESSING ────────────────────────────────────────────
+  let finalCrumbs: UnifiedCrumb[] = [];
 
-  // Se lo store ha items, li usiamo direttamente — nessuna logica pathname
-  if (storeItems.length > 0) {
-    return (
-      <div className="bg-card border-b border-border px-6 py-4">
-        <nav className="flex items-center space-x-2 text-sm">
-          <Link
-            href="/dashboard"
-            className={cn(
-              "flex items-center gap-1.5 px-2 py-1 rounded-md transition-colors",
-              "text-muted-foreground hover:text-foreground hover:bg-accent",
-            )}
-          >
-            <Home className="h-4 w-4" />
-            <span>Home</span>
-          </Link>
+  // Verify if the store holds fresh data matching the active page layout
+  const isStoreValid = storeItems.length > 0 && storePathname === currentPathname;
 
-          {storeItems.map((item, i) => {
-            const isLast = i === storeItems.length - 1;
-            return (
-              <div key={i} className="flex items-center space-x-2">
-                <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                {item.href && !isLast ? (
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "px-2 py-1 rounded-md transition-colors",
-                      "text-muted-foreground hover:text-foreground hover:bg-accent",
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                ) : (
-                  <span className="font-medium text-foreground px-2 py-1">{item.label}</span>
-                )}
-              </div>
-            );
-          })}
-        </nav>
-      </div>
-    );
+  if (isStoreValid) {
+    // Map store items to match our unified structure safely
+    finalCrumbs = storeItems.map((item) => ({
+      label: item.label,
+      href: item.href || currentPathname,
+    }));
+  } else {
+    // Fallback: Generate structural breadcrumbs directly from the URL pathname segments
+    const pathSegments = currentPathname.split("/").filter(Boolean);
+
+    if (!(pathSegments.length === 1 && pathSegments[0] === "dashboard")) {
+      finalCrumbs = pathSegments.map((segment, index) => {
+        const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
+
+        // Robust dynamic identifier parsing: check if the parent segment is a registered entity root
+        const parentSegment = index > 0 ? pathSegments[index - 1] : null;
+        const isDynamicId = parentSegment && entityLabels[parentSegment];
+
+        let label = segment;
+        const structuralTitle = findPageTitle(href);
+
+        if (structuralTitle) {
+          label = structuralTitle;
+        } else if (actionLabels[segment]) {
+          label = actionLabels[segment];
+        } else if (isDynamicId) {
+          // Handles numerical IDs, UUIDs, and custom strings gracefully by cropping long hashes
+          const formattedId = segment.length > 12 ? segment.slice(0, 8) + "..." : segment;
+          label = `${entityLabels[parentSegment]} #${formattedId}`;
+        } else {
+          // General semantic fallback for non-registered static segments
+          label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ");
+        }
+
+        return { label, href };
+      });
+    }
   }
 
-  // ── Priorità 2: fallback automatico da pathname (logica esistente) ─────────
-  const pathSegments = pathname.split("/").filter(Boolean);
-  if (pathSegments.length === 1 && pathSegments[0] === "dashboard") return null;
+  // If no segments could be calculated, prevent empty rendering wrapper
+  if (finalCrumbs.length === 0) return null;
 
-  const findItemRecursive = (items: NavigationItem[], href: string): NavigationItem | null => {
-    for (const item of items) {
-      if (item.href === href) return item;
-      if (item.items) {
-        const found = findItemRecursive(item.items, href);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
+  // ── SINCRONIZZAZIONE DEL TITOLO DEL BROWSER ────────────────────────
+  // Estraiamo l'ultimo elemento calcolato (che sia da store o da fallback)
+  const lastCrumbLabel = finalCrumbs.at(-1)?.label;
 
-  const findPageTitle = (href: string): string => {
-    for (const section of navigationConfig) {
-      const item = findItemRecursive(section.items, href);
-      if (item) return item.name;
-    }
-    return "";
-  };
+  useEffect(() => {
+    const baseTitle = process.env.NEXT_PUBLIC_APP_NAME ?? "MyERP - Gestionale Aziendale";
+    document.title = lastCrumbLabel ? `${lastCrumbLabel} | ${baseTitle}` : baseTitle;
+  }, [lastCrumbLabel]); // Si attiva solo se il testo dell'ultimo breadcrumb cambia effettivamente
 
-  const isNumericId = (segment: string) => /^\d+$/.test(segment);
-
-  const getEntityName = (index: number): string => {
-    if (index > 0) {
-      const parent = pathSegments[index - 1];
-      return entityLabels[parent] || "Dettaglio";
-    }
-    return "Dettaglio";
-  };
-
-  const getSegmentLabel = (segment: string, index: number, href: string): string => {
-    const navTitle = findPageTitle(href);
-    if (navTitle) return navTitle;
-    if (actionLabels[segment]) return actionLabels[segment];
-    if (isNumericId(segment)) return `${getEntityName(index)} #${segment}`;
-    return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ");
-  };
-
-  const breadcrumbs: BreadcrumbSegment[] = pathSegments.map((segment, index) => {
-    const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
-    return {
-      name: getSegmentLabel(segment, index, href),
-      href,
-      isLast: index === pathSegments.length - 1,
-    };
-  });
-
+  // ── 2. UNIFIED UI RENDERING (DRY) ─────────────────────────────────────────
   return (
     <div className="bg-card border-b border-border px-6 py-4">
-      <nav className="flex items-center space-x-2 text-sm">
+      <nav className="flex items-center space-x-2 text-sm" aria-label="Breadcrumb">
         <Link
           href="/dashboard"
           className={cn(
@@ -172,24 +113,30 @@ export function Breadcrumbs() {
           <span>Home</span>
         </Link>
 
-        {breadcrumbs.map((crumb) => (
-          <div key={crumb.href} className="flex items-center space-x-2">
-            <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-            {crumb.isLast ? (
-              <span className="font-medium text-foreground px-2 py-1">{crumb.name}</span>
-            ) : (
-              <Link
-                href={crumb.href}
-                className={cn(
-                  "px-2 py-1 rounded-md transition-colors",
-                  "text-muted-foreground hover:text-foreground hover:bg-accent",
-                )}
-              >
-                {crumb.name}
-              </Link>
-            )}
-          </div>
-        ))}
+        {finalCrumbs.map((crumb, i) => {
+          const isLast = i === finalCrumbs.length - 1;
+
+          return (
+            <div key={`${crumb.href}-${i}`} className="flex items-center space-x-2">
+              <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" aria-hidden="true" />
+              {isLast ? (
+                <span className="font-medium text-foreground px-2 py-1" aria-current="page">
+                  {crumb.label}
+                </span>
+              ) : (
+                <Link
+                  href={crumb.href}
+                  className={cn(
+                    "px-2 py-1 rounded-md transition-colors",
+                    "text-muted-foreground hover:text-foreground hover:bg-accent",
+                  )}
+                >
+                  {crumb.label}
+                </Link>
+              )}
+            </div>
+          );
+        })}
       </nav>
     </div>
   );

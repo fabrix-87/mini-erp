@@ -2,10 +2,9 @@
 // app/suppliers/[id]/page.tsx
 "use client";
 
-import { useRouter, useParams, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, Edit, Trash2, MoreVertical, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,26 +30,24 @@ import { CompanyDetailHeader } from "@/components/company/company-detail-header"
 import { CompanyDetailTabs } from "@/components/company/company-detail-tabs";
 import { BreadcrumbSetter } from "./ui/breadcrumb-setter";
 import { CompanyType } from "@/types/company-types";
-import { BreadcrumbItem } from "@/lib/stores/breadcrumb-store";
 import { Customer, Supplier } from "@mini-erp/shared";
+import { BreadcrumbItem } from "@/types/breadcrumb-types";
+import { CRUMB_CUSTOMERS, CRUMB_SUPPLIERS } from "@/lib/constants/breadcrumbs";
 
 interface CompanyFormProps {
   data: Customer | Supplier;
   companyType: CompanyType;
 }
 
-export default function CompanyDetailPage({data, companyType}: CompanyFormProps) {
+export default function CompanyDetailPage({ data, companyType }: CompanyFormProps) {
   const router = useRouter();
-  
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const entityId = data.id
+  const entityId = data.id;
 
   const breadcrumbItems: BreadcrumbItem[] = [
-    {
-      label: companyType === "CUSTOMER" ? "Clienti" : "Fornitori",
-      href: companyType === "CUSTOMER" ? "/customers" : "/suppliers",
-    },
+    companyType === "CUSTOMER" ? CRUMB_CUSTOMERS : CRUMB_SUPPLIERS,
     {
       label: data.company.companyName || "",
     },
@@ -172,8 +169,8 @@ export default function CompanyDetailPage({data, companyType}: CompanyFormProps)
           <AlertDialogHeader>
             <AlertDialogTitle>Conferma eliminazione</AlertDialogTitle>
             <AlertDialogDescription>
-              Sei sicuro di voler eliminare <strong>{companyData.company?.companyName}</strong>? Questa
-              azione non può essere annullata.
+              Sei sicuro di voler eliminare <strong>{companyData.company?.companyName}</strong>?
+              Questa azione non può essere annullata.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

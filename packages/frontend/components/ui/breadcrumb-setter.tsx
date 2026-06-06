@@ -2,7 +2,7 @@
 "use client";
 
 import { useBreadcrumbSetter } from "@/hooks/use-breadcrumb";
-import type { BreadcrumbItem } from "@/lib/stores/breadcrumb-store";
+import { BreadcrumbItem } from "@/types/breadcrumb-types";
 
 // ============================================================================
 // Props — mutually exclusive

@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import ContactDetailsPage from "@/components/contact/contact-details";
 import { contactIdSchema } from "@mini-erp/shared";
 import { getContactById } from "@/services/server/contact-service";
-import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 
 interface ContactDetailPageProps {
   params: Promise<{
@@ -25,10 +24,5 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
     notFound();
   }
 
-  return (
-    <>
-      <BreadcrumbSetter items={[{ label: `${data.firstName} ${data.lastName}` }]} />
-      <ContactDetailsPage contact={data} contactId={contactId} />;
-    </>
-  );
+  return <ContactDetailsPage contact={data} contactId={contactId} />;
 }
