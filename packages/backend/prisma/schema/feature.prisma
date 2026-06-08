@@ -1,0 +1,132 @@
+// ============================================================================
+// FEATURE GROUP
+// Dictionary of reusable specification groups.
+// ============================================================================
+
+/// Reusable specification group, e.g. material, dimensions, compatibility.
+model FeatureGroup {
+    id Int @id @default(autoincrement())
+
+    /// Stable system identifier.
+    code String @unique @db.VarChar(50)
+
+    /// Display ordering hint.
+    position Int @default(0)
+
+    /// Controls whether this group can be exposed as a catalog filter.
+    isFilterable Boolean @default(false) @map("is_filterable")
+
+    translations  FeatureGroupTranslation[]
+    features      Feature[]
+    productValues ProductFeature[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([position])
+    @@map("feature_groups")
+}
+
+// ============================================================================
+// FEATURE GROUP TRANSLATION
+// Localized labels for feature groups.
+// ============================================================================
+
+/// Localized feature-group labels by language.
+model FeatureGroupTranslation {
+    id Int @id @default(autoincrement())
+
+    featureGroupId Int          @map("feature_group_id")
+    featureGroup   FeatureGroup @relation(fields: [featureGroupId], references: [id], onDelete: Cascade)
+
+    languageId Int      @map("language_id")
+    language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+    /// Localized display name.
+    name String @db.VarChar(128)
+
+    @@unique([featureGroupId, languageId])
+    @@map("feature_group_translations")
+}
+
+// ============================================================================
+// FEATURE
+// Reusable predefined values within a feature group.
+// ============================================================================
+
+/// Reusable predefined value belonging to a feature group.
+model Feature {
+    id Int @id @default(autoincrement())
+
+    featureGroupId Int          @map("feature_group_id")
+    featureGroup   FeatureGroup @relation(fields: [featureGroupId], references: [id], onDelete: Cascade)
+
+    /// Stable system identifier unique within the same feature group.
+    code String @db.VarChar(50)
+
+    /// Display ordering within the same feature group.
+    position Int @default(0)
+
+    translations  FeatureTranslation[]
+    productValues ProductFeature[]
+
+    @@unique([featureGroupId, code])
+    @@index([featureGroupId])
+    @@map("features")
+}
+
+// ============================================================================
+// FEATURE TRANSLATION
+// Localized labels for predefined feature values.
+// ============================================================================
+
+/// Localized feature values by language.
+model FeatureTranslation {
+    id Int @id @default(autoincrement())
+
+    featureId Int     @map("feature_id")
+    feature   Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+
+    languageId Int      @map("language_id")
+    language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+    /// Localized display value.
+    value String @db.VarChar(255)
+
+    @@unique([featureId, languageId])
+    @@map("feature_translations")
+}
+
+// ============================================================================
+// PRODUCT FEATURE
+// One value per product and feature group.
+// The value can be predefined or custom, but never both.
+// ============================================================================
+
+/// Assigns a single feature-group value to a product.
+model ProductFeature {
+    id Int @id @default(autoincrement())
+
+    productId String  @map("product_id")
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    featureGroupId Int          @map("feature_group_id")
+    featureGroup   FeatureGroup @relation(fields: [featureGroupId], references: [id], onDelete: Cascade)
+
+    /// Predefined reusable value selected for the group.
+    featureId Int?     @map("feature_id")
+    feature   Feature? @relation(fields: [featureId], references: [id], onDelete: Restrict)
+
+    /// Product-specific value used when no predefined feature applies.
+    /// Expected shape: localized key/value object.
+    customValue Json?
+
+    /// Display ordering within the product specification list.
+    position Int @default(0)
+
+    @@unique([productId, featureGroupId])
+    @@index([productId])
+    @@index([featureGroupId])
+    @@index([featureId])
+    @@map("product_features")
+}

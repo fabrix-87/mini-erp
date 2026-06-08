@@ -1,78 +1,134 @@
+// ============================================================================
+// INTRASTAT COMPLIANCE SYSTEM
+// European Union customs tracking for cross-border trade declaration.
+// Uses strict snapshotting to ensure historical financial and regulatory audits.
+// ============================================================================
+
 enum IntrastatFlow {
-  ARRIVAL // Arrivo di beni/servizi (Acquisti)
-  DISPATCH // Spedizione di beni/servizi (Vendite)
+  ARRIVAL
+  DISPATCH
 }
 
+/// Regulatory ledger recording transactions subject to EU Intrastat customs reporting.
 model IntrastatTransaction {
-  id              Int       @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  // Collegamento al documento e alla riga
-  documentId      Int
-  document        Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  
-  documentLineId  Int
-  documentLine    DocumentLine @relation(fields: [documentLineId], references: [id], onDelete: Cascade)
+  documentId Int      @map("document_id")
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
-  flow            IntrastatFlow // ARRIVAL o DISPATCH
+  documentLineId Int          @map("document_line_id")
+  documentLine   DocumentLine @relation(fields: [documentLineId], references: [id], onDelete: Cascade)
 
-  // Dati Transazionali (Snapshot)
-  transactionDate DateTime  // Data della transazione (solitamente la data DDT/Fattura)
-  
-  // Codici (FK)
-  transactionCode String    @db.Char(2)
+  flow IntrastatFlow
+
+  /// Business-effective timestamp driving the tax declaration period.
+  transactionDate DateTime @map("transaction_date")
+
+  transactionCode String                   @map("transaction_code") @db.Char(2)
   transCodeRel    IntrastatTransactionCode @relation(fields: [transactionCode], references: [code])
-  
-  // Nomenclatura (FK)
-  commodityCode   String    @db.Char(8)
-  commCodeRel     IntrastatCommodityCode @relation(fields: [commodityCode], references: [code])
-  
-  // Dati Nazione (Snapshot dal Documento)
-  partnerCountryCode String @db.Char(2) // Nazione del partner (es. FR)
-  
-  // Dati Monetari
-  invoicedValue   Decimal   @db.Decimal(15, 2) // Valore Fatturato (imponibile riga)
-  statisticalValue Decimal @db.Decimal(15, 2) // Valore Statistico (incl. costi accessori)
 
-  // Dati Logistici
-  netMass         Decimal   @db.Decimal(15, 3) // Peso netto in Kg
-  supplementaryUnits Int?   // Unità supplementare (es. litri, metri)
-  
-  modeOfTransport String?   @db.VarChar(2) // Codice modalità di trasporto (es. 1, 2, 3...)
-  
-  // Dati Correzioni
-  isCorrection    Boolean   @default(false)
-  
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  
-  @@unique([documentLineId]) // Una riga di documento ha una sola transazione Intrastat
+  commodityCode String                 @map("commodity_code") @db.Char(8)
+  commCodeRel   IntrastatCommodityCode @relation(fields: [commodityCode], references: [code])
+
+  /// ISO 3166-1 alpha-2 country reference. Immutable audit snapshot from document partner data.
+  partnerCountryCode String @map("partner_country_code") @db.Char(2)
+
+  /// Net transactional value. Immutable snapshot of line taxable amount.
+  invoicedValue Decimal @map("invoiced_value") @db.Decimal(15, 2)
+
+  /// Statistical value computed for customs (invoicedValue adjusted with ancillary costs).
+  statisticalValue Decimal @map("statistical_value") @db.Decimal(15, 2)
+
+  netMass Decimal @map("net_mass") @db.Decimal(15, 3)
+
+  /// Non-mass customs quantity constraint (e.g., liters, units) required by specific NC8 codes.
+  supplementaryUnits Int? @map("supplementary_units")
+
+  /// Single-digit customs classification representing transport mechanism (e.g., "1" Maritime, "3" Road).
+  modeOfTransport String? @map("mode_of_transport") @db.VarChar(2)
+
+  /// Operational flag indicating data adjustments/amendments on previously closed declarations.
+  isCorrection Boolean @default(false) @map("is_correction")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([documentLineId])
   @@index([transactionDate])
   @@index([partnerCountryCode])
+  @@map("intrastat_transactions")
 }
 
+// ============================================================================
+// INTRASTAT COMPLIANCE SYSTEM (REGULATORY MASTER DATA)
+// Normalized multi-language dictionaries for EU customs reporting.
+// ============================================================================
+
+/// Nature of Transaction (NoT) regulatory master catalog (e.g., "11", "12").
 model IntrastatTransactionCode {
-  code          String    @id @db.Char(2) // Es. 11 (Acquisto/Vendita)
-  descriptionIT String    @db.VarChar(255)
-  descriptionEN String    @db.VarChar(255)
-  
-  // Relazioni inverse
-  transactions  IntrastatTransaction[]
+  code String @id @db.Char(2)
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  translations IntrastatTransactionCodeTranslation[]
+  transactions IntrastatTransaction[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("intrastat_transaction_codes")
 }
 
+/// Localization ledger for Intrastat Transaction Codes.
+model IntrastatTransactionCodeTranslation {
+  id Int @id @default(autoincrement())
+
+  transactionCode String                   @map("transaction_code") @db.Char(2)
+  transactionRel  IntrastatTransactionCode @relation(fields: [transactionCode], references: [code], onDelete: Cascade)
+
+  languageId Int      @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id])
+
+  /// Localized official customs description for the transaction type.
+  description String @db.VarChar(255)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([transactionCode, languageId])
+  @@index([languageId])
+  @@map("intrastat_transaction_code_translations")
+}
+
+/// Combined Nomenclature (NC8) 8-digit master catalog for customs tariff classification.
 model IntrastatCommodityCode {
-  code          String    @id @db.Char(8) // Codice NC8 (es. 85171200)
-  descriptionIT String    @db.VarChar(500)
-  descriptionEN String    @db.VarChar(500)
-  
-  // Opzionale: Link a Product/Variant (può essere un'unica relazione nel modello ProductVariant)
-  productVariants ProductVariant[]
+  code String @id @db.Char(8)
 
-  // Relazioni inverse
-  transactions  IntrastatTransaction[]
+  translations IntrastatCommodityCodeTranslation[]
+  products     Product[]
+  transactions IntrastatTransaction[]
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("intrastat_commodity_codes")
+}
+
+/// Localization ledger for Combined Nomenclature (NC8) descriptions.
+model IntrastatCommodityCodeTranslation {
+  id Int @id @default(autoincrement())
+
+  commodityCode String                 @map("commodity_code") @db.Char(8)
+  commodityRel  IntrastatCommodityCode @relation(fields: [commodityCode], references: [code], onDelete: Cascade)
+
+  languageId Int      @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id])
+
+  /// Localized official customs description for the goods category.
+  description String @db.VarChar(500)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([commodityCode, languageId])
+  @@index([languageId])
+  @@map("intrastat_commodity_code_translations")
 }

@@ -1,14 +1,14 @@
 model Country {
   code        String  @id // IT, DE, FR…
   name        String
-  isEU        Boolean @default(false)
+  isEU        Boolean @default(false) @map("is_eu")
   iso3        String  @db.VarChar(3)
-  numericCode String  @db.VarChar(3)
-  phoneCode   String  @db.VarChar(4)
+  numericCode String  @map("numeric_code") @db.VarChar(3)
+  phoneCode   String  @map("phone_code") @db.VarChar(4)
   continent   String
   active      Boolean
 
-  currencyCode String   @default("EUR") @db.Char(3)
+  currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
   currency     Currency @relation("CountryCurrency", fields: [currencyCode], references: [code])
 
   // Relazioni inverse
@@ -23,4 +23,6 @@ model Country {
   taxRule TaxRule[]
 
   languages Language[]
+
+  @@map("countries")
 }

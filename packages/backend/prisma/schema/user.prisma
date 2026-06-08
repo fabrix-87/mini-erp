@@ -1,50 +1,77 @@
+// ============================================================================
+// IDENTITY AND AUTHENTICATION
+// Core user accounts supporting RBAC, multi-tenancy, and advanced security workflows.
+// ============================================================================
+
+/// Central identity provider (IdP) model for system authentication and audit tracking.
 model User {
-  id       Int     @id @default(autoincrement())
-  username String  @unique @db.VarChar(50)
-  email    String  @unique @db.VarChar(255)
-  password String  @db.VarChar(255) // bcrypt hash
+  id       Int    @id @default(autoincrement())
+  username String @unique @db.VarChar(50)
+  email    String @unique @db.VarChar(255)
+
+  /// Storage for salted password cryptographic hashes (e.g., Argon2id or bcrypt).
+  password String  @db.VarChar(255)
   active   Boolean @default(true)
 
+  /// Tenant boundary for isolation in B2B SaaS deployments. Null denotes system global accounts.
   tenantId Int?
   tenant   Tenant? @relation(fields: [tenantId], references: [id])
 
   // === EMAIL VERIFICATION ===
-  emailVerified            Boolean   @default(false)
-  emailVerificationToken   String?   @unique @db.Char(64) // SHA-256 hash
+  emailVerified Boolean @default(false)
+
+  /// Cryptographic token used during signup or email-change confirmation sequences.
+  emailVerificationToken   String?   @unique @db.Char(64)
   emailVerificationExpires DateTime?
-  emailVerifiedAt          DateTime? // timestamp verifica
+  emailVerifiedAt          DateTime?
 
   // === PASSWORD RESET ===
-  resetPasswordToken    String?   @unique @db.Char(64) // Char(64) per SHA-256
-  resetPasswordExpires  DateTime?
-  passwordResetAttempts Int       @default(0) // rate limiting
-  lastPasswordResetAt   DateTime? // audit trail
+
+  /// Cryptographic token used during self-service recovery workflows.
+  resetPasswordToken   String?   @unique @db.Char(64)
+  resetPasswordExpires DateTime?
+
+  /// Counter for mitigation against token enumeration and brute-force vectors.
+  passwordResetAttempts Int       @default(0)
+  lastPasswordResetAt   DateTime?
 
   // === TWO-FACTOR AUTHENTICATION (2FA) ===
-  twoFactorEnabled     Boolean @default(false)
-  twoFactorSecret      String? @db.VarChar(255) // TOTP secret
-  twoFactorBackupCodes Json? // backup codes array
+  twoFactorEnabled Boolean @default(false)
+
+  /// Base32 encoded seed value utilized for TOTP generation (RFC 6238).
+  twoFactorSecret String? @db.VarChar(255)
+
+  /// Encrypted payload containing deterministic fallback codes.
+  twoFactorBackupCodes Json?
 
   // === SECURITY & AUDIT ===
-  lastPasswordChangeAt DateTime? // traccia ultimo cambio password
-  passwordChangedBy    Int? // admin che ha cambiato password
+  lastPasswordChangeAt DateTime?
 
-  failedLoginAttempts Int       @default(0) // rate limiting login
+  /// Reference to administrative actor executing override actions.
+  passwordChangedBy Int?
+
+  /// Counter for mitigation against brute-force login vectors.
+  failedLoginAttempts Int       @default(0)
   lastFailedLoginAt   DateTime?
-  lockedUntil         DateTime? // account temporaneamente bloccato
+
+  /// Operational timestamp restriction window enforced during rate-limiting lockout phases.
+  lockedUntil DateTime?
 
   // === GDPR & PRIVACY ===
-  consentGivenAt         DateTime? // consenso privacy
-  dataRetentionExpiresAt DateTime? // scadenza dati GDPR
 
-  roles Role[] @relation("UserRoles")
+  /// Immutable record documenting active acknowledgment of legal policies.
+  consentGivenAt DateTime?
+
+  /// Automated archival/deletion threshold mapping for standard right-to-be-forgotten timelines.
+  dataRetentionExpiresAt DateTime?
+
+  roles    Role[]        @relation("UserRoles")
   settings UserSetting[] @relation("UserSettings")
 
-  // Preferenze lingua
   preferredLanguageId Int      @default(1)
   preferredLanguage   Language @relation("UserPreferredLanguage", fields: [preferredLanguageId], references: [id])
 
-  // Relazioni (le tue esistenti)
+  // Core System Operational Relations
   createdDocuments      Document[]            @relation("CreatedBy")
   assignedDocuments     Document[]            @relation("AssignedTo")
   createdOpportunities  Opportunity[]         @relation("CreatedBy")
@@ -58,12 +85,14 @@ model User {
   auditLogs             AuditLog[]
   SecurityEvents        SecurityEvent[]
 
+  // Soft-Delete / Auditing Attribution Targets
   deletedDocuments       Document[]       @relation("DeletedBy")
-  deletedProducts        Product[]        @relation("DeletedBy")
-  deletedProductVariants ProductVariant[] @relation("DeletedBy")
+  deletedProducts        Product[]        @relation("ProductDeletedBy")
+  deletedProductVariants ProductVariant[] @relation("ProductVariantDeletedBy")
   deletedCustomers       Customer[]       @relation("DeletedBy")
   deletedSuppliers       Supplier[]       @relation("DeletedBy")
 
+  // Sales CRM Subsystem Assignments
   assignedLeads  Lead[] @relation("LeadAssignedUser")
   convertedLeads Lead[] @relation("LeadConvertedBy")
   createdLeads   Lead[] @relation("LeadCreatedBy")
@@ -76,30 +105,36 @@ model User {
   @@index([email])
   @@index([emailVerificationToken])
   @@index([resetPasswordToken])
-  @@index([lockedUntil]) // per query account bloccati
+  @@index([lockedUntil])
   @@index([tenantId])
 }
 
+// ============================================================================
+// USER PROFILE DATA
+// Vertical partition separating structural identity data from application-level details.
+// ============================================================================
+
+/// Volatile profile attributes and contextual interaction data for individual entities.
 model UserDetails {
   id Int @id @default(autoincrement())
 
   userId Int  @unique
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  firstName String @db.VarChar(100)
+  firstName String  @db.VarChar(100)
   lastName  String? @db.VarChar(100)
 
   profilePicture String? @db.VarChar(500)
 
-  // Contatti e Indirizzo
   phone   String? @db.VarChar(20)
   address String? @db.VarChar(255)
   city    String? @db.VarChar(100)
   state   String? @db.VarChar(100)
   zipCode String? @db.VarChar(20)
+
+  /// ISO 3166-1 alpha-2 geographical country reference code.
   country String? @default("IT") @db.Char(2)
 
-  // Dati personali
   dateOfBirth DateTime? @db.Date
   gender      Gender    @default(PREFER_NOT_TO_SAY)
   bio         String?   @db.Text

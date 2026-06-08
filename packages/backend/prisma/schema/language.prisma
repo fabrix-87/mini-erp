@@ -1,24 +1,42 @@
+// ============================================================================
+// LANGUAGE MASTER DATA
+// Central dictionary for localization support across the entire system.
+// ============================================================================
+
+/// System language definitions for i18n support.
 model Language {
-  id            Int    @id @default(autoincrement())
-  name          String @unique @db.VarChar(50) // Italiano, English, etc.
-  iso_code      String @unique @db.Char(2) // it, en, ...
-  language_code String @unique @db.Char(5) // it_IT, en_US, ...
+  id Int @id @default(autoincrement())
 
-  // Relazioni
-  usersPreferred             User[]                      @relation("UserPreferredLanguage")
-  productTranslations        ProductTranslation[]
-  categoryTranslations       CategoryTranslation[]
-  paymentMethodTranslations  PaymentMethodTranslation[]
-  taxRuleTranslations        TaxRuleTranslation[]
-  attributeTranslations      AttributeTranslation[]
-  attributeGroupTranslations AttributeGroupTranslation[]
-  vatNatureTranslations      VatNatureTranslation[]
-  tenant                     Tenant[]
-  countries                  Country[]
-  currencyTranslations       CurrencyTranslation[]
+  /// Native language name (e.g., "Italiano", "English").
+  name String @unique @db.VarChar(50)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  /// ISO 639-1 two-letter code (e.g., "it", "en"). Primary key for URL routing.
+  isoCode String @unique @map("iso_code") @db.Char(2)
 
-  @@index([iso_code])
+  /// BCP 47 language tag (e.g., "it_IT", "en_US"). Used for locale-specific formatting.
+  languageCode String @unique @map("language_code") @db.Char(5)
+
+  // i18n Relations: central point for all localized entity lookups.
+  usersPreferred                       User[]                                @relation("UserPreferredLanguage")
+  productTranslations                  ProductTranslation[]
+  productImageTranslations             ProductImageTranslation[]
+  categoryTranslations                 CategoryTranslation[]
+  paymentMethodTranslations            PaymentMethodTranslation[]
+  taxRuleTranslations                  TaxRuleTranslation[]
+  attributeTranslations                AttributeTranslation[]
+  attributeGroupTranslations           AttributeGroupTranslation[]
+  vatNatureTranslations                VatNatureTranslation[]
+  tenant                               Tenant[]
+  countries                            Country[]
+  currencyTranslations                 CurrencyTranslation[]
+  featureGroupTranslation              FeatureGroupTranslation[]
+  featureTranslations                  FeatureTranslation[]
+  IntrastatTransactionCodeTranslations IntrastatTransactionCodeTranslation[]
+  IntrastatCommodityCodeTranslations   IntrastatCommodityCodeTranslation[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([isoCode])
+  @@map("languages")
 }

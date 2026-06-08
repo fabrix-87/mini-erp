@@ -264,7 +264,7 @@ model DocumentLine {
     productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: SetNull)
 
     // Opzionale: Link al prodotto padre per raggruppamenti statistici facili
-    productId Int?
+    productId String?
     product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 
     lineNumber Int

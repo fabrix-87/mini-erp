@@ -1,97 +1,154 @@
 // ============================================================================
-// CURRENCY & EXCHANGE RATES
+// CURRENCY
+// Stable currency master data and base-currency exchange rate storage.
 // ============================================================================
 
+/// ISO 4217 currency master data.
 model Currency {
-  id   Int    @id @default(autoincrement())
-  code String @unique @db.Char(3) // ISO 4217: EUR, USD, CHF, GBP, JPY
+  id Int @id @default(autoincrement())
 
-  // Identificazione
-  symbol       String @db.VarChar(10) // "€", "$", "CHF", "£", "¥"
-  symbolNative String @db.VarChar(10) // Simbolo nella locale nativa
+  /// ISO 4217 alphabetic code, e.g. EUR, USD, CHF.
+  code String @unique @db.Char(3)
 
-  // Formattazione
-  decimalDigits     Int     @default(2) // Numero decimali (0 per JPY, 2 per EUR)
-  rounding          Decimal @default(0) @db.Decimal(5, 4) // 0.0000 = no rounding, 0.0500 = arrotonda a 5 centesimi
-  symbolPosition    String  @default("before") @db.VarChar(10) // "before" (€100) o "after" (100€)
-  decimalSeparator  String  @default(",") @db.VarChar(1) // "," o "."
-  thousandSeparator String  @default(".") @db.VarChar(1) // "." o "," o " "
+  /// ISO 4217 numeric code.
+  numericCode String? @unique @map("numeric_code") @db.Char(3)
 
-  // Tasso di cambio (verso valuta base)
-  isBaseCurrency      Boolean  @default(false) // true solo per EUR (o la tua valuta base)
-  exchangeRate        Decimal  @default(1.0) @db.Decimal(12, 6) // Tasso verso base currency
-  exchangeRateUpdated DateTime @default(now())
+  /// Standard symbol used for display.
+  symbol String @db.VarChar(10)
 
-  // Provider tasso cambio
-  exchangeRateSource String? @db.VarChar(50) // "ECB", "manual", "openexchangerates.org"
+  /// Optional native-market symbol variant.
+  symbolNative String? @map("symbol_native") @db.VarChar(10)
 
-  // Stato
+  /// Number of decimal digits normally used by the currency.
+  minorUnit Int @default(2) @map("minor_unit")
+
+  /// Smallest business rounding step; 0 means no additional rounding rule.
+  rounding Decimal @default(0) @db.Decimal(10, 4)
+
+  /// Marks the unique system base currency.
+  isBaseCurrency Boolean @default(false) @map("is_base_currency")
+
+  /// Enables operational use without deleting historical references.
   active Boolean @default(true)
 
-  // Metadata
-  priority    Int     @default(0) // Ordine visualizzazione
-  countryCode String? @db.Char(2) // Paese principale (EUR → IT, USD → US)
+  /// Display ordering hint for selectors and UI lists.
+  priority Int @default(0)
 
-  // === RELAZIONI ===
+  /// Optional informational primary country code.
+  countryCode String? @map("country_code") @db.Char(2)
 
-  // Paesi che usano questa valuta
-  countries Country[] @relation("CountryCurrency")
-
-  // Documenti in questa valuta
-  documents Document[] @relation("DocumentCurrency")
-
-  // Listini prezzi in questa valuta
-  priceLists PriceList[] @relation("PriceListCurrency")
-
-  // Virtual stock con prezzo fornitore
+  countries     Country[]      @relation("CountryCurrency")
+  documents     Document[]     @relation("DocumentCurrency")
+  priceLists    PriceList[]    @relation("PriceListCurrency")
   virtualStocks VirtualStock[] @relation("VirtualStockCurrency")
 
-  // Storico tassi cambio
-  exchangeRateHistory ExchangeRateHistory[]
+  /// Latest rate from the system base currency to this currency.
+  currentRatesFromBase CurrencyCurrentRate[] @relation("RateFromBase")
 
-  // Traduzioni
+  /// Historical rates from the system base currency to this currency.
+  rateHistoryFromBase ExchangeRateHistory[] @relation("HistoryFromBase")
+
   translations CurrencyTranslation[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([code])
   @@index([active])
   @@index([isBaseCurrency])
+  @@index([priority])
+  @@map("currencies")
 }
 
-// Storico tassi di cambio
+// ============================================================================
+// CURRENT EXCHANGE RATE
+// One current snapshot per currency, always expressed from the system base currency.
+// Example: if base currency = EUR and rate = 1.082345 for USD, then 1 EUR = 1.082345 USD.
+// ============================================================================
+
+/// Current exchange-rate snapshot for a currency.
+model CurrencyCurrentRate {
+  id Int @id @default(autoincrement())
+
+  /// One current snapshot per currency.
+  currencyId Int @unique @map("currency_id")
+
+  currency Currency @relation("RateFromBase", fields: [currencyId], references: [id], onDelete: Cascade)
+
+  /// Rate expressed from base currency to target currency.
+  rate Decimal @db.Decimal(18, 8)
+
+  /// Business-effective timestamp.
+  effectiveAt DateTime @map("effective_at")
+
+  /// Source system or provider.
+  source String? @db.VarChar(50)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([effectiveAt])
+  @@map("currency_current_rates")
+}
+
+// ============================================================================
+// EXCHANGE RATE HISTORY
+// Historical series expressed from the system base currency.
+// ============================================================================
+
+/// Historical exchange rates for a currency.
 model ExchangeRateHistory {
-  id         Int      @id @default(autoincrement())
-  currencyId Int
-  currency   Currency @relation(fields: [currencyId], references: [id], onDelete: Cascade)
+  id Int @id @default(autoincrement())
 
-  rate   Decimal  @db.Decimal(12, 6) // Tasso verso base currency
-  date   DateTime @default(now()) // Data del tasso
-  source String?  @db.VarChar(50) // Provider
+  currencyId Int @map("currency_id")
 
-  createdAt DateTime @default(now())
+  currency Currency @relation("HistoryFromBase", fields: [currencyId], references: [id], onDelete: Cascade)
 
-  @@unique([currencyId, date])
-  @@index([currencyId, date])
-  @@index([date])
+  /// Rate expressed from base currency to target currency.
+  rate Decimal @db.Decimal(18, 8)
+
+  /// Business-effective timestamp.
+  effectiveAt DateTime @map("effective_at")
+
+  /// Source system or provider.
+  source String? @db.VarChar(50)
+
+  /// Optional import batch or upstream reference.
+  batchKey String? @map("batch_key") @db.VarChar(100)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([currencyId, effectiveAt])
+  @@index([currencyId, effectiveAt])
+  @@index([effectiveAt])
+  @@index([source])
+  @@map("exchange_rate_history")
 }
 
-// Traduzioni valute
+// ============================================================================
+// CURRENCY TRANSLATION
+// Localized labels only.
+// ============================================================================
+
+/// Localized currency labels by language.
 model CurrencyTranslation {
-  id         Int      @id @default(autoincrement())
-  currencyId Int
+  id Int @id @default(autoincrement())
+
+  currencyId Int      @map("currency_id")
   currency   Currency @relation(fields: [currencyId], references: [id], onDelete: Cascade)
 
-  languageId Int
-  language   Language @relation(fields: [languageId], references: [id])
+  languageId Int      @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-  name       String @db.VarChar(100)
-  namePlural String @db.VarChar(100)
+  /// Singular localized name.
+  name String @db.VarChar(100)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  /// Plural localized name.
+  namePlural String @map("name_plural") @db.VarChar(100)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([currencyId, languageId])
   @@index([languageId])
+  @@map("currency_translations")
 }

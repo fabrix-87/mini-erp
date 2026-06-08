@@ -1,46 +1,81 @@
+// ============================================================================
+// CATEGORY
+// Hierarchical product category tree.
+// ============================================================================
+
+/// Product category node in a hierarchical tree.
 model Category {
-    id       Int        @id @default(autoincrement())
-    parentId Int?
-    code     String?    @db.VarChar(50) @unique
-    // Relazione auto-referenziante per la gerarchia
-    parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+    id Int @id @default(autoincrement())
+
+    /// Parent category reference; null identifies a root node.
+    parentId Int? @map("parent_id")
+
+    /// Immediate parent in the category tree.
+    parent Category? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Immediate child categories.
     children Category[] @relation("CategoryHierarchy")
 
-    active   Boolean @default(true)
-    position Int     @default(0)
-    level    Int     @default(0)
+    /// Enables operational use without removing historical links.
+    active Boolean @default(true)
+
+    /// Display ordering within the same parent scope.
+    position Int @default(0)
 
     translations CategoryTranslation[]
-    // Relazione many-to-many esplicita con Product (ProductCategory)
     products     ProductCategory[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
     @@index([parentId])
     @@index([active])
-    @@index([level])
+    @@index([parentId, active, position])
+    @@map("categories")
 }
 
+// ============================================================================
+// CATEGORY TRANSLATION
+// Localized labels and SEO metadata.
+// ============================================================================
+
+/// Localized category content by language.
 model CategoryTranslation {
-    id         Int      @id @default(autoincrement())
-    categoryId Int
+    id Int @id @default(autoincrement())
+
+    categoryId Int      @map("category_id")
     category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-    languageId Int
-    language   Language @relation(fields: [languageId], references: [id])
+    languageId Int      @map("language_id")
+    language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    name            String  @db.VarChar(255)
-    slug            String? @db.VarChar(255)
-    description     String? @db.Text
-    linkRewrite     String? @db.VarChar(255)
-    metaTitle       String? @db.VarChar(255)
-    metaDescription String? @db.Text
+    /// Localized display name.
+    name String @db.VarChar(255)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    /// Localized URL slug.
+    slug String? @db.VarChar(255)
 
-    // traduzione unica per categoria e lingua.
+    /// Localized descriptive content.
+    description String? @db.Text
+
+    /// Optional localized route alias for SEO or legacy routing.
+    linkRewrite String? @map("link_rewrite") @db.VarChar(255)
+
+    /// Localized SEO title.
+    metaTitle String? @map("meta_title") @db.VarChar(255)
+
+    /// Localized SEO meta description.
+    metaDescription String? @map("meta_description") @db.Text
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    /// One translation per category and language.
     @@unique([categoryId, languageId])
+    /// Localized slug must be unique within the same language.
+    @@unique([languageId, slug])
+    /// Localized route rewrite must be unique within the same language.
+    @@unique([languageId, linkRewrite])
     @@index([languageId])
+    @@map("category_translations")
 }

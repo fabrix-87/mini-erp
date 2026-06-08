@@ -1,3 +1,9 @@
+// ============================================================================
+// ATTRIBUTE SYSTEM
+// Normalized attribute structure for product variations. 
+// Uses EAV-like approach with strict relational integrity.
+// ============================================================================
+
 enum AttributeDisplayType {
   SELECT
   RADIO
@@ -5,107 +11,109 @@ enum AttributeDisplayType {
   IMAGE
 }
 
+/// Logical grouping for attributes (e.g., "Color", "Size").
 model AttributeGroup {
-  id              Int       @id @default(autoincrement())
-  
-  // Codice interno (slug) - es. "color", "size"
-  code            String    @unique @db.VarChar(50)
-  
-  // Tipo di visualizzazione
-  displayType     AttributeDisplayType @default(SELECT)
-  
-  position        Int       @default(0)
-  isPublic        Boolean   @default(true)
+  id Int @id @default(autoincrement())
 
-  // Relazioni
-  translations    AttributeGroupTranslation[]
-  attributes      Attribute[]
+  /// Internal system slug (e.g., "color", "size").
+  code String @unique @db.VarChar(50)
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  /// External system mapping for ETL/Sync processes.
+  externalCode String? @unique @map("external_code") @db.VarChar(100)
+
+  /// Determines UI rendering strategy.
+  displayType AttributeDisplayType @default(SELECT) @map("display_type")
+
+  position Int     @default(0)
+  isPublic Boolean @default(true) @map("is_public")
+
+  translations AttributeGroupTranslation[]
+  attributes   Attribute[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([position])
+  @@map("attribute_groups")
 }
 
+/// Localization for AttributeGroup names.
 model AttributeGroupTranslation {
-  id                Int             @id @default(autoincrement())
-  
-  attributeGroupId  Int
-  attributeGroup    AttributeGroup  @relation(fields: [attributeGroupId], references: [id], onDelete: Cascade)
-  
-  // Relazione con la tabella Language esistente
-  languageId        Int
-  language          Language        @relation(fields: [languageId], references: [id])
-  
-  name              String          @db.VarChar(128) // es: "Colore", "Color"
-  publicName        String?         @db.VarChar(128) // Nome frontend se diverso
+  id Int @id @default(autoincrement())
 
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  attributeGroupId Int            @map("attribute_group_id")
+  attributeGroup   AttributeGroup @relation(fields: [attributeGroupId], references: [id], onDelete: Cascade)
 
-  // Unica traduzione per gruppo e lingua
+  languageId Int      @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id])
+
+  name        String  @db.VarChar(128)
+  displayName String? @map("display_name") @db.VarChar(128)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@unique([attributeGroupId, languageId])
   @@index([languageId])
+  @@map("attribute_group_translations")
 }
 
+/// Specific attribute values (e.g., "Red", "XL").
 model Attribute {
-  id                Int       @id @default(autoincrement())
-  
-  attributeGroupId  Int
-  attributeGroup    AttributeGroup @relation(fields: [attributeGroupId], references: [id], onDelete: Cascade)
-  
-  // Codice valore (slug) - es. "red", "xl"
-  code              String    @db.VarChar(50)
-  
-  // Metadati specifici
-  colorHex          String?   @db.VarChar(7)   // es: #FF0000
-  colorHex2         String?   @db.VarChar(7)   // es: #FF0000
-  colorPms          String?   @db.VarChar(20)  // es: PMS 485C
-  colorPms2         String?   @db.VarChar(20)  // es: PMS 485C
-  imageUrl          String?   @db.VarChar(500) // URL icona/texture
-  
-  position          Int       @default(0)
+  id Int @id @default(autoincrement())
 
-  // Relazioni
-  translations      AttributeTranslation[]
-  
-  // Relazione Many-to-Many esplicita con le varianti
-  variants          ProductVariantAttribute[]
+  attributeGroupId Int            @map("attribute_group_id")
+  attributeGroup   AttributeGroup @relation(fields: [attributeGroupId], references: [id], onDelete: Cascade)
 
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  /// Value identifier within the group context.
+  code String @db.VarChar(50)
 
-  // Unicità del codice all'interno del gruppo
+  /// Schema-less storage for specialized values (e.g., color hex codes, icon URLs).
+  metadata Json?
+
+  position Int @default(0)
+
+  translations AttributeTranslation[]
+  variants     ProductVariantAttribute[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@unique([attributeGroupId, code])
   @@index([attributeGroupId])
+  @@index([position])
+  @@map("attributes")
 }
 
+/// Localization for Attribute values.
 model AttributeTranslation {
-  id              Int       @id @default(autoincrement())
-  
-  attributeId     Int
-  attribute       Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
-  
-  languageId      Int
-  language        Language  @relation(fields: [languageId], references: [id])
-  
-  name            String    @db.VarChar(128) // es: "Rosso", "Red"
+  id Int @id @default(autoincrement())
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  attributeId Int       @map("attribute_id")
+  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  languageId Int      @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id])
+
+  name String @db.VarChar(128)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([attributeId, languageId])
   @@index([languageId])
+  @@map("attribute_translations")
 }
 
+/// Junction table linking product variants to their specific attribute definitions.
 model ProductVariantAttribute {
-  productVariantId  Int
-  productVariant    ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
-  
-  attributeId       Int
-  attribute         Attribute      @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  productVariantId Int            @map("product_variant_id")
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
 
-  // Chiave primaria composta: una variante non può avere lo stesso attributo due volte
+  attributeId Int       @map("attribute_id")
+  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
   @@id([productVariantId, attributeId])
   @@index([attributeId])
+  @@map("product_variant_attribute")
 }

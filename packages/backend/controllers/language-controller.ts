@@ -14,8 +14,8 @@ import { Context } from "hono";
 export const languageSelect = {
   id: true,
   name: true,
-  iso_code: true,
-  language_code: true,
+  isoCode: true,
+  languageCode: true,
 } satisfies Prisma.LanguageSelect;
 
 // ============================================================================

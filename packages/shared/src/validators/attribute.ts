@@ -51,15 +51,23 @@ const pmsColorSchema = z
   .regex(PMS_COLOR_PATTERN, "Codice PMS non valido (es: PMS 485C)");
 
 /**
+ * Validate attribute metadata
+ */
+const attributeMetadataSchema = z.object({
+  colorHex: colorHexSchema.optional().nullable(),
+  colorHex2: colorHexSchema.optional().nullable(),
+  colorPms: pmsColorSchema.optional().nullable(),
+  colorPms2: pmsColorSchema.optional().nullable(),
+  imageUrl: urlSchema(false, MAX_IMAGE_URL_LENGTH),
+});
+
+/**
  * Validate attribute group code (slug)
  */
 const attributeGroupCodeSchema = z
   .string()
   .min(1, "Codice gruppo attributo obbligatorio")
-  .max(
-    MAX_ATTRIBUTE_GROUP_CODE_LENGTH,
-    `Codice max ${MAX_ATTRIBUTE_GROUP_CODE_LENGTH} caratteri`,
-  )
+  .max(MAX_ATTRIBUTE_GROUP_CODE_LENGTH, `Codice max ${MAX_ATTRIBUTE_GROUP_CODE_LENGTH} caratteri`)
   .regex(
     /^[a-z0-9_-]+$/,
     "Codice può contenere solo lettere minuscole, numeri, underscore e trattini",
@@ -123,11 +131,10 @@ export const createAttributeGroupTranslationSchema = z
   })
   .strict();
 
-export const updateAttributeGroupTranslationSchema =
-  createAttributeGroupTranslationSchema
-    .omit({ attributeGroupId: true, languageId: true })
-    .partial()
-    .strict();
+export const updateAttributeGroupTranslationSchema = createAttributeGroupTranslationSchema
+  .omit({ attributeGroupId: true, languageId: true })
+  .partial()
+  .strict();
 
 // ============================================================================
 // ATTRIBUTE SCHEMAS
@@ -141,16 +148,8 @@ export const createAttributeSchema = z
 
     code: attributeCodeSchema,
 
-    colorHex: colorHexSchema.optional().nullable(),
+    metadata: attributeMetadataSchema,
 
-    colorHex2: colorHexSchema.optional().nullable(),
-
-    colorPms: pmsColorSchema.optional().nullable(),
-
-    colorPms2: pmsColorSchema.optional().nullable(),
-
-    imageUrl: urlSchema(false, MAX_IMAGE_URL_LENGTH),
-    
     position: z.number().int().nonnegative("Position non può essere negativa").default(0),
   })
   .strict();
@@ -199,9 +198,7 @@ export const bulkAssignAttributesSchema = z
   .object({
     productVariantId: createIdSchema("Product Variant ID non valido"),
 
-    attributeIds: z
-      .array(attributeIdSchema)
-      .min(1, "Seleziona almeno un attributo"),
+    attributeIds: z.array(attributeIdSchema).min(1, "Seleziona almeno un attributo"),
   })
   .strict();
 
@@ -209,9 +206,7 @@ export const bulkRemoveAttributesSchema = z
   .object({
     productVariantId: createIdSchema("Product Variant ID non valido"),
 
-    attributeIds: z
-      .array(attributeIdSchema)
-      .min(1, "Seleziona almeno un attributo"),
+    attributeIds: z.array(attributeIdSchema).min(1, "Seleziona almeno un attributo"),
   })
   .strict();
 
@@ -225,9 +220,7 @@ export const attributeGroupQuerySchema = z.object({
   search: z.string().optional(),
   displayType: attributeDisplayTypeSchema.optional(),
   isPublic: queryBooleanSchema,
-  sortBy: z
-    .enum(["code", "position", "createdAt"])
-    .default("position"),
+  sortBy: z.enum(["code", "position", "createdAt"]).default("position"),
   sortOrder: sortOrderSchema,
 });
 
@@ -238,9 +231,7 @@ export const attributeQuerySchema = z.object({
   attributeGroupId: attributeGroupIdSchema.optional(),
   hasColor: queryBooleanSchema,
   hasImage: queryBooleanSchema,
-  sortBy: z
-    .enum(["code", "position", "createdAt"])
-    .default("position"),
+  sortBy: z.enum(["code", "position", "createdAt"]).default("position"),
   sortOrder: sortOrderSchema,
 });
 
@@ -290,13 +281,9 @@ export const batchCreateAttributesSchema = z
 
     attributes: z
       .array(
-        createAttributeSchema
-          .omit({ attributeGroupId: true })
-          .extend({
-            translations: z.array(
-              createAttributeTranslationSchema.omit({ attributeId: true }),
-            ),
-          }),
+        createAttributeSchema.omit({ attributeGroupId: true }).extend({
+          translations: z.array(createAttributeTranslationSchema.omit({ attributeId: true })),
+        }),
       )
       .min(1, "Almeno un attributo richiesto")
       .max(100, "Massimo 100 attributi per richiesta"),
