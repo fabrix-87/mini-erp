@@ -5,9 +5,9 @@
 
 */
 -- AlterTable
-ALTER TABLE "product_features" DROP COLUMN "customValue",
-ADD COLUMN     "custom_value" JSONB;
-
+ALTER TABLE "product_features"
+DROP COLUMN "customValue",
+ADD COLUMN "custom_value" JSONB,
 ADD CONSTRAINT "product_features_feature_xor_custom_chk"
 CHECK (
   ("feature_id" IS NOT NULL AND "custom_value" IS NULL)
