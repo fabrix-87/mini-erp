@@ -17,6 +17,8 @@ enum TenantPlan {
   ENTERPRISE
 }
 
+// Italian SdI regime codes — defined by Agenzia delle Entrate, not user-configurable.
+// Stamped on every electronic invoice as <RegimeFiscale>.
 enum TaxRegime {
   RF01 // Ordinario
   RF02 // Contribuenti minimi (ex art. 27, DL 98/2011)
@@ -38,43 +40,50 @@ enum TaxRegime {
   RF19 // Regime forfettario (L. 190/2014)
 }
 
+/// SaaS tenant — top-level isolation boundary for all operational data.
 model Tenant {
-  id   Int          @id @default(autoincrement())
-  code String       @unique @db.VarChar(20) // slug univoco, es. "acme-srl"
+  id   Int    @id @default(autoincrement())
+  code String @unique @db.VarChar(20) // slug univoco, es. "acme-srl"
 
   status TenantStatus @default(ACTIVE)
   plan   TenantPlan   @default(FREE)
 
   // Azienda legale emittente — NON nullable: senza Company non si emettono documenti
-  companyId Int     @unique
-  company   Company @relation("TenantOwnedCompany", fields: [companyId], references: [id])
+  companyId Int     @unique @map("company_id")
+  company   Company @relation("TenantOwnedCompany", fields: [companyId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   // === REGIME FISCALE ===
-  taxRegime TaxRegime @default(RF01) // es. "RF01" (ordinario), "RF19" (forfettario)
+  taxRegime TaxRegime @default(RF01) @map("tax_regime") // es. "RF01" (ordinario), "RF19" (forfettario)
 
-  defaultSalesTaxRuleId Int?
+  defaultSalesTaxRuleId Int?     @map("default_sales_tax_rule_id")
   defaultSalesTaxRule   TaxRule? @relation("TenantDefaultSalesTaxRule", fields: [defaultSalesTaxRuleId], references: [id])
 
-  defaultPurchasesTaxRuleId Int?
+  defaultPurchasesTaxRuleId Int?     @map("default_purchases_tax_rule_id")
   defaultPurchasesTaxRule   TaxRule? @relation("TenantDefaultPurchasesTaxRule", fields: [defaultPurchasesTaxRuleId], references: [id])
 
   // === CONFIGURAZIONI GENERALI ===
-  defaultCurrency   String    @default("EUR") @db.Char(3)
-  defaultLanguageId Int?
-  defaultLanguage   Language? @relation(fields: [defaultLanguageId], references: [id])
+  defaultCurrencyCode String    @default("EUR") @map("default_currency_code") @db.Char(3)
+  defaultCurrency     Currency  @relation("TenantCurrency", fields: [defaultCurrencyCode], references: [code])
+  defaultLanguageId   Int?      @map("default_language_id") // es. "it"
+  defaultLanguage     Language? @relation(fields: [defaultLanguageId], references: [id])
 
   // === FATTURAZIONE ELETTRONICA SdI ===
-  sdiTransmissionFormat String? @db.VarChar(10)  // es. "FPR12" (privati), "FPA12" (PA)
-  sdiCertificatePath    String? @db.VarChar(500)
+  sdiTransmissionFormat String? @map("sdi_transmission_format") @db.VarChar(10) // es. "FPR12" (privati), "FPA12" (PA)
+  sdiCertificateRef     String? @map("sdi_certificate_ref") @db.VarChar(500) // S3 key or absolute path
 
   // === RELAZIONI OPERATIVE ===
   users             User[]
   documents         Document[]         @relation("TenantDocuments")
   documentSequences DocumentSequence[] @relation("TenantSequences")
+  taxRules          TaxRule[]          @relation("TenantOwnedTaxRules")
+  companies         Company[]          @relation("TenantCompanies")
+  products          Product[]          @relation("TenantProducts")
+  manufacturers     Manufacturer[]     @relation("TenantManufacturers")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([companyId])
   @@index([status])
+  @@index([plan])
+  @@map("tenants")
 }

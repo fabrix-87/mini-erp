@@ -119,7 +119,7 @@ model ProductFeature {
 
     /// Product-specific value used when no predefined feature applies.
     /// Expected shape: localized key/value object.
-    customValue Json?
+    customValue Json? @map("custom_value")
 
     /// Display ordering within the product specification list.
     position Int @default(0)

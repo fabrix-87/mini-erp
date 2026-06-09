@@ -1,31 +1,57 @@
-model Warehouse {
-    id        Int           @id @default(autoincrement())
-    name      String
-    location  String?
-    type      WarehouseType @default(PHYSICAL)
-    createdAt DateTime      @default(now())
+// ============================================================================
+// WAREHOUSE
+// Physical warehouses use stock movements.
+// Virtual warehouses expose supplier-provided stock snapshots.
+// ============================================================================
 
-    stockMovements    StockMovement[] // solo per magazzini fisici
-    virtualStocks     VirtualStock[] // solo per magazzini virtuali
-    documentLines     DocumentLine[]
+/// Inventory location used for physical or virtual stock.
+model Warehouse {
+    id Int @id @default(autoincrement())
+
+    /// Human-readable warehouse name.
+    name String
+
+    /// Optional physical or business location label.
+    location String?
+
+    /// Warehouse operating mode.
+    type WarehouseType @default(PHYSICAL)
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    stockMovements    StockMovement[]
+    virtualStocks     VirtualStock[]
     stockReservations StockReservation[]
-    document          Document[]
+    stockBatchs       StockBatch[]
+
+    /// Documents associated with this warehouse.
+    documents Document[]
+
+    /// Document lines associated with this warehouse.
+    documentLines DocumentLine[]
+
+    @@index([type])
+    @@map("warehouses")
 }
 
 enum WarehouseType {
-    PHYSICAL // usa movimenti
-    VIRTUAL // stock statico proveniente da fornitori
+    /// Uses movement-based stock accounting.
+    PHYSICAL
+
+    /// Uses externally provided static availability.
+    VIRTUAL
 }
 
 enum MovementType {
-    PURCHASE // carico da fornitore
-    SALE // scarico per vendita
-    RETURN_IN // reso da cliente
-    RETURN_OUT // reso a fornitore
-    ADJUSTMENT // rettifica manuale
-    TRANSFER_IN // trasferimento + (arrivo)
-    TRANSFER_OUT // trasferimento - (uscita)
-    INVENTORY_START // stock iniziale
+    PURCHASE
+    SALE
+    RETURN_IN
+    RETURN_OUT
+    ADJUSTMENT_IN
+    ADJUSTMENT_OUT
+    TRANSFER_IN
+    TRANSFER_OUT
+    INVENTORY_START
 }
 
 enum MovementStatus {
@@ -34,137 +60,205 @@ enum MovementStatus {
     CANCELLED
 }
 
-model StockMovement {
-    id               Int          @id @default(autoincrement())
-    productVariantId Int
-    warehouseId      Int
-    quantity         Int // + o -
-    movementType     MovementType
-    referenceId      String?
-    note             String?
-    movementDate     DateTime     @default(now())
-
-    // costo movimento (per valorizzazione)
-    unitCost  Decimal? @db.Decimal(20, 6)
-    totalCost Decimal? @db.Decimal(20, 2)
-
-    // documenti collegati
-    documentId     Int?
-    document       Document?     @relation(fields: [documentId], references: [id])
-    documentLineId Int?
-    documentLine   DocumentLine? @relation(fields: [documentLineId], references: [id])
-
-    // lotto/seriale
-    batchNumber  String?   @db.VarChar(50)
-    serialNumber String?   @db.VarChar(50)
-    expiryDate   DateTime?
-
-    // utente che ha registrato
-    createdByUserId Int?
-    createdBy       User? @relation(fields: [createdByUserId], references: [id])
-
-    // stato movimento
-    status MovementStatus @default(PENDING)
-
-    productVariant ProductVariant @relation(fields: [productVariantId], references: [id])
-    warehouse      Warehouse      @relation(fields: [warehouseId], references: [id])
-
-    createdAt DateTime @default(now())
-
-    @@index([productVariantId])
-    @@index([warehouseId])
-    @@index([movementDate])
-    @@index([documentId])
-    @@index([batchNumber])
-    @@index([serialNumber])
-    @@index([status])
-}
-
 enum VirtualSyncStatus {
     PENDING
     SUCCESS
     ERROR
 }
 
-model VirtualStock {
-    id               Int      @id @default(autoincrement())
-    productVariantId Int
-    warehouseId      Int // magazzino virtuale
-    quantity         Int // stock fornito dal fornitore
-    updatedAt        DateTime @updatedAt
-    source           String? // API name, manual, csv, ecc.
-
-    productVariant ProductVariant @relation(fields: [productVariantId], references: [id])
-    warehouse      Warehouse      @relation(fields: [warehouseId], references: [id])
-
-    // tracking sincronizzazione
-    lastSyncAt DateTime?
-    syncStatus VirtualSyncStatus @default(PENDING)
-    syncError  String?           @db.Text
-
-    // disponibilità attesa
-    expectedAvailableDate DateTime?
-    leadTimeDays          Int       @default(0)
-
-    // prezzo fornitore
-    supplierPrice        Decimal?  @db.Decimal(20, 6)
-    supplierCurrencyCode String?   @db.Char(3)
-    supplierCurrency     Currency? @relation("VirtualStockCurrency", fields: [supplierCurrencyCode], references: [code])
-
-    @@unique([productVariantId, warehouseId]) // Uno stock virtuale per variante per magazzino
-    @@index([supplierCurrencyCode])
-    @@index([syncStatus, lastSyncAt])
+enum StockBatchStatus {
+    ACTIVE
+    QUARANTINE
+    EXPIRED
 }
 
-// gestione lotti
-model StockBatch {
-    id               Int            @id @default(autoincrement())
-    productVariantId Int
-    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
-
-    batchNumber      String    @db.VarChar(50)
-    manufacturedDate DateTime?
-    expiryDate       DateTime?
-
-    supplierId Int?
-    supplier   Supplier? @relation(fields: [supplierId], references: [id])
-
-    quantity Int @default(0)
-    reserved Int @default(0)
-
-    status String @default("active") @db.VarChar(20) // "active", "quarantine", "expired"
-
-    @@unique([productVariantId, batchNumber])
-    @@index([expiryDate])
+enum StockReservationStatus {
+    ACTIVE
+    FULFILLED
+    CANCELLED
+    EXPIRED
 }
 
-// AGGIUNGERE: gestione prenotazioni
-model StockReservation {
-    id               Int            @id @default(autoincrement())
-    productVariantId Int
-    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+/// Immutable stock ledger movement for a product variant in a physical warehouse.
+model StockMovement {
+    id Int @id @default(autoincrement())
 
-    warehouseId Int
-    warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+    productVariantId Int @map("product_variant_id")
+    warehouseId      Int @map("warehouse_id")
 
+    /// Absolute movement quantity. Direction is determined by movement type.
     quantity Int
 
-    // Riferimento al documento che ha prenotato
-    documentId     Int
-    document       Document      @relation(fields: [documentId], references: [id], onDelete: Cascade)
-    documentLineId Int?
-    documentLine   DocumentLine? @relation(fields: [documentLineId], references: [id])
+    movementType MovementType @map("movement_type")
 
-    status String @default("active") @db.VarChar(20) // "active", "fulfilled", "cancelled", "expired"
+    /// Optional business or external reference identifier.
+    referenceId String? @map("reference_id")
 
-    reservedAt  DateTime  @default(now())
-    expiresAt   DateTime? // Prenotazione temporanea (carrello)
-    fulfilledAt DateTime?
-    cancelledAt DateTime?
+    note String?
 
-    batchNumber String? @db.VarChar(50) // Lotto specifico prenotato
+    /// Business-effective movement timestamp.
+    movementDate DateTime @default(now()) @map("movement_date")
+
+    /// Unit cost used for stock valuation when applicable.
+    unitCost Decimal? @map("unit_cost") @db.Decimal(20, 6)
+
+    /// Total cost for the movement.
+    totalCost Decimal? @map("total_cost") @db.Decimal(20, 6)
+
+    documentId Int?      @map("document_id")
+    document   Document? @relation(fields: [documentId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+    documentLineId Int?          @map("document_line_id")
+    documentLine   DocumentLine? @relation(fields: [documentLineId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+    /// Optional batch identifier for lot-tracked inventory.
+    batchNumber String? @map("batch_number") @db.VarChar(50)
+
+    /// Optional serial identifier for uniquely tracked items.
+    serialNumber String? @map("serial_number") @db.VarChar(50)
+
+    expiryDate DateTime? @map("expiry_date")
+
+    createdByUserId Int?  @map("created_by_user_id")
+    createdBy       User? @relation(fields: [createdByUserId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+    status MovementStatus @default(PENDING)
+
+    productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    warehouse      Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@index([productVariantId])
+    @@index([warehouseId])
+    @@index([movementDate])
+    @@index([documentId])
+    @@index([documentLineId])
+    @@index([batchNumber])
+    @@index([serialNumber])
+    @@index([status])
+    @@index([warehouseId, productVariantId, movementDate])
+    @@map("stock_movements")
+}
+
+/// Supplier-provided stock snapshot for a product variant in a virtual warehouse.
+model VirtualStock {
+    id Int @id @default(autoincrement())
+
+    productVariantId Int @map("product_variant_id")
+
+    /// Target virtual warehouse.
+    warehouseId Int @map("warehouse_id")
+
+    /// Current supplier-provided available quantity.
+    quantity Int
+
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    /// Source channel, such as API, CSV, or manual import.
+    source String? @db.VarChar(100)
+
+    productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    warehouse      Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    lastSyncAt DateTime?         @map("last_sync_at")
+    syncStatus VirtualSyncStatus @default(PENDING) @map("sync_status")
+    syncError  String?           @map("sync_error") @db.Text
+
+    /// Expected date when stock should become available again.
+    expectedAvailableDate DateTime? @map("expected_available_date")
+
+    /// Supplier lead time in days.
+    leadTimeDays Int @default(0) @map("lead_time_days")
+
+    /// Supplier purchase price in the supplier currency.
+    supplierPrice Decimal? @map("supplier_price") @db.Decimal(20, 6)
+
+    supplierCurrencyCode String?   @map("supplier_currency_code") @db.Char(3)
+    supplierCurrency     Currency? @relation("VirtualStockCurrency", fields: [supplierCurrencyCode], references: [code], onDelete: SetNull, onUpdate: Cascade)
+
+    @@unique([productVariantId, warehouseId])
+    @@index([productVariantId])
+    @@index([warehouseId])
+    @@index([supplierCurrencyCode])
+    @@index([syncStatus, lastSyncAt])
+    @@index([warehouseId, syncStatus])
+    @@map("virtual_stocks")
+}
+
+// ============================================================================
+// LOT TRACKING
+// ============================================================================
+
+/// Batch tracked for a product variant within a warehouse.
+model StockBatch {
+    id Int @id @default(autoincrement())
+
+    productVariantId Int            @map("product_variant_id")
+    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    warehouseId Int       @map("warehouse_id")
+    warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Batch identifier unique within the same product variant and warehouse.
+    batchNumber String @map("batch_number") @db.VarChar(50)
+
+    manufacturedDate DateTime? @map("manufactured_date")
+    expiryDate       DateTime? @map("expiry_date")
+
+    supplierId Int?      @map("supplier_id")
+    supplier   Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+    /// Current on-hand quantity for the batch.
+    quantity Int @default(0)
+
+    /// Reserved quantity not currently available for allocation.
+    reserved Int @default(0)
+
+    status StockBatchStatus @default(ACTIVE)
+
+    @@unique([productVariantId, warehouseId, batchNumber])
+    @@index([expiryDate])
+    @@index([warehouseId, productVariantId])
+    @@map("stock_batches")
+}
+
+/// Reserved quantity for a product variant in a warehouse.
+model StockReservation {
+    id Int @id @default(autoincrement())
+
+    productVariantId Int            @map("product_variant_id")
+    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    warehouseId Int       @map("warehouse_id")
+    warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Reserved quantity blocked from general availability.
+    quantity Int
+
+    documentId Int      @map("document_id")
+    document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    documentLineId Int?          @map("document_line_id")
+    documentLine   DocumentLine? @relation(fields: [documentLineId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+    status StockReservationStatus @default(ACTIVE)
+
+    reservedAt DateTime @default(now()) @map("reserved_at")
+
+    /// Optional expiry for temporary reservations.
+    expiresAt DateTime? @map("expires_at")
+
+    fulfilledAt DateTime? @map("fulfilled_at")
+    cancelledAt DateTime? @map("cancelled_at")
+
+    /// Optional batch-specific reservation.
+    batchNumber String? @map("batch_number") @db.VarChar(50)
 
     @@index([productVariantId, warehouseId, status])
     @@index([documentId])
+    @@index([documentLineId])
     @@index([expiresAt])
+    @@index([warehouseId, status, expiresAt])
+    @@map("stock_reservations")
 }

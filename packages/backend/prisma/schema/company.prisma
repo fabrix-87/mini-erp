@@ -98,6 +98,9 @@ model Company {
     assignedUserId Int?
     activities     Activity[]
 
+    tenantId Int    @map("tenant_id")
+    tenant   Tenant @relation("TenantCompanies", fields: [tenantId], references: [id], onDelete: Restrict)
+
     // Indirizzi
     addresses CompanyAddress[] @relation("CompanyAddresses")
 
@@ -105,7 +108,7 @@ model Company {
     contacts  CompanyContact[]
     customers Customer[]
     suppliers Supplier[]
-    tenant    Tenant?          @relation("TenantOwnedCompany")
+    tenants   Tenant?          @relation("TenantOwnedCompany")
 
     // Note
     notes CompanyNote[]
@@ -259,43 +262,36 @@ enum AddressType {
 
 // Modello per gli indirizzi delle aziende
 model CompanyAddress {
-    id Int @id @default(autoincrement())
-
-    companyId Int
+    id        Int     @id @default(autoincrement()) @map("id")
+    companyId Int     @map("company_id")
     company   Company @relation("CompanyAddresses", fields: [companyId], references: [id], onDelete: Cascade)
 
-    addressType AddressType @default(BILLING) // LEGAL, BILLING, SHIPPING, WAREHOUSE
-    isPrimary   Boolean     @default(false)
+    addressType AddressType @default(BILLING) @map("address_type")
+    isPrimary   Boolean     @default(false) @map("is_primary")
 
-    // Campi base dell'indirizzo
-    address String @db.VarChar(255)
-    city    String @db.VarChar(100)
+    address      String  @db.VarChar(255)
+    city         String  @db.VarChar(100)
+    provinceCode String? @map("province_code") @db.Char(2)
+    zipCode      String  @map("zip_code") @db.VarChar(20)
 
-    // Provincia (Obbligatorio per IT SdI)
-    provinceCode String? @db.Char(2) // Codice Provincia (es. MI, RM)
-
-    zipCode String @db.VarChar(20)
-
-    countryCode String  @default("IT") @db.Char(2)
+    countryCode String  @default("IT") @map("country_code") @db.Char(2)
     country     Country @relation("AddressCountry", fields: [countryCode], references: [code])
 
-    // Decimal corretto per coordinate geografiche
-    latitude  Decimal? @db.Decimal(10, 8) // Decimal(totale_cifre, decimali)
+    latitude  Decimal? @db.Decimal(10, 8)
     longitude Decimal? @db.Decimal(11, 8)
 
-    // Contatto specifico per questo indirizzo (es. telefono del magazzino)
-    phone String? @db.VarChar(50)
-
-    openingHours Json?
+    phone        String? @db.VarChar(50)
+    openingHours Json?   @map("opening_hours")
     notes        String? @db.Text
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
-    // Garantisce un solo indirizzo legale per company (partial unique index)
-    @@unique([companyId], map: "unique_company_legal_address", where: { addressType: "LEGAL" })
+    // Partial unique: only one LEGAL address per company
+    @@unique([companyId], map: "unique_company_legal_address", where: raw("\"address_type\" = 'LEGAL'"))
     @@index([companyId])
     @@index([companyId, addressType])
+    @@map("company_addresses")
 }
 
 // Modello per i contatti
@@ -326,40 +322,40 @@ model Contact {
 
 // Tabella di relazione many-to-many con dati contestuali
 model CompanyContact {
-    id        Int     @id @default(autoincrement())
-    contactId Int
+    id        Int     @id @default(autoincrement()) @map("id")
+    contactId Int     @map("contact_id")
     contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
-    companyId Int
+    companyId Int     @map("company_id")
     company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-    // Dati specifici per il ruolo in questa company
     position         String? @db.VarChar(100)
     department       String? @db.VarChar(100)
-    isPrimaryContact Boolean @default(false)
+    isPrimaryContact Boolean @default(false) @map("is_primary_contact")
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
-    // Un contatto è associato una sola volta per company
     @@unique([companyId, contactId])
-    // Un solo contatto primario per company
+    // Partial unique: only one primary contact per company
     @@unique([companyId], map: "unique_primary_contact_per_company", where: { isPrimaryContact: true })
     @@index([contactId])
     @@index([companyId])
+    @@map("company_contacts")
 }
 
 // Tabella Note
 model CompanyNote {
     id        Int      @id @default(autoincrement())
-    companyId Int
+    companyId Int      @map("company_id")
     company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
     title     String   @db.VarChar(255)
     content   String   @db.Text
-    authorId  Int
-    author    User     @relation(fields: [authorId], references: [id])
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    authorId  Int?     @map("author_id")
+    author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
     @@index([companyId])
     @@index([authorId])
+    @@map("company_notes")
 }

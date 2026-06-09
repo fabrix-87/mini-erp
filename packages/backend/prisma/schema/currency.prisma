@@ -41,6 +41,7 @@ model Currency {
   documents     Document[]     @relation("DocumentCurrency")
   priceLists    PriceList[]    @relation("PriceListCurrency")
   virtualStocks VirtualStock[] @relation("VirtualStockCurrency")
+  tenants    Tenant[]       @relation("TenantCurrency")
 
   /// Latest rate from the system base currency to this currency.
   currentRatesFromBase CurrencyCurrentRate[] @relation("RateFromBase")

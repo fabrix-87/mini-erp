@@ -79,6 +79,20 @@ model VatNatureTranslation {
   @@index([languageId])
 }
 
+enum TaxRuleApplicability {
+  SALES
+  PURCHASES
+  BOTH
+}
+
+enum TaxRuleCustomerType {
+  B2B
+  B2C
+  PA // Pubblica Amministrazione
+  FOREIGN
+  ANY
+}
+
 // ============================================================================
 // TAX RULE (Regole fiscali configurabili)
 // ============================================================================
@@ -89,34 +103,38 @@ model TaxRule {
   name        String  @db.VarChar(255)
   description String? @db.Text
 
+  // NULL = global system rule; NOT NULL = tenant-private rule
+  tenantId Int?    @map("tenant_id")
+  tenant   Tenant? @relation("TenantOwnedTaxRules", fields: [tenantId], references: [id], onDelete: Cascade)
+
   // === ALIQUOTA IVA ===
   rate Decimal @default(0) @db.Decimal(5, 2) // 0.00, 4.00, 5.00, 10.00, 22.00
 
   // === NATURA IVA (obbligatoria se rate = 0) ===
-  vatNatureId        Int?
+  vatNatureId        Int?       @map("vat_nature_id")
   vatNature          VatNature? @relation(fields: [vatNatureId], references: [id])
-  normativeReference String?    @db.VarChar(255)
+  normativeReference String?    @map("normative_reference") @db.VarChar(255)
 
   // === APPLICABILITÀ ===
-  countryCode     String  @default("IT") @db.Char(2)
-  country         Country @relation(fields: [countryCode], references: [code])
-  applicableFor   String  @default("both") @db.VarChar(20) // "sales", "purchases", "both"
-  productCategory String? @db.VarChar(50)
-  customerType    String? @db.VarChar(20)
+  countryCode     String               @default("IT") @map("country_code") @db.Char(2)
+  country         Country              @relation(fields: [countryCode], references: [code])
+  applicableFor   TaxRuleApplicability @default(BOTH) @map("applicable_for") // "sales", "purchases", "both"
+  productCategory String?              @map("product_category") @db.VarChar(50)
+  customerType    TaxRuleCustomerType  @default(ANY) @map("customer_type")
 
   // === REGOLE SPECIALI ===
-  isSplitPayment       Boolean @default(false)
-  deductibilityPercent Decimal @default(100) @db.Decimal(5, 2)
-  vatDeductible        Boolean @default(true)
+  isSplitPayment       Boolean @default(false) @map("is_split_payment")
+  deductibilityPercent Decimal @default(100) @map("deductibility_percent") @db.Decimal(5, 2)
+  vatDeductible        Boolean @default(true) @map("vat_deductible")
 
   // === VALIDITÀ ===
-  validFrom DateTime  @default(now())
-  validTo   DateTime?
+  validFrom DateTime  @default(now()) @map("valid_from")
+  validTo   DateTime? @map("valid_to")
 
   // === STATO ===
   active       Boolean @default(true)
-  isDefault    Boolean @default(false)
-  displayOrder Int     @default(0)
+  isDefault    Boolean @default(false) @map("is_default")
+  displayOrder Int     @default(0) @map("display_order")
   color        String? @db.VarChar(7)
 
   // === RELAZIONI ===
@@ -129,16 +147,18 @@ model TaxRule {
   documentLines    DocumentLine[]       @relation("DocumentLineTaxRule")
   products         Product[]            @relation("ProductTaxRule")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([code])
   @@index([rate])
   @@index([vatNatureId])
   @@index([countryCode])
   @@index([active, isDefault])
   @@index([validFrom, validTo])
   @@index([applicableFor])
+  @@index([tenantId])
+  @@index([tenantId, active, isDefault]) // compound per lookup frequente
+  @@map("tax_rules")
 }
 
 model TaxRuleTranslation {
