@@ -1,70 +1,101 @@
 // ============================================================================
-// PAGAMENTI
+// PAYMENT METHODS
 // ============================================================================
+
+/// Payment due date calculation strategy for a single installment.
+enum PaymentTermType {
+    ANTICIPATED // Due immediately (advance payment)
+    DAYS_FROM_INVOICE // Due N days after invoice date
+    END_OF_MONTH // Due at end of month, optionally plus dueDays
+    FIXED_DAY // Due on a fixed day of the month
+}
+
+/// Tenant-scoped or global payment method defining installment structure and due date rules.
+/// The sum of all related PaymentTermDetail.percentage values must equal 100 (enforced at application level).
 model PaymentMethod {
     id   Int    @id @default(autoincrement())
-    code String @unique @db.VarChar(50) // Esempio: "SPLIT_30_30_40"
-
-    // Campi descrittivi
+    // e.g. "SPLIT_30_30_40", "IMMEDIATE", "NET_60"
+    code String @db.VarChar(50)
+    
     active   Boolean @default(true)
     position Int     @default(0)
 
-    // Relazioni
+    // NULL = global system payment method; NOT NULL = tenant-private payment method
+    tenantId Int?    @map("tenant_id")
+    tenant   Tenant? @relation("TenantPaymentMethods", fields: [tenantId], references: [id], onDelete: Cascade)
+
+    // === RELATIONS ===
     translations                PaymentMethodTranslation[]   @relation(name: "PaymentMethodTranslations")
     customers                   Customer[]                   @relation(name: "CompanyPaymentMethod")
     documents                   Document[]                   @relation(name: "DocumentPaymentMethod")
     documentPaymentInstallments DocumentPaymentInstallment[]
 
-    // NUOVA RELAZIONE: Contiene tutti i dettagli di scadenza (le singole rate)
+    /// Default bank account to use when this payment method is selected on a document.
+    /// Only relevant for wire transfer methods. NULL = no default account.
+    defaultBankAccountId Int?               @map("default_bank_account_id")
+    defaultBankAccount   TenantBankAccount? @relation(fields: [defaultBankAccountId], references: [id], onDelete: SetNull)
+
+    /// Individual installment rules for this payment method.
     details PaymentTermDetail[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
+    @@unique([tenantId, code])
+    @@unique([code], where: { tenantId: null }, map: "unique_global_payment_method_code")
     @@index([active])
+    @@map("payment_methods")
 }
 
+/// Single installment rule within a payment method.
+/// Defines the percentage of the total amount and its due date calculation logic.
 model PaymentTermDetail {
     id              Int           @id @default(autoincrement())
-    paymentMethodId Int
+    paymentMethodId Int           @map("payment_method_id")
     paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Cascade)
 
-    // Percentuale
-    percentage Decimal @default(0) @db.Decimal(5, 2) // Esempio: 30.00, 40.00
+    /// Share of the total amount due for this installment (e.g. 30.00, 40.00).
+    /// All installments of a payment method must sum to 100.
+    percentage Decimal @default(0) @db.Decimal(5, 2)
 
-    // Regole di scadenza per questa rata
-    termType String @default("days_from_invoice") @db.VarChar(50) // Esempio: 'anticipated', 'days_from_invoice', 'end_of_month'
+    /// Due date calculation strategy for this installment.
+    termType PaymentTermType @default(DAYS_FROM_INVOICE) @map("term_type")
 
-    dueDays          Int     @default(0) // Giorni dalla data documento (es. 30, 60, 90)
-    isEndOfMonth     Boolean @default(false) // Se true, la scadenza è a fine mese + dueDays
-    isFixedDate      Boolean @default(false) // Scadenza giorno del mese prestabilito
-    fixedDay         Int?
-    fixedMonthOffset Int     @default(0)
+    /// Number of days from the invoice date (used when termType = DAYS_FROM_INVOICE or END_OF_MONTH).
+    dueDays          Int  @default(0) @map("due_days") 
+    /// Fixed day of the month when the installment is due (used when termType = FIXED_DAY).
+    fixedDay         Int? @map("fixed_day")
+    /// Number of months to offset from the invoice month (used with FIXED_DAY).
+    fixedMonthOffset Int  @default(0) @map("fixed_month_offset")
 
-    position Int @default(0) // Ordine in cui processare le rate
+    /// Processing order of installments within the payment method.
+    position Int @default(0)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
     @@index([paymentMethodId])
     @@index([position])
+    @@map("payment_term_details")
 }
 
+/// Localized name and description for a PaymentMethod.
 model PaymentMethodTranslation {
     id              Int           @id @default(autoincrement())
-    paymentMethodId Int
+    paymentMethodId Int           @map("payment_method_id")
     paymentMethod   PaymentMethod @relation("PaymentMethodTranslations", fields: [paymentMethodId], references: [id], onDelete: Cascade)
 
-    languageId Int
+    languageId Int      @map("language_id")
     language   Language @relation(fields: [languageId], references: [id])
 
-    name        String  @db.VarChar(100) // Bonifico Bancario, Bank Transfer
+    // e.g. "Bonifico Bancario", "Bank Transfer"
+    name        String  @db.VarChar(100)
     description String? @db.Text
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
-    // Traduzione unica per modalità di pagamento e lingua.
+    // Unique translation per payment method and language.
     @@unique([paymentMethodId, languageId])
     @@index([languageId])
 }

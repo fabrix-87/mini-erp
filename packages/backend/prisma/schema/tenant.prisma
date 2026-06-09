@@ -73,12 +73,16 @@ model Tenant {
 
   // === RELAZIONI OPERATIVE ===
   users             User[]
-  documents         Document[]         @relation("TenantDocuments")
-  documentSequences DocumentSequence[] @relation("TenantSequences")
-  taxRules          TaxRule[]          @relation("TenantOwnedTaxRules")
-  companies         Company[]          @relation("TenantCompanies")
-  products          Product[]          @relation("TenantProducts")
-  manufacturers     Manufacturer[]     @relation("TenantManufacturers")
+  documents         Document[]          @relation("TenantDocuments")
+  documentSequences DocumentSequence[]  @relation("TenantSequences")
+  taxRules          TaxRule[]           @relation("TenantOwnedTaxRules")
+  companies         Company[]           @relation("TenantCompanies")
+  products          Product[]           @relation("TenantProducts")
+  manufacturers     Manufacturer[]      @relation("TenantManufacturers")
+  roles             Role[]              @relation("TenantRoles")
+  priceLists        PriceList[]         @relation("TenantPriceLists")
+  paymentMethods    PaymentMethod[]     @relation("TenantPaymentMethods")
+  bankAccounts      TenantBankAccount[] @relation("TenantBankAccounts")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -86,4 +90,33 @@ model Tenant {
   @@index([status])
   @@index([plan])
   @@map("tenants")
+}
+
+/// Tenant-owned bank account used for payment receipt or disbursement.
+model TenantBankAccount {
+  id       Int    @id @default(autoincrement())
+  tenantId Int    @map("tenant_id")
+  tenant   Tenant @relation("TenantBankAccounts", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  /// Internal label (e.g. "Conto principale EUR", "Conto USD estero").
+  name         String   @db.VarChar(100)
+  bankName     String   @map("bank_name") @db.VarChar(100)
+  iban         String   @db.VarChar(34)
+  bic          String?  @db.VarChar(11)
+  /// ISO 4217 currency code of the account.
+  currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
+  currency     Currency @relation("BankAccountCurrency", fields: [currencyCode], references: [code])
+
+  active    Boolean @default(true)
+  isDefault Boolean @default(false) @map("is_default")
+
+  // === RELATIONS ===
+  paymentMethods PaymentMethod[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tenantId, iban])
+  @@index([tenantId, active])
+  @@map("tenant_bank_accounts")
 }

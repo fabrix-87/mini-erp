@@ -1,89 +1,109 @@
-// Tipo di listino
+/// Purpose/direction of the price list.
 enum PriceListType {
-    SALE // Listino di vendita (standard)
-    PURCHASE // Listino di acquisto (dai fornitori)
-    PROMOTION // Listino promozionale (sovrascrive temporaneamente)
-    CONTRACT // Listino specifico per contratto cliente
+    SALE // Standard sales price list
+    PURCHASE // Supplier purchase price list
+    PROMOTION // Temporary promotional override
+    CONTRACT // Customer-specific contract pricing
 }
 
-// Strategia di calcolo (se il listino è derivato da un altro)
+/// Price calculation strategy when the list is derived from a parent list.
 enum PriceListStrategy {
-    EXPLICIT // I prezzi sono inseriti manualmente riga per riga
-    PERCENT_DECREASE // Sconto percentuale dal listino padre (es. -20%)
-    PERCENT_INCREASE // Ricarico percentuale dal listino padre
-    FIXED_DECREASE // Sconto fisso (es. -5€)
-    FIXED_INCREASE // Ricarico fisso
+    EXPLICIT // Prices entered manually line by line
+    PERCENT_DECREASE // Percentage discount from parent list (e.g. -20%)
+    PERCENT_INCREASE // Percentage markup from parent list
+    FIXED_DECREASE // Fixed amount discount (e.g. -5.00)
+    FIXED_INCREASE // Fixed amount markup
 }
 
+/// Rounding strategy applied to computed prices.
+enum PriceRoundingMethod {
+    NONE // No rounding applied
+    NEAREST_05 // Round to nearest 0.05
+    NEAREST_10 // Round to nearest 0.10
+    ROUND_UP // Always round up
+    ROUND_DOWN // Always round down
+}
+
+/// Tenant-scoped or global price list defining selling, purchase, promotional, or contract prices.
+/// Supports parent-child hierarchy for derived pricing strategies.
 model PriceList {
     id Int @id @default(autoincrement())
 
     // Identificazione
-    code         String   @unique @db.VarChar(50) // Es. LIST_PUB, LIST_GOLD
+    code         String   @db.VarChar(50) // Es. LIST_PUB, LIST_GOLD
     name         String   @db.VarChar(100)
-    currencyCode String   @default("EUR") @db.Char(3)
+    currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
     currency     Currency @relation("PriceListCurrency", fields: [currencyCode], references: [code])
+
+    // NULL = global system price list; NOT NULL = tenant-private price list
+    tenantId Int?    @map("tenant_id")
+    tenant   Tenant? @relation("TenantPriceLists", fields: [tenantId], references: [id], onDelete: Cascade)
 
     type PriceListType @default(SALE)
 
     // Validità (opzionale, se null vale sempre)
-    validFrom DateTime?
-    validTo   DateTime?
+    validFrom DateTime? @map("valid_from")
+    validTo   DateTime? @map("valid_to")
     active    Boolean   @default(true)
 
     // LOGICA EREDITARIETA' (Listini dinamici)
     // Se parentListId è presente, questo listino calcola i prezzi basandosi sul padre
-    parentListId  Int?
-    parentList    PriceList?  @relation("PriceListHierarchy", fields: [parentListId], references: [id])
+    parentListId  Int?        @map("parent_list_id")
+    parentList    PriceList?  @relation("PriceListHierarchy", fields: [parentListId], references: [id], onDelete: SetNull)
     childrenLists PriceList[] @relation("PriceListHierarchy")
 
-    strategy       PriceListStrategy @default(EXPLICIT)
-    strategyValue  Decimal           @default(0) @db.Decimal(10, 2) // Es. 10.00 (per indicare 10%)
-    roundingMethod String?           @default("none") @db.VarChar(20) // none, nearest_05, nearest_10, up, down
+    strategy       PriceListStrategy   @default(EXPLICIT)
+    strategyValue  Decimal             @default(0) @map("strategy_value") @db.Decimal(10, 2) // Es. 10.00 (per indicare 10%)
+    roundingMethod PriceRoundingMethod @default(NONE) @map("rounding_method") // none, nearest_05, nearest_10, up, down
 
     // Relazioni
     items     PriceListItem[]
     customers Customer[] // Clienti assegnati a questo listino
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
+    @@unique([tenantId, code])
+    @@unique([code], where: { tenantId: null }, map: "unique_global_price_list_code")
     @@index([active])
     @@index([validFrom, validTo])
+    @@map("price_lists")
 }
 
+/// Single pricing entry within a price list, optionally scoped by quantity break.
 model PriceListItem {
     id Int @id @default(autoincrement())
 
-    priceListId Int
+    priceListId Int       @map("price_list_id")
     priceList   PriceList @relation(fields: [priceListId], references: [id], onDelete: Cascade)
 
     // Collegamento Variante Prodotto
-    variantId Int
+    variantId Int            @map("variant_id")
     variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
 
     // Scaglioni di quantità (Quantity Breaks)
     // Default 1. Se inserisci una riga con minQuantity 10, si applica da 10 pezzi in su.
-    minQuantity Int @default(1)
+    minQuantity Int @default(1) @map("min_quantity")
 
     // Il Prezzo
     price Decimal @db.Decimal(19, 4) // 4 decimali per precisione unitaria
 
     // Opzionale: Sconto specifico per questa riga (sovrascrive logiche generali)
-    discountPercent Decimal? @db.Decimal(5, 2)
+    discountPercent Decimal? @map("discount_percent") @db.Decimal(5, 2)
 
     // Date specifiche per la riga (es. offerta lampo su un solo prodotto)
-    validFrom DateTime?
-    validTo   DateTime?
+    validFrom DateTime? @map("valid_from")
+    validTo   DateTime? @map("valid_to")
 
     // Relazioni
-    taxRuleId Int?
+    taxRuleId Int?     @map("tax_rule_id")
     taxRule   TaxRule? @relation("PriceListTaxRule", fields: [taxRuleId], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
-    // Vincoli: Non puoi avere due prezzi per lo stesso prodotto/variante/quantità nello stesso listino
+    // Unique constraint: no duplicate prices for the same variant/quantity in the same list
     @@unique([priceListId, variantId, minQuantity])
     @@index([variantId])
+    @@map("price_list_items")
 }

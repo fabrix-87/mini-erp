@@ -1,56 +1,88 @@
+/// Role assignable to users, either globally (tenantId NULL) or scoped to a specific tenant.
+/// Global roles (e.g. ADMIN, VIEWER) are shared across all tenants.
+/// Tenant-private roles allow custom permission sets per tenant.
+/// Supports optional hierarchy via parentRole for permission inheritance.
 model Role {
-  id              Int           @id @default(autoincrement())
-  
-  // Codice univoco (per lookup nel codice)
-  code            String        @unique @db.VarChar(50) // ADMIN, WAREHOUSE, SALES
-  
-  name            String        @db.VarChar(100)
-  description     String?       @db.Text
-  
-  isDefault       Boolean       @default(false) // Ruolo assegnato di default ai nuovi utenti
-  
-  // Relazioni
-  users           User[]        @relation("UserRoles")
-  permissions     RolePermission[]
+  id Int @id @default(autoincrement())
 
-  // gerarchia ruoli
-    parentRoleId Int?
-    parentRole   Role?  @relation("RoleHierarchy", fields: [parentRoleId], references: [id])
-    childRoles   Role[] @relation("RoleHierarchy")
-  
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  // Unique code for programmatic lookup (e.g. ADMIN, WAREHOUSE, SALES)
+  code String @db.VarChar(50)
+
+  name        String  @db.VarChar(100)
+  description String? @db.Text
+
+  /// If true, automatically assigned to new users within this role's scope.
+  isDefault Boolean @default(false) @map("is_default")
+
+  // NULL = global system role shared across tenants; NOT NULL = tenant-private custom role
+  tenantId Int?    @map("tenant_id")
+  tenant   Tenant? @relation("TenantRoles", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // === HIERARCHY ===
+
+  parentRoleId Int?   @map("parent_role_id")
+  parentRole   Role?  @relation("RoleHierarchy", fields: [parentRoleId], references: [id], onDelete: SetNull)
+  childRoles   Role[] @relation("RoleHierarchy")
+
+  // === RELATIONS ===
+
+  users       User[]           @relation("UserRoles")
+  permissions RolePermission[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tenantId, code])
+  @@unique([code], where: { tenantId: null }, map: "unique_global_role_code")
+  // At most one default role per tenant (or one global). PostgreSQL partial unique — requires Prisma preview feature or raw migration.
+  @@unique([tenantId, isDefault], where: { isDefault: true }, map: "unique_default_role_per_tenant")
+  @@map("roles")
 }
 
-model Permission {
-  id              Int           @id @default(autoincrement())
-  
-  // Nome del permesso (es. product:read, invoice:create)
-  code            String        @unique @db.VarChar(100)
-  
-  resource        String        @db.VarChar(50) // Es. product, document, company
-  action          String        @db.VarChar(50) // Es. read, create, update, delete, approve, export
-  scope           String        @default("own") @db.VarChar(20) // "own", "team", "all"
+/// Scope of a permission: restricts what data the action can be applied to.
+enum PermissionScope {
+  OWN // Only records owned by the user
+  TEAM // Records belonging to the user's team
+  ALL // Unrestricted access across the tenant
+}
 
-  description     String?       @db.Text
-  
-  // Relazioni
-  roles           RolePermission[]
-  
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+/// Atomic system permission. Always global — never duplicated per tenant.
+/// Identified by the composite (resource, action, scope) triple.
+/// Examples: product:read:own, invoice:create:all, document:approve:team.
+model Permission {
+  id Int @id @default(autoincrement())
+
+  // Permission code in resource:action format (e.g. product:read, invoice:create)
+  code String @unique @db.VarChar(100)
+
+  resource String          @db.VarChar(50) // e.g. product, document, company
+  action   String          @db.VarChar(50) // e.g. read, create, update, delete, approve, export
+  scope    PermissionScope @default(OWN)
+
+  description String? @db.Text
+
+  // === RELATIONS ===
+
+  roles RolePermission[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([resource, action, scope])
+  @@map("permissions")
 }
 
+/// Join table between Role and Permission.
+/// A role can hold multiple permissions; a permission can belong to multiple roles.
 model RolePermission {
-  roleId          Int
-  role            Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  
-  permissionId    Int
-  permission      Permission    @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-  
-  // Chiave primaria composta
+  roleId Int  @map("role_id")
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  permissionId Int        @map("permission_id")
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  // Composite primary key
   @@id([roleId, permissionId])
   @@index([permissionId])
+  @@map("role_permissions")
 }

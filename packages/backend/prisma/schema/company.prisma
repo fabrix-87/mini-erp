@@ -142,7 +142,7 @@ model Customer {
 
     // Dati Commerciali
     defaultPriceListId Int?
-    defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id])
+    defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id], onDelete: SetNull)
 
     customerTaxRuleId Int?
     customerTaxRule   TaxRule? @relation("CustomerTaxRule", fields: [customerTaxRuleId], references: [id])
@@ -288,7 +288,7 @@ model CompanyAddress {
     updatedAt DateTime @updatedAt @map("updated_at")
 
     // Partial unique: only one LEGAL address per company
-    @@unique([companyId], map: "unique_company_legal_address", where: raw("\"address_type\" = 'LEGAL'"))
+    @@unique([companyId], map: "unique_company_legal_address", where: raw("address_type = 'LEGAL'"))
     @@index([companyId])
     @@index([companyId, addressType])
     @@map("company_addresses")

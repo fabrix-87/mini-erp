@@ -1,104 +1,142 @@
 // ============================================================================
-// GESTIONE IVA E NATURE OPERAZIONI
+// VAT MANAGEMENT AND OPERATION NATURES
 // ============================================================================
 
+/// Macro-category for VAT nature, aligned to SDI coding (N1–N7).
+/// Used to group VatNature records in UI and for automatic selection logic.
 enum VatNatureCategory {
-  EXCLUDED // N1 - Escluse
-  NOT_SUBJECT // N2.x - Non soggette
-  NOT_TAXABLE // N3.x - Non imponibili
-  EXEMPT // N4 - Esenti
-  MARGIN // N5 - Regime del margine
-  REVERSE // N6.x - Inversione contabile
-  EU_VAT // N7 - IVA altro stato UE
+  EXCLUDED // N1 - Excluded
+  NOT_SUBJECT // N2.x - Not subject
+  NOT_TAXABLE // N3.x - Not taxable
+  EXEMPT // N4 - Exempt
+  MARGIN // N5 - Margin scheme
+  REVERSE // N6.x - Reverse charge
+  EU_VAT // N7 - VAT of another EU member state
 }
 
 // ============================================================================
-// NATURE IVA (Codici obbligatori fattura elettronica)
+// VAT NATURES (Mandatory codes for electronic invoicing)
 // ============================================================================
+
+/// VAT nature codes required for SDI electronic invoicing (FatturaPA).
+/// Global master data: no tenantId — shared across all tenants.
+/// A nature code must be selected whenever the VAT rate is 0%.
 model VatNature {
   id   Int    @id @default(autoincrement())
-  code String @unique @db.VarChar(10) // N1, N2.1, N2.2, N3.1, ecc.
+  /// Official SDI code (e.g. N1, N2.1, N2.2, N3.1). Used in the XML tag <Natura>.
+  code String @unique @db.VarChar(10)
 
+  /// Macro-category for grouping and automatic selection logic.
   category VatNatureCategory
 
+  /// Short description for dropdowns and reports.
   description         String  @db.VarChar(500)
-  extendedDescription String? @db.Text
-  legalReference      String? @db.VarChar(255)
+  /// Extended description for tooltips, contextual help, or internal documentation.
+  extendedDescription String? @map("extended_description") @db.Text
+  /// Legal reference (e.g. "Art. 8 DPR 633/72"). Useful for printouts and audits.
+  legalReference      String? @map("legal_reference") @db.VarChar(255)
 
-  applicableToEntityTypes String? @db.VarChar(10)
-  validForSales           Boolean @default(true)
-  validForPurchases       Boolean @default(false)
-  vatReturnLine           String? @db.VarChar(10)
-  requiresNormReference   Boolean @default(false)
+  // === APPLICABILITY ===
 
-  usageExamples    String? @db.Text
-  operationalNotes String? @db.Text
+  /// Fiscal entity types for which this nature applies (e.g. "PA", "B2B").
+  /// Free-form for now; consider a dedicated enum if logic becomes formalized.
+  applicableToEntityTypes String? @map("applicable_to_entity_types") @db.VarChar(10)
+  /// If true, this nature is selectable on sales document lines.
+  validForSales           Boolean @default(true) @map("valid_for_sales")
+  /// If true, this nature is selectable on purchase document lines.
+  validForPurchases       Boolean @default(false) @map("valid_for_purchases")
+  /// VAT return line this nature maps to (e.g. VP/VF reference).
+  vatReturnLine           String? @map("vat_return_line") @db.VarChar(10)
+  /// If true, any TaxRule using this nature must provide a normativeReference.
+  requiresNormReference   Boolean @default(false) @map("requires_norm_reference")
+
+  // === OPERATIONAL DOCUMENTATION ===
+
+  /// Usage examples for operators — shown in tooltips or detail panels.
+  usageExamples    String? @map("usage_examples") @db.Text
+  /// Internal operational notes (not exposed to end customers).
+  operationalNotes String? @map("operational_notes") @db.Text
+
+  // === TEMPORAL VALIDITY ===
 
   active       Boolean   @default(true)
-  validFrom    DateTime  @default("2021-01-01T00:00:00Z")
-  validTo      DateTime?
-  displayOrder Int       @default(0)
+  /// Effective date of the SDI code. Default: mandatory FatturaPA introduction date.
+  validFrom    DateTime  @default("2021-01-01T00:00:00Z") @map("valid_from")
+  /// Expiry date. NULL = still in force.
+  validTo      DateTime? @map("valid_to")
+  displayOrder Int       @default(0) @map("display_order")
 
-  // Sostituzione codici legacy
-  replacedByCode String?     @db.VarChar(10)
+  // === LEGACY CODE REPLACEMENT ===
+
+  /// SDI code that supersedes this one when deprecated (self-join on `code`).
+  replacedByCode String?     @map("replaced_by_code") @db.VarChar(10)
   replacedBy     VatNature?  @relation("VatNatureReplacement", fields: [replacedByCode], references: [code])
   replacements   VatNature[] @relation("VatNatureReplacement")
 
-  // === RELAZIONI ===
+  // === RELATIONS ===
 
-  // Regole fiscali che usano questa natura
-  taxRules TaxRule[]
-
-  // Traduzioni
+  /// Tax rules referencing this nature (required when rate = 0).
+  taxRules     TaxRule[]
   translations VatNatureTranslation[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([code])
   @@index([category])
   @@index([active, displayOrder])
   @@index([validFrom, validTo])
+  @@map("vat_natures")
 }
 
+/// Localized translations of VatNature (description + notes per active language).
 model VatNatureTranslation {
   id          Int       @id @default(autoincrement())
-  vatNatureId Int
+  vatNatureId Int       @map("vat_nature_id")
   vatNature   VatNature @relation(fields: [vatNatureId], references: [id], onDelete: Cascade)
 
-  languageId Int
+  languageId Int      @map("language_id")
   language   Language @relation(fields: [languageId], references: [id])
 
   description String  @db.VarChar(500)
   notes       String? @db.Text
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([vatNatureId, languageId])
   @@index([languageId])
+  @@map("vat_nature_translations")
 }
 
+/// Direction of the document flow to which the tax rule applies.
 enum TaxRuleApplicability {
   SALES
   PURCHASES
   BOTH
 }
 
+/// Counterparty type used for automatic TaxRule selection.
 enum TaxRuleCustomerType {
   B2B
   B2C
-  PA // Pubblica Amministrazione
+  PA // Public Administration — subject to split payment
   FOREIGN
   ANY
 }
 
 // ============================================================================
-// TAX RULE (Regole fiscali configurabili)
+// TAX RULE (Configurable fiscal rules for VAT rate and nature)
 // ============================================================================
+
+/// Fiscal rule combining VAT rate, SDI nature, and applicability conditions.
+/// Can be global (tenantId NULL) or tenant-private (tenantId NOT NULL).
+/// Used by DocumentLine, PriceListItem, Customer, Supplier, and Product
+/// to determine the correct VAT treatment when issuing documents.
 model TaxRule {
   id   Int    @id @default(autoincrement())
-  code String @unique @db.VarChar(20)
+  /// Mnemonic code (e.g. "IVA22", "EXEMPT-N4", "RC-N6.1").
+  /// Unique per scope: global (tenantId NULL) or per-tenant.
+  code String @db.VarChar(20)
 
   name        String  @db.VarChar(255)
   description String? @db.Text
@@ -107,37 +145,60 @@ model TaxRule {
   tenantId Int?    @map("tenant_id")
   tenant   Tenant? @relation("TenantOwnedTaxRules", fields: [tenantId], references: [id], onDelete: Cascade)
 
-  // === ALIQUOTA IVA ===
-  rate Decimal @default(0) @db.Decimal(5, 2) // 0.00, 4.00, 5.00, 10.00, 22.00
+  // === VAT RATE ===
 
-  // === NATURA IVA (obbligatoria se rate = 0) ===
+  /// Applied VAT percentage (e.g. 0.00, 4.00, 10.00, 22.00).
+  /// If 0.00, vatNatureId is required to populate the SDI <Natura> tag.
+  rate Decimal @default(0) @db.Decimal(5, 2)
+
+  // === VAT NATURE ===
+
+  /// Required when rate = 0. Determines the <Natura> tag in the electronic invoice.
   vatNatureId        Int?       @map("vat_nature_id")
-  vatNature          VatNature? @relation(fields: [vatNatureId], references: [id])
+  vatNature          VatNature? @relation(fields: [vatNatureId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  /// Rule-specific legal reference (e.g. "Art. 17 c.6 DPR 633/72").
+  /// Mandatory if vatNature.requiresNormReference = true.
   normativeReference String?    @map("normative_reference") @db.VarChar(255)
 
-  // === APPLICABILITÀ ===
-  countryCode     String               @default("IT") @map("country_code") @db.Char(2)
-  country         Country              @relation(fields: [countryCode], references: [code])
-  applicableFor   TaxRuleApplicability @default(BOTH) @map("applicable_for") // "sales", "purchases", "both"
+  // === GEOGRAPHIC AND DOCUMENT APPLICABILITY ===
+
+  /// Country of application (ISO 3166-1 alpha-2). Default: Italy.
+  countryCode String  @default("IT") @map("country_code") @db.Char(2)
+  country     Country @relation(fields: [countryCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
+
+  /// Document flow direction (sales / purchases / both).
+  applicableFor   TaxRuleApplicability @default(BOTH) @map("applicable_for")
+  /// Product or service category this rule specifically applies to (optional).
   productCategory String?              @map("product_category") @db.VarChar(50)
+  /// Counterparty type. Used for automatic tax rule selection.
   customerType    TaxRuleCustomerType  @default(ANY) @map("customer_type")
 
-  // === REGOLE SPECIALI ===
+  // === SPECIAL RULES ===
+
+  /// If true, VAT is remitted directly by the customer (PA). Affects net amount calculation.
   isSplitPayment       Boolean @default(false) @map("is_split_payment")
+  /// VAT deductibility percentage on purchases (e.g. 40% for company vehicles).
   deductibilityPercent Decimal @default(100) @map("deductibility_percent") @db.Decimal(5, 2)
+  /// If false, input VAT is not deductible (e.g. entertainment expenses).
   vatDeductible        Boolean @default(true) @map("vat_deductible")
 
-  // === VALIDITÀ ===
+  // === TEMPORAL VALIDITY ===
+
   validFrom DateTime  @default(now()) @map("valid_from")
+  /// NULL = rule still in force.
   validTo   DateTime? @map("valid_to")
 
-  // === STATO ===
+  // === STATUS AND PRESENTATION ===
+
   active       Boolean @default(true)
+  /// If true, this rule is pre-selected as default within the scope defined by customerType/applicableFor.
   isDefault    Boolean @default(false) @map("is_default")
   displayOrder Int     @default(0) @map("display_order")
+  /// Optional HEX color to visually distinguish the rule in UI (#RRGGBB).
   color        String? @db.VarChar(7)
 
-  // === RELAZIONI ===
+  // === RELATIONS ===
+
   translations     TaxRuleTranslation[]
   customers        Customer[]           @relation("CustomerTaxRule")
   suppliers        Supplier[]           @relation("SupplierTaxRule")
@@ -150,6 +211,8 @@ model TaxRule {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([tenantId, code])
+  @@unique([code], where: { tenantId: null }, map: "unique_global_tax_rule_code")
   @@index([rate])
   @@index([vatNatureId])
   @@index([countryCode])
@@ -157,10 +220,11 @@ model TaxRule {
   @@index([validFrom, validTo])
   @@index([applicableFor])
   @@index([tenantId])
-  @@index([tenantId, active, isDefault]) // compound per lookup frequente
+  @@index([tenantId, active, isDefault]) // compound index for frequent lookup
   @@map("tax_rules")
 }
 
+/// Localized translations of TaxRule (name + description per active language).
 model TaxRuleTranslation {
   id        Int     @id @default(autoincrement())
   taxRuleId Int
