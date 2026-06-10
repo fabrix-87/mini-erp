@@ -60,42 +60,42 @@ enum CompanyStatus {
 
 // Tabella Company (base comune)
 model Company {
-    id Int @id @default(autoincrement())
+    id String @id @default(cuid())
 
     // Dati Base
     code        String  @unique @db.VarChar(20)
-    companyName String  @db.VarChar(255)
-    tradeName   String? @db.VarChar(255)
-    legalForm   String? @db.VarChar(100)
+    companyName String  @map("company_name") @db.VarChar(255)
+    tradeName   String? @map("trade_name") @db.VarChar(255)
+    legalForm   String? @map("legal_form") @db.VarChar(100)
 
     status CompanyStatus @default(ACTIVE)
 
     // Tipo Persona (per differenziare l'uso di CF o P.IVA)
-    entityType CompanyTypeEntity @default(JURIDICAL)
+    entityType CompanyTypeEntity @default(JURIDICAL) @map("entity_type")
 
     // Dati Fiscali ITALIANI (SdI)
-    vatNumber String? @db.VarChar(20) // Partita IVA
-    taxCode   String? @db.VarChar(20) // Codice Fiscale
+    vatNumber String? @map("vat_number") @db.VarChar(20) // Partita IVA 
+    taxCode   String? @map("tax_code") @db.VarChar(20) // Codice Fiscale
 
     // Codice Destinatario (o SDI/PEC)
-    sdiCode String? @db.VarChar(7) // Codice SDI (7 caratteri, '0000000' per i privati/esteri)
+    sdiCode String? @map("sdi_code") @db.VarChar(7) // Codice SDI (7 caratteri, '0000000' per i privati/esteri)
     pec     String? @db.VarChar(255) // Indirizzo PEC
 
     // Dati Fiscali ESTERI (necessari se Country non è IT)
-    eoriNumber String? @db.VarChar(20) // EORI (per transazioni extra UE)
-    vatId      String? @db.VarChar(20) // VAT ID per UE (es. FR123456789)
+    eoriNumber String? @map("eori_number") @db.VarChar(20) // EORI (per transazioni extra UE)
+    vatId      String? @map("vat_id") @db.VarChar(20) // VAT ID per UE (es. FR123456789)
 
     // Nazione Fiscale
-    countryCode String  @default("IT") @db.Char(2)
+    countryCode String  @default("IT") @map("country_code") @db.Char(2) // Codice ISO 31
     country     Country @relation("CompanyCountry", fields: [countryCode], references: [code])
 
     // Contatti Generali
-    mainEmail String? @db.VarChar(255)
-    mainPhone String? @db.VarChar(50)
+    mainEmail String? @map("main_email") @db.VarChar(255) // Email principale del contatto
+    mainPhone String? @map("main_phone") @db.VarChar(50)
 
     // Relazioni
     user           User?      @relation("AssignedUser", fields: [assignedUserId], references: [id])
-    assignedUserId Int?
+    assignedUserId String?    @map("assigned_user_id")
     activities     Activity[]
 
     tenantId Int    @map("tenant_id")
@@ -114,23 +114,24 @@ model Company {
     notes CompanyNote[]
 
     // Custom Fields
-    customFields Json?
+    customFields Json? @map("custom_fields")
 
     // Campi per tracking
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
     // Index
     @@index([vatNumber])
     @@index([taxCode])
+    @@map("companies")
 }
 
 // Tabella Customer
 model Customer {
-    id Int @id @default(autoincrement())
+    id String @id @default(cuid())
 
     // Collegamento 1-a-1 alla Company
-    companyId Int     @unique
+    companyId String  @unique @map("company_id")
     company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
     // Dati specifici Cliente/CRM
@@ -141,39 +142,39 @@ model Customer {
     creditStatus CreditCheckStatus @default(PENDING)
 
     // Dati Commerciali
-    defaultPriceListId Int?
+    defaultPriceListId Int?       @map("default_price_list_id")
     defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id], onDelete: SetNull)
 
-    customerTaxRuleId Int?
+    customerTaxRuleId Int?     @map("customer_tax_rule_id")
     customerTaxRule   TaxRule? @relation("CustomerTaxRule", fields: [customerTaxRuleId], references: [id])
 
-    paymentMethodId Int?
+    paymentMethodId Int?           @map("payment_method_id")
     paymentMethod   PaymentMethod? @relation("CompanyPaymentMethod", fields: [paymentMethodId], references: [id])
 
-    creditLimit Decimal? @db.Decimal(15, 2) // Limite di credito CONCESSO al Cliente
+    creditLimit Decimal? @map("credit_limit") @db.Decimal(15, 2) // Limite di credito CONCESSO al Cliente
 
     // Tracking/Reportistica
-    firstSaleDate DateTime? // Prima vendita CONFERMATA
-    lastSaleDate  DateTime? // Ultima vendita CONFERMATA
-    totalSales    Int       @default(0) // Numero ordini TOTALI
-    totalRevenue  Decimal   @default(0) @db.Decimal(15, 2) // Fatturato TOTALE reale
+    firstSaleDate DateTime? @map("first_sale_date") // Prima vendita CONFERMATA
+    lastSaleDate  DateTime? @map("last_sale_date") // Ultima vendita CONFERMATA
+    totalSales    Int       @default(0) @map("total_sales") // Numero ordini TOTALI
+    totalRevenue  Decimal   @default(0) @map("total_revenue") @db.Decimal(15, 2) // Fatturato TOTALE reale
 
     // Date estese
-    customerSince     DateTime? // Data entrata in CRM (può essere prima di firstSaleDate)
-    lastInteractionAt DateTime? // Ultima attività (vendita, email, call, meeting)
+    customerSince     DateTime? @map("customer_since") // Data entrata in CRM (può essere prima di firstSaleDate)
+    lastInteractionAt DateTime? @map("last_interaction_at") // Ultima attività (vendita, email, call, meeting)
 
     // Metriche calcolate
-    averageOrderValue Decimal @default(0) @db.Decimal(15, 2) // Fatturato medio ( totalRevenue / totalSales )
-    lifetimeValue     Decimal @default(0) @db.Decimal(15, 2) // LTV (storico + proiezione)
+    averageOrderValue Decimal @default(0) @map("average_order_value") @db.Decimal(15, 2) // Fatturato medio ( totalRevenue / totalSales )
+    lifetimeValue     Decimal @default(0) @map("lifetime_value") @db.Decimal(15, 2) // LTV (storico + proiezione)
 
     // Score predittivi
-    churnRisk   Int @default(0) @db.SmallInt // 0-100 (rischio abbandono)
-    healthScore Int @default(50) @db.SmallInt // 0-100 (salute complessiva)
+    churnRisk   Int @default(0) @map("churn_risk") @db.SmallInt // 0-100 (rischio abbandono)
+    healthScore Int @default(50) @map("health_score") @db.SmallInt // 0-100 (salute complessiva)
 
     // NPS e soddisfazione
-    npsScore         Int?      @db.SmallInt // -100 a +100
-    satisfactionRate Decimal?  @db.Decimal(3, 2) // 0.00 - 5.00
-    lastSurveyDate   DateTime?
+    npsScore         Int?      @map("nps_score") @db.SmallInt // -100 a +100
+    satisfactionRate Decimal?  @map("satisfaction_rate") @db.Decimal(3, 2) // 0.00 - 5.00
+    lastSurveyDate   DateTime? @map("last_survey_date") // Data dell'ultimo sondaggio
 
     // Relazioni a documenti di Vendita
     documentsOut  Document[]    @relation("CustomerDocuments")
@@ -181,50 +182,51 @@ model Customer {
     activities    Activity[]
 
     // Relazioni tra clienti (gruppi e gerarchie)
-    parentCustomerId Int?
+    parentCustomerId String?    @map("parent_customer_id")
     parentCustomer   Customer?  @relation("CustomerHierarchy", fields: [parentCustomerId], references: [id], onDelete: SetNull)
     subsidiaries     Customer[] @relation("CustomerHierarchy")
 
     // Lead convertita in questo customer
     convertedFromLead Lead? @relation("ConvertedCustomer")
 
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
 
     // Safe delete
-    deletedBy     Int?
-    deletedByUser User? @relation("DeletedBy", fields: [deletedBy], references: [id])
+    deletedBy     String? @map("deleted_by")
+    deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
     @@index([parentCustomerId])
     @@index([deletedAt])
+    @@map("customers")
 }
 
 // Tabella Supplier
 model Supplier {
-    id Int @id @default(autoincrement())
+    id String @id @default(cuid())
 
     // Collegamento 1-a-1 alla Company
-    companyId Int     @unique
+    companyId String  @unique @map("company_id")
     company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
     // Dati specifici Fornitore
-    paymentTerms String?  @db.VarChar(100) // Es. 30 giorni data fattura fine mese
-    creditLimit  Decimal? @db.Decimal(15, 2) // Limite di credito CONCESSO dal Fornitore
-    bankAccount  String?  @db.VarChar(100) // IBAN per bonifici in USCITA
+    paymentTerms String?  @map("payment_terms") @db.VarChar(100) // Es. 30 giorni data fattura fine mese
+    creditLimit  Decimal? @map("credit_limit") @db.Decimal(15, 2) // Limite di credito CONCESSO dal Fornitore
+    bankAccount  String?  @map("bank_account") @db.VarChar(100) // IBAN per bonifici in USCITA
 
     // Costi e Logistica
-    leadTimeDays  Int?     @default(0) // Tempo standard di consegna
-    transportCost Decimal? @db.Decimal(10, 2)
+    leadTimeDays  Int?     @default(0) @map("lead_time_days") // Tempo standard di consegna
+    transportCost Decimal? @map("transport_cost") @db.Decimal(10, 2) // Costo standard di trasporto
 
     // Tracking/Reportistica
-    firstOrderDate DateTime?
-    lastOrderDate  DateTime?
-    totalOrders    Int       @default(0)
-    totalSpent     Decimal   @default(0) @db.Decimal(15, 2)
-    rating         Int?      @default(5) // 1-5 stelle
+    firstOrderDate DateTime? @map("first_order_date") // Data del primo ordine
+    lastOrderDate  DateTime? @map("last_order_date") // Data dell'ultimo ordine
+    totalOrders    Int       @default(0) @map("total_orders")
+    totalSpent     Decimal   @default(0) @map("total_spent") @db.Decimal(15, 2)
+    rating         Int?      @default(5) // 1-5 stelle 
 
-    supplierTaxRuleId Int?
+    supplierTaxRuleId Int?     @map("supplier_tax_rule_id")
     supplierTaxRule   TaxRule? @relation("SupplierTaxRule", fields: [supplierTaxRuleId], references: [id])
 
     // Relazioni a documenti di Acquisto
@@ -235,19 +237,20 @@ model Supplier {
     stockBatchs StockBatch[]
 
     // Relazioni tra fornitori (gruppi e gerarchie)
-    parentSupplierId Int?
+    parentSupplierId String?    @map("parent_supplier_id")
     parentSupplier   Supplier?  @relation("SupplierHierarchy", fields: [parentSupplierId], references: [id], onDelete: SetNull)
     subsidiaries     Supplier[] @relation("SupplierHierarchy")
 
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
 
-    deletedBy     Int?
-    deletedByUser User? @relation("DeletedBy", fields: [deletedBy], references: [id])
+    deletedBy     String? @map("deleted_by")
+    deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
     @@index([parentSupplierId])
     @@index([deletedAt])
+    @@map("suppliers")
 }
 
 // Enum per tipo indirizzo
@@ -263,7 +266,7 @@ enum AddressType {
 // Modello per gli indirizzi delle aziende
 model CompanyAddress {
     id        Int     @id @default(autoincrement()) @map("id")
-    companyId Int     @map("company_id")
+    companyId String  @map("company_id")
     company   Company @relation("CompanyAddresses", fields: [companyId], references: [id], onDelete: Cascade)
 
     addressType AddressType @default(BILLING) @map("address_type")
@@ -296,14 +299,14 @@ model CompanyAddress {
 
 // Modello per i contatti
 model Contact {
-    id Int @id @default(autoincrement())
+    id String @id @default(cuid())
 
     // Dati anagrafici puri — nessun companyId diretto
-    firstName   String  @db.VarChar(100)
-    lastName    String? @db.VarChar(100)
+    firstName   String  @map("first_name") @db.VarChar(100)
+    lastName    String? @map("last_name") @db.VarChar(100)
     email       String? @unique @db.VarChar(255) // unique globale, non per company
     phone       String? @db.VarChar(50)
-    mobilePhone String? @db.VarChar(50)
+    mobilePhone String? @map("mobile_phone") @db.VarChar(50)
 
     active Boolean @default(true)
     notes  String? @db.Text
@@ -314,18 +317,19 @@ model Contact {
     activities           Activity[]
     activityParticipants ActivityParticipant[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
     @@index([email])
+    @@map("contacts")
 }
 
 // Tabella di relazione many-to-many con dati contestuali
 model CompanyContact {
     id        Int     @id @default(autoincrement()) @map("id")
-    contactId Int     @map("contact_id")
+    contactId String  @map("contact_id")
     contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
-    companyId Int     @map("company_id")
+    companyId String  @map("company_id")
     company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
     position         String? @db.VarChar(100)
@@ -346,11 +350,11 @@ model CompanyContact {
 // Tabella Note
 model CompanyNote {
     id        Int      @id @default(autoincrement())
-    companyId Int      @map("company_id")
+    companyId String   @map("company_id")
     company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
     title     String   @db.VarChar(255)
     content   String   @db.Text
-    authorId  Int?     @map("author_id")
+    authorId  String?  @map("author_id")
     author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")

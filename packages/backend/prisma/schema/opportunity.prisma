@@ -1,109 +1,127 @@
 // ============================================================================
-// ENUMS OPPORTUNITY
+// OPPORTUNITY MANAGEMENT
 // ============================================================================
 
+/// Overall outcome status of the opportunity.
 enum OpportunityStatus {
-  OPEN      // L'opportunità è attiva e in lavorazione
-  WON       // Vendita conclusa con successo
-  LOST      // Vendita persa
-  PENDING   // In attesa di una decisione esterna
-  CLOSED    // Chiusa (generico)
+  OPEN // Actively being worked
+  WON // Successfully closed
+  LOST // Lost to competitor or abandoned
+  PENDING // Waiting for an external decision
+  CLOSED // Generically closed without win/loss outcome
 }
 
+/// Current stage of the opportunity in the sales pipeline.
 enum SalesStage {
-  LEAD_QUALIFICATION  // Qualificazione del potenziale cliente
-  PROSPECTING        // Ricerca e primo contatto
-  NEEDS_ANALYSIS     // Analisi dei bisogni
-  PROPOSAL_SENT      // Proposta inviata
-  NEGOTIATION        // Trattativa
-  COMMITMENT         // Impegno/Firma (Pre-Won)
+  LEAD_QUALIFICATION // Assessing fit and interest
+  PROSPECTING // Research and first contact
+  NEEDS_ANALYSIS // Discovering requirements and pain points
+  PROPOSAL_SENT // Proposal or quote submitted
+  NEGOTIATION // Commercial negotiation in progress
+  COMMITMENT // Verbal or written commitment received (pre-won)
 }
 
+/// Channel or event that originated the opportunity.
 enum OpportunitySource {
-  LEAD          // Generata da una Lead
-  CUSTOMER      // Generata da un Customer esistente (upsell/cross-sell)
-  INBOUND       // Richiesta inbound
-  OUTBOUND      // Azione outbound
-  REFERRAL      // Referral
-  PARTNER       // Partner
-  EVENT         // Evento/Fiera
-  OTHER         // Altro
+  LEAD // Generated from a Lead record
+  CUSTOMER // Existing customer upsell or cross-sell
+  INBOUND // Unsolicited inbound request
+  OUTBOUND // Result of an outbound action
+  REFERRAL // Referral from a third party
+  PARTNER // Commercial partner
+  EVENT // Trade show, conference, or webinar
+  OTHER // Other
 }
 
-// ============================================================================
-// OPPORTUNITA
-// ============================================================================
+/// Sales opportunity linked to a Lead and/or an existing Customer.
+/// At least one of leadId or customerId must be non-null (enforced at application level).
+/// Tracks pipeline stage, financial metrics, BANT probability, and closure outcome.
 model Opportunity {
   id          Int     @id @default(autoincrement())
   title       String  @db.VarChar(255)
   description String? @db.Text
 
-  // === RELAZIONI CON LEAD O CUSTOMER ===
-  // Un'opportunità può essere collegata a una Lead (prima della conversione)
-  // oppure a un Customer esistente (upsell/cross-sell)
-  // Almeno una delle due deve essere presente (validazione a livello applicativo)
-  leadId     Int?
-  lead       Lead?     @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  // === LEAD / CUSTOMER LINK ===
+  // An opportunity can be linked to a Lead (before conversion),
+  // a Customer (upsell/cross-sell), or both (post-conversion traceability).
+  leadId Int?  @map("lead_id")
+  lead   Lead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
-  customerId Int
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String?   @map("customer_id")
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  // Fonte dell'opportunità
+  /// Tenant that owns this opportunity. All opportunity data is tenant-isolated.
+  tenantId Int    @map("tenant_id")
+  tenant   Tenant @relation("TenantOpportunities", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
   source OpportunitySource @default(OTHER)
-
-  // STATO E STAGE
   status OpportunityStatus @default(OPEN)
-  stage  SalesStage        @default(LEAD_QUALIFICATION) // Lo stadio specifico della vendita
+  /// Current pipeline stage. Should drive the probability value.
+  stage  SalesStage        @default(LEAD_QUALIFICATION)
 
-  // METRICHE FINANZIARIE
-  estimatedValue Decimal? @db.Decimal(15, 2)
-  // Campo calcolato: ValoreAtteso = estimatedValue * (probability / 100)
-  weightedValue  Decimal  @default(0) @db.Decimal(15, 2)
-  probability    Int      @default(0) // 0-100. Deve essere mappato allo Stage.
+  // === FINANCIAL METRICS ===
 
-  // Valore effettivo (se vinta)
-  actualValue    Decimal? @db.Decimal(15, 2)
+  estimatedValue Decimal? @map("estimated_value") @db.Decimal(15, 2)
+  /// Computed: weightedValue = estimatedValue * (probability / 100). Updated at application level.
+  weightedValue  Decimal  @default(0) @map("weighted_value") @db.Decimal(15, 2)
+  /// Win probability percentage (0–100). Should be aligned with the current stage.
+  probability    Int      @default(0)
+  /// Actual closed value. Populated when status = WON.
+  actualValue    Decimal? @map("actual_value") @db.Decimal(15, 2)
 
-  // TEMPISTICHE CHIAVE
-  expectedCloseDate DateTime?
-  closedDate        DateTime?
+  // === KEY DATES ===
 
-  // MOTIVAZIONI E RAGIONI
-  // Aggiunto un campo per specificare la ragione della perdita/vittoria
-  closedReasonId Int?
+  expectedCloseDate DateTime? @map("expected_close_date")
+  closedDate        DateTime? @map("closed_date")
+
+  // === CLOSURE ===
+
+  closedReasonId Int?          @map("closed_reason_id")
   closedReason   ClosedReason? @relation(fields: [closedReasonId], references: [id])
-  closedNotes String? @db.Text // Note sulla chiusura (utile per l'analisi)
+  /// Free-text notes on the closure outcome. Useful for win/loss analysis.
+  closedNotes    String?       @map("closed_notes") @db.Text
 
-  // DATI UTENTE
-  createdByUserId Int
-  createdBy       User  @relation("CreatedBy", fields: [createdByUserId], references: [id])
-  assignedUserId  Int?
-  assignedUser    User? @relation("AssignedTo", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  // === OWNERSHIP ===
 
-  // DATA DI CAMBIO STAGE
-  lastStageChange DateTime @default(now()) // Utile per monitorare la stagnazione
-  daysInCurrentStage Int @default(0) // Calcolato, utile per identificare opportunità stagnanti
+  createdByUserId String? @map("created_by_user_id")
+  createdBy       User?   @relation("CreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  /// Sales rep responsible for this opportunity.
+  assignedUserId  String? @map("assigned_user_id")
+  assignedUser    User?   @relation("AssignedTo", fields: [assignedUserId], references: [id], onDelete: SetNull)
 
-  // Contatori interazioni
-  totalActivities Int @default(0)
-  lastActivityDate DateTime?
+  // === STAGE TRACKING ===
 
-  // === PRODOTTI/SERVIZI ===
-  proposedProducts Json? // Array di {productId, quantity, price, discount}
+  /// Timestamp of the last stage transition. NULL = stage never changed. Used to detect stagnation.
+  lastStageChange    DateTime? @map("last_stage_change")
+  /// Denormalized count of days in the current stage. Updated by a scheduled job — do not write directly.
+  daysInCurrentStage Int       @default(0) @map("days_in_current_stage")
 
-  // === NOTE E CAMPI CUSTOM ===
+  // === ACTIVITY COUNTERS ===
+
+  /// Denormalized total activity count. Updated at application level.
+  totalActivities  Int       @default(0) @map("total_activities")
+  lastActivityDate DateTime? @map("last_activity_date")
+
+  // === PRODUCTS / SERVICES ===
+
+  /// Snapshot of proposed items: Array<{ productId, quantity, price, discount }>.
+  /// Consider migrating to a dedicated OpportunityProduct table if querying by product is needed.
+  proposedProducts Json? @map("proposed_products")
+
+  // === NOTES AND CUSTOM FIELDS ===
+
   notes        String? @db.Text
-  customFields Json?
+  customFields Json?   @map("custom_fields")
 
-  // RELAZIONI
+  // === RELATIONS ===
+
   documents  Document[]
   activities Activity[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  // === INDICI ===
-  @@index([leadId])
+  @@index([tenantId, leadId])
   @@index([customerId])
   @@index([status])
   @@index([stage])
@@ -111,24 +129,60 @@ model Opportunity {
   @@index([assignedUserId])
   @@index([expectedCloseDate])
   @@index([closedDate])
+  @@map("opportunities")
 }
 
 // ============================================================================
-// MOTIVI DI CHIUSURA (WIN/LOSS)
+// WIN / LOSS REASONS
 // ============================================================================
+
+/// Tenant-scoped or global reason for closing an opportunity as won or lost.
+/// Global reasons (tenantId NULL) are shared across all tenants as system defaults.
+/// Tenants can define private reasons in addition to or instead of global ones.
 model ClosedReason {
-  id            Int           @id @default(autoincrement())
-  code          String        @unique @db.VarChar(50) // Es. 'PRICE', 'COMPETITOR', 'NO_BUDGET'
-  description   String        @db.VarChar(255)
-  isWon         Boolean       // true per motivi di vittoria, false per perdita
-  active        Boolean       @default(true)
-  displayOrder  Int           @default(0)
-  
+  id   Int    @id @default(autoincrement())
+  /// Mnemonic code (e.g. PRICE, COMPETITOR, NO_BUDGET).
+  /// Unique per scope: global (tenantId NULL) or per-tenant.
+  code String @db.VarChar(50)
+
+  /// true = win reason; false = loss reason.
+  isWon        Boolean @map("is_won")
+  active       Boolean @default(true)
+  displayOrder Int     @default(0) @map("display_order")
+
+  tenantId Int?    @map("tenant_id")
+  tenant   Tenant? @relation("TenantOpportunityClosedReasons", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
   opportunities Opportunity[]
-  
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  
+  translations  ClosedReasonTranslation[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tenantId, code])
+  @@unique([code], where: { tenantId: null }, map: "unique_global_closed_reason_code")
   @@index([isWon])
   @@index([active])
+  @@map("closed_reasons")
+}
+
+/// Localized name and description for a ClosedReason.
+model ClosedReasonTranslation {
+  id             Int          @id @default(autoincrement())
+  closedReasonId Int          @map("closed_reason_id")
+  closedReason   ClosedReason @relation(fields: [closedReasonId], references: [id], onDelete: Cascade)
+
+  languageId Int      @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id])
+
+  /// Localized label shown in UI and documents (e.g. "Prezzo", "Price").
+  name        String  @db.VarChar(255)
+  description String? @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([closedReasonId, languageId])
+  @@index([languageId])
+  @@map("closed_reason_translations")
 }

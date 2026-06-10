@@ -43,7 +43,7 @@ model AuditLog {
   severity AuditSeverity @default(INFO)
 
   // === USER INFORMATION ===
-  userId   Int?
+  userId   String?
   user     User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
   username String @db.VarChar(50) // Snapshot dello username (anche se user viene cancellato)
 
@@ -107,7 +107,7 @@ model SecurityEvent {
   eventType String @db.VarChar(50) // "failed_login", "suspicious_activity", "unauthorized_access"
   severity  AuditSeverity @default(WARNING)
 
-  userId   Int?
+  userId   String?
   user     User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
   username String? @db.VarChar(50)
   email    String? @db.VarChar(255)

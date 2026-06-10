@@ -105,7 +105,7 @@ model StockMovement {
     /// Total cost for the movement.
     totalCost Decimal? @map("total_cost") @db.Decimal(20, 6)
 
-    documentId Int?      @map("document_id")
+    documentId String?      @map("document_id")
     document   Document? @relation(fields: [documentId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     documentLineId Int?          @map("document_line_id")
@@ -119,7 +119,7 @@ model StockMovement {
 
     expiryDate DateTime? @map("expiry_date")
 
-    createdByUserId Int?  @map("created_by_user_id")
+    createdByUserId String?  @map("created_by_user_id")
     createdBy       User? @relation(fields: [createdByUserId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     status MovementStatus @default(PENDING)
@@ -206,7 +206,7 @@ model StockBatch {
     manufacturedDate DateTime? @map("manufactured_date")
     expiryDate       DateTime? @map("expiry_date")
 
-    supplierId Int?      @map("supplier_id")
+    supplierId String?      @map("supplier_id")
     supplier   Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     /// Current on-hand quantity for the batch.
@@ -236,7 +236,7 @@ model StockReservation {
     /// Reserved quantity blocked from general availability.
     quantity Int
 
-    documentId Int      @map("document_id")
+    documentId String      @map("document_id")
     document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     documentLineId Int?          @map("document_line_id")

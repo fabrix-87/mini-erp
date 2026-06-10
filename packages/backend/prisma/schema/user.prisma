@@ -5,7 +5,7 @@
 
 /// Central identity provider (IdP) model for system authentication and audit tracking.
 model User {
-  id       Int    @id @default(autoincrement())
+  id       String @id @default(cuid())
   username String @unique @db.VarChar(50)
   email    String @unique @db.VarChar(255)
 
@@ -15,7 +15,7 @@ model User {
 
   /// Tenant boundary for isolation in B2B SaaS deployments. Null denotes system global accounts.
   tenantId Int?
-  tenant   Tenant? @relation(fields: [tenantId], references: [id])
+  tenant   Tenant? @relation("TenantUsers", fields: [tenantId], references: [id])
 
   // === EMAIL VERIFICATION ===
   emailVerified Boolean @default(false)
@@ -72,18 +72,19 @@ model User {
   preferredLanguage   Language @relation("UserPreferredLanguage", fields: [preferredLanguageId], references: [id])
 
   // Core System Operational Relations
-  createdDocuments      Document[]            @relation("CreatedBy")
-  assignedDocuments     Document[]            @relation("AssignedTo")
-  createdOpportunities  Opportunity[]         @relation("CreatedBy")
-  assignedOpportunities Opportunity[]         @relation("AssignedTo")
-  assignedCompanies     Company[]             @relation("AssignedUser")
-  activitiesAssigned    Activity[]            @relation("ActivityAssigned")
-  activitiesCreated     Activity[]            @relation("ActivityCreated")
-  activityParticipants  ActivityParticipant[]
-  companyNotes          CompanyNote[]
-  stockMovement         StockMovement[]
-  auditLogs             AuditLog[]
-  SecurityEvents        SecurityEvent[]
+  createdDocuments        Document[]              @relation("CreatedBy")
+  assignedDocuments       Document[]              @relation("AssignedTo")
+  createdOpportunities    Opportunity[]           @relation("CreatedBy")
+  assignedOpportunities   Opportunity[]           @relation("AssignedTo")
+  assignedCompanies       Company[]               @relation("AssignedUser")
+  activitiesAssigned      Activity[]              @relation("ActivityAssigned")
+  activitiesCreated       Activity[]              @relation("ActivityCreated")
+  activityParticipants    ActivityParticipant[]
+  companyNotes            CompanyNote[]
+  stockMovement           StockMovement[]
+  auditLogs               AuditLog[]
+  securityEvents          SecurityEvent[]
+  documentStatusHistories DocumentStatusHistory[]
 
   // Soft-Delete / Auditing Attribution Targets
   deletedDocuments       Document[]       @relation("DeletedBy")
@@ -118,8 +119,8 @@ model User {
 model UserDetails {
   id Int @id @default(autoincrement())
 
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   firstName String  @db.VarChar(100)
   lastName  String? @db.VarChar(100)

@@ -2,244 +2,230 @@
 // LEAD MANAGEMENT
 // ============================================================================
 
-// ============================================================================
-// ENUMS
-// ============================================================================
-
-// Enum per lo stato della lead nel funnel
+/// Lead funnel status.
 enum LeadStatus {
-  NEW // Nuova lead non ancora contattata
-  CONTACTED // Primo contatto effettuato
-  QUALIFIED // Lead qualificata e pronta per opportunità
-  UNQUALIFIED // Lead non qualificata (non target)
-  NURTURING // In fase di nurturing/coltivazione
-  CONVERTED // Convertita in Customer
-  LOST // Persa/Non interessata
-  DUPLICATE // Duplicato di altra lead
-  ARCHIVED // Archiviata
+  NEW // New lead, not yet contacted
+  CONTACTED // First contact made
+  QUALIFIED // Qualified and ready for opportunity creation
+  UNQUALIFIED // Not a valid target
+  NURTURING // In nurturing/cultivation phase
+  CONVERTED // Converted to Customer
+  LOST // Lost or not interested
+  DUPLICATE // Duplicate of another lead
+  ARCHIVED // Archived
 }
 
-// Enum per la fonte di acquisizione della lead
+/// Acquisition channel that originated the lead.
 enum LeadSource {
-  WEBSITE // Sito web (form contatto, landing page)
-  REFERRAL // Passaparola/Referral da cliente
-  SOCIAL_MEDIA // Social Media (LinkedIn, Facebook, etc.)
-  EMAIL_CAMPAIGN // Campagna Email Marketing
-  PHONE_CALL // Chiamata telefonica inbound
-  COLD_CALL // Chiamata a freddo outbound
-  EVENT // Evento/Fiera/Webinar
-  PARTNER // Partner commerciale
-  ADVERTISING // Pubblicità online (Google Ads, Facebook Ads)
-  CONTENT // Content Marketing (blog, ebook, whitepaper)
-  DIRECT // Contatto diretto
-  CHAT // Chat dal sito web
-  OTHER // Altro
+  WEBSITE // Website (contact form, landing page)
+  REFERRAL // Word of mouth / customer referral
+  SOCIAL_MEDIA // Social media (LinkedIn, Facebook, etc.)
+  EMAIL_CAMPAIGN // Email marketing campaign
+  PHONE_CALL // Inbound phone call
+  COLD_CALL // Outbound cold call
+  EVENT // Event / trade show / webinar
+  PARTNER // Commercial partner
+  ADVERTISING // Online advertising (Google Ads, Facebook Ads)
+  CONTENT // Content marketing (blog, ebook, whitepaper)
+  DIRECT // Direct contact
+  CHAT // Website chat
+  OTHER // Other
 }
 
-// Enum per la qualità/temperatura della lead
+/// Conversion likelihood of the lead.
 enum LeadQuality {
-  HOT // Lead calda - alta probabilità di conversione
-  WARM // Lead tiepida - media probabilità
-  COLD // Lead fredda - bassa probabilità
+  HOT // High conversion probability
+  WARM // Medium conversion probability
+  COLD // Low conversion probability
 }
 
-// ============================================================================
-// MODELLO LEAD
-// ============================================================================
+/// Expected timeframe for the purchase decision.
+enum LeadPurchaseTimeframe {
+  IMMEDIATE // Less than 1 month
+  SHORT_TERM // 1–3 months
+  MEDIUM_TERM // 3–6 months
+  LONG_TERM // 6–12 months
+  UNDEFINED // Not yet determined
+}
 
+/// Role of the primary contact in the decision-making process.
+enum LeadDecisionAuthority {
+  DECISION_MAKER
+  INFLUENCER
+  GATEKEEPER
+  END_USER
+  UNKNOWN
+}
+
+/// Prospective company record in the sales funnel.
+/// Tenant-scoped. Convertible to Customer via the convertedTo relation.
+/// Tracks qualification, BANT, GDPR consent, UTM attribution, and activity history.
 model Lead {
   id Int @id @default(autoincrement())
 
-  // === CODICE UNIVOCO ===
-  code String @unique @db.VarChar(20) // Es. LEAD-2026-0001
+  // Unique human-readable code per tenant (e.g. LEAD-2026-0001)
+  code String @db.VarChar(20)
 
-  // === DATI BASE AZIENDA ===
-  companyName String  @db.VarChar(255)
-  tradeName   String? @db.VarChar(255) // Nome commerciale se diverso da ragione sociale
+  // === COMPANY DATA ===
+
+  companyName String  @map("company_name") @db.VarChar(255)
+  /// Trade name if different from the legal company name.
+  tradeName   String? @map("trade_name") @db.VarChar(255)
   website     String? @db.VarChar(255)
 
-  // Dati Fiscali (opzionali per una lead, diventeranno obbligatori alla conversione)
-  vatNumber String? @db.VarChar(20) // Partita IVA
-  taxCode   String? @db.VarChar(20) // Codice Fiscale
+  // Fiscal data — optional at lead stage, required upon conversion to Customer
+  vatNumber String? @map("vat_number") @db.VarChar(20) // VAT number
+  taxCode   String? @map("tax_code") @db.VarChar(20) // Tax code / fiscal code
 
-  // Nazione
-  countryCode String  @default("IT") @db.Char(2)
+  countryCode String  @default("IT") @map("country_code") @db.Char(2)
   country     Country @relation("LeadCountry", fields: [countryCode], references: [code])
 
-  // === CONTATTO PRINCIPALE ===
-  contactFirstName  String  @db.VarChar(100)
-  contactLastName   String  @db.VarChar(100)
-  contactEmail      String  @db.VarChar(255)
-  contactPhone      String? @db.VarChar(50)
-  contactMobile     String? @db.VarChar(50)
-  contactPosition   String? @db.VarChar(100) // Es. CEO, Responsabile Acquisti
-  contactDepartment String? @db.VarChar(100) // Es. IT, Marketing, Procurement
+  /// Tenant that owns this lead. All lead data is tenant-isolated.
+  tenantId Int    @map("tenant_id")
+  tenant   Tenant @relation("TenantLeads", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-  // === INDIRIZZO (semplificato - verrà espanso alla conversione) ===
+  // === PRIMARY CONTACT ===
+
+  contactFirstName  String  @map("contact_first_name") @db.VarChar(100)
+  contactLastName   String  @map("contact_last_name") @db.VarChar(100)
+  contactEmail      String  @map("contact_email") @db.VarChar(255)
+  contactPhone      String? @map("contact_phone") @db.VarChar(50)
+  contactMobile     String? @map("contact_mobile") @db.VarChar(50)
+  /// Contact's job title (e.g. CEO, Procurement Manager).
+  contactPosition   String? @map("contact_position") @db.VarChar(100)
+  /// Contact's department (e.g. IT, Marketing, Procurement).
+  contactDepartment String? @map("contact_department") @db.VarChar(100)
+
+  // === ADDRESS (simplified — expanded upon conversion) ===
+
   address      String? @db.VarChar(255)
   city         String? @db.VarChar(100)
-  provinceCode String? @db.Char(2) // Codice Provincia (es. MI, RM)
-  zipCode      String? @db.VarChar(20)
+  /// Province code (e.g. MI, RM) — Italian standard.
+  provinceCode String? @map("province_code") @db.Char(2)
+  zipCode      String? @map("zip_code") @db.VarChar(20)
 
-  // === GESTIONE LEAD ===
+  // === LEAD MANAGEMENT ===
+
   status  LeadStatus  @default(NEW)
   source  LeadSource  @default(OTHER)
   quality LeadQuality @default(COLD)
 
-  // Lead Score (0-100) - per prioritizzazione automatica
-  // Può essere calcolato automaticamente in base a:
-  // - Interazioni (email aperte, link cliccati)
-  // - Fit demografico (dimensione azienda, settore)
-  // - Comportamento (visite al sito, download contenuti)
+  /// Lead scoring value (0–100). Computed from engagement, demographic fit, and behavioral signals.
   score Int @default(0) @db.SmallInt
 
-  // === DATI COMMERCIALI E QUALIFICAZIONE ===
+  // === COMMERCIAL QUALIFICATION ===
 
-  // Valore stimato dell'opportunità potenziale
-  estimatedValue Decimal? @db.Decimal(15, 2)
+  /// Estimated potential opportunity value.
+  estimatedValue Decimal?      @map("estimated_value") @db.Decimal(15, 2)
+  /// Estimated company size category.
+  estimatedSize  CustomerSize? @map("estimated_size")
+  /// Industry or sector (e.g. Manufacturing, Retail, IT).
+  industry       String?       @db.VarChar(100)
+  /// Estimated number of employees.
+  employeesCount Int?          @map("employees_count")
+  /// Estimated annual revenue.
+  annualRevenue  Decimal?      @map("annual_revenue") @db.Decimal(15, 2)
+  /// Available budget declared by the lead.
+  budget         Decimal?      @db.Decimal(15, 2)
 
-  // Dimensione stimata dell'azienda
-  estimatedSize CustomerSize?
+  purchaseTimeframe LeadPurchaseTimeframe? @map("purchase_timeframe")
+  decisionAuthority LeadDecisionAuthority? @map("decision_authority")
 
-  // Settore/Industria (es. "Manifatturiero", "Retail", "IT")
-  industry String? @db.VarChar(100)
+  /// Primary need or pain point expressed by the lead.
+  primaryNeed  String? @map("primary_need") @db.Text
+  /// Products or services the lead has shown interest in.
+  interestedIn String? @map("interested_in") @db.Text
 
-  // Numero dipendenti stimati
-  employeesCount Int?
+  // === TRACKING AND CONVERSION ===
 
-  // Fatturato annuo stimato
-  annualRevenue Decimal? @db.Decimal(15, 2)
+  createdByUserId String? @map("created_by_user_id")
+  createdBy       User?   @relation("LeadCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
 
-  // Budget disponibile
-  budget Decimal? @db.Decimal(15, 2)
+  /// Sales owner assigned to this lead.
+  assignedUserId String? @map("assigned_user_id")
+  assignedUser   User?   @relation("LeadAssignedUser", fields: [assignedUserId], references: [id], onDelete: SetNull)
 
-  // Timeframe per l'acquisto
-  purchaseTimeframe String? @db.VarChar(50) // Es. "Immediato", "1-3 mesi", "3-6 mesi", "6-12 mesi"
-
-  // Autorità decisionale del contatto
-  decisionAuthority String? @db.VarChar(50) // Es. "Decision Maker", "Influencer", "Gatekeeper"
-
-  // Necessità/Pain Point principale
-  primaryNeed String? @db.Text
-
-  // Prodotti/Servizi di interesse
-  interestedIn String? @db.Text
-
-  // === TRACKING E CONVERSIONE ===
-  createdByUserId Int?
-  createdBy       User? @relation("LeadCreatedBy", fields: [createdByUserId], references: [id])
-
-  // Utente assegnato (sales owner)
-  assignedUserId Int?
-  assignedUser   User? @relation("LeadAssignedUser", fields: [assignedUserId], references: [id], onDelete: SetNull)
-
-  // Data e riferimento alla conversione in Customer
-  convertedAt   DateTime?
-  convertedToId Int?      @unique
+  /// Timestamp of conversion to Customer.
+  convertedAt   DateTime? @map("converted_at")
+  /// Reference to the Customer record created upon conversion.
+  convertedToId String?   @unique @map("converted_to_id")
   convertedTo   Customer? @relation("ConvertedCustomer", fields: [convertedToId], references: [id])
 
-  // Utente che ha convertito la lead
-  convertedByUserId Int?
-  convertedBy       User? @relation("LeadConvertedBy", fields: [convertedByUserId], references: [id])
+  convertedByUserId String? @map("converted_by_user_id")
+  convertedBy       User?   @relation("LeadConvertedBy", fields: [convertedByUserId], references: [id])
 
-  // === GESTIONE PERDITA ===
+  // === LOSS TRACKING ===
 
-  // Motivo perdita (se status = LOST)
-  lostReason String?   @db.Text
-  lostDate   DateTime?
+  /// Reason for loss. Populated when status = LOST.
+  lostReason String?   @map("lost_reason") @db.Text
+  lostDate   DateTime? @map("lost_date")
 
-  // === TRACKING ATTIVITÀ ===
+  // === ACTIVITY TRACKING ===
 
-  // Data primo contatto
-  firstContactDate DateTime?
+  firstContactDate DateTime? @map("first_contact_date")
+  lastContactDate  DateTime? @map("last_contact_date")
+  /// Number of contact attempts made (calls, emails, etc.).
+  contactAttempts  Int       @default(0) @map("contact_attempts")
+  /// Timestamp of the last status transition. NULL = status never changed.
+  lastStatusChange DateTime? @map("last_status_change")
 
-  // Data ultimo contatto
-  lastContactDate DateTime?
+  // === BANT QUALIFICATION (Budget, Authority, Need, Timeframe) ===
 
-  // Numero di tentativi di contatto
-  contactAttempts Int @default(0)
+  bantQualified Boolean @default(false) @map("bant_qualified")
+  bantNotes     String? @map("bant_notes") @db.Text
 
-  // Data ultima modifica dello status
-  lastStatusChange DateTime @default(now())
+  // === GDPR AND CONSENT ===
 
-  // === QUALIFICAZIONE BANT (Budget, Authority, Need, Timeframe) ===
-  bantQualified Boolean @default(false)
-  bantNotes     String? @db.Text
+  privacyConsent       Boolean   @default(false) @map("privacy_consent")
+  privacyConsentDate   DateTime? @map("privacy_consent_date")
+  marketingConsent     Boolean   @default(false) @map("marketing_consent")
+  marketingConsentDate DateTime? @map("marketing_consent_date")
+  /// If true, this contact must not be reached by phone.
+  doNotCall            Boolean   @default(false) @map("do_not_call")
+  /// If true, this contact must not be reached by email.
+  doNotEmail           Boolean   @default(false) @map("do_not_email")
 
-  // === GDPR E CONSENSI ===
+  // === UTM ATTRIBUTION ===
 
-  // Consenso al trattamento dati
-  privacyConsent     Boolean   @default(false)
-  privacyConsentDate DateTime?
+  /// Origin campaign name (e.g. "Summer Campaign 2026", "Webinar AI").
+  campaignName String? @map("campaign_name") @db.VarChar(100)
+  /// UTM medium (e.g. cpc, organic, social).
+  utmMedium    String? @map("utm_medium") @db.VarChar(50)
+  /// UTM source (e.g. google, facebook, linkedin).
+  utmSource    String? @map("utm_source") @db.VarChar(50)
+  /// UTM campaign slug (e.g. spring_sale).
+  utmCampaign  String? @map("utm_campaign") @db.VarChar(50)
+  /// Landing page URL where the lead originated.
+  landingPage  String? @map("landing_page") @db.VarChar(255)
+  referrer     String? @db.VarChar(255)
 
-  // Consenso marketing
-  marketingConsent     Boolean   @default(false)
-  marketingConsentDate DateTime?
+  // === NOTES AND CUSTOM FIELDS ===
 
-  // Opt-out comunicazioni
-  doNotCall  Boolean @default(false)
-  doNotEmail Boolean @default(false)
+  notes        String? @db.Text
+  description  String? @db.Text
+  customFields Json?   @map("custom_fields")
+  /// Competitors the lead is currently evaluating.
+  competitors  String? @db.Text
 
-  // === CAMPAGNE E TRACKING ===
+  // === RELATIONS ===
 
-  // Campagna di origine (es. "Summer Campaign 2026", "Webinar AI")
-  campaignName String? @db.VarChar(100)
-
-  // Medium (es. "cpc", "organic", "social")
-  utmMedium String? @db.VarChar(50)
-
-  // Source (es. "google", "facebook", "linkedin")
-  utmSource String? @db.VarChar(50)
-
-  // Campaign (es. "spring_sale")
-  utmCampaign String? @db.VarChar(50)
-
-  // Pagina di atterraggio
-  landingPage String? @db.VarChar(255)
-
-  // Referrer
-  referrer String? @db.VarChar(255)
-
-  // === NOTE E CAMPI CUSTOM ===
-
-  // Note generali
-  notes String? @db.Text
-
-  // Descrizione dettagliata dell'interesse/bisogno
-  description String? @db.Text
-
-  // Campi personalizzati (JSON flessibile)
-  customFields Json?
-
-  // Informazioni competitive
-  competitors String? @db.Text // Concorrenti che sta valutando
-
-  // === RELAZIONI ===
-
-  // Attività collegate (chiamate, email, meeting)
-  activities Activity[]
-
-  // Documenti allegati (presentazioni, offerte, contratti)
-  documents Document[]
-
-  // Opportunità generate da questa lead
+  /// Activities linked to this lead (calls, emails, meetings).
+  activities    Activity[]
+  /// Documents attached to this lead (presentations, quotes, contracts).
+  documents     Document[]
+  /// Opportunities generated from this lead.
   opportunities Opportunity[]
 
-  // === TIMESTAMP ===
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  // === INDICI PER PERFORMANCE ===
-  @@index([code])
-  @@index([status])
+  @@unique([tenantId, code])
   @@index([source])
-  @@index([quality])
-  @@index([score])
-  @@index([assignedUserId])
   @@index([contactEmail])
   @@index([convertedToId])
   @@index([createdAt])
   @@index([lastContactDate])
-  @@index([status, assignedUserId]) // Composite per query "mie lead attive"
-  @@index([quality, score]) // Composite per prioritizzazione
+  @@index([status, assignedUserId]) // Compound: "my active leads" queries
+  @@index([quality, score]) // Compound: lead prioritization
+  @@map("leads")
 }

@@ -85,7 +85,7 @@ model Product {
     manufacturerId Int?          @map("manufacturer_id")
     manufacturer   Manufacturer? @relation(fields: [manufacturerId], references: [id])
 
-    supplierId Int?      @map("supplier_id")
+    supplierId String?   @map("supplier_id")
     supplier   Supplier? @relation(fields: [supplierId], references: [id])
 
     additionalShippingCost Decimal @default(0) @map("additional_shipping_cost") @db.Decimal(20, 6)
@@ -117,7 +117,7 @@ model Product {
 
     // Audited Soft-Delete Layer
     deletedAt     DateTime? @map("deleted_at")
-    deletedBy     Int?      @map("deleted_by")
+    deletedBy     String?   @map("deleted_by")
     deletedByUser User?     @relation("ProductDeletedBy", fields: [deletedBy], references: [id])
 
     createdAt DateTime @default(now()) @map("created_at")
@@ -230,7 +230,7 @@ model ProductVariant {
     images            ProductImage[]
 
     deletedAt     DateTime? @map("deleted_at")
-    deletedBy     Int?      @map("deleted_by")
+    deletedBy     String?   @map("deleted_by")
     deletedByUser User?     @relation("ProductVariantDeletedBy", fields: [deletedBy], references: [id])
 
     createdAt DateTime @default(now()) @map("created_at")

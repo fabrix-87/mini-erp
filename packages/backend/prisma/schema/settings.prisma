@@ -3,9 +3,9 @@
 // ============================================================================
 
 model UserSetting {
-  id     Int  @id @default(autoincrement())
-  userId Int  @map("user_id")
-  user   User @relation("UserSettings", fields: [userId], references: [id], onDelete: Cascade)
+  id     Int    @id @default(autoincrement())
+  userId String @map("user_id")
+  user   User   @relation("UserSettings", fields: [userId], references: [id], onDelete: Cascade)
 
   key   String @db.VarChar(100) // e.g. "dashboard.layout"
   value Json

@@ -31,8 +31,10 @@ model Language {
   currencyTranslations                 CurrencyTranslation[]
   featureGroupTranslation              FeatureGroupTranslation[]
   featureTranslations                  FeatureTranslation[]
-  IntrastatTransactionCodeTranslations IntrastatTransactionCodeTranslation[]
-  IntrastatCommodityCodeTranslations   IntrastatCommodityCodeTranslation[]
+  intrastatTransactionCodeTranslations IntrastatTransactionCodeTranslation[]
+  intrastatCommodityCodeTranslations   IntrastatCommodityCodeTranslation[]
+  intrastatTransportModeTranslations   IntrastatTransportModeTranslation[]
+  closedReasonTranslations             ClosedReasonTranslation[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

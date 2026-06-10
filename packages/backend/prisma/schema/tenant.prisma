@@ -49,7 +49,7 @@ model Tenant {
   plan   TenantPlan   @default(FREE)
 
   // Azienda legale emittente — NON nullable: senza Company non si emettono documenti
-  companyId Int     @unique @map("company_id")
+  companyId String     @unique @map("company_id")
   company   Company @relation("TenantOwnedCompany", fields: [companyId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   // === REGIME FISCALE ===
@@ -72,17 +72,21 @@ model Tenant {
   sdiCertificateRef     String? @map("sdi_certificate_ref") @db.VarChar(500) // S3 key or absolute path
 
   // === RELAZIONI OPERATIVE ===
-  users             User[]
-  documents         Document[]          @relation("TenantDocuments")
-  documentSequences DocumentSequence[]  @relation("TenantSequences")
-  taxRules          TaxRule[]           @relation("TenantOwnedTaxRules")
-  companies         Company[]           @relation("TenantCompanies")
-  products          Product[]           @relation("TenantProducts")
-  manufacturers     Manufacturer[]      @relation("TenantManufacturers")
-  roles             Role[]              @relation("TenantRoles")
-  priceLists        PriceList[]         @relation("TenantPriceLists")
-  paymentMethods    PaymentMethod[]     @relation("TenantPaymentMethods")
-  bankAccounts      TenantBankAccount[] @relation("TenantBankAccounts")
+  users                    User[]                 @relation("TenantUsers")
+  documents                Document[]             @relation("TenantDocuments")
+  documentSequences        DocumentSequence[]     @relation("TenantSequences")
+  taxRules                 TaxRule[]              @relation("TenantOwnedTaxRules")
+  companies                Company[]              @relation("TenantCompanies")
+  products                 Product[]              @relation("TenantProducts")
+  manufacturers            Manufacturer[]         @relation("TenantManufacturers")
+  roles                    Role[]                 @relation("TenantRoles")
+  priceLists               PriceList[]            @relation("TenantPriceLists")
+  paymentMethods           PaymentMethod[]        @relation("TenantPaymentMethods")
+  bankAccounts             TenantBankAccount[]    @relation("TenantBankAccounts")
+  leads                    Lead[]                 @relation("TenantLeads")
+  opportunities            Opportunity[]          @relation("TenantOpportunities")
+  opportunityClosedReasons ClosedReason[]         @relation("TenantOpportunityClosedReasons")
+  intrastatTransactions    IntrastatTransaction[] @relation("TenantInstrastatTransactions")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

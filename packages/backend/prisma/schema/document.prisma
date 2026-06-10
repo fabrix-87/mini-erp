@@ -1,237 +1,268 @@
 // ============================================================================
-// DOCUMENTI (ORDINI, FATTURE, PREVENTIVI)
+// DOCUMENT MANAGEMENT (QUOTES, ORDERS, INVOICES, DDT)
 // ============================================================================
 
-// tipo di documento
+/// Commercial document type driving numbering sequence, workflow, and fiscal behavior.
 enum DocumentType {
-    // Principali
-    QUOTE // Preventivo
-    PROFORMA // Proforma
-    ORDER // Ordine Cliente (Sales Order)
-    DELIVERY_NOTE // Documento di Trasporto (DDT)
-    INVOICE // Fattura
-    CREDIT_NOTE // Nota di Credito
-    DEBIT_NOTE // Nota di Debito (raro, ma possibile)
-    SUPPLIER_ORDER // Ordine a Fornitore
-    ARCHIVED // Documento archiviato o non classificato
+    QUOTE // Customer quote / estimate
+    PROFORMA // Pro-forma invoice (non-fiscal)
+    ORDER // Customer sales order
+    DELIVERY_NOTE // Delivery note (DDT — Documento di Trasporto)
+    INVOICE // Tax invoice
+    CREDIT_NOTE // Credit note reversing a prior invoice
+    DEBIT_NOTE // Debit note (supplementary charge)
+    SUPPLIER_ORDER // Purchase order sent to a supplier
+    ARCHIVED // Archived or unclassified document
 }
 
-enum DocumentStatusCategory {
-    DRAFT_PHASE // Stati di lavorazione
-    APPROVAL_PHASE // Stato di invio
-    ACTIVE_PHASE // Stati di accettazione
-    FULFILLMENT_PHASE // Stati logistici/fiscali
-    PAYMENT_PHASE // Stati finanziari
-    CLOSED_PHASE // Stati finali
-}
-
+/// Lifecycle status of a document across drafting, fulfillment, payment, and closure phases.
 enum DocumentStatus {
-    // Stati di lavorazione
-    DRAFT // Bozza (non ancora numerato)
-    PENDING_APPROVAL // In attesa di approvazione interna
+    // Drafting
+    DRAFT // Not yet numbered; editable
+    PENDING_APPROVAL // Awaiting internal authorization before sending
 
-    // Stati di invio/accettazione
-    SENT // Inviato (a Cliente)
-    ACCEPTED // Accettato (dal Cliente)
-    REJECTED // Rifiutato (dal Cliente)
+    // Send / acceptance
+    SENT // Transmitted to the counterparty
+    ACCEPTED // Counterparty confirmed acceptance
+    REJECTED // Counterparty rejected the document
 
-    // Stati logistici/fiscali
-    PREPARING // In preparazione (picking)
-    PARTIALLY_FULFILLED // Evasione parziale (alcuni item spediti)
-    FULFILLED // Totalmente evaso (tutti item pronti)
-    IN_TRANSIT // In transito (per DDT)
-    DELIVERED // Consegnato (per DDT)
+    // Fulfillment
+    PREPARING // Warehouse picking in progress
+    PARTIALLY_FULFILLED // Some lines shipped; remainder pending
+    FULFILLED // All lines ready for dispatch or dispatched
+    IN_TRANSIT // Goods in transit (DDT context)
+    DELIVERED // Goods confirmed delivered
 
-    // Stati finanziari
-    UNPAID // Non pagato (In attesa)
-    PARTIALLY_PAID // Pagato parzialmente
-    PAID // Pagato (Chiuso)
-    OVERDUE // Scaduto
+    // Payment
+    UNPAID // Awaiting first payment
+    PARTIALLY_PAID // One or more installments paid; balance outstanding
+    PAID // Fully settled
+    OVERDUE // Past due date with outstanding balance
 
-    // Stati finali
-    VOIDED // Annullato/Non valido
-    CLOSED // Chiuso (Generico, per chiudere il ciclo)
+    // Terminal
+    VOIDED // Cancelled and legally void
+    CLOSED // Cycle complete (generic closure)
 }
 
+/// Semantic relationship between two linked documents.
 enum DocumentRelationType {
-    CONVERTS_TO
-    CLONED_FROM
-    SPLITS_FROM
-    MERGES_INTO
-    CREDITS
-    AMENDS
+    CONVERTS_TO // Source was converted into target (e.g. Quote → Order)
+    CLONED_FROM // Target is a copy of source
+    SPLITS_FROM // Target is a partial split of source
+    MERGES_INTO // Source was merged into target
+    CREDITS // Source is a credit note for target invoice
+    AMENDS // Source amends or corrects target
 }
 
+/// Lifecycle status of a single payment installment.
 enum InstallmentStatus {
-    PENDING // In attesa di pagamento
-    PAID // Pagato completamente
-    OVERDUE // Scaduto
-    CANCELLED // Annullato
-    PARTIAL // Pagato parzialmente (opzionale)
+    PENDING // Awaiting payment
+    PAID // Fully settled
+    OVERDUE // Past due date
+    CANCELLED // Voided installment
+    PARTIAL // Partially paid; balance still due
 }
 
+/// Rendering role of a document line, driving fiscal and layout behavior.
 enum DocumentLineType {
-    PRODUCT
-    SERVICE
-    DISCOUNT
-    SUBTOTAL
-    TEXT
-    PAGE_BREAK
+    PRODUCT // Physical or digital goods
+    SERVICE // Service or labor
+    DISCOUNT // Explicit discount line
+    SUBTOTAL // Subtotal separator row
+    TEXT // Free-text annotation line (non-fiscal)
+    PAGE_BREAK // Layout page break (print/PDF only)
 }
 
+/// Commercial document record covering the full B2B/B2C document lifecycle:
+/// quotes, orders, DDT, invoices, credit/debit notes, and supplier orders.
+/// Customer and counterparty data are snapshotted at creation for fiscal immutability.
 model Document {
-    id Int @id @default(autoincrement())
+    id String @id @default(cuid())
 
-    // Classificazione
-    documentType   DocumentType
-    statusCategory DocumentStatusCategory @default(DRAFT_PHASE)
-    status         DocumentStatus         @default(DRAFT)
+    // === CLASSIFICATION ===
 
-    // Numerazione
-    documentNumber String? @unique
-    sequenceNumber Int? // Numero progressivo nella sequenza
-    documentYear   Int
+    documentType DocumentType   @map("document_type")
+    /// Current lifecycle status. Every transition is recorded in DocumentStatusHistory.
+    status       DocumentStatus @default(DRAFT)
 
-    // Soggetti
-    tenantId Int
-    tenant   Tenant @relation("TenantDocuments", fields: [tenantId], references: [id])
+    // === NUMBERING ===
 
-    // RUOLO COMMERCIALE (Se è un documento di Vendita)
-    customerId Int?
-    customer   Customer? @relation("CustomerDocuments", fields: [customerId], references: [id])
-    // RUOLO COMMERCIALE (Se è un documento di Acquisto)
-    supplierId Int?
-    supplier   Supplier? @relation("SupplierDocuments", fields: [supplierId], references: [id])
+    /// Human-readable document number (e.g. FT-2024-0042). Assigned on confirmation; NULL while DRAFT.
+    documentNumber String? @map("document_number")
+    /// Monotonically increasing counter within (tenantId, documentType, documentYear). Drives @@unique.
+    sequenceNumber Int?    @map("sequence_number")
+    documentYear   Int     @map("document_year")
 
-    contactId     Int?
+    // === TENANT ===
+
+    tenantId Int    @map("tenant_id")
+    tenant   Tenant @relation("TenantDocuments", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    // === COUNTERPARTIES ===
+
+    /// Present on sale documents (QUOTE, ORDER, INVOICE, CREDIT_NOTE, DELIVERY_NOTE).
+    customerId String?      @map("customer_id")
+    customer   Customer? @relation("CustomerDocuments", fields: [customerId], references: [id], onDelete: Restrict)
+
+    /// Present on purchase documents (SUPPLIER_ORDER).
+    supplierId String?      @map("supplier_id")
+    supplier   Supplier? @relation("SupplierDocuments", fields: [supplierId], references: [id], onDelete: Restrict)
+
+    contactId     String?         @map("contact_id")
     contact       Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
-    opportunityId Int?
+    /// CRM opportunity that originated this document. NULL for purchase-side documents.
+    opportunityId Int?         @map("opportunity_id")
     opportunity   Opportunity? @relation(fields: [opportunityId], references: [id])
 
-    // Relazione con Lead
-    leadId Int?
-    lead   Lead? @relation(fields: [leadId], references: [id], onDelete: Cascade)
+    /// Pre-conversion lead that originated this document. Preserved for traceability after conversion.
+    leadId Int?  @map("lead_id")
+    lead   Lead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
-    // Magazzino di riferimento (Cruciale per DDT e Ordini)
-    // Per vendita: Magazzino di partenza. Per acquisto: Magazzino di arrivo.
-    warehouseId Int?
+    // === WAREHOUSE ===
+
+    /// Source warehouse for sales; destination warehouse for purchases. Required for DDT and stock movements.
+    warehouseId Int?       @map("warehouse_id")
     warehouse   Warehouse? @relation(fields: [warehouseId], references: [id])
 
-    // Date
-    documentDate DateTime  @default(now())
-    dueDate      DateTime? // Scadenza della prima rata o media
-    deliveryDate DateTime?
-    validUntil   DateTime?
-    sentDate     DateTime?
+    // === KEY DATES ===
 
-    // Relazioni documento
-    parentDocumentId Int?
-    parentDocument   Document?  @relation("DocumentChain", fields: [parentDocumentId], references: [id])
-    childDocuments   Document[] @relation("DocumentChain")
+    documentDate DateTime  @default(now()) @map("document_date")
+    /// Due date of the first or average installment. Denormalized from installments for quick filtering.
+    dueDate      DateTime? @map("due_date")
+    deliveryDate DateTime? @map("delivery_date")
+    /// Expiry date for quotes and proformas.
+    validUntil   DateTime? @map("valid_until")
+    sentDate     DateTime? @map("sent_date")
 
-    // AGGIUNGERE: tabella junction per relazioni multiple
+    // === DOCUMENT RELATIONS ===
+
+    /// Outbound edges: this document is the source of these relations.
     relatedDocuments   DocumentRelation[] @relation("SourceDocument")
+    /// Inbound edges: this document is the target of these relations.
     relatedToDocuments DocumentRelation[] @relation("TargetDocument")
 
-    // Dati cliente (snapshot)
-    customerName      String
-    customerVatNumber String?
-    customerTaxCode   String?
-    customerPec       String?
-    customerSdiCode   String?
+    // === COUNTERPARTY SNAPSHOT (fiscal immutability) ===
+    // Values copied from Customer/Supplier at document creation.
+    // Must not be updated after the document is confirmed.
 
-    customerAddress    String?
-    customerCity       String?
-    customerPostalCode String?
-    customerProvince   String?
+    customerName      String  @map("customer_name")
+    customerVatNumber String? @map("customer_vat_number")
+    customerTaxCode   String? @map("customer_tax_code")
+    /// PEC address for electronic invoice delivery (SDI).
+    customerPec       String? @map("customer_pec")
+    /// SDI recipient code (Codice Destinatario) for FatturaPA routing.
+    customerSdiCode   String? @map("customer_sdi_code")
 
-    // SNAPSHOT Country Cliente
-    customerCountryCode String  @default("IT") @db.Char(2) // Sostituisce customerCountry
-    customerCountry     Country @relation("DocumentCountry", fields: [customerCountryCode], references: [code])
+    customerAddress     String? @map("customer_address")
+    customerCity        String? @map("customer_city")
+    customerPostalCode  String? @map("customer_postal_code")
+    customerProvince    String? @map("customer_province")
+    /// ISO 3166-1 alpha-2 snapshot. Drives Intrastat flow detection (IT vs EU vs extra-EU).
+    customerCountryCode String  @default("IT") @map("customer_country_code") @db.Char(2)
+    customerCountry     Country @relation("DocumentCountry", fields: [customerCountryCode], references: [code], onDelete: Restrict)
 
-    customerEmail String?
-    customerPhone String?
+    customerEmail String? @map("customer_email")
+    customerPhone String? @map("customer_phone")
 
-    // Indirizzo spedizione
-    shippingName       String?
-    shippingAddress    String?
-    shippingCity       String?
-    shippingPostalCode String?
-    shippingProvince   String?
+    // === SHIPPING ADDRESS SNAPSHOT ===
 
-    // SNAPSHOT Country Spedizione
-    shippingCountryCode String?  @db.Char(2) // Sostituisce shippingCountry
-    shippingCountry     Country? @relation("DocumentShippingCountry", fields: [shippingCountryCode], references: [code])
+    shippingName        String?  @map("shipping_name")
+    shippingAddress     String?  @map("shipping_address")
+    shippingCity        String?  @map("shipping_city")
+    shippingPostalCode  String?  @map("shipping_postal_code")
+    shippingProvince    String?  @map("shipping_province")
+    shippingCountryCode String?  @map("shipping_country_code") @db.Char(2)
+    shippingCountry     Country? @relation("DocumentShippingCountry", fields: [shippingCountryCode], references: [code], onDelete: Restrict)
 
-    // Importi    
-    subtotal          Decimal  @default(0) @db.Decimal(15, 2)
-    discountPercent   Decimal  @default(0) @db.Decimal(5, 2)
-    discountAmount    Decimal  @default(0) @db.Decimal(15, 2)
-    shippingCost      Decimal  @default(0) @db.Decimal(15, 2)
-    shippingTaxAmount Decimal  @default(0) @db.Decimal(15, 2)
-    taxableAmount     Decimal  @default(0) @db.Decimal(15, 2)
-    taxAmount         Decimal  @default(0) @db.Decimal(15, 2)
-    totalAmount       Decimal  @default(0) @db.Decimal(15, 2)
-    paidAmount        Decimal  @default(0) @db.Decimal(15, 2)
-    currencyCode      String   @default("EUR") @db.Char(3)
-    currency          Currency @relation("DocumentCurrency", fields: [currencyCode], references: [code])
+    // === AMOUNTS (all in document currency) ===
 
-    // Snapshot tasso cambio al momento documento (per storicizzazione)
-    exchangeRate     Decimal  @default(1.0) @db.Decimal(12, 6)
-    exchangeRateDate DateTime @default(now())
-    baseCurrencyCode String   @default("EUR") @db.Char(3)
+    subtotal          Decimal @default(0) @db.Decimal(15, 2)
+    discountPercent   Decimal @default(0) @map("discount_percent") @db.Decimal(5, 2)
+    discountAmount    Decimal @default(0) @map("discount_amount") @db.Decimal(15, 2)
+    shippingCost      Decimal @default(0) @map("shipping_cost") @db.Decimal(15, 2)
+    shippingTaxAmount Decimal @default(0) @map("shipping_tax_amount") @db.Decimal(15, 2)
+    /// Taxable base after discounts and before VAT.
+    taxableAmount     Decimal @default(0) @map("taxable_amount") @db.Decimal(15, 2)
+    taxAmount         Decimal @default(0) @map("tax_amount") @db.Decimal(15, 2)
+    totalAmount       Decimal @default(0) @map("total_amount") @db.Decimal(15, 2)
+    /// Denormalized sum of all settled installment amounts. Updated on each payment event.
+    paidAmount        Decimal @default(0) @map("paid_amount") @db.Decimal(15, 2)
 
-    // Pagamento
-    // FK al set di regole usate per calcolare la scadenza
-    paymentMethodId  Int?
+    currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
+    currency     Currency @relation("DocumentCurrency", fields: [currencyCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
+
+    // === EXCHANGE RATE SNAPSHOT ===
+    // Captured at document creation for multi-currency historical reporting.
+
+    /// FX rate applied to convert document currency to baseCurrencyCode at creation time.
+    exchangeRate     Decimal  @default(1.0) @map("exchange_rate") @db.Decimal(12, 6)
+    exchangeRateDate DateTime @default(now()) @map("exchange_rate_date")
+    /// Tenant base currency at document creation (typically EUR).
+    baseCurrencyCode String   @default("EUR") @map("base_currency_code") @db.Char(3)
+
+    // === PAYMENT ===
+
+    /// FK to the PaymentMethod that determined installment schedule. NULL if manually set.
+    paymentMethodId  Int?           @map("payment_method_id")
     paymentMethodRel PaymentMethod? @relation("DocumentPaymentMethod", fields: [paymentMethodId], references: [id], onDelete: SetNull)
 
-    // Campi Snapshot (Mantengono i valori effettivi al momento della creazione)
-    paymentMethod String  @default("bank_transfer") @db.VarChar(50) // Nome/Code snapshot
-    paymentTerms  String? @db.VarChar(100) // Termine di pagamento descrittivo snapshot (es. 30gg Fine Mese)
-    bankName      String? @db.VarChar(100)
-    bankIban      String?
-    bankSwift     String?
+    // Payment snapshot — frozen at document creation; independent of future PaymentMethod changes.
+    /// Snapshot of PaymentMethod.code at creation (e.g. "bank_transfer", "cash").
+    paymentMethod String  @map("payment_method") @db.VarChar(50)
+    /// Human-readable snapshot of payment terms (e.g. "30 days end of month").
+    paymentTerms  String? @map("payment_terms") @db.VarChar(100)
+    bankName      String? @map("bank_name") @db.VarChar(100)
+    bankIban      String? @map("bank_iban")
+    bankSwift     String? @map("bank_swift")
 
-    // Note
+    // === NOTES ===
+
     notes              String? @db.Text
-    internalNotes      String? @db.Text
-    termsAndConditions String? @db.Text
+    /// Visible to internal users only; never printed on documents.
+    internalNotes      String? @map("internal_notes") @db.Text
+    termsAndConditions String? @map("terms_and_conditions") @db.Text
 
-    // Metadata
-    createdByUserId Int
-    createdBy       User  @relation("CreatedBy", fields: [createdByUserId], references: [id])
-    assignedUserId  Int?
+    // === OWNERSHIP ===
+
+    createdByUserId String   @map("created_by_user_id")
+    createdBy       User  @relation("CreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+    assignedUserId  String?  @map("assigned_user_id")
     assignedUser    User? @relation("AssignedTo", fields: [assignedUserId], references: [id], onDelete: SetNull)
-    deletedBy       Int?
+    /// User who soft-deleted this document. NULL if not deleted.
+    deletedBy       String?  @map("deleted_by")
     deletedByUser   User? @relation("DeletedBy", fields: [deletedBy], references: [id])
 
-    customFields Json?
+    customFields Json? @map("custom_fields")
 
-    // Storico transizioni stato
-    statusHistory Json? // Array: [{from, to, by, at, reason}]
+    // === STATUS HISTORY ===
 
-    // date importanti 
-    approvedAt   DateTime?
-    invoicedAt   DateTime?
-    deliveredAt  DateTime?
-    closedAt     DateTime?
-    voidedAt     DateTime?
-    voidedReason String?   @db.Text
+    statusHistory DocumentStatusHistory[]
 
-    // Relazioni
+    // === LIFECYCLE TIMESTAMPS ===
+    // Set once when the corresponding status transition occurs; never overwritten.
+
+    approvedAt   DateTime? @map("approved_at")
+    invoicedAt   DateTime? @map("invoiced_at")
+    deliveredAt  DateTime? @map("delivered_at")
+    closedAt     DateTime? @map("closed_at")
+    voidedAt     DateTime? @map("voided_at")
+    /// Mandatory free-text explanation when status transitions to VOIDED.
+    voidedReason String?   @map("voided_reason") @db.Text
+
+    // === RELATIONS ===
+
     lines                 DocumentLine[]
-    installments          DocumentPaymentInstallment[] // rate pagamento
+    installments          DocumentPaymentInstallment[]
     stockMovement         StockMovement[]
     stockReservations     StockReservation[]
-    // Relazione alla transazione Intrastat
     intrastatTransactions IntrastatTransaction[]
 
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
+    /// Soft-delete timestamp. Non-null = logically deleted; excluded from all active queries.
+    deletedAt DateTime? @map("deleted_at")
 
-    @@unique([documentType, documentYear, sequenceNumber])
+    @@unique([tenantId, documentType, documentYear, sequenceNumber])
     @@index([currencyCode])
     @@index([deletedAt])
     @@index([documentType])
@@ -246,176 +277,240 @@ model Document {
     @@index([documentYear])
     @@index([customerCountryCode])
     @@index([shippingCountryCode])
-    @@index([documentType, documentYear, documentNumber])
+    @@index([tenantId, documentType, documentYear, documentNumber])
     @@index([deletedAt, documentType])
     @@index([deletedAt, customerId])
     @@index([deletedAt, supplierId])
     @@index([deletedAt, status])
+    @@map("documents")
 }
 
+/// Single line item within a document. Supports products, services, discounts,
+/// text annotations, and kit/bundle components via self-join.
 model DocumentLine {
     id         Int      @id @default(autoincrement())
-    documentId Int
+    documentId String   @map("document_id")
     document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
-    // COLLEGAMENTO CORE: Variante Prodotto
-    // Opzionale perché la riga potrebbe essere un servizio "libero" o una nota
-    productVariantId Int?
-    productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: SetNull)
+    // === PRODUCT LINK ===
 
-    // Opzionale: Link al prodotto padre per raggruppamenti statistici facili
-    productId String?
+    /// Specific product variant selected. NULL for free-text services, discounts, and text lines.
+    /// Restrict prevents deletion of a variant that appears on a fiscal document.
+    productVariantId Int?            @map("product_variant_id")
+    productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: Restrict)
+
+    /// Parent product reference (cuid). Denormalized from productVariant for statistical grouping.
+    productId String?  @map("product_id")
     product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 
-    lineNumber Int
+    lineNumber Int              @map("line_number")
     lineType   DocumentLineType @default(PRODUCT)
+    /// Supplier or internal article code. Snapshotted at line creation.
+    code       String?
 
-    code String?
+    // === DESCRIPTIONS (dual-language snapshot) ===
 
-    // Campo 1: Descrizione nella lingua del compilatore/sistema (Originale)
-    nameSystem        String  @db.VarChar(255) // Nome dell'articolo nella lingua di base
-    descriptionSystem String? @db.Text
+    /// Article name in the system/operator base language. Always populated.
+    nameSystem        String  @map("name_system") @db.VarChar(255)
+    descriptionSystem String? @map("description_system") @db.Text
 
-    // Campo 2: Descrizione nella lingua del cliente (Tradotta)
-    nameCustomer        String? @db.VarChar(255) // Nome dell'articolo nella lingua del cliente
-    descriptionCustomer String? @db.Text
+    /// Article name translated into the customer's language. NULL if same as system language.
+    nameCustomer        String? @map("name_customer") @db.VarChar(255)
+    descriptionCustomer String? @map("description_customer") @db.Text
+
+    // === QUANTITIES AND PRICING ===
 
     quantity Decimal @default(1) @db.Decimal(15, 6)
+    /// Unit of measure code (e.g. "pz", "kg", "h").
     unit     String  @default("pz")
 
-    unitPrice Decimal @default(0) @db.Decimal(20, 6)
-    unitCost  Decimal @default(0) @db.Decimal(20, 6)
+    unitPrice Decimal @default(0) @map("unit_price") @db.Decimal(20, 6)
+    /// Purchase cost snapshot for margin calculation. Not exposed to the customer.
+    unitCost  Decimal @default(0) @map("unit_cost") @db.Decimal(20, 6)
 
-    discountPercent Decimal @default(0) @db.Decimal(5, 2)
-    discountAmount  Decimal @default(0) @db.Decimal(15, 2)
+    discountPercent Decimal @default(0) @map("discount_percent") @db.Decimal(5, 2)
+    discountAmount  Decimal @default(0) @map("discount_amount") @db.Decimal(15, 2)
 
-    lineTotal Decimal @default(0) @db.Decimal(15, 2)
+    /// Line net total: (unitPrice × quantity) − discount. Excludes VAT.
+    lineTotal Decimal @default(0) @map("line_total") @db.Decimal(15, 2)
 
-    // Regola fiscale applicata
-    taxRuleId Int?
-    taxRule   TaxRule? @relation("DocumentLineTaxRule", fields: [taxRuleId], references: [id], onDelete: SetNull)
+    // === TAX (snapshot at document creation) ===
 
-    // Snapshot valori al momento documento
-    taxPercent Decimal @default(22) @db.Decimal(5, 2)
-    taxAmount  Decimal @default(0) @db.Decimal(15, 2)
+    /// TaxRule applied. Restrict prevents deletion of a rule used on a fiscal document.
+    taxRuleId Int?     @map("tax_rule_id")
+    taxRule   TaxRule? @relation("DocumentLineTaxRule", fields: [taxRuleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    // Natura IVA utilizzata (snapshot)
-    vatNatureCode String? @db.VarChar(10) // N2.1, N3.2, ecc.
+    /// VAT rate percentage snapshotted from TaxRule.rate at creation.
+    taxPercent       Decimal @default(22) @map("tax_percent") @db.Decimal(5, 2)
+    taxAmount        Decimal @default(0) @map("tax_amount") @db.Decimal(15, 2)
+    /// SDI Natura code snapshotted when rate = 0 (e.g. N2.1, N3.2).
+    vatNatureCode    String? @map("vat_nature_code") @db.VarChar(10)
+    /// Normative reference for the <RiferimentoNormativo> tag in FatturaPA XML.
+    vatNormReference String? @map("vat_norm_reference") @db.VarChar(255)
 
-    // Riferimento normativo utilizzato (per XML fattura elettronica)
-    vatNormReference String? @db.VarChar(255)
-
-    lineTotalWithTax Decimal @default(0) @db.Decimal(15, 2)
+    /// Line gross total: lineTotal + taxAmount.
+    lineTotalWithTax Decimal @default(0) @map("line_total_with_tax") @db.Decimal(15, 2)
 
     notes        String? @db.Text
-    customFields Json?
+    customFields Json?   @map("custom_fields")
 
-    // Relazione alla transazione Intrastat
-    intrastatTransaction IntrastatTransaction?
+    intrastatTransactions IntrastatTransaction[]
 
-    // tracking magazzino
-    warehouseId Int?
+    // === WAREHOUSE ===
+
+    /// Override warehouse for this specific line. Falls back to Document.warehouseId if NULL.
+    warehouseId Int?       @map("warehouse_id")
     warehouse   Warehouse? @relation(fields: [warehouseId], references: [id])
 
     stockReservations StockReservation[]
     stockMovement     StockMovement[]
 
-    // gestione kit/bundle
-    parentLineId   Int?
+    // === KIT / BUNDLE ===
+
+    /// Parent line ID when this line is a component of a kit. NULL for top-level lines.
+    parentLineId   Int?           @map("parent_line_id")
     parentLine     DocumentLine?  @relation("LineComponents", fields: [parentLineId], references: [id])
     componentLines DocumentLine[] @relation("LineComponents")
 
-    isComponent Boolean @default(false) // True se fa parte di un kit
+    /// True if this line belongs to a kit/bundle; its amounts may be rolled up into the parent.
+    isComponent Boolean @default(false) @map("is_component")
 
-    // tracking evasione
-    quantityInvoiced  Decimal @default(0) @db.Decimal(15, 6)
-    quantityDelivered Decimal @default(0) @db.Decimal(15, 6)
-    quantityReturned  Decimal @default(0) @db.Decimal(15, 6)
+    // === FULFILLMENT TRACKING ===
 
-    // prezzi originali per storico
-    originalUnitPrice   Decimal? @db.Decimal(20, 6)
-    priceOverrideReason String?  @db.Text
+    /// Cumulative quantity transferred to invoices from this order line.
+    quantityInvoiced  Decimal @default(0) @map("quantity_invoiced") @db.Decimal(15, 6)
+    /// Cumulative quantity confirmed delivered via DDT.
+    quantityDelivered Decimal @default(0) @map("quantity_delivered") @db.Decimal(15, 6)
+    /// Cumulative quantity returned via credit note or return DDT.
+    quantityReturned  Decimal @default(0) @map("quantity_returned") @db.Decimal(15, 6)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    // === PRICE AUDIT ===
+
+    /// Original list price before any manual override. NULL if no override occurred.
+    originalUnitPrice   Decimal? @map("original_unit_price") @db.Decimal(20, 6)
+    /// Mandatory justification when unitPrice deviates from originalUnitPrice.
+    priceOverrideReason String?  @map("price_override_reason") @db.Text
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
     @@index([warehouseId])
     @@index([parentLineId])
-    @@index([documentId, lineNumber]) // Ordinamento righe
+    @@index([documentId, lineNumber])
     @@index([documentId])
     @@index([productId])
+    @@index([productVariantId])
+    @@index([taxRuleId])
+    @@map("document_lines")
 }
 
+/// Payment installment generated from a document's payment terms.
+/// Tracks individual due dates, amounts, reminders, and late fees.
 model DocumentPaymentInstallment {
     id         Int      @id @default(autoincrement())
-    documentId Int
+    documentId String   @map("document_id")
     document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
-    // Dati della rata
-    installmentNumber Int     @default(1)
-    percentage        Decimal @db.Decimal(5, 2) // 30.00, 40.00, etc.
-    amount            Decimal @default(0) @db.Decimal(15, 2) // Importo effettivo in valuta
+    /// Sequential position within the document's installment schedule (1-based).
+    installmentNumber Int     @default(1) @map("installment_number")
+    /// Share of the document total assigned to this installment (e.g. 30.00 = 30%).
+    percentage        Decimal @db.Decimal(5, 2)
+    /// Absolute amount due in document currency.
+    amount            Decimal @default(0) @db.Decimal(15, 2)
 
-    // Date e Status (Snapshot)
-    dueDate    DateTime // La data di scadenza CALCOLATA
-    paidDate   DateTime? // Data di pagamento effettivo
-    paidAmount Decimal           @default(0) @db.Decimal(15, 2)
+    dueDate    DateTime          @map("due_date")
+    paidDate   DateTime?         @map("paid_date")
+    paidAmount Decimal           @default(0) @map("paid_amount") @db.Decimal(15, 2)
     status     InstallmentStatus @default(PENDING)
 
     notes String? @db.Text
 
-    // metodo pagamento specifico per rata
-    paymentMethodId Int?
+    /// Payment method for this specific installment (can differ from document-level method).
+    paymentMethodId Int?           @map("payment_method_id")
     paymentMethod   PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
 
-    // riferimenti transazioni
-    paymentReference  String? @db.VarChar(100) // CRO, TRN, ecc.
-    bankTransactionId String? @db.VarChar(100)
+    /// Bank transaction reference (CRO, TRN, SEPA end-to-end ID).
+    paymentReference  String? @map("payment_reference") @db.VarChar(100)
+    /// Internal bank transaction identifier for reconciliation.
+    bankTransactionId String? @map("bank_transaction_id") @db.VarChar(100)
 
-    // gestione solleciti
-    remindersSent  Int       @default(0)
-    lastReminderAt DateTime?
+    // === DUNNING ===
 
-    // penali ritardo
-    lateFeeAmount Decimal @default(0) @db.Decimal(15, 2)
+    /// Number of payment reminders sent for this installment.
+    remindersSent  Int       @default(0) @map("reminders_sent")
+    lastReminderAt DateTime? @map("last_reminder_at")
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    /// Late payment penalty accrued on this installment.
+    lateFeeAmount Decimal @default(0) @map("late_fee_amount") @db.Decimal(15, 2)
 
-    @@index([status, dueDate]) // Solleciti automatici
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([status, dueDate]) // Compound for dunning job: fetch PENDING/OVERDUE ordered by due date
     @@index([documentId])
     @@index([dueDate])
     @@index([status])
+    @@map("document_payment_installments")
 }
 
-// tabella per gestire sequenze
+/// Per-tenant, per-type, per-year monotonic sequence counter.
+/// The application locks this row (SELECT FOR UPDATE) before incrementing lastNumber
+/// to guarantee gap-free sequential document numbering.
 model DocumentSequence {
     id           Int          @id @default(autoincrement())
-    documentType DocumentType 
+    documentType DocumentType @map("document_type")
     year         Int
-    lastNumber   Int          @default(0)
-    prefix       String?      @db.VarChar(10) // Es. "FT", "DDT", "PRV" 
-    tenantId     Int
-    tenant       Tenant       @relation("TenantSequences", fields: [tenantId], references: [id])
+    /// Last issued sequence number. Increment atomically; never decrement.
+    lastNumber   Int          @default(0) @map("last_number")
+    /// Optional prefix prepended to the document number (e.g. "FT", "DDT", "PRV").
+    prefix       String?      @db.VarChar(10)
 
-    updatedAt DateTime @updatedAt
+    tenantId Int    @map("tenant_id")
+    tenant   Tenant @relation("TenantSequences", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    updatedAt DateTime @updatedAt @map("updated_at")
 
     @@unique([tenantId, documentType, year])
     @@index([tenantId])
+    @@map("document_sequences")
 }
 
-// gestione relazioni complesse
+/// Directed graph edge representing a semantic relationship between two documents.
+/// Enables multi-hop traceability (e.g. Quote → Order → DDT → Invoice → Credit Note).
 model DocumentRelation {
-    sourceDocumentId Int
+    sourceDocumentId String   @map("source_document_id")
     sourceDocument   Document @relation("SourceDocument", fields: [sourceDocumentId], references: [id], onDelete: Cascade)
 
-    targetDocumentId Int
+    targetDocumentId String   @map("target_document_id")
     targetDocument   Document @relation("TargetDocument", fields: [targetDocumentId], references: [id], onDelete: Cascade)
 
-    relationType DocumentRelationType
+    relationType DocumentRelationType @map("relation_type")
 
-    createdAt DateTime @default(now())
+    createdAt DateTime @default(now()) @map("created_at")
 
     @@id([sourceDocumentId, targetDocumentId, relationType])
     @@index([targetDocumentId])
+    @@map("document_relations")
+}
+
+/// Immutable audit log of every document status transition.
+/// Never updated or deleted — append-only.
+model DocumentStatusHistory {
+    id         Int      @id @default(autoincrement())
+    documentId String   @map("document_id")
+    document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+    /// Previous status. NULL for the initial DRAFT entry.
+    fromStatus DocumentStatus? @map("from_status")
+    toStatus   DocumentStatus  @map("to_status")
+    changedBy  String             @map("changed_by")
+    user       User            @relation(fields: [changedBy], references: [id], onDelete: Restrict)
+    /// Optional operator note explaining the reason for the transition.
+    reason     String?         @db.Text
+
+    changedAt DateTime @default(now()) @map("changed_at")
+
+    @@index([documentId, changedAt])
+    @@index([toStatus])
+    @@map("document_status_history")
 }

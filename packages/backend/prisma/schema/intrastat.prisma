@@ -13,11 +13,14 @@ enum IntrastatFlow {
 model IntrastatTransaction {
   id Int @id @default(autoincrement())
 
-  documentId Int      @map("document_id")
+  documentId String   @map("document_id")
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   documentLineId Int          @map("document_line_id")
   documentLine   DocumentLine @relation(fields: [documentLineId], references: [id], onDelete: Cascade)
+
+  tenantId Int    @map("tenant_id")
+  tenant   Tenant @relation("TenantInstrastatTransactions", fields: [tenantId], references: [id], onDelete: Restrict)
 
   flow IntrastatFlow
 
@@ -25,13 +28,14 @@ model IntrastatTransaction {
   transactionDate DateTime @map("transaction_date")
 
   transactionCode String                   @map("transaction_code") @db.Char(2)
-  transCodeRel    IntrastatTransactionCode @relation(fields: [transactionCode], references: [code])
+  transCodeRel    IntrastatTransactionCode @relation(fields: [transactionCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
 
   commodityCode String                 @map("commodity_code") @db.Char(8)
-  commCodeRel   IntrastatCommodityCode @relation(fields: [commodityCode], references: [code])
+  commCodeRel   IntrastatCommodityCode @relation(fields: [commodityCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
 
   /// ISO 3166-1 alpha-2 country reference. Immutable audit snapshot from document partner data.
-  partnerCountryCode String @map("partner_country_code") @db.Char(2)
+  partnerCountryCode String  @map("partner_country_code") @db.Char(2)
+  partnerCountry     Country @relation("InstrastatPartnerCountry", fields: [partnerCountryCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
 
   /// Net transactional value. Immutable snapshot of line taxable amount.
   invoicedValue Decimal @map("invoiced_value") @db.Decimal(15, 2)
@@ -44,8 +48,9 @@ model IntrastatTransaction {
   /// Non-mass customs quantity constraint (e.g., liters, units) required by specific NC8 codes.
   supplementaryUnits Int? @map("supplementary_units")
 
-  /// Single-digit customs classification representing transport mechanism (e.g., "1" Maritime, "3" Road).
-  modeOfTransport String? @map("mode_of_transport") @db.VarChar(2)
+  /// Transport mode code (1–2 chars). Single digit per EU standard; 2-digit used by some member states.
+  modeOfTransportCode String?                 @map("mode_of_transport_code") @db.Char(2)
+  modeOfTransport     IntrastatTransportMode? @relation(fields: [modeOfTransportCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
 
   /// Operational flag indicating data adjustments/amendments on previously closed declarations.
   isCorrection Boolean @default(false) @map("is_correction")
@@ -53,7 +58,8 @@ model IntrastatTransaction {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([documentLineId])
+  @@unique([documentLineId, isCorrection])
+  @@index([tenantId, partnerCountryCode])
   @@index([transactionDate])
   @@index([partnerCountryCode])
   @@map("intrastat_transactions")
@@ -71,9 +77,17 @@ model IntrastatTransactionCode {
   translations IntrastatTransactionCodeTranslation[]
   transactions IntrastatTransaction[]
 
+  active    Boolean   @default(true)
+  /// Start of validity period. Aligns with EU annual CN8 update cycles (typically Jan 1).
+  validFrom DateTime  @default(now()) @map("valid_from")
+  /// End of validity. NULL = currently valid.
+  validTo   DateTime? @map("valid_to")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([active])
+  @@index([validFrom, validTo])
   @@map("intrastat_transaction_codes")
 }
 
@@ -106,9 +120,17 @@ model IntrastatCommodityCode {
   products     Product[]
   transactions IntrastatTransaction[]
 
+  active    Boolean   @default(true)
+  /// Start of validity period. Aligns with EU annual CN8 update cycles (typically Jan 1).
+  validFrom DateTime  @default(now()) @map("valid_from")
+  /// End of validity. NULL = currently valid.
+  validTo   DateTime? @map("valid_to")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([active])
+  @@index([validFrom, validTo])
   @@map("intrastat_commodity_codes")
 }
 
@@ -131,4 +153,43 @@ model IntrastatCommodityCodeTranslation {
   @@unique([commodityCode, languageId])
   @@index([languageId])
   @@map("intrastat_commodity_code_translations")
+}
+
+/// EU Intrastat transport mode master catalog.
+model IntrastatTransportMode {
+  code String @id @db.Char(2)
+
+  active    Boolean   @default(true)
+  validFrom DateTime  @default(now()) @map("valid_from")
+  validTo   DateTime? @map("valid_to")
+
+  translations IntrastatTransportModeTranslation[]
+  transactions IntrastatTransaction[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([active])
+  @@map("intrastat_transport_modes")
+}
+
+/// Localized descriptions for Intrastat transport mode codes.
+model IntrastatTransportModeTranslation {
+  id Int @id @default(autoincrement())
+
+  transportModeCode String                 @map("transport_mode_code") @db.Char(2)
+  transportMode     IntrastatTransportMode @relation(fields: [transportModeCode], references: [code], onDelete: Cascade)
+
+  languageId Int      @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id])
+
+  /// Localized official label (e.g. "Marittimo", "Maritime").
+  description String @db.VarChar(255)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([transportModeCode, languageId])
+  @@index([languageId])
+  @@map("intrastat_transport_mode_translations")
 }
