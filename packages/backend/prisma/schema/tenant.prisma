@@ -72,7 +72,7 @@ model Tenant {
   sdiCertificateRef     String? @map("sdi_certificate_ref") @db.VarChar(500) // S3 key or absolute path
 
   // === RELAZIONI OPERATIVE ===
-  users                    User[]                 @relation("TenantUsers")
+  memberships              UserTenantMembership[] @relation("TenantUsers")
   documents                Document[]             @relation("TenantDocuments")
   documentSequences        DocumentSequence[]     @relation("TenantSequences")
   taxRules                 TaxRule[]              @relation("TenantOwnedTaxRules")

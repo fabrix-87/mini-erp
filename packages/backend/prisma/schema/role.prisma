@@ -15,7 +15,7 @@ model Role {
   isDefault Boolean @default(false) @map("is_default")
 
   // NULL = global system role shared across tenants; NOT NULL = tenant-private custom role
-  tenantId String?    @map("tenant_id")
+  tenantId String? @map("tenant_id")
   tenant   Tenant? @relation("TenantRoles", fields: [tenantId], references: [id], onDelete: Cascade)
 
   // === HIERARCHY ===
@@ -26,8 +26,8 @@ model Role {
 
   // === RELATIONS ===
 
-  users       User[]           @relation("UserRoles")
-  permissions RolePermission[]
+  usersTenantMembershipRoles UserTenantMembershipRole[] @relation("UserTenantRoles")
+  permissions                RolePermission[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

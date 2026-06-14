@@ -3,7 +3,9 @@
 // Core user accounts supporting RBAC, multi-tenancy, and advanced security workflows.
 // ============================================================================
 
-/// Central identity provider (IdP) model for system authentication and audit tracking.
+/// Global user identity — not directly tenant-scoped.
+/// Tenant membership and per-tenant roles are managed via UserTenantMembership.
+/// A user with no memberships is a system-level or unassigned account.
 model User {
   id       String @id @default(cuid())
   username String @unique @db.VarChar(50)
@@ -12,10 +14,6 @@ model User {
   /// Storage for salted password cryptographic hashes (e.g., Argon2id or bcrypt).
   password String  @db.VarChar(255)
   active   Boolean @default(true)
-
-  /// Tenant boundary for isolation in B2B SaaS deployments. Null denotes system global accounts.
-  tenantId String? @map("tenant_id")
-  tenant   Tenant? @relation("TenantUsers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   // === EMAIL VERIFICATION ===
   emailVerified Boolean @default(false) @map("email_verified")
@@ -67,12 +65,13 @@ model User {
   /// Automated archival/deletion threshold mapping for standard right-to-be-forgotten timelines.
   dataRetentionExpiresAt DateTime? @map("data_retention_expires_at")
 
-  roles    Role[]        @relation("UserRoles")
   settings UserSetting[] @relation("UserSettings")
 
   preferredLanguageId Int?      @map("preferred_language_id")
   preferredLanguage   Language? @relation("UserPreferredLanguage", fields: [preferredLanguageId], references: [id])
 
+  /// All tenant memberships for this user. A user may belong to multiple tenants.
+  memberships             UserTenantMembership[]  @relation("UserTenants")
   // Core System Operational Relations
   createdDocuments        Document[]              @relation("CreatedBy")
   assignedDocuments       Document[]              @relation("AssignedTo")
@@ -108,10 +107,10 @@ model User {
   lastLogin DateTime? @map("last_login")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
+  /// Soft-delete timestamp. NULL = active record. Set by the delete service; never updated directly.
   deletedAt DateTime? @map("deleted_at")
 
   @@index([lockedUntil])
-  @@index([tenantId])
   @@map("users")
 }
 
@@ -142,7 +141,7 @@ model UserDetails {
   countryCode String?  @default("IT") @map("country_code") @db.Char(2)
   country     Country? @relation("UserDetailCountry", fields: [countryCode], references: [code])
 
-  dateOfBirth DateTime? @map("date_of_birth")
+  dateOfBirth DateTime? @map("date_of_birth") @db.Date
   gender      Gender    @default(PREFER_NOT_TO_SAY)
   bio         String?   @db.Text
 
@@ -158,4 +157,54 @@ enum Gender {
   FEMALE
   OTHER
   PREFER_NOT_TO_SAY
+}
+
+/// Junction between a User and a Tenant.
+/// Carries the membership lifecycle (INVITED → ACTIVE → SUSPENDED)
+/// and is the aggregate root for per-tenant role assignments.
+model UserTenantMembership {
+  id       String @id @default(cuid())
+  userId   String @map("user_id")
+  tenantId String @map("tenant_id")
+
+  /// Lifecycle state of the membership.
+  /// INVITED: user has been invited but has not yet accepted.
+  /// ACTIVE: user has full access according to assigned roles.
+  /// SUSPENDED: access revoked without deleting the membership record.
+  status MembershipStatus @default(ACTIVE)
+
+  user   User   @relation("UserTenants", fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation("TenantUsers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  roles UserTenantMembershipRole[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, tenantId])
+  @@index([userId])
+  @@index([tenantId])
+  @@map("user_tenant_memberships")
+}
+
+/// Assigns a Role to a User within a specific tenant membership.
+/// A user may hold multiple roles per tenant.
+/// Roles are always scoped to the membership — never global.
+model UserTenantMembershipRole {
+  membershipId String @map("membership_id")
+  roleId       Int    @map("role_id")
+
+  membership UserTenantMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  role       Role                 @relation("UserTenantRoles", fields: [roleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@id([membershipId, roleId])
+  @@index([roleId])
+  @@map("user_tenant_membership_roles")
+}
+
+/// Lifecycle states for a user's membership in a tenant.
+enum MembershipStatus {
+  INVITED
+  ACTIVE
+  SUSPENDED
 }
