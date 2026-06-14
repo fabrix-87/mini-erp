@@ -176,12 +176,18 @@ model UserTenantMembership {
   user   User   @relation("UserTenants", fields: [userId], references: [id], onDelete: Cascade)
   tenant Tenant @relation("TenantUsers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
+  /// Marks the tenant loaded by default on login when the user belongs to multiple tenants.
+  /// At most one membership per user may be true.
+  /// Enforced at the application layer: unset all others within a transaction before setting a new default.
+  isDefault Boolean @default(false) @map("is_default")
+
   roles UserTenantMembershipRole[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([userId, tenantId])
+  @@unique([userId], where: { isDefault: true }, map: "unique_default_user_tenant")
   @@index([userId])
   @@index([tenantId])
   @@map("user_tenant_memberships")

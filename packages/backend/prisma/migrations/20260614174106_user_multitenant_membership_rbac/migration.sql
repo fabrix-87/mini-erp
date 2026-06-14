@@ -35,6 +35,7 @@ CREATE TABLE "user_tenant_memberships" (
     "user_id" TEXT NOT NULL,
     "tenant_id" TEXT NOT NULL,
     "status" "MembershipStatus" NOT NULL DEFAULT 'ACTIVE',
+    "is_default" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -57,6 +58,9 @@ CREATE INDEX "user_tenant_memberships_tenant_id_idx" ON "user_tenant_memberships
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_tenant_memberships_user_id_tenant_id_key" ON "user_tenant_memberships"("user_id", "tenant_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "unique_default_user_tenant" ON "user_tenant_memberships"("user_id") WHERE ("is_default" = true);
 
 -- CreateIndex
 CREATE INDEX "user_tenant_membership_roles_role_id_idx" ON "user_tenant_membership_roles"("role_id");
