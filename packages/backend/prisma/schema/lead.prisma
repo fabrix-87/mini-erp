@@ -61,7 +61,7 @@ enum LeadDecisionAuthority {
 /// Tenant-scoped. Convertible to Customer via the convertedTo relation.
 /// Tracks qualification, BANT, GDPR consent, UTM attribution, and activity history.
 model Lead {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
 
   // Unique human-readable code per tenant (e.g. LEAD-2026-0001)
   code String @db.VarChar(20)
@@ -81,7 +81,7 @@ model Lead {
   country     Country @relation("LeadCountry", fields: [countryCode], references: [code])
 
   /// Tenant that owns this lead. All lead data is tenant-isolated.
-  tenantId Int    @map("tenant_id")
+  tenantId String @map("tenant_id")
   tenant   Tenant @relation("TenantLeads", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   // === PRIMARY CONTACT ===

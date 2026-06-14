@@ -58,7 +58,7 @@ model Product {
     status ProductStatus @default(DRAFT)
 
     /// Tenant that owns this product. All catalog data is tenant-isolated.
-    tenantId Int    @map("tenant_id")
+    tenantId String    @map("tenant_id")
     tenant   Tenant @relation("TenantProducts", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     /// Global internal manufacturer/factory fallback code.
@@ -320,7 +320,7 @@ model Manufacturer {
     active Boolean @default(true)
 
     /// All catalog data is tenant-isolated.
-    tenantId Int    @map("tenant_id")
+    tenantId String    @map("tenant_id")
     tenant   Tenant @relation("TenantManufacturers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     customFields Json? @map("custom_fields")

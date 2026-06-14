@@ -95,28 +95,28 @@ model Document {
 
     // === TENANT ===
 
-    tenantId Int    @map("tenant_id")
+    tenantId String @map("tenant_id")
     tenant   Tenant @relation("TenantDocuments", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     // === COUNTERPARTIES ===
 
     /// Present on sale documents (QUOTE, ORDER, INVOICE, CREDIT_NOTE, DELIVERY_NOTE).
-    customerId String?      @map("customer_id")
+    customerId String?   @map("customer_id")
     customer   Customer? @relation("CustomerDocuments", fields: [customerId], references: [id], onDelete: Restrict)
 
     /// Present on purchase documents (SUPPLIER_ORDER).
-    supplierId String?      @map("supplier_id")
+    supplierId String?   @map("supplier_id")
     supplier   Supplier? @relation("SupplierDocuments", fields: [supplierId], references: [id], onDelete: Restrict)
 
-    contactId     String?         @map("contact_id")
+    contactId     String?      @map("contact_id")
     contact       Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
     /// CRM opportunity that originated this document. NULL for purchase-side documents.
-    opportunityId Int?         @map("opportunity_id")
+    opportunityId String?      @map("opportunity_id")
     opportunity   Opportunity? @relation(fields: [opportunityId], references: [id])
 
     /// Pre-conversion lead that originated this document. Preserved for traceability after conversion.
-    leadId Int?  @map("lead_id")
-    lead   Lead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+    leadId String? @map("lead_id")
+    lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
     // === WAREHOUSE ===
 
@@ -224,13 +224,13 @@ model Document {
 
     // === OWNERSHIP ===
 
-    createdByUserId String   @map("created_by_user_id")
-    createdBy       User  @relation("CreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
-    assignedUserId  String?  @map("assigned_user_id")
-    assignedUser    User? @relation("AssignedTo", fields: [assignedUserId], references: [id], onDelete: SetNull)
+    createdByUserId String  @map("created_by_user_id")
+    createdBy       User    @relation("CreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+    assignedUserId  String? @map("assigned_user_id")
+    assignedUser    User?   @relation("AssignedTo", fields: [assignedUserId], references: [id], onDelete: SetNull)
     /// User who soft-deleted this document. NULL if not deleted.
-    deletedBy       String?  @map("deleted_by")
-    deletedByUser   User? @relation("DeletedBy", fields: [deletedBy], references: [id])
+    deletedBy       String? @map("deleted_by")
+    deletedByUser   User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
     customFields Json? @map("custom_fields")
 
@@ -465,7 +465,7 @@ model DocumentSequence {
     /// Optional prefix prepended to the document number (e.g. "FT", "DDT", "PRV").
     prefix       String?      @db.VarChar(10)
 
-    tenantId Int    @map("tenant_id")
+    tenantId String @map("tenant_id")
     tenant   Tenant @relation("TenantSequences", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     updatedAt DateTime @updatedAt @map("updated_at")
@@ -503,7 +503,7 @@ model DocumentStatusHistory {
     /// Previous status. NULL for the initial DRAFT entry.
     fromStatus DocumentStatus? @map("from_status")
     toStatus   DocumentStatus  @map("to_status")
-    changedBy  String             @map("changed_by")
+    changedBy  String          @map("changed_by")
     user       User            @relation(fields: [changedBy], references: [id], onDelete: Restrict)
     /// Optional operator note explaining the reason for the transition.
     reason     String?         @db.Text

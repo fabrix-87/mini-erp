@@ -36,7 +36,7 @@ model PriceList {
     currency     Currency @relation("PriceListCurrency", fields: [currencyCode], references: [code])
 
     // NULL = global system price list; NOT NULL = tenant-private price list
-    tenantId Int?    @map("tenant_id")
+    tenantId String? @map("tenant_id")
     tenant   Tenant? @relation("TenantPriceLists", fields: [tenantId], references: [id], onDelete: Cascade)
 
     type PriceListType @default(SALE)

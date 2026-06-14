@@ -19,7 +19,7 @@ model IntrastatTransaction {
   documentLineId Int          @map("document_line_id")
   documentLine   DocumentLine @relation(fields: [documentLineId], references: [id], onDelete: Cascade)
 
-  tenantId Int    @map("tenant_id")
+  tenantId String @map("tenant_id")
   tenant   Tenant @relation("TenantInstrastatTransactions", fields: [tenantId], references: [id], onDelete: Restrict)
 
   flow IntrastatFlow

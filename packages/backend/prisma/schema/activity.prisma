@@ -3,25 +3,25 @@
 // ============================================================================
 
 enum ActivityType {
-  CALL          // Chiamata telefonica
-  EMAIL         // Email
-  MEETING       // Riunione/Appuntamento
-  TASK          // Task/Todo
-  NOTE          // Nota/Memo
-  WHATSAPP      // Messaggio WhatsApp
-  SMS           // SMS
-  VIDEO_CALL    // Videochiamata
-  SITE_VISIT    // Visita in loco
-  OTHER         // Altro
+  CALL        // Phone call
+  EMAIL       // Email
+  MEETING     // Meeting / appointment
+  TASK        // Task / to-do
+  NOTE        // Note / memo
+  WHATSAPP    // WhatsApp message
+  SMS         // SMS
+  VIDEO_CALL  // Video call
+  SITE_VISIT  // On-site visit
+  OTHER       // Other
 }
 
 enum ActivityStatus {
-  SCHEDULED     // Programmata (futura)
-  IN_PROGRESS   // In corso
-  COMPLETED     // Completata
-  CANCELLED     // Cancellata
-  RESCHEDULED   // Riprogrammata
-  NO_SHOW       // Non presentato
+  SCHEDULED   // Planned future activity
+  IN_PROGRESS // Currently in progress
+  COMPLETED   // Successfully completed
+  CANCELLED   // Cancelled before execution
+  RESCHEDULED // Rescheduled to a new date/time
+  NO_SHOW     // Participant did not show up
 }
 
 enum ActivityPriority {
@@ -32,158 +32,220 @@ enum ActivityPriority {
 }
 
 enum ActivityOutcome {
-  SUCCESSFUL        // Successo
-  NO_ANSWER         // Nessuna risposta
-  LEFT_MESSAGE      // Lasciato messaggio
-  FOLLOW_UP_NEEDED  // Necessario follow-up
-  NOT_INTERESTED    // Non interessato
-  WRONG_CONTACT     // Contatto sbagliato
-  CALLBACK_LATER    // Richiamare più tardi
-  POSTPONED         // Posticipato
+  SUCCESSFUL       // Activity completed successfully
+  NO_ANSWER        // No response from the contact
+  LEFT_MESSAGE     // Left a voicemail or written message
+  FOLLOW_UP_NEEDED // Requires a follow-up activity
+  NOT_INTERESTED   // Contact is not interested
+  WRONG_CONTACT    // Reached the wrong person
+  CALLBACK_LATER   // Contact asked to be called back
+  POSTPONED        // Activity postponed by agreement
   OTHER
 }
 
-model Activity {
-  id              Int              @id @default(autoincrement())
-  
-  // Tipo e stato
-  type            ActivityType
-  status          ActivityStatus   @default(SCHEDULED)
-  priority        ActivityPriority @default(MEDIUM)
-  outcome         ActivityOutcome?
-  
-  // Informazioni base
-  subject         String           @db.VarChar(255)
-  description     String?          @db.Text
-  location        String?          @db.VarChar(255) // Luogo fisico o link meeting
-  
-  // Date e durata
-  scheduledStart  DateTime
-  scheduledEnd    DateTime?
-  actualStart     DateTime?
-  actualEnd       DateTime?
-  duration        Int?             // Durata in minuti
-  
-  // Promemoria
-  reminderMinutes Int?             // Minuti prima per reminder (es. 15, 30, 60)
-  reminderSent    Boolean          @default(false)
-  
-  // Relazioni principali
-  companyId       String?
-  company         Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  
-  customerId      String?
-  customer        Customer?        @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  
-  contactId       String?
-  contact         Contact?         @relation(fields: [contactId], references: [id], onDelete: SetNull)
-  
-  opportunityId   Int?
-  opportunity     Opportunity?     @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
+/// Participation status for a meeting participant.
+enum ParticipantStatus {
+  INVITED   // Invited, no response yet
+  ACCEPTED  // Accepted the invitation
+  DECLINED  // Declined the invitation
+  TENTATIVE // Accepted tentatively
+  ATTENDED  // Actually attended
+  NO_SHOW   // Did not attend
+}
 
-  // Relazione con Lead
-  leadId          Int?
-  lead            Lead?            @relation(fields: [leadId], references: [id], onDelete: Cascade)
-  
-  // Utente responsabile
-  assignedUserId  String
-  assignedUser    User             @relation("ActivityAssigned", fields: [assignedUserId], references: [id])
-  
-  // Utente che ha creato l'attività
-  createdByUserId String
-  createdBy       User             @relation("ActivityCreated", fields: [createdByUserId], references: [id])
-  
-  // Partecipanti (per meeting)
-  participants    ActivityParticipant[]
-  
-  // Allegati/Link
-  attachments     Json?            // Array di URL o riferimenti a file
-  
-  // Note interne
-  internalNotes   String?          @db.Text
-  
-  // Risultato/Output
-  result          String?          @db.Text
-  
-  // Follow-up
-  followUpActivity Activity?       @relation("ActivityFollowUp", fields: [followUpActivityId], references: [id], onDelete: SetNull)
-  followUpActivityId Int?
-  followedUpBy     Activity[]      @relation("ActivityFollowUp")
-  
-  // Custom fields
-  customFields    Json?
-  
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  
+/// Role of a participant within a meeting.
+enum ParticipantRole {
+  ORGANIZER   // Meeting organizer
+  REQUIRED    // Required participant
+  OPTIONAL    // Optional participant
+}
+
+/// CRM activity record (call, email, meeting, task, note, etc.).
+/// Tenant-scoped: tenantId is mandatory on every Activity row.
+/// At least one of companyId / customerId / contactId / opportunityId / leadId
+/// should be set to anchor the activity to a business entity.
+model Activity {
+  id       Int @id @default(autoincrement())
+
+  /// Tenant that owns this activity — mandatory for multi-tenant isolation.
+  tenantId String    @map("tenant_id")
+  tenant   Tenant @relation("TenantActivities", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  // --- Type / status ---
+
+  type     ActivityType
+  status   ActivityStatus   @default(SCHEDULED)
+  priority ActivityPriority @default(MEDIUM)
+  outcome  ActivityOutcome?
+
+  // --- Core fields ---
+
+  subject      String  @db.VarChar(255)
+  description  String? @db.Text
+  /// Physical location or meeting link (e.g. Google Meet URL).
+  location     String? @db.VarChar(255)
+
+  // --- Scheduling ---
+
+  scheduledStart DateTime  @map("scheduled_start")
+  scheduledEnd   DateTime? @map("scheduled_end")
+  actualStart    DateTime? @map("actual_start")
+  actualEnd      DateTime? @map("actual_end")
+  /// Duration in minutes — redundant when both actualStart/End are set; kept for quick reads.
+  duration       Int?
+
+  // --- Reminder ---
+
+  /// Minutes before scheduledStart to send the reminder (e.g. 15, 30, 60).
+  reminderMinutes Int?     @map("reminder_minutes")
+  reminderSent    Boolean  @default(false) @map("reminder_sent")
+
+  // --- Business entity relations ---
+  // At least one should be populated. onDelete policy:
+  //   Cascade  → activity has no standalone meaning without the parent
+  //   SetNull  → activity keeps its history even if the related record is removed
+
+  companyId     String?
+  company       Company?     @relation("CompanyActivities", fields: [companyId], references: [id], onDelete: SetNull)
+
+  customerId    String?      @map("customer_id")
+  customer      Customer?    @relation("CustomerActivities", fields: [customerId], references: [id], onDelete: SetNull)
+
+  contactId     String?      @map("contact_id")
+  contact       Contact?     @relation("ContactActivities", fields: [contactId], references: [id], onDelete: SetNull)
+
+  opportunityId String?         @map("opportunity_id")
+  opportunity   Opportunity? @relation("OpportunityActivities", fields: [opportunityId], references: [id], onDelete: SetNull)
+
+  leadId        String?         @map("lead_id")
+  lead          Lead?        @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  // --- Users ---
+
+  /// User responsible for executing this activity.
+  assignedUserId  String @map("assigned_user_id")
+  assignedUser    User   @relation("ActivityAssigned", fields: [assignedUserId], references: [id])
+
+  /// User who created this activity record.
+  createdByUserId String @map("created_by_user_id")
+  createdBy       User   @relation("ActivityCreated", fields: [createdByUserId], references: [id])
+
+  // --- Participants (for MEETING / VIDEO_CALL types) ---
+
+  participants ActivityParticipant[]
+
+  // --- Attachments ---
+  /// Structured list of file references: [{ name, url, mimeType, sizeBytes }].
+  /// Enforce shape with a Zod schema at the application layer.
+  attachments Json? @db.JsonB
+
+  // --- Notes and result ---
+
+  internalNotes String? @map("internal_notes") @db.Text
+  result        String? @db.Text
+
+  // --- Follow-up self-relation ---
+  // followUpActivityId references the *original* activity this one follows up on.
+
+  followUpActivityId Int?      @map("follow_up_activity_id")
+  followUpActivity   Activity? @relation("ActivityFollowUp", fields: [followUpActivityId], references: [id], onDelete: SetNull)
+  followedUpBy       Activity[] @relation("ActivityFollowUp")
+
+  // --- Custom fields ---
+
+  customFields Json? @map("custom_fields") @db.JsonB
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([tenantId, status])         // Compound: "all open activities for tenant"
+  @@index([tenantId, assignedUserId]) // Compound: "my activities" — most common dashboard query
+  @@index([tenantId, scheduledStart]) // Compound: calendar/timeline queries per tenant
   @@index([type])
-  @@index([status])
   @@index([priority])
   @@index([companyId])
   @@index([customerId])
   @@index([opportunityId])
-  @@index([leadId]) 
-  @@index([assignedUserId])
-  @@index([scheduledStart])
-  @@index([scheduledEnd])
+  @@index([leadId])
+  @@index([scheduledStart, scheduledEnd]) // Compound: range queries (e.g. activities this week)
+  @@index([followUpActivityId])           // Self-relation lookup: "follow-ups of activity X"
+  @@map("activities")
 }
 
+/// Junction table linking activities to their participants.
+/// A participant can be an internal User, an existing Contact, or an external attendee (email only).
 model ActivityParticipant {
-  id              Int      @id @default(autoincrement())
-  
-  activityId      Int
-  activity        Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  
-  // Può essere un utente interno o un contatto esterno
-  userId          String?
-  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  contactId       String?
-  contact         Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
-  
-  // Email se non è né user né contact
-  externalEmail   String?  @db.VarChar(255)
-  externalName    String?  @db.VarChar(255)
-  
-  // Stato partecipazione
-  status          String   @default("invited") @db.VarChar(20) // invited, accepted, declined, tentative, attended, no_show
-  
-  // Ruolo nel meeting
-  role            String   @default("participant") @db.VarChar(20) // organizer, required, optional
-  
-  responseDate    DateTime?
-  notes           String?  @db.Text
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
+  id Int @id @default(autoincrement())
+
+  activityId Int      @map("activity_id")
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  // Exactly one of userId / contactId / externalEmail must be populated.
+  // Enforce this constraint at the application layer (Zod / service).
+
+  userId  String? @map("user_id")
+  user    User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  contactId String? @map("contact_id")
+  contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  /// Email for external attendees not in the system.
+  externalEmail String? @map("external_email") @db.VarChar(255)
+  externalName  String? @map("external_name") @db.VarChar(255)
+
+  status ParticipantStatus @default(INVITED)
+  role   ParticipantRole   @default(OPTIONAL)
+
+  responseDate DateTime? @map("response_date")
+  notes        String?   @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Prevent duplicate participant rows for the same user/contact on the same activity.
+  @@unique([activityId, userId])
+  @@unique([activityId, contactId])
   @@index([activityId])
   @@index([userId])
   @@index([contactId])
+  @@map("activity_participants")
 }
 
-// Template di attività ricorrenti o comuni
+/// Reusable activity templates for activity creation.
+/// tenantId = NULL  → global system template, visible to all tenants.
+/// tenantId = set   → private template visible only to that tenant.
+/// Application layer must always filter: WHERE tenant_id = ? OR tenant_id IS NULL.
 model ActivityTemplate {
-  id              Int              @id @default(autoincrement())
-  
-  name            String           @db.VarChar(255)
-  description     String?          @db.Text
-  
-  type            ActivityType
-  priority        ActivityPriority @default(MEDIUM)
-  
-  defaultDuration Int?             // Durata predefinita in minuti
-  defaultSubject  String           @db.VarChar(255)
-  defaultDescription String?       @db.Text
-  
-  // Checklist o passi da seguire
-  checklist       Json?
-  
-  active          Boolean          @default(true)
-  
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  
+  id Int @id @default(autoincrement())
+
+  name        String  @db.VarChar(255)
+  description String? @db.Text
+
+  type     ActivityType
+  priority ActivityPriority @default(MEDIUM)
+
+  /// Default duration in minutes when using this template.
+  defaultDuration     Int?    @map("default_duration")
+  defaultSubject      String  @map("default_subject") @db.VarChar(255)
+  defaultDescription  String? @map("default_description") @db.Text
+
+  tenantId String?    @map("tenant_id")
+  tenant   Tenant? @relation("TenantActivityTemplates", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  /// Optional step-by-step checklist: [{ order, label, required }].
+  checklist Json? @db.JsonB
+
+  active Boolean @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+// Template names must be unique per tenant.
+  // Global templates (tenantId IS NULL) are deduplicated by name at the application layer.
+  @@unique([tenantId, name])
+  @@index([tenantId])
   @@index([type])
   @@index([active])
+  @@map("activity_templates")
 }

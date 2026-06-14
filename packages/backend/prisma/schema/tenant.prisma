@@ -42,14 +42,14 @@ enum TaxRegime {
 
 /// SaaS tenant — top-level isolation boundary for all operational data.
 model Tenant {
-  id   Int    @id @default(autoincrement())
+  id   String @id @default(cuid())
   code String @unique @db.VarChar(20) // slug univoco, es. "acme-srl"
 
   status TenantStatus @default(ACTIVE)
   plan   TenantPlan   @default(FREE)
 
   // Azienda legale emittente — NON nullable: senza Company non si emettono documenti
-  companyId String     @unique @map("company_id")
+  companyId String  @unique @map("company_id")
   company   Company @relation("TenantOwnedCompany", fields: [companyId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   // === REGIME FISCALE ===
@@ -87,6 +87,8 @@ model Tenant {
   opportunities            Opportunity[]          @relation("TenantOpportunities")
   opportunityClosedReasons ClosedReason[]         @relation("TenantOpportunityClosedReasons")
   intrastatTransactions    IntrastatTransaction[] @relation("TenantInstrastatTransactions")
+  activities               Activity[]             @relation("TenantActivities")
+  activityTemplates        ActivityTemplate[]     @relation("TenantActivityTemplates")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -99,7 +101,7 @@ model Tenant {
 /// Tenant-owned bank account used for payment receipt or disbursement.
 model TenantBankAccount {
   id       Int    @id @default(autoincrement())
-  tenantId Int    @map("tenant_id")
+  tenantId String @map("tenant_id")
   tenant   Tenant @relation("TenantBankAccounts", fields: [tenantId], references: [id], onDelete: Cascade)
 
   /// Internal label (e.g. "Conto principale EUR", "Conto USD estero").

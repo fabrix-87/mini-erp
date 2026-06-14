@@ -16,12 +16,12 @@ model PaymentMethod {
     id   Int    @id @default(autoincrement())
     // e.g. "SPLIT_30_30_40", "IMMEDIATE", "NET_60"
     code String @db.VarChar(50)
-    
+
     active   Boolean @default(true)
     position Int     @default(0)
 
     // NULL = global system payment method; NOT NULL = tenant-private payment method
-    tenantId Int?    @map("tenant_id")
+    tenantId String? @map("tenant_id")
     tenant   Tenant? @relation("TenantPaymentMethods", fields: [tenantId], references: [id], onDelete: Cascade)
 
     // === RELATIONS ===
@@ -62,7 +62,7 @@ model PaymentTermDetail {
     termType PaymentTermType @default(DAYS_FROM_INVOICE) @map("term_type")
 
     /// Number of days from the invoice date (used when termType = DAYS_FROM_INVOICE or END_OF_MONTH).
-    dueDays          Int  @default(0) @map("due_days") 
+    dueDays          Int  @default(0) @map("due_days")
     /// Fixed day of the month when the installment is due (used when termType = FIXED_DAY).
     fixedDay         Int? @map("fixed_day")
     /// Number of months to offset from the invoice month (used with FIXED_DAY).

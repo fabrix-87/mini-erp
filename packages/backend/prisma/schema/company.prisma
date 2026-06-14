@@ -96,9 +96,9 @@ model Company {
     // Relazioni
     user           User?      @relation("AssignedUser", fields: [assignedUserId], references: [id])
     assignedUserId String?    @map("assigned_user_id")
-    activities     Activity[]
+    activities     Activity[] @relation("CompanyActivities")
 
-    tenantId Int    @map("tenant_id")
+    tenantId String @map("tenant_id")
     tenant   Tenant @relation("TenantCompanies", fields: [tenantId], references: [id], onDelete: Restrict)
 
     // Indirizzi
@@ -179,7 +179,7 @@ model Customer {
     // Relazioni a documenti di Vendita
     documentsOut  Document[]    @relation("CustomerDocuments")
     opportunities Opportunity[]
-    activities    Activity[]
+    activities    Activity[]    @relation("CustomerActivities")
 
     // Relazioni tra clienti (gruppi e gerarchie)
     parentCustomerId String?    @map("parent_customer_id")
@@ -314,7 +314,7 @@ model Contact {
     // Relazioni
     companies            CompanyContact[]
     documents            Document[]
-    activities           Activity[]
+    activities           Activity[]            @relation("ContactActivities")
     activityParticipants ActivityParticipant[]
 
     createdAt DateTime @default(now()) @map("created_at")

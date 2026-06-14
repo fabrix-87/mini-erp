@@ -37,21 +37,21 @@ enum OpportunitySource {
 /// At least one of leadId or customerId must be non-null (enforced at application level).
 /// Tracks pipeline stage, financial metrics, BANT probability, and closure outcome.
 model Opportunity {
-  id          Int     @id @default(autoincrement())
+  id          String  @id @default(cuid())
   title       String  @db.VarChar(255)
   description String? @db.Text
 
   // === LEAD / CUSTOMER LINK ===
   // An opportunity can be linked to a Lead (before conversion),
   // a Customer (upsell/cross-sell), or both (post-conversion traceability).
-  leadId Int?  @map("lead_id")
-  lead   Lead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  leadId String? @map("lead_id")
+  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
   customerId String?   @map("customer_id")
   customer   Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   /// Tenant that owns this opportunity. All opportunity data is tenant-isolated.
-  tenantId Int    @map("tenant_id")
+  tenantId String @map("tenant_id")
   tenant   Tenant @relation("TenantOpportunities", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   source OpportunitySource @default(OTHER)
@@ -116,7 +116,7 @@ model Opportunity {
   // === RELATIONS ===
 
   documents  Document[]
-  activities Activity[]
+  activities Activity[] @relation("OpportunityActivities")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -150,7 +150,7 @@ model ClosedReason {
   active       Boolean @default(true)
   displayOrder Int     @default(0) @map("display_order")
 
-  tenantId Int?    @map("tenant_id")
+  tenantId String? @map("tenant_id")
   tenant   Tenant? @relation("TenantOpportunityClosedReasons", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   opportunities Opportunity[]
