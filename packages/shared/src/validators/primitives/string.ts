@@ -17,8 +17,6 @@ export const phoneSchema = z
   .string()
   .max(20, "Telefono troppo lungo")
   .regex(/^[+]?[\d\s()-]*$/, "Formato telefono non valido")
-  .optional()
-  .nullable();
 
 /**
  * Schema factory for URL fields.

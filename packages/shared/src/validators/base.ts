@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { createIdSchema } from "./primitives/id";
+import { createCuidSchema } from "./primitives/id";
 
 /**
  * Schema per validare ID utente
  */
-export const userIdSchema = createIdSchema("ID utente non valido");
+export const userIdSchema = createCuidSchema("ID utente non valido");
 
 /**
  * Schema base per Currency Code

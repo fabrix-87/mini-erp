@@ -58,7 +58,7 @@ export const userDetailsSchema = z.object({
   firstName: z.string().max(100, "Nome troppo lungo"),
   lastName: z.string().max(100, "Cognome troppo lungo").optional(),
   profilePicture: urlSchema().optional().nullable(),
-  phone: phoneSchema,
+  phone: phoneSchema.optional().nullable(),
 
   // Address
   address: z.string().max(255, "Indirizzo troppo lungo").optional().nullable(),

@@ -37,6 +37,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@paralleldrive/cuid2": "^3.3.0",
     "decimal.js": "^10.6.0",
     "zod": "^4.4.3"
   },

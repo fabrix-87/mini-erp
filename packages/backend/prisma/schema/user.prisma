@@ -14,62 +14,64 @@ model User {
   active   Boolean @default(true)
 
   /// Tenant boundary for isolation in B2B SaaS deployments. Null denotes system global accounts.
-  tenantId String?
-  tenant   Tenant? @relation("TenantUsers", fields: [tenantId], references: [id])
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantUsers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   // === EMAIL VERIFICATION ===
-  emailVerified Boolean @default(false)
+  emailVerified Boolean @default(false) @map("email_verified")
 
   /// Cryptographic token used during signup or email-change confirmation sequences.
-  emailVerificationToken   String?   @unique @db.Char(64)
-  emailVerificationExpires DateTime?
-  emailVerifiedAt          DateTime?
+  emailVerificationToken   String?   @unique @map("email_verification_token") @db.Char(64)
+  emailVerificationExpires DateTime? @map("email_verification_expires")
+  emailVerifiedAt          DateTime? @map("email_verified_at")
 
   // === PASSWORD RESET ===
 
   /// Cryptographic token used during self-service recovery workflows.
-  resetPasswordToken   String?   @unique @db.Char(64)
-  resetPasswordExpires DateTime?
+  resetPasswordToken   String?   @unique @map("reset_password_token") @db.Char(64)
+  resetPasswordExpires DateTime? @map("reset_password_expires")
 
   /// Counter for mitigation against token enumeration and brute-force vectors.
-  passwordResetAttempts Int       @default(0)
-  lastPasswordResetAt   DateTime?
+  passwordResetAttempts Int       @default(0) @map("password_reset_attempts")
+  lastPasswordResetAt   DateTime? @map("last_password_reset_at")
 
   // === TWO-FACTOR AUTHENTICATION (2FA) ===
-  twoFactorEnabled Boolean @default(false)
+  twoFactorEnabled Boolean @default(false) @map("two_factor_enabled")
 
-  /// Base32 encoded seed value utilized for TOTP generation (RFC 6238).
-  twoFactorSecret String? @db.VarChar(255)
+  /// TOTP seed (RFC 6238). Must be AES-256-GCM encrypted at the application layer before persistence.
+  /// Never store the raw Base32 secret in plaintext.
+  twoFactorSecret String? @map("two_factor_secret") @db.VarChar(255)
 
   /// Encrypted payload containing deterministic fallback codes.
-  twoFactorBackupCodes Json?
+  twoFactorBackupCodes Json? @map("two_factor_backup_codes")
 
   // === SECURITY & AUDIT ===
-  lastPasswordChangeAt DateTime?
+  lastPasswordChangeAt DateTime? @map("last_password_change_at")
 
-  /// Reference to administrative actor executing override actions.
-  passwordChangedBy Int?
+  // On the target user (whose password was overridden)
+  passwordChangedById String? @map("password_changed_by_id")
+  passwordChangedBy   User?   @relation("AdminPasswordOverride", fields: [passwordChangedById], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   /// Counter for mitigation against brute-force login vectors.
-  failedLoginAttempts Int       @default(0)
-  lastFailedLoginAt   DateTime?
+  failedLoginAttempts Int       @default(0) @map("failed_login_attempts")
+  lastFailedLoginAt   DateTime? @map("last_failed_login_at")
 
   /// Operational timestamp restriction window enforced during rate-limiting lockout phases.
-  lockedUntil DateTime?
+  lockedUntil DateTime? @map("locked_until")
 
   // === GDPR & PRIVACY ===
 
   /// Immutable record documenting active acknowledgment of legal policies.
-  consentGivenAt DateTime?
+  consentGivenAt DateTime? @map("consent_given_at")
 
   /// Automated archival/deletion threshold mapping for standard right-to-be-forgotten timelines.
-  dataRetentionExpiresAt DateTime?
+  dataRetentionExpiresAt DateTime? @map("data_retention_expires_at")
 
   roles    Role[]        @relation("UserRoles")
   settings UserSetting[] @relation("UserSettings")
 
-  preferredLanguageId Int      @default(1)
-  preferredLanguage   Language @relation("UserPreferredLanguage", fields: [preferredLanguageId], references: [id])
+  preferredLanguageId Int?      @map("preferred_language_id")
+  preferredLanguage   Language? @relation("UserPreferredLanguage", fields: [preferredLanguageId], references: [id])
 
   // Core System Operational Relations
   createdDocuments        Document[]              @relation("CreatedBy")
@@ -83,9 +85,11 @@ model User {
   companyNotes            CompanyNote[]
   stockMovement           StockMovement[]
   auditLogs               AuditLog[]
-  securityEvents          SecurityEvent[]         @relation("ResolvedSecurityEvents")
-  ResolvedSecurityEvents  SecurityEvent[]
+  securityEvents          SecurityEvent[]
+  resolvedSecurityEvents  SecurityEvent[]         @relation("ResolvedSecurityEvents")
   documentStatusHistories DocumentStatusHistory[]
+  // On the admin user (back-relation — who performed the override)
+  overriddenPasswordUsers User[]                  @relation("AdminPasswordOverride")
 
   // Soft-Delete / Auditing Attribution Targets
   deletedDocuments       Document[]       @relation("DeletedBy")
@@ -101,14 +105,14 @@ model User {
 
   details UserDetails?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  lastLogin DateTime? @map("last_login")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
-  @@index([email])
-  @@index([emailVerificationToken])
-  @@index([resetPasswordToken])
   @@index([lockedUntil])
   @@index([tenantId])
+  @@map("users")
 }
 
 // ============================================================================
@@ -120,35 +124,33 @@ model User {
 model UserDetails {
   id Int @id @default(autoincrement())
 
-  userId String @unique
+  userId String @unique @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  firstName String  @db.VarChar(100)
-  lastName  String? @db.VarChar(100)
+  firstName String @map("first_name") @db.VarChar(100)
+  lastName  String @map("last_name") @db.VarChar(100)
 
-  profilePicture String? @db.VarChar(500)
+  profilePicture String? @map("profile_picture") @db.Text
 
   phone   String? @db.VarChar(20)
   address String? @db.VarChar(255)
   city    String? @db.VarChar(100)
   state   String? @db.VarChar(100)
-  zipCode String? @db.VarChar(20)
+  zipCode String? @map("zip_code") @db.VarChar(20)
 
   /// ISO 3166-1 alpha-2 geographical country reference code.
-  country String? @default("IT") @db.Char(2)
+  countryCode String?  @default("IT") @map("country_code") @db.Char(2)
+  country     Country? @relation("UserDetailCountry", fields: [countryCode], references: [code])
 
-  dateOfBirth DateTime? @db.Date
+  dateOfBirth DateTime? @map("date_of_birth")
   gender      Gender    @default(PREFER_NOT_TO_SAY)
   bio         String?   @db.Text
 
-  lastLogin DateTime?
-  active    Boolean   @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([firstName])
-  @@index([lastName])
+  @@index([firstName, lastName])
+  @@map("user_details")
 }
 
 enum Gender {
