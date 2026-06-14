@@ -1,3 +1,4 @@
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "../../config/prisma-config";
 
 async function main() {
@@ -712,17 +713,14 @@ async function main() {
     },
   ];
 
-  // Recupera le lingue disponibili dal database
+  // Lingue disponibili nel DB (già seedate in precedenza)
   const availableLanguages = await prisma.language.findMany({
-    select: { iso_code: true },
+    select: { isoCode: true },
   });
-  const availableIsoCodes = new Set(availableLanguages.map((l) => l.iso_code));
+  const availableIsoCodes = new Set(availableLanguages.map((l) => l.isoCode));
 
   for (const country of countriesData) {
-    // Filtra solo le lingue che esistono nel database
-    const validLanguages = country.languages.filter((iso) =>
-      availableIsoCodes.has(iso),
-    );
+    const validLanguages = country.languages.filter((iso) => availableIsoCodes.has(iso));
 
     await prisma.country.create({
       data: {
@@ -737,9 +735,7 @@ async function main() {
         isEU: country.isEU,
         languages:
           validLanguages.length > 0
-            ? {
-                connect: validLanguages.map((iso) => ({ iso_code: iso })),
-              }
+            ? { connect: validLanguages.map((iso) => ({ isoCode: iso })) }
             : undefined,
       },
     });
@@ -747,9 +743,7 @@ async function main() {
 
   console.log(`✅ Creati ${countriesData.length} paesi`);
   console.log(`   - ${countriesData.filter((c) => c.isEU).length} paesi EU`);
-  console.log(
-    `   - ${countriesData.filter((c) => !c.isEU).length} paesi extra-EU`,
-  );
+  console.log(`   - ${countriesData.filter((c) => !c.isEU).length} paesi extra-EU`);
   console.log("🎉 Seeding Country completato!");
 }
 

@@ -3,6 +3,10 @@
 import { prisma } from '@/config/prisma-config';
 import { VatNatureCategory } from '@/generated/prisma/enums';
 
+// ============================================================================
+// VAT NATURES
+// ============================================================================
+
 const vatNatures = [
   // ========================================
   // N1 - ESCLUSE
@@ -19,9 +23,9 @@ const vatNatures = [
     vatReturnLine: 'VE38',
     requiresNormReference: true,
     usageExamples: 'Cessioni gratuite di beni, cessioni di azienda, prestazioni non a titolo oneroso',
-    operationalNotes: 'Utilizzare quando l\'operazione è esclusa dal campo di applicazione dell\'IVA',
+    operationalNotes: "Utilizzare quando l'operazione è esclusa dal campo di applicazione dell'IVA",
     active: true,
-    displayOrder: 1
+    displayOrder: 1,
   },
 
   // ========================================
@@ -38,10 +42,10 @@ const vatNatures = [
     validForPurchases: false,
     vatReturnLine: 'VE38',
     requiresNormReference: true,
-    usageExamples: 'Servizi resi/ricevuti fuori dall\'UE, cessioni di beni in transito',
-    operationalNotes: 'Operazioni con controparti extra-UE senza territorialità italiana',
+    usageExamples: "Servizi resi/ricevuti fuori dall'UE, cessioni di beni in transito",
+    operationalNotes: "Operazioni con controparti extra-UE senza territorialità italiana",
     active: true,
-    displayOrder: 2
+    displayOrder: 2,
   },
   {
     code: 'N2.2',
@@ -55,9 +59,9 @@ const vatNatures = [
     vatReturnLine: 'VE38',
     requiresNormReference: true,
     usageExamples: 'Fatture emesse da contribuenti in regime forfettario o regime dei minimi',
-    operationalNotes: 'Codice più utilizzato per forfettari. Indicare sempre riferimento normativo',
+    operationalNotes: "Codice più utilizzato per forfettari. Indicare sempre riferimento normativo",
     active: true,
-    displayOrder: 3
+    displayOrder: 3,
   },
 
   // ========================================
@@ -66,8 +70,8 @@ const vatNatures = [
   {
     code: 'N3.1',
     category: 'NOT_TAXABLE' as VatNatureCategory,
-    description: 'Non imponibili - esportazioni',
-    extendedDescription: 'Cessioni all\'esportazione (vendite fuori UE)',
+    description: "Non imponibili - esportazioni",
+    extendedDescription: "Cessioni all'esportazione (vendite fuori UE)",
     legalReference: 'art. 8, c. 1 lett. a) e b) DPR 633/72',
     applicableToEntityTypes: null,
     validForSales: true,
@@ -77,7 +81,7 @@ const vatNatures = [
     usageExamples: 'Vendita di beni con destinazione extra-UE con prova documentale',
     operationalNotes: 'Necessaria documentazione doganale (bolle export, CMR internazionale)',
     active: true,
-    displayOrder: 4
+    displayOrder: 4,
   },
   {
     code: 'N3.2',
@@ -93,7 +97,7 @@ const vatNatures = [
     usageExamples: 'Vendita a cliente business con VIES valida in altro Paese UE',
     operationalNotes: 'Verificare validità VIES controparte. Emettere modello INTRASTAT se supera soglia',
     active: true,
-    displayOrder: 5
+    displayOrder: 5,
   },
   {
     code: 'N3.3',
@@ -109,12 +113,12 @@ const vatNatures = [
     usageExamples: 'Vendite a soggetti sammarinesi con operatore economico registrato',
     operationalNotes: 'Richiesto bollettario di cauzione doganale o dichiarazione importatore SM',
     active: true,
-    displayOrder: 6
+    displayOrder: 6,
   },
   {
     code: 'N3.4',
     category: 'NOT_TAXABLE' as VatNatureCategory,
-    description: 'Non imponibili - operazioni assimilate alle cessioni all\'esportazione',
+    description: "Non imponibili - operazioni assimilate alle cessioni all'esportazione",
     extendedDescription: 'Operazioni con enti internazionali, ambasciate, forze NATO, etc.',
     legalReference: 'art. 8, c. 1 lett. c) DPR 633/72',
     applicableToEntityTypes: null,
@@ -125,23 +129,23 @@ const vatNatures = [
     usageExamples: 'Vendite a ambasciate, ONU, NATO, Vaticano con esenzione diplomatica',
     operationalNotes: 'Necessario visto doganale su fattura',
     active: true,
-    displayOrder: 7
+    displayOrder: 7,
   },
   {
     code: 'N3.5',
     category: 'NOT_TAXABLE' as VatNatureCategory,
-    description: 'Non imponibili - a seguito di dichiarazioni d\'intento',
-    extendedDescription: 'Cessioni/prestazioni a esportatori abituali con plafond',
+    description: "Non imponibili - a seguito di dichiarazioni d'intento",
+    extendedDescription: "Cessioni/prestazioni a esportatori abituali con plafond",
     legalReference: 'art. 8, c. 1 lett. c) DPR 633/72',
     applicableToEntityTypes: null,
     validForSales: true,
     validForPurchases: false,
     vatReturnLine: 'VE31',
     requiresNormReference: true,
-    usageExamples: 'Vendite a cliente esportatore abituale che ha inviato lettera d\'intento valida',
-    operationalNotes: 'Verificare protocollo telematico dichiarazione d\'intento su portale AdE',
+    usageExamples: "Vendite a cliente esportatore abituale che ha inviato lettera d'intento valida",
+    operationalNotes: "Verificare protocollo telematico dichiarazione d'intento su portale AdE",
     active: true,
-    displayOrder: 8
+    displayOrder: 8,
   },
   {
     code: 'N3.6',
@@ -157,7 +161,7 @@ const vatNatures = [
     usageExamples: 'Servizi internazionali, trasporti internazionali, operazioni triangolari',
     operationalNotes: 'Categoria residuale per operazioni non imponibili non classificabili altrove',
     active: true,
-    displayOrder: 9
+    displayOrder: 9,
   },
 
   // ========================================
@@ -177,7 +181,7 @@ const vatNatures = [
     usageExamples: 'Prestazioni sanitarie, formazione, assicurazioni, operazioni bancarie/finanziarie',
     operationalNotes: 'IVA non detraibile a monte per fornitore. Specificare comma art. 10 applicabile',
     active: true,
-    displayOrder: 10
+    displayOrder: 10,
   },
 
   // ========================================
@@ -187,7 +191,7 @@ const vatNatures = [
     code: 'N5',
     category: 'MARGIN' as VatNatureCategory,
     description: 'Regime del margine / IVA non esposta in fattura',
-    extendedDescription: 'Applicazione IVA sul margine (beni usati, oggetti d\'arte, antiquariato, agenzie viaggio)',
+    extendedDescription: "Applicazione IVA sul margine (beni usati, oggetti d'arte, antiquariato, agenzie viaggio)",
     legalReference: 'art. 36 e 74-ter DPR 633/72',
     applicableToEntityTypes: null,
     validForSales: true,
@@ -197,11 +201,11 @@ const vatNatures = [
     usageExamples: 'Vendita auto usate, oggetti antiquariato, pacchetti turistici',
     operationalNotes: 'IVA calcolata sul margine, non esposta in fattura al cliente',
     active: true,
-    displayOrder: 11
+    displayOrder: 11,
   },
 
   // ========================================
-  // N6.x - REVERSE CHARGE (INVERSIONE CONTABILE)
+  // N6.x - REVERSE CHARGE
   // ========================================
   {
     code: 'N6.1',
@@ -217,7 +221,7 @@ const vatNatures = [
     usageExamples: 'Vendita rottami ferrosi, non ferrosi, carta da macero, vetro',
     operationalNotes: 'IVA a carico del cessionario. Fornitore emette fattura senza IVA',
     active: true,
-    displayOrder: 12
+    displayOrder: 12,
   },
   {
     code: 'N6.2',
@@ -233,7 +237,7 @@ const vatNatures = [
     usageExamples: 'Cessioni di oro da investimento purezza >= 995‰, argento purezza >= 999‰',
     operationalNotes: 'Applicabile solo per metalli puri sopra specifiche purezze',
     active: true,
-    displayOrder: 13
+    displayOrder: 13,
   },
   {
     code: 'N6.3',
@@ -249,7 +253,7 @@ const vatNatures = [
     usageExamples: 'Prestazioni di subappalto costruzione/ristrutturazione edifici',
     operationalNotes: 'Applicabile solo tra soggetti passivi IVA in ambito subappalto edilizio',
     active: true,
-    displayOrder: 14
+    displayOrder: 14,
   },
   {
     code: 'N6.4',
@@ -265,7 +269,7 @@ const vatNatures = [
     usageExamples: 'Vendita fabbricati strumentali tra soggetti IVA entro 5 anni da ultimazione',
     operationalNotes: 'Solo per fabbricati a destinazione abitativa entro 5 anni o opzione per imponibilità',
     active: true,
-    displayOrder: 15
+    displayOrder: 15,
   },
   {
     code: 'N6.5',
@@ -281,7 +285,7 @@ const vatNatures = [
     usageExamples: 'Cessioni tra operatori commerciali di cellulari, smartphone, tablet',
     operationalNotes: 'Applicabile cessioni tra soggetti passivi IVA',
     active: true,
-    displayOrder: 16
+    displayOrder: 16,
   },
   {
     code: 'N6.6',
@@ -297,7 +301,7 @@ const vatNatures = [
     usageExamples: 'Console da gioco, laptop, tablet PC',
     operationalNotes: 'Limitato a specifiche categorie merceologiche previste dalla norma',
     active: true,
-    displayOrder: 17
+    displayOrder: 17,
   },
   {
     code: 'N6.7',
@@ -313,7 +317,7 @@ const vatNatures = [
     usageExamples: 'Prestazioni di pulizia, demolizione, installazioni impianti, completamento edifici',
     operationalNotes: 'Ampia casistica servizi edili. Consultare elenco codici ATECO applicabili',
     active: true,
-    displayOrder: 18
+    displayOrder: 18,
   },
   {
     code: 'N6.8',
@@ -329,7 +333,7 @@ const vatNatures = [
     usageExamples: 'Cessioni gas metano, energia elettrica tra operatori del settore',
     operationalNotes: 'Solo tra soggetti passivi IVA con specifica abilitazione settore energetico',
     active: true,
-    displayOrder: 19
+    displayOrder: 19,
   },
   {
     code: 'N6.9',
@@ -345,7 +349,7 @@ const vatNatures = [
     usageExamples: 'Trasferimenti quote gas serra, certificati energetici, altri casi specifici',
     operationalNotes: 'Categoria residuale per casi non rientranti nelle altre fattispecie N6.x',
     active: true,
-    displayOrder: 20
+    displayOrder: 20,
   },
 
   // ========================================
@@ -365,7 +369,7 @@ const vatNatures = [
     usageExamples: 'E-commerce B2C verso privati UE, servizi digitali/telecom via OSS',
     operationalNotes: 'Utilizzare per regime speciale OSS (One Stop Shop). IVA versata nel paese del cliente',
     active: true,
-    displayOrder: 21
+    displayOrder: 21,
   },
 
   // ========================================
@@ -388,7 +392,7 @@ const vatNatures = [
     validFrom: new Date('2017-07-01'),
     validTo: new Date('2020-12-31'),
     replacedByCode: 'N2.1',
-    displayOrder: 99
+    displayOrder: 99,
   },
   {
     code: 'N3',
@@ -407,7 +411,7 @@ const vatNatures = [
     validFrom: new Date('2017-07-01'),
     validTo: new Date('2020-12-31'),
     replacedByCode: 'N3.1',
-    displayOrder: 100
+    displayOrder: 100,
   },
   {
     code: 'N6',
@@ -426,31 +430,398 @@ const vatNatures = [
     validFrom: new Date('2017-07-01'),
     validTo: new Date('2020-12-31'),
     replacedByCode: 'N6.9',
-    displayOrder: 101
-  }
+    displayOrder: 101,
+  },
 ];
 
+// ============================================================================
+// TAX RULES GLOBALI (tenantId = null → condivise da tutti i tenant)
+// ============================================================================
+
+// Definizione locale: code + campi usati nella create/update
+type TaxRuleSeed = {
+  code:                 string;
+  name:                 string;
+  description?:         string;
+  tenantId:             null;
+  rate:                 number;
+  vatNatureCode?:       string;   // risolto → vatNatureId prima dell'upsert
+  normativeReference?:  string;
+  countryCode:          string;
+  applicableFor:        'SALES' | 'PURCHASES' | 'BOTH';
+  customerType:         'B2B' | 'B2C' | 'PA' | 'FOREIGN' | 'ANY';
+  isSplitPayment:       boolean;
+  deductibilityPercent: number;
+  vatDeductible:        boolean;
+  isDefault:            boolean;
+  displayOrder:         number;
+  color?:               string;
+};
+
+const taxRules: TaxRuleSeed[] = [
+  // ── ALIQUOTE ORDINARIE ────────────────────────────────────────────────────
+
+  {
+    code:                 'IVA22',
+    name:                 'IVA 22%',
+    description:          'Aliquota ordinaria IVA — beni e servizi in regime normale',
+    tenantId:             null,
+    rate:                 22,
+    countryCode:          'IT',
+    applicableFor:        'BOTH',
+    customerType:         'ANY',
+    isSplitPayment:       false,
+    deductibilityPercent: 100,
+    vatDeductible:        true,
+    isDefault:            true,
+    displayOrder:         1,
+    color:                '#3B82F6',
+  },
+  {
+    code:                 'IVA10',
+    name:                 'IVA 10%',
+    description:          'Aliquota ridotta — turismo, ristorazione, certi prodotti alimentari',
+    tenantId:             null,
+    rate:                 10,
+    countryCode:          'IT',
+    applicableFor:        'BOTH',
+    customerType:         'ANY',
+    isSplitPayment:       false,
+    deductibilityPercent: 100,
+    vatDeductible:        true,
+    isDefault:            false,
+    displayOrder:         2,
+    color:                '#06B6D4',
+  },
+  {
+    code:                 'IVA5',
+    name:                 'IVA 5%',
+    description:          'Aliquota ultra-ridotta — certi servizi sociali e beni di prima necessità',
+    tenantId:             null,
+    rate:                 5,
+    countryCode:          'IT',
+    applicableFor:        'BOTH',
+    customerType:         'ANY',
+    isSplitPayment:       false,
+    deductibilityPercent: 100,
+    vatDeductible:        true,
+    isDefault:            false,
+    displayOrder:         3,
+    color:                '#8B5CF6',
+  },
+  {
+    code:                 'IVA4',
+    name:                 'IVA 4%',
+    description:          'Aliquota minima — prima casa, prodotti prima necessità (Tab. A parte II)',
+    tenantId:             null,
+    rate:                 4,
+    countryCode:          'IT',
+    applicableFor:        'BOTH',
+    customerType:         'ANY',
+    isSplitPayment:       false,
+    deductibilityPercent: 100,
+    vatDeductible:        true,
+    isDefault:            false,
+    displayOrder:         4,
+    color:                '#10B981',
+  },
+
+  // ── ESENZIONE ─────────────────────────────────────────────────────────────
+
+  {
+    code:                 'EXEMPT-N4',
+    name:                 'Esente IVA',
+    description:          'Operazioni esenti — sanitarie, educative, finanziarie (art. 10 DPR 633/72)',
+    tenantId:             null,
+    rate:                 0,
+    vatNatureCode:        'N4',
+    normativeReference:   'art. 10 DPR 633/72',
+    countryCode:          'IT',
+    applicableFor:        'SALES',
+    customerType:         'ANY',
+    isSplitPayment:       false,
+    deductibilityPercent: 0,
+    vatDeductible:        false,
+    isDefault:            false,
+    displayOrder:         10,
+    color:                '#F59E0B',
+  },
+
+  // ── NON SOGGETTE ─────────────────────────────────────────────────────────
+
+  {
+    code:                 'NS-N2.1',
+    name:                 'Non soggetta — fuori campo territoriale',
+    description:          'Operazioni non soggette per carenza requisito territoriale (artt. 7-7septies)',
+    tenantId:             null,
+    rate:                 0,
+    vatNatureCode:        'N2.1',
+    normativeReference:   'artt. 7-7septies DPR 633/72',
+    countryCode:          'IT',
+    applicableFor:        'SALES',
+    customerType:         'FOREIGN',
+    isSplitPayment:       false,
+    deductibilityPercent: 0,
+    vatDeductible:        false,
+    isDefault:            false,
+    displayOrder:         11,
+  },
+  {
+    code:                 'NS-N2.2',
+    name:                 'Non soggetta — regime forfettario',
+    description:          'Operazioni non soggette IVA per regime forfettario/minimi (L. 190/2014)',
+    tenantId:             null,
+    rate:                 0,
+    vatNatureCode:        'N2.2',
+    normativeReference:   'L. 190/2014',
+    countryCode:          'IT',
+    applicableFor:        'SALES',
+    customerType:         'ANY',
+    isSplitPayment:       false,
+    deductibilityPercent: 0,
+    vatDeductible:        false,
+    isDefault:            false,
+    displayOrder:         12,
+  },
+
+  // ── NON IMPONIBILI ────────────────────────────────────────────────────────
+
+  {
+    code:                 'NI-EXPORT',
+    name:                 'Non imponibile — esportazione',
+    description:          "Cessioni all'esportazione fuori UE (art. 8 c.1 lett. a/b)",
+    tenantId:             null,
+    rate:                 0,
+    vatNatureCode:        'N3.1',
+    normativeReference:   'art. 8, c. 1 lett. a) e b) DPR 633/72',
+    countryCode:          'IT',
+    applicableFor:        'SALES',
+    customerType:         'FOREIGN',
+    isSplitPayment:       false,
+    deductibilityPercent: 100,
+    vatDeductible:        true,
+    isDefault:            false,
+    displayOrder:         20,
+    color:                '#6366F1',
+  },
+  {
+    code:                 'NI-INTRA',
+    name:                 'Non imponibile — cessione intracomunitaria',
+    description:          'Cessioni di beni verso soggetti passivi IVA UE (art. 41 DL 331/93)',
+    tenantId:             null,
+    rate:                 0,
+    vatNatureCode:        'N3.2',
+    normativeReference:   'art. 41 DL 331/93',
+    countryCode:          'IT',
+    applicableFor:        'SALES',
+    customerType:         'B2B',
+    isSplitPayment:       false,
+    deductibilityPercent: 100,
+    vatDeductible:        true,
+    isDefault:            false,
+    displayOrder:         21,
+    color:                '#6366F1',
+  },
+  {
+    code:                 'NI-INTENT',
+    name:                 "Non imponibile — dichiarazione d'intento",
+    description:          "Cessioni ad esportatori abituali con lettera d'intento valida",
+    tenantId:             null,
+    rate:                 0,
+    vatNatureCode:        'N3.5',
+    normativeReference:   'art. 8, c. 1 lett. c) DPR 633/72',
+    countryCode:          'IT',
+    applicableFor:        'SALES',
+    customerType:         'B2B',
+    isSplitPayment:       false,
+    deductibilityPercent: 100,
+    vatDeductible:        true,
+    isDefault:            false,
+    displayOrder:         22,
+  },
+
+  // ── REVERSE CHARGE ────────────────────────────────────────────────────────
+
+  {
+    code:                 'RC-N6.3',
+    name:                 'Reverse charge — subappalto edile',
+    description:          'Inversione contabile subappalto settore edile (art. 17 c.6 lett. a)',
+    tenantId:             null,
+    rate:                 0,
+    vatNatureCode:        'N6.3',
+    normativeReference:   'art. 17, c. 6 lett. a) DPR 633/72',
+    countryCode:          'IT',
+    applicableFor:        'BOTH',
+    customerType:         'B2B',
+    isSplitPayment:       false,
+    deductibilityPercent: 100,
+    vatDeductible:        true,
+    isDefault:            false,
+    displayOrder:         30,
+    color:                '#EF4444',
+  },
+  {
+    code:                 'RC-N6.7',
+    name:                 'Reverse charge — servizi edili',
+    description:          'Inversione contabile prestazioni comparto edile e settori connessi',
+    tenantId:             null,
+    rate:                 0,
+    vatNatureCode:        'N6.7',
+    normativeReference:   'art. 17, c. 6 lett. a-ter) DPR 633/72',
+    countryCode:          'IT',
+    applicableFor:        'BOTH',
+    customerType:         'B2B',
+    isSplitPayment:       false,
+    deductibilityPercent: 100,
+    vatDeductible:        true,
+    isDefault:            false,
+    displayOrder:         31,
+    color:                '#EF4444',
+  },
+  {
+    code:                 'RC-N6.9',
+    name:                 'Reverse charge — altri casi',
+    description:          'Inversione contabile altri casi ex art. 17 c.6 DPR 633/72',
+    tenantId:             null,
+    rate:                 0,
+    vatNatureCode:        'N6.9',
+    normativeReference:   'art. 17, c. 6 DPR 633/72',
+    countryCode:          'IT',
+    applicableFor:        'BOTH',
+    customerType:         'B2B',
+    isSplitPayment:       false,
+    deductibilityPercent: 100,
+    vatDeductible:        true,
+    isDefault:            false,
+    displayOrder:         32,
+    color:                '#EF4444',
+  },
+
+  // ── SPLIT PAYMENT (PA) ────────────────────────────────────────────────────
+
+  {
+    code:                 'IVA22-SPLIT',
+    name:                 'IVA 22% — Split Payment PA',
+    description:          'Scissione pagamenti per forniture alla Pubblica Amministrazione',
+    tenantId:             null,
+    rate:                 22,
+    countryCode:          'IT',
+    applicableFor:        'SALES',
+    customerType:         'PA',
+    isSplitPayment:       true,
+    deductibilityPercent: 100,
+    vatDeductible:        true,
+    isDefault:            false,
+    displayOrder:         40,
+    color:                '#F97316',
+  },
+
+  // ── PARZIALMENTE INDETRAIBILE ─────────────────────────────────────────────
+
+  {
+    code:                 'IVA22-40',
+    name:                 'IVA 22% — detraibilità 40%',
+    description:          "Acquisti con IVA parzialmente indetraibile al 40% (es. autovetture ad uso promiscuo)",
+    tenantId:             null,
+    rate:                 22,
+    countryCode:          'IT',
+    applicableFor:        'PURCHASES',
+    customerType:         'ANY',
+    isSplitPayment:       false,
+    deductibilityPercent: 40,
+    vatDeductible:        true,
+    isDefault:            false,
+    displayOrder:         50,
+  },
+  {
+    code:                 'IVA22-0',
+    name:                 'IVA 22% — totalmente indetraibile',
+    description:          "Acquisti con IVA totalmente indetraibile (es. intrattenimento, rappresentanza)",
+    tenantId:             null,
+    rate:                 22,
+    countryCode:          'IT',
+    applicableFor:        'PURCHASES',
+    customerType:         'ANY',
+    isSplitPayment:       false,
+    deductibilityPercent: 0,
+    vatDeductible:        false,
+    isDefault:            false,
+    displayOrder:         51,
+  },
+];
+
+// ============================================================================
+// SEED FUNCTIONS
+// ============================================================================
+
 async function seedVatNatures() {
-  console.log('🌱 Seeding VAT Natures...');
+  console.log('🌱 Seeding VatNatures...');
 
   for (const nature of vatNatures) {
     await prisma.vatNature.upsert({
-      where: { code: nature.code },
+      where:  { code: nature.code },
       update: nature,
-      create: nature
+      create: nature,
     });
   }
 
-  console.log(`✅ Seeded ${vatNatures.length} VAT Nature codes`);
+  console.log(`  ✅ ${vatNatures.length} VatNature upserted`);
 }
 
-seedVatNatures()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+async function seedTaxRules() {
+  console.log('📐 Seeding TaxRules globali...');
 
-export default seedVatNatures;
+  const vatNatureMap = new Map(
+    (await prisma.vatNature.findMany({ select: { id: true, code: true } }))
+      .map((v) => [v.code, v.id]),
+  );
+
+  let upserted = 0;
+
+  for (const rule of taxRules) {
+    const { vatNatureCode, ...fields } = rule;
+
+    const vatNatureId = vatNatureCode ? vatNatureMap.get(vatNatureCode) : undefined;
+    if (vatNatureCode && !vatNatureId) {
+      console.warn(`  ⚠️  VatNature "${vatNatureCode}" non trovata per TaxRule "${rule.code}" — skip`);
+      continue;
+    }
+
+    const data = {
+      ...fields,
+      ...(vatNatureId !== undefined && { vatNatureId }),
+    };
+
+    // Partial unique index (tenantId: null) non è accessibile via upsert where.
+    // Usiamo findFirst + create/update espliciti.
+    const existing = await prisma.taxRule.findFirst({
+      where: { code: rule.code, tenantId: null },
+      select: { id: true },
+    });
+
+    if (existing) {
+      await prisma.taxRule.update({ where: { id: existing.id }, data });
+    } else {
+      await prisma.taxRule.create({ data });
+    }
+
+    upserted++;
+  }
+
+  console.log(`  ✅ ${upserted} TaxRule globali upserted`);
+}
+
+// ============================================================================
+// MAIN
+// ============================================================================
+
+async function seedVatNaturesAndTaxRules() {
+  await seedVatNatures();
+  await seedTaxRules();
+}
+
+seedVatNaturesAndTaxRules()
+  .catch((e) => { console.error(e); process.exit(1); })
+  .finally(() => prisma.$disconnect());
+
+export { seedVatNatures, seedTaxRules, seedVatNaturesAndTaxRules as default };

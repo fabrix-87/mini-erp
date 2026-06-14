@@ -64,16 +64,16 @@ export const disconnectRedis = async (): Promise<void> => {
 
 export const sessionKeys = {
   // Session data: user info + metadata
-  session: (userId: number) => `session:${userId}`,
+  session: (userId: string) => `session:${userId}`,
   
   // Refresh token whitelist: userId -> tokenId mapping
-  refreshToken: (userId: number) => `refresh:${userId}`,
+  refreshToken: (userId: string) => `refresh:${userId}`,
   
   // JWT blacklist: jti -> expiration
   blacklist: (jti: string) => `blacklist:${jti}`,
   
   // User permissions cache: userId -> permissions[]
-  permissions: (userId: number) => `permissions:${userId}`,
+  permissions: (userId: string) => `permissions:${userId}`,
   
   // Rate limiting
   rateLimit: (identifier: string) => `rate:${identifier}`,

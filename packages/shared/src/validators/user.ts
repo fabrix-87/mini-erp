@@ -19,6 +19,8 @@ export const genderSchema = z.enum(["MALE", "FEMALE", "OTHER", "PREFER_NOT_TO_SA
 
 export const userSortFieldSchema = z.enum(["createdAt", "username", "email", "lastLogin"]);
 
+export const membershipStatusSchema = z.enum(["ACTIVE", "INVITED", "SUSPENDED"]);
+
 // ============================================================================
 // BASE SCHEMAS
 // ============================================================================
@@ -56,7 +58,7 @@ export const userBaseSchema = z.object({
 
 export const userDetailsSchema = z.object({
   firstName: z.string().max(100, "Nome troppo lungo"),
-  lastName: z.string().max(100, "Cognome troppo lungo").optional(),
+  lastName: z.string().max(100, "Cognome troppo lungo"),
   profilePicture: urlSchema().optional().nullable(),
   phone: phoneSchema.optional().nullable(),
 
@@ -65,8 +67,8 @@ export const userDetailsSchema = z.object({
   city: z.string().max(100, "Città troppo lungo").optional().nullable(),
   state: z.string().max(100, "Provincia troppo lungo").optional().nullable(),
   zipCode: z.string().max(20, "CAP troppo lungo").optional().nullable(),
-  // TODO: Modificare il campo country con CountryCode ed associarlo alla tabella Country
-  country: countryCodeBaseSchema.optional().nullable(),
+  
+  countryCode: countryCodeBaseSchema.optional().nullable(),
 
   // Personal
   dateOfBirth: dateStringSchema({
@@ -239,7 +241,7 @@ export const regenerateBackupCodesSchema = z.object({
  * Schema per la creazione di un nuovo utente
  */
 export const createUserSchema = userBaseSchema.extend({
-  details: userDetailsSchema.partial().required({ firstName: true }),
+  details: userDetailsSchema.partial().required({ firstName: true, lastName: true, countryCode: true }),
   roleIds: z.array(roleIdSchema).min(1, "Deve essere assegnato almeno un ruolo"),
 });
 
@@ -271,7 +273,7 @@ export const registerUserSchema = userBaseSchema
 /**
  * Schema per l'aggiornamento solo dei dettagli personali
  */
-export const updateUserDetailsSchema = userDetailsSchema.partial().required({ firstName: true });
+export const updateUserDetailsSchema = userDetailsSchema.partial().required({ firstName: true, lastName: true });
 
 /**
  * Schema per l'aggiornamento completo del profilo utente

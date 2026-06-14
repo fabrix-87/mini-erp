@@ -1,4 +1,4 @@
-import { genderSchema, userSortFieldSchema } from "../validators";
+import { genderSchema, membershipStatusSchema, userSortFieldSchema } from "../validators";
 import { z } from "zod";
 
 // ============================================================================
@@ -8,3 +8,5 @@ import { z } from "zod";
 export type Gender = z.infer<typeof genderSchema>;
 
 export type UserSortField = z.infer<typeof userSortFieldSchema>;
+
+export type UserMembershipStatus = z.infer<typeof membershipStatusSchema>;

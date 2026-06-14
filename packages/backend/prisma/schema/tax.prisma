@@ -142,7 +142,7 @@ model TaxRule {
   description String? @db.Text
 
   // NULL = global system rule; NOT NULL = tenant-private rule
-  tenantId String?    @map("tenant_id")
+  tenantId String? @map("tenant_id")
   tenant   Tenant? @relation("TenantOwnedTaxRules", fields: [tenantId], references: [id], onDelete: Cascade)
 
   // === VAT RATE ===
@@ -227,18 +227,19 @@ model TaxRule {
 /// Localized translations of TaxRule (name + description per active language).
 model TaxRuleTranslation {
   id        Int     @id @default(autoincrement())
-  taxRuleId Int
+  taxRuleId Int     @map("tax_rule_id")
   taxRule   TaxRule @relation(fields: [taxRuleId], references: [id], onDelete: Cascade)
 
-  languageId Int
+  languageId Int      @map("language_id")
   language   Language @relation(fields: [languageId], references: [id])
 
   name        String  @db.VarChar(255)
   description String? @db.Text
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([taxRuleId, languageId])
   @@index([languageId])
+  @@map("tax_rule_translations")
 }

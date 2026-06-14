@@ -9,6 +9,7 @@ import { AuthContextUser, AuthJwtPayload } from "./user-types";
  */
 export interface AppContextVariables {
   user?: AuthContextUser;
+  currentTenantId? : string;
   jwtPayload?: AuthJwtPayload;
   validatedBody?: unknown;
   validatedQuery?: unknown;

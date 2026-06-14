@@ -41,17 +41,19 @@ export interface AuthJwtPayload {
 // ============================================================================
 
 export interface SessionData {
-  userId: number;
+  userId: string;
   username: string;
   email: string;
-  roles: Array<{
-    id: number;
-    code: string;
-    name: string;
-  }>;
+  currentTenant: {
+    tenantId: string;
+    membershipId: string;
+    status: "ACTIVE" | "INVITED" | "SUSPENDED";
+    roles: Array<{ id: number; code: string; name: string }>;
+    permissions: string[];
+  };
   fingerprint?: string;
-  loginAt: Date;
-  lastActivity: Date;
+  loginAt: string; // ISO string — Date non è serializzabile in Redis JSON
+  lastActivity: string; // ISO string
   metadata?: {
     ip?: string;
     userAgent?: string;

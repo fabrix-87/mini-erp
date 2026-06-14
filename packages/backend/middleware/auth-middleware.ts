@@ -40,9 +40,9 @@ export const authenticateToken = createMiddleware<AppBindings>(async (c, next) =
   }
 
   // 2. Verifica firma JWT + exp
-  let decoded: any;
+  let decoded: UserPayload;
   try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       return sendAuthenticationError(c, "Token scaduto");
@@ -77,14 +77,18 @@ export const authenticateToken = createMiddleware<AppBindings>(async (c, next) =
     return sendAuthenticationError(c, "Sessione non valida o scaduta");
   }
 
-  // 7. Sliding session: aggiorna TTL se configurato
-  await refreshSessionTTL(decoded.userId);
+  // 7. Valida che il token abbia un tenant corrente (obbligatorio post multi-tenant)
+  if (!decoded.currentTenant?.tenantId) {
+    return sendAuthenticationError(c, "Tenant corrente non presente nel token");
+  }
 
-  // 8. Aggiorna lastActivity
+  // 8. Sliding session: aggiorna TTL + lastActivity
+  await refreshSessionTTL(decoded.userId);
   await updateSessionActivity(decoded.userId);
 
   // 9. Popola il context Hono
-  c.set("user", decoded as UserPayload);
+  c.set("user", decoded);
+  c.set("currentTenantId", decoded.currentTenant.tenantId);
   c.set("jwtPayload", {
     sub: String(decoded.userId),
     email: decoded.email,
@@ -134,7 +138,12 @@ export const authenticateTokenLightweight = createMiddleware<AppBindings>(async 
     return sendAuthenticationError(c, "Claims non validi");
   }
 
+  if (!decoded.currentTenant?.tenantId) {
+    return sendAuthenticationError(c, "Tenant corrente non presente nel token");
+  }
+
   c.set("user", decoded);
+  c.set("currentTenantId", decoded.currentTenant.tenantId);
   await next();
 });
 
@@ -194,8 +203,9 @@ export const requireRole = (requiredRoles: string[]) => {
       return sendAuthenticationError(c);
     }
 
-    const userRoleCodes = user.roles.map((role) => role.code);
-    const hasRole = requiredRoles.some((role) => userRoleCodes.includes(role));
+    // I ruoli sono scoped al tenant corrente, non globali
+    const currentTenantRoleCodes = user.currentTenant?.roles?.map((r) => r.code) ?? [];
+    const hasRole = requiredRoles.some((role) => currentTenantRoleCodes.includes(role));
 
     if (!hasRole) {
       return sendFail(c, {
@@ -228,17 +238,21 @@ export const requireSelfOrAdmin = (paramName: string = "id") => {
       return sendAuthenticationError(c);
     }
 
-    const resourceId = parseInt(c.req.param(paramName) ?? '', 10);
+    const resourceId = c.req.param(paramName);
 
     if (resourceId === user.userId) {
       return await next();
     }
 
-    const isAdmin = user.roles.some((role) => role.code === "ADMIN" || role.code === "user:manage");
+    // Verifica ruolo ADMIN nel tenant corrente
+    const isAdmin = user.currentTenant?.roles?.some(
+      (role) => role.code === "ADMIN" || role.code === "SUPERADMIN" || role.code === "user:manage",
+    );
 
     if (isAdmin) {
       return await next();
     }
+
     return sendFail(c, {
       statusCode: 403,
       message: "Puoi accedere solo alle tue risorse",
@@ -266,6 +280,9 @@ export const optionalAuth = createMiddleware<AppBindings>(async (c, next) => {
 
       if (decoded.iss === authConfig.jwt.issuer && decoded.aud === authConfig.jwt.audience) {
         c.set("user", decoded);
+        if (decoded.currentTenant?.tenantId) {
+          c.set("currentTenantId", decoded.currentTenant.tenantId);
+        }
       }
     } catch {
       // Silent fail — optional auth never blocks

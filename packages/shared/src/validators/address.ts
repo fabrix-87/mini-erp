@@ -61,7 +61,7 @@ export const createAddressSchema = z
       .max(180, "Longitudine deve essere tra -180 e 180")
       .optional()
       .nullable(),
-    phone: phoneSchema,
+    phone: phoneSchema.optional().nullable(),
     isPrimary: z.boolean().default(false),
     openingHours: inputJsonValueSchema.optional().nullable(),
     notes: z.string().max(500, "Note non possono superare 500 caratteri").optional().nullable(),

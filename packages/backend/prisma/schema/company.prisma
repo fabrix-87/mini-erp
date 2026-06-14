@@ -98,8 +98,9 @@ model Company {
     assignedUserId String?    @map("assigned_user_id")
     activities     Activity[] @relation("CompanyActivities")
 
-    tenantId String @map("tenant_id")
-    tenant   Tenant @relation("TenantCompanies", fields: [tenantId], references: [id], onDelete: Restrict)
+    // Tenant opzionale (per creazione company del nuovo tenant stesso)
+    tenantId String? @map("tenant_id")
+    tenant   Tenant? @relation("TenantCompanies", fields: [tenantId], references: [id], onDelete: SetNull)
 
     // Indirizzi
     addresses CompanyAddress[] @relation("CompanyAddresses")

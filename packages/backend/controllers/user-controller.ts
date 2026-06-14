@@ -13,7 +13,6 @@ import { UserPayload } from "../types/user-types";
 
 import {
   clearTokenCookies,
-  formatUserRoles,
   generateResetToken,
   generateTokenPair,
   getUserSelection,
@@ -26,7 +25,9 @@ import {
   invalidateUserPermissionsCache,
   destroyAllUserSessions,
   calculateLockUntil,
+  mapUserResponse,
 } from "../helpers/user-helper";
+
 import authConfig from "../config/auth-config";
 import { sendDeleted, sendPaginatedResponse, sendSuccess } from "../utils/response-utils";
 import {
@@ -54,6 +55,12 @@ import {
 } from "@/helpers/validated-context";
 import { getCookie } from "hono/cookie";
 import logger from "@/config/logger-config";
+import {
+  getPermissionsFromMembership,
+  getRolesFromMembership,
+  pickCurrentMembership,
+} from "@/helpers/user-membership-helper";
+import { Prisma } from "@/generated/prisma/client";
 
 // ============================================================================
 // PUBLIC ROUTES - Authentication
@@ -84,24 +91,12 @@ export const register = async (c: Context<AppBindings>) => {
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  // Trova ruolo default
-  const defaultRole = await prisma.role.findFirst({
-    where: { isDefault: true },
-  });
-
-  if (!defaultRole) {
-    throw new BadRequestError("Nessun ruolo di default configurato");
-  }
-
   // Crea utente con dettagli e ruolo
   const newUser = await prisma.user.create({
     data: {
       username,
       email,
       password: hashedPassword,
-      roles: {
-        connect: { id: defaultRole.id },
-      },
       details: {
         create: {
           firstName: details.firstName || "",
@@ -114,15 +109,13 @@ export const register = async (c: Context<AppBindings>) => {
 
   // TODO: Invia email di verifica
 
-  const formattedRoles = formatUserRoles(newUser.roles);
-
   return sendSuccess(
     c,
     {
       id: newUser.id,
       username: newUser.username,
       email: newUser.email,
-      roles: formattedRoles,
+      memberships: newUser.memberships,
       details: newUser.details,
     },
     {
@@ -142,20 +135,54 @@ export const login = async (c: Context<AppBindings>) => {
   // Trova utente con ruoli e dettagli
   const user = await prisma.user.findUnique({
     where: { email },
-    include: {
-      details: true,
-      roles: {
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      password: true,
+      active: true,
+      lockedUntil: true,
+      failedLoginAttempts: true,
+      preferredLanguageId: true,
+      details: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      memberships: {
+        where: { status: "ACTIVE" },
         select: {
           id: true,
-          code: true,
-          name: true,
-          permissions: {
+          tenantId: true,
+          status: true,
+          isDefault: true,
+          tenant: {
             select: {
-              permission: {
+              code: true,
+              company: {
+                select: {
+                  companyName: true,
+                },
+              },
+            },
+          },
+          roles: {
+            select: {
+              role: {
                 select: {
                   id: true,
                   code: true,
-                  description: true,
+                  name: true,
+                  permissions: {
+                    select: {
+                      permission: {
+                        select: {
+                          code: true,
+                        },
+                      },
+                    },
+                  },
                 },
               },
             },
@@ -182,6 +209,10 @@ export const login = async (c: Context<AppBindings>) => {
     throw new UnauthorizedError("Account disabilitato");
   }
 
+  if (!user.memberships.length) {
+    throw new UnauthorizedError("Nessun tenant attivo associato all'utente");
+  }
+
   // Verifica password
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
@@ -206,21 +237,20 @@ export const login = async (c: Context<AppBindings>) => {
     throw new UnauthorizedError("Credenziali non valide");
   }
 
-  // Login riuscito: reset tentativi falliti
+  // Login riuscito: reset tentativi falliti ed aggiorna lastLogin
   await prisma.user.update({
     where: { id: user.id },
     data: {
       failedLoginAttempts: 0,
       lockedUntil: null,
+      lastLogin: new Date(),
     },
   });
 
-  // Aggiorna lastLogin
-  if (user.details) {
-    await prisma.userDetails.update({
-      where: { userId: user.id },
-      data: { lastLogin: new Date() },
-    });
+  const currentMembership = pickCurrentMembership(user.memberships);
+
+  if (!currentMembership) {
+    throw new UnauthorizedError("Nessun tenant attivo disponibile");
   }
 
   // 1. Genera fingerprint dal browser o da Next.js header
@@ -232,7 +262,24 @@ export const login = async (c: Context<AppBindings>) => {
     email: user.email,
     username: user.username,
     preferredLanguageId: user.preferredLanguageId,
-    roles: formatUserRoles(user.roles),
+    firstName: user.details?.firstName || "",
+    lastName: user.details?.lastName || "",
+
+    currentTenant: {
+      tenantId: currentMembership.tenantId,
+      membershipId: currentMembership.id,
+      status: currentMembership.status,
+      roles: getRolesFromMembership(currentMembership),
+      permissions: getPermissionsFromMembership(currentMembership),
+    },
+
+    availableTenants: user.memberships.map((membership) => ({
+      tenantId: membership.tenantId,
+      name: membership.tenant.company.companyName,
+      code: membership.tenant.code,
+      isDefault: membership.isDefault,
+      status: membership.status,
+    })),
   };
 
   const tokens = generateTokenPair(userPayload, fingerprint);
@@ -244,10 +291,20 @@ export const login = async (c: Context<AppBindings>) => {
       userId: user.id,
       username: user.username,
       email: user.email,
-      roles: formatUserRoles(user.roles),
+      currentTenant: {
+        tenantId: currentMembership.tenantId,
+        membershipId: currentMembership.id,
+        status: currentMembership.status,
+        roles: getRolesFromMembership(currentMembership),
+        permissions: getPermissionsFromMembership(currentMembership),
+      },
       fingerprint,
-      loginAt: new Date(),
-      lastActivity: new Date(),
+      loginAt: new Date().toISOString(),
+      lastActivity: new Date().toISOString(),
+      metadata: {
+        ip: c.req.header("x-forwarded-for"),
+        userAgent: c.req.header("user-agent"),
+      },
     },
     tokens.refreshTokenId!,
   );
@@ -258,14 +315,7 @@ export const login = async (c: Context<AppBindings>) => {
   return sendSuccess(
     c,
     {
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        roles: formatUserRoles(user.roles),
-        preferredLanguageId: user.preferredLanguageId,
-        details: user.details,
-      },
+      user: userPayload,
       // Opzionale: ritorna exp per frontend
       expiresIn: authConfig.jwt.expiresInMs,
       accessToken: tokens.accessToken,
@@ -373,40 +423,40 @@ export const refreshToken = async (c: Context<AppBindings>) => {
   // 3. Trova utente
   const user = await prisma.user.findUnique({
     where: { id: decoded.userId },
-    include: {
-      details: true,
-      roles: {
-        select: {
-          id: true,
-          code: true,
-          name: true,
-          permissions: {
-            select: {
-              permission: {
-                select: {
-                  id: true,
-                  code: true,
-                  description: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
+    select: getUserSelection(),
   });
 
   if (!user || !user.active) {
-    throw new UnauthorizedError("Utente non valido");
+    throw new UnauthorizedError("Utente non valido o disabilitato");
   }
 
-  // 5. Genera NUOVA coppia di token
+  const currentMembership = pickCurrentMembership(user.memberships);
+
+  if (!currentMembership) {
+    throw new UnauthorizedError("Nessun tenant attivo disponibile");
+  }
+
   const userPayload: UserPayload = {
     userId: user.id,
     email: user.email,
     username: user.username,
     preferredLanguageId: user.preferredLanguageId,
-    roles: formatUserRoles(user.roles),
+    firstName: user.details?.firstName || "",
+    lastName: user.details?.lastName || "",
+    currentTenant: {
+      tenantId: currentMembership.tenantId,
+      membershipId: currentMembership.id,
+      status: currentMembership.status,
+      roles: getRolesFromMembership(currentMembership),
+      permissions: getPermissionsFromMembership(currentMembership),
+    },
+    availableTenants: user.memberships.map((membership) => ({
+      tenantId: membership.tenantId,
+      name: membership.tenant.company.companyName,
+      code: membership.tenant.code,
+      isDefault: membership.isDefault,
+      status: membership.status,
+    })),
   };
 
   const newTokens = generateTokenPair(userPayload, tokenFingerprint || currentFingerprint);
@@ -425,10 +475,20 @@ export const refreshToken = async (c: Context<AppBindings>) => {
       userId: user.id,
       username: user.username,
       email: user.email,
-      roles: formatUserRoles(user.roles),
+      currentTenant: {
+        tenantId: currentMembership.tenantId,
+        membershipId: currentMembership.id,
+        status: currentMembership.status,
+        roles: getRolesFromMembership(currentMembership),
+        permissions: getPermissionsFromMembership(currentMembership),
+      },
       fingerprint: tokenFingerprint || currentFingerprint,
-      loginAt: new Date(),
-      lastActivity: new Date(),
+      loginAt: new Date().toISOString(),
+      lastActivity: new Date().toISOString(),
+      metadata: {
+        ip: c.req.header("x-forwarded-for"),
+        userAgent: c.req.header("user-agent"),
+      },
     },
     newTokens.refreshTokenId!,
   );
@@ -443,8 +503,14 @@ export const refreshToken = async (c: Context<AppBindings>) => {
         id: user.id,
         username: user.username,
         email: user.email,
-        roles: formatUserRoles(user.roles),
         details: user.details,
+        currentTenant: {
+          tenantId: currentMembership.tenantId,
+          membershipId: currentMembership.id,
+          status: currentMembership.status,
+          roles: getRolesFromMembership(currentMembership),
+          permissions: getPermissionsFromMembership(currentMembership),
+        },
       },
       expiresIn: authConfig.jwt.expiresInMs,
       accessToken: newTokens.accessToken,
@@ -626,19 +692,14 @@ export const getMe = async (c: Context<AppBindings>) => {
     throw new NotFoundError("ID utente non trovato");
   }
 
-  // Chiave cache per l'utente
   const cacheKey = `user:profile:${userId}`;
-
-  // Tenta di recuperare dalla cache
   const cached = await redisClient.get(cacheKey);
 
   if (cached) {
     const userData = JSON.parse(cached);
     return sendSuccess(c, userData);
-    return;
   }
 
-  // Se non in cache, recupera dal database
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: getUserSelection(),
@@ -648,12 +709,8 @@ export const getMe = async (c: Context<AppBindings>) => {
     throw new NotFoundError("Utente non trovato");
   }
 
-  const userData = {
-    ...user,
-    roles: formatUserRoles(user.roles),
-  };
+  const userData = mapUserResponse(user);
 
-  // Salva in cache (TTL: 1 ora = 3600 secondi)
   await redisClient.setEx(cacheKey, 3600, JSON.stringify(userData));
 
   return sendSuccess(c, userData);
@@ -665,23 +722,22 @@ export const getMe = async (c: Context<AppBindings>) => {
  * @access  Private
  */
 export const updateProfile = async (c: Context<AppBindings>) => {
-  // Usa validatedBody (dati già validati)
   const { username, email, preferredLanguageId, details } =
     getValidatedBody<UpdateUserProfileInput>(c);
 
-  // Prendi userId dall'utente autenticato o dai params (admin)
   const { id: userId } = getValidatedParams<UserIdParam>(c);
 
-  // Prepara dati da aggiornare per User
-  const userDataToUpdate: any = {};
+  const userDataToUpdate: Record<string, unknown> = {};
 
   if (username !== undefined) {
     const usernameExists = await prisma.user.findFirst({
       where: { username, id: { not: userId } },
     });
+
     if (usernameExists) {
       throw new ConflictError("Username già in uso");
     }
+
     userDataToUpdate.username = username;
   }
 
@@ -689,9 +745,11 @@ export const updateProfile = async (c: Context<AppBindings>) => {
     const emailExists = await prisma.user.findFirst({
       where: { email, id: { not: userId } },
     });
+
     if (emailExists) {
       throw new ConflictError("Email già in uso");
     }
+
     userDataToUpdate.email = email;
   }
 
@@ -699,7 +757,6 @@ export const updateProfile = async (c: Context<AppBindings>) => {
     userDataToUpdate.preferredLanguageId = preferredLanguageId;
   }
 
-  // Aggiorna User
   if (Object.keys(userDataToUpdate).length > 0) {
     await prisma.user.update({
       where: { id: userId },
@@ -707,11 +764,6 @@ export const updateProfile = async (c: Context<AppBindings>) => {
     });
   }
 
-  // INVALIDA CACHE dopo l'aggiornamento
-  const cacheKey = `user:profile:${userId}`;
-  await redisClient.del(cacheKey);
-
-  // Aggiorna Details se forniti
   if (details && Object.keys(details).length > 0) {
     await prisma.userDetails.upsert({
       where: { userId },
@@ -723,18 +775,20 @@ export const updateProfile = async (c: Context<AppBindings>) => {
     });
   }
 
-  // Ricarica dati completi
+  const cacheKey = `user:profile:${userId}`;
+  await redisClient.del(cacheKey);
+
   const updatedUser = await prisma.user.findUnique({
     where: { id: userId },
     select: getUserSelection(),
   });
 
-  const userData = {
-    ...updatedUser,
-    roles: formatUserRoles(updatedUser!.roles),
-  };
+  if (!updatedUser) {
+    throw new NotFoundError("Utente non trovato");
+  }
 
-  // Ri-popola la cache con i nuovi dati
+  const userData = mapUserResponse(updatedUser);
+
   await redisClient.setEx(cacheKey, 3600, JSON.stringify(userData));
 
   return sendSuccess(c, userData, {
@@ -749,11 +803,8 @@ export const updateProfile = async (c: Context<AppBindings>) => {
  */
 export const updateDetails = async (c: Context<AppBindings>) => {
   const updateData = getValidatedBody<UpdateUserDetailsInput>(c);
-
-  // Prendi userId dall'utente autenticato o dai params (admin)
   const { id: userId } = getValidatedParams<UserIdParam>(c);
 
-  // Upsert dettagli
   await prisma.userDetails.upsert({
     where: { userId },
     update: updateData,
@@ -763,22 +814,20 @@ export const updateDetails = async (c: Context<AppBindings>) => {
     },
   });
 
-  // INVALIDA CACHE dopo l'aggiornamento
   const cacheKey = `user:profile:${userId}`;
   await redisClient.del(cacheKey);
 
-  // Ricarica dati completi
   const updatedUser = await prisma.user.findUnique({
     where: { id: userId },
     select: getUserSelection(),
   });
 
-  const userData = {
-    ...updatedUser,
-    roles: formatUserRoles(updatedUser!.roles),
-  };
+  if (!updatedUser) {
+    throw new NotFoundError("Utente non trovato");
+  }
 
-  // Ri-popola la cache con i nuovi dati
+  const userData = mapUserResponse(updatedUser);
+
   await redisClient.setEx(cacheKey, 3600, JSON.stringify(userData));
 
   return sendSuccess(c, userData, {
@@ -845,7 +894,6 @@ export const changePassword = async (c: Context<AppBindings>) => {
  * @access  Private/Admin
  */
 export const getAllUsers = async (c: Context<AppBindings>) => {
-  // Query params già validati
   const {
     page = 1,
     limit = 10,
@@ -856,16 +904,25 @@ export const getAllUsers = async (c: Context<AppBindings>) => {
     sortOrder = "desc",
   } = getValidatedQuery<UserQueryInput>(c);
 
-  const skip = (Number(page) - 1) * Number(limit);
-  const take = Number(limit);
+  const pageNumber = Number(page);
+  const limitNumber = Number(limit);
+  const skip = (pageNumber - 1) * limitNumber;
+  const take = limitNumber;
+  const tenantId = c.get("currentTenantId");
 
-  // Costruisci filtri dinamici
-  const where: any = {};
+  const where: Prisma.UserWhereInput = {
+    memberships: {
+      some: {
+        tenantId,
+        status: "ACTIVE",
+      },
+    },
+  };
 
   if (search) {
     where.OR = [
-      { username: { contains: search as string, mode: "insensitive" } },
-      { email: { contains: search as string, mode: "insensitive" } },
+      { username: { contains: String(search), mode: "insensitive" } },
+      { email: { contains: String(search), mode: "insensitive" } },
     ];
   }
 
@@ -874,12 +931,19 @@ export const getAllUsers = async (c: Context<AppBindings>) => {
   }
 
   if (roleId) {
-    where.roles = {
-      some: { id: Number(roleId) },
+    where.memberships = {
+      some: {
+        status: "ACTIVE",
+        tenantId,
+        roles: {
+          some: {
+            roleId: Number(roleId),
+          },
+        },
+      },
     };
   }
 
-  // Query con paginazione
   const [users, total] = await Promise.all([
     prisma.user.findMany({
       where,
@@ -891,13 +955,9 @@ export const getAllUsers = async (c: Context<AppBindings>) => {
     prisma.user.count({ where }),
   ]);
 
-  // Formatta risultati
-  const usersFormatted = users.map((user) => ({
-    ...user,
-    roles: formatUserRoles(user.roles),
-  }));
+  const usersFormatted = users.map((user) => mapUserResponse(user, tenantId));
 
-  return sendPaginatedResponse(c, usersFormatted, total, page, limit);
+  return sendPaginatedResponse(c, usersFormatted, total, pageNumber, limitNumber);
 };
 
 /**
@@ -917,10 +977,7 @@ export const getUserById = async (c: Context<AppBindings>) => {
     throw new NotFoundError("Utente non trovato");
   }
 
-  return sendSuccess(c, {
-    ...user,
-    roles: formatUserRoles(user.roles),
-  });
+  return sendSuccess(c, mapUserResponse(user));
 };
 
 /**
@@ -929,10 +986,9 @@ export const getUserById = async (c: Context<AppBindings>) => {
  * @access  Private/Admin
  */
 export const createUser = async (c: Context<AppBindings>) => {
-  const { username, email, password, roleIds, details, preferredLanguageId } =
+  const { username, email, password, details, preferredLanguageId } =
     getValidatedBody<CreateUserInput>(c);
 
-  // Verifica esistenza username/email
   const existingUser = await prisma.user.findFirst({
     where: {
       OR: [{ username }, { email }],
@@ -946,19 +1002,14 @@ export const createUser = async (c: Context<AppBindings>) => {
     throw new ConflictError("Email già in uso");
   }
 
-  // Hash password
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  // Crea utente
   const newUser = await prisma.user.create({
     data: {
       username,
       email,
       password: hashedPassword,
       preferredLanguageId,
-      roles: {
-        connect: roleIds.map((id: number) => ({ id })),
-      },
       details: details
         ? {
             create: details,
@@ -968,16 +1019,9 @@ export const createUser = async (c: Context<AppBindings>) => {
     select: getUserSelection(),
   });
 
-  return sendSuccess(
-    c,
-    {
-      ...newUser,
-      roles: formatUserRoles(newUser.roles),
-    },
-    {
-      message: "Utente creato con successo",
-    },
-  );
+  return sendSuccess(c, mapUserResponse(newUser), {
+    message: "Utente creato con successo",
+  });
 };
 
 /**
@@ -987,9 +1031,7 @@ export const createUser = async (c: Context<AppBindings>) => {
  */
 export const updateRole = async (c: Context<AppBindings>) => {
   const { id: userId } = getValidatedParams<UserIdParam>(c);
-  const { roleIds } = getValidatedBody<UpdateUserRolesInput>(c);
 
-  // Verifica esistenza utente
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });
@@ -998,34 +1040,12 @@ export const updateRole = async (c: Context<AppBindings>) => {
     throw new NotFoundError("Utente non trovato");
   }
 
-  // Non permettere di modificare i propri ruoli
   if (userId === c.get("user")!.userId) {
     throw new BadRequestError("Non puoi modificare i tuoi ruoli");
   }
 
-  // Aggiorna ruoli
-  const updatedUser = await prisma.user.update({
-    where: { id: userId },
-    data: {
-      roles: {
-        set: roleIds.map((roleId: number) => ({ id: roleId })),
-      },
-    },
-    select: getUserSelection(),
-  });
-
-  // Invalida cache permessi dopo modifica ruoli
-  await invalidateUserPermissionsCache(userId);
-
-  return sendSuccess(
-    c,
-    {
-      ...updatedUser,
-      roles: formatUserRoles(updatedUser.roles),
-    },
-    {
-      message: "Ruoli aggiornati con successo",
-    },
+  throw new BadRequestError(
+    "I ruoli devono essere aggiornati a livello di membership tenant. Usa un endpoint dedicato con membershipId o tenantId.",
   );
 };
 

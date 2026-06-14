@@ -11,6 +11,8 @@ import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../config/prisma-config";
 import type { AppBindings } from "../lib/hono-app";
 import { Prisma } from "@/generated/prisma/client";
+import { UserMembershipStatus } from "@mini-erp/shared";
+import { getPermissionsFromMembership, getRolesFromMembership } from "./user-membership-helper";
 
 // ============================================================================
 // USER SELECTION
@@ -19,34 +21,57 @@ import { Prisma } from "@/generated/prisma/client";
 /**
  * Returns the standard Prisma user selection with roles and permissions.
  */
-export const getUserSelection = () => ({
-  id: true,
-  username: true,
-  email: true,
-  active: true,
-  roles: {
-    select: {
-      id: true,
-      code: true,
-      name: true,
-      permissions: {
-        select: {
-          permission: {
-            select: {
-              id: true,
-              code: true,
-              description: true,
+export const getUserSelection = () =>
+  ({
+    id: true,
+    username: true,
+    email: true,
+    active: true,
+    preferredLanguageId: true,
+    details: {
+      select: {
+        firstName: true,
+        lastName: true,
+      },
+    },
+    memberships: {
+      where: { status: "ACTIVE" },
+      select: {
+        id: true,
+        tenantId: true,
+        status: true,
+        isDefault: true,
+        tenant: {
+          select: {
+            code: true,
+            company: {
+              select: {
+                companyName: true,
+              },
+            },
+          },
+        },
+        roles: {
+          select: {
+            role: {
+              select: {
+                id: true,
+                code: true,
+                name: true,
+                permissions: {
+                  select: {
+                    permission: { select: { code: true } },
+                  },
+                },
+              },
             },
           },
         },
       },
     },
-  },
-  details: true,
-  preferredLanguageId: true,
-  createdAt: true,
-  updatedAt: true,
-}) satisfies Prisma.UserSelect;
+    createdAt: true,
+    updatedAt: true,
+  }) satisfies Prisma.UserSelect;
 
 // ============================================================================
 // FINGERPRINTING
@@ -140,7 +165,7 @@ export const generateTokenPair = (user: UserPayload, fingerprint: string): Token
  * Saves the user session and refresh token to Redis atomically.
  */
 export const saveSession = async (
-  userId: number,
+  userId: string,
   sessionData: SessionData,
   refreshTokenId: string,
 ): Promise<void> => {
@@ -170,17 +195,12 @@ export const saveSession = async (
 /**
  * Retrieves a user session from Redis.
  */
-export const getSession = async (userId: number): Promise<SessionData | null> => {
+export const getSession = async (userId: string): Promise<SessionData | null> => {
   try {
     const data = await redisClient.get(sessionKeys.session(userId));
     if (!data) return null;
 
-    const session = JSON.parse(data) as SessionData;
-    // Converti stringhe in Date
-    session.loginAt = new Date(session.loginAt);
-    session.lastActivity = new Date(session.lastActivity);
-
-    return session;
+    return JSON.parse(data) as SessionData;
   } catch (error) {
     return null;
   }
@@ -189,7 +209,7 @@ export const getSession = async (userId: number): Promise<SessionData | null> =>
 /**
  * Extends session and refresh token TTL (sliding session).
  */
-export const refreshSessionTTL = async (userId: number): Promise<void> => {
+export const refreshSessionTTL = async (userId: string): Promise<void> => {
   if (!authConfig.session.sliding) return;
 
   const multi = redisClient.multi();
@@ -202,11 +222,11 @@ export const refreshSessionTTL = async (userId: number): Promise<void> => {
 /**
  * Updates the lastActivity timestamp in the session.
  */
-export const updateSessionActivity = async (userId: number): Promise<void> => {
+export const updateSessionActivity = async (userId: string): Promise<void> => {
   const session = await getSession(userId);
   if (!session) return;
 
-  session.lastActivity = new Date();
+  session.lastActivity = new Date().toISOString();
 
   await redisClient.set(sessionKeys.session(userId), JSON.stringify(session), {
     EX: RedisTTL.SESSION,
@@ -222,7 +242,7 @@ export const updateSessionActivity = async (userId: number): Promise<void> => {
  * Checks whether the given refresh token ID is still valid in Redis.
  */
 export const isRefreshTokenValid = async (
-  userId: number,
+  userId: string,
   refreshTokenId: string,
 ): Promise<boolean> => {
   try {
@@ -241,7 +261,7 @@ export const isRefreshTokenValid = async (
 /**
  * Retrieves the current refresh token ID for the user from Redis.
  */
-export const getRefreshTokenId = async (userId: number): Promise<string | null> => {
+export const getRefreshTokenId = async (userId: string): Promise<string | null> => {
   try {
     if (authConfig.security.singleRefreshToken) {
       return await redisClient.get(sessionKeys.refreshToken(userId));
@@ -258,7 +278,7 @@ export const getRefreshTokenId = async (userId: number): Promise<string | null> 
  * Rotates the refresh token by replacing the old ID with a new one.
  */
 export const rotateRefreshToken = async (
-  userId: number,
+  userId: string,
   oldRefreshTokenId: string,
   newRefreshTokenId: string,
 ): Promise<void> => {
@@ -307,7 +327,7 @@ export const isTokenBlacklisted = async (jti: string): Promise<boolean> => {
 /**
  * Destroys the full user session and blacklists the current access token.
  */
-export const destroySession = async (userId: number, jti: string, ttl: number): Promise<void> => {
+export const destroySession = async (userId: string, jti: string, ttl: number): Promise<void> => {
   const multi = redisClient.multi();
 
   // 1. Rimuovi sessione
@@ -330,7 +350,7 @@ export const destroySession = async (userId: number, jti: string, ttl: number): 
 /**
  * Destroys all active sessions for a user (e.g. after password reset).
  */
-export const destroyAllUserSessions = async (userId: number): Promise<void> => {
+export const destroyAllUserSessions = async (userId: string): Promise<void> => {
   const multi = redisClient.multi();
 
   multi.del(sessionKeys.session(userId));
@@ -347,24 +367,20 @@ export const destroyAllUserSessions = async (userId: number): Promise<void> => {
 /**
  * Returns the user's permission codes from Redis cache or database.
  */
-export const getUserPermissions = async (userId: number): Promise<string[]> => {
-  // 1. Prova a recuperare da cache
+export const getUserPermissions = async (userId: string): Promise<string[]> => {
   const cached = await redisClient.get(sessionKeys.permissions(userId));
+  if (cached) return JSON.parse(cached) as string[];
 
-  if (cached) {
-    return JSON.parse(cached) as string[];
-  }
-
-  // 2. Se non in cache, recupera dal DB
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
-      roles: {
+      memberships: {
+        where: { status: "ACTIVE" },
         select: {
-          permissions: {
+          roles: {
             select: {
-              permission: {
-                select: { code: true },
+              role: {
+                select: { permissions: { select: { permission: { select: { code: true } } } } },
               },
             },
           },
@@ -373,34 +389,28 @@ export const getUserPermissions = async (userId: number): Promise<string[]> => {
     },
   });
 
-  if (!user) {
-    return [];
+  if (!user) return [];
+
+  const permissions = new Set<string>();
+  for (const membership of user.memberships) {
+    for (const mr of membership.roles) {
+      for (const rp of mr.role.permissions) {
+        if (rp.permission?.code) permissions.add(rp.permission.code);
+      }
+    }
   }
 
-  // 3. Appiattisci la struttura
-  const permissions = new Set<string>();
-  user.roles.forEach((role) => {
-    role.permissions.forEach((rp) => {
-      if (rp.permission?.code) {
-        permissions.add(rp.permission.code);
-      }
-    });
-  });
-
   const permissionArray = Array.from(permissions);
-
-  // 4. Salva in cache con TTL
   await redisClient.set(sessionKeys.permissions(userId), JSON.stringify(permissionArray), {
     EX: RedisTTL.PERMISSIONS,
   });
-
   return permissionArray;
 };
 
 /**
  * Invalidates the cached permissions for a user (call after role changes).
  */
-export const invalidateUserPermissionsCache = async (userId: number): Promise<void> => {
+export const invalidateUserPermissionsCache = async (userId: string): Promise<void> => {
   await redisClient.del(sessionKeys.permissions(userId));
 };
 
@@ -408,7 +418,7 @@ export const invalidateUserPermissionsCache = async (userId: number): Promise<vo
  * Returns true if the user has at least one of the required permissions.
  */
 export const hasPermission = async (
-  userId: number,
+  userId: string,
   requiredPermissions: string[],
 ): Promise<boolean> => {
   const userPermissions = await getUserPermissions(userId);
@@ -448,7 +458,7 @@ export const clearTokenCookies = (c: Context<AppBindings>): void => {
   const cookieBase = {
     httpOnly: true,
     secure: authConfig.isProduction,
-    sameSite: "strict" as const,
+    sameSite: (authConfig.isProduction ? "strict" : "lax") as "strict" | "lax",
     path: "/",
     maxAge: 0,
   };
@@ -461,36 +471,84 @@ export const clearTokenCookies = (c: Context<AppBindings>): void => {
 // UTILITY FUNCTIONS
 // ============================================================================
 
-type RoleWithPermissions = {
-  id: number;
-  code: string;
-  name: string;
-  permissions: {
-    permission: {
-      id: number;
-      code: string;
-      description: string | null;
-    };
-  }[];
-};
+export const mapUserResponse = <
+  T extends {
+    id: string;
+    username: string;
+    email: string;
+    active: boolean;
+    preferredLanguageId: number | null;
+    details: unknown;
+    createdAt: Date;
+    updatedAt: Date;
+    memberships: Array<{
+      id: string;
+      tenantId: string;
+      status: UserMembershipStatus;
+      isDefault: boolean;
+      tenant: {
+        code: string;
+        company: {
+          companyName: string;
+        };
+      };
+      roles: Array<{
+        role: {
+          id: number;
+          code: string;
+          name: string;
+          permissions: Array<{
+            permission: { code: string };
+          }>;
+        };
+      }>;
+    }>;
+  },
+>(
+  user: T,
+  currentTenantId?: string,
+) => {
+  const currentMembership =
+    (currentTenantId
+      ? user.memberships.find((membership) => membership.tenantId === currentTenantId)
+      : undefined) ??
+    user.memberships.find((membership) => membership.isDefault) ??
+    user.memberships.find((membership) => membership.status === "ACTIVE") ??
+    null;
 
-type RoleDTO = {
-  id: number;
-  code: string;
-  name: string;
-  permissions: string[];
-};
+  return {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    active: user.active,
+    preferredLanguageId: user.preferredLanguageId,
+    details: user.details,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
 
-/**
- * Formats role objects into flat DTOs with permission code arrays.
- */
-export const formatUserRoles = (roles: RoleWithPermissions[]): RoleDTO[] => {
-  return roles.map((role) => ({
-    id: role.id,
-    code: role.code,
-    name: role.name,
-    permissions: role.permissions.map((rp) => rp.permission.code),
-  }));
+    currentTenant: currentMembership
+      ? {
+          tenantId: currentMembership.tenantId,
+          membershipId: currentMembership.id,
+          name: currentMembership.tenant.company.companyName,
+          code: currentMembership.tenant.code,
+          isDefault: currentMembership.isDefault,
+          status: currentMembership.status,
+          roles: getRolesFromMembership(currentMembership),
+          permissions: getPermissionsFromMembership(currentMembership),
+        }
+      : null,
+
+    availableTenants: user.memberships.map((membership) => ({
+      tenantId: membership.tenantId,
+      membershipId: membership.id,
+      name: membership.tenant.company.companyName,
+      code: membership.tenant.code,
+      isDefault: membership.isDefault,
+      status: membership.status,
+      roles: getRolesFromMembership(membership),
+    })),
+  };
 };
 
 /**
