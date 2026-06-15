@@ -11,8 +11,12 @@ enum DocumentType {
     INVOICE // Tax invoice
     CREDIT_NOTE // Credit note reversing a prior invoice
     DEBIT_NOTE // Debit note (supplementary charge)
-    SUPPLIER_ORDER // Purchase order sent to a supplier
     ARCHIVED // Archived or unclassified document
+    SUPPLIER_ORDER // Purchase order sent to a supplier
+    SUPPLIER_INVOICE
+    SUPPLIER_CREDIT_NOTE
+    SUPPLIER_DELIVERY_NOTE
+    SELF_INVOICE
 }
 
 /// Lifecycle status of a document across drafting, fulfillment, payment, and closure phases.
@@ -73,6 +77,12 @@ enum DocumentLineType {
     PAGE_BREAK // Layout page break (print/PDF only)
 }
 
+/// Rendering role of a document direction, driving fiscal and layout behavior.
+enum DocumentDirection {
+    OUTBOUND // Emitted by the tenant (cyclical active phase)
+    INBOUND // Received from third parties (cyclical passive phase)
+}
+
 /// Commercial document record covering the full B2B/B2C document lifecycle:
 /// quotes, orders, DDT, invoices, credit/debit notes, and supplier orders.
 /// Customer and counterparty data are snapshotted at creation for fiscal immutability.
@@ -84,6 +94,8 @@ model Document {
     documentType DocumentType   @map("document_type")
     /// Current lifecycle status. Every transition is recorded in DocumentStatusHistory.
     status       DocumentStatus @default(DRAFT)
+
+    direction DocumentDirection @default(OUTBOUND)
 
     // === NUMBERING ===
 
@@ -269,7 +281,7 @@ model Document {
     @@index([status])
     @@index([tenantId])
     @@index([tenantId, documentType])
-    @@index([tenantId, status])
+    @@index([tenantId, direction, status])
     @@index([customerId])
     @@index([supplierId])
     @@index([opportunityId])

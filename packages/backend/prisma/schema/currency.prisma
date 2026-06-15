@@ -42,7 +42,7 @@ model Currency {
   priceLists    PriceList[]         @relation("PriceListCurrency")
   virtualStocks VirtualStock[]      @relation("VirtualStockCurrency")
   tenants       Tenant[]            @relation("TenantCurrency")
-  bankAccounts  TenantBankAccount[] @relation("BankAccountCurrency")
+  bankAccounts  BankAccount[] @relation("BankAccountCurrency")
 
   /// Latest rate from the system base currency to this currency.
   currentRatesFromBase CurrencyCurrentRate[] @relation("RateFromBase")

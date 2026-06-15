@@ -106,13 +106,16 @@ model Company {
     addresses CompanyAddress[] @relation("CompanyAddresses")
 
     // Contatti e Relazioni Commerciali
-    contacts  CompanyContact[]
-    customers Customer[]
-    suppliers Supplier[]
-    tenants   Tenant?          @relation("TenantOwnedCompany")
+    contacts CompanyContact[]
+    customer Customer?
+    supplier Supplier?
+    tenants  Tenant?          @relation("TenantOwnedCompany")
 
     // Note
     notes CompanyNote[]
+
+    // Bank accounts
+    bankAccounts BankAccount[] @relation("CompanyBankAccounts")
 
     // Custom Fields
     customFields Json? @map("custom_fields")
@@ -134,6 +137,11 @@ model Customer {
     // Collegamento 1-a-1 alla Company
     companyId String  @unique @map("company_id")
     company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+    /// Denormalized from Company for direct tenant-scoped queries without join.
+    /// Must match Company.tenantId — enforced at application level on creation.
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantCustomers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     // Dati specifici Cliente/CRM
     priority     CustomerPriority  @default(LOW)
@@ -198,8 +206,13 @@ model Customer {
     deletedBy     String? @map("deleted_by")
     deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
+    @@index([tenantId])
+    @@index([tenantId, type])
+    @@index([tenantId, segment])
+    @@index([tenantId, creditStatus])
     @@index([parentCustomerId])
     @@index([deletedAt])
+    @@index([tenantId, deletedAt]) // per soft-delete scoped: WHERE tenantId = ? AND deletedAt IS NULL
     @@map("customers")
 }
 
@@ -211,10 +224,29 @@ model Supplier {
     companyId String  @unique @map("company_id")
     company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
+    /// Denormalized from Company for direct tenant-scoped queries without join.
+    /// Must match Company.tenantId — enforced at application level on creation.
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantSuppliers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
     // Dati specifici Fornitore
-    paymentTerms String?  @map("payment_terms") @db.VarChar(100) // Es. 30 giorni data fattura fine mese
-    creditLimit  Decimal? @map("credit_limit") @db.Decimal(15, 2) // Limite di credito CONCESSO dal Fornitore
-    bankAccount  String?  @map("bank_account") @db.VarChar(100) // IBAN per bonifici in USCITA
+    creditLimit Decimal? @map("credit_limit") @db.Decimal(15, 2) // Limite di credito CONCESSO dal Fornitore
+
+    paymentMethodId Int?           @map("payment_method_id")
+    paymentMethod   PaymentMethod? @relation("SupplierPaymentMethod", fields: [paymentMethodId], references: [id])
+
+    /// Regime fiscale FatturaPA (RF01 = ordinario, RF19 = forfettario, ecc.)
+    fiscalRegimeCode String? @map("fiscal_regime_code") @db.VarChar(4)
+
+    /// Il fornitore è soggetto a ritenuta d'acconto (es. professionisti, agenti)
+    isWithholdingSubject      Boolean  @default(false) @map("is_withholding_subject")
+    /// Tipo ritenuta FatturaPA (RT01 persone fisiche, RT02 persone giuridiche, RT03 INPS, ecc.)
+    withholdingTaxType        String?  @map("withholding_tax_type") @db.VarChar(4)
+    defaultWithholdingPercent Decimal? @map("default_withholding_percent") @db.Decimal(5, 2)
+
+    /// Cassa previdenziale applicata in fattura (TC01-TC22 FatturaPA, es. TC02 = INPS, TC07 = ENPAM)
+    socialSecurityFundCode     String?  @map("social_security_fund_code") @db.VarChar(4)
+    defaultContributionPercent Decimal? @map("default_contribution_percent") @db.Decimal(5, 2)
 
     // Costi e Logistica
     leadTimeDays  Int?     @default(0) @map("lead_time_days") // Tempo standard di consegna
@@ -249,6 +281,8 @@ model Supplier {
     deletedBy     String? @map("deleted_by")
     deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
+    @@index([tenantId])
+    @@index([tenantId, deletedAt]) // soft-delete scoped
     @@index([parentSupplierId])
     @@index([deletedAt])
     @@map("suppliers")
@@ -305,7 +339,7 @@ model Contact {
     // Dati anagrafici puri — nessun companyId diretto
     firstName   String  @map("first_name") @db.VarChar(100)
     lastName    String? @map("last_name") @db.VarChar(100)
-    email       String? @unique @db.VarChar(255) // unique globale, non per company
+    email       String? @db.VarChar(255)
     phone       String? @db.VarChar(50)
     mobilePhone String? @map("mobile_phone") @db.VarChar(50)
 
@@ -313,6 +347,8 @@ model Contact {
     notes  String? @db.Text
 
     // Relazioni
+    tenantId             String                @map("tenant_id")
+    tenant               Tenant                @relation("TenantContacts", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     companies            CompanyContact[]
     documents            Document[]
     activities           Activity[]            @relation("ContactActivities")
@@ -321,7 +357,10 @@ model Contact {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@index([email])
+    // email unica per tenant (non globale) — solo se email non null
+    @@unique([tenantId, email], where: { email: { not: null } }, map: "unique_tenant_contact_email")
+    @@index([tenantId])
+    @@index([tenantId, active])
     @@map("contacts")
 }
 

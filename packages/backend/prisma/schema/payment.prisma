@@ -25,15 +25,16 @@ model PaymentMethod {
     tenant   Tenant? @relation("TenantPaymentMethods", fields: [tenantId], references: [id], onDelete: Cascade)
 
     // === RELATIONS ===
-    translations                PaymentMethodTranslation[]   @relation(name: "PaymentMethodTranslations")
-    customers                   Customer[]                   @relation(name: "CompanyPaymentMethod")
-    documents                   Document[]                   @relation(name: "DocumentPaymentMethod")
+    translations                PaymentMethodTranslation[]   @relation("PaymentMethodTranslations")
+    customers                   Customer[]                   @relation("CompanyPaymentMethod")
+    suppliers                   Supplier[]                   @relation("SupplierPaymentMethod")
+    documents                   Document[]                   @relation("DocumentPaymentMethod")
     documentPaymentInstallments DocumentPaymentInstallment[]
 
     /// Default bank account to use when this payment method is selected on a document.
     /// Only relevant for wire transfer methods. NULL = no default account.
-    defaultBankAccountId Int?               @map("default_bank_account_id")
-    defaultBankAccount   TenantBankAccount? @relation(fields: [defaultBankAccountId], references: [id], onDelete: SetNull)
+    defaultBankAccountId Int?         @map("default_bank_account_id")
+    defaultBankAccount   BankAccount? @relation(fields: [defaultBankAccountId], references: [id], onDelete: SetNull)
 
     /// Individual installment rules for this payment method.
     details PaymentTermDetail[]

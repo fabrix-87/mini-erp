@@ -1,0 +1,46 @@
+/// Conto bancario, di proprietà del tenant oppure di una Company controparte
+/// (cliente o fornitore tramite la relazione 1:1 con Customer/Supplier).
+/// Vincolo logico: esattamente uno tra tenantId e companyId è non-null.
+model BankAccount {
+    id Int @id @default(autoincrement())
+
+    // === OWNER (exclusive arc) ===
+
+    tenantId String? @map("tenant_id")
+    tenant   Tenant? @relation("TenantBankAccounts", fields: [tenantId], references: [id], onDelete: Cascade)
+
+    companyId String?  @map("company_id")
+    company   Company? @relation("CompanyBankAccounts", fields: [companyId], references: [id], onDelete: Cascade)
+
+    /// Internal label (e.g. "Conto principale EUR", "IBAN fornitore sede Milano").
+    name     String  @db.VarChar(100)
+    bankName String  @map("bank_name") @db.VarChar(100)
+    iban     String  @db.VarChar(34)
+    bic      String? @db.VarChar(11)
+
+    /// Titolare del conto, se diverso dalla ragione sociale (conti cointestati/fiduciari).
+    accountHolder String? @map("account_holder") @db.VarChar(255)
+
+    currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
+    currency     Currency @relation("BankAccountCurrency", fields: [currencyCode], references: [code])
+
+    note String @db.VarChar(250)
+
+    active    Boolean @default(true)
+    isDefault Boolean @default(false) @map("is_default")
+
+    // === RELATIONS ===
+    paymentMethods PaymentMethod[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([tenantId, iban])
+    @@unique([companyId, iban])
+    // Un solo conto "default" per owner+valuta (partial unique, stesso pattern di CompanyAddress)
+    @@unique([tenantId, currencyCode], map: "unique_tenant_default_bank_account", where: { isDefault: true })
+    @@unique([companyId, currencyCode], map: "unique_company_default_bank_account", where: { isDefault: true })
+    @@index([tenantId, active])
+    @@index([companyId, active])
+    @@map("bank_accounts")
+}
