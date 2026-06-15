@@ -288,7 +288,7 @@ model Document {
 /// Single line item within a document. Supports products, services, discounts,
 /// text annotations, and kit/bundle components via self-join.
 model DocumentLine {
-    id         Int      @id @default(autoincrement())
+    id         String   @id @default(cuid())
     documentId String   @map("document_id")
     document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
@@ -296,7 +296,7 @@ model DocumentLine {
 
     /// Specific product variant selected. NULL for free-text services, discounts, and text lines.
     /// Restrict prevents deletion of a variant that appears on a fiscal document.
-    productVariantId Int?            @map("product_variant_id")
+    productVariantId String?         @map("product_variant_id")
     productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id], onDelete: Restrict)
 
     /// Parent product reference (cuid). Denormalized from productVariant for statistical grouping.
@@ -368,7 +368,7 @@ model DocumentLine {
     // === KIT / BUNDLE ===
 
     /// Parent line ID when this line is a component of a kit. NULL for top-level lines.
-    parentLineId   Int?           @map("parent_line_id")
+    parentLineId   String?        @map("parent_line_id")
     parentLine     DocumentLine?  @relation("LineComponents", fields: [parentLineId], references: [id])
     componentLines DocumentLine[] @relation("LineComponents")
 
@@ -407,7 +407,7 @@ model DocumentLine {
 /// Payment installment generated from a document's payment terms.
 /// Tracks individual due dates, amounts, reminders, and late fees.
 model DocumentPaymentInstallment {
-    id         Int      @id @default(autoincrement())
+    id         String   @id @default(cuid())
     documentId String   @map("document_id")
     document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 

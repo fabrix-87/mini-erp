@@ -11,16 +11,16 @@ enum IntrastatFlow {
 
 /// Regulatory ledger recording transactions subject to EU Intrastat customs reporting.
 model IntrastatTransaction {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
 
   documentId String   @map("document_id")
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
-  documentLineId Int          @map("document_line_id")
+  documentLineId String       @map("document_line_id")
   documentLine   DocumentLine @relation(fields: [documentLineId], references: [id], onDelete: Cascade)
 
   tenantId String @map("tenant_id")
-  tenant   Tenant @relation("TenantInstrastatTransactions", fields: [tenantId], references: [id], onDelete: Restrict)
+  tenant   Tenant @relation("TenantIntrastatTransactions", fields: [tenantId], references: [id], onDelete: Restrict)
 
   flow IntrastatFlow
 
@@ -35,7 +35,7 @@ model IntrastatTransaction {
 
   /// ISO 3166-1 alpha-2 country reference. Immutable audit snapshot from document partner data.
   partnerCountryCode String  @map("partner_country_code") @db.Char(2)
-  partnerCountry     Country @relation("InstrastatPartnerCountry", fields: [partnerCountryCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
+  partnerCountry     Country @relation("IntrastatPartnerCountry", fields: [partnerCountryCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
 
   /// Net transactional value. Immutable snapshot of line taxable amount.
   invoicedValue Decimal @map("invoiced_value") @db.Decimal(15, 2)
@@ -52,14 +52,23 @@ model IntrastatTransaction {
   modeOfTransportCode String?                 @map("mode_of_transport_code") @db.Char(2)
   modeOfTransport     IntrastatTransportMode? @relation(fields: [modeOfTransportCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
 
-  /// Operational flag indicating data adjustments/amendments on previously closed declarations.
-  isCorrection Boolean @default(false) @map("is_correction")
+  /// Monotonically increasing amendment counter for this line's Intrastat record.
+  /// 0 = original declaration; 1+ = successive corrections.
+  /// Prevents duplicate correction entries while allowing multi-round amendments.
+  /// NOTE: correctionSequence must be incremented atomically by the application
+  /// (SELECT MAX(correctionSequence) FOR UPDATE) before inserting a new correction row.
+  correctionSequence Int @default(0) @map("correction_sequence")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([documentLineId, isCorrection])
+  /// Guarantees at most one record per (line, correction round).
+  /// correctionSequence 0 = original; increment on each amendment cycle.
+  @@unique([documentLineId, correctionSequence])
   @@index([tenantId, partnerCountryCode])
+  @@index([tenantId])
+  @@index([tenantId, flow]) // ARRIVAL vs DISPATCH split
+  @@index([tenantId, transactionDate]) // range temporale per periodo dichiarativo
   @@index([transactionDate])
   @@index([partnerCountryCode])
   @@map("intrastat_transactions")

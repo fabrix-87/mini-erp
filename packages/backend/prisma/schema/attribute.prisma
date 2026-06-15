@@ -107,7 +107,7 @@ model AttributeTranslation {
 
 /// Junction table linking product variants to their specific attribute definitions.
 model ProductVariantAttribute {
-  productVariantId Int            @map("product_variant_id")
+  productVariantId String         @map("product_variant_id")
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
 
   attributeId Int       @map("attribute_id")

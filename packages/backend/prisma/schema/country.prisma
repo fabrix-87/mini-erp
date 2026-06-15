@@ -19,7 +19,7 @@ model Country {
   documentCountry         Document[] @relation("DocumentCountry")
   documentShippingCountry Document[] @relation("DocumentShippingCountry")
 
-  instrastatTransations IntrastatTransaction[] @relation("InstrastatPartnerCountry")
+  instrastatTransations IntrastatTransaction[] @relation("IntrastatPartnerCountry")
 
   leads Lead[] @relation("LeadCountry")
 

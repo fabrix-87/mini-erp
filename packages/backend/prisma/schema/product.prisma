@@ -58,7 +58,7 @@ model Product {
     status ProductStatus @default(DRAFT)
 
     /// Tenant that owns this product. All catalog data is tenant-isolated.
-    tenantId String    @map("tenant_id")
+    tenantId String @map("tenant_id")
     tenant   Tenant @relation("TenantProducts", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     /// Global internal manufacturer/factory fallback code.
@@ -175,15 +175,18 @@ model ProductTranslation {
 
 /// Transactional sellable stock unit (SKU). All physical and financial attributes live here.
 model ProductVariant {
-    id        Int     @id @default(autoincrement())
+    id        String  @id @default(cuid())
     productId String  @map("product_id")
     product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
     /// System generated immutable hash or variant identifier string.
     variantCode String @unique @map("variant_code") @db.VarChar(64)
 
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantProductVariants", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
     /// Stock Keeping Unit. Primary transactional interface code for ERP/WMS systems.
-    sku String? @db.VarChar(64)
+    sku String @db.VarChar(64)
 
     ean13 String? @db.Char(13)
     upc   String? @db.Char(12)
@@ -236,7 +239,7 @@ model ProductVariant {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([sku])
+    @@unique([tenantId, sku])
     @@unique([ean13])
     @@index([productId])
     @@index([productId, active])
@@ -253,7 +256,7 @@ model ProductImage {
     product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
     /// Optional assignment fallback to bind a specific image to a single variant attribute subset.
-    variantId Int?            @map("variant_id")
+    variantId String?         @map("variant_id")
     variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
 
     imageUrl  String  @map("image_url") @db.VarChar(500)
@@ -300,7 +303,7 @@ model ProductCategory {
     productId String  @map("product_id")
     product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-    categoryId Int      @map("category_id")
+    categoryId String   @map("category_id")
     category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
     position Int @default(0)
@@ -320,7 +323,7 @@ model Manufacturer {
     active Boolean @default(true)
 
     /// All catalog data is tenant-isolated.
-    tenantId String    @map("tenant_id")
+    tenantId String @map("tenant_id")
     tenant   Tenant @relation("TenantManufacturers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     customFields Json? @map("custom_fields")

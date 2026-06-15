@@ -77,7 +77,9 @@ model Tenant {
   documentSequences        DocumentSequence[]     @relation("TenantSequences")
   taxRules                 TaxRule[]              @relation("TenantOwnedTaxRules")
   companies                Company[]              @relation("TenantCompanies")
+  categories               Category[]             @relation("TenantCategories")
   products                 Product[]              @relation("TenantProducts")
+  productVariants          ProductVariant[]       @relation("TenantProductVariants")
   manufacturers            Manufacturer[]         @relation("TenantManufacturers")
   roles                    Role[]                 @relation("TenantRoles")
   priceLists               PriceList[]            @relation("TenantPriceLists")
@@ -86,7 +88,7 @@ model Tenant {
   leads                    Lead[]                 @relation("TenantLeads")
   opportunities            Opportunity[]          @relation("TenantOpportunities")
   opportunityClosedReasons ClosedReason[]         @relation("TenantOpportunityClosedReasons")
-  intrastatTransactions    IntrastatTransaction[] @relation("TenantInstrastatTransactions")
+  intrastatTransactions    IntrastatTransaction[] @relation("TenantIntrastatTransactions")
   activities               Activity[]             @relation("TenantActivities")
   activityTemplates        ActivityTemplate[]     @relation("TenantActivityTemplates")
 

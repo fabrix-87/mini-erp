@@ -18,7 +18,8 @@ export const MOVEMENT_TYPES = {
   SALE: "SALE",
   RETURN_IN: "RETURN_IN",
   RETURN_OUT: "RETURN_OUT",
-  ADJUSTMENT: "ADJUSTMENT",
+  ADJUSTMENT_IN: "ADJUSTMENT_IN",
+  ADJUSTMENT_OUT: "ADJUSTMENT_OUT",
   TRANSFER_IN: "TRANSFER_IN",
   TRANSFER_OUT: "TRANSFER_OUT",
   INVENTORY_START: "INVENTORY_START",
@@ -46,19 +47,19 @@ export const VIRTUAL_SYNC_STATUS = {
  * Stock batch status
  */
 export const STOCK_BATCH_STATUS = {
-  ACTIVE: "active",
-  QUARANTINE: "quarantine",
-  EXPIRED: "expired",
+  ACTIVE: "ACTIVE",
+  QUARANTINE: "QUARANTINE",
+  EXPIRED: "EXPIRED",
 } as const;
 
 /**
  * Stock reservation status
  */
 export const STOCK_RESERVATION_STATUS = {
-  ACTIVE: "active",
-  FULFILLED: "fulfilled",
-  CANCELLED: "cancelled",
-  EXPIRED: "expired",
+  ACTIVE: "ACTIVE",
+  FULFILLED: "FULFILLED",
+  CANCELLED: "CANCELLED",
+  EXPIRED: "EXPIRED",
 } as const;
 
 // ============================================================================
@@ -73,7 +74,8 @@ export const MOVEMENT_TYPE_LABELS: Record<
   SALE: "Vendita a cliente",
   RETURN_IN: "Reso da cliente",
   RETURN_OUT: "Reso a fornitore",
-  ADJUSTMENT: "Rettifica inventario",
+  ADJUSTMENT_IN: "Rettifica inventario (carico)",
+  ADJUSTMENT_OUT: "Rettifica inventario (scarico)",
   TRANSFER_IN: "Trasferimento in entrata",
   TRANSFER_OUT: "Trasferimento in uscita",
   INVENTORY_START: "Inventario iniziale",
@@ -90,7 +92,8 @@ export const MOVEMENT_TYPE_DIRECTION: Record<
   SALE: "OUT",
   RETURN_IN: "IN",
   RETURN_OUT: "OUT",
-  ADJUSTMENT: "IN", // Can be both, depends on quantity sign
+  ADJUSTMENT_IN: "IN", 
+  ADJUSTMENT_OUT: "OUT", 
   TRANSFER_IN: "IN",
   TRANSFER_OUT: "OUT",
   INVENTORY_START: "IN",

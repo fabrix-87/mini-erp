@@ -27,7 +27,7 @@ enum PriceRoundingMethod {
 /// Tenant-scoped or global price list defining selling, purchase, promotional, or contract prices.
 /// Supports parent-child hierarchy for derived pricing strategies.
 model PriceList {
-    id Int @id @default(autoincrement())
+    id String @id @default(cuid())
 
     // Identificazione
     code         String   @db.VarChar(50) // Es. LIST_PUB, LIST_GOLD
@@ -48,7 +48,7 @@ model PriceList {
 
     // LOGICA EREDITARIETA' (Listini dinamici)
     // Se parentListId è presente, questo listino calcola i prezzi basandosi sul padre
-    parentListId  Int?        @map("parent_list_id")
+    parentListId  String?     @map("parent_list_id")
     parentList    PriceList?  @relation("PriceListHierarchy", fields: [parentListId], references: [id], onDelete: SetNull)
     childrenLists PriceList[] @relation("PriceListHierarchy")
 
@@ -72,13 +72,13 @@ model PriceList {
 
 /// Single pricing entry within a price list, optionally scoped by quantity break.
 model PriceListItem {
-    id Int @id @default(autoincrement())
+    id String @id @default(cuid())
 
-    priceListId Int       @map("price_list_id")
+    priceListId String    @map("price_list_id")
     priceList   PriceList @relation(fields: [priceListId], references: [id], onDelete: Cascade)
 
     // Collegamento Variante Prodotto
-    variantId Int            @map("variant_id")
+    variantId String         @map("variant_id")
     variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
 
     // Scaglioni di quantità (Quantity Breaks)

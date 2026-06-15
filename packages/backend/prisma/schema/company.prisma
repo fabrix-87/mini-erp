@@ -143,7 +143,7 @@ model Customer {
     creditStatus CreditCheckStatus @default(PENDING)
 
     // Dati Commerciali
-    defaultPriceListId Int?       @map("default_price_list_id")
+    defaultPriceListId String?    @map("default_price_list_id")
     defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id], onDelete: SetNull)
 
     customerTaxRuleId Int?     @map("customer_tax_rule_id")

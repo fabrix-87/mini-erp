@@ -76,7 +76,7 @@ model Opportunity {
 
   // === CLOSURE ===
 
-  closedReasonId Int?          @map("closed_reason_id")
+  closedReasonId String?       @map("closed_reason_id")
   closedReason   ClosedReason? @relation(fields: [closedReasonId], references: [id])
   /// Free-text notes on the closure outcome. Useful for win/loss analysis.
   closedNotes    String?       @map("closed_notes") @db.Text
@@ -122,10 +122,10 @@ model Opportunity {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([tenantId, leadId])
-  @@index([customerId])
-  @@index([status])
-  @@index([stage])
-  @@index([source])
+  @@index([tenantId, customerId])
+  @@index([tenantId, status])
+  @@index([tenantId, stage])
+  @@index([tenantId, source])
   @@index([assignedUserId])
   @@index([expectedCloseDate])
   @@index([closedDate])
@@ -140,7 +140,7 @@ model Opportunity {
 /// Global reasons (tenantId NULL) are shared across all tenants as system defaults.
 /// Tenants can define private reasons in addition to or instead of global ones.
 model ClosedReason {
-  id   Int    @id @default(autoincrement())
+  id   String @id @default(cuid())
   /// Mnemonic code (e.g. PRICE, COMPETITOR, NO_BUDGET).
   /// Unique per scope: global (tenantId NULL) or per-tenant.
   code String @db.VarChar(50)
@@ -168,8 +168,8 @@ model ClosedReason {
 
 /// Localized name and description for a ClosedReason.
 model ClosedReasonTranslation {
-  id             Int          @id @default(autoincrement())
-  closedReasonId Int          @map("closed_reason_id")
+  id             String       @id @default(cuid())
+  closedReasonId String       @map("closed_reason_id")
   closedReason   ClosedReason @relation(fields: [closedReasonId], references: [id], onDelete: Cascade)
 
   languageId Int      @map("language_id")

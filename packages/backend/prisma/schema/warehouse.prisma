@@ -83,9 +83,6 @@ enum StockReservationStatus {
 model StockMovement {
     id Int @id @default(autoincrement())
 
-    productVariantId Int @map("product_variant_id")
-    warehouseId      Int @map("warehouse_id")
-
     /// Absolute movement quantity. Direction is determined by movement type.
     quantity Int
 
@@ -105,10 +102,10 @@ model StockMovement {
     /// Total cost for the movement.
     totalCost Decimal? @map("total_cost") @db.Decimal(20, 6)
 
-    documentId String?      @map("document_id")
+    documentId String?   @map("document_id")
     document   Document? @relation(fields: [documentId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
-    documentLineId Int?          @map("document_line_id")
+    documentLineId String?       @map("document_line_id")
     documentLine   DocumentLine? @relation(fields: [documentLineId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     /// Optional batch identifier for lot-tracked inventory.
@@ -119,13 +116,16 @@ model StockMovement {
 
     expiryDate DateTime? @map("expiry_date")
 
-    createdByUserId String?  @map("created_by_user_id")
-    createdBy       User? @relation(fields: [createdByUserId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    createdByUserId String? @map("created_by_user_id")
+    createdBy       User?   @relation(fields: [createdByUserId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     status MovementStatus @default(PENDING)
 
-    productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    warehouse      Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    productVariantId String         @map("product_variant_id")
+    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    warehouseId Int       @map("warehouse_id")
+    warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     createdAt DateTime @default(now()) @map("created_at")
 
@@ -145,8 +145,6 @@ model StockMovement {
 model VirtualStock {
     id Int @id @default(autoincrement())
 
-    productVariantId Int @map("product_variant_id")
-
     /// Target virtual warehouse.
     warehouseId Int @map("warehouse_id")
 
@@ -158,8 +156,9 @@ model VirtualStock {
     /// Source channel, such as API, CSV, or manual import.
     source String? @db.VarChar(100)
 
-    productVariant ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    warehouse      Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    productVariantId String         @map("product_variant_id")
+    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    warehouse        Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     lastSyncAt DateTime?         @map("last_sync_at")
     syncStatus VirtualSyncStatus @default(PENDING) @map("sync_status")
@@ -194,7 +193,7 @@ model VirtualStock {
 model StockBatch {
     id Int @id @default(autoincrement())
 
-    productVariantId Int            @map("product_variant_id")
+    productVariantId String         @map("product_variant_id")
     productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     warehouseId Int       @map("warehouse_id")
@@ -206,7 +205,7 @@ model StockBatch {
     manufacturedDate DateTime? @map("manufactured_date")
     expiryDate       DateTime? @map("expiry_date")
 
-    supplierId String?      @map("supplier_id")
+    supplierId String?   @map("supplier_id")
     supplier   Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     /// Current on-hand quantity for the batch.
@@ -227,7 +226,7 @@ model StockBatch {
 model StockReservation {
     id Int @id @default(autoincrement())
 
-    productVariantId Int            @map("product_variant_id")
+    productVariantId String         @map("product_variant_id")
     productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     warehouseId Int       @map("warehouse_id")
@@ -236,10 +235,10 @@ model StockReservation {
     /// Reserved quantity blocked from general availability.
     quantity Int
 
-    documentId String      @map("document_id")
+    documentId String   @map("document_id")
     document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    documentLineId Int?          @map("document_line_id")
+    documentLineId String?       @map("document_line_id")
     documentLine   DocumentLine? @relation(fields: [documentLineId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     status StockReservationStatus @default(ACTIVE)

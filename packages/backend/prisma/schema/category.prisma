@@ -5,13 +5,15 @@
 
 /// Product category node in a hierarchical tree.
 model Category {
-    id Int @id @default(autoincrement())
+    id String @id @default(cuid())
+
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantCategories", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     /// Parent category reference; null identifies a root node.
-    parentId Int? @map("parent_id")
-
+    parentId String?   @map("parent_id")
     /// Immediate parent in the category tree.
-    parent Category? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    parent   Category? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     /// Immediate child categories.
     children Category[] @relation("CategoryHierarchy")
@@ -28,8 +30,8 @@ model Category {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@index([parentId])
-    @@index([active])
+    @@index([tenantId, parentId])
+    @@index([tenantId, active, position])
     @@index([parentId, active, position])
     @@map("categories")
 }
@@ -43,11 +45,13 @@ model Category {
 model CategoryTranslation {
     id Int @id @default(autoincrement())
 
-    categoryId Int      @map("category_id")
+    categoryId String   @map("category_id")
     category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
     languageId Int      @map("language_id")
     language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    tenantId String @map("tenant_id")
 
     /// Localized display name.
     name String @db.VarChar(255)
@@ -58,9 +62,6 @@ model CategoryTranslation {
     /// Localized descriptive content.
     description String? @db.Text
 
-    /// Optional localized route alias for SEO or legacy routing.
-    linkRewrite String? @map("link_rewrite") @db.VarChar(255)
-
     /// Localized SEO title.
     metaTitle String? @map("meta_title") @db.VarChar(255)
 
@@ -70,12 +71,8 @@ model CategoryTranslation {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    /// One translation per category and language.
     @@unique([categoryId, languageId])
-    /// Localized slug must be unique within the same language.
-    @@unique([languageId, slug])
-    /// Localized route rewrite must be unique within the same language.
-    @@unique([languageId, linkRewrite])
+    @@unique([tenantId, languageId, slug])
     @@index([languageId])
     @@map("category_translations")
 }
