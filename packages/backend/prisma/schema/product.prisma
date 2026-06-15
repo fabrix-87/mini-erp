@@ -123,7 +123,8 @@ model Product {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    productFeatures ProductFeature[]
+    productFeatures     ProductFeature[]
+    opportunityProducts OpportunityProduct[]
 
     @@unique([tenantId, reference]) // unique per tenant, not globally
     @@index([tenantId, status]) // compound: lookup frequente per tenant attivo
@@ -223,14 +224,15 @@ model ProductVariant {
 
     metadata Json?
 
-    attributes        ProductVariantAttribute[]
-    stockMovement     StockMovement[]
-    stockReservations StockReservation[]
-    stockBatches      StockBatch[]
-    virtualStock      VirtualStock[]
-    documentLines     DocumentLine[]
-    priceListItems    PriceListItem[]
-    images            ProductImage[]
+    attributes          ProductVariantAttribute[]
+    stockMovement       StockMovement[]
+    stockReservations   StockReservation[]
+    stockBatches        StockBatch[]
+    virtualStock        VirtualStock[]
+    documentLines       DocumentLine[]
+    priceListItems      PriceListItem[]
+    images              ProductImage[]
+    opportunityProducts OpportunityProduct[]
 
     deletedAt     DateTime? @map("deleted_at")
     deletedBy     String?   @map("deleted_by")

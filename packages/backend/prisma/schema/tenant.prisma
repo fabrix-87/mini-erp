@@ -88,6 +88,7 @@ model Tenant {
   leads                    Lead[]                 @relation("TenantLeads")
   opportunities            Opportunity[]          @relation("TenantOpportunities")
   opportunityClosedReasons ClosedReason[]         @relation("TenantOpportunityClosedReasons")
+  opportunityProducs       OpportunityProduct[]   @relation("TenantOpportunityProducts")
   intrastatTransactions    IntrastatTransaction[] @relation("TenantIntrastatTransactions")
   activities               Activity[]             @relation("TenantActivities")
   activityTemplates        ActivityTemplate[]     @relation("TenantActivityTemplates")

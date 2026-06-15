@@ -99,6 +99,8 @@ model PriceListItem {
     taxRuleId Int?     @map("tax_rule_id")
     taxRule   TaxRule? @relation("PriceListTaxRule", fields: [taxRuleId], references: [id])
 
+    opportunityProducts OpportunityProduct[]
+
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 

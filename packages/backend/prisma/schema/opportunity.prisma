@@ -104,9 +104,8 @@ model Opportunity {
 
   // === PRODUCTS / SERVICES ===
 
-  /// Snapshot of proposed items: Array<{ productId, quantity, price, discount }>.
-  /// Consider migrating to a dedicated OpportunityProduct table if querying by product is needed.
-  proposedProducts Json? @map("proposed_products")
+  /// Proposed items
+  products OpportunityProduct[]
 
   // === NOTES AND CUSTOM FIELDS ===
 
@@ -130,6 +129,84 @@ model Opportunity {
   @@index([expectedCloseDate])
   @@index([closedDate])
   @@map("opportunities")
+}
+
+/// Line item proposed within a sales opportunity.
+/// Linked to a specific ProductVariant (every product has at least one base variant).
+/// The base price is resolved from PriceListItem at creation and can be overridden
+/// for custom offers. Structure mirrors DocumentLine for frictionless conversion.
+model OpportunityProduct {
+  id            String      @id @default(cuid())
+  opportunityId String      @map("opportunity_id")
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  // === PRODUCT LINK ===
+
+  /// Specific variant selected. Restrict: cannot delete a variant in an active opportunity.
+  productVariantId String         @map("product_variant_id")
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict)
+
+  /// Denormalized from productVariant for statistical grouping (mirrors DocumentLine pattern).
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  /// Tenant denormalized for direct filtering without joining Opportunity.
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantOpportunityProducts", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  // === DESCRIPTIONS (snapshot at line creation) ===
+
+  /// Variant/product name at time of proposal. Survives product renames.
+  nameSnapshot        String  @map("name_snapshot") @db.VarChar(255)
+  descriptionSnapshot String? @map("description_snapshot") @db.Text
+
+  // === QUANTITIES AND PRICING ===
+
+  quantity Decimal @default(1) @db.Decimal(15, 6)
+  unit     String  @default("pz") @db.VarChar(20)
+
+  /// Active list price resolved from PriceListItem at line creation.
+  /// Preserved as audit trail even if the price list changes later.
+  listPrice Decimal @map("list_price") @db.Decimal(20, 6)
+
+  /// Actual proposed price. Equals listPrice unless manually overridden.
+  unitPrice Decimal @map("unit_price") @db.Decimal(20, 6)
+
+  /// Non-null when unitPrice != listPrice. Mandatory justification for price deviation.
+  priceOverrideReason String? @map("price_override_reason") @db.Text
+
+  /// PriceListItem used to resolve listPrice. NULL if no active price list matched
+  /// (fallback to ProductVariant.price or Product.price).
+  priceListItemId String?       @map("price_list_item_id")
+  priceListItem   PriceListItem? @relation(fields: [priceListItemId], references: [id], onDelete: SetNull)
+
+  discountPercent Decimal @default(0) @map("discount_percent") @db.Decimal(5, 2)
+  discountAmount  Decimal @default(0) @map("discount_amount")  @db.Decimal(15, 2)
+
+  /// Line subtotal: (unitPrice × quantity) − discount. Excludes VAT (no fiscal context here).
+  lineTotal Decimal @default(0) @map("line_total") @db.Decimal(15, 2)
+
+  // === LINE CONTROL ===
+
+  lineNumber Int     @default(0) @map("line_number")
+  notes      String? @db.Text
+
+  // === CONVERSION TRACKING ===
+
+  /// True once this line has been included in at least one converted Document.
+  /// Prevents duplicate conversion; frontend uses this to pre-select/deselect lines.
+  converted   Boolean   @default(false)
+  convertedAt DateTime? @map("converted_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt     @map("updated_at")
+
+  @@index([opportunityId, lineNumber])
+  @@index([tenantId, productVariantId])
+  @@index([tenantId, productId])
+  @@index([priceListItemId])
+  @@index([converted])
+  @@map("opportunity_products")
 }
 
 // ============================================================================
