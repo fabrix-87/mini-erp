@@ -1,0 +1,98 @@
+// ============================================================================
+// SDI — ELECTRONIC INVOICE TRANSMISSION (Sistema di Interscambio)
+// Manages the full lifecycle of electronic invoice transmission via SDI,
+// covering both outbound (OUTBOUND documents) and inbound (INBOUND documents).
+// ============================================================================
+
+/// SDI notification type codes as defined by Agenzia delle Entrate (specs v1.9, April 2025).
+enum SdiNotificationType {
+  RC // Ricevuta di Consegna — delivery confirmed to recipient
+  MC // Mancata Consegna — delivery failed; SDI retries for 10 days
+  NS // Notifica di Scarto — document rejected by SDI (format/content error)
+  NE // Notifica Esito Cessionario/Committente — buyer acceptance (EC01) or rejection (EC02); B2G only
+  DT // Decorrenza Termini — 15-day acceptance window expired without PA response; B2G only
+  AT // Attestazione Trasmissione — transmission proof when PA recipient permanently unavailable; B2G only
+}
+
+/// Overall SDI transmission lifecycle status for a document.
+enum SdiTransmissionStatus {
+  PENDING // Queued, not yet submitted to SDI
+  SENT // Submitted to SDI, awaiting first notification
+  DELIVERED // RC received — recipient confirmed
+  DELIVERY_FAILED // MC received — SDI retrying delivery
+  REJECTED // NS received — document rejected; must be corrected and resubmitted
+  ACCEPTED // NE received with EC01 — buyer accepted (B2G only)
+  DISPUTED // NE received with EC02 — buyer rejected (B2G only)
+  EXPIRED // DT received — 15-day window elapsed; deemed accepted
+  UNDELIVERABLE // AT received — permanent delivery failure to PA
+}
+
+/// SDI transmission record for a Document.
+/// One record per document; tracks current status and channel metadata.
+/// Detailed notification history is in SdiNotification (1:N).
+model SdiTransmission {
+  id         String   @id @default(cuid())
+  documentId String   @unique @map("document_id")
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantSdiTransmissions", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  /// SDI unique identifier assigned to this transmission.
+  sdiIdentifier String? @map("sdi_identifier") @db.VarChar(20)
+
+  /// Original XML filename as required by SDI naming convention.
+  fileName String @map("file_name") @db.VarChar(100)
+
+  /// Storage reference (S3/blob path) to the original FatturaPA XML.
+  xmlStoragePath String @map("xml_storage_path") @db.VarChar(500)
+
+  /// Storage reference to the signed XML (p7m), if applicable.
+  signedXmlStoragePath String? @map("signed_xml_storage_path") @db.VarChar(500)
+
+  status SdiTransmissionStatus @default(PENDING)
+
+  /// For OUTBOUND: timestamp of submission to SDI.
+  /// For INBOUND: timestamp of receipt from SDI channel.
+  transmittedAt DateTime? @map("transmitted_at")
+
+  /// Timestamp of the last status update (last notification received).
+  lastEventAt DateTime? @map("last_event_at")
+
+  /// Storage reference to the conservation package (conservazione sostitutiva).
+  /// Populated once the document enters the long-term archive.
+  conservationRef String? @map("conservation_ref") @db.VarChar(500)
+
+  notifications SdiNotification[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId, status])
+  @@index([sdiIdentifier])
+  @@index([tenantId, transmittedAt])
+  @@map("sdi_transmissions")
+}
+
+/// Individual SDI notification event linked to a transmission.
+/// Append-only — never updated. One row per notification received from SDI.
+model SdiNotification {
+  id             Int             @id @default(autoincrement())
+  transmissionId String          @map("transmission_id")
+  transmission   SdiTransmission @relation(fields: [transmissionId], references: [id], onDelete: Cascade)
+
+  notificationType SdiNotificationType @map("notification_type")
+
+  /// Raw notification XML received from SDI. Stored for audit and dispute resolution.
+  rawPayloadPath String? @map("raw_payload_path") @db.VarChar(500)
+
+  /// SDI message code from the notification (e.g. error code on NS).
+  sdiMessageCode String? @map("sdi_message_code") @db.VarChar(10)
+  sdiMessageDesc String? @map("sdi_message_desc") @db.Text
+
+  receivedAt DateTime @default(now()) @map("received_at")
+
+  @@index([transmissionId, receivedAt])
+  @@index([notificationType])
+  @@map("sdi_notifications")
+}

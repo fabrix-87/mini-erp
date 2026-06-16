@@ -71,24 +71,32 @@ model User {
   preferredLanguage   Language? @relation("UserPreferredLanguage", fields: [preferredLanguageId], references: [id])
 
   /// All tenant memberships for this user. A user may belong to multiple tenants.
-  memberships             UserTenantMembership[]  @relation("UserTenants")
+  memberships             UserTenantMembership[]     @relation("UserTenants")
   // Core System Operational Relations
-  createdDocuments        Document[]              @relation("CreatedBy")
-  assignedDocuments       Document[]              @relation("AssignedTo")
-  createdOpportunities    Opportunity[]           @relation("CreatedBy")
-  assignedOpportunities   Opportunity[]           @relation("AssignedTo")
-  assignedCompanies       Company[]               @relation("AssignedUser")
-  activitiesAssigned      Activity[]              @relation("ActivityAssigned")
-  activitiesCreated       Activity[]              @relation("ActivityCreated")
+  createdDocuments        Document[]                 @relation("CreatedBy")
+  assignedDocuments       Document[]                 @relation("AssignedTo")
+  createdOpportunities    Opportunity[]              @relation("CreatedBy")
+  assignedOpportunities   Opportunity[]              @relation("AssignedTo")
+  assignedCompanies       Company[]                  @relation("AssignedUser")
+  activitiesAssigned      Activity[]                 @relation("ActivityAssigned")
+  activitiesCreated       Activity[]                 @relation("ActivityCreated")
+  paymentBatches          PaymentBatch[]             @relation("PaymentBatchCreatedBy")
+  approvedPaymentBatches  PaymentBatch[]             @relation("PaymentBatchApprovedBy")
   activityParticipants    ActivityParticipant[]
   companyNotes            CompanyNote[]
   stockMovement           StockMovement[]
   auditLogs               AuditLog[]
   securityEvents          SecurityEvent[]
-  resolvedSecurityEvents  SecurityEvent[]         @relation("ResolvedSecurityEvents")
+  resolvedSecurityEvents  SecurityEvent[]            @relation("ResolvedSecurityEvents")
   documentStatusHistories DocumentStatusHistory[]
+  lockedAccountingPeriods AccountingPeriod[]         @relation("PeriodLockedBy")
+  closedFiscalYears       FiscalYear[]               @relation("FiscalYearClosedBy")
+  createdJournalEntries   JournalEntry[]             @relation("JournalEntryCreatedBy")
+  postedJournalEntries    JournalEntry[]             @relation("JournalEntryPostedBy")
+  verifiedBankDetails     Document[]                 @relation("DocumentBankDetailsVerifiedBy")
+  submittedSettlements    WithholdingTaxSettlement[] @relation("SettlementSubmittedBy")
   // On the admin user (back-relation — who performed the override)
-  overriddenPasswordUsers User[]                  @relation("AdminPasswordOverride")
+  overriddenPasswordUsers User[]                     @relation("AdminPasswordOverride")
 
   // Soft-Delete / Auditing Attribution Targets
   deletedDocuments       Document[]       @relation("DeletedBy")

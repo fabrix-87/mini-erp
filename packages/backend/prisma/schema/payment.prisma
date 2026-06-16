@@ -1,3 +1,9 @@
+// Cross-file references:
+// BankAccount    → bank.prisma
+// Document       → document.prisma
+// Customer       → company.prisma
+// Supplier       → company.prisma
+
 // ============================================================================
 // PAYMENT METHODS
 // ============================================================================
@@ -13,7 +19,7 @@ enum PaymentTermType {
 /// Tenant-scoped or global payment method defining installment structure and due date rules.
 /// The sum of all related PaymentTermDetail.percentage values must equal 100 (enforced at application level).
 model PaymentMethod {
-    id   Int    @id @default(autoincrement())
+    id   String @id @default(cuid())
     // e.g. "SPLIT_30_30_40", "IMMEDIATE", "NET_60"
     code String @db.VarChar(50)
 
@@ -33,7 +39,7 @@ model PaymentMethod {
 
     /// Default bank account to use when this payment method is selected on a document.
     /// Only relevant for wire transfer methods. NULL = no default account.
-    defaultBankAccountId Int?         @map("default_bank_account_id")
+    defaultBankAccountId String?      @map("default_bank_account_id")
     defaultBankAccount   BankAccount? @relation(fields: [defaultBankAccountId], references: [id], onDelete: SetNull)
 
     /// Individual installment rules for this payment method.
@@ -44,6 +50,8 @@ model PaymentMethod {
 
     @@unique([tenantId, code])
     @@unique([code], where: { tenantId: null }, map: "unique_global_payment_method_code")
+    @@index([tenantId])
+    @@index([tenantId, active])
     @@index([active])
     @@map("payment_methods")
 }
@@ -51,8 +59,8 @@ model PaymentMethod {
 /// Single installment rule within a payment method.
 /// Defines the percentage of the total amount and its due date calculation logic.
 model PaymentTermDetail {
-    id              Int           @id @default(autoincrement())
-    paymentMethodId Int           @map("payment_method_id")
+    id              String        @id @default(cuid())
+    paymentMethodId String        @map("payment_method_id")
     paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Cascade)
 
     /// Share of the total amount due for this installment (e.g. 30.00, 40.00).
@@ -76,14 +84,13 @@ model PaymentTermDetail {
     updatedAt DateTime @updatedAt @map("updated_at")
 
     @@index([paymentMethodId])
-    @@index([position])
     @@map("payment_term_details")
 }
 
 /// Localized name and description for a PaymentMethod.
 model PaymentMethodTranslation {
-    id              Int           @id @default(autoincrement())
-    paymentMethodId Int           @map("payment_method_id")
+    id              String        @id @default(cuid())
+    paymentMethodId String        @map("payment_method_id")
     paymentMethod   PaymentMethod @relation("PaymentMethodTranslations", fields: [paymentMethodId], references: [id], onDelete: Cascade)
 
     languageId Int      @map("language_id")
@@ -99,4 +106,51 @@ model PaymentMethodTranslation {
     // Unique translation per payment method and language.
     @@unique([paymentMethodId, languageId])
     @@index([languageId])
+}
+
+model PaymentBatch {
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantPaymentBatches", fields: [tenantId], references: [id], onDelete: Restrict)
+
+    /// Data di esecuzione/disposizione della distinta
+    executionDate DateTime @map("execution_date")
+
+    /// Tenant bank account used for this payment run.
+    tenantBankAccountId String?      @map("tenant_bank_account_id")
+    tenantBankAccount   BankAccount? @relation(fields: [tenantBankAccountId], references: [id], onDelete: SetNull)
+
+    /// Denormalized sum of all installment amounts in this batch.
+    totalAmount Decimal @default(0) @map("total_amount") @db.Decimal(15, 2)
+
+    status            PaymentBatchStatus @default(DRAFT)
+    /// Riferimento file SEPA XML generato/esportato
+    sepaFileReference String?            @map("sepa_file_reference")
+
+    notes String? @db.Text
+
+    installments DocumentPaymentInstallment[]
+
+    createdByUserId String @map("created_by_user_id")
+    createdBy       User   @relation("PaymentBatchCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+    /// User who approved this batch for export. NULL while DRAFT.
+    approvedByUserId String?   @map("approved_by_user_id")
+    approvedBy       User?     @relation("PaymentBatchApprovedBy", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+    approvedAt       DateTime? @map("approved_at")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([tenantId])
+    @@index([tenantId, status])
+    @@index([executionDate])
+    @@map("payment_batches")
+}
+
+enum PaymentBatchStatus {
+    DRAFT
+    EXPORTED
+    EXECUTED
+    RECONCILED
 }

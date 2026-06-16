@@ -243,3 +243,173 @@ model TaxRuleTranslation {
   @@index([languageId])
   @@map("tax_rule_translations")
 }
+
+/// Standard or tenant-custom withholding tax type.
+/// Global records (tenantId NULL) map to Italian FatturaPA RT codes.
+/// Tenants can define additional types for edge cases.
+model WithholdingTaxType {
+  id String @id @default(cuid())
+
+  /// FatturaPA code (e.g. RT01, RT02). Unique per scope.
+  code String @db.VarChar(10)
+
+  /// Percentage base: what fraction of the gross amount is subject to withholding.
+  /// e.g. 100.00 for lavoro autonomo, 50.00 for agenti (ritenuta su 50% del compenso).
+  taxableBasePercent Decimal @map("taxable_base_percent") @db.Decimal(5, 2)
+
+  /// Withholding rate applied to the taxable base (e.g. 20.00, 23.00).
+  rate Decimal @db.Decimal(5, 2)
+
+  active Boolean @default(true)
+
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantWithholdingTaxTypes", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  documents Document[]
+  suppliers Supplier[] @relation("SupplierDefaultWithholdingTaxType")
+  withholdingTaxSettlementLines WithholdingTaxSettlementLine[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tenantId, code])
+  @@unique([code], where: { tenantId: null }, map: "unique_global_withholding_tax_type_code")
+  @@map("withholding_tax_types")
+}
+
+// ============================================================================
+// SOCIAL SECURITY FUND (Cassa Previdenziale — FatturaPA TC01–TC22)
+// ============================================================================
+
+/// FatturaPA social security fund master data (TC01–TC22).
+/// Global shared table — no tenantId (same rationale as WithholdingTaxType).
+/// Seeded from the official Agenzia delle Entrate code list; never modified by tenants.
+model SocialSecurityFund {
+    id String @id @default(cuid())
+
+    /// FatturaPA code (e.g. "TC02", "TC07"). Unique, used as natural key in XML generation.
+    code String @unique @db.VarChar(4)
+
+    /// Official Italian description (e.g. "INPS", "ENPAM").
+    description String @db.VarChar(255)
+
+    /// Standard contribution rate as defined by the fund (e.g. 4.00 for Enasarco).
+    /// NULL if the rate is variable or depends on the contract type.
+    defaultRate Decimal? @map("default_rate") @db.Decimal(5, 2)
+
+    /// If true, this fund adds to the taxable base (imponibile) rather than being deducted.
+    /// e.g. Enasarco increases the taxable amount; ritenuta decreases it.
+    addsTaxableBase Boolean @default(false) @map("adds_taxable_base")
+
+    active Boolean @default(true)
+
+    suppliers Supplier[]
+
+    @@map("social_security_funds")
+}
+
+// ============================================================================
+// WITHHOLDING TAX SETTLEMENT (Liquidazione Ritenute — Versamento F24)
+// ============================================================================
+
+/// Aggregates withholding tax liabilities accrued across multiple supplier invoices
+/// into a single periodic F24 payment (typically monthly).
+/// The accrual entries (Debito Erario c/Ritenute) are created at SUPPLIER_INVOICE
+/// registration — this model tracks only the settlement event.
+model WithholdingTaxSettlement {
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantWithholdingTaxSettlements", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    // === PERIOD ===
+
+    /// Calendar month this settlement covers (1–12).
+    periodMonth Int @map("period_month")
+    /// Calendar year this settlement covers.
+    periodYear  Int @map("period_year")
+
+    // === F24 PAYMENT ===
+
+    /// Date the F24 was submitted / bank debit executed.
+    paymentDate DateTime @map("payment_date")
+    /// F24 section code (e.g. "1040" for ritenute lavoro autonomo).
+    f24TaxCode  String   @map("f24_tax_code") @db.VarChar(10)
+    /// Total amount remitted to Agenzia delle Entrate.
+    totalAmount Decimal  @map("total_amount") @db.Decimal(15, 2)
+
+    /// Bank account used for F24 payment.
+    bankAccountId String?      @map("bank_account_id")
+    bankAccount   BankAccount? @relation("SettlementBankAccount", fields: [bankAccountId], references: [id], onDelete: SetNull)
+
+    /// External reference (CRO, F24 protocol, or payment provider ID).
+    paymentReference String? @map("payment_reference") @db.VarChar(100)
+
+    // === STATUS ===
+
+    status WithholdingTaxSettlementStatus @default(DRAFT)
+
+    /// User who approved and submitted the F24.
+    submittedByUserId String? @map("submitted_by_user_id")
+    submittedBy       User?   @relation("SettlementSubmittedBy", fields: [submittedByUserId], references: [id], onDelete: SetNull)
+    submittedAt       DateTime? @map("submitted_at")
+
+    notes String? @db.Text
+
+    // === RELATIONS ===
+
+    /// Individual withholding tax lines aggregated into this settlement.
+    lines          WithholdingTaxSettlementLine[]
+    journalEntries JournalEntry[]                 @relation("SettlementJournalEntries")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    /// One settlement per period per tenant (one F24 per month).
+    @@unique([tenantId, periodYear, periodMonth])
+    @@index([tenantId, status])
+    @@index([tenantId, paymentDate])
+    @@map("withholding_tax_settlements")
+}
+
+enum WithholdingTaxSettlementStatus {
+    DRAFT      // Being compiled; lines still being added
+    LOCKED     // Finalized; ready for F24 submission
+    SUBMITTED  // F24 submitted to Agenzia delle Entrate
+    PAID       // Bank debit confirmed
+}
+
+/// Single withholding tax line linking a supplier invoice to a settlement.
+/// One line per SUPPLIER_INVOICE that carried a withholding tax accrual.
+model WithholdingTaxSettlementLine {
+    id           String                   @id @default(cuid())
+    settlementId String                   @map("settlement_id")
+    settlement   WithholdingTaxSettlement @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+
+    /// Source invoice that generated the withholding tax accrual.
+    documentId String   @map("document_id")
+    document   Document @relation("DocumentWithholdingLines", fields: [documentId], references: [id], onDelete: Restrict)
+
+    supplierId String   @map("supplier_id")
+    supplier   Supplier @relation("SupplierWithholdingLines", fields: [supplierId], references: [id], onDelete: Restrict)
+
+    withholdingTaxTypeId String             @map("withholding_tax_type_id")
+    withholdingTaxType   WithholdingTaxType @relation(fields: [withholdingTaxTypeId], references: [id], onDelete: Restrict)
+
+    /// Taxable base amount from the source invoice.
+    taxableBase       Decimal @map("taxable_base") @db.Decimal(15, 2)
+    /// Applied withholding rate (snapshotted from invoice).
+    withholdingPercent Decimal @map("withholding_percent") @db.Decimal(5, 2)
+    /// Withholding amount to remit (snapshotted from Document.withholdingTaxAmount).
+    withholdingAmount  Decimal @map("withholding_amount") @db.Decimal(15, 2)
+
+    /// Invoice registration date — determines which F24 period this line belongs to.
+    documentRegistrationDate DateTime @map("document_registration_date")
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    /// Each invoice can appear in at most one settlement.
+    @@unique([documentId])
+    @@index([settlementId])
+    @@index([supplierId])
+    @@map("withholding_tax_settlement_lines")
+}

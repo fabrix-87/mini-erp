@@ -1,24 +1,21 @@
 // ============================================================================
-// ANAGRAFICA CLIENTI
+// COMPANY / CUSTOMER / SUPPLIER
 // ============================================================================
 
-// Enum per il tipo di azienda
 enum CustomerType {
-    PROSPECT // Cliente potenziale (già qualificato, non ancora acquistato)
-    CUSTOMER // Cliente attivo
-    PARTNER // Partner commerciale
-    OTHER // Altro
+    PROSPECT // Not yet a paying customer; qualified lead
+    CUSTOMER // Active paying customer
+    PARTNER // Commercial partner
+    OTHER
 }
 
-// Enum per lo stato di Credit Check
 enum CreditCheckStatus {
     PENDING
+    IN_PROGRESS
     APPROVED
     REJECTED
-    IN_PROGRESS
 }
 
-// Enum per la dimensione del cliente
 enum CustomerSize {
     MICRO
     SMALL
@@ -27,14 +24,12 @@ enum CustomerSize {
     ENTERPRISE
 }
 
-// Enum per la priorità del cliente
 enum CustomerPriority {
     LOW
     MEDIUM
     HIGH
 }
 
-// Enum per il segmento del cliente
 enum CustomerSegment {
     VIP
     GOLD
@@ -43,14 +38,13 @@ enum CustomerSegment {
     STANDARD
 }
 
-// Enum per il tipo di entità aziendale
+/// Distinguishes legal entity type, driving which fiscal identifiers are required.
 enum CompanyTypeEntity {
-    JURIDICAL // Persona Giuridica (Azienda)
-    NATURAL // Persona Fisica (Privato/Ditta individuale)
-    FOREIGN // Entità Estera
+    JURIDICAL // Persona giuridica — P.IVA required
+    NATURAL // Persona fisica / ditta individuale — CF required
+    FOREIGN // Foreign entity — vatId / EORI
 }
 
-// Enum per stato azienda
 enum CompanyStatus {
     ACTIVE
     INACTIVE
@@ -58,83 +52,87 @@ enum CompanyStatus {
     ARCHIVED
 }
 
-// Tabella Company (base comune)
+/// Base registry shared by Customer, Supplier, and the tenant's own company.
+/// Always owned by a tenant except during bootstrap (see tenantId comment).
 model Company {
     id String @id @default(cuid())
 
-    // Dati Base
-    code        String  @unique @db.VarChar(20)
-    companyName String  @map("company_name") @db.VarChar(255)
-    tradeName   String? @map("trade_name") @db.VarChar(255)
-    legalForm   String? @map("legal_form") @db.VarChar(100)
+    // === IDENTITY ===
 
-    status CompanyStatus @default(ACTIVE)
+    code        String            @db.VarChar(20)
+    companyName String            @map("company_name") @db.VarChar(255)
+    tradeName   String?           @map("trade_name") @db.VarChar(255)
+    legalForm   String?           @map("legal_form") @db.VarChar(100)
+    status      CompanyStatus     @default(ACTIVE)
+    entityType  CompanyTypeEntity @default(JURIDICAL) @map("entity_type")
 
-    // Tipo Persona (per differenziare l'uso di CF o P.IVA)
-    entityType CompanyTypeEntity @default(JURIDICAL) @map("entity_type")
+    // === ITALIAN FISCAL DATA ===
 
-    // Dati Fiscali ITALIANI (SdI)
-    vatNumber String? @map("vat_number") @db.VarChar(20) // Partita IVA 
-    taxCode   String? @map("tax_code") @db.VarChar(20) // Codice Fiscale
+    vatNumber String? @map("vat_number") @db.VarChar(20)
+    taxCode   String? @map("tax_code") @db.VarChar(20)
+    /// SDI recipient code for FatturaPA routing. '0000000' for private/foreign.
+    sdiCode   String? @map("sdi_code") @db.VarChar(7)
+    pec       String? @db.VarChar(255)
 
-    // Codice Destinatario (o SDI/PEC)
-    sdiCode String? @map("sdi_code") @db.VarChar(7) // Codice SDI (7 caratteri, '0000000' per i privati/esteri)
-    pec     String? @db.VarChar(255) // Indirizzo PEC
+    // === FOREIGN FISCAL DATA ===
 
-    // Dati Fiscali ESTERI (necessari se Country non è IT)
-    eoriNumber String? @map("eori_number") @db.VarChar(20) // EORI (per transazioni extra UE)
-    vatId      String? @map("vat_id") @db.VarChar(20) // VAT ID per UE (es. FR123456789)
+    /// EORI number — required for extra-EU customs transactions.
+    eoriNumber String? @map("eori_number") @db.VarChar(20)
+    /// EU VAT identifier (e.g. FR123456789). Populated when countryCode ≠ IT.
+    vatId      String? @map("vat_id") @db.VarChar(20)
 
-    // Nazione Fiscale
-    countryCode String  @default("IT") @map("country_code") @db.Char(2) // Codice ISO 31
+    // === FISCAL COUNTRY ===
+
+    /// ISO 3166-1 alpha-2. Drives fiscal regime and Intrastat flow detection.
+    countryCode String  @default("IT") @map("country_code") @db.Char(2)
     country     Country @relation("CompanyCountry", fields: [countryCode], references: [code])
 
-    // Contatti Generali
-    mainEmail String? @map("main_email") @db.VarChar(255) // Email principale del contatto
+    // === CONTACTS ===
+
+    mainEmail String? @map("main_email") @db.VarChar(255)
     mainPhone String? @map("main_phone") @db.VarChar(50)
 
-    // Relazioni
-    user           User?      @relation("AssignedUser", fields: [assignedUserId], references: [id])
-    assignedUserId String?    @map("assigned_user_id")
-    activities     Activity[] @relation("CompanyActivities")
+    // === OWNERSHIP ===
 
-    // Tenant opzionale (per creazione company del nuovo tenant stesso)
+    assignedUserId String? @map("assigned_user_id")
+    user           User?   @relation("AssignedUser", fields: [assignedUserId], references: [id])
+
+    /// Nullable for two reasons only:
+    /// (1) Bootstrap window: the tenant's own Company is created before the Tenant row
+    ///     (Tenant.companyId is mandatory). tenantId is back-filled in the same transaction:
+    ///     CREATE Company → CREATE Tenant → UPDATE Company SET tenantId.
+    /// (2) Orphaning: if a Tenant is deleted (onDelete: SetNull), its Companies are
+    ///     preserved for historical traceability with tenantId = NULL.
+    /// All live Company records linked to an active Customer/Supplier always have tenantId set.
     tenantId String? @map("tenant_id")
     tenant   Tenant? @relation("TenantCompanies", fields: [tenantId], references: [id], onDelete: SetNull)
 
-    // Indirizzi
-    addresses CompanyAddress[] @relation("CompanyAddresses")
+    // === RELATIONS ===
 
-    // Contatti e Relazioni Commerciali
-    contacts CompanyContact[]
-    customer Customer?
-    supplier Supplier?
-    tenants  Tenant?          @relation("TenantOwnedCompany")
+    addresses    CompanyAddress[] @relation("CompanyAddresses")
+    contacts     CompanyContact[]
+    customer     Customer?
+    supplier     Supplier?
+    tenants      Tenant?          @relation("TenantOwnedCompany")
+    notes        CompanyNote[]
+    bankAccounts BankAccount[]    @relation("CompanyBankAccounts")
+    activities   Activity[]       @relation("CompanyActivities")
 
-    // Note
-    notes CompanyNote[]
-
-    // Bank accounts
-    bankAccounts BankAccount[] @relation("CompanyBankAccounts")
-
-    // Custom Fields
     customFields Json? @map("custom_fields")
 
-    // Campi per tracking
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    // Index
-    @@index([vatNumber])
+    @@unique([tenantId, code])
+    @@index([tenantId, vatNumber])
     @@index([taxCode])
     @@map("companies")
 }
 
-// Tabella Customer
+/// CRM and commercial profile of a customer, extending Company 1-to-1.
 model Customer {
     id String @id @default(cuid())
 
-    // Collegamento 1-a-1 alla Company
     companyId String  @unique @map("company_id")
     company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
@@ -143,66 +141,78 @@ model Customer {
     tenantId String @map("tenant_id")
     tenant   Tenant @relation("TenantCustomers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    // Dati specifici Cliente/CRM
+    // === CRM CLASSIFICATION ===
+
+    type         CustomerType      @default(PROSPECT)
     priority     CustomerPriority  @default(LOW)
     segment      CustomerSegment   @default(STANDARD)
     size         CustomerSize      @default(SMALL)
-    type         CustomerType      @default(PROSPECT)
     creditStatus CreditCheckStatus @default(PENDING)
 
-    // Dati Commerciali
+    // === COMMERCIAL DEFAULTS ===
+
     defaultPriceListId String?    @map("default_price_list_id")
     defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id], onDelete: SetNull)
 
     customerTaxRuleId Int?     @map("customer_tax_rule_id")
     customerTaxRule   TaxRule? @relation("CustomerTaxRule", fields: [customerTaxRuleId], references: [id])
 
-    paymentMethodId Int?           @map("payment_method_id")
+    paymentMethodId String?        @map("payment_method_id")
     paymentMethod   PaymentMethod? @relation("CompanyPaymentMethod", fields: [paymentMethodId], references: [id])
 
-    creditLimit Decimal? @map("credit_limit") @db.Decimal(15, 2) // Limite di credito CONCESSO al Cliente
+    creditLimit Decimal? @map("credit_limit") @db.Decimal(15, 2)
 
-    // Tracking/Reportistica
-    firstSaleDate DateTime? @map("first_sale_date") // Prima vendita CONFERMATA
-    lastSaleDate  DateTime? @map("last_sale_date") // Ultima vendita CONFERMATA
-    totalSales    Int       @default(0) @map("total_sales") // Numero ordini TOTALI
-    totalRevenue  Decimal   @default(0) @map("total_revenue") @db.Decimal(15, 2) // Fatturato TOTALE reale
+    // === SALES TRACKING (denormalized, updated on payment events) ===
 
-    // Date estese
-    customerSince     DateTime? @map("customer_since") // Data entrata in CRM (può essere prima di firstSaleDate)
-    lastInteractionAt DateTime? @map("last_interaction_at") // Ultima attività (vendita, email, call, meeting)
+    firstSaleDate DateTime? @map("first_sale_date")
+    lastSaleDate  DateTime? @map("last_sale_date")
+    totalSales    Int       @default(0) @map("total_sales")
+    totalRevenue  Decimal   @default(0) @map("total_revenue") @db.Decimal(15, 2)
 
-    // Metriche calcolate
-    averageOrderValue Decimal @default(0) @map("average_order_value") @db.Decimal(15, 2) // Fatturato medio ( totalRevenue / totalSales )
-    lifetimeValue     Decimal @default(0) @map("lifetime_value") @db.Decimal(15, 2) // LTV (storico + proiezione)
+    /// Date of first CRM entry — may precede firstSaleDate.
+    customerSince     DateTime? @map("customer_since")
+    /// Timestamp of the last recorded interaction (sale, email, call, meeting).
+    lastInteractionAt DateTime? @map("last_interaction_at")
 
-    // Score predittivi
-    churnRisk   Int @default(0) @map("churn_risk") @db.SmallInt // 0-100 (rischio abbandono)
-    healthScore Int @default(50) @map("health_score") @db.SmallInt // 0-100 (salute complessiva)
+    // === COMPUTED METRICS (updated by background job) ===
 
-    // NPS e soddisfazione
-    npsScore         Int?      @map("nps_score") @db.SmallInt // -100 a +100
-    satisfactionRate Decimal?  @map("satisfaction_rate") @db.Decimal(3, 2) // 0.00 - 5.00
-    lastSurveyDate   DateTime? @map("last_survey_date") // Data dell'ultimo sondaggio
+    /// totalRevenue / totalSales. Zero when totalSales = 0.
+    averageOrderValue Decimal @default(0) @map("average_order_value") @db.Decimal(15, 2)
+    /// Lifetime value — historical spend plus projection.
+    lifetimeValue     Decimal @default(0) @map("lifetime_value") @db.Decimal(15, 2)
 
-    // Relazioni a documenti di Vendita
-    documentsOut  Document[]    @relation("CustomerDocuments")
-    opportunities Opportunity[]
-    activities    Activity[]    @relation("CustomerActivities")
+    // === PREDICTIVE SCORES ===
 
-    // Relazioni tra clienti (gruppi e gerarchie)
+    /// Churn risk score 0–100 (higher = more likely to churn). Updated by ML job.
+    churnRisk   Int @default(0) @map("churn_risk") @db.SmallInt
+    /// Overall health score 0–100. Composite of recency, frequency, spend.
+    healthScore Int @default(50) @map("health_score") @db.SmallInt
+
+    // === SATISFACTION ===
+
+    /// Net Promoter Score -100 to +100.
+    npsScore         Int?      @map("nps_score") @db.SmallInt
+    /// Average satisfaction rating 0.00–5.00.
+    satisfactionRate Decimal?  @map("satisfaction_rate") @db.Decimal(3, 2)
+    lastSurveyDate   DateTime? @map("last_survey_date")
+
+    // === HIERARCHY ===
+
     parentCustomerId String?    @map("parent_customer_id")
     parentCustomer   Customer?  @relation("CustomerHierarchy", fields: [parentCustomerId], references: [id], onDelete: SetNull)
     subsidiaries     Customer[] @relation("CustomerHierarchy")
 
-    // Lead convertita in questo customer
-    convertedFromLead Lead? @relation("ConvertedCustomer")
+    // === RELATIONS ===
+
+    documentsOut      Document[]    @relation("CustomerDocuments")
+    opportunities     Opportunity[]
+    activities        Activity[]    @relation("CustomerActivities")
+    convertedFromLead Lead?         @relation("ConvertedCustomer")
 
     createdAt DateTime  @default(now()) @map("created_at")
     updatedAt DateTime  @updatedAt @map("updated_at")
     deletedAt DateTime? @map("deleted_at")
 
-    // Safe delete
     deletedBy     String? @map("deleted_by")
     deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
@@ -210,17 +220,16 @@ model Customer {
     @@index([tenantId, type])
     @@index([tenantId, segment])
     @@index([tenantId, creditStatus])
+    @@index([tenantId, deletedAt])
     @@index([parentCustomerId])
     @@index([deletedAt])
-    @@index([tenantId, deletedAt]) // per soft-delete scoped: WHERE tenantId = ? AND deletedAt IS NULL
     @@map("customers")
 }
 
-// Tabella Supplier
+/// Procurement and fiscal profile of a supplier, extending Company 1-to-1.
 model Supplier {
     id String @id @default(cuid())
 
-    // Collegamento 1-a-1 alla Company
     companyId String  @unique @map("company_id")
     company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
@@ -229,50 +238,68 @@ model Supplier {
     tenantId String @map("tenant_id")
     tenant   Tenant @relation("TenantSuppliers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    // Dati specifici Fornitore
-    creditLimit Decimal? @map("credit_limit") @db.Decimal(15, 2) // Limite di credito CONCESSO dal Fornitore
+    // === FISCAL ===
 
-    paymentMethodId Int?           @map("payment_method_id")
-    paymentMethod   PaymentMethod? @relation("SupplierPaymentMethod", fields: [paymentMethodId], references: [id])
-
-    /// Regime fiscale FatturaPA (RF01 = ordinario, RF19 = forfettario, ecc.)
+    /// FatturaPA fiscal regime code (RF01–RF19).
+    /// Validated at application level against the FatturaPA code list — no FK needed (stable list).
     fiscalRegimeCode String? @map("fiscal_regime_code") @db.VarChar(4)
 
-    /// Il fornitore è soggetto a ritenuta d'acconto (es. professionisti, agenti)
-    isWithholdingSubject      Boolean  @default(false) @map("is_withholding_subject")
-    /// Tipo ritenuta FatturaPA (RT01 persone fisiche, RT02 persone giuridiche, RT03 INPS, ecc.)
-    withholdingTaxType        String?  @map("withholding_tax_type") @db.VarChar(4)
+    /// True if this supplier is subject to withholding tax (ritenuta d'acconto).
+    isWithholdingSubject        Boolean             @default(false) @map("is_withholding_subject")
+    /// Default withholding tax type applied to INBOUND invoices from this supplier.
+    /// Drives pre-population of Document.withholdingTaxTypeId at invoice creation.
+    defaultWithholdingTaxTypeId String?             @map("default_withholding_tax_type_id")
+    defaultWithholdingTaxType   WithholdingTaxType? @relation("SupplierDefaultWithholdingTaxType", fields: [defaultWithholdingTaxTypeId], references: [id], onDelete: SetNull)
+
+    /// Override rate if this supplier has a negotiated percentage different from WithholdingTaxType.rate.
+    /// NULL means use the standard rate from the related WithholdingTaxType.
     defaultWithholdingPercent Decimal? @map("default_withholding_percent") @db.Decimal(5, 2)
 
-    /// Cassa previdenziale applicata in fattura (TC01-TC22 FatturaPA, es. TC02 = INPS, TC07 = ENPAM)
-    socialSecurityFundCode     String?  @map("social_security_fund_code") @db.VarChar(4)
+    /// FatturaPA social security fund code (TC01–TC22, e.g. TC02 = INPS, TC07 = ENPAM).
+    socialSecurityFundId String?             @map("social_security_fund_id")
+    socialSecurityFund   SocialSecurityFund? @relation(fields: [socialSecurityFundId], references: [id], onDelete: SetNull)
+
+    /// Override rate if this supplier has a negotiated percentage different from SocialSecurityFund.defaultRate.
+    /// NULL means use the standard rate from the related SocialSecurityFund.
     defaultContributionPercent Decimal? @map("default_contribution_percent") @db.Decimal(5, 2)
 
-    // Costi e Logistica
-    leadTimeDays  Int?     @default(0) @map("lead_time_days") // Tempo standard di consegna
-    transportCost Decimal? @map("transport_cost") @db.Decimal(10, 2) // Costo standard di trasporto
+    // === COMMERCIAL DEFAULTS ===
 
-    // Tracking/Reportistica
-    firstOrderDate DateTime? @map("first_order_date") // Data del primo ordine
-    lastOrderDate  DateTime? @map("last_order_date") // Data dell'ultimo ordine
-    totalOrders    Int       @default(0) @map("total_orders")
-    totalSpent     Decimal   @default(0) @map("total_spent") @db.Decimal(15, 2)
-    rating         Int?      @default(5) // 1-5 stelle 
+    paymentMethodId String?        @map("payment_method_id")
+    paymentMethod   PaymentMethod? @relation("SupplierPaymentMethod", fields: [paymentMethodId], references: [id])
 
     supplierTaxRuleId Int?     @map("supplier_tax_rule_id")
     supplierTaxRule   TaxRule? @relation("SupplierTaxRule", fields: [supplierTaxRuleId], references: [id])
 
-    // Relazioni a documenti di Acquisto
-    documentsIn Document[] @relation("SupplierDocuments")
-    products    Product[]
+    /// Credit limit granted by this supplier to the tenant.
+    creditLimit Decimal? @map("credit_limit") @db.Decimal(15, 2)
 
-    // Relazione stocks
-    stockBatchs StockBatch[]
+    // === LOGISTICS ===
 
-    // Relazioni tra fornitori (gruppi e gerarchie)
+    leadTimeDays  Int?     @default(0) @map("lead_time_days")
+    transportCost Decimal? @map("transport_cost") @db.Decimal(10, 2)
+
+    // === PURCHASE TRACKING (denormalized, updated on order/invoice events) ===
+
+    firstOrderDate DateTime? @map("first_order_date")
+    lastOrderDate  DateTime? @map("last_order_date")
+    totalOrders    Int       @default(0) @map("total_orders")
+    totalSpent     Decimal   @default(0) @map("total_spent") @db.Decimal(15, 2)
+    /// Supplier quality rating 1–5.
+    rating         Int?      @default(5)
+
+    // === HIERARCHY ===
+
     parentSupplierId String?    @map("parent_supplier_id")
     parentSupplier   Supplier?  @relation("SupplierHierarchy", fields: [parentSupplierId], references: [id], onDelete: SetNull)
     subsidiaries     Supplier[] @relation("SupplierHierarchy")
+
+    // === RELATIONS ===
+
+    documentsIn                Document[]                     @relation("SupplierDocuments")
+    withholdingSettlementLines WithholdingTaxSettlementLine[] @relation("SupplierWithholdingLines")
+    products                   Product[]
+    stockBatchs                StockBatch[]
 
     createdAt DateTime  @default(now()) @map("created_at")
     updatedAt DateTime  @updatedAt @map("updated_at")
@@ -282,13 +309,12 @@ model Supplier {
     deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
     @@index([tenantId])
-    @@index([tenantId, deletedAt]) // soft-delete scoped
+    @@index([tenantId, deletedAt])
     @@index([parentSupplierId])
     @@index([deletedAt])
     @@map("suppliers")
 }
 
-// Enum per tipo indirizzo
 enum AddressType {
     LEGAL
     BILLING
@@ -298,9 +324,8 @@ enum AddressType {
     OTHER
 }
 
-// Modello per gli indirizzi delle aziende
 model CompanyAddress {
-    id        Int     @id @default(autoincrement()) @map("id")
+    id        Int     @id @default(autoincrement())
     companyId String  @map("company_id")
     company   Company @relation("CompanyAddresses", fields: [companyId], references: [id], onDelete: Cascade)
 
@@ -325,28 +350,26 @@ model CompanyAddress {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    // Partial unique: only one LEGAL address per company
+    /// Enforces at most one LEGAL address per company.
     @@unique([companyId], map: "unique_company_legal_address", where: raw("address_type = 'LEGAL'"))
     @@index([companyId])
     @@index([companyId, addressType])
     @@map("company_addresses")
 }
 
-// Modello per i contatti
+/// Person contact, independent of any single company.
+/// Associated to one or more companies via CompanyContact.
 model Contact {
     id String @id @default(cuid())
 
-    // Dati anagrafici puri — nessun companyId diretto
     firstName   String  @map("first_name") @db.VarChar(100)
     lastName    String? @map("last_name") @db.VarChar(100)
     email       String? @db.VarChar(255)
     phone       String? @db.VarChar(50)
     mobilePhone String? @map("mobile_phone") @db.VarChar(50)
+    active      Boolean @default(true)
+    notes       String? @db.Text
 
-    active Boolean @default(true)
-    notes  String? @db.Text
-
-    // Relazioni
     tenantId             String                @map("tenant_id")
     tenant               Tenant                @relation("TenantContacts", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     companies            CompanyContact[]
@@ -357,16 +380,16 @@ model Contact {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    // email unica per tenant (non globale) — solo se email non null
+    /// Email unique per tenant. Partial: allows multiple NULL emails within the same tenant.
     @@unique([tenantId, email], where: { email: { not: null } }, map: "unique_tenant_contact_email")
     @@index([tenantId])
     @@index([tenantId, active])
     @@map("contacts")
 }
 
-// Tabella di relazione many-to-many con dati contestuali
+/// Many-to-many join between Contact and Company with role metadata.
 model CompanyContact {
-    id        Int     @id @default(autoincrement()) @map("id")
+    id        Int     @id @default(autoincrement())
     contactId String  @map("contact_id")
     contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
     companyId String  @map("company_id")
@@ -380,14 +403,14 @@ model CompanyContact {
     updatedAt DateTime @updatedAt @map("updated_at")
 
     @@unique([companyId, contactId])
-    // Partial unique: only one primary contact per company
+    /// Enforces at most one primary contact per company.
     @@unique([companyId], map: "unique_primary_contact_per_company", where: { isPrimaryContact: true })
     @@index([contactId])
     @@index([companyId])
     @@map("company_contacts")
 }
 
-// Tabella Note
+/// Internal note attached to a company. Append-friendly; not soft-deleted.
 model CompanyNote {
     id        Int      @id @default(autoincrement())
     companyId String   @map("company_id")

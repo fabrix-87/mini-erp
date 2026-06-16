@@ -37,12 +37,12 @@ model Currency {
   /// Optional informational primary country code.
   countryCode String? @map("country_code") @db.Char(2)
 
-  countries     Country[]           @relation("CountryCurrency")
-  documents     Document[]          @relation("DocumentCurrency")
-  priceLists    PriceList[]         @relation("PriceListCurrency")
-  virtualStocks VirtualStock[]      @relation("VirtualStockCurrency")
-  tenants       Tenant[]            @relation("TenantCurrency")
-  bankAccounts  BankAccount[] @relation("BankAccountCurrency")
+  countries     Country[]      @relation("CountryCurrency")
+  documents     Document[]     @relation("DocumentCurrency")
+  priceLists    PriceList[]    @relation("PriceListCurrency")
+  virtualStocks VirtualStock[] @relation("VirtualStockCurrency")
+  tenants       Tenant[]       @relation("TenantCurrency")
+  bankAccounts  BankAccount[]  @relation("BankAccountCurrency")
 
   /// Latest rate from the system base currency to this currency.
   currentRatesFromBase CurrencyCurrentRate[] @relation("RateFromBase")
@@ -51,6 +51,7 @@ model Currency {
   rateHistoryFromBase ExchangeRateHistory[] @relation("HistoryFromBase")
 
   translations CurrencyTranslation[]
+  fiscalYears  FiscalYear[]          @relation("FiscalYearCurrency")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

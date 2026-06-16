@@ -1,0 +1,495 @@
+// ============================================================================
+// ACCOUNTING — GENERAL LEDGER (CO.GE.)
+// Covers: chart of accounts, fiscal years, accounting periods,
+// journal entries (auto-generated + manual), and cost centers (Co.An. stub).
+//
+// Cross-file references:
+//   Document                → document.prisma
+//   DocumentPaymentInstallment → document.prisma
+//   WithholdingTaxType      → tax.prisma
+//   Tenant                  → tenant.prisma
+//   User                    → user.prisma
+//   Currency                → locale.prisma
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// ENUMS
+// ----------------------------------------------------------------------------
+
+/// Lifecycle state of a fiscal year.
+enum FiscalYearStatus {
+    OPEN // Entries can be created and modified
+    CLOSING // Provisional close in progress (trial balance, adjustments)
+    CLOSED // Permanently closed; no further entries allowed
+}
+
+/// Lifecycle state of an accounting period (month).
+enum AccountingPeriodStatus {
+    OPEN // Entries freely created/modified
+    LOCKED // Soft lock: entries require elevated permission to modify
+    CLOSED // Hard close: no modifications allowed
+}
+
+/// Debit or credit side of a journal entry line.
+enum JournalEntryLineDirection {
+    DEBIT // Dare
+    CREDIT // Avere
+}
+
+/// Lifecycle state of a journal entry.
+enum JournalEntryStatus {
+    DRAFT // Being composed; not yet posted to the ledger
+    POSTED // Validated and posted; affects balances
+    CANCELLED // Reversed by a counter-entry; no longer affects balances
+}
+
+/// Identifies the business event that generated a JournalEntry.
+/// Used by JournalEntryTemplate to match the correct debit/credit pattern.
+enum JournalEntryOrigin {
+    // === OUTBOUND CYCLE ===
+    CUSTOMER_INVOICE // Sales invoice / credit note posted to customer ledger
+    CUSTOMER_PAYMENT // Payment received from customer; clears receivable
+
+    // === INBOUND CYCLE ===
+    SUPPLIER_INVOICE // Supplier invoice posted; splits payable net of withholding tax
+    // and accrues Debito Erario c/Ritenute if withholdingTaxTypeId is set
+    SUPPLIER_PAYMENT // Payment sent to supplier; clears net payable
+
+    // === REVERSE CHARGE / SELF-INVOICE ===
+    REVERSE_CHARGE_PURCHASE // Inbound leg of reverse charge: cost + VAT both sides (acquisti register)
+    REVERSE_CHARGE_SALES // Outbound mirror leg: VAT journal entry for vendite register (zero net)
+    // Always paired with REVERSE_CHARGE_PURCHASE via DocumentRelation.MIRRORS
+
+    // === WITHHOLDING TAX ===
+    /// Periodic F24 payment aggregating withholding tax liabilities across multiple suppliers.
+    /// NOT linked to a single Document — linked to a future WithholdingTaxSettlement model.
+    /// The accrual (Debito Erario c/Ritenute) is created by SUPPLIER_INVOICE, not here.
+    WITHHOLDING_TAX_PAYMENT
+
+    // === BANK / TREASURY ===
+    BANK_RECONCILIATION // Manual or imported bank statement matching entry
+    MANUAL // Free-form manual entry; requires operator justification
+}
+
+/// Account type driving balance-sheet / P&L classification and normal balance side.
+enum AccountType {
+    ASSET // Attività — normal balance: DEBIT
+    LIABILITY // Passività — normal balance: CREDIT
+    EQUITY // Patrimonio netto — normal balance: CREDIT
+    REVENUE // Ricavi — normal balance: CREDIT
+    EXPENSE // Costi — normal balance: DEBIT
+    TAX // Conti IVA (IVA a debito / IVA a credito)
+    BANK // Conti bancari e cassa
+    ACCOUNTS_RECEIVABLE // Crediti verso clienti
+    ACCOUNTS_PAYABLE // Debiti verso fornitori
+    WITHHOLDING_TAX // Ritenute d'acconto (attive/passive)
+    INTERCOMPANY // Conti infragruppo
+}
+
+// ----------------------------------------------------------------------------
+// FISCAL YEAR
+// ----------------------------------------------------------------------------
+
+/// Tenant fiscal year. May not coincide with the calendar year.
+/// Accounting periods are generated automatically on creation.
+model FiscalYear {
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantFiscalYears", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Human label, e.g. "2024", "2024/2025".
+    name String @db.VarChar(20)
+
+    /// Inclusive start date of the fiscal year.
+    startDate DateTime @map("start_date") @db.Date
+    /// Inclusive end date of the fiscal year.
+    endDate   DateTime @map("end_date") @db.Date
+
+    status FiscalYearStatus @default(OPEN)
+
+    /// Currency used for all entries in this fiscal year.
+    /// Normally matches tenant base currency; stored for historical integrity.
+    currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
+    currency     Currency @relation("FiscalYearCurrency", fields: [currencyCode], references: [code], onDelete: Restrict)
+
+    /// User who closed this fiscal year. NULL while OPEN or CLOSING.
+    closedByUserId String?   @map("closed_by_user_id")
+    closedBy       User?     @relation("FiscalYearClosedBy", fields: [closedByUserId], references: [id], onDelete: SetNull)
+    closedAt       DateTime? @map("closed_at")
+
+    periods AccountingPeriod[]
+    entries JournalEntry[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([tenantId, name])
+    @@unique([tenantId, startDate])
+    @@index([tenantId, status])
+    @@map("fiscal_years")
+}
+
+// ----------------------------------------------------------------------------
+// ACCOUNTING PERIOD
+// ----------------------------------------------------------------------------
+
+/// Monthly accounting period within a fiscal year.
+/// Auto-generated when the FiscalYear is created.
+/// Entries are locked per-period to enforce closing discipline.
+model AccountingPeriod {
+    id           String     @id @default(cuid())
+    fiscalYearId String     @map("fiscal_year_id")
+    fiscalYear   FiscalYear @relation(fields: [fiscalYearId], references: [id], onDelete: Cascade)
+
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantAccountingPeriods", fields: [tenantId], references: [id], onDelete: Restrict)
+
+    /// Period sequence within the fiscal year (1 = first month).
+    periodNumber Int      @map("period_number")
+    /// e.g. "2024-01", "2024-12".
+    name         String   @db.VarChar(10)
+    startDate    DateTime @map("start_date") @db.Date
+    endDate      DateTime @map("end_date") @db.Date
+
+    status AccountingPeriodStatus @default(OPEN)
+
+    /// User who locked or closed this period.
+    lockedByUserId String?   @map("locked_by_user_id")
+    lockedBy       User?     @relation("PeriodLockedBy", fields: [lockedByUserId], references: [id], onDelete: SetNull)
+    lockedAt       DateTime? @map("locked_at")
+
+    entries JournalEntry[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([fiscalYearId, periodNumber])
+    @@unique([tenantId, name])
+    @@index([tenantId, status])
+    @@index([tenantId, startDate, endDate])
+    @@map("accounting_periods")
+}
+
+// ----------------------------------------------------------------------------
+// CHART OF ACCOUNTS
+// ----------------------------------------------------------------------------
+
+/// Account in the chart of accounts.
+/// Global records (tenantId NULL) represent the standard Italian OIC chart.
+/// Tenants can add private sub-accounts under any global account.
+///
+/// Hierarchy: top-level accounts have parentAccountId NULL.
+/// Standard depth: 3–4 levels (class → group → account → sub-account).
+model ChartOfAccount {
+    id String @id @default(cuid())
+
+    /// Account code, e.g. "1", "10", "1001", "1001001".
+    /// Unique within tenant scope (NULL = global).
+    code String @db.VarChar(20)
+
+    /// NULL = global (OIC standard); NOT NULL = tenant-private account.
+    tenantId String? @map("tenant_id")
+    tenant   Tenant? @relation("TenantChartOfAccounts", fields: [tenantId], references: [id], onDelete: Restrict)
+
+    accountType AccountType @map("account_type")
+
+    /// Normal balance side for this account type.
+    /// Informational — drives sign convention in reports.
+    normalBalance JournalEntryLineDirection @map("normal_balance")
+
+    active Boolean @default(true)
+
+    /// Parent account for hierarchical grouping. NULL for root-level accounts.
+    parentAccountId String?          @map("parent_account_id")
+    parentAccount   ChartOfAccount?  @relation("AccountHierarchy", fields: [parentAccountId], references: [id])
+    childAccounts   ChartOfAccount[] @relation("AccountHierarchy")
+
+    /// Only leaf accounts (no children) can receive journal entry lines.
+    /// Enforced at application level.
+    isPostable Boolean @default(true) @map("is_postable")
+
+    /// Whether this account feeds the VAT register (IVA a debito/credito).
+    isVatAccount Boolean @default(false) @map("is_vat_account")
+
+    /// Whether this account is a bank/cash account eligible for bank reconciliation.
+    isBankAccount Boolean @default(false) @map("is_bank_account")
+
+    translations  ChartOfAccountTranslation[]
+    lines         JournalEntryLine[]
+    templateLines JournalEntryTemplateLine[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([tenantId, code])
+    @@unique([code], where: { tenantId: null }, map: "unique_global_chart_of_account_code")
+    @@index([tenantId, accountType])
+    @@index([tenantId, active])
+    @@index([parentAccountId])
+    @@map("chart_of_accounts")
+}
+
+/// Localized name and description for a chart of account entry.
+model ChartOfAccountTranslation {
+    id               Int            @id @default(autoincrement())
+    chartOfAccountId String         @map("chart_of_account_id")
+    chartOfAccount   ChartOfAccount @relation(fields: [chartOfAccountId], references: [id], onDelete: Cascade)
+
+    languageId Int      @map("language_id")
+    language   Language @relation(fields: [languageId], references: [id])
+
+    name        String  @db.VarChar(150)
+    description String? @db.Text
+
+    @@unique([chartOfAccountId, languageId])
+    @@index([languageId])
+    @@map("chart_of_account_translations")
+}
+
+// ----------------------------------------------------------------------------
+// COST CENTER (Co.An. stub)
+// ----------------------------------------------------------------------------
+
+/// Analytical cost center for management accounting.
+/// Used as optional dimension on JournalEntryLine.
+/// Full Co.An. logic (budgets, allocations) is out of scope for this iteration.
+model CostCenter {
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantCostCenters", fields: [tenantId], references: [id], onDelete: Restrict)
+
+    code   String  @db.VarChar(20)
+    active Boolean @default(true)
+
+    parentCostCenterId String?      @map("parent_cost_center_id")
+    parentCostCenter   CostCenter?  @relation("CostCenterHierarchy", fields: [parentCostCenterId], references: [id])
+    childCostCenters   CostCenter[] @relation("CostCenterHierarchy")
+
+    translations CostCenterTranslation[]
+    lines        JournalEntryLine[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([tenantId, code])
+    @@index([tenantId, active])
+    @@index([parentCostCenterId])
+    @@map("cost_centers")
+}
+
+model CostCenterTranslation {
+    id           Int        @id @default(autoincrement())
+    costCenterId String     @map("cost_center_id")
+    costCenter   CostCenter @relation(fields: [costCenterId], references: [id], onDelete: Cascade)
+
+    languageId Int      @map("language_id")
+    language   Language @relation(fields: [languageId], references: [id])
+
+    name        String  @db.VarChar(100)
+    description String? @db.Text
+
+    @@unique([costCenterId, languageId])
+    @@index([languageId])
+    @@map("cost_center_translations")
+}
+
+// ----------------------------------------------------------------------------
+// JOURNAL ENTRY TEMPLATE
+// ----------------------------------------------------------------------------
+
+/// Auto-generation template for journal entries triggered by document events.
+/// One template per (documentType, origin) pair, scoped globally or per tenant.
+/// Each template has N lines defining the DEBIT/CREDIT accounts to use.
+model JournalEntryTemplate {
+    id String @id @default(cuid())
+
+    /// NULL = global template; NOT NULL = tenant override of a global template.
+    tenantId String? @map("tenant_id")
+    tenant   Tenant? @relation("TenantJournalEntryTemplates", fields: [tenantId], references: [id], onDelete: Cascade)
+
+    /// The event that triggers this template.
+    origin JournalEntryOrigin
+
+    /// Human-readable description of this template (e.g. "Fattura vendita standard").
+    description String @db.VarChar(255)
+
+    active Boolean @default(true)
+
+    lines JournalEntryTemplateLine[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([tenantId, origin])
+    @@unique([origin], where: { tenantId: null }, map: "unique_global_journal_entry_template_origin")
+    @@index([tenantId, active])
+    @@map("journal_entry_templates")
+}
+
+/// Origine dell'importo per una riga di JournalEntryTemplate.
+/// Risolto a runtime dal motore contabile contro il record sorgente
+/// (Document oppure DocumentPaymentInstallment, in base a JournalEntryOrigin).
+enum AmountSourceType {
+    // === Document — importi base ===
+    SUBTOTAL // Document.subtotal — totale ante sconto/spese accessorie
+    DISCOUNT_AMOUNT // Document.discountAmount
+    SHIPPING_COST // Document.shippingCost
+    SHIPPING_TAX_AMOUNT // Document.shippingTaxAmount
+    TAXABLE_AMOUNT // Document.taxableAmount — imponibile
+    TAX_AMOUNT // Document.taxAmount — IVA
+    TOTAL_AMOUNT // Document.totalAmount — totale documento (imponibile + IVA)
+
+    // === Document — ciclo passivo / ritenute ===
+    WITHHOLDING_TAX_AMOUNT // Document.withholdingTaxAmount — ritenuta d'acconto
+    CONTRIBUTION_AMOUNT // Document.contributionAmount — cassa previdenziale
+    NET_PAYABLE_AMOUNT // Document.netPayableAmount — netto a pagare (totale − ritenuta)
+
+    // === DocumentPaymentInstallment — origin DOCUMENT_PAYMENT ===
+    INSTALLMENT_AMOUNT // DocumentPaymentInstallment.amount — importo rata
+    LATE_FEE_AMOUNT // DocumentPaymentInstallment.lateFeeAmount — mora
+}
+
+/// Single line rule within a JournalEntryTemplate.
+/// Defines which account receives DEBIT or CREDIT and how the amount is derived.
+model JournalEntryTemplateLine {
+    id         Int                  @id @default(autoincrement())
+    templateId String               @map("template_id")
+    template   JournalEntryTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+    direction JournalEntryLineDirection
+
+    chartOfAccountId String         @map("chart_of_account_id")
+    chartOfAccount   ChartOfAccount @relation(fields: [chartOfAccountId], references: [id], onDelete: Restrict)
+
+    /// Describes how to derive the amount from the source document.
+    /// Resolved at generation time by the accounting engine.
+    amountSource AmountSourceType @map("amount_source")
+
+    /// Processing order within the template.
+    position Int @default(0)
+
+    @@index([templateId])
+    @@index([chartOfAccountId])
+    @@map("journal_entry_template_lines")
+}
+
+// ----------------------------------------------------------------------------
+// JOURNAL ENTRY
+// ----------------------------------------------------------------------------
+
+/// Header of an accounting entry in the general ledger.
+/// Auto-generated entries are linked to their source Document.
+/// Manual entries have origin = MANUAL and documentId = NULL.
+model JournalEntry {
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantJournalEntries", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    fiscalYearId String     @map("fiscal_year_id")
+    fiscalYear   FiscalYear @relation(fields: [fiscalYearId], references: [id], onDelete: Restrict)
+
+    periodId String           @map("period_id")
+    period   AccountingPeriod @relation(fields: [periodId], references: [id], onDelete: Restrict)
+
+    /// Sequential entry number within (tenantId, fiscalYearId). Gap-free.
+    /// Assigned at POST time, never at DRAFT creation.
+    entryNumber Int? @map("entry_number")
+
+    /// Accounting date — determines the period. May differ from document date for late registrations.
+    entryDate DateTime @map("entry_date") @db.Date
+
+    origin      JournalEntryOrigin
+    status      JournalEntryStatus @default(DRAFT)
+    description String             @db.VarChar(500)
+
+    // === SOURCE DOCUMENT LINK ===
+
+    /// Source document that triggered this entry. NULL for MANUAL, OPENING_BALANCE, CLOSING.
+    documentId String?   @map("document_id")
+    document   Document? @relation("DocumentJournalEntries", fields: [documentId], references: [id], onDelete: SetNull)
+
+    /// Source installment for DOCUMENT_PAYMENT entries.
+    installmentId String?                     @map("installment_id")
+    installment   DocumentPaymentInstallment? @relation("InstallmentJournalEntries", fields: [installmentId], references: [id], onDelete: SetNull)
+
+    withholdingSettlementId String?                   @map("withholding_settlement_id")
+    withholdingSettlement   WithholdingTaxSettlement? @relation("SettlementJournalEntries", fields: [withholdingSettlementId], references: [id], onDelete: SetNull)
+
+    // === REVERSAL LINK ===
+
+    /// If this entry was reversed, points to the counter-entry.
+    reversedByEntryId String?       @unique @map("reversed_by_entry_id")
+    reversedByEntry   JournalEntry? @relation("EntryReversal", fields: [reversedByEntryId], references: [id])
+    reversesEntry     JournalEntry? @relation("EntryReversal")
+
+    // === OWNERSHIP ===
+
+    createdByUserId String    @map("created_by_user_id")
+    createdBy       User      @relation("JournalEntryCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+    postedByUserId  String?   @map("posted_by_user_id")
+    postedBy        User?     @relation("JournalEntryPostedBy", fields: [postedByUserId], references: [id], onDelete: SetNull)
+    postedAt        DateTime? @map("posted_at")
+
+    /// Free-text operator note. Mandatory when origin = MANUAL or ADJUSTMENT.
+    notes String? @db.Text
+
+    lines JournalEntryLine[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([tenantId, fiscalYearId, entryNumber], where: { entryNumber: { not: null } })
+    @@index([tenantId, status])
+    @@index([tenantId, origin])
+    @@index([tenantId, entryDate])
+    @@index([periodId])
+    @@index([documentId])
+    @@index([installmentId])
+    @@map("journal_entries")
+}
+
+// ----------------------------------------------------------------------------
+// JOURNAL ENTRY LINE
+// ----------------------------------------------------------------------------
+
+/// Single debit or credit line within a journal entry.
+/// Every posted entry must have balanced DEBIT = CREDIT totals (enforced at application level).
+model JournalEntryLine {
+    /// Autoincrement: append-only ledger line, never exposed directly via API.
+    /// Always accessed via JournalEntry (parent FK).
+    id      Int          @id @default(autoincrement())
+    entryId String       @map("entry_id")
+    entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantJournalEntryLines", fields: [tenantId], references: [id], onDelete: Restrict)
+
+    chartOfAccountId String         @map("chart_of_account_id")
+    chartOfAccount   ChartOfAccount @relation(fields: [chartOfAccountId], references: [id], onDelete: Restrict)
+
+    direction JournalEntryLineDirection
+
+    /// Amount in document/entry currency.
+    amount Decimal @db.Decimal(15, 2)
+
+    /// Amount converted to tenant base currency at entry exchange rate.
+    amountBase Decimal @map("amount_base") @db.Decimal(15, 2)
+
+    /// Optional cost center for analytical accounting (Co.An. stub).
+    costCenterId String?     @map("cost_center_id")
+    costCenter   CostCenter? @relation(fields: [costCenterId], references: [id], onDelete: SetNull)
+
+    /// VAT code snapshot for VAT register lines (natura IVA, aliquota).
+    vatCode    String?  @map("vat_code") @db.VarChar(10)
+    vatPercent Decimal? @map("vat_percent") @db.Decimal(5, 2)
+
+    description String? @db.VarChar(255)
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@index([entryId])
+    @@index([tenantId, chartOfAccountId])
+    @@index([tenantId, chartOfAccountId, direction]) // Account balance queries
+    @@index([costCenterId])
+    @@map("journal_entry_lines")
+}
