@@ -9,7 +9,7 @@ import {
 } from "./primitives";
 import { countryCodeBaseSchema, userIdSchema } from "./base";
 import { roleIdSchema, userRoleSchema } from "./role";
-import { limitSchema, pageSchema, queryBooleanSchema, sortOrderSchema } from "./query";
+import { limitSchema, pageSchema, paginationSchema, queryBooleanSchema, sortOrderSchema } from "./query";
 
 // ============================================================================
 // ENUMS
@@ -49,7 +49,7 @@ export const userBaseSchema = z.object({
   email: emailSchema(),
   password: passwordSchema,
   active: z.boolean().default(true),
-  preferredLanguageId: createIdSchema("Language ID obbligatorio"),
+  preferredLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
 });
 
 // ============================================================================
@@ -96,11 +96,12 @@ export const userSchema = userBaseSchema
   .extend({
     id: userIdSchema,
     roles: z.array(userRoleSchema).optional(),
+    lastLogin: z.string().nullable().optional(), 
     createdAt: z.string(),
     updatedAt: z.string(),
     details: userDetailsSchema.optional(),
   })
-  .omit({ password: true }); // Rimuovi password dal type pubblico
+  .omit({ password: true });// Rimuovi password dal type pubblico
 
 // ============================================================================
 // FORM SCHEMAS (Frontend)
@@ -332,17 +333,12 @@ export const unlockUserSchema = z.object({
 /**
  * Schema per query di ricerca/filtro utenti
  */
-export const userQuerySchema = z.object({
-  page: pageSchema,
-  limit: limitSchema,
-  search: z.string().optional(),
-  active: queryBooleanSchema,
-  emailVerified: queryBooleanSchema,
-  twoFactorEnabled: queryBooleanSchema,
-  locked: queryBooleanSchema, // Users with lockedUntil > now
-  roleId: createIdSchema("RoleId non valido").optional(),
-  sortBy: userSortFieldSchema.default("createdAt"),
-  sortOrder: sortOrderSchema,
+export const userQuerySchema = paginationSchema.extend({
+  search:    z.string().optional(),
+  active:    queryBooleanSchema.optional(),
+  roleId:    z.coerce.number().int().positive().optional(),
+  sortBy:    z.enum(["createdAt", "updatedAt", "username", "email", "lastLogin"]).default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
 // ============================================================================

@@ -104,13 +104,16 @@ model User {
   deletedProductVariants ProductVariant[] @relation("ProductVariantDeletedBy")
   deletedCustomers       Customer[]       @relation("DeletedBy")
   deletedSuppliers       Supplier[]       @relation("DeletedBy")
+  deletedUsers           User[]           @relation("DeletedBy")
 
   // Sales CRM Subsystem Assignments
   assignedLeads  Lead[] @relation("LeadAssignedUser")
   convertedLeads Lead[] @relation("LeadConvertedBy")
   createdLeads   Lead[] @relation("LeadCreatedBy")
 
-  details UserDetails?
+  details       UserDetails?
+  deletedBy     String?      @map("deleted_by")
+  deletedByUser User?        @relation("DeletedBy", fields: [deletedBy], references: [id])
 
   lastLogin DateTime? @map("last_login")
   createdAt DateTime  @default(now()) @map("created_at")

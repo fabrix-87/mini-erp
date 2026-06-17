@@ -63,3 +63,10 @@ export const querySortOrderSchema = (defaultValue: "asc" | "desc" = "asc") =>
     .refine((val): val is "asc" | "desc" => val === "asc" || val === "desc", {
       message: 'sortOrder must be "asc" or "desc"',
     });
+
+
+  
+export const paginationSchema = z.object({
+  page: pageSchema,
+  limit: limitSchema,
+});

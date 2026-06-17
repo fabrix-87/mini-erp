@@ -26,6 +26,7 @@ import {
   destroyAllUserSessions,
   calculateLockUntil,
   mapUserResponse,
+  findUserOrThrow,
 } from "../helpers/user-helper";
 
 import authConfig from "../config/auth-config";
@@ -1091,31 +1092,40 @@ export const toggleUserActive = async (c: Context<AppBindings>) => {
 };
 
 /**
- * @desc    Elimina un utente
+ * @desc    Delete a user (Soft Delete)
  * @route   DELETE /api/users/:id
  * @access  Private/Admin
  */
 export const deleteUser = async (c: Context<AppBindings>) => {
   const { id: userId } = getValidatedParams<UserIdParam>(c);
+  const currentUserId = c.get("user")!.userId;
+  const tenantId = c.get("currentTenantId")!;
 
-  // Verifica esistenza utente
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
-
-  if (!user) {
-    throw new NotFoundError("Utente non trovato");
-  }
-
-  // Non permettere di eliminare se stessi
-  if (userId === c.get("user")!.userId) {
+  // Immediate guard clause: Prevent self-deletion before hitting the DB
+  if (userId === currentUserId) {
     throw new BadRequestError("Non puoi eliminare il tuo account");
   }
 
-  // Elimina utente (cascade gestirà le relazioni)
-  await prisma.user.delete({
-    where: { id: userId },
-  });
+  try {
+    // Single-step verification & update (Atomic operation)
+    await prisma.user.update({
+      where: {
+        id: userId,
+        tenantId: tenantId, // Ensures the user belongs to the current tenant
+        deletedAt: null,    // Prevents re-deleting an already deleted user
+      },
+      data: {
+        deletedAt: new Date(),
+        deletedBy: currentUserId,
+      },
+    });
+  } catch (error) {
+    // Prisma throws P2025 when the record to update is not found
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      throw new NotFoundError("Utente non trovato");
+    }
+    throw error; // Forward any other unexpected DB errors
+  }
 
   return sendDeleted(c, "Utente eliminato con successo");
 };

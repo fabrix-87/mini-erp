@@ -13,6 +13,7 @@ import type { AppBindings } from "../lib/hono-app";
 import { Prisma } from "@/generated/prisma/client";
 import { UserMembershipStatus } from "@mini-erp/shared";
 import { getPermissionsFromMembership, getRolesFromMembership } from "./user-membership-helper";
+import { NotFoundError } from "@/utils/app-error-utils";
 
 // ============================================================================
 // USER SELECTION
@@ -607,4 +608,27 @@ export function calculateLockUntil(failedAttempts: number): Date {
   // 5 tentativi = 5 min, 10 = 30 min, 15 = 2 ore
   const minutes = Math.min(Math.pow(2, failedAttempts - 5), 120);
   return new Date(Date.now() + minutes * 60 * 1000);
+}
+
+/**
+ * Finds a user by their ID and tenant ID.
+ * 
+ * @param {string} userId - The unique identifier of the user.
+ * @param {string} tenantId - The identifier of the tenant the user belongs to.
+ * @returns The user record if found.
+ * @throws {NotFoundError} If no user matches the provided ID and tenant ID.
+ */
+export async function findUserOrThrow(userId: string, tenantId: string) {
+  const user = await prisma.user.findFirst({
+    where: {
+      id: userId,
+      tenantId: tenantId,
+    },
+  });
+
+  if (!user) {
+    throw new NotFoundError("Utente non trovato");
+  }
+
+  return user;
 }
