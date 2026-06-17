@@ -1,6 +1,6 @@
 import { buildQueryString } from "@/helpers/role-helper";
 import api from "@/lib/client/api";
-import { UserListApiResponse, UserSingleApiResponse } from "@/types/user";
+import { UserListApiResponse, UserSingleApiResponse } from "@/types/user-types";
 import { UserQueryInput } from "@mini-erp/shared";
 
 // ============================================================================

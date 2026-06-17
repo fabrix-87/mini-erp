@@ -6,33 +6,46 @@ import { UsersFilterBar } from "@/components/users/users-filter-bar";
 import { UsersTable } from "@/components/users/users-table";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { StatisticCard } from "@/components/ui/statistic-card";
-import { Users, UserCheck, UserX, Shield } from "lucide-react";
-import { userKeys } from "@/types/user";
+import { Users, UserCheck, UserX, Shield, Plus } from "lucide-react";
+import { userKeys, UserListApiResponse, UserStatsResponse } from "@/types/user-types";
 import { clientUserService } from "@/services/client/user";
 import { UserQueryInput } from "@mini-erp/shared";
+import { useNavigation } from "@/hooks/use-navigation";
+import { Button } from "@/components/ui/button";
 
 interface UsersContentProps {
   queryParams: UserQueryInput;
+  usersList: UserListApiResponse;
+  stats: UserStatsResponse;
+  canCreate: boolean;
 }
 
-export default function UsersContent({ queryParams }: UsersContentProps) {
-  const { data: usersResponse } = useQuery({
-    queryKey: userKeys.list(queryParams),
-    queryFn: () => clientUserService.getAll(queryParams),
-    staleTime: 30 * 1000,
-  });
+export default function UsersContent({
+  queryParams,
+  usersList,
+  stats,
+  canCreate,
+}: UsersContentProps) {
+  const { refresh, navigateToNew, navigateToDetail, navigateToEdit } = useNavigation();
 
-  const { data: stats } = useQuery({
-    queryKey: userKeys.stats(),
-    queryFn: () => clientUserService.getStats(),
-    staleTime: 60 * 1000,
-  });
-
-  const users = usersResponse?.data ?? [];
-  const pagination = usersResponse?.pagination ?? null;
+  const users = usersList.data;
+  const pagination = usersList.pagination;
 
   return (
     <>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Gestione Utenti</h1>
+          <p className="text-muted-foreground mt-2">Amministra gli utenti del sistema.</p>
+        </div>
+        {canCreate && (
+          <Button onClick={() => navigateToNew("users")}>
+            <Plus className="h-4 w-4 mr-2" />
+            Nuovo utente
+          </Button>
+        )}
+      </div>
       {/* Statistics Cards */}
       {stats && (
         <div className="grid gap-4 md:grid-cols-4">

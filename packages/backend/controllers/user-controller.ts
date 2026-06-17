@@ -9,7 +9,7 @@ import { prisma } from "../config/prisma-config";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { UserPayload } from "../types/user-types";
+import { UserSessionPayload } from "../types/user-types";
 
 import {
   clearTokenCookies,
@@ -22,7 +22,6 @@ import {
   destroySession,
   isRefreshTokenValid,
   rotateRefreshToken,
-  invalidateUserPermissionsCache,
   destroyAllUserSessions,
   calculateLockUntil,
   mapUserResponse,
@@ -258,7 +257,7 @@ export const login = async (c: Context<AppBindings>) => {
   const fingerprint = extractFingerprint(c);
 
   // 2. Genera token con jti
-  const userPayload: UserPayload = {
+  const userPayload: UserSessionPayload = {
     userId: user.id,
     email: user.email,
     username: user.username,
@@ -437,7 +436,7 @@ export const refreshToken = async (c: Context<AppBindings>) => {
     throw new UnauthorizedError("Nessun tenant attivo disponibile");
   }
 
-  const userPayload: UserPayload = {
+  const userPayload: UserSessionPayload = {
     userId: user.id,
     email: user.email,
     username: user.username,

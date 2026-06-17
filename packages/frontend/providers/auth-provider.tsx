@@ -11,7 +11,6 @@ import {
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Spinner } from "../components/ui/spinner";
-import { User } from "../types/api";
 import { logoutAction } from "@/actions/auth";
 import { getUserFromUserCookie, isAuthenticated } from "@/lib/jwt";
 import { refreshToken } from "@/services/client/auth";
@@ -21,13 +20,14 @@ import {
   TOKEN_CHECK_INTERVAL_MS,
 } from "@/lib/constants/auth";
 import { isPublicRoute } from "@/lib/constants/routes";
+import { UserSessionPayload } from "@mini-erp/shared";
 
 // ============================================================================
 // Types
 // ============================================================================
 
 interface AuthContextType {
-  user: User | null;
+  user: UserSessionPayload | null;
   logout: () => Promise<void>;
   refreshUser: () => void;
   isLoading: boolean;
@@ -62,7 +62,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 // ============================================================================
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserSessionPayload | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
   const router = useRouter();

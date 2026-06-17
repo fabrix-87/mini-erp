@@ -7,7 +7,8 @@ import type {
   UpdateUserDetailsInput,
   UpdateUserProfileInput,
   UserListApiResponse,
-} from "@/types/user";
+  UserStatsResponse,
+} from "@/types/user-types";
 import { ApiResponse, CreateUserFormInput, CreateUserInput } from "@mini-erp/shared";
 import { PaginatedResponse } from "@mini-erp/shared/types";
 
@@ -80,6 +81,7 @@ export async function changePassword(currentPassword: string, newPassword: strin
 /**
  * Get all users with filters and pagination
  * Con cache per performance
+ * @return {Promise<UserListApiResponse>} 
  */
 export async function getAllUsers(params?: {
   page?: number;
@@ -224,7 +226,7 @@ export async function searchUsers(
     limit?: number;
     revalidate?: number | false;
   },
-): Promise<ApiResponse<User[]>> {
+): Promise<UserListApiResponse> {
   return getAllUsers({
     search: query,
     limit: options?.limit ?? 10,
@@ -242,7 +244,7 @@ export async function getUsersByRole(
     limit?: number;
     revalidate?: number | false;
   },
-): Promise<ApiResponse<User[]>> {
+): Promise<UserListApiResponse> {
   return getAllUsers({
     roleId,
     page: options?.page,
@@ -258,7 +260,7 @@ export async function getActiveUsers(options?: {
   page?: number;
   limit?: number;
   revalidate?: number | false;
-}): Promise<ApiResponse<User[]>> {
+}): Promise<UserListApiResponse> {
   return getAllUsers({
     active: true,
     page: options?.page,
@@ -274,13 +276,8 @@ export async function getActiveUsers(options?: {
 /**
  * Get user statistics
  */
-export async function getUserStats(): Promise<{
-  total: number;
-  active: number;
-  inactive: number;
-  byRole: Record<string, number>;
-}> {
-  const users = (await getAllUsers({ limit: 1000, revalidate: 60 })) as PaginatedResponse<User>;
+export async function getUserStats(): Promise<UserStatsResponse> {
+  const users = (await getAllUsers({ limit: 1000, revalidate: 60 })) as UserListApiResponse;
 
   const stats = {
     total: users.pagination.totalItems,
@@ -296,7 +293,7 @@ export async function getUserStats(): Promise<{
       stats.inactive++;
     }
 
-    user.roles?.forEach((role: any) => {
+    user.currentTenant.roles?.forEach((role: any) => {
       stats.byRole[role.code] = (stats.byRole[role.code] || 0) + 1;
     });
   });

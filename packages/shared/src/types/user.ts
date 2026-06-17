@@ -1,64 +1,54 @@
-// ============================================================================
-// USER TYPE EXPORTS
-// ============================================================================
-
+// packages/shared/src/types/user.ts
 import { z } from "zod";
-import type { Role } from "./role";
+import type { Role, Permission } from "./role";
 import type { Language } from "./language";
-import type { Document } from "./document";
-import type { Opportunity } from "./opportunity";
-import type { Company } from "./company";
-import type { Activity, ActivityParticipant } from "./activity";
-import type { CompanyNote } from "./company";
-import type { StockMovement } from "./warehouse";
-import type { AuditLog } from "./audit";
-import type { Product, ProductVariant } from "./product";
-import type { Customer } from "./customer";
-import type { Supplier } from "./supplier";
-import type { Lead } from "./lead";
+import { Gender, UserMembershipStatus } from "../constants/user";
 import {
-  userFormSchema,
-  createUserFormSchema,
-  updateUserFormSchema,
-  userIdParamSchema,
-  userIdAsUserIdParamSchema,
+  // Auth
   loginSchema,
-  twoFactorLoginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
   verifyEmailSchema,
-  resendVerificationEmailSchema,
+  changePasswordSchema,
+  // 2FA
   enableTwoFactorSchema,
   confirmTwoFactorSchema,
   disableTwoFactorSchema,
   regenerateBackupCodesSchema,
+  // Create
   createUserSchema,
   registerUserSchema,
+  // Update
   updateUserProfileSchema,
   updateUserDetailsSchema,
-  changePasswordSchema,
   updateUserRolesSchema,
   toggleUserStatusSchema,
-  unlockUserSchema,
+  // Form (frontend)
+  userFormSchema,
+  createUserFormSchema,
+  updateUserFormSchema,
+  // Params
+  userIdParamSchema,
+  // Query
   userQuerySchema,
+  // GDPR
   updateConsentSchema,
   requestDataExportSchema,
   requestAccountDeletionSchema,
 } from "../validators/user";
 
-import { Gender } from "../constants/user";
-
 // ============================================================================
-// ENTITY TYPES
+// ENTITY TYPES — mirror del Prisma schema (solo campi safe, no secrets)
 // ============================================================================
 
 /**
- * User Details entity
+ * UserDetails entity — vertical partition of `user_details`.
+ * Mirrors the non-sensitive columns of the Prisma `UserDetails` model.
+ * `id` is autoincrement Int; `userId` is a cuid String (FK → users.id).
  */
 export type UserDetails = {
   id: number;
-  userId: number;
-  user: User;
+  userId: string;
   firstName: string;
   lastName: string;
   profilePicture: string | null;
@@ -67,162 +57,160 @@ export type UserDetails = {
   city: string | null;
   state: string | null;
   zipCode: string | null;
-  country: string | null;
+  countryCode: string | null;
   dateOfBirth: Date | null;
   gender: Gender;
   bio: string | null;
-  lastLogin: Date | null;
-  active: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
 
 /**
- * User entity
+ * Slim role shape used inside membership responses.
+ * Avoids importing the full Role entity with its relations.
  */
-export type User = Omit<CreateUserInput, "password" | "roleIds" | "details"> & {
+export type MembershipRole = {
   id: number;
-  // Email verification
+  code: string;
+  name: string;
+  permissions: Pick<Permission, "code">[];
+};
+
+/**
+ * A single tenant membership as returned by the API.
+ * Corresponds to `UserTenantMembership` + its roles in user.prisma.
+ */
+export type UserMembership = {
+  tenantId: string;
+  status: UserMembershipStatus;
+  isDefault: boolean;
+  roles: MembershipRole[];
+};
+
+/**
+ * Safe User entity — never includes password or security-internal tokens.
+ * This is the shape produced by `mapUserResponse()` in user-helper.ts
+ * and returned by every authenticated endpoint.
+ */
+export type User = {
+  id: string;
+  username: string;
+  email: string;
+  active: boolean;
+  // Email verification (status only — no tokens)
   emailVerified: boolean;
-  emailVerificationToken: string | null;
-  emailVerificationExpires: Date | null;
   emailVerifiedAt: Date | null;
-  // Password reset
-  resetPasswordToken: string | null;
-  resetPasswordExpires: Date | null;
-  passwordResetAttempts: number;
-  lastPasswordResetAt: Date | null;
-  // Two-factor authentication
+  // 2FA (status only — no secrets)
   twoFactorEnabled: boolean;
-  twoFactorSecret: string | null;
-  twoFactorBackupCodes: Record<string, any> | null;
-  // Security & Audit
-  lastPasswordChangeAt: Date | null;
-  passwordChangedBy: number | null;
+  // Security counters (read-only, useful for admin views)
   failedLoginAttempts: number;
-  lastFailedLoginAt: Date | null;
   lockedUntil: Date | null;
-  // GDPR & Privacy
+  lastPasswordChangeAt: Date | null;
+  // GDPR
   consentGivenAt: Date | null;
   dataRetentionExpiresAt: Date | null;
+  // Preferences
+  preferredLanguageId: number | null;
+  preferredLanguage?: Language;
   // Relations
-  roles: Role[];
-  preferredLanguage: Language;
-  details?: UserDetails;
-  createdDocuments: Document[];
-  assignedDocuments: Document[];
-  createdOpportunities: Opportunity[];
-  assignedOpportunities: Opportunity[];
-  assignedCompanies: Company[];
-  activitiesAssigned: Activity[];
-  activitiesCreated: Activity[];
-  activityParticipants: ActivityParticipant[];
-  companyNotes: CompanyNote[];
-  stockMovement: StockMovement[];
-  auditLogs: AuditLog[];
-  deletedDocuments: Document[];
-  deletedProducts: Product[];
-  deletedProductVariants: ProductVariant[];
-  deletedCustomers: Customer[];
-  deletedSuppliers: Supplier[];
-  assignedLeads: Lead[];
-  convertedLeads: Lead[];
+  details?: UserDetails | null;
+  availableTenants: UserMembership[];
+  // Soft-delete
+  deletedAt: Date | null;
+  // Timestamps
+  lastLogin: Date | null;
   createdAt: Date;
   updatedAt: Date;
 };
 
 // ============================================================================
-// INPUT TYPES (using z.infer)
+// INPUT TYPES — z.infer from validators
 // ============================================================================
 
+// --- Create ---
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
+
+// --- Update ---
 export type UpdateUserProfileInput = z.infer<typeof updateUserProfileSchema>;
 export type UpdateUserDetailsInput = z.infer<typeof updateUserDetailsSchema>;
-export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export type UpdateUserRolesInput = z.infer<typeof updateUserRolesSchema>;
 export type ToggleUserStatusInput = z.infer<typeof toggleUserStatusSchema>;
-export type UnlockUserInput = z.infer<typeof unlockUserSchema>;
 
-// Form inputs
+// --- Auth ---
+export type LoginInput = z.infer<typeof loginSchema>;
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+
+// --- 2FA ---
+export type EnableTwoFactorInput = z.infer<typeof enableTwoFactorSchema>;
+export type ConfirmTwoFactorInput = z.infer<typeof confirmTwoFactorSchema>;
+export type DisableTwoFactorInput = z.infer<typeof disableTwoFactorSchema>;
+export type RegenerateBackupCodesInput = z.infer<typeof regenerateBackupCodesSchema>;
+
+// --- GDPR ---
+export type UpdateConsentInput = z.infer<typeof updateConsentSchema>;
+export type RequestDataExportInput = z.infer<typeof requestDataExportSchema>;
+export type RequestAccountDeletionInput = z.infer<typeof requestAccountDeletionSchema>;
+
+// --- Form (frontend only) ---
 export type UserFormInput = z.infer<typeof userFormSchema>;
 export type CreateUserFormInput = z.infer<typeof createUserFormSchema>;
 export type UpdateUserFormInput = z.infer<typeof updateUserFormSchema>;
 
-// Auth inputs
-export type LoginInput = z.infer<typeof loginSchema>;
-export type TwoFactorLoginInput = z.infer<typeof twoFactorLoginSchema>;
-export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
-export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
-export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
-export type ResendVerificationEmailInput = z.infer<
-  typeof resendVerificationEmailSchema
->;
+// ============================================================================
+// PARAM TYPES — z.infer from validators
+// ============================================================================
 
-// 2FA inputs
-export type EnableTwoFactorInput = z.infer<typeof enableTwoFactorSchema>;
-export type ConfirmTwoFactorInput = z.infer<typeof confirmTwoFactorSchema>;
-export type DisableTwoFactorInput = z.infer<typeof disableTwoFactorSchema>;
-export type RegenerateBackupCodesInput = z.infer<
-  typeof regenerateBackupCodesSchema
->;
-
-// GDPR inputs
-export type UpdateConsentInput = z.infer<typeof updateConsentSchema>;
-export type RequestDataExportInput = z.infer<typeof requestDataExportSchema>;
-export type RequestAccountDeletionInput = z.infer<
-  typeof requestAccountDeletionSchema
->;
+export type UserIdParam = z.infer<typeof userIdParamSchema>;
 
 // ============================================================================
-// QUERY TYPES (using z.infer)
+// QUERY TYPES — z.infer from validators
 // ============================================================================
 
 export type UserQueryInput = z.infer<typeof userQuerySchema>;
 
 // ============================================================================
-// PARAM TYPES (using z.infer)
-// ============================================================================
-
-export type UserIdParam = z.infer<typeof userIdParamSchema>;
-export type UserIdAsUserIdParam = z.infer<typeof userIdAsUserIdParamSchema>;
-
-// ============================================================================
-// UTILITY TYPES
+// UTILITY TYPES — response shapes and derived views
 // ============================================================================
 
 /**
- * Simplified user for list views (no sensitive data)
+ * Slim user entry for list/table views.
+ * No sensitive data; no heavy relations.
  */
 export type UserListItem = {
-  id: number;
+  id: string;
   username: string;
   email: string;
   active: boolean;
-  emailVerified: boolean;
-  twoFactorEnabled: boolean;
-  firstName: string | null;
-  lastName: string | null;
+  details: {
+    firstName: string | null;
+    lastName: string | null;
+    gender: Gender
+  }
   profilePicture: string | null;
-  roles: { id: number; name: string }[];
+  currentTenant: Pick<UserMembership, "tenantId" | "status" | "roles">;
+  availableTenants: Pick<UserMembership, "tenantId" | "status" | "roles">[];
   lastLogin: Date | null;
   createdAt: Date;
 };
 
 /**
- * User with full details and relations
+ * Full user with details guaranteed non-null.
+ * Used in admin detail pages and profile views.
  */
-export type UserComplete = User & {
+export type UserComplete = Omit<User, "details"> & {
   details: UserDetails;
-  roles: Role[];
   preferredLanguage: Language;
 };
 
 /**
- * User profile (public view, safe to expose)
+ * Public-safe profile (anonymous/shareable view).
  */
 export type UserProfile = {
-  id: number;
+  id: string;
   username: string;
   firstName: string | null;
   lastName: string | null;
@@ -231,45 +219,109 @@ export type UserProfile = {
   createdAt: Date;
 };
 
+// ============================================================================
+// SESSION / JWT PAYLOAD TYPES
+// Allineati con UserPayload in packages/backend/types/user-types.ts
+// ============================================================================
+
 /**
- * User session data (stored in JWT/session)
+ * Tenant context embedded in the JWT access token.
  */
-export type UserSession = {
-  userId: number;
+export type CurrentTenantPayload = {
+  tenantId: string;
+  membershipId: string;
+  status: UserMembershipStatus;
+  roles: RoleDTO[]; // role codes
+  permissions: string[]; // permission codes
+};
+
+export type RoleDTO = {
+  id: number;
+  code: string;
+  name: string;
+};
+
+/**
+ * Available tenant entry in the JWT (for tenant-switcher UI).
+ */
+export type AvailableTenantEntry = {
+  tenantId: string;
+  name: string;
+  code: string;
+  isDefault: boolean;
+  status: UserMembershipStatus;
+};
+
+/**
+ * Full JWT/session payload — matches UserPayload in user-helper.ts.
+ * Stored in access token claims; never includes secrets.
+ */
+export type UserSessionPayload = {
+  userId: string;
   username: string;
   email: string;
-  roles: string[]; // role names
-  permissions: string[];
-  preferredLanguageId: number;
-  twoFactorEnabled: boolean;
-  emailVerified: boolean;
+  firstName: string;
+  lastName: string;
+  preferredLanguageId: number | null;
+  currentTenant: CurrentTenantPayload;
+  availableTenants: AvailableTenantEntry[];
+  // --- CLAIMS STANDARD JWT ---
+  fingerprint?: string; // Browser fingerprint
+  jti?: string; // JWT ID
+  iat?: number; // Issued at
+  exp?: number; // Expires at
+  iss?: string; // Issuer
+  aud?: string; // Audience
 };
 
+// ============================================================================
+// AUTH RESPONSE TYPES
+// ============================================================================
+
 /**
- * User authentication result
+ * Shape of the response body from POST /api/users/login and
+ * POST /api/users/refresh-token.
  */
 export type AuthResult = {
-  user: UserSession;
+  user: UserSessionPayload;
   accessToken: string;
   refreshToken: string;
-  expiresIn: number; // seconds
-  requiresTwoFactor: boolean;
-  twoFactorToken?: string; // temporary token if 2FA required
+  expiresIn: number; // milliseconds (authConfig.jwt.expiresInMs)
 };
 
 /**
- * Two-factor setup result
+ * 2FA setup response — returned after enabling TOTP.
  */
 export type TwoFactorSetupResult = {
   secret: string;
-  qrCode: string; // base64 or URL
+  qrCode: string; // data-URL or provisioning URI
   backupCodes: string[];
 };
 
+// ============================================================================
+// SECURITY / AUDIT TYPES
+// ============================================================================
+
 /**
- * User statistics
+ * Admin security overview for a single user account.
  */
-export interface UserStats {
+export type UserSecurityAudit = {
+  userId: string;
+  passwordAgeDays: number;
+  failedLoginAttempts: number;
+  lastFailedLoginAt: Date | null;
+  isLocked: boolean;
+  lockedUntil: Date | null;
+  twoFactorEnabled: boolean;
+  emailVerified: boolean;
+  lastPasswordChangeAt: Date | null;
+  passwordResetAttempts: number;
+};
+
+/**
+ * Aggregated user statistics for the admin dashboard.
+ */
+export type UserStats = {
   totalUsers: number;
   activeUsers: number;
   inactiveUsers: number;
@@ -279,149 +331,22 @@ export interface UserStats {
   twoFactorEnabled: number;
   newUsersThisMonth: number;
   newUsersThisWeek: number;
-  averageLoginFrequency: number; // days
-  byRole: Record<string, number>;
-}
+};
+
+// ============================================================================
+// GDPR TYPES
+// ============================================================================
 
 /**
- * User activity summary
+ * Portable data export for GDPR right-to-access requests.
+ * Heavy relations are typed as `unknown[]` to avoid
+ * importing every domain type into @mini-erp/shared.
  */
-export interface UserActivitySummary {
-  userId: number;
-  lastLogin: Date | null;
-  totalLogins: number;
-  loginThisMonth: number;
-  loginThisWeek: number;
-  totalDocumentsCreated: number;
-  totalOpportunitiesAssigned: number;
-  totalActivitiesCompleted: number;
-  averageResponseTime: number; // hours
-  mostActiveDay: string; // day of week
-  mostActiveHour: number; // 0-23
-}
-
-/**
- * User security audit
- */
-export interface UserSecurityAudit {
-  userId: number;
-  passwordAge: number; // days since last change
-  passwordChanges: number; // total password changes
-  failedLoginAttempts: number;
-  lastFailedLogin: Date | null;
-  isLocked: boolean;
-  lockedUntil: Date | null;
-  twoFactorEnabled: boolean;
-  emailVerified: boolean;
-  lastPasswordChange: Date | null;
-  passwordResetAttempts: number;
-  suspiciousActivityDetected: boolean;
-  riskScore: number; // 0-100
-  recommendations: string[];
-}
-
-/**
- * User permissions summary
- */
-export interface UserPermissionsSummary {
-  userId: number;
-  roles: {
-    id: number;
-    name: string;
-    permissions: string[];
-  }[];
-  allPermissions: string[];
-  canCreate: string[]; // entities user can create
-  canRead: string[]; // entities user can read
-  canUpdate: string[]; // entities user can update
-  canDelete: string[]; // entities user can delete
-  isAdmin: boolean;
-  isSuperAdmin: boolean;
-}
-
-/**
- * User GDPR data export
- */
-export interface UserGDPRExport {
-  user: {
-    id: number;
-    username: string;
-    email: string;
-    createdAt: Date;
+export type UserGDPRExport = {
+  user: Pick<User, "id" | "username" | "email" | "createdAt"> & {
     details: UserDetails | null;
   };
-  activities: Activity[];
-  documents: Document[];
-  opportunities: Opportunity[];
-  leads: Lead[];
-  companies: Company[];
-  notes: CompanyNote[];
-  auditLogs: AuditLog[];
+  relatedData: Record<string, unknown[]>;
   exportedAt: Date;
   expiresAt: Date;
-}
-
-/**
- * Password strength result
- */
-export interface PasswordStrengthResult {
-  score: number; // 0-4
-  feedback: {
-    warning: string | null;
-    suggestions: string[];
-  };
-  isWeak: boolean;
-  containsUserInfo: boolean; // contains username/email
-  meetsRequirements: boolean;
-}
-
-/**
- * Login attempt result
- */
-export interface LoginAttemptResult {
-  success: boolean;
-  user?: UserSession;
-  requiresTwoFactor: boolean;
-  twoFactorToken?: string;
-  error?: string;
-  remainingAttempts?: number;
-  lockoutDuration?: number; // seconds until unlock
-}
-
-/**
- * User notification preferences
- */
-export interface UserNotificationPreferences {
-  userId: number;
-  email: {
-    enabled: boolean;
-    digest: "realtime" | "daily" | "weekly";
-    types: string[]; // e.g., ["opportunity_won", "document_assigned"]
-  };
-  push: {
-    enabled: boolean;
-    types: string[];
-  };
-  inApp: {
-    enabled: boolean;
-    types: string[];
-  };
-}
-
-/**
- * User onboarding status
- */
-export interface UserOnboardingStatus {
-  userId: number;
-  currentStep: number;
-  totalSteps: number;
-  completedSteps: string[];
-  isComplete: boolean;
-  steps: {
-    profileCompleted: boolean;
-    emailVerified: boolean;
-    twoFactorSetup: boolean;
-    firstLoginCompleted: boolean;
-    tourCompleted: boolean;
-  };
-}
+};

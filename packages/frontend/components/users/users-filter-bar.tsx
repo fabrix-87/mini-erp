@@ -1,112 +1,108 @@
 // frontend/components/users/users-filter-bar.tsx
-'use client';
+"use client";
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useTransition, useState, useEffect } from 'react';
-import { Search, Filter, X } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { useTransition, useState, useEffect } from "react";
+import { Search, Filter, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { useUpdateURL } from "@/hooks/use-update-url";
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface UsersFilterBarProps {
   initialSearch?: string;
   initialActive?: boolean | null;
   initialSortBy?: string;
-  initialSortOrder?: 'asc' | 'desc';
+  initialSortOrder?: "asc" | "desc";
 }
 
 export function UsersFilterBar({
-  initialSearch = '',
+  initialSearch = "",
   initialActive = null,
-  initialSortBy = 'createdAt',
-  initialSortOrder = 'desc',
+  initialSortBy = "createdAt",
+  initialSortOrder = "desc",
 }: UsersFilterBarProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const { getRoute } = useNavigation();
+  const USERS_BASE_PATH = getRoute("users");
+
+  /**
+   * updateURL is bound to USERS_BASE_PATH so call sites don't repeat the path.
+   * We use replace:true for all filter changes to avoid polluting browser history,
+   * and resetPage:true to reset pagination whenever filters change.
+   */
+  const updateURL = useUpdateURL(USERS_BASE_PATH);
   const [isPending, startTransition] = useTransition();
 
-  // Local state per gli input
   const [search, setSearch] = useState(initialSearch);
   const [active, setActive] = useState<string>(
-    initialActive === null ? '' : initialActive.toString()
+    initialActive === null ? "" : initialActive.toString(),
   );
   const [sortBy, setSortBy] = useState(initialSortBy);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(initialSortOrder);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(initialSortOrder);
 
-  // Debounce per la ricerca
+  // Debounce della ricerca testuale
   useEffect(() => {
     const timer = setTimeout(() => {
-      updateURL({ search });
+      startTransition(() => {
+        updateURL({ search }, { replace: true, resetPage: true });
+      });
     }, 500);
 
     return () => clearTimeout(timer);
   }, [search]);
 
-  const updateURL = useCallback(
-    (updates: Partial<{
-      search: string;
-      active: string;
-      sortBy: string;
-      sortOrder: string;
-      page: string;
-    }>) => {
-      const params = new URLSearchParams(searchParams.toString());
-
-      // Applica aggiornamenti
-      Object.entries(updates).forEach(([key, value]) => {
-        if (value === '' || value === null || value === undefined) {
-          params.delete(key);
-        } else {
-          params.set(key, value);
-        }
-      });
-
-      // Reset page quando cambiano i filtri
-      if ('search' in updates || 'active' in updates) {
-        params.delete('page');
-      }
-
-      startTransition(() => {
-        router.push(`?${params.toString()}`, { scroll: false });
-      });
-    },
-    [searchParams, router]
-  );
-
+  /**
+   * Handles active status filter change.
+   * @param value - 'true' | 'false' | '' (empty = tutti)
+   */
   const handleActiveChange = (value: string) => {
     setActive(value);
-    updateURL({ active: value });
-  };
-
-  const handleSortByChange = (value: string) => {
-    setSortBy(value);
-    updateURL({ sortBy: value });
-  };
-
-  const handleSortOrderChange = (value: 'asc' | 'desc') => {
-    setSortOrder(value);
-    updateURL({ sortOrder: value });
-  };
-
-  const handleClearFilters = () => {
-    setSearch('');
-    setActive('');
-    setSortBy('createdAt');
-    setSortOrder('desc');
-    
     startTransition(() => {
-      router.push('/settings/users', { scroll: false });
+      updateURL({ active: value || null }, { replace: true, resetPage: true });
     });
   };
 
-  const hasActiveFilters = search || active || sortBy !== 'createdAt' || sortOrder !== 'desc';
+  /**
+   * Handles sort field change.
+   * @param value - Field name to sort by
+   */
+  const handleSortByChange = (value: string) => {
+    setSortBy(value);
+    startTransition(() => {
+      updateURL({ sortBy: value }, { replace: true });
+    });
+  };
+
+  /**
+   * Handles sort direction change.
+   * @param value - 'asc' | 'desc'
+   */
+  const handleSortOrderChange = (value: "asc" | "desc") => {
+    setSortOrder(value);
+    startTransition(() => {
+      updateURL({ sortOrder: value }, { replace: true });
+    });
+  };
+
+  /** Resets all filters and navigates to the base users route. */
+  const handleClearFilters = () => {
+    setSearch("");
+    setActive("");
+    setSortBy("createdAt");
+    setSortOrder("desc");
+    startTransition(() => {
+      updateURL({}, { clearAll: true, replace: true });
+    });
+  };
+
+  const hasActiveFilters = search || active || sortBy !== "createdAt" || sortOrder !== "desc";
 
   return (
     <div className="rounded-lg border bg-card">
@@ -123,12 +119,7 @@ export function UsersFilterBar({
             )}
           </div>
           {hasActiveFilters && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClearFilters}
-              className="h-8 text-xs"
-            >
+            <Button variant="ghost" size="sm" onClick={handleClearFilters} className="h-8 text-xs">
               <X className="h-3 w-3 mr-1" />
               Reimposta
             </Button>
@@ -156,7 +147,7 @@ export function UsersFilterBar({
               <SelectValue placeholder="Tutti gli stati" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="0">Tutti gli stati</SelectItem>
+              <SelectItem value="all">Tutti gli stati</SelectItem>
               <SelectItem value="true">Solo Attivi</SelectItem>
               <SelectItem value="false">Solo Inattivi</SelectItem>
             </SelectContent>
@@ -177,7 +168,7 @@ export function UsersFilterBar({
 
             <Select
               value={sortOrder}
-              onValueChange={(v) => handleSortOrderChange(v as 'asc' | 'desc')}
+              onValueChange={(v) => handleSortOrderChange(v as "asc" | "desc")}
               disabled={isPending}
             >
               <SelectTrigger className="w-25">

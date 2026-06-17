@@ -1,4 +1,4 @@
-import { UserMembershipStatus } from "@mini-erp/shared";
+import { RoleDTO, UserMembershipStatus } from "@mini-erp/shared";
 
 type MembershipWithRoles = {
   roles: Array<{
@@ -11,12 +11,6 @@ type MembershipWithRoles = {
       }>;
     };
   }>;
-};
-
-type RoleDTO = {
-  id: number;
-  code: string;
-  name: string;
 };
 
 /**

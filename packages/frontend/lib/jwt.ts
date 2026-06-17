@@ -1,5 +1,5 @@
 // lib/jwt.ts
-import { JWTPayload, User } from "@/types/api";
+import { UserSessionPayload } from "@mini-erp/shared";
 import * as jose from "jose";
 
 // ============================================================================
@@ -10,7 +10,7 @@ import * as jose from "jose";
  * Decodifica JWT senza verificare la firma (solo per leggere i dati)
  * ⚠️ Non validare, usare solo per debug o analisi non critiche
  */
-export function decodeJWT(token: string): JWTPayload | null {
+export function decodeJWT(token: string): UserSessionPayload | null {
   try {
     const decoded = jose.decodeJwt(token);
     
@@ -24,7 +24,7 @@ export function decodeJWT(token: string): JWTPayload | null {
       return null;
     }
 
-    return decoded as unknown as JWTPayload;
+    return decoded as unknown as UserSessionPayload;
   } catch (error) {
     console.error("❌ Failed to decode JWT:", error);
     return null;
@@ -36,10 +36,10 @@ export function decodeJWT(token: string): JWTPayload | null {
 // ============================================================================
 
 /**
- * Ottiene i dati utente dal cookie 'user'
+ * Ottiene i dati utente dal cookie 'UserSessionPayload'
  * ✅ Metodo principale per l'AuthProvider
  */
-export function getUserFromUserCookie(): User | null {
+export function getUserFromUserCookie(): UserSessionPayload | null {
   const userCookie = getCookie('user');
   console.debug('############################')
   console.debug(userCookie)
@@ -49,7 +49,7 @@ export function getUserFromUserCookie(): User | null {
   try {
     // ✅ Decodifica URL encoding prima di parsare JSON
     const decodedCookie = decodeURIComponent(userCookie);
-    return JSON.parse(decodedCookie) as User;
+    return JSON.parse(decodedCookie) as UserSessionPayload;
   } catch (error) {
     console.error('Failed to parse user cookie:', error);
     console.error('Cookie value:', userCookie);
@@ -72,7 +72,7 @@ export function isAuthenticated(): boolean {
 /**
  * Ottiene i dati utente corrente per controlli RBAC
  */
-export function getCurrentUser(): User | null {
+export function getCurrentUser(): UserSessionPayload | null {
   return getUserFromUserCookie();
 }
 
@@ -81,9 +81,9 @@ export function getCurrentUser(): User | null {
  */
 export function hasRole(roleCode: string): boolean {
   const user = getCurrentUser();
-  if (!user || !user.roles) return false;
+  if (!user || !user.currentTenant.roles) return false;
   
-  return user.roles.some(role => role.code === roleCode);
+  return user.currentTenant.roles.some(role => role.code === roleCode);
 }
 
 /**
@@ -91,9 +91,9 @@ export function hasRole(roleCode: string): boolean {
  */
 export function hasAnyRole(roleCodes: string[]): boolean {
   const user = getCurrentUser();
-  if (!user || !user.roles) return false;
+  if (!user || !user.currentTenant.roles) return false;
   
-  return user.roles.some(role => roleCodes.includes(role.code));
+  return user.currentTenant.roles.some(role => roleCodes.includes(role.code));
 }
 
 /**
@@ -101,10 +101,10 @@ export function hasAnyRole(roleCodes: string[]): boolean {
  */
 export function hasAllRoles(roleCodes: string[]): boolean {
   const user = getCurrentUser();
-  if (!user || !user.roles) return false;
+  if (!user || !user.currentTenant.roles) return false;
   
   return roleCodes.every(code => 
-    user.roles!.some(role => role.code === code)
+    user.currentTenant.roles!.some(role => role.code === code)
   );
 }
 
@@ -113,9 +113,9 @@ export function hasAllRoles(roleCodes: string[]): boolean {
  */
 export function getUserRoleCodes(): string[] {
   const user = getCurrentUser();
-  if (!user || !user.roles) return [];
+  if (!user || !user.currentTenant.roles) return [];
   
-  return user.roles.map(role => role.code);
+  return user.currentTenant.roles.map(role => role.code);
 }
 
 // ============================================================================
@@ -127,28 +127,28 @@ export function getUserRoleCodes(): string[] {
  * ⚠️ Richiede il payload JWT - usare solo per refresh token logic
  */
 export function isTokenExpiringSoon(
-  payload: JWTPayload,
+  payload: UserSessionPayload,
   thresholdMs: number = 5 * 60 * 1000 // 5 minuti default
 ): boolean {
   const now = Math.floor(Date.now() / 1000);
-  const timeUntilExpiry = payload.exp - now;
+  const timeUntilExpiry = payload.exp! - now;
   return timeUntilExpiry < thresholdMs / 1000;
 }
 
 /**
  * Ottiene il tempo rimanente prima della scadenza in secondi
  */
-export function getTimeUntilExpiry(payload: JWTPayload): number {
+export function getTimeUntilExpiry(payload: UserSessionPayload): number {
   const now = Math.floor(Date.now() / 1000);
-  return Math.max(0, payload.exp - now);
+  return Math.max(0, payload.exp! - now);
 }
 
 /**
  * Controlla se il token è già scaduto
  */
-export function isTokenExpired(payload: JWTPayload): boolean {
+export function isTokenExpired(payload: UserSessionPayload): boolean {
   const now = Math.floor(Date.now() / 1000);
-  return payload.exp <= now;
+  return payload.exp! <= now;
 }
 
 // ============================================================================

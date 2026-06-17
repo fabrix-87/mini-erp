@@ -9,7 +9,7 @@ import {
   FileText,
   Globe
 } from 'lucide-react';
-import { User } from '@/types/user'
+import { User } from '@/types/user-types'
 
 interface UserDetailInfoProps {
   user: User;

@@ -9,9 +9,10 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { HydrationBoundary } from "@/providers/hydration-boundary";
-import UsersContent from "@/components/users/users-content";
-import { userKeys } from "@/types/user";
+import UsersContent from "@/app/admin/users/components/users-content";
+import { userKeys } from "@/types/user-types";
 import { UserQueryInput, userQuerySchema } from "@mini-erp/shared";
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface PageProps {
   searchParams: Promise<UserQueryInput>;
@@ -31,44 +32,22 @@ export default async function UsersPage({ searchParams }: PageProps) {
 
   const queryParams: UserQueryInput = userQuerySchema.parse(await searchParams);
 
-  const queryClient = new QueryClient();
-
-  await Promise.all([
-    queryClient.prefetchQuery({
-      queryKey: userKeys.list(queryParams),
-      queryFn: () => getAllUsers({ ...queryParams, revalidate: 30 }),
-    }),
-    queryClient.prefetchQuery({
-      queryKey: userKeys.stats(),
-      queryFn: () => getUserStats(),
-    }),
+  const [users, stats, canCreate] = await Promise.all([
+    getAllUsers({ ...queryParams, revalidate: 30 }),
+    getUserStats(),
+    checkUserPermission("user:create"),
   ]);
-
-  const canCreate = await checkUserPermission("user:create");
 
   return (
     <div className="container mx-auto p-6">
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Gestione Utenti</h1>
-            <p className="text-muted-foreground mt-2">Amministra gli utenti del sistema.</p>
-          </div>
-          {canCreate && (
-            <Button asChild>
-              <Link href="/settings/users/new">
-                <Plus className="h-4 w-4 mr-2" />
-                Nuovo utente
-              </Link>
-            </Button>
-          )}
-        </div>
-
-        <HydrationBoundary state={dehydrate(queryClient)}>
-          <BreadcrumbSetter title="Gestione Utenti" />
-          <UsersContent queryParams={queryParams} />
-        </HydrationBoundary>
+        <BreadcrumbSetter title="Gestione Utenti" />
+        <UsersContent
+          queryParams={queryParams}
+          usersList={users}
+          stats={stats}
+          canCreate={canCreate}
+        />
       </div>
     </div>
   );

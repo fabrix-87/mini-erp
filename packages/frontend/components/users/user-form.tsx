@@ -10,7 +10,7 @@ import {
   UpdateUserFormInput,
   createUserFormSchema,
   updateUserFormSchema,
-} from "@/types/user";
+} from "@/types/user-types";
 import {
   Form,
   FormControl,
@@ -44,6 +44,7 @@ import { Checkbox } from "../ui/checkbox";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
 import { CountryCombobox } from "../ui/country-combobox";
 import { useNavigation } from "@/hooks/use-navigation";
+import { Language, Role } from "@mini-erp/shared";
 
 // ============================================================================
 // Component Props
@@ -52,8 +53,8 @@ import { useNavigation } from "@/hooks/use-navigation";
 interface UserFormProps {
   user?: User;
   mode: "create" | "edit";
-  roles: Array<{ id: number; name: string; code: string }>;
-  languages: Array<{ id: number; name: string; iso_code: string }>;
+  roles:Role[];
+  languages: Language[];
 }
 
 // ============================================================================

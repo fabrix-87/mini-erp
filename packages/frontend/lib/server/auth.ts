@@ -1,6 +1,6 @@
 // lib/api/server-modules/auth.ts
-import { User } from '@mini-erp/shared';
-import { serverApi } from './api';
+import { RoleDTO, User, UserSessionPayload } from "@mini-erp/shared";
+import { serverApi } from "./api";
 
 // ============================================================================
 // Server-Side Auth API Functions
@@ -12,12 +12,12 @@ import { serverApi } from './api';
  */
 export async function checkAuth(): Promise<User | null> {
   try {
-    const user = await serverApi.get<User>('/users/me', {
+    const user = await serverApi.get<User>("/users/me", {
       revalidate: 0, // No cache - sempre fresh
     });
     return user;
   } catch (error) {
-    console.error('Auth check failed:', error);
+    console.error("Auth check failed:", error);
     return null;
   }
 }
@@ -30,29 +30,25 @@ export async function getCurrentUser(options?: {
   revalidate?: number | false;
   tags?: string[];
 }): Promise<User> {
-  return serverApi.get<User>('/users/me', {
+  return serverApi.get<User>("/users/me", {
     revalidate: options?.revalidate ?? 60, // Cache 1 min by default
-    tags: options?.tags ?? ['user-profile'],
+    tags: options?.tags ?? ["user-profile"],
   });
 }
 
 /**
  * Verifica permessi utente
  */
-export async function checkUserPermission(
-  permissionCode: string
-): Promise<boolean> {
+export async function checkUserPermission(permissionCode: string): Promise<boolean> {
   try {
-    const user = await serverApi.get<User>('/users/me', {
+    const user = await serverApi.get<UserSessionPayload>("/users/me", {
       revalidate: 0,
     });
 
     // Check if user has permission through roles
-    return user.roles?.some((role: any) =>
-      role.permissions?.some((p: any) => p === permissionCode)
-    ) ?? false;
+    return user.currentTenant.permissions.some((p: string) => p === permissionCode) ?? false;
   } catch (error) {
-    console.error('Permission check failed:', error);
+    console.error("Permission check failed:", error);
     return false;
   }
 }
@@ -62,13 +58,13 @@ export async function checkUserPermission(
  */
 export async function checkUserRole(roleCode: string): Promise<boolean> {
   try {
-    const user = await serverApi.get<User>('/users/me', {
+    const user = await serverApi.get<UserSessionPayload>("/users/me", {
       revalidate: 0,
     });
 
-    return user.roles?.some((role: any) => role.code === roleCode) ?? false;
+    return user.currentTenant.roles.some((role: RoleDTO) => role.code === roleCode) ?? false;
   } catch (error) {
-    console.error('Role check failed:', error);
+    console.error("Role check failed:", error);
     return false;
   }
 }
@@ -77,7 +73,7 @@ export async function checkUserRole(roleCode: string): Promise<boolean> {
  * Verifica se utente è admin
  */
 export async function isAdmin(): Promise<boolean> {
-  return checkUserRole('ADMIN') || checkUserRole('SUPER_ADMIN');
+  return checkUserRole("ADMIN") || checkUserRole("SUPER_ADMIN");
 }
 
 /**
@@ -88,7 +84,7 @@ export async function requireAuth(): Promise<User> {
   const user = await checkAuth();
 
   if (!user) {
-    throw new Error('Unauthorized - Authentication required');
+    throw new Error("Unauthorized - Authentication required");
   }
 
   return user;
@@ -130,7 +126,7 @@ export async function requireAdmin(): Promise<User> {
   const isAdminUser = await isAdmin();
 
   if (!isAdminUser) {
-    throw new Error('Forbidden - Admin access required');
+    throw new Error("Forbidden - Admin access required");
   }
 
   return user;

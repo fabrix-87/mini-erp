@@ -1,4 +1,5 @@
 // frontend/components/users/users-table.tsx
+"use client";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,11 +11,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ExternalLink } from "lucide-react";
-import { User } from "@/types/user";
 import { GenderIcon } from "../gender-icon";
+import { UserListItem } from "@mini-erp/shared";
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface UsersTableProps {
-  users: User[];
+  users: UserListItem[];
 }
 
 export function UsersTable({ users }: UsersTableProps) {
@@ -30,6 +32,8 @@ export function UsersTable({ users }: UsersTableProps) {
       </div>
     );
   }
+
+  const { getDetailRoute } = useNavigation();
 
   return (
     <div className="rounded-lg border bg-card">
@@ -53,31 +57,21 @@ export function UsersTable({ users }: UsersTableProps) {
                 <TableCell className="font-mono text-sm">{user.id}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {user.details?.gender && (
-                      <GenderIcon gender={user.details.gender} />
-                    )}
+                    {user.details?.gender && <GenderIcon gender={user.details.gender} />}
                     <span>
                       {user.details?.firstName} {user.details?.lastName}
                     </span>
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">{user.username}</TableCell>
-                <TableCell className="text-muted-foreground">
-                  {user.email}
-                </TableCell>
+                <TableCell className="text-muted-foreground">{user.email}</TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
-                    {user.roles?.map((role) => (
-                      <Badge
-                        key={role.id}
-                        variant="secondary"
-                        className="text-xs"
-                      >
+                    {user.currentTenant.roles?.map((role) => (
+                      <Badge key={role.id} variant="secondary" className="text-xs">
                         {role.name}
                       </Badge>
-                    )) || (
-                      <span className="text-sm text-muted-foreground">-</span>
-                    )}
+                    )) || <span className="text-sm text-muted-foreground">-</span>}
                   </div>
                 </TableCell>
                 <TableCell>
@@ -97,7 +91,7 @@ export function UsersTable({ users }: UsersTableProps) {
                 </TableCell>
                 <TableCell className="text-right">
                   <Link
-                    href={`/settings/users/${user.id}`}
+                    href={getDetailRoute("users", user.id)}
                     className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
                   >
                     Dettagli

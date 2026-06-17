@@ -1,6 +1,6 @@
 // types/user.ts
-import type { UserPayload } from "@mini-erp/shared";
-export type { UserPayload } from "@mini-erp/shared";
+import type { UserSessionPayload } from "@mini-erp/shared";
+export type { UserSessionPayload } from "@mini-erp/shared";
 
 // ============================================================================
 // JWT & Token Types
@@ -20,7 +20,7 @@ export interface TokenPair {
 /**
  * Authenticated request user stored inside the Hono context.
  */
-export interface AuthContextUser extends UserPayload {}
+export interface AuthContextUser extends UserSessionPayload {}
 
 /**
  * JWT payload stored in the Hono context after token validation.

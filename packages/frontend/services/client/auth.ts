@@ -10,7 +10,7 @@ import type {
   ApiResponse,
 } from "@/types/api";
 
-import { User, RegisterUserInput } from '@/types/user'
+import { User, RegisterUserInput } from '@/types/user-types'
 
 // ============================================================================
 // Auth API Functions

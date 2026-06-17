@@ -8,7 +8,7 @@ import { ServerApiError } from "@/types/server-client";
 import { AuthResponse } from "@/types/api";
 import { logoutUser } from "@/services/server/auth";
 import { setCookies } from "@/lib/server/cookies";
-import { LoginInput } from "@/types/user"
+import { LoginInput } from "@/types/user-types"
 
 export async function loginAction(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;

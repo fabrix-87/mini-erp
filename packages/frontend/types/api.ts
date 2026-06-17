@@ -1,20 +1,6 @@
 // types/api.ts
 
-import { User } from "./user";
-
-// ============ JWT Types ============
-export interface JWTPayload {
-  userId: number;
-  email: string;
-  username: string;
-  roles: Array<{ id: number; code: string; name: string }>;
-  fingerprint?: string;
-  jti: string;
-  iat: number;
-  exp: number;
-  iss: string;
-  aud: string;
-}
+import { User } from "./user-types";
 
 // ============ API Query Types ============
 export interface PaginationQueryType {

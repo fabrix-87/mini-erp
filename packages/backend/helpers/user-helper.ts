@@ -3,7 +3,7 @@
 import jwt from "jsonwebtoken";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import type { Context } from "hono";
-import { TokenPair, UserPayload, SessionData } from "../types/user-types";
+import { TokenPair, UserSessionPayload, SessionData } from "../types/user-types";
 import crypto from "crypto";
 import authConfig from "../config/auth-config";
 import { redisClient, sessionKeys, RedisTTL } from "../config/redis-config";
@@ -33,6 +33,7 @@ export const getUserSelection = () =>
       select: {
         firstName: true,
         lastName: true,
+        gender: true,
       },
     },
     memberships: {
@@ -121,7 +122,7 @@ export const verifyFingerprint = (c: Context<AppBindings>, tokenFingerprint: str
 /**
  * Generates a signed access + refresh token pair for the given user.
  */
-export const generateTokenPair = (user: UserPayload, fingerprint: string): TokenPair => {
+export const generateTokenPair = (user: UserSessionPayload, fingerprint: string): TokenPair => {
   const jti = uuidv4(); // JWT ID univoco
   const now = Math.floor(Date.now() / 1000);
 

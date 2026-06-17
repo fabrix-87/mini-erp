@@ -18,7 +18,7 @@ import {
 } from '@/services/server/user-service';
 import { ServerApiError } from '@/types/server-client';
 import { redirect } from 'next/navigation';
-import type { UpdateUserProfileInput, UpdateUserDetailsInput } from '@/types/user';
+import type { UpdateUserProfileInput, UpdateUserDetailsInput } from '@/types/user-types';
 import { CreateUserFormInput, CreateUserInput } from '@mini-erp/shared';
 
 // ============================================================================

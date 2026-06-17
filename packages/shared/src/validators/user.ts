@@ -8,23 +8,44 @@ import {
   urlSchema,
 } from "./primitives";
 import { countryCodeBaseSchema, userIdSchema } from "./base";
-import { roleIdSchema, userRoleSchema } from "./role";
-import { limitSchema, pageSchema, paginationSchema, queryBooleanSchema, sortOrderSchema } from "./query";
+import { roleIdSchema } from "./role";
+import { paginationSchema, queryBooleanOrAllSchema } from "./query";
 
 // ============================================================================
 // ENUMS
+// sort → base → create → update → id param → query → special
 // ============================================================================
 
+/**
+ * Gender values matching the Prisma `Gender` enum in user.prisma.
+ */
 export const genderSchema = z.enum(["MALE", "FEMALE", "OTHER", "PREFER_NOT_TO_SAY"]);
 
-export const userSortFieldSchema = z.enum(["createdAt", "username", "email", "lastLogin"]);
+/**
+ * Lifecycle states for a user's membership in a tenant.
+ * Matches the Prisma `MembershipStatus` enum.
+ */
+export const membershipStatusSchema = z.enum(["INVITED", "ACTIVE", "SUSPENDED"]);
 
-export const membershipStatusSchema = z.enum(["ACTIVE", "INVITED", "SUSPENDED"]);
+/**
+ * Allowed sort fields for user list queries.
+ */
+export const userSortFieldSchema = z.enum([
+  "createdAt",
+  "updatedAt",
+  "username",
+  "email",
+  "lastLogin",
+]);
 
 // ============================================================================
-// BASE SCHEMAS
+// PRIMITIVES
 // ============================================================================
 
+/**
+ * Validated username: 3-50 chars, alphanumeric + underscore only.
+ * Matches the `username VARCHAR(50) UNIQUE` column on the `users` table.
+ */
 export const usernameSchema = z
   .string()
   .trim()
@@ -32,6 +53,10 @@ export const usernameSchema = z
   .max(50, "Username troppo lungo")
   .regex(/^[a-zA-Z0-9_]+$/, "Username può contenere solo lettere, numeri e underscore");
 
+/**
+ * Validated password: min 8 chars, must include uppercase, lowercase, digit.
+ * Matches the `password VARCHAR(255)` column on the `users` table.
+ */
 export const passwordSchema = z
   .string()
   .min(8, "Password deve essere almeno 8 caratteri")
@@ -41,227 +66,110 @@ export const passwordSchema = z
     "Password deve contenere maiuscola, minuscola e numero",
   );
 
+// ============================================================================
+// BASE SCHEMA — User core fields (no relations, no timestamps)
+// ============================================================================
+
 /**
- * Schema base per User (senza details)
+ * Core user fields shared between create and update operations.
+ * Does NOT include password (handled separately for security).
  */
 export const userBaseSchema = z.object({
   username: usernameSchema,
   email: emailSchema(),
-  password: passwordSchema,
   active: z.boolean().default(true),
   preferredLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
 });
 
 // ============================================================================
-// USER DETAILS SCHEMA
+// USER DETAILS — Vertical partition (UserDetails model)
 // ============================================================================
 
+/**
+ * Full shape of the `user_details` table.
+ * All optional/nullable fields mirror Prisma nullability.
+ */
 export const userDetailsSchema = z.object({
-  firstName: z.string().max(100, "Nome troppo lungo"),
-  lastName: z.string().max(100, "Cognome troppo lungo"),
+  firstName: z.string().trim().min(1, "Nome obbligatorio").max(100, "Nome troppo lungo"),
+  lastName: z.string().trim().min(1, "Cognome obbligatorio").max(100, "Cognome troppo lungo"),
   profilePicture: urlSchema().optional().nullable(),
   phone: phoneSchema.optional().nullable(),
-
-  // Address
   address: z.string().max(255, "Indirizzo troppo lungo").optional().nullable(),
-  city: z.string().max(100, "Città troppo lungo").optional().nullable(),
-  state: z.string().max(100, "Provincia troppo lungo").optional().nullable(),
+  city: z.string().max(100, "Città troppo lunga").optional().nullable(),
+  state: z.string().max(100, "Provincia troppo lunga").optional().nullable(),
   zipCode: z.string().max(20, "CAP troppo lungo").optional().nullable(),
-  
   countryCode: countryCodeBaseSchema.optional().nullable(),
-
-  // Personal
   dateOfBirth: dateStringSchema({
     max: new Date(),
     min: (() => {
-      const minDate = new Date();
-      minDate.setFullYear(minDate.getFullYear() - 120);
-      return minDate;
+      const d = new Date();
+      d.setFullYear(d.getFullYear() - 120);
+      return d;
     })(),
     message: {
       max: "La data di nascita non può essere futura",
-      min: "La data di nascita non è valida (massimo 120 anni)",
+      min: "La data di nascita non è valida (massimo 120 anni fa)",
     },
-  }).optional().nullable(),
+  })
+    .optional()
+    .nullable(),
   gender: genderSchema.default("PREFER_NOT_TO_SAY"),
   bio: z.string().max(1000, "Biografia troppo lunga").optional().nullable(),
 });
 
 // ============================================================================
-// Schema User completo
-// ============================================================================
-
-// Estendi lo schema con i campi aggiuntivi
-export const userSchema = userBaseSchema
-  .extend({
-    id: userIdSchema,
-    roles: z.array(userRoleSchema).optional(),
-    lastLogin: z.string().nullable().optional(), 
-    createdAt: z.string(),
-    updatedAt: z.string(),
-    details: userDetailsSchema.optional(),
-  })
-  .omit({ password: true });// Rimuovi password dal type pubblico
-
-// ============================================================================
-// FORM SCHEMAS (Frontend)
-// ============================================================================
-
-export const userFormSchema = z.object({
-  username: usernameSchema,
-  email: emailSchema(),
-  password: passwordSchema.optional().or(z.literal("")),
-  roleIds: z.array(roleIdSchema).min(1, "Deve essere assegnato almeno un ruolo").optional(),
-  preferredLanguageId: createIdSchema("Language ID obbligatorio"),
-  ...userDetailsSchema.shape,
-});
-
-export const createUserFormSchema = userFormSchema.required({
-  username: true,
-  email: true,
-  password: true,
-});
-
-export const updateUserFormSchema = userFormSchema.partial().extend({
-  username: usernameSchema,
-  email: emailSchema(),
-});
-
-// ============================================================================
-// API SCHEMAS (Backend)
+// PUBLIC RESPONSE SCHEMA — safe shape returned by mapUserResponse()
 // ============================================================================
 
 /**
- * Schema per validare ID utente nei params
+ * Shape of the user object returned by the API (password excluded).
+ * Mirrors what `mapUserResponse()` in user-helper.ts produces.
  */
-export const userIdParamSchema = z.object({
+export const userSchema = userBaseSchema.extend({
   id: userIdSchema,
-});
-
-/**
- * Schema alternativo per userId nei params
- */
-export const userIdAsUserIdParamSchema = z.object({
-  userId: userIdSchema,
-});
-
-// ============================================================================
-// AUTHENTICATION SCHEMAS
-// ============================================================================
-
-/**
- * Schema per il login
- */
-export const loginSchema = z.object({
-  email: emailSchema(),
-  password: z.string().min(1, "Password obbligatoria"),
-  twoFactorCode: z.string().length(6).optional(), // TOTP code
-});
-
-/**
- * Schema per login con 2FA
- */
-export const twoFactorLoginSchema = z.object({
-  token: z.string().min(1, "Token obbligatorio"), // Temporary token from first login step
-  code: z.string().length(6, "Codice 2FA deve essere 6 cifre"),
-});
-
-/**
- * Schema per la richiesta di reset password
- */
-export const forgotPasswordSchema = z.object({
-  email: emailSchema(),
-});
-
-/**
- * Schema per il reset password
- */
-export const resetPasswordSchema = z
-  .object({
-    token: z.string().min(1, "Token obbligatorio"),
-    newPassword: passwordSchema,
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Le password non corrispondono",
-    path: ["confirmPassword"],
-  });
-
-/**
- * Schema per verifica email
- */
-export const verifyEmailSchema = z.object({
-  token: z.string().length(64, "Token non valido"),
-});
-
-/**
- * Schema per reinvio email di verifica
- */
-export const resendVerificationEmailSchema = z.object({
-  email: emailSchema(),
+  lastLogin: z.string().nullable().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  deletedAt: z.string().nullable().optional(),
+  details: userDetailsSchema.optional().nullable(),
 });
 
 // ============================================================================
-// TWO-FACTOR AUTHENTICATION SCHEMAS
+// CREATE SCHEMAS
 // ============================================================================
 
 /**
- * Schema per abilitare 2FA
+ * Admin-only user creation.
+ * Requires credentials + mandatory name fields + at least one role.
+ * Used by: POST /api/users  →  CreateUserInput
  */
-export const enableTwoFactorSchema = z.object({
-  password: z.string().min(1, "Password obbligatoria per verifica"),
-});
-
-/**
- * Schema per confermare attivazione 2FA
- */
-export const confirmTwoFactorSchema = z.object({
-  code: z.string().length(6, "Codice deve essere 6 cifre"),
-});
-
-/**
- * Schema per disabilitare 2FA
- */
-export const disableTwoFactorSchema = z.object({
-  password: z.string().min(1, "Password obbligatoria per verifica"),
-  code: z.string().length(6, "Codice 2FA obbligatorio"),
-});
-
-/**
- * Schema per rigenerare backup codes
- */
-export const regenerateBackupCodesSchema = z.object({
-  password: z.string().min(1, "Password obbligatoria per verifica"),
-});
-
-// ============================================================================
-// CREATION SCHEMAS
-// ============================================================================
-
-/**
- * Schema per la creazione di un nuovo utente
- */
-export const createUserSchema = userBaseSchema.extend({
-  details: userDetailsSchema.partial().required({ firstName: true, lastName: true, countryCode: true }),
-  roleIds: z.array(roleIdSchema).min(1, "Deve essere assegnato almeno un ruolo"),
-});
-
-/**
- * Schema semplificato per registrazione pubblica
- */
-export const registerUserSchema = userBaseSchema
-  .pick({
-    username: true,
-    email: true,
-    password: true,
-  })
+export const createUserSchema = userBaseSchema
   .extend({
+    password: passwordSchema,
+    details: userDetailsSchema.partial().required({ firstName: true, lastName: true }),
+    roleIds: z.array(roleIdSchema).min(1, "Deve essere assegnato almeno un ruolo"),
+    preferredLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
+  })
+  .strict();
+
+/**
+ * Public self-registration.
+ * Requires username, email, password + basic name.
+ * `confirmPassword` is validated client-side only (not forwarded to the API).
+ * Used by: POST /api/users/register  →  RegisterUserInput
+ */
+export const registerUserSchema = z
+  .object({
+    username: usernameSchema,
+    email: emailSchema(),
+    password: passwordSchema,
     confirmPassword: z.string(),
     details: userDetailsSchema.pick({
       firstName: true,
       lastName: true,
     }),
   })
+  .strict()
   .refine((data) => data.password === data.confirmPassword, {
     message: "Le password non corrispondono",
     path: ["confirmPassword"],
@@ -272,58 +180,59 @@ export const registerUserSchema = userBaseSchema
 // ============================================================================
 
 /**
- * Schema per l'aggiornamento solo dei dettagli personali
+ * Partial update of the UserDetails record.
+ * firstName and lastName remain required when the details object is present.
+ * Used by: PUT /api/users/me/details  →  UpdateUserDetailsInput
  */
-export const updateUserDetailsSchema = userDetailsSchema.partial().required({ firstName: true, lastName: true });
+export const updateUserDetailsSchema = userDetailsSchema
+  .partial()
+  .required({ firstName: true, lastName: true })
+  .strict();
 
 /**
- * Schema per l'aggiornamento completo del profilo utente
+ * Partial update of core User fields + optional details block.
+ * All fields are optional; omit a key to leave it unchanged.
+ * Used by: PUT /api/users/me/profile  →  UpdateUserProfileInput
  */
-export const updateUserProfileSchema = z.object({
-  username: userBaseSchema.shape.username.optional(),
-  email: userBaseSchema.shape.email.optional(),
-  active: z.boolean().optional(),
-  preferredLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
-  details: updateUserDetailsSchema.optional().nullable(),
-});
-
-/**
- * Schema per il cambio password
- */
-export const changePasswordSchema = z
+export const updateUserProfileSchema = z
   .object({
-    currentPassword: z.string().min(1, "Password attuale obbligatoria"),
-    newPassword: passwordSchema,
-    confirmPassword: z.string(),
+    username: usernameSchema.optional(),
+    email: emailSchema().optional(),
+    preferredLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
+    details: updateUserDetailsSchema.optional().nullable(),
   })
-  .refine(
-    (data: { newPassword: string; confirmPassword: string }) =>
-      data.newPassword === data.confirmPassword,
-    {
-      message: "Le password non corrispondono",
-      path: ["confirmPassword"],
-    },
-  );
+  .strict();
 
 /**
- * Schema per l'aggiornamento dei ruoli (solo Admin)
+ * Role assignment update (admin only).
+ * Used by: PUT /api/users/:id/roles  →  UpdateUserRolesInput
  */
-export const updateUserRolesSchema = z.object({
-  roleIds: z.array(roleIdSchema).min(1, "Deve essere assegnato almeno un ruolo"),
-});
+export const updateUserRolesSchema = z
+  .object({
+    roleIds: z.array(roleIdSchema).min(1, "Deve essere assegnato almeno un ruolo"),
+  })
+  .strict();
 
 /**
- * Schema per attivare/disattivare un utente
+ * Toggle active flag for a user account (admin only).
+ * Used by: PATCH /api/users/:id/toggle-active  →  ToggleUserStatusInput
  */
-export const toggleUserStatusSchema = z.object({
-  active: z.boolean(),
-});
+export const toggleUserStatusSchema = z
+  .object({
+    active: z.boolean(),
+  })
+  .strict();
+
+// ============================================================================
+// ID PARAM SCHEMAS
+// ============================================================================
 
 /**
- * Schema per sbloccare utente
+ * Path param `id` for user routes.
+ * Used by: GET/PUT/DELETE /api/users/:id  →  UserIdParam
  */
-export const unlockUserSchema = z.object({
-  reason: z.string().max(500).optional().nullable(),
+export const userIdParamSchema = z.object({
+  id: userIdSchema,
 });
 
 // ============================================================================
@@ -331,39 +240,184 @@ export const unlockUserSchema = z.object({
 // ============================================================================
 
 /**
- * Schema per query di ricerca/filtro utenti
+ * Query string filters for the user list endpoint.
+ * Used by: GET /api/users  →  UserQueryInput
  */
-export const userQuerySchema = paginationSchema.extend({
-  search:    z.string().optional(),
-  active:    queryBooleanSchema.optional(),
-  roleId:    z.coerce.number().int().positive().optional(),
-  sortBy:    z.enum(["createdAt", "updatedAt", "username", "email", "lastLogin"]).default("createdAt"),
-  sortOrder: z.enum(["asc", "desc"]).default("desc"),
-});
+export const userQuerySchema = paginationSchema
+  .extend({
+    search: z.string().optional(),
+    active: queryBooleanOrAllSchema(),
+    roleId: z.coerce.number().int().positive().optional(),
+    sortBy: userSortFieldSchema.default("createdAt"),
+    sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  })
+  .strict();
 
 // ============================================================================
-// SECURITY SCHEMAS
+// AUTHENTICATION SCHEMAS
 // ============================================================================
 
 /**
- * Schema per consent GDPR
+ * Standard email + password login.
+ * Used by: POST /api/users/login  →  LoginInput
  */
-export const updateConsentSchema = z.object({
-  consentGiven: z.boolean(),
+export const loginSchema = z
+  .object({
+    email: emailSchema(),
+    password: z.string().min(1, "Password obbligatoria"),
+  })
+  .strict();
+
+/**
+ * Request a password-reset link via email.
+ * Used by: POST /api/users/forgot-password  →  ForgotPasswordInput
+ */
+export const forgotPasswordSchema = z
+  .object({
+    email: emailSchema(),
+  })
+  .strict();
+
+/**
+ * Consume a password-reset token and set the new password.
+ * `confirmPassword` is validated client-side only (not forwarded to the API).
+ * Used by: POST /api/users/reset-password  →  ResetPasswordInput
+ */
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().min(1, "Token obbligatorio"),
+    newPassword: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .strict()
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Le password non corrispondono",
+    path: ["confirmPassword"],
+  });
+
+/**
+ * Email verification via token in path params.
+ * The token is a 64-char hex string (SHA-256 of the raw token).
+ * Used by: GET /api/users/verify-email/:token  →  VerifyEmailInput
+ */
+export const verifyEmailSchema = z.object({
+  token: z.string().length(64, "Token di verifica non valido"),
 });
 
 /**
- * Schema per richiedere download dati GDPR
+ * Authenticated password change (current user knows their password).
+ * Invalidates all sessions on success — confirmPassword is UI-only.
+ * Used by: PUT /api/users/me/change-password  →  ChangePasswordInput
  */
-export const requestDataExportSchema = z.object({
-  includeRelatedData: z.boolean().default(true),
-  format: z.enum(["json", "csv"]).default("json"),
-});
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Password attuale obbligatoria"),
+    newPassword: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .strict()
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Le password non corrispondono",
+    path: ["confirmPassword"],
+  });
+
+// ============================================================================
+// TWO-FACTOR AUTHENTICATION SCHEMAS
+// ============================================================================
 
 /**
- * Schema per richiedere cancellazione account (GDPR)
+ * Enable 2FA — requires password confirmation before issuing a TOTP seed.
  */
-export const requestAccountDeletionSchema = z.object({
-  password: z.string().min(1, "Password obbligatoria per conferma"),
-  reason: z.string().max(500).optional().nullable(),
+export const enableTwoFactorSchema = z
+  .object({
+    password: z.string().min(1, "Password obbligatoria per verifica"),
+  })
+  .strict();
+
+/**
+ * Confirm 2FA activation by submitting the first valid TOTP code.
+ */
+export const confirmTwoFactorSchema = z
+  .object({
+    code: z.string().length(6, "Codice deve essere 6 cifre"),
+  })
+  .strict();
+
+/**
+ * Disable 2FA — requires both password and a valid TOTP code.
+ */
+export const disableTwoFactorSchema = z
+  .object({
+    password: z.string().min(1, "Password obbligatoria per verifica"),
+    code: z.string().length(6, "Codice 2FA obbligatorio"),
+  })
+  .strict();
+
+/**
+ * Regenerate 2FA backup codes — requires password confirmation.
+ */
+export const regenerateBackupCodesSchema = z
+  .object({
+    password: z.string().min(1, "Password obbligatoria per verifica"),
+  })
+  .strict();
+
+// ============================================================================
+// GDPR / SECURITY SCHEMAS
+// ============================================================================
+
+/**
+ * Record explicit GDPR consent.
+ */
+export const updateConsentSchema = z
+  .object({
+    consentGiven: z.boolean(),
+  })
+  .strict();
+
+/**
+ * Request a personal data export (right to data portability).
+ */
+export const requestDataExportSchema = z
+  .object({
+    includeRelatedData: z.boolean().default(true),
+    format: z.enum(["json", "csv"]).default("json"),
+  })
+  .strict();
+
+/**
+ * Request account deletion (right to be forgotten).
+ */
+export const requestAccountDeletionSchema = z
+  .object({
+    password: z.string().min(1, "Password obbligatoria per conferma"),
+    reason: z.string().max(500).optional().nullable(),
+  })
+  .strict();
+
+// ============================================================================
+// FRONTEND FORM SCHEMAS
+// ============================================================================
+
+/**
+ * Unified form schema for create/edit user forms in the admin panel.
+ * password is optional on edit (leave blank = keep existing).
+ */
+export const userFormSchema = z.object({
+  username: usernameSchema,
+  email: emailSchema(),
+  password: passwordSchema.optional().or(z.literal("")),
+  roleIds: z.array(roleIdSchema).min(1, "Deve essere assegnato almeno un ruolo").optional(),
+  preferredLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
+  ...userDetailsSchema.shape,
+});
+
+export const createUserFormSchema = userFormSchema.required({
+  username: true,
+  email: true,
+});
+
+export const updateUserFormSchema = userFormSchema.partial().extend({
+  username: usernameSchema,
+  email: emailSchema(),
 });

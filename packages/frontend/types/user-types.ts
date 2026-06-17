@@ -1,4 +1,4 @@
-import { ApiResponse, User } from "@mini-erp/shared";
+import { ApiResponse, PaginatedResponse, User, UserListItem } from "@mini-erp/shared";
 
 export type {
   User,
@@ -28,6 +28,12 @@ export const userKeys = {
 // RESPONSE TYPES
 // ============================================================================
 
-export interface UserListApiResponse extends ApiResponse<User[]> {}
+export type UserListApiResponse = PaginatedResponse<UserListItem>;
 export interface UserSingleApiResponse extends ApiResponse<User> {}
 export interface UserDeleteApiResponse extends ApiResponse<null> {}
+export interface UserStatsResponse {
+  total: number;
+  active: number;
+  inactive: number;
+  byRole: Record<string, number>;
+}

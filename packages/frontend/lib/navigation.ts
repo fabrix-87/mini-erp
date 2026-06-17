@@ -76,14 +76,14 @@ export function useFilteredNavigation(): NavigationSection[] {
   const t = useTranslations("nav");
 
   return useMemo(() => {
-    const userRoleCodes = new Set<string>(user?.roles?.map((r: { code: string }) => r.code) ?? []);
+    const userRoleCodes = new Set<string>(user?.currentTenant.roles?.map((r: { code: string }) => r.code) ?? []);
 
     const config = buildNavigationConfig(t);
 
     return config
       .map((section) => ({ ...section, items: filterItemsByRoles(section.items, userRoleCodes) }))
       .filter((section) => section.items.length > 0);
-  }, [user?.roles, t]);
+  }, [user?.currentTenant.roles, t]);
 }
 
 /**

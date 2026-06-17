@@ -9,7 +9,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { GenderType } from '@/types/user';
+import { GenderType } from '@/types/user-types';
 
 interface GenderIconProps {
   gender?: GenderType
