@@ -13,7 +13,6 @@ import {
   RoleQueryInput,
   UpdatePermissionInput,
   UpdateRoleInput,
-  UserIdAsUserIdParam,
 } from "@mini-erp/shared";
 import { buildPagination } from "@/utils/query-utils";
 import {
@@ -34,8 +33,9 @@ import {
   formatPermissionRoles,
   formatRolePermissions,
   getPermissionSelection,
-  roleSelect,
+  getRoleSelect,
 } from "@/helpers/role-helper";
+import { checkUserTenantMembership } from "@/helpers/user-helper";
 
 // ============================================================================
 // ROLES - CRUD Operations
@@ -56,17 +56,27 @@ export const getAllRoles = async (c: Context<AppBindings>) => {
     limit = 20,
   } = getValidatedQuery<RoleQueryInput>(c);
 
+  const tenantId = c.get("currentTenantId")!;
+
   // Costruisci filtri dinamici
-  const where: Prisma.RoleWhereInput = {};
+  const where: Prisma.RoleWhereInput = {
+    AND: [
+      {
+        OR: [{ tenantId: tenantId }, { tenantId: null }],
+      },
+    ],
+  };
 
   const { skip, take } = buildPagination(Number(page), Number(limit));
 
   if (search) {
-    where.OR = [
-      { code: { contains: search as string, mode: "insensitive" } },
-      { name: { contains: search as string, mode: "insensitive" } },
-      { description: { contains: search as string, mode: "insensitive" } },
-    ];
+    (where.AND as Prisma.RoleWhereInput[]).push({
+      OR: [
+        { code: { contains: search as string, mode: "insensitive" } },
+        { name: { contains: search as string, mode: "insensitive" } },
+        { description: { contains: search as string, mode: "insensitive" } },
+      ],
+    });
   }
 
   if (isDefault !== undefined) {
@@ -78,7 +88,7 @@ export const getAllRoles = async (c: Context<AppBindings>) => {
       where,
       skip,
       take,
-      select: roleSelect,
+      select: getRoleSelect(tenantId),
       orderBy: { [sortBy]: sortOrder },
     }),
     prisma.role.count({ where }),
@@ -96,10 +106,14 @@ export const getAllRoles = async (c: Context<AppBindings>) => {
  */
 export const getRoleById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<RoleIdParam>(c);
+  const tenantId = c.get("currentTenantId")!;
 
-  const role = await prisma.role.findUnique({
-    where: { id: Number(id) },
-    select: roleSelect,
+  const role = await prisma.role.findFirst({
+    where: {
+      id: Number(id),
+      OR: [{ tenantId: tenantId }, { tenantId: null }],
+    },
+    select: getRoleSelect(tenantId),
   });
 
   if (!role) {
@@ -116,10 +130,14 @@ export const getRoleById = async (c: Context<AppBindings>) => {
  */
 export const getRoleByCode = async (c: Context<AppBindings>) => {
   const { code } = getValidatedParams<RoleCodeParam>(c);
+  const tenantId = c.get("currentTenantId")!;
 
-  const role = await prisma.role.findUnique({
-    where: { code: code.toUpperCase() },
-    select: roleSelect,
+  const role = await prisma.role.findFirst({
+    where: {
+      code: code.toUpperCase(),
+      OR: [{ tenantId: tenantId }, { tenantId: null }],
+    },
+    select: getRoleSelect(tenantId),
   });
 
   if (!role) {
@@ -136,10 +154,14 @@ export const getRoleByCode = async (c: Context<AppBindings>) => {
  */
 export const createRole = async (c: Context<AppBindings>) => {
   const { permissionIds, ...roleData } = getValidatedBody<CreateRoleInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   // Verifica unicità code
-  const existingRole = await prisma.role.findUnique({
-    where: { code: roleData.code },
+  const existingRole = await prisma.role.findFirst({
+    where: {
+      code: roleData.code,
+      OR: [{ tenantId: tenantId }, { tenantId: null }],
+    },
   });
 
   if (existingRole) {
@@ -149,7 +171,7 @@ export const createRole = async (c: Context<AppBindings>) => {
   // Se isDefault è true, rimuovi il flag da altri ruoli
   if (roleData.isDefault) {
     await prisma.role.updateMany({
-      where: { isDefault: true },
+      where: { isDefault: true, tenantId },
       data: { isDefault: false },
     });
   }
@@ -158,6 +180,7 @@ export const createRole = async (c: Context<AppBindings>) => {
   const role = await prisma.role.create({
     data: {
       ...roleData,
+      tenantId,
       permissions: permissionIds?.length
         ? {
             create: permissionIds.map((permissionId: number) => ({
@@ -166,7 +189,7 @@ export const createRole = async (c: Context<AppBindings>) => {
           }
         : undefined,
     },
-    select: roleSelect,
+    select: getRoleSelect(tenantId),
   });
 
   return sendSuccess(c, formatRolePermissions(role), {
@@ -182,10 +205,11 @@ export const createRole = async (c: Context<AppBindings>) => {
 export const updateRole = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<RoleIdParam>(c);
   const { permissionIds, ...updateData } = getValidatedBody<UpdateRoleInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   // Verifica esistenza
-  const existingRole = await prisma.role.findUnique({
-    where: { id: Number(id) },
+  const existingRole = await prisma.role.findFirst({
+    where: { id: Number(id), OR: [{ tenantId }, { tenantId: null }] },
   });
 
   if (!existingRole) {
@@ -194,8 +218,8 @@ export const updateRole = async (c: Context<AppBindings>) => {
 
   // Verifica unicità code se modificato
   if (updateData.code && updateData.code !== existingRole.code) {
-    const duplicateCode = await prisma.role.findUnique({
-      where: { code: updateData.code },
+    const duplicateCode = await prisma.role.findFirst({
+      where: { code: updateData.code, OR: [{ tenantId }, { tenantId: null }] },
     });
 
     if (duplicateCode) {
@@ -206,7 +230,7 @@ export const updateRole = async (c: Context<AppBindings>) => {
   // Se isDefault è true, rimuovi il flag da altri ruoli
   if (updateData.isDefault === true) {
     await prisma.role.updateMany({
-      where: { isDefault: true, id: { not: Number(id) } },
+      where: { isDefault: true, id: { not: Number(id) }, OR: [{ tenantId }, { tenantId: null }] },
       data: { isDefault: false },
     });
   }
@@ -228,7 +252,7 @@ export const updateRole = async (c: Context<AppBindings>) => {
             deleteMany: {},
           },
     },
-    select: roleSelect,
+    select: getRoleSelect(tenantId),
   });
 
   return sendSuccess(c, formatRolePermissions(role), {
@@ -243,12 +267,13 @@ export const updateRole = async (c: Context<AppBindings>) => {
  */
 export const deleteRole = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<RoleIdParam>(c);
+  const tenantId = c.get("currentTenantId");
 
-  const role = await prisma.role.findUnique({
-    where: { id: Number(id) },
+  const role = await prisma.role.findFirst({
+    where: { id: Number(id), OR: [{ tenantId }, { tenantId: null }] },
     include: {
       _count: {
-        select: { users: true },
+        select: { usersTenantMembershipRoles: true },
       },
     },
   });
@@ -257,10 +282,14 @@ export const deleteRole = async (c: Context<AppBindings>) => {
     throw new NotFoundError("Ruolo non trovato");
   }
 
+  if (role.tenantId === null) {
+    throw new BadRequestError("Impossibile rimuovere un ruolo di sistema");
+  }
+
   // Verifica che non ci siano utenti assegnati
-  if (role._count.users > 0) {
+  if (role._count.usersTenantMembershipRoles > 0) {
     throw new BadRequestError(
-      `Impossibile eliminare il ruolo. Ci sono ${role._count.users} utenti assegnati.`,
+      `Impossibile eliminare il ruolo. Ci sono ${role._count.usersTenantMembershipRoles} utenti assegnati.`,
     );
   }
 
@@ -333,10 +362,11 @@ export const getRolePermissions = async (c: Context<AppBindings>) => {
 export const assignPermissionsToRole = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<RoleIdParam>(c);
   const { permissionIds } = getValidatedBody<AssignPermissionsInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   // Verifica esistenza ruolo
-  const role = await prisma.role.findUnique({
-    where: { id: Number(id) },
+  const role = await prisma.role.findFirst({
+    where: { id: Number(id), OR: [{ tenantId }, { tenantId: null }] },
   });
 
   if (!role) {
@@ -364,7 +394,7 @@ export const assignPermissionsToRole = async (c: Context<AppBindings>) => {
   // Ricarica ruolo con permessi aggiornati
   const updatedRole = await prisma.role.findUnique({
     where: { id: Number(id) },
-    select: roleSelect,
+    select: getRoleSelect(tenantId),
   });
 
   return sendSuccess(c, formatRolePermissions(updatedRole), {
@@ -380,6 +410,7 @@ export const assignPermissionsToRole = async (c: Context<AppBindings>) => {
 export const removePermissionsFromRole = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<RoleIdParam>(c);
   const { permissionIds } = getValidatedBody<AssignPermissionsInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   // Verifica esistenza ruolo
   const role = await prisma.role.findUnique({
@@ -401,7 +432,7 @@ export const removePermissionsFromRole = async (c: Context<AppBindings>) => {
   // Ricarica ruolo con permessi aggiornati
   const updatedRole = await prisma.role.findUnique({
     where: { id: Number(id) },
-    select: roleSelect,
+    select: getRoleSelect(tenantId),
   });
 
   return sendSuccess(c, formatRolePermissions(updatedRole), {
@@ -416,16 +447,25 @@ export const removePermissionsFromRole = async (c: Context<AppBindings>) => {
  */
 export const getRoleUsers = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<RoleIdParam>(c);
+  const tenantId = c.get("currentTenantId");
 
   const role = await prisma.role.findUnique({
-    where: { id: Number(id) },
+    where: { id: Number(id), tenantId },
     include: {
-      users: {
+      usersTenantMembershipRoles: {
         select: {
-          id: true,
-          username: true,
-          email: true,
-          active: true,
+          membership: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  email: true,
+                  active: true,
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -443,10 +483,10 @@ export const getRoleUsers = async (c: Context<AppBindings>) => {
         code: role.code,
         name: role.name,
       },
-      users: role.users,
+      users: role.usersTenantMembershipRoles,
     },
     {
-      results: role.users.length,
+      results: role.usersTenantMembershipRoles.length,
     },
   );
 };
@@ -678,13 +718,16 @@ export const getPermissionRoles = async (c: Context<AppBindings>) => {
  */
 export const assignRolesToUser = async (c: Context<AppBindings>) => {
   const { userId, roleIds } = getValidatedBody<AssignRolesToUserInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
-  // Verifica esistenza utente
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
+  // Verifica esistenza utente E appartenenza al tenant corrente
+  const isMember = await checkUserTenantMembership({
+    userId,
+    tenantId,
+    mustBeActive: true,
   });
 
-  if (!user) {
+  if (!isMember) {
     throw new NotFoundError("Utente non trovato");
   }
 
@@ -698,11 +741,21 @@ export const assignRolesToUser = async (c: Context<AppBindings>) => {
   }
 
   // Assegna ruoli
-  await prisma.user.update({
-    where: { id: userId },
+  await prisma.userTenantMembership.update({
+    where: {
+      userId_tenantId: {
+        userId: userId,
+        tenantId: tenantId,
+      },
+    },
     data: {
       roles: {
-        connect: roleIds.map((id: number) => ({ id })),
+        // 1. Svuota tutte le associazioni di ruolo esistenti per questa specifica membership
+        deleteMany: {},
+        // 2. Connette i nuovi ruoli passati nell'array roleIds
+        create: roleIds.map((id: number) => ({
+          roleId: id,
+        })),
       },
     },
   });
@@ -710,18 +763,7 @@ export const assignRolesToUser = async (c: Context<AppBindings>) => {
   // Ricarica utente con ruoli
   const updatedUser = await prisma.user.findUnique({
     where: { id: userId },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      roles: {
-        select: {
-          id: true,
-          code: true,
-          name: true,
-        },
-      },
-    },
+    select: getRoleSelect(tenantId),
   });
 
   return sendSuccess(c, updatedUser, {
@@ -736,16 +778,16 @@ export const assignRolesToUser = async (c: Context<AppBindings>) => {
  */
 export const removeRolesFromUser = async (c: Context<AppBindings>) => {
   const { userId, roleIds } = getValidatedBody<AssignRolesToUserInput>(c);
+  const tenantId = c.get("currentTenantId")!
 
-  // Verifica esistenza utente
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: {
-      roles: true,
-    },
+  // Verifica esistenza utente E appartenenza al tenant corrente
+  const isMember = await checkUserTenantMembership({
+    userId,
+    tenantId,
+    mustBeActive: true,
   });
 
-  if (!user) {
+  if (!isMember) {
     throw new NotFoundError("Utente non trovato");
   }
 

@@ -420,4 +420,6 @@ export const createUserFormSchema = userFormSchema.required({
 export const updateUserFormSchema = userFormSchema.partial().extend({
   username: usernameSchema,
   email: emailSchema(),
+  firstName: z.string().trim().min(1, "Nome obbligatorio").max(100, "Nome troppo lungo"),
+  lastName: z.string().trim().min(1, "Cognome obbligatorio").max(100, "Cognome troppo lungo"),
 });

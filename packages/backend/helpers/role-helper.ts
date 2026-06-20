@@ -7,12 +7,13 @@ import { Prisma } from "@/generated/prisma/client";
 /**
  * Selezione standard per Role con relazioni
  */
-export const roleSelect = {
+export const getRoleSelect = (tenantId: string) => ({
   id: true,
   code: true,
   name: true,
   description: true,
   isDefault: true,
+  tenantId: true,
   createdAt: true,
   updatedAt: true,
   permissions: {
@@ -28,12 +29,18 @@ export const roleSelect = {
       },
     },
   },
-  _count: {
+  // Al posto di _count globale, filtriamo la relazione in base al tenant della membership
+  usersTenantMembershipRoles: {
+    where: {
+      membership: {
+        tenantId: tenantId, // Conta solo le associazioni che puntano a questo tenant
+      },
+    },
     select: {
-      users: true,
+      membershipId: true, // Selezioniamo il minimo indispensabile per far funzionare la query
     },
   },
-} satisfies Prisma.RoleSelect;
+} satisfies Prisma.RoleSelect);
 
 /**
  * Selezione standard per Permission con relazioni
@@ -67,7 +74,7 @@ export const formatRolePermissions = (role: any) => {
   return {
     ...role,
     permissions: role.permissions?.map((rp: any) => rp.permission) || [],
-    userCount: role._count?.users || 0,
+    userCount: role.usersTenantMembershipRoles?.length || 0,
   };
 };
 

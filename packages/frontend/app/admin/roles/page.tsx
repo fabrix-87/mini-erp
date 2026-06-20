@@ -1,4 +1,4 @@
-import RoleListPage from "@/components/role/role-list";
+import RoleListPage from "@/app/admin/roles/components/role-list";
 import { requirePermission } from "@/lib/server/auth";
 import { getAllRoles } from "@/services/server/role-service";
 import { RoleQueryInput, roleQuerySchema } from "@mini-erp/shared";

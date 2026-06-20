@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { headerIcons } from "@/lib/navigation";
 import { Check } from "lucide-react";
+import PurgeCacheButton from "./clear-cache-button";
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -100,6 +101,12 @@ export function Navbar({ onMenuClick }: NavbarProps) {
           <span className="sr-only">Notifiche</span>
         </Button>
       </div>
+      {
+        /* Bottone per invalidare la cache - only Dev mode */
+        process.env.NODE_ENV === "development" && (
+          <PurgeCacheButton/>
+        )
+      }
     </header>
   );
 }

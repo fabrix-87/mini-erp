@@ -18,7 +18,7 @@ import { PaginatedResponse } from "@mini-erp/shared/types";
 
 const USER_TAGS = {
   list: "users-list",
-  detail: (id: number) => `user-${id}`,
+  detail: (id: string) => `user-${id}`,
   profile: "user-profile",
 };
 
@@ -81,7 +81,7 @@ export async function changePassword(currentPassword: string, newPassword: strin
 /**
  * Get all users with filters and pagination
  * Con cache per performance
- * @return {Promise<UserListApiResponse>} 
+ * @return {Promise<UserListApiResponse>}
  */
 export async function getAllUsers(params?: {
   page?: number;
@@ -108,7 +108,7 @@ export async function getAllUsers(params?: {
  * Con cache per dettagli utente
  */
 export async function getUserById(
-  id: number,
+  id: string,
   options?: { revalidate?: number | false },
 ): Promise<User> {
   return serverApi.get<User>(`/users/${id}`, {
@@ -130,7 +130,7 @@ export async function createUser(data: CreateUserFormInput): Promise<User> {
 /**
  * Update user profile (admin)
  */
-export async function updateUserProfile(id: number, data: UpdateUserProfileInput): Promise<User> {
+export async function updateUserProfile(id: string, data: UpdateUserProfileInput): Promise<User> {
   return serverApi.put<User>(`/users/${id}/profile`, data, {
     tags: [USER_TAGS.detail(id), USER_TAGS.list],
     revalidate: false,
@@ -140,7 +140,7 @@ export async function updateUserProfile(id: number, data: UpdateUserProfileInput
 /**
  * Update user details (admin)
  */
-export async function updateUserDetails(id: number, data: UpdateUserDetailsInput): Promise<User> {
+export async function updateUserDetails(id: string, data: UpdateUserDetailsInput): Promise<User> {
   return serverApi.put<User>(`/users/${id}/details`, data, {
     tags: [USER_TAGS.detail(id), USER_TAGS.list],
     revalidate: false,
@@ -150,7 +150,7 @@ export async function updateUserDetails(id: number, data: UpdateUserDetailsInput
 /**
  * Update user roles (admin)
  */
-export async function updateUserRoles(id: number, roleIds: number[]): Promise<User> {
+export async function updateUserRoles(id: string, roleIds: number[]): Promise<User> {
   return serverApi.put<User>(
     `/users/${id}/roles`,
     { roleIds },
@@ -164,7 +164,7 @@ export async function updateUserRoles(id: number, roleIds: number[]): Promise<Us
 /**
  * Toggle user active status (admin)
  */
-export async function toggleUserActive(id: number, active: boolean): Promise<void> {
+export async function toggleUserActive(id: string, active: boolean): Promise<void> {
   await serverApi.patch<void>(
     `/users/${id}/toggle-active`,
     { active },
@@ -178,7 +178,7 @@ export async function toggleUserActive(id: number, active: boolean): Promise<voi
 /**
  * Delete user (admin)
  */
-export async function deleteUser(id: number): Promise<void> {
+export async function deleteUser(id: string): Promise<void> {
   await serverApi.delete<void>(`/users/${id}`, {
     tags: [USER_TAGS.detail(id), USER_TAGS.list],
     revalidate: false,
@@ -194,7 +194,7 @@ export async function deleteUser(id: number): Promise<void> {
  * Con parallelizzazione
  */
 export async function getUsersByIds(
-  ids: number[],
+  ids: string[],
   options?: { revalidate?: number | false },
 ): Promise<User[]> {
   const promises = ids.map((id) => getUserById(id, options));
@@ -205,7 +205,7 @@ export async function getUsersByIds(
  * Bulk update users
  */
 export async function bulkUpdateUsers(
-  updates: Array<{ id: number; data: Partial<UpdateUserProfileInput> }>,
+  updates: Array<{ id: string; data: Partial<UpdateUserProfileInput> }>,
 ): Promise<User[]> {
   const promises = updates.map(({ id, data }) =>
     updateUserProfile(id, data as UpdateUserProfileInput),

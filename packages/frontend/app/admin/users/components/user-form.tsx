@@ -39,10 +39,10 @@ import {
   updateUserRolesAction,
 } from "@/actions/user";
 import { Loader2, Save, Shield, X } from "lucide-react";
-import { Badge } from "../ui/badge";
-import { Checkbox } from "../ui/checkbox";
-import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
-import { CountryCombobox } from "../ui/country-combobox";
+import { Badge } from "../../../../components/ui/badge";
+import { Checkbox } from "../../../../components/ui/checkbox";
+import { BreadcrumbSetter } from "../../../../components/ui/breadcrumb-setter";
+import { CountryCombobox } from "../../../../components/ui/country-combobox";
 import { useNavigation } from "@/hooks/use-navigation";
 import { Language, Role } from "@mini-erp/shared";
 
@@ -83,11 +83,11 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
       city: user?.details?.city || "",
       state: user?.details?.state || "",
       zipCode: user?.details?.zipCode || "",
-      country: user?.details?.country || "",
+      countryCode: user?.details?.countryCode || "",
       dateOfBirth: user?.details?.dateOfBirth || null,
       gender: user?.details?.gender || undefined,
       bio: user?.details?.bio || "",
-      roleIds: user?.roles?.map((r) => r.id) || [],
+      roleIds: user?.currentTenant.roles?.map((r) => r.id) || [],
       preferredLanguageId: user?.preferredLanguageId ?? 1,
     },
   });
@@ -143,7 +143,7 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
           // Update details
           // Update roles if changed
           const currentRoleIds = (data as UpdateUserFormInput).roleIds ?? [];
-          const originalRoleIds = user?.roles?.map((r) => r.id) ?? [];
+          const originalRoleIds = user?.currentTenant.roles?.map((r) => r.id) ?? [];
           const rolesChanged =
             JSON.stringify([...currentRoleIds].sort()) !==
             JSON.stringify([...originalRoleIds].sort());
@@ -165,7 +165,7 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
             city: updateData.city,
             state: updateData.state,
             zipCode: updateData.zipCode,
-            country: updateData.country,
+            countryCode: updateData.countryCode,
             dateOfBirth: updateData.dateOfBirth,
             gender: updateData.gender,
             bio: updateData.bio,
@@ -295,7 +295,7 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
                           <SelectItem key={lang.id} value={String(lang.id)}>
                             <span className="flex items-center gap-2">
                               <span className="font-mono text-xs uppercase text-muted-foreground w-6">
-                                {lang.iso_code}
+                                {lang.isoCode}
                               </span>
                               {lang.name}
                             </span>
@@ -625,7 +625,7 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
 
                 <FormField
                   control={form.control}
-                  name="country"
+                  name="countryCode"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Paese</FormLabel>

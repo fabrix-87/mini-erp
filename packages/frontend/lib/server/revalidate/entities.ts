@@ -1,3 +1,4 @@
+// lib/server/revalidate/entities.ts
 import { revalidateEntity, revalidateEntityWithList, revalidatePath, revalidateTag } from ".";
 
 // ============================================================================
@@ -5,107 +6,145 @@ import { revalidateEntity, revalidateEntityWithList, revalidatePath, revalidateT
 // ============================================================================
 
 /**
- * Revalidate user-related cache
+ * Revalidate user-related cache.
+ * Route: /admin/users
  */
 export const userRevalidation = {
-  /** Revalidate specific user detail and path */
-  user: (id: number) => revalidateEntity("user", id, { pathRoot: "settings/users" }),
+  /** Revalidate specific user detail and path. */
+  user: (id: number) => revalidateEntity("user", id, { routeKey: "users" }),
 
-  /** Revalidate users list */
-  list: () => revalidateEntity("users", undefined, { pathRoot: "settings/users" }),
+  /** Revalidate users list. */
+  list: () => revalidateEntity("user", undefined, { routeKey: "users" }),
 
-  /** Revalidate specific user + list */
-  userWithList: (id: number) =>
-    revalidateEntityWithList("user", id, {
-      tagPrefix: "user",
-      pathRoot: "settings/users",
-    }),
+  /** Revalidate specific user and users list. */
+  userWithList: (id: number) => revalidateEntityWithList("user", id, { routeKey: "users" }),
 
-  /** Revalidate user profile (no path needed) */
+  /** Revalidate user profile tag only (no path needed). */
   profile: () => revalidateTag("user-profile"),
 };
 
 /**
- * Revalidate product-related cache
- */
-export const productRevalidation = {
-  product: (id: number) => revalidateEntity("product", id),
-  list: () => revalidateEntity("products"),
-  productWithList: (id: number) => revalidateEntityWithList("product", id),
-};
-
-/**
- * Revalidate document-related cache
- */
-export const documentRevalidation = {
-  document: (id: number) => revalidateEntity("document", id),
-  list: () => revalidateEntity("documents"),
-  documentWithList: (id: number) => revalidateEntityWithList("document", id),
-};
-
-/**
- * Revalidate customer-related cache
- */
-export const customerRevalidation = {
-  customer: (id: number) => revalidateEntity("customer", id),
-  list: () => revalidateEntity("customers"),
-  customerWithList: (id: number) => revalidateEntityWithList("customer", id),
-};
-
-/**
- * Revalidate supplier-related cache
- */
-export const supplierRevalidation = {
-  supplier: (id: number) => revalidateEntity("supplier", id),
-  list: () => revalidateEntity("suppliers"),
-  supplierWithList: (id: number) => revalidateEntityWithList("supplier", id),
-};
-
-/**
- * Revalidate role-related cache
+ * Revalidate role-related cache.
+ * Route: /admin/roles
  */
 export const roleRevalidation = {
-  /** Revalidate specific role and roles list */
-  role: (id: number) =>
-    revalidateEntityWithList("role", id, {
-      tagPrefix: "role",
-      pathRoot: "settings/roles",
-    }),
+  /** Revalidate specific role detail and roles list. */
+  role: (id: number) => revalidateEntityWithList("role", id, { routeKey: "roles" }),
 
-  /** Revalidate roles list only */
-  list: () => revalidateEntity("roles", undefined, { pathRoot: "settings/roles" }),
+  /** Revalidate roles list only. */
+  list: () => revalidateEntity("role", undefined, { routeKey: "roles" }),
 };
 
 /**
- * Revalidate lead-related cache
+ * Revalidate lead-related cache.
+ * Route: /crm/leads
  */
 export const leadRevalidation = {
-  lead: (id: number) => revalidateEntityWithList("lead", id, { pathRoot: "leads" }),
-  list: () => revalidateEntity("leads", undefined, { pathRoot: "leads" }),
+  /** Revalidate specific lead detail and leads list. */
+  lead: (id: number) => revalidateEntityWithList("lead", id, { routeKey: "leads" }),
+
+  /** Revalidate leads list. */
+  list: () => revalidateEntity("lead", undefined, { routeKey: "leads" }),
 };
 
 /**
- * Revalidate activity-related cache
+ * Revalidate customer-related cache.
+ * Route: /crm/customers
+ */
+export const customerRevalidation = {
+  /** Revalidate specific customer detail and path. */
+  customer: (id: number) => revalidateEntity("customer", id, { routeKey: "customers" }),
+
+  /** Revalidate customers list. */
+  list: () => revalidateEntity("customer", undefined, { routeKey: "customers" }),
+
+  /** Revalidate specific customer and customers list. */
+  customerWithList: (id: number) =>
+    revalidateEntityWithList("customer", id, { routeKey: "customers" }),
+};
+
+/**
+ * Revalidate supplier-related cache.
+ * Route: /crm/suppliers
+ */
+export const supplierRevalidation = {
+  /** Revalidate specific supplier detail and path. */
+  supplier: (id: number) => revalidateEntity("supplier", id, { routeKey: "suppliers" }),
+
+  /** Revalidate suppliers list. */
+  list: () => revalidateEntity("supplier", undefined, { routeKey: "suppliers" }),
+
+  /** Revalidate specific supplier and suppliers list. */
+  supplierWithList: (id: number) =>
+    revalidateEntityWithList("supplier", id, { routeKey: "suppliers" }),
+};
+
+/**
+ * Revalidate contact-related cache.
+ * Route: /crm/contacts
+ */
+export const contactRevalidation = {
+  /** Revalidate specific contact detail and path. */
+  contact: (id: number) => revalidateEntity("contact", id, { routeKey: "contacts" }),
+
+  /** Revalidate contacts list. */
+  list: () => revalidateEntity("contact", undefined, { routeKey: "contacts" }),
+
+  /** Revalidate specific contact and contacts list. */
+  contactWithList: (id: number) =>
+    revalidateEntityWithList("contact", id, { routeKey: "contacts" }),
+};
+
+/**
+ * Revalidate activity-related cache.
+ * Route: /activities
  */
 export const activityRevalidation = {
-  /** Revalidate specific activity detail + lists */
-  activity: (id: number) => revalidateEntityWithList("activity", id, { pathRoot: "activities" }),
+  /** Revalidate specific activity detail and activities list. */
+  activity: (id: number) => revalidateEntityWithList("activity", id, { routeKey: "activities" }),
 
-  /** Revalidate activities list */
-  list: () => revalidateEntity("activities", undefined, { pathRoot: "activities" }),
+  /** Revalidate activities list. */
+  list: () => revalidateEntity("activity", undefined, { routeKey: "activities" }),
 
-  /** Revalidate activities belonging to a lead (revalidates lead detail page) */
+  /**
+   * Revalidate activities belonging to a specific lead.
+   * Invalidates the lead detail page and the activities-lead tag.
+   */
   forLead: (leadId: number) => {
     revalidateTag(`activities-lead-${leadId}`);
-    revalidatePath(`/leads/${leadId}`, "page");
+    revalidatePath(`/crm/leads/${leadId}`, "page");
   },
 };
 
 /**
- * Revalidate contact-related cache
+ * Revalidate product-related cache.
+ * Route: /catalog/products
  */
-export const contactRevalidation = {
-  contact: (id: number) => revalidateEntity("contact", id),
-  list: () => revalidateEntity("contacts"),
-  contactWithList: (id: number) => revalidateEntityWithList("contact", id),
+export const productRevalidation = {
+  /** Revalidate specific product detail and path. */
+  product: (id: number) => revalidateEntity("product", id, { routeKey: "products" }),
+
+  /** Revalidate products list. */
+  list: () => revalidateEntity("product", undefined, { routeKey: "products" }),
+
+  /** Revalidate specific product and products list. */
+  productWithList: (id: number) =>
+    revalidateEntityWithList("product", id, { routeKey: "products" }),
+};
+
+/**
+ * Revalidate document-related cache.
+ * NOTE: "documents" is not yet in NAVIGATION_TREE — using pathRoot fallback.
+ * @todo Add "documents" to NAVIGATION_TREE and migrate to routeKey.
+ */
+export const documentRevalidation = {
+  /** Revalidate specific document detail and path. */
+  document: (id: number) => revalidateEntity("document", id, { pathRoot: "documents" }),
+
+  /** Revalidate documents list. */
+  list: () => revalidateEntity("document", undefined, { pathRoot: "documents" }),
+
+  /** Revalidate specific document and documents list. */
+  documentWithList: (id: number) =>
+    revalidateEntityWithList("document", id, { pathRoot: "documents" }),
 };

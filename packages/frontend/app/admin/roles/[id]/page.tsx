@@ -3,7 +3,7 @@ import { getRoleById } from "@/services/server/role-service";
 import { permissionKeys, roleKeys } from "@/types/role-types";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { HydrationBoundary } from "@/providers/hydration-boundary";
-import RoleDetailPage from "@/components/role/role-detail";
+import RoleDetailPage from "@/app/admin/roles/components/role-detail";
 import { notFound } from "next/navigation";
 import { getAllPermissions } from "@/services/server/permission";
 

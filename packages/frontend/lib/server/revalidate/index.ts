@@ -1,28 +1,17 @@
 // lib/server/revalidate/index.ts
-// Helper utilities for Next.js 16 revalidation API
 
 import {
   revalidateTag as nextRevalidateTag,
   revalidatePath as nextRevalidatePath,
 } from "next/cache";
+import { getRoute, type RouteKey } from "@/lib/navigation-routes";
 
 // ============================================================================
 // Types
 // ============================================================================
 
-/**
- * Next.js revalidation profile for revalidateTag
- */
 type RevalidateTagProfile = string | { expire?: number };
-
-/**
- * Next.js revalidation type for revalidatePath
- */
 type RevalidatePathType = "page" | "layout";
-
-// ============================================================================
-// Default Profile
-// ============================================================================
 
 const DEFAULT_TAG_PROFILE: RevalidateTagProfile = "max";
 const DEFAULT_PATH_TYPE: RevalidatePathType = "page";
@@ -94,76 +83,117 @@ export function revalidatePaths(
   paths.forEach((path) => nextRevalidatePath(path, type));
 }
 
+// ============================================================================
+// Options type condiviso
+// ============================================================================
+
+interface RevalidateOptions {
+  tagProfile?: RevalidateTagProfile;
+  pathType?: RevalidatePathType;
+  tagPrefix?: string;
+  /**
+   * RouteKey dalla navigation tree (e.g. "roles", "customers").
+   * Se fornito, il path viene risolto tramite `getRoute(routeKey)`.
+   * Ha precedenza su `pathRoot`.
+   */
+  routeKey?: RouteKey;
+  /**
+   * Override manuale del path root, usato solo se `routeKey` non è fornito.
+   * @deprecated Preferire `routeKey` quando disponibile.
+   */
+  pathRoot?: string;
+}
+
+// ============================================================================
+// Internal helper: resolve the base path
+// ============================================================================
+
 /**
- * Revalidate entity (tag + path)
+ * Resolves the base path from options, prioritizing `routeKey` over `pathRoot`.
  *
- * @param entity - Entity name (e.g., 'user', 'product')
- * @param id - Entity ID (optional)
- * @param options { tagProfile, pathType } - Revalidation options ({default: 'max', default: 'page'})
+ * @param entity - Entity name used as fallback (e.g. "user" → "/users")
+ * @param options - Revalidation options
+ * @param withId - Whether we're resolving a detail path
+ */
+function resolveBasePath(
+  entity: string,
+  options: RevalidateOptions | undefined,
+  withId: boolean,
+): string {
+  if (options?.routeKey) {
+    return getRoute(options.routeKey);
+  }
+  if (options?.pathRoot) {
+    return `/${options.pathRoot}`;
+  }
+  // Fallback legacy: entity → pluralizza solo se stiamo cercando il path lista
+  return withId ? `/${entity}s` : `/${entity}s`;
+}
+
+// ============================================================================
+// Entity revalidators
+// ============================================================================
+
+/**
+ * Revalidate a single entity (tag + path) or its list.
+ *
+ * @param entity - Entity name in singular (e.g. "role", "user")
+ * @param id - Entity ID (omit to revalidate the list)
+ * @param options - Revalidation options; use `routeKey` for type-safe path resolution
  *
  * @example
- * // Revalidate all users
- * revalidateEntity('users');
+ * // List - path resolved from navigation tree
+ * revalidateEntity("role", undefined, { routeKey: "roles" });
  *
- * // Revalidate specific user
- * revalidateEntity('user', 1);
+ * // Detail
+ * revalidateEntity("role", 1, { routeKey: "roles" });
  */
 export function revalidateEntity(
   entity: string,
   id?: number | string,
-  options?: {
-    tagProfile?: RevalidateTagProfile;
-    pathType?: RevalidatePathType;
-    tagPrefix?: string;
-    pathRoot?: string;
-  },
+  options?: RevalidateOptions,
 ): void {
   const tag = options?.tagPrefix ?? entity;
-  const pathRoot = options?.pathRoot ?? (id !== undefined ? `${entity}s` : entity);
+  const basePath = resolveBasePath(entity, options, id !== undefined);
 
   if (id !== undefined) {
     revalidateTag(`${tag}-${id}`, options?.tagProfile);
-    revalidatePath(`/${pathRoot}/${id}`, options?.pathType);
+    revalidatePath(`${basePath}/${id}`, options?.pathType);
   } else {
     revalidateTag(`${tag}s-list`, options?.tagProfile);
-    revalidatePath(`/${pathRoot}`, options?.pathType);
+    revalidatePath(basePath, options?.pathType);
   }
 }
 
 /**
- * Revalidate entity and its list
+ * Revalidate a single entity AND its list (tag + path for both).
  *
- * @param entity - Entity name (e.g., 'user', 'product')
+ * @param entity - Entity name in singular (e.g. "role", "user")
  * @param id - Entity ID
- * @param options { tagProfile, pathType } - Revalidation options ({default: 'max', default: 'page'})
+ * @param options - Revalidation options; use `routeKey` for type-safe path resolution
  *
  * @example
- * // After updating user 1, revalidate both the user and the users list
- * revalidateEntityWithList('user', 1);
+ * revalidateEntityWithList("role", 1, { routeKey: "roles" });
  */
 export function revalidateEntityWithList(
   entity: string,
   id: number | string,
-  options?: {
-    tagProfile?: RevalidateTagProfile;
-    pathType?: RevalidatePathType;
-    tagPrefix?: string;
-    /** Override path root, e.g. 'settings/users' instead of 'users' */
-    pathRoot?: string;
-  },
+  options?: RevalidateOptions,
 ): void {
   const tag = options?.tagPrefix ?? entity;
-  const pathRoot = options?.pathRoot ?? `${entity}s`;
+  const basePath = resolveBasePath(entity, options, true);
 
+  // Singolo
   revalidateTag(`${tag}-${id}`, options?.tagProfile);
-  revalidatePath(`/${pathRoot}/${id}`, options?.pathType);
+  revalidatePath(`${basePath}/${id}`, options?.pathType);
 
+  // Lista
   revalidateTag(`${tag}s-list`, options?.tagProfile);
-  revalidatePath(`/${pathRoot}`, options?.pathType);
+  revalidatePath(basePath, options?.pathType);
 }
 
 // ============================================================================
-// Export for convenience
+// Exports
 // ============================================================================
 
 export {

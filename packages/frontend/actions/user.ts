@@ -1,25 +1,25 @@
 // actions/user.ts
-'use server';
+"use server";
 
-import { requireAdmin, requirePermission } from '@/lib/server/auth';
-import { userRevalidation } from '@/lib/server/revalidate';
-import { 
-  createUser, 
-  deleteUser, 
-  toggleUserActive, 
-  updateUserDetails, 
-  updateUserProfile, 
+import { requireAdmin, requirePermission } from "@/lib/server/auth";
+import { userRevalidation } from "@/lib/server/revalidate";
+import {
+  createUser,
+  deleteUser,
+  toggleUserActive,
+  updateUserDetails,
+  updateUserProfile,
   updateUserRoles,
   getUserById,
   searchUsers,
   getUsersByRole,
   getActiveUsers,
   bulkUpdateUsers,
-} from '@/services/server/user-service';
-import { ServerApiError } from '@/types/server-client';
-import { redirect } from 'next/navigation';
-import type { UpdateUserProfileInput, UpdateUserDetailsInput } from '@/types/user-types';
-import { CreateUserFormInput, CreateUserInput } from '@mini-erp/shared';
+} from "@/services/server/user-service";
+import { ServerApiError } from "@/types/server-client";
+import { redirect } from "next/navigation";
+import type { UpdateUserProfileInput, UpdateUserDetailsInput } from "@/types/user-types";
+import { CreateUserFormInput, CreateUserInput } from "@mini-erp/shared";
 
 // ============================================================================
 // Types
@@ -38,7 +38,7 @@ interface ActionResult<T = any> {
 
 async function withAuth<T>(
   action: () => Promise<T>,
-  permission?: string
+  permission?: string,
 ): Promise<ActionResult<T>> {
   try {
     // Check authorization
@@ -53,28 +53,28 @@ async function withAuth<T>(
 
     return { success: true, data };
   } catch (error) {
-    console.error('Server action error:', error);
+    console.error("Server action error:", error);
 
     if (error instanceof ServerApiError) {
       if (error.statusCode === 401) {
-        redirect('/login');
+        redirect("/login");
       }
       if (error.statusCode === 403) {
         return {
           success: false,
-          error: 'Non hai i permessi per questa azione',
+          error: "Non hai i permessi per questa azione",
         };
       }
 
       return {
         success: false,
-        error: error.message || 'Errore durante l\'operazione',
+        error: error.message || "Errore durante l'operazione",
       };
     }
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Errore imprevisto',
+      error: error instanceof Error ? error.message : "Errore imprevisto",
     };
   }
 }
@@ -91,10 +91,10 @@ export async function createUserAction(data: CreateUserFormInput): Promise<Actio
     const user = await createUser(data);
     userRevalidation.list();
     return user;
-  }, 'user:create');
+  }, "user:create");
 
   if (result.success) {
-    result.message = 'Utente creato con successo';
+    result.message = "Utente creato con successo";
   }
 
   return result;
@@ -104,17 +104,17 @@ export async function createUserAction(data: CreateUserFormInput): Promise<Actio
  * Update user profile
  */
 export async function updateUserProfileAction(
-  userId: number,
-  data: UpdateUserProfileInput
+  userId: string,
+  data: UpdateUserProfileInput,
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
     const user = await updateUserProfile(userId, data);
     userRevalidation.userWithList(userId);
     return user;
-  }, 'user:update');
+  }, "user:update");
 
   if (result.success) {
-    result.message = 'Profilo aggiornato con successo';
+    result.message = "Profilo aggiornato con successo";
   }
 
   return result;
@@ -124,17 +124,17 @@ export async function updateUserProfileAction(
  * Update user details
  */
 export async function updateUserDetailsAction(
-  userId: number,
-  data: UpdateUserDetailsInput
+  userId: string,
+  data: UpdateUserDetailsInput,
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
     const user = await updateUserDetails(userId, data);
     userRevalidation.userWithList(userId);
     return user;
-  }, 'user:update');
+  }, "user:update");
 
   if (result.success) {
-    result.message = 'Dettagli aggiornati con successo';
+    result.message = "Dettagli aggiornati con successo";
   }
 
   return result;
@@ -144,17 +144,17 @@ export async function updateUserDetailsAction(
  * Update user roles
  */
 export async function updateUserRolesAction(
-  userId: number,
-  roleIds: number[]
+  userId: string,
+  roleIds: number[],
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
     const user = await updateUserRoles(userId, roleIds);
     userRevalidation.userWithList(userId);
     return user;
-  }, 'user:manage');
+  }, "user:manage");
 
   if (result.success) {
-    result.message = 'Ruoli aggiornati con successo';
+    result.message = "Ruoli aggiornati con successo";
   }
 
   return result;
@@ -164,19 +164,17 @@ export async function updateUserRolesAction(
  * Toggle user active status
  */
 export async function toggleUserActiveAction(
-  userId: number,
-  active: boolean
+  userId: string,
+  active: boolean,
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
     await toggleUserActive(userId, active);
     userRevalidation.userWithList(userId);
     return { active };
-  }, 'user:update');
+  }, "user:update");
 
   if (result.success) {
-    result.message = active 
-      ? 'Utente attivato con successo' 
-      : 'Utente disattivato con successo';
+    result.message = active ? "Utente attivato con successo" : "Utente disattivato con successo";
   }
 
   return result;
@@ -185,15 +183,15 @@ export async function toggleUserActiveAction(
 /**
  * Delete user
  */
-export async function deleteUserAction(userId: number): Promise<ActionResult> {
+export async function deleteUserAction(userId: string): Promise<ActionResult> {
   const result = await withAuth(async () => {
     await deleteUser(userId);
     userRevalidation.list();
     return null;
-  }, 'user:delete');
+  }, "user:delete");
 
   if (result.success) {
-    result.message = 'Utente eliminato con successo';
+    result.message = "Utente eliminato con successo";
   }
 
   return result;
@@ -207,24 +205,22 @@ export async function deleteUserAction(userId: number): Promise<ActionResult> {
  * Bulk toggle active status
  */
 export async function bulkToggleActiveAction(
-  userIds: number[],
-  active: boolean
+  userIds: string[],
+  active: boolean,
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
     // Usa Promise.all per operazioni parallele
-    await Promise.all(
-      userIds.map((id) => toggleUserActive(id, active))
-    );
+    await Promise.all(userIds.map((id) => toggleUserActive(id, active)));
 
     // Revalidate all affected users
     userIds.forEach((id) => userRevalidation.user(id));
     userRevalidation.list();
 
     return { count: userIds.length };
-  }, 'user:manage');
+  }, "user:manage");
 
   if (result.success) {
-    result.message = `${userIds.length} utenti ${active ? 'attivati' : 'disattivati'} con successo`;
+    result.message = `${userIds.length} utenti ${active ? "attivati" : "disattivati"} con successo`;
   }
 
   return result;
@@ -233,18 +229,14 @@ export async function bulkToggleActiveAction(
 /**
  * Bulk delete users
  */
-export async function bulkDeleteUsersAction(
-  userIds: number[]
-): Promise<ActionResult> {
+export async function bulkDeleteUsersAction(userIds: string[]): Promise<ActionResult> {
   const result = await withAuth(async () => {
     // Usa Promise.all per operazioni parallele
-    await Promise.all(
-      userIds.map((id) => deleteUser(id))
-    );
+    await Promise.all(userIds.map((id) => deleteUser(id)));
 
     userRevalidation.list();
     return { count: userIds.length };
-  }, 'user:delete');
+  }, "user:delete");
 
   if (result.success) {
     result.message = `${userIds.length} utenti eliminati con successo`;
@@ -257,19 +249,17 @@ export async function bulkDeleteUsersAction(
  * Bulk update user roles
  */
 export async function bulkUpdateRolesAction(
-  userIds: number[],
-  roleIds: number[]
+  userIds: string[],
+  roleIds: number[],
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
-    await Promise.all(
-      userIds.map((id) => updateUserRoles(id, roleIds))
-    );
+    await Promise.all(userIds.map((id) => updateUserRoles(id, roleIds)));
 
     userIds.forEach((id) => userRevalidation.user(id));
     userRevalidation.list();
 
     return { count: userIds.length };
-  }, 'user:manage');
+  }, "user:manage");
 
   if (result.success) {
     result.message = `Ruoli aggiornati per ${userIds.length} utenti`;
@@ -282,16 +272,16 @@ export async function bulkUpdateRolesAction(
  * Bulk update users (usando il service bulkUpdateUsers)
  */
 export async function bulkUpdateUsersAction(
-  updates: Array<{ id: number; data: Partial<UpdateUserProfileInput> }>
+  updates: Array<{ id: string; data: Partial<UpdateUserProfileInput> }>,
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
     const users = await bulkUpdateUsers(updates);
-    
+
     updates.forEach(({ id }) => userRevalidation.user(id));
     userRevalidation.list();
 
     return { users, count: users.length };
-  }, 'user:update');
+  }, "user:update");
 
   if (result.success) {
     result.message = `${updates.length} utenti aggiornati con successo`;
@@ -311,7 +301,7 @@ export async function searchUsersAction(
   query: string,
   options?: {
     limit?: number;
-  }
+  },
 ): Promise<ActionResult> {
   return withAuth(async () => {
     const result = await searchUsers(query, {
@@ -319,7 +309,7 @@ export async function searchUsersAction(
       revalidate: 30,
     });
     return result;
-  }, 'user:read');
+  }, "user:read");
 }
 
 /**
@@ -330,7 +320,7 @@ export async function getUsersByRoleAction(
   options?: {
     page?: number;
     limit?: number;
-  }
+  },
 ): Promise<ActionResult> {
   return withAuth(async () => {
     const result = await getUsersByRole(roleId, {
@@ -339,7 +329,7 @@ export async function getUsersByRoleAction(
       revalidate: 30,
     });
     return result;
-  }, 'user:read');
+  }, "user:read");
 }
 
 /**
@@ -356,7 +346,7 @@ export async function getActiveUsersAction(options?: {
       revalidate: 30,
     });
     return result;
-  }, 'user:read');
+  }, "user:read");
 }
 
 // ============================================================================
@@ -368,7 +358,7 @@ export async function getActiveUsersAction(options?: {
  */
 export async function checkUsernameAvailabilityAction(
   username: string,
-  excludeUserId?: number
+  excludeUserId?: string,
 ): Promise<ActionResult<{ available: boolean }>> {
   try {
     // Validazione base lato client
@@ -388,9 +378,10 @@ export async function checkUsernameAvailabilityAction(
 
     // Cerca utenti con lo stesso username
     const result = await searchUsers(username, { limit: 1, revalidate: 0 });
-    
+
     // Se trova utenti, controlla se è lo stesso da escludere
-    const available = result.data.length === 0 || (!!excludeUserId && result.data[0].id === excludeUserId);
+    const available =
+      result.data.length === 0 || (!!excludeUserId && result.data[0].id === excludeUserId);
 
     return {
       success: true,
@@ -399,7 +390,7 @@ export async function checkUsernameAvailabilityAction(
   } catch (error) {
     return {
       success: false,
-      error: 'Errore durante la verifica del username',
+      error: "Errore durante la verifica del username",
     };
   }
 }
@@ -409,7 +400,7 @@ export async function checkUsernameAvailabilityAction(
  */
 export async function checkEmailAvailabilityAction(
   email: string,
-  excludeUserId?: number
+  excludeUserId?: string,
 ): Promise<ActionResult<{ available: boolean }>> {
   try {
     // Validazione base email
@@ -423,9 +414,10 @@ export async function checkEmailAvailabilityAction(
 
     // Cerca utenti con la stessa email
     const result = await searchUsers(email, { limit: 1, revalidate: 0 });
-    
+
     // Se trova utenti, controlla se è lo stesso da escludere
-    const available = result.data.length === 0 ||  (!!excludeUserId && result.data[0].id === excludeUserId);
+    const available =
+      result.data.length === 0 || (!!excludeUserId && result.data[0].id === excludeUserId);
 
     return {
       success: true,
@@ -434,7 +426,7 @@ export async function checkEmailAvailabilityAction(
   } catch (error) {
     return {
       success: false,
-      error: 'Errore durante la verifica dell\'email',
+      error: "Errore durante la verifica dell'email",
     };
   }
 }
@@ -454,21 +446,21 @@ export async function exportUsersAction(filters?: {
   return withAuth(async () => {
     // Costruisci URL per export con filtri
     const params = new URLSearchParams();
-    
+
     if (filters?.active !== undefined) {
-      params.set('active', filters.active.toString());
+      params.set("active", filters.active.toString());
     }
     if (filters?.roleId) {
-      params.set('roleId', filters.roleId.toString());
+      params.set("roleId", filters.roleId.toString());
     }
     if (filters?.search) {
-      params.set('search', filters.search);
+      params.set("search", filters.search);
     }
 
-    const url = `/api/users/export${params.toString() ? `?${params.toString()}` : ''}`;
+    const url = `/api/users/export${params.toString() ? `?${params.toString()}` : ""}`;
 
     return { url };
-  }, 'user:read');
+  }, "user:read");
 }
 
 // ============================================================================
@@ -479,29 +471,27 @@ export async function exportUsersAction(filters?: {
  * Reset user password (admin)
  */
 export async function resetUserPasswordAction(
-  userId: number,
-  newPassword: string
+  userId: string,
+  newPassword: string,
 ): Promise<ActionResult> {
   return withAuth(async () => {
     // TODO: Implementa quando il backend è pronto
     // await resetUserPassword(userId, newPassword);
 
     // Per ora, placeholder
-    console.warn('resetUserPassword not implemented yet');
+    console.warn("resetUserPassword not implemented yet");
 
     return {
       success: true,
-      message: 'Password reimpostata con successo',
+      message: "Password reimpostata con successo",
     };
-  }, 'user:manage');
+  }, "user:manage");
 }
 
 /**
  * Send password reset email
  */
-export async function sendPasswordResetEmailAction(
-  userId: number
-): Promise<ActionResult> {
+export async function sendPasswordResetEmailAction(userId: string): Promise<ActionResult> {
   const result = await withAuth(async () => {
     // Ottieni l'utente per avere l'email
     const user = await getUserById(userId, { revalidate: 0 });
@@ -510,13 +500,13 @@ export async function sendPasswordResetEmailAction(
     // await sendPasswordResetEmail(user.email);
 
     // Per ora, placeholder
-    console.warn('sendPasswordResetEmail not implemented yet for:', user.email);
+    console.warn("sendPasswordResetEmail not implemented yet for:", user.email);
 
     return { email: user.email };
-  }, 'user:manage');
+  }, "user:manage");
 
   if (result.success) {
-    result.message = 'Email di reset inviata con successo';
+    result.message = "Email di reset inviata con successo";
   }
 
   return result;
@@ -529,17 +519,17 @@ export async function sendPasswordResetEmailAction(
 /**
  * Get user by ID (wrapper action per form pre-fill)
  */
-export async function getUserByIdAction(userId: number): Promise<ActionResult> {
+export async function getUserByIdAction(userId: string): Promise<ActionResult> {
   return withAuth(async () => {
     const user = await getUserById(userId, { revalidate: 30 });
     return user;
-  }, 'user:read');
+  }, "user:read");
 }
 
 /**
  * Refresh user cache
  */
-export async function refreshUserCacheAction(userId?: number): Promise<ActionResult> {
+export async function refreshUserCacheAction(userId?: string): Promise<ActionResult> {
   return withAuth(async () => {
     if (userId) {
       userRevalidation.userWithList(userId);
@@ -548,5 +538,5 @@ export async function refreshUserCacheAction(userId?: number): Promise<ActionRes
     }
 
     return { refreshed: true };
-  }, 'user:read');
+  }, "user:read");
 }

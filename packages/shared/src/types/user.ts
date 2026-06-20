@@ -114,6 +114,7 @@ export type User = {
   preferredLanguage?: Language;
   // Relations
   details?: UserDetails | null;
+  currentTenant: UserMembership;
   availableTenants: UserMembership[];
   // Soft-delete
   deletedAt: Date | null;

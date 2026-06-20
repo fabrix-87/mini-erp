@@ -9,7 +9,6 @@ import {
   removePermissions,
   updateRole,
 } from "@/services/server/role-service";
-import { redirect } from "next/navigation";
 import type { CreateRoleInput, Role, UpdateRoleInput } from "@mini-erp/shared";
 import { type ActionResult, withAuth } from "@/lib/server/action";
 

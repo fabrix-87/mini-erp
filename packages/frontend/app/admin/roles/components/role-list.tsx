@@ -3,11 +3,11 @@
 import { RoleQueryInput, RoleSortField, SortOrder } from "@mini-erp/shared";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-import { DataPagination } from "../ui/data-pagination";
-import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
+import { DataPagination } from "../../../../components/ui/data-pagination";
+import { BreadcrumbSetter } from "../../../../components/ui/breadcrumb-setter";
 import RoleTable from "./role-list/table";
 import RoleToolbar from "./role-list/toolbar";
-import DeleteDialog from "../dialog/delete-dialog";
+import DeleteDialog from "../../../../components/dialog/delete-dialog";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { RoleListApiResponse } from "@/types/role-types";
 import { deleteRoleAction } from "@/actions/role-actions";
@@ -95,6 +95,7 @@ export default function RoleListPage({ data }: Props) {
           <p className="text-muted-foreground">Gestisci i ruoli degli utenti</p>
         </div>
       </div>
+      <h1 className="text-red-600">*** TODO: Rendere modificabili solo da SUPERADMIN (globale) i RUOLI di sistema ***</h1>
 
       <RoleToolbar
         onSearch={handleSearch}

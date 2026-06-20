@@ -30,6 +30,7 @@ export type Role = {
   name: string;
   description?: string;
   isDefault: boolean;
+  tenantId: string;
   permissions?: Permission[];
   createdAt: Date;
   updatedAt: Date;

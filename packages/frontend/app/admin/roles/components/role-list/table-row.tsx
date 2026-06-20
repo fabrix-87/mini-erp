@@ -37,7 +37,10 @@ export default function RoleTableRow({ role, onView, onEdit, onDelete }: RoleTab
         <div className="text-center">{role.permissions?.length}</div>
       </TableCell>
       <TableCell>
-        <div className="text-center">{role.userCount}</div>
+        <div className="text-center">{role.tenantId !== null ? 'Aziendale' : 'Sistema'}</div>
+      </TableCell>
+      <TableCell>
+        <div className="text-center">{role.userCount || 0}</div>
       </TableCell>
       <TableCell>
         <div className="flex items-center justify-start gap-1">

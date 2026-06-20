@@ -613,7 +613,7 @@ export function calculateLockUntil(failedAttempts: number): Date {
 
 /**
  * Finds a user by their ID and tenant ID.
- * 
+ *
  * @param {string} userId - The unique identifier of the user.
  * @param {string} tenantId - The identifier of the tenant the user belongs to.
  * @returns The user record if found.
@@ -632,4 +632,57 @@ export async function findUserOrThrow(userId: string, tenantId: string) {
   }
 
   return user;
+}
+
+interface CheckUserMembershipInput {
+  userId: string;
+  tenantId: string;
+  mustBeActive?: boolean;
+}
+
+/**
+ * Verifies if a user exists globally and holds a valid membership within a specific tenant.
+ * It leverages Prisma's composite unique index (userId_tenantId) for optimal lookup performance.
+ *
+ * @param {CheckUserMembershipInput} params - The function parameters.
+ * @param {string} params.userId - The unique identifier of the user to check.
+ * @param {string} params.tenantId - The unique identifier of the current tenant context.
+ * @param {boolean} [params.mustBeActive=true] - If true, the function will also ensure the membership status is 'ACTIVE'.
+ * @returns {Promise<boolean>} Resolves to true if the membership is valid (and active, if required); otherwise, false.
+ *
+ * @example
+ * const isValid = await checkUserTenantMembership({
+ * prisma,
+ * userId: "cuid_user_123",
+ * tenantId: "cuid_tenant_456",
+ * mustBeActive: true
+ * });
+ */
+export async function checkUserTenantMembership({
+  userId,
+  tenantId,
+  mustBeActive = true,
+}: CheckUserMembershipInput): Promise<boolean> {
+  const membership = await prisma.userTenantMembership.findUnique({
+    where: {
+      userId_tenantId: {
+        userId,
+        tenantId,
+      },
+    },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+
+  if (!membership) {
+    return false;
+  }
+
+  if (mustBeActive && membership.status !== "ACTIVE") {
+    return false;
+  }
+
+  return true;
 }

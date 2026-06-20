@@ -2,7 +2,7 @@ import { requirePermission } from "@/lib/server/auth";
 import { permissionKeys } from "@/types/role-types";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { HydrationBoundary } from "@/providers/hydration-boundary";
-import RoleFormPage from "@/components/role/role-form";
+import RoleFormPage from "@/app/admin/roles/components/role-form";
 import { getAllPermissions } from "@/services/server/permission";
 
 export default async function NewRolePage() {

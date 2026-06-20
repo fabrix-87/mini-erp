@@ -43,6 +43,7 @@ export default function RoleTable({
                 Ultima modifica
             </SortableTableHead>
             <TableHead className="text-center">Permessi</TableHead>
+            <TableHead className="text-center">Scope</TableHead>
             <TableHead className="text-center">Utenti</TableHead>
             <TableHead className="text-center">Azioni</TableHead>
           </TableRow>
