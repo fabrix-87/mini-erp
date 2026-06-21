@@ -2,8 +2,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { UsersFilterBar } from "@/components/users/users-filter-bar";
-import { UsersTable } from "@/components/users/users-table";
+import { UsersFilterBar } from "@/app/admin/users/components/users-filter-bar";
+import { UsersTable } from "@/app/admin/users/components/users-table";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { StatisticCard } from "@/components/ui/statistic-card";
 import { Users, UserCheck, UserX, Shield, Plus } from "lucide-react";
@@ -26,7 +26,7 @@ export default function UsersContent({
   stats,
   canCreate,
 }: UsersContentProps) {
-  const { refresh, navigateToNew, navigateToDetail, navigateToEdit } = useNavigation();
+  const { navigateToNew } = useNavigation();
 
   const users = usersList.data;
   const pagination = usersList.pagination;

@@ -41,5 +41,5 @@ export const countryQuerySchema = z.object({
   page: pageSchema,
   limit: limitSchema,
   search: z.string().optional(),
-  isEU: queryBooleanSchema
+  isEU: queryBooleanSchema.optional().nullable()
 });

@@ -73,6 +73,7 @@ export const getUserSelection = () =>
     },
     createdAt: true,
     updatedAt: true,
+    lastLogin: true,
   }) satisfies Prisma.UserSelect;
 
 // ============================================================================
@@ -483,6 +484,7 @@ export const mapUserResponse = <
     details: unknown;
     createdAt: Date;
     updatedAt: Date;
+    lastLogin: Date | null;
     memberships: Array<{
       id: string;
       tenantId: string;
@@ -527,7 +529,7 @@ export const mapUserResponse = <
     details: user.details,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
-
+    lastLogin: user.lastLogin,
     currentTenant: currentMembership
       ? {
           tenantId: currentMembership.tenantId,

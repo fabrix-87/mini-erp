@@ -1,7 +1,6 @@
 import { validateBody, validateParams, validateQuery } from "@/middleware/validation-middleware";
 import {
   assignPermissionsSchema,
-  assignRolesToUserSchema,
   checkPermissionSchema,
   createPermissionSchema,
   createRoleSchema,
@@ -50,10 +49,5 @@ export const validatePermissionId = validateParams(
 );
 
 export const validatePermissionQuery = validateQuery(permissionQuerySchema, "Permission query");
-
-export const validateAssignRolesToUser = validateBody(
-  assignRolesToUserSchema,
-  "Assign roles to user",
-);
 
 export const validateCheckPermission = validateBody(checkPermissionSchema, "Check permission");

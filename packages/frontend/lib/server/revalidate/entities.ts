@@ -11,13 +11,13 @@ import { revalidateEntity, revalidateEntityWithList, revalidatePath, revalidateT
  */
 export const userRevalidation = {
   /** Revalidate specific user detail and path. */
-  user: (id: number) => revalidateEntity("user", id, { routeKey: "users" }),
+  user: (id: string) => revalidateEntity("user", id, { routeKey: "users" }),
 
   /** Revalidate users list. */
   list: () => revalidateEntity("user", undefined, { routeKey: "users" }),
 
   /** Revalidate specific user and users list. */
-  userWithList: (id: number) => revalidateEntityWithList("user", id, { routeKey: "users" }),
+  userWithList: (id: string) => revalidateEntityWithList("user", id, { routeKey: "users" }),
 
   /** Revalidate user profile tag only (no path needed). */
   profile: () => revalidateTag("user-profile"),

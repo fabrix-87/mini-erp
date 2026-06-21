@@ -25,6 +25,7 @@ import {
   destroyAllUserSessions,
   calculateLockUntil,
   mapUserResponse,
+  checkUserTenantMembership,
 } from "../helpers/user-helper";
 
 import authConfig from "../config/auth-config";
@@ -906,7 +907,7 @@ export const getAllUsers = async (c: Context<AppBindings>) => {
   const limitNumber = Number(limit);
   const skip = (pageNumber - 1) * limitNumber;
   const take = limitNumber;
-  const tenantId = c.get("currentTenantId");
+  const tenantId = c.get("currentTenantId")!;
 
   const where: Prisma.UserWhereInput = {
     memberships: {
@@ -986,6 +987,7 @@ export const getUserById = async (c: Context<AppBindings>) => {
 export const createUser = async (c: Context<AppBindings>) => {
   const { username, email, password, details, preferredLanguageId } =
     getValidatedBody<CreateUserInput>(c);
+  const tenantId = c.get("currentTenantId")!
 
   const existingUser = await prisma.user.findFirst({
     where: {
@@ -1006,6 +1008,7 @@ export const createUser = async (c: Context<AppBindings>) => {
     data: {
       username,
       email,
+      tenantId,
       password: hashedPassword,
       preferredLanguageId,
       details: details
@@ -1030,13 +1033,12 @@ export const createUser = async (c: Context<AppBindings>) => {
 export const toggleUserActive = async (c: Context<AppBindings>) => {
   const { id: userId } = getValidatedParams<UserIdParam>(c);
   const { active } = getValidatedBody<ToggleUserStatusInput>(c);
+  const tenantId = c.get("currentTenantId")!
 
-  // Verifica esistenza utente
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
+  // Verifica esistenza utente ed associazione tenant
+  const member = await checkUserTenantMembership({userId, tenantId})
 
-  if (!user) {
+  if (!member) {
     throw new NotFoundError("Utente non trovato");
   }
 

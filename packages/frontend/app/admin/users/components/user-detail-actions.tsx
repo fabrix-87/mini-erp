@@ -2,7 +2,6 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
 import { User } from '@/types/user-types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,15 +25,17 @@ import {
   Key
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useNavigation } from '@/hooks/use-navigation';
+import { deleteUserAction } from '@/actions/user';
 
 interface UserDetailActionsProps {
   user: User;
 }
 
 export function UserDetailActions({ user }: UserDetailActionsProps) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isDeleting, setIsDeleting] = useState(false);
+  const { navigateToEdit, refresh, navigate } = useNavigation();
 
   const handleToggleActive = async () => {
     try {
@@ -55,7 +56,7 @@ export function UserDetailActions({ user }: UserDetailActionsProps) {
       );
 
       startTransition(() => {
-        router.refresh();
+        refresh();
       });
     } catch (error) {
       toast.error('Errore durante l\'operazione');
@@ -66,17 +67,14 @@ export function UserDetailActions({ user }: UserDetailActionsProps) {
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const response = await fetch(`/api/users/${user.id}`, {
-        method: 'DELETE',
-      });
+      const response = await deleteUserAction(user.id)
 
-      if (!response.ok) {
+      if (!response.success) {
         throw new Error('Errore durante l\'eliminazione');
       }
 
       toast.success('Utente eliminato con successo');
-      router.push('/settings/users');
-      router.refresh();
+      navigate('users')
     } catch (error) {
       toast.error('Errore durante l\'eliminazione');
       console.error(error);
@@ -98,7 +96,7 @@ export function UserDetailActions({ user }: UserDetailActionsProps) {
           <Button
             variant="outline"
             className="w-full justify-start"
-            onClick={() => router.push(`/settings/users/${user.id}/edit`)}
+            onClick={() => navigateToEdit('users', user.id)}
             disabled={isPending}
           >
             <Edit className="h-4 w-4 mr-2" />
@@ -109,7 +107,7 @@ export function UserDetailActions({ user }: UserDetailActionsProps) {
           <Button
             variant="outline"
             className="w-full justify-start"
-            onClick={() => router.push(`/settings/users/${user.id}/roles`)}
+            onClick={() => ''}
             disabled={isPending}
           >
             <Shield className="h-4 w-4 mr-2" />
@@ -120,7 +118,7 @@ export function UserDetailActions({ user }: UserDetailActionsProps) {
           <Button
             variant="outline"
             className="w-full justify-start"
-            onClick={() => router.push(`/settings/users/${user.id}/reset-password`)}
+            onClick={() => '' }
             disabled={isPending}
           >
             <Key className="h-4 w-4 mr-2" />

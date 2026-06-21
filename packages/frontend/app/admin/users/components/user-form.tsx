@@ -125,7 +125,7 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
 
           // Update profile if changed
           const profileChanged =
-            updateData.username !== updateData!.username || updateData.email !== updateData!.email;
+            user!.username !== updateData!.username || user!.email !== updateData!.email;
 
           if (profileChanged) {
             const profileResult = await updateUserProfileAction(userId, {

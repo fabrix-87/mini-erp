@@ -18,18 +18,18 @@ import { getValidatedParams, getValidatedQuery } from "@/helpers/validated-conte
  */
 export const getAllCountries = async (c: Context<AppBindings>) => {
   const { limit = 10, page = 1, isEU, search } = getValidatedQuery<CountryQueryInput>(c);
-
+/*
   const languageId = c.get("user")?.preferredLanguageId;
 
   if (!languageId) {
     throw new Error("User language not defined");
   }
-
+*/
   const safeLimit = Math.min(limit, 200);
   const safePage = Math.max(page, 1);
 
   const where: Prisma.CountryWhereInput = {
-    ...(isEU !== undefined && { isEU }),
+    ...(isEU && isEU !== undefined && { isEU }),
     ...(search && {
       OR: [
         { code: { contains: search, mode: "insensitive" } },
@@ -42,7 +42,7 @@ export const getAllCountries = async (c: Context<AppBindings>) => {
     where,
     safePage,
     safeLimit,
-    languageId,
+    //languageId,
   });
 
   // Try cache

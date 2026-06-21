@@ -83,6 +83,8 @@ export type UserMembership = {
   tenantId: string;
   status: UserMembershipStatus;
   isDefault: boolean;
+  name: string;
+  code: string;
   roles: MembershipRole[];
 };
 

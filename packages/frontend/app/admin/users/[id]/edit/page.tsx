@@ -17,7 +17,7 @@ interface PageProps {
   }>;
 }
 
-async function EditUserContent({ userId }: { userId: number }) {
+async function EditUserContent({ userId }: { userId: string }) {
   const { data: roles } = await getAllRoles({
     page: 1,
     limit: 100,
@@ -38,17 +38,7 @@ async function EditUserContent({ userId }: { userId: number }) {
   }
 }
 
-function EditUserSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-32 w-full" />
-      </div>
-    </div>
-  );
-}
+
 
 export default async function EditUserPage({ params }: PageProps) {
   // Authorization Check
@@ -66,18 +56,12 @@ export default async function EditUserPage({ params }: PageProps) {
 
   const { id } = await params;
 
-  const userId = parseInt(id, 10);
-
-  if (isNaN(userId)) {
-    notFound();
-  }
-
   return (
     <div className="container mx-auto p-6">
       <div className="space-y-6">
         {/* Back Navigation */}
         <Link
-          href={`/settings/users/${userId}`}
+          href={`/settings/users/${id}`}
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -91,9 +75,7 @@ export default async function EditUserPage({ params }: PageProps) {
         </div>
 
         {/* Form */}
-        <Suspense fallback={<EditUserSkeleton />}>
-          <EditUserContent userId={userId} />
-        </Suspense>
+        <EditUserContent userId={id} />
       </div>
     </div>
   );
@@ -106,15 +88,7 @@ export async function generateMetadata({ params }: PageProps) {
 
     const { id } = await params;
 
-    const userId = parseInt(id, 10);
-
-    if (isNaN(userId)) {
-      return {
-        title: "Utente Non Trovato | Mini ERP",
-      };
-    }
-
-    const user = await getUserById(userId);
+    const user = await getUserById(id);
 
     return {
       title: `Modifica ${user.username} | Mini ERP`,
