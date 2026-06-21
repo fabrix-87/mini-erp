@@ -1,15 +1,14 @@
 // app/settings/users/[id]/edit/page.tsx
-import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { requirePermission } from "@/lib/server/auth";
 import { getUserById } from "@/services/server/user-service";
 import { ServerApiError } from "@/types/server-client";
 import { UserForm } from "@/app/admin/users/components/user-form";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getAllRoles } from "@/services/server/role-service";
 import { getAllLanguages } from "@/services/server/language";
+import { getDetailRoute } from "@/lib/navigation-routes";
 
 interface PageProps {
   params: Promise<{
@@ -61,7 +60,7 @@ export default async function EditUserPage({ params }: PageProps) {
       <div className="space-y-6">
         {/* Back Navigation */}
         <Link
-          href={`/settings/users/${id}`}
+          href={getDetailRoute('users', id)}
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />

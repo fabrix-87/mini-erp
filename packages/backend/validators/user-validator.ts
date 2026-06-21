@@ -6,7 +6,8 @@ import {
   changePasswordSchema,
   toggleUserStatusSchema,
   userIdParamSchema,
-  userQuerySchema
+  userQuerySchema,
+  updateUserFormSchema
 } from '@mini-erp/shared/validators/user';
 
 
@@ -30,6 +31,14 @@ export const validateCreateUser = validateBody(
 export const validateRegisterUser = validateBody(
   registerUserSchema,
   "User registration"
+);
+
+/**
+ * Middleware per l'aggiornamento dell'utente completo
+ */
+export const validateUpdateUser = validateBody(
+  updateUserFormSchema,
+  "User update"
 );
 
 /**

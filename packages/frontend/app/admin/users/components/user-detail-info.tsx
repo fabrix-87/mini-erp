@@ -1,4 +1,6 @@
 // frontend/components/users/user-detail-info.tsx
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { 
@@ -7,9 +9,14 @@ import {
   Phone,
   Calendar,
   FileText,
-  Globe
+  Globe,
+  Cpu,
+  Fingerprint,
+  CalendarPlus,
+  CalendarClock
 } from 'lucide-react';
 import { User } from '@/types/user-types'
+import InfoCard from '@/components/ui/info-card';
 
 interface UserDetailInfoProps {
   user: User;
@@ -139,7 +146,7 @@ export function UserDetailInfo({ user }: UserDetailInfoProps) {
           
           <InfoRow 
             label="Paese" 
-            value={details?.country || 'Non specificato'}
+            value={`${details?.country?.name} (${details?.countryCode})` || 'Non specificato'}
             icon={<Globe className="h-4 w-4" />}
           />
         </CardContent>
@@ -163,44 +170,56 @@ export function UserDetailInfo({ user }: UserDetailInfoProps) {
       )}
 
       {/* Metadati */}
-      <Card className="md:col-span-2">
-        <CardHeader>
-          <CardTitle>Metadati</CardTitle>
-          <CardDescription>
-            Informazioni di sistema
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <InfoRow 
-              label="ID Utente" 
-              value={`#${user.id}`}
-            />
-            
-            <InfoRow 
-              label="Creato il" 
-              value={new Date(user.createdAt).toLocaleString('it-IT', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            />
-            
-            <InfoRow 
-              label="Ultimo aggiornamento" 
-              value={new Date(user.updatedAt).toLocaleString('it-IT', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <Card className="md:col-span-2 shadow-sm border-border/60">
+  <CardHeader className="pb-4">
+    <div className="flex items-center gap-2">
+      <div className="p-1.5 rounded-md bg-muted text-muted-foreground">
+        <Cpu className="w-4 h-4" />
+      </div>
+      <div>
+        <CardTitle className="text-base font-semibold">Metadati</CardTitle>
+        <CardDescription className="text-xs">
+          Informazioni cronologiche e identificativi di sistema
+        </CardDescription>
+      </div>
+    </div>
+  </CardHeader>
+  
+  <CardContent>
+    <div className="grid gap-3 sm:grid-cols-3">
+      <InfoCard
+        label="ID Utente" 
+        value={`#${user.id}`}
+        icon={Fingerprint}
+        canCopy={true}
+      />
+      
+      <InfoCard 
+        label="Creato il" 
+        value={new Date(user.createdAt).toLocaleString('it-IT', {
+          day: 'numeric',
+          month: 'short', // 'short' (es. "nov") è più compatto e sta meglio nel box
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })}
+        icon={CalendarPlus}
+      />
+      
+      <InfoCard 
+        label="Ultimo aggiornamento" 
+        value={new Date(user.updatedAt).toLocaleString('it-IT', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })}
+        icon={CalendarClock}
+      />
+    </div>
+  </CardContent>
+</Card>
     </div>
   );
 }

@@ -31,6 +31,7 @@ import {
   requestDataExportSchema,
   requestAccountDeletionSchema,
 } from "../validators/user";
+import { Country } from "./country";
 
 // ============================================================================
 // ENTITY TYPES — mirror del Prisma schema (solo campi safe, no secrets)
@@ -53,11 +54,12 @@ export type UserDetails = {
   state: string | null;
   zipCode: string | null;
   countryCode: string | null;
+  country: {
+    name: string;
+  } | null;
   dateOfBirth: Date | null;
   gender: Gender;
   bio: string | null;
-  createdAt: Date;
-  updatedAt: Date;
 };
 
 /**
@@ -179,8 +181,8 @@ export type UserListItem = {
   details: {
     firstName: string | null;
     lastName: string | null;
-    gender: Gender
-  }
+    gender: Gender;
+  };
   profilePicture: string | null;
   currentTenant: Pick<UserMembership, "tenantId" | "status" | "roles">;
   availableTenants: Pick<UserMembership, "tenantId" | "status" | "roles">[];

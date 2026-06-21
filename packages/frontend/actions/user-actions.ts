@@ -15,69 +15,11 @@ import {
   getUsersByRole,
   getActiveUsers,
   bulkUpdateUsers,
+  updateUser,
 } from "@/services/server/user-service";
-import { ServerApiError } from "@/types/server-client";
-import { redirect } from "next/navigation";
 import type { UpdateUserProfileInput, UpdateUserDetailsInput } from "@/types/user-types";
-import { CreateUserFormInput, CreateUserInput } from "@mini-erp/shared";
-
-// ============================================================================
-// Types
-// ============================================================================
-
-interface ActionResult<T = any> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}
-
-// ============================================================================
-// Helper for Error Handling
-// ============================================================================
-
-async function withAuth<T>(
-  action: () => Promise<T>,
-  permission?: string,
-): Promise<ActionResult<T>> {
-  try {
-    // Check authorization
-    if (permission) {
-      await requirePermission(permission);
-    } else {
-      await requireAdmin();
-    }
-
-    // Execute action
-    const data = await action();
-
-    return { success: true, data };
-  } catch (error) {
-    console.error("Server action error:", error);
-
-    if (error instanceof ServerApiError) {
-      if (error.statusCode === 401) {
-        redirect("/login");
-      }
-      if (error.statusCode === 403) {
-        return {
-          success: false,
-          error: "Non hai i permessi per questa azione",
-        };
-      }
-
-      return {
-        success: false,
-        error: error.message || "Errore durante l'operazione",
-      };
-    }
-
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Errore imprevisto",
-    };
-  }
-}
+import { CreateUserInput, UpdateUserFormInput, User } from "@mini-erp/shared";
+import { ActionResult, withAuth } from "@/lib/server/action";
 
 // ============================================================================
 // User CRUD Actions
@@ -86,7 +28,7 @@ async function withAuth<T>(
 /**
  * Create new user
  */
-export async function createUserAction(data: CreateUserFormInput): Promise<ActionResult> {
+export async function createUserAction(data: CreateUserInput): Promise<ActionResult<User>> {
   const result = await withAuth(async () => {
     const user = await createUser(data);
     userRevalidation.list();
@@ -95,6 +37,26 @@ export async function createUserAction(data: CreateUserFormInput): Promise<Actio
 
   if (result.success) {
     result.message = "Utente creato con successo";
+  }
+
+  return result;
+}
+
+/**
+ * Update user
+ */
+export async function updateUserAction(
+  userId: string,
+  data: UpdateUserFormInput,
+): Promise<ActionResult<User>> {
+  const result = await withAuth(async () => {
+    const user = await updateUser(userId, data);
+    userRevalidation.list();
+    return user;
+  }, "user:update");
+
+  if (result.success) {
+    result.message = "Utente modificato con successo";
   }
 
   return result;

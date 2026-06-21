@@ -1,17 +1,17 @@
 // components/users/users-content.tsx
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { UsersFilterBar } from "@/app/admin/users/components/users-filter-bar";
 import { UsersTable } from "@/app/admin/users/components/users-table";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { StatisticCard } from "@/components/ui/statistic-card";
 import { Users, UserCheck, UserX, Shield, Plus } from "lucide-react";
-import { userKeys, UserListApiResponse, UserStatsResponse } from "@/types/user-types";
-import { clientUserService } from "@/services/client/user";
+import { UserListApiResponse, UserStatsResponse } from "@/types/user-types";
 import { UserQueryInput } from "@mini-erp/shared";
 import { useNavigation } from "@/hooks/use-navigation";
 import { Button } from "@/components/ui/button";
+import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
+import { useState } from "react";
 
 interface UsersContentProps {
   queryParams: UserQueryInput;
@@ -27,12 +27,14 @@ export default function UsersContent({
   canCreate,
 }: UsersContentProps) {
   const { navigateToNew } = useNavigation();
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   const users = usersList.data;
   const pagination = usersList.pagination;
 
   return (
     <>
+      <BreadcrumbSetter title="Gestione Utenti" />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -85,10 +87,11 @@ export default function UsersContent({
         initialActive={queryParams.active}
         initialSortBy={queryParams.sortBy}
         initialSortOrder={queryParams.sortOrder}
+        setLoading={setLoading}
       />
 
       {/* Table */}
-      <UsersTable users={users} />
+      <UsersTable users={users} isLoading={isLoading} />
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 0 && (

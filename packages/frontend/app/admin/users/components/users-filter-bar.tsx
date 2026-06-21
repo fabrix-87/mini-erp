@@ -21,6 +21,7 @@ interface UsersFilterBarProps {
   initialActive?: boolean | null;
   initialSortBy?: string;
   initialSortOrder?: "asc" | "desc";
+  setLoading: (value: boolean) => void;
 }
 
 export function UsersFilterBar({
@@ -28,6 +29,7 @@ export function UsersFilterBar({
   initialActive = null,
   initialSortBy = "createdAt",
   initialSortOrder = "desc",
+  setLoading,
 }: UsersFilterBarProps) {
   const { getRoute } = useNavigation();
   const USERS_BASE_PATH = getRoute("users");
@@ -57,6 +59,10 @@ export function UsersFilterBar({
 
     return () => clearTimeout(timer);
   }, [search]);
+
+  useEffect(() => {
+    setLoading(isPending)
+  },[isPending])
 
   /**
    * Handles active status filter change.
@@ -117,7 +123,7 @@ export function UsersFilterBar({
                 Attivi
               </Badge>
             )}
-          </div>
+          </div>          
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={handleClearFilters} className="h-8 text-xs">
               <X className="h-3 w-3 mr-1" />
@@ -181,14 +187,6 @@ export function UsersFilterBar({
             </Select>
           </div>
         </div>
-
-        {/* Loading indicator */}
-        {isPending && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <div className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            Aggiornamento in corso...
-          </div>
-        )}
       </div>
     </div>
   );

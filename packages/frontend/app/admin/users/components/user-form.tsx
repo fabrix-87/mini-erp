@@ -32,19 +32,14 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import {
-  createUserAction,
-  updateUserProfileAction,
-  updateUserDetailsAction,
-  updateUserRolesAction,
-} from "@/actions/user";
+import { createUserAction, updateUserAction } from "@/actions/user-actions";
 import { Loader2, Save, Shield, X } from "lucide-react";
 import { Badge } from "../../../../components/ui/badge";
 import { Checkbox } from "../../../../components/ui/checkbox";
 import { BreadcrumbSetter } from "../../../../components/ui/breadcrumb-setter";
 import { CountryCombobox } from "../../../../components/ui/country-combobox";
 import { useNavigation } from "@/hooks/use-navigation";
-import { Language, Role } from "@mini-erp/shared";
+import { CreateUserInput, Language, Role } from "@mini-erp/shared";
 
 // ============================================================================
 // Component Props
@@ -53,7 +48,7 @@ import { Language, Role } from "@mini-erp/shared";
 interface UserFormProps {
   user?: User;
   mode: "create" | "edit";
-  roles:Role[];
+  roles: Role[];
   languages: Language[];
 }
 
@@ -62,7 +57,7 @@ interface UserFormProps {
 // ============================================================================
 
 export function UserForm({ user, mode, roles = [], languages = [] }: UserFormProps) {
-  const { navigate, navigateToDetail } = useNavigation()
+  const { navigate, navigateToDetail } = useNavigation();
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState<"profile" | "details" | "address">("profile");
 
@@ -99,22 +94,34 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
         if (mode === "create") {
           const createData = data as CreateUserFormInput;
 
-          // Create new user
-          const result = await createUserAction({
+          const formattedData: CreateUserInput = {
             username: createData.username,
             email: createData.email,
-            password: createData.password,
-            gender: createData.gender ?? 'PREFER_NOT_TO_SAY',
-            roleIds: createData.roleIds,
-            preferredLanguageId: createData.preferredLanguageId ?? 1,
-            firstName: createData.firstName,
-            lastName: createData.lastName,
-            phone: createData.phone || "",
-          });
+            password: createData.password!,            
+            roleIds: createData.roleIds || [],
+            active: true,
+            preferredLanguageId: createData.preferredLanguageId,
+            details: {
+              firstName: createData.firstName,
+              lastName: createData.lastName,
+              gender: createData.gender ?? "PREFER_NOT_TO_SAY",
+              phone: createData.phone,
+              dateOfBirth: createData.dateOfBirth,
+              bio: createData.bio,
+              address: createData.address,
+              city: createData.city,
+              countryCode: createData.countryCode,
+              state: createData.state,
+              zipCode: createData.zipCode
+            }
+          }
+
+          // Create new user
+          const result = await createUserAction(formattedData);
 
           if (result.success) {
             toast.success(result.message || "Utente creato con successo");
-            navigate('users');
+            navigateToDetail("users", result.data!.id);
           } else {
             toast.error(result.error || "Errore durante la creazione");
           }
@@ -123,59 +130,13 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
           const updateData = data as UpdateUserFormInput;
           const userId = user!.id;
 
-          // Update profile if changed
-          const profileChanged =
-            user!.username !== updateData!.username || user!.email !== updateData!.email;
+          const result = await updateUserAction(userId, updateData);
 
-          if (profileChanged) {
-            const profileResult = await updateUserProfileAction(userId, {
-              username: updateData.username,
-              email: updateData.email,
-              preferredLanguageId: updateData.preferredLanguageId ?? 1,
-            });
-
-            if (!profileResult.success) {
-              toast.error(profileResult.error || "Errore aggiornamento profilo");
-              return;
-            }
-          }
-
-          // Update details
-          // Update roles if changed
-          const currentRoleIds = (data as UpdateUserFormInput).roleIds ?? [];
-          const originalRoleIds = user?.currentTenant.roles?.map((r) => r.id) ?? [];
-          const rolesChanged =
-            JSON.stringify([...currentRoleIds].sort()) !==
-            JSON.stringify([...originalRoleIds].sort());
-
-          if (rolesChanged && currentRoleIds.length > 0) {
-            const rolesResult = await updateUserRolesAction(userId, currentRoleIds);
-            if (!rolesResult.success) {
-              toast.error(rolesResult.error || "Errore aggiornamento ruoli");
-              return;
-            }
-          }
-
-          // Update details
-          const detailsResult = await updateUserDetailsAction(userId, {
-            firstName: updateData.firstName!,
-            lastName: updateData.lastName,
-            phone: updateData.phone,
-            address: updateData.address,
-            city: updateData.city,
-            state: updateData.state,
-            zipCode: updateData.zipCode,
-            countryCode: updateData.countryCode,
-            dateOfBirth: updateData.dateOfBirth,
-            gender: updateData.gender,
-            bio: updateData.bio,
-          });
-
-          if (detailsResult.success) {
-            toast.success(detailsResult.message || "Utente aggiornato con successo");
-            navigateToDetail('users', userId);
+          if (result.success) {
+            toast.success(result.message || "Utente aggiornato con successo");
+            navigateToDetail("users", userId);
           } else {
-            toast.error(detailsResult.error || "Errore durante l'aggiornamento");
+            toast.error(result.error || "Errore durante l'aggiornamento");
           }
         }
       } catch (error) {
@@ -187,9 +148,9 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
 
   const handleCancel = () => {
     if (mode === "edit" && user) {
-      navigateToDetail('users', user.id);
+      navigateToDetail("users", user.id);
     } else {
-      navigate('users')
+      navigate("users");
     }
   };
 
@@ -468,9 +429,7 @@ export function UserForm({ user, mode, roles = [], languages = [] }: UserFormPro
                         <Input
                           {...field}
                           value={
-                            field.value instanceof Date
-                              ? field.value.toISOString().split("T")[0]
-                              : field.value || ""
+                            field.value ? new Date(field.value).toISOString().split("T")[0] : ""
                           }
                           type="date"
                           disabled={isPending}

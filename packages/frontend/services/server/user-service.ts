@@ -9,7 +9,12 @@ import type {
   UserListApiResponse,
   UserStatsResponse,
 } from "@/types/user-types";
-import { ApiResponse, CreateUserFormInput, CreateUserInput } from "@mini-erp/shared";
+import {
+  ApiResponse,
+  CreateUserFormInput,
+  CreateUserInput,
+  UpdateUserFormInput,
+} from "@mini-erp/shared";
 import { PaginatedResponse } from "@mini-erp/shared/types";
 
 // ============================================================================
@@ -120,9 +125,19 @@ export async function getUserById(
 /**
  * Create new user (admin only)
  */
-export async function createUser(data: CreateUserFormInput): Promise<User> {
+export async function createUser(data: CreateUserInput): Promise<User> {
   return serverApi.post<User>("/users", data, {
     tags: [USER_TAGS.list],
+    revalidate: false,
+  });
+}
+
+/**
+ * Update user (admin only)
+ */
+export async function updateUser(id: string, data: UpdateUserFormInput): Promise<User> {
+  return serverApi.put<User>(`/users/${id}`, data, {
+    tags: [USER_TAGS.detail(id), USER_TAGS.list],
     revalidate: false,
   });
 }

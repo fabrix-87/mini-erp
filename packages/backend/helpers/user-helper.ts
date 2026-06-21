@@ -76,6 +76,77 @@ export const getUserSelection = () =>
     lastLogin: true,
   }) satisfies Prisma.UserSelect;
 
+/**
+ * Returns the standard Prisma user selection with roles and permissions.
+ */
+export const getUserDetailedSelection = () =>
+  ({
+    id: true,
+    username: true,
+    email: true,
+    active: true,
+    preferredLanguageId: true,
+    details: {
+      select: {
+        firstName: true,
+        lastName: true,
+        profilePicture: true,
+        phone: true,
+        address: true,
+        city: true,
+        state: true,
+        zipCode: true,
+        countryCode: true,
+        dateOfBirth: true,
+        gender: true,
+        bio: true,
+        country: {
+          select: {
+            name: true,
+          }
+        },
+      }
+    },
+    memberships: {
+      where: { status: "ACTIVE" },
+      select: {
+        id: true,
+        tenantId: true,
+        status: true,
+        isDefault: true,
+        tenant: {
+          select: {
+            code: true,
+            company: {
+              select: {
+                companyName: true,
+              },
+            },
+          },
+        },
+        roles: {
+          select: {
+            role: {
+              select: {
+                id: true,
+                code: true,
+                name: true,
+                permissions: {
+                  select: {
+                    permission: { select: { code: true } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    createdAt: true,
+    updatedAt: true,
+    lastLogin: true,
+  }) satisfies Prisma.UserSelect;
+
 // ============================================================================
 // FINGERPRINTING
 // ============================================================================

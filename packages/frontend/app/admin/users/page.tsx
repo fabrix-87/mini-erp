@@ -3,16 +3,8 @@ import { redirect } from "next/navigation";
 import { checkUserPermission, requirePermission } from "@/lib/server/auth";
 import { getAllUsers, getUserStats } from "@/services/server/user-service";
 import { ServerApiError } from "@/types/server-client";
-import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import Link from "next/link";
-import { dehydrate, QueryClient } from "@tanstack/react-query";
-import { HydrationBoundary } from "@/providers/hydration-boundary";
 import UsersContent from "@/app/admin/users/components/users-content";
-import { userKeys } from "@/types/user-types";
 import { UserQueryInput, userQuerySchema } from "@mini-erp/shared";
-import { useNavigation } from "@/hooks/use-navigation";
 
 interface PageProps {
   searchParams: Promise<UserQueryInput>;
@@ -41,7 +33,6 @@ export default async function UsersPage({ searchParams }: PageProps) {
   return (
     <div className="container mx-auto p-6">
       <div className="space-y-6">
-        <BreadcrumbSetter title="Gestione Utenti" />
         <UsersContent
           queryParams={queryParams}
           usersList={users}

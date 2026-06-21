@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigation } from '@/hooks/use-navigation';
-import { deleteUserAction } from '@/actions/user';
+import { deleteUserAction } from '@/actions/user-actions';
 
 interface UserDetailActionsProps {
   user: User;
@@ -91,7 +91,7 @@ export function UserDetailActions({ user }: UserDetailActionsProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {/* Modifica Profilo */}
           <Button
             variant="outline"
@@ -101,17 +101,6 @@ export function UserDetailActions({ user }: UserDetailActionsProps) {
           >
             <Edit className="h-4 w-4 mr-2" />
             Modifica Profilo
-          </Button>
-
-          {/* Gestisci Ruoli */}
-          <Button
-            variant="outline"
-            className="w-full justify-start"
-            onClick={() => ''}
-            disabled={isPending}
-          >
-            <Shield className="h-4 w-4 mr-2" />
-            Gestisci Ruoli
           </Button>
 
           {/* Reset Password */}

@@ -18,10 +18,20 @@ import { formatDateIT } from "@/helpers/date-helper";
 
 interface UsersTableProps {
   users: UserListItem[];
+  isLoading: boolean;
 }
 
-export function UsersTable({ users }: UsersTableProps) {
-  if (users.length === 0) {
+export function UsersTable({ users, isLoading }: UsersTableProps) {
+  if (isLoading) {
+    return (
+      <div className="rounded-lg border bg-card">
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          Aggiornamento in corso...
+        </div>
+      </div>
+    );
+  } else if (users.length === 0) {
     return (
       <div className="rounded-lg border bg-card">
         <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -64,7 +74,9 @@ export function UsersTable({ users }: UsersTableProps) {
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">{user.username}</TableCell>
-                <TableCell className="text-muted-foreground"><a href={`mailto:${user.email}`}>{user.email}</a></TableCell>
+                <TableCell className="text-muted-foreground">
+                  <a href={`mailto:${user.email}`}>{user.email}</a>
+                </TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {user.currentTenant.roles?.map((role) => (
@@ -83,10 +95,10 @@ export function UsersTable({ users }: UsersTableProps) {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  { formatDateIT(user.createdAt) }
+                  {formatDateIT(user.createdAt)}
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  { formatDateIT(user.lastLogin) }
+                  {formatDateIT(user.lastLogin)}
                 </TableCell>
                 <TableCell className="text-right">
                   <Link

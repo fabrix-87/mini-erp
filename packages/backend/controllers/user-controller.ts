@@ -14,6 +14,8 @@ import {
   destroyAllUserSessions,
   mapUserResponse,
   checkUserTenantMembership,
+  invalidateUserPermissionsCache,
+  getUserDetailedSelection,
 } from "../helpers/user-helper";
 
 import { sendDeleted, sendPaginatedResponse, sendSuccess } from "../utils/response-utils";
@@ -22,6 +24,7 @@ import {
   CreateUserInput,
   ToggleUserStatusInput,
   UpdateUserDetailsInput,
+  UpdateUserFormInput,
   UpdateUserProfileInput,
   UserIdParam,
   UserQueryInput,
@@ -36,7 +39,7 @@ import {
 } from "@/helpers/validated-context";
 
 import { Prisma } from "@/generated/prisma/client";
-
+import { connectById, connectOrDisconnectByCode } from "@/helpers/prisma-helper";
 
 // ============================================================================
 // PRIVATE ROUTES - Current User
@@ -64,7 +67,7 @@ export const getMe = async (c: Context<AppBindings>) => {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: getUserSelection(),
+    select: getUserDetailedSelection(),
   });
 
   if (!user) {
@@ -273,6 +276,7 @@ export const getAllUsers = async (c: Context<AppBindings>) => {
   const tenantId = c.get("currentTenantId")!;
 
   const where: Prisma.UserWhereInput = {
+    deletedAt: null,
     memberships: {
       some: {
         tenantId,
@@ -331,8 +335,8 @@ export const getUserById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<UserIdParam>(c);
 
   const user = await prisma.user.findUnique({
-    where: { id },
-    select: getUserSelection(),
+    where: { id, deletedAt: null },
+    select: getUserDetailedSelection(),
   });
 
   if (!user) {
@@ -343,14 +347,24 @@ export const getUserById = async (c: Context<AppBindings>) => {
 };
 
 /**
- * @desc    Crea un nuovo utente (Admin)
+ * Creates a new user with personal details and role assignments within the current tenant.
+ * Checks for username/email conflicts globally, then creates the user, their details,
+ * a tenant membership, and assigns the specified roles — all within a single atomic transaction.
+ *
  * @route   POST /api/users
  * @access  Private/Admin
  */
 export const createUser = async (c: Context<AppBindings>) => {
-  const { username, email, password, details, preferredLanguageId } =
-    getValidatedBody<CreateUserInput>(c);
-  const tenantId = c.get("currentTenantId")!
+  const {
+    username,
+    email,
+    password,
+    active = true,
+    preferredLanguageId,
+    roleIds = [],
+    details,
+  } = getValidatedBody<CreateUserInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   const existingUser = await prisma.user.findFirst({
     where: {
@@ -367,24 +381,208 @@ export const createUser = async (c: Context<AppBindings>) => {
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  const newUser = await prisma.user.create({
-    data: {
-      username,
-      email,
-      tenantId,
-      password: hashedPassword,
-      preferredLanguageId,
-      details: details
-        ? {
-            create: details,
-          }
-        : undefined,
-    },
+  const newUser = await prisma.$transaction(async (tx) => {
+    // 1. Crea l'utente con i dettagli
+    const user = await tx.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword,
+        active,
+        preferredLanguageId,
+        details: details
+          ? {
+              create: {
+                firstName: details.firstName,
+                lastName: details.lastName,
+                gender: details.gender ?? "PREFER_NOT_TO_SAY",
+                phone: details.phone,
+                dateOfBirth: details.dateOfBirth ? new Date(details.dateOfBirth) : undefined,
+                bio: details.bio,
+                address: details.address,
+                city: details.city,
+                countryCode: details.countryCode,
+                state: details.state,
+                zipCode: details.zipCode,
+              },
+            }
+          : undefined,
+      },
+      select: { id: true },
+    });
+
+    // 2. Crea la membership nel tenant corrente
+    const membership = await tx.userTenantMembership.create({
+      data: {
+        userId: user.id,
+        tenantId,
+        status: "ACTIVE",
+        isDefault: true,
+      },
+      select: { id: true },
+    });
+
+    // 3. Assegna i ruoli (se presenti)
+    if (roleIds.length > 0) {
+      await tx.userTenantMembershipRole.createMany({
+        data: roleIds.map((roleId) => ({
+          membershipId: membership.id,
+          roleId,
+        })),
+      });
+    }
+
+    return user.id;
+  });
+
+  // Ricarica l'utente completo con la selezione standard
+  const createdUser = await prisma.user.findUnique({
+    where: { id: newUser },
     select: getUserSelection(),
   });
 
-  return sendSuccess(c, mapUserResponse(newUser), {
+  if (!createdUser) throw new NotFoundError("Utente non trovato dopo la creazione");
+
+  return sendSuccess(c, mapUserResponse(createdUser), {
     message: "Utente creato con successo",
+  });
+};
+
+/**
+ * Updates a user's profile, personal details, and role assignments in a single atomic transaction.
+ * Only fields present in the request body are updated (partial update).
+ * Invalidates the Redis profile cache after a successful update.
+ *
+ * @route   PUT /api/users/:id
+ * @access  Private/Admin
+ */
+export const updateUser = async (c: Context<AppBindings>) => {
+  const { id: userId } = getValidatedParams<UserIdParam>(c);
+  const tenantId = c.get("currentTenantId")!;
+
+  const {
+    username,
+    email,
+    preferredLanguageId,
+    roleIds,
+    firstName,
+    lastName,
+    phone,
+    address,
+    city,
+    state,
+    zipCode,
+    countryCode,
+    dateOfBirth,
+    gender,
+    bio,
+  } = getValidatedBody<UpdateUserFormInput>(c);
+
+  console.log(`countryCode: ${countryCode}`);
+
+  // Verifica appartenenza al tenant
+  const isMember = await checkUserTenantMembership({ userId, tenantId });
+  if (!isMember) throw new NotFoundError("Utente non trovato");
+
+  // Unicità username (escludi utente corrente)
+  if (username !== undefined) {
+    const conflict = await prisma.user.findFirst({
+      where: { username, id: { not: userId } },
+    });
+    if (conflict) throw new ConflictError("Username già in uso");
+  }
+
+  // Unicità email (escludi utente corrente)
+  if (email !== undefined) {
+    const conflict = await prisma.user.findFirst({
+      where: { email, id: { not: userId } },
+    });
+    if (conflict) throw new ConflictError("Email già in uso");
+  }
+
+  // Campi tabella User
+  const profileData: Prisma.UserUpdateInput = {};
+  if (username !== undefined) profileData.username = username;
+  if (email !== undefined) profileData.email = email;
+  if (preferredLanguageId !== undefined)
+    profileData.preferredLanguage = connectById(preferredLanguageId);
+
+  // Campi tabella UserDetails
+  const detailsData: Prisma.UserDetailsUpdateInput = {};
+  if (firstName !== undefined) detailsData.firstName = firstName;
+  if (lastName !== undefined) detailsData.lastName = lastName;
+  if (phone !== undefined) detailsData.phone = phone;
+  if (address !== undefined) detailsData.address = address;
+  if (city !== undefined) detailsData.city = city;
+  if (state !== undefined) detailsData.state = state;
+  if (zipCode !== undefined) detailsData.zipCode = zipCode;
+  if (countryCode !== undefined) detailsData.country = connectOrDisconnectByCode(countryCode);
+  if (dateOfBirth !== undefined) detailsData.dateOfBirth = dateOfBirth;
+  if (gender !== undefined) detailsData.gender = gender;
+  if (bio !== undefined) detailsData.bio = bio;
+
+  await prisma.$transaction(async (tx) => {
+    // 1. Aggiorna profilo (se ci sono campi)
+    if (Object.keys(profileData).length > 0) {
+      await tx.user.update({ where: { id: userId }, data: profileData });
+    }
+
+    // 2. Upsert dettagli (se ci sono campi)
+    if (Object.keys(detailsData).length > 0) {
+      const detailsCreate: Prisma.UserDetailsCreateInput = {
+        user: { connect: { id: userId } },
+        ...(detailsData as Omit<Prisma.UserDetailsUncheckedCreateInput, "userId">),
+      };
+
+      await tx.userDetails.upsert({
+        where: { userId },
+        update: detailsData,
+        create: detailsCreate,
+      });
+    }
+
+    // 3. Aggiorna ruoli nel tenant (se forniti)
+    if (roleIds !== undefined) {
+      // Recupera il membershipId per questo utente+tenant
+      const membership = await tx.userTenantMembership.findUnique({
+        where: { userId_tenantId: { userId, tenantId } },
+        select: { id: true },
+      });
+
+      if (!membership) throw new NotFoundError("Membership non trovata");
+
+      // Sostituisce tutti i ruoli correnti con i nuovi
+      await tx.userTenantMembershipRole.deleteMany({
+        where: { membershipId: membership.id },
+      });
+
+      if (roleIds.length > 0) {
+        await tx.userTenantMembershipRole.createMany({
+          data: roleIds.map((roleId) => ({
+            membershipId: membership.id,
+            roleId,
+          })),
+        });
+      }
+    }
+  });
+
+  // Invalida cache profilo e permessi
+  const cacheKey = `user:profile:${userId}`;
+  await Promise.all([redisClient.del(cacheKey), invalidateUserPermissionsCache(userId)]);
+
+  const updatedUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: getUserSelection(),
+  });
+
+  if (!updatedUser) throw new NotFoundError("Utente non trovato");
+
+  const userData = mapUserResponse(updatedUser, tenantId);
+  await redisClient.setEx(cacheKey, 3600, JSON.stringify(userData));
+
+  return sendSuccess(c, userData, {
+    message: "Utente aggiornato con successo",
   });
 };
 
@@ -396,10 +594,10 @@ export const createUser = async (c: Context<AppBindings>) => {
 export const toggleUserActive = async (c: Context<AppBindings>) => {
   const { id: userId } = getValidatedParams<UserIdParam>(c);
   const { active } = getValidatedBody<ToggleUserStatusInput>(c);
-  const tenantId = c.get("currentTenantId")!
+  const tenantId = c.get("currentTenantId")!;
 
   // Verifica esistenza utente ed associazione tenant
-  const member = await checkUserTenantMembership({userId, tenantId})
+  const member = await checkUserTenantMembership({ userId, tenantId });
 
   if (!member) {
     throw new NotFoundError("Utente non trovato");
@@ -436,7 +634,6 @@ export const toggleUserActive = async (c: Context<AppBindings>) => {
 export const deleteUser = async (c: Context<AppBindings>) => {
   const { id: userId } = getValidatedParams<UserIdParam>(c);
   const currentUserId = c.get("user")!.userId;
-  const tenantId = c.get("currentTenantId")!;
 
   // Immediate guard clause: Prevent self-deletion before hitting the DB
   if (userId === currentUserId) {
@@ -448,17 +645,16 @@ export const deleteUser = async (c: Context<AppBindings>) => {
     await prisma.user.update({
       where: {
         id: userId,
-        tenantId: tenantId, // Ensures the user belongs to the current tenant
-        deletedAt: null,    // Prevents re-deleting an already deleted user
+        deletedAt: null, // Prevents re-deleting an already deleted user
       },
       data: {
         deletedAt: new Date(),
-        deletedBy: currentUserId,
+        deletedByUser: {connect: {id: currentUserId}},
       },
     });
   } catch (error) {
     // Prisma throws P2025 when the record to update is not found
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
       throw new NotFoundError("Utente non trovato");
     }
     throw error; // Forward any other unexpected DB errors

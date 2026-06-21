@@ -6,6 +6,7 @@ import {
   validateToggleUserStatus,
   validateUserId,
   validateUserQuery,
+  validateUpdateUser,
 } from "../validators/user-validator";
 import {
   getAllUsers,
@@ -17,6 +18,7 @@ import {
   changePassword,
   toggleUserActive,
   deleteUser,
+  updateUser,
 } from "../controllers/user-controller";
 
 import { createHonoApp } from "@/lib/hono-app";
@@ -126,6 +128,20 @@ userRoutes.put(
   validateUserId,
   validateUpdateUserDetails,
   updateDetails,
+);
+
+/**
+ * @route   PUT /api/users/:id
+ * @desc    Aggiorna tutto l'utente (Admin)
+ * @access  Private/Admin (user:update)
+ */
+userRoutes.put(
+  "/:id",
+  authenticateToken,
+  authorize(["user:update", "user:manage"]),
+  validateUserId,
+  validateUpdateUser,
+  updateUser,
 );
 
 /**
