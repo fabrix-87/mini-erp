@@ -224,6 +224,8 @@ export type CurrentTenantPayload = {
   tenantId: string;
   membershipId: string;
   status: UserMembershipStatus;
+  name: string;
+  code: string;
   roles: RoleDTO[]; // role codes
   permissions: string[]; // permission codes
 };
@@ -253,10 +255,13 @@ export type UserSessionPayload = {
   userId: string;
   username: string;
   email: string;
-  firstName: string;
-  lastName: string;
   preferredLanguageId: number | null;
   currentTenant: CurrentTenantPayload;
+  details: {
+    firstName: string;
+    lastName: string;
+    gender: string;
+  };
   availableTenants: AvailableTenantEntry[];
   // --- CLAIMS STANDARD JWT ---
   fingerprint?: string; // Browser fingerprint

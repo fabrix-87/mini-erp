@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { requirePermission } from "@/lib/server/auth";
 import { getUserById } from "@/services/server/user-service";
 import { ServerApiError } from "@/types/server-client";
-import { UserForm } from "@/app/admin/users/components/user-form";
+import { UserForm } from "@/app/(protected)/admin/users/components/user-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getAllRoles } from "@/services/server/role-service";

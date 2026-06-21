@@ -83,12 +83,7 @@ export async function changePassword(currentPassword: string, newPassword: strin
 // Admin User Management Functions
 // ============================================================================
 
-/**
- * Get all users with filters and pagination
- * Con cache per performance
- * @return {Promise<UserListApiResponse>}
- */
-export async function getAllUsers(params?: {
+interface getUserProps {
   page?: number;
   limit?: number;
   search?: string;
@@ -97,8 +92,15 @@ export async function getAllUsers(params?: {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   revalidate?: number | false;
-}): Promise<UserListApiResponse> {
-  const { revalidate = 30, ...queryParams } = params || {};
+}
+
+/**
+ * Get all users with filters and pagination
+ * Con cache per performance
+ * @return {Promise<UserListApiResponse>}
+ */
+export async function getAllUsers(params?: getUserProps): Promise<UserListApiResponse> {
+  const { page = 1, limit = 20, revalidate = 30, ...queryParams } = params || {};
 
   return serverApi.get<UserListApiResponse>("/users", {
     params: queryParams,

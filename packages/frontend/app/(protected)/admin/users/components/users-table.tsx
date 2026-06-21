@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ExternalLink } from "lucide-react";
-import { GenderIcon } from "../../../../components/gender-icon";
+import { GenderIcon } from "../../../../../components/gender-icon";
 import { UserListItem } from "@mini-erp/shared";
 import { useNavigation } from "@/hooks/use-navigation";
 import { formatDateIT } from "@/helpers/date-helper";

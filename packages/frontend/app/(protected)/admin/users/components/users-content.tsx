@@ -1,8 +1,8 @@
 // components/users/users-content.tsx
 "use client";
 
-import { UsersFilterBar } from "@/app/admin/users/components/users-filter-bar";
-import { UsersTable } from "@/app/admin/users/components/users-table";
+import { UsersFilterBar } from "@/app/(protected)/admin/users/components/users-filter-bar";
+import { UsersTable } from "@/app/(protected)/admin/users/components/users-table";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { StatisticCard } from "@/components/ui/statistic-card";
 import { Users, UserCheck, UserX, Shield, Plus } from "lucide-react";
@@ -11,7 +11,7 @@ import { UserQueryInput } from "@mini-erp/shared";
 import { useNavigation } from "@/hooks/use-navigation";
 import { Button } from "@/components/ui/button";
 import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
-import { useState } from "react";
+import { useTransition } from "react";
 
 interface UsersContentProps {
   queryParams: UserQueryInput;
@@ -27,7 +27,7 @@ export default function UsersContent({
   canCreate,
 }: UsersContentProps) {
   const { navigateToNew } = useNavigation();
-  const [isLoading, setLoading] = useState<boolean>(false);
+  const [isPending, startTransition] = useTransition();
 
   const users = usersList.data;
   const pagination = usersList.pagination;
@@ -87,11 +87,12 @@ export default function UsersContent({
         initialActive={queryParams.active}
         initialSortBy={queryParams.sortBy}
         initialSortOrder={queryParams.sortOrder}
-        setLoading={setLoading}
+        startTransition={startTransition}
+        isPending={isPending}
       />
 
       {/* Table */}
-      <UsersTable users={users} isLoading={isLoading} />
+      <UsersTable users={users} isLoading={isPending} />
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 0 && (

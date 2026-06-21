@@ -3,11 +3,11 @@
 import { RoleQueryInput, RoleSortField, SortOrder } from "@mini-erp/shared";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-import { DataPagination } from "../../../../components/ui/data-pagination";
-import { BreadcrumbSetter } from "../../../../components/ui/breadcrumb-setter";
+import { DataPagination } from "../../../../../components/ui/data-pagination";
+import { BreadcrumbSetter } from "../../../../../components/ui/breadcrumb-setter";
 import RoleTable from "./role-list/table";
 import RoleToolbar from "./role-list/toolbar";
-import DeleteDialog from "../../../../components/dialog/delete-dialog";
+import DeleteDialog from "../../../../../components/dialog/delete-dialog";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { RoleListApiResponse } from "@/types/role-types";
 import { deleteRoleAction } from "@/actions/role-actions";

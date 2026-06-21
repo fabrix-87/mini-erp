@@ -62,6 +62,7 @@ export const login = async (c: Context<AppBindings>) => {
         select: {
           firstName: true,
           lastName: true,
+          gender: true,
         },
       },
       memberships: {
@@ -176,11 +177,16 @@ export const login = async (c: Context<AppBindings>) => {
     email: user.email,
     username: user.username,
     preferredLanguageId: user.preferredLanguageId,
-    firstName: user.details?.firstName || "",
-    lastName: user.details?.lastName || "",
+    details: {
+      firstName: user.details?.firstName || "",
+      lastName: user.details?.lastName || "",
+      gender: user.details?.gender || "",
+    },
 
     currentTenant: {
       tenantId: currentMembership.tenantId,
+      name: currentMembership.tenant.company.companyName,
+      code: currentMembership.tenant.code,
       membershipId: currentMembership.id,
       status: currentMembership.status,
       roles: getRolesFromMembership(currentMembership),
@@ -355,10 +361,16 @@ export const refreshToken = async (c: Context<AppBindings>) => {
     email: user.email,
     username: user.username,
     preferredLanguageId: user.preferredLanguageId,
-    firstName: user.details?.firstName || "",
-    lastName: user.details?.lastName || "",
+    details: {
+      firstName: user.details?.firstName || "",
+      lastName: user.details?.lastName || "",
+      gender: user.details?.gender || "",
+    },
+
     currentTenant: {
       tenantId: currentMembership.tenantId,
+      name: currentMembership.tenant.company.companyName,
+      code: currentMembership.tenant.code,
       membershipId: currentMembership.id,
       status: currentMembership.status,
       roles: getRolesFromMembership(currentMembership),

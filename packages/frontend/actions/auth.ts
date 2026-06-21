@@ -26,7 +26,6 @@ export async function loginAction(prevState: any, formData: FormData) {
       credentials
     );
 
-    // ✅ Aggiorna i cookie
     setCookies(data.accessToken, data.refreshToken, data.user);
   } catch (error) {
     if (error instanceof ServerApiError) {

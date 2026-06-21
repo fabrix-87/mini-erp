@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { getProducts } from "../../../lib/client/modules/product";
+import { getProducts } from "../../../../lib/client/modules/product";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
+} from "../../../../components/ui/card";
 import {
   Table,
   TableBody,
@@ -15,17 +15,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../components/ui/table";
-import { Badge } from "../../../components/ui/badge";
-import { Input } from "../../../components/ui/input";
-import { Button } from "../../../components/ui/button";
+} from "../../../../components/ui/table";
+import { Badge } from "../../../../components/ui/badge";
+import { Input } from "../../../../components/ui/input";
+import { Button } from "../../../../components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../components/ui/select";
+} from "../../../../components/ui/select";
 
 import {
   Search,
@@ -222,7 +222,7 @@ export default function Products() {
             </div>
 
             <Select value={inStockFilter} onValueChange={setInStockFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectTrigger className="w-full sm:w-45">
                 <SelectValue placeholder="Stock status" />
               </SelectTrigger>
               <SelectContent>
@@ -239,7 +239,7 @@ export default function Products() {
                 setCurrentPage(1);
               }}
             >
-              <SelectTrigger className="w-full sm:w-[120px]">
+              <SelectTrigger className="w-full sm:w-30">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

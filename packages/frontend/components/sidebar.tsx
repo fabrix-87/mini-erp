@@ -4,11 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import {
-  useFilteredNavigation,
-  isActiveLink,
-  hasActiveSubItem,
-} from "@/lib/navigation";
+import { useFilteredNavigation, isActiveLink, hasActiveSubItem } from "@/lib/navigation";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -78,9 +74,7 @@ export function Sidebar({ sidebarOpen, onSidebarClose }: SidebarProps) {
             className={cn(
               "w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
               "hover:bg-accent hover:text-accent-foreground",
-              hasActiveSub
-                ? "text-foreground"
-                : "text-muted-foreground"
+              hasActiveSub ? "text-foreground" : "text-muted-foreground",
             )}
           >
             {Icon && <Icon className="h-5 w-5 shrink-0" />}
@@ -100,9 +94,7 @@ export function Sidebar({ sidebarOpen, onSidebarClose }: SidebarProps) {
               "flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
               "hover:bg-accent hover:text-accent-foreground",
               level > 0 && "pl-11", // Indenta i sub-items
-              shouldHighlight
-                ? "bg-accent text-accent-foreground"
-                : "text-muted-foreground"
+              shouldHighlight ? "bg-accent text-accent-foreground" : "text-muted-foreground",
             )}
           >
             {Icon && level === 0 && <Icon className="h-5 w-5 shrink-0" />}
@@ -128,24 +120,23 @@ export function Sidebar({ sidebarOpen, onSidebarClose }: SidebarProps) {
   return (
     <>
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={onSidebarClose}
-        />
+        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={onSidebarClose} />
       )}
 
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 w-64 bg-background border-r border-border transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:z-auto flex flex-col",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          sidebarOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         {/* Logo */}
         <div className="flex items-center gap-2 px-6 py-5 border-b border-border">
           <div className="h-8 w-8 rounded-lg bg-linear-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground font-bold text-lg">
-            M
+            {user?.currentTenant.name?.[0] || "M"}
           </div>
-          <span className="font-semibold text-lg text-foreground">Mini ERP</span>
+          <span className="font-semibold text-lg text-foreground">
+            {user?.currentTenant.name || "Mini ERP"}
+          </span>
         </div>
 
         {/* Navigazione */}
@@ -156,9 +147,7 @@ export function Sidebar({ sidebarOpen, onSidebarClose }: SidebarProps) {
                 <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   {section.title}
                 </h3>
-                <div className="space-y-1">
-                  {section.items.map((item) => renderNavItem(item))}
-                </div>
+                <div className="space-y-1">{section.items.map((item) => renderNavItem(item))}</div>
               </div>
             ))}
           </div>
@@ -168,21 +157,16 @@ export function Sidebar({ sidebarOpen, onSidebarClose }: SidebarProps) {
         <div className="border-t border-border p-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3 px-2"
-              >
+              <Button variant="ghost" className="w-full justify-start gap-3 px-2">
                 <div className="h-8 w-8 rounded-full bg-linear-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground text-sm font-semibold">
-                  {user?.UserDetail?.firstName?.[0]}
-                  {user?.UserDetail?.lastName?.[0]}
+                  {user?.details.firstName?.[0]}
+                  {user?.details.lastName?.[0]}
                 </div>
                 <div className="flex-1 text-left overflow-hidden">
                   <p className="text-sm font-medium truncate">
-                    {user?.UserDetail?.firstName} {user?.UserDetail?.lastName}
+                    {user?.details.firstName} {user?.details.lastName}
                   </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {user?.email}
-                  </p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>

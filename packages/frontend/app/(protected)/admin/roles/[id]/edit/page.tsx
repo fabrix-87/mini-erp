@@ -3,18 +3,16 @@ import { getRoleById } from "@/services/server/role-service";
 import { permissionKeys, roleKeys } from "@/types/role-types";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { HydrationBoundary } from "@/providers/hydration-boundary";
-import RoleDetailPage from "@/app/admin/roles/components/role-detail";
+import RoleFormPage from "@/app/(protected)/admin/roles/components/role-form";
 import { notFound } from "next/navigation";
 import { getAllPermissions } from "@/services/server/permission";
 
-interface RoleDetailPageProps {
+interface EditRolePageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function RoleDetailPageRoute({
-  params,
-}: RoleDetailPageProps) {
-  await requirePermission("role:read");
+export default async function EditRolePage({ params }: EditRolePageProps) {
+  await requirePermission("role:update");
 
   const { id } = await params;
   const roleId = Number(id);
@@ -36,7 +34,7 @@ export default async function RoleDetailPageRoute({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <RoleDetailPage roleId={roleId} />
+      <RoleFormPage mode="edit" roleId={roleId} />
     </HydrationBoundary>
   );
 }

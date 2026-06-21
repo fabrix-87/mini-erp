@@ -34,10 +34,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { createUserAction, updateUserAction } from "@/actions/user-actions";
 import { Loader2, Save, Shield, X } from "lucide-react";
-import { Badge } from "../../../../components/ui/badge";
-import { Checkbox } from "../../../../components/ui/checkbox";
-import { BreadcrumbSetter } from "../../../../components/ui/breadcrumb-setter";
-import { CountryCombobox } from "../../../../components/ui/country-combobox";
+import { Badge } from "../../../../../components/ui/badge";
+import { Checkbox } from "../../../../../components/ui/checkbox";
+import { BreadcrumbSetter } from "../../../../../components/ui/breadcrumb-setter";
+import { CountryCombobox } from "../../../../../components/ui/country-combobox";
 import { useNavigation } from "@/hooks/use-navigation";
 import { CreateUserInput, Language, Role } from "@mini-erp/shared";
 

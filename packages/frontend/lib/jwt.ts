@@ -37,7 +37,6 @@ export function decodeJWT(token: string): UserSessionPayload | null {
 
 /**
  * Ottiene i dati utente dal cookie 'UserSessionPayload'
- * ✅ Metodo principale per l'AuthProvider
  */
 export function getUserFromUserCookie(): UserSessionPayload | null {
   const userCookie = getCookie('user');
@@ -47,7 +46,6 @@ export function getUserFromUserCookie(): UserSessionPayload | null {
   if (!userCookie) return null;
 
   try {
-    // ✅ Decodifica URL encoding prima di parsare JSON
     const decodedCookie = decodeURIComponent(userCookie);
     return JSON.parse(decodedCookie) as UserSessionPayload;
   } catch (error) {
@@ -59,7 +57,6 @@ export function getUserFromUserCookie(): UserSessionPayload | null {
 
 /**
  * Verifica se l'utente è autenticato controllando il cookie 'user'
- * ✅ Metodo veloce per l'AuthProvider
  */
 export function isAuthenticated(): boolean {
   return getUserFromUserCookie() !== null;

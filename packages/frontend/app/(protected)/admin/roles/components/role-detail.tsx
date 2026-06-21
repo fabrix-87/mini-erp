@@ -33,7 +33,7 @@ import { deleteRoleAction } from "@/actions/role-actions";
 import { Permission } from "@mini-erp/shared";
 import { formatDate } from "@/utils/format";
 import { RoleDetailProps } from "@/types/role-types";
-import DeleteDialog from "../../../../components/dialog/delete-dialog";
+import DeleteDialog from "../../../../../components/dialog/delete-dialog";
 import { useNavigation } from "@/hooks/use-navigation";
 import { useCrumbMap } from "@/hooks/use-breadcrumb";
 

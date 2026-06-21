@@ -1,7 +1,7 @@
 // frontend/components/users/users-filter-bar.tsx
 "use client";
 
-import { useTransition, useState, useEffect } from "react";
+import { useTransition, useState, useEffect, useRef } from "react";
 import { Search, Filter, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,15 @@ import { Badge } from "@/components/ui/badge";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { useNavigation } from "@/hooks/use-navigation";
 
+type StartTransition = ReturnType<typeof useTransition>[1];
+
 interface UsersFilterBarProps {
   initialSearch?: string;
   initialActive?: boolean | null;
   initialSortBy?: string;
   initialSortOrder?: "asc" | "desc";
-  setLoading: (value: boolean) => void;
+  startTransition: StartTransition;
+  isPending: boolean;
 }
 
 export function UsersFilterBar({
@@ -29,7 +32,8 @@ export function UsersFilterBar({
   initialActive = null,
   initialSortBy = "createdAt",
   initialSortOrder = "desc",
-  setLoading,
+  startTransition,
+  isPending,
 }: UsersFilterBarProps) {
   const { getRoute } = useNavigation();
   const USERS_BASE_PATH = getRoute("users");
@@ -40,7 +44,6 @@ export function UsersFilterBar({
    * and resetPage:true to reset pagination whenever filters change.
    */
   const updateURL = useUpdateURL(USERS_BASE_PATH);
-  const [isPending, startTransition] = useTransition();
 
   const [search, setSearch] = useState(initialSearch);
   const [active, setActive] = useState<string>(
@@ -49,8 +52,16 @@ export function UsersFilterBar({
   const [sortBy, setSortBy] = useState(initialSortBy);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(initialSortOrder);
 
+  const isMounted = useRef(false);
+
   // Debounce della ricerca testuale
   useEffect(() => {
+    // Skip al mount: non triggerare una navigazione con i valori iniziali
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+
     const timer = setTimeout(() => {
       startTransition(() => {
         updateURL({ search }, { replace: true, resetPage: true });
@@ -59,10 +70,6 @@ export function UsersFilterBar({
 
     return () => clearTimeout(timer);
   }, [search]);
-
-  useEffect(() => {
-    setLoading(isPending)
-  },[isPending])
 
   /**
    * Handles active status filter change.
@@ -123,7 +130,7 @@ export function UsersFilterBar({
                 Attivi
               </Badge>
             )}
-          </div>          
+          </div>
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={handleClearFilters} className="h-8 text-xs">
               <X className="h-3 w-3 mr-1" />

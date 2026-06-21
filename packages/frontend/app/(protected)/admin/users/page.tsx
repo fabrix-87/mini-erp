@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { checkUserPermission, requirePermission } from "@/lib/server/auth";
 import { getAllUsers, getUserStats } from "@/services/server/user-service";
 import { ServerApiError } from "@/types/server-client";
-import UsersContent from "@/app/admin/users/components/users-content";
+import UsersContent from "@/app/(protected)/admin/users/components/users-content";
 import { UserQueryInput, userQuerySchema } from "@mini-erp/shared";
 
 interface PageProps {
@@ -25,7 +25,7 @@ export default async function UsersPage({ searchParams }: PageProps) {
   const queryParams: UserQueryInput = userQuerySchema.parse(await searchParams);
 
   const [users, stats, canCreate] = await Promise.all([
-    getAllUsers({ ...queryParams, revalidate: 30 }),
+    getAllUsers({ ...queryParams, revalidate: 600 }),
     getUserStats(),
     checkUserPermission("user:create"),
   ]);
