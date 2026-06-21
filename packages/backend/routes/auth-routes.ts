@@ -4,25 +4,23 @@ import {
   loginRateLimiter,
   passwordResetRateLimiter,
   refreshTokenRateLimiter,
-  registerRateLimiter,
 } from "@/middleware/rate-limit-middleware";
 
 import {
-  register,
   login,
   logout,
   refreshToken,
   forgotPassword,
   resetPassword,
   verifyEmail,
-} from "../controllers/user-controller";
+} from "../controllers/auth-controller";
 
 import {
-  validateRegisterUser,
   validateLogin,
   validateForgotPassword,
   validateResetPassword,
-} from "../validators/user-validator";
+  validateVerifyEmail,
+} from "../validators/auth-validator";
 import { authenticateToken } from "@/middleware/auth-middleware";
 
 const authRoutes = createHonoApp();
@@ -30,13 +28,6 @@ const authRoutes = createHonoApp();
 // ============================================================================
 // PUBLIC ROUTES - Authentication
 // ============================================================================
-
-/**
- * @route   POST /api/users/register
- * @desc    Registra nuovo utente (pubblico)
- * @access  Public
- */
-authRoutes.post("/register", registerRateLimiter, validateRegisterUser, register);
 
 /**
  * @route   POST /api/users/login
@@ -83,6 +74,6 @@ authRoutes.post("/reset-password", validateResetPassword, resetPassword);
  * @desc    Verifica email utente
  * @access  Public
  */
-authRoutes.get("/verify-email/:token", verifyEmail);
+authRoutes.get("/verify-email/:token", validateVerifyEmail, verifyEmail);
 
 export default authRoutes;

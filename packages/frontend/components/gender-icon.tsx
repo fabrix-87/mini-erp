@@ -1,7 +1,6 @@
 // components/users/gender-icon.tsx
 'use client';
 
-import { User, UserCheck, Users, Minus } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -9,10 +8,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { GenderType } from '@/types/user-types';
+import { Gender } from '@mini-erp/shared';
+import { GENDER_DISPLAY_CONFIG } from '@/types/user-types';
 
 interface GenderIconProps {
-  gender?: GenderType
+  gender?: Gender
   className?: string;
   showLabel?: boolean;
 }
@@ -22,39 +22,17 @@ export function GenderIcon({
   className,
   showLabel = false 
 }: GenderIconProps) {
-  const config = {
-    MALE: {
-      icon: User,
-      label: 'Uomo',
-      color: 'text-blue-600 dark:text-blue-400',
-    },
-    FEMALE: {
-      icon: UserCheck,
-      label: 'Donna',
-      color: 'text-pink-600 dark:text-pink-400',
-    },
-    OTHER: {
-      icon: Users,
-      label: 'Altro',
-      color: 'text-purple-600 dark:text-purple-400',
-    },
-    PREFER_NOT_TO_SAY: {
-      icon: Minus,
-      label: 'Preferisco non specificare',
-      color: 'text-gray-500 dark:text-gray-400',
-    },
-  };
 
-  if (!gender || !(gender in config)) {
+  if (!gender || !(gender in GENDER_DISPLAY_CONFIG)) {
     return null;
   }
 
-  const { icon: Icon, label, color } = config[gender];
+  const { icon: Icon, label, textColor } = GENDER_DISPLAY_CONFIG[gender];
 
   if (showLabel) {
     return (
       <div className="flex items-center gap-2">
-        <Icon className={cn('h-4 w-4', color, className)} />
+        <Icon className={cn('h-4 w-4', textColor, className)} />
         <span className="text-sm text-muted-foreground">{label}</span>
       </div>
     );
@@ -65,7 +43,7 @@ export function GenderIcon({
       <Tooltip>
         <TooltipTrigger asChild>
           <span className="inline-flex items-center cursor-default">
-            <Icon className={cn('h-4 w-4', color, className)} />
+            <Icon className={cn('h-4 w-4', textColor, className)} />
           </span>
         </TooltipTrigger>
         <TooltipContent>

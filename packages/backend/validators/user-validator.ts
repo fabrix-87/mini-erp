@@ -4,9 +4,6 @@ import {
   updateUserProfileSchema,
   updateUserDetailsSchema,
   changePasswordSchema,
-  loginSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
   toggleUserStatusSchema,
   userIdParamSchema,
   userQuerySchema
@@ -33,27 +30,6 @@ export const validateCreateUser = validateBody(
 export const validateRegisterUser = validateBody(
   registerUserSchema,
   "User registration"
-);
-
-/**
- * Middleware per il login
- */
-export const validateLogin = validateBody(loginSchema, "User login");
-
-/**
- * Middleware per la richiesta di reset password
- */
-export const validateForgotPassword = validateBody(
-  forgotPasswordSchema,
-  "Forgot password"
-);
-
-/**
- * Middleware per il reset password
- */
-export const validateResetPassword = validateBody(
-  resetPasswordSchema,
-  "Reset password"
 );
 
 /**

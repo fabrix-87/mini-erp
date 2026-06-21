@@ -1,14 +1,10 @@
 // packages/shared/src/types/user.ts
 import { z } from "zod";
-import type { Role, Permission } from "./role";
+import type { Permission } from "./role";
 import type { Language } from "./language";
 import { Gender, UserMembershipStatus } from "../constants/user";
 import {
   // Auth
-  loginSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
-  verifyEmailSchema,
   changePasswordSchema,
   // 2FA
   enableTwoFactorSchema,
@@ -137,12 +133,6 @@ export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type UpdateUserProfileInput = z.infer<typeof updateUserProfileSchema>;
 export type UpdateUserDetailsInput = z.infer<typeof updateUserDetailsSchema>;
 export type ToggleUserStatusInput = z.infer<typeof toggleUserStatusSchema>;
-
-// --- Auth ---
-export type LoginInput = z.infer<typeof loginSchema>;
-export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
-export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
-export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 
 // --- 2FA ---

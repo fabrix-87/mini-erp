@@ -1,7 +1,7 @@
 // frontend/components/users/user-detail-header.tsx
 "use client";
 
-import { User } from "@/types/user-types";
+import { GENDER_DISPLAY_CONFIG, User } from "@/types/user-types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,6 +9,7 @@ import { Mail, Calendar, Shield, CheckCircle2, XCircle, Clock, Building } from "
 import { GenderIcon } from "@/components/gender-icon";
 import { useCrumbMap } from "@/hooks/use-breadcrumb";
 import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
+import { cn } from "@/lib/utils";
 
 interface UserDetailHeaderProps {
   user: User;
@@ -34,7 +35,16 @@ export function UserDetailHeader({ user }: UserDetailHeaderProps) {
           {/* Avatar */}
           <Avatar className="h-20 w-20">
             <AvatarImage src={user.details?.profilePicture || ""} alt={user.username} />
-            <AvatarFallback className="text-2xl font-bold">{initials}</AvatarFallback>
+            <AvatarFallback
+              className={cn(
+                "text-2xl",
+                "font-bold",
+                GENDER_DISPLAY_CONFIG[user.details!.gender].textColor,
+                GENDER_DISPLAY_CONFIG[user.details!.gender].bgColor,
+              )}
+            >
+              {initials}
+            </AvatarFallback>
           </Avatar>
 
           {/* Info */}

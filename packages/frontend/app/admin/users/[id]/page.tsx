@@ -8,6 +8,7 @@ import { UserDetailInfo } from '@/app/admin/users/components/user-detail-info';
 import { UserDetailActions } from '@/app/admin/users/components/user-detail-actions';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { getRoute } from '@/lib/navigation-routes';
 
 interface PageProps {
   params: Promise<{
@@ -57,7 +58,7 @@ export default async function UserDetailPage({ params }: PageProps) {
       <div className="space-y-6">
         {/* Back Navigation */}
         <Link
-          href="/settings/users"
+          href={getRoute('users')}
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />

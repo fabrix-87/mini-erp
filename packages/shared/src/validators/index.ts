@@ -19,6 +19,7 @@ export * from "./base";
 
 // Models
 export * from "./audit";
+export * from "./auth";
 export * from "./user";
 export * from "./activity";
 export * from "./role";

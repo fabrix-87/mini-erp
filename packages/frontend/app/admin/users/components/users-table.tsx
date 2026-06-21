@@ -14,6 +14,7 @@ import { ExternalLink } from "lucide-react";
 import { GenderIcon } from "../../../../components/gender-icon";
 import { UserListItem } from "@mini-erp/shared";
 import { useNavigation } from "@/hooks/use-navigation";
+import { formatDateIT } from "@/helpers/date-helper";
 
 interface UsersTableProps {
   users: UserListItem[];
@@ -41,20 +42,19 @@ export function UsersTable({ users }: UsersTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-20">ID</TableHead>
               <TableHead>Nome</TableHead>
               <TableHead>Username</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Ruoli</TableHead>
               <TableHead className="w-25">Stato</TableHead>
               <TableHead className="w-30">Creato</TableHead>
+              <TableHead className="w-30">Ultimo accesso</TableHead>
               <TableHead className="w-25 text-right">Azioni</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {users.map((user) => (
               <TableRow key={user.id} className="group">
-                <TableCell className="font-mono text-sm">{user.id}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     {user.details?.gender && <GenderIcon gender={user.details.gender} />}
@@ -64,7 +64,7 @@ export function UsersTable({ users }: UsersTableProps) {
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">{user.username}</TableCell>
-                <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                <TableCell className="text-muted-foreground"><a href={`mailto:${user.email}`}>{user.email}</a></TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {user.currentTenant.roles?.map((role) => (
@@ -83,11 +83,10 @@ export function UsersTable({ users }: UsersTableProps) {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  {new Date(user.createdAt).toLocaleDateString("it-IT", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}
+                  { formatDateIT(user.createdAt) }
+                </TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  { formatDateIT(user.lastLogin) }
                 </TableCell>
                 <TableCell className="text-right">
                   <Link
