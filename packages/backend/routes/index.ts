@@ -18,6 +18,7 @@ import productRoutes from "./product-routes";
 import roleRoutes from "./role-routes";
 import supplierRoutes from "./supplier-routes";
 import taxRoutes from "./tax-routes";
+import membershipRolesRoutes from "./user-membership-roles-routes";
 import userRoutes from "./user-routes";
 
 const apiRoutes = createHonoApp();
@@ -45,5 +46,6 @@ apiRoutes.route("/products", productRoutes);
 apiRoutes.route("/documents", documentRoutes);
 apiRoutes.route("/suppliers", supplierRoutes);
 apiRoutes.route("/company-contacts", companyContactRoutes);
+apiRoutes.route("/memberships", membershipRolesRoutes);
 
 export default apiRoutes;

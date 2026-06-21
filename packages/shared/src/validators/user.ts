@@ -204,16 +204,6 @@ export const updateUserProfileSchema = z
   .strict();
 
 /**
- * Role assignment update (admin only).
- * Used by: PUT /api/users/:id/roles  →  UpdateUserRolesInput
- */
-export const updateUserRolesSchema = z
-  .object({
-    roleIds: z.array(roleIdSchema).min(1, "Deve essere assegnato almeno un ruolo"),
-  })
-  .strict();
-
-/**
  * Toggle active flag for a user account (admin only).
  * Used by: PATCH /api/users/:id/toggle-active  →  ToggleUserStatusInput
  */

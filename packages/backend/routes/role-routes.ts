@@ -36,11 +36,6 @@ import {
   deletePermission,
   getPermissionRoles,
   // Utilities
-  assignRolesToUser,
-  removeRolesFromUser,
-  getUserRoles,
-  getUserPermissions,
-  checkUserPermission,
   syncPermissions,
 } from '../controllers/role-controller'
 import { createHonoApp } from '@/lib/hono-app';
@@ -134,72 +129,6 @@ roleRoutes.delete(
   authorize(['permission:delete', 'permission:manage']),
   validatePermissionId,
   deletePermission
-);
-
-// ============================================================================
-// USER ROLE MANAGEMENT
-// ============================================================================
-
-/**
- * @route   POST /api/roles/users/assign
- * @desc    Assegna ruoli a un utente
- * @access  Private/Admin (user:manage)
- */
-roleRoutes.post(
-  '/users/assign',
-  authenticateToken,
-  authorize(['user:manage']),
-  validateAssignRolesToUser,
-  assignRolesToUser
-);
-
-/**
- * @route   POST /api/roles/users/remove
- * @desc    Rimuovi ruoli da un utente
- * @access  Private/Admin (user:manage)
- */
-roleRoutes.post(
-  '/users/remove',
-  authenticateToken,
-  authorize(['user:manage']),
-  removeRolesFromUser
-);
-
-/**
- * @route   GET /api/roles/users/:userId/roles
- * @desc    Lista ruoli di un utente
- * @access  Private/Admin (user:read)
- */
-roleRoutes.get(
-  '/users/:userId/roles',
-  authenticateToken,
-  authorize(['user:read', 'user:manage']),
-  getUserRoles
-);
-
-/**
- * @route   GET /api/roles/users/:userId/permissions
- * @desc    Lista tutti i permessi di un utente (tramite ruoli)
- * @access  Private/Admin (user:read)
- */
-roleRoutes.get(
-  '/users/:userId/permissions',
-  authenticateToken,
-  authorize(['user:read', 'user:manage']),
-  getUserPermissions
-);
-
-/**
- * @route   POST /api/roles/users/check-permission
- * @desc    Verifica se un utente ha un permesso specifico
- * @access  Private/Admin (user:read)
- */
-roleRoutes.post(
-  '/users/check-permission',
-  authenticateToken,
-  authorize(['user:read', 'user:manage']),
-  validateCheckPermission,
-  checkUserPermission
 );
 
 // ============================================================================

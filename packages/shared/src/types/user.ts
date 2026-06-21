@@ -21,7 +21,6 @@ import {
   // Update
   updateUserProfileSchema,
   updateUserDetailsSchema,
-  updateUserRolesSchema,
   toggleUserStatusSchema,
   // Form (frontend)
   userFormSchema,
@@ -135,7 +134,6 @@ export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 // --- Update ---
 export type UpdateUserProfileInput = z.infer<typeof updateUserProfileSchema>;
 export type UpdateUserDetailsInput = z.infer<typeof updateUserDetailsSchema>;
-export type UpdateUserRolesInput = z.infer<typeof updateUserRolesSchema>;
 export type ToggleUserStatusInput = z.infer<typeof toggleUserStatusSchema>;
 
 // --- Auth ---

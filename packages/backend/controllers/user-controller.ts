@@ -25,7 +25,6 @@ import {
   destroyAllUserSessions,
   calculateLockUntil,
   mapUserResponse,
-  findUserOrThrow,
 } from "../helpers/user-helper";
 
 import authConfig from "../config/auth-config";
@@ -40,7 +39,6 @@ import {
   ToggleUserStatusInput,
   UpdateUserDetailsInput,
   UpdateUserProfileInput,
-  UpdateUserRolesInput,
   UserIdParam,
   UserQueryInput,
   VerifyEmailInput,
@@ -1022,31 +1020,6 @@ export const createUser = async (c: Context<AppBindings>) => {
   return sendSuccess(c, mapUserResponse(newUser), {
     message: "Utente creato con successo",
   });
-};
-
-/**
- * @desc    Aggiorna ruoli di un utente
- * @route   PUT /api/users/:id/roles
- * @access  Private/Admin
- */
-export const updateRole = async (c: Context<AppBindings>) => {
-  const { id: userId } = getValidatedParams<UserIdParam>(c);
-
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
-
-  if (!user) {
-    throw new NotFoundError("Utente non trovato");
-  }
-
-  if (userId === c.get("user")!.userId) {
-    throw new BadRequestError("Non puoi modificare i tuoi ruoli");
-  }
-
-  throw new BadRequestError(
-    "I ruoli devono essere aggiornati a livello di membership tenant. Usa un endpoint dedicato con membershipId o tenantId.",
-  );
 };
 
 /**

@@ -183,16 +183,6 @@ export const permissionQuerySchema = z.object({
 });
 
 /**
- * Schema per assegnare ruoli a utenti
- */
-export const assignRolesToUserSchema = z
-  .object({
-    userId: userIdSchema,
-    roleIds: z.array(roleIdSchema).min(1, "Almeno un ruolo è richiesto"),
-  })
-  .strict();
-
-/**
  * Schema per verificare permessi
  */
 export const checkPermissionSchema = z

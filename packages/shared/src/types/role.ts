@@ -5,7 +5,6 @@
 import { z } from "zod";
 import {
   assignPermissionsSchema,
-  assignRolesToUserSchema,
   checkPermissionSchema,
   createPermissionSchema,
   createRoleSchema,
@@ -13,7 +12,7 @@ import {
   permissionQuerySchema,
   roleCodeParamSchema,
   roleIdParamSchema,
-  roleQuerySchema,  
+  roleQuerySchema,
   updatePermissionSchema,
 } from "../validators";
 
@@ -56,7 +55,6 @@ export type UpdateRoleInput = z.infer<typeof createRoleSchema>;
 export type AssignPermissionsInput = z.infer<typeof assignPermissionsSchema>;
 export type CreatePermissionInput = z.infer<typeof createPermissionSchema>;
 export type UpdatePermissionInput = z.infer<typeof updatePermissionSchema>;
-export type AssignRolesToUserInput = z.infer<typeof assignRolesToUserSchema>;
 export type CheckUserPermissionInput = z.infer<typeof checkPermissionSchema>;
 
 // ============================================================================

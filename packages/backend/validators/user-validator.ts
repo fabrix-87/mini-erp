@@ -7,7 +7,6 @@ import {
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
-  updateUserRolesSchema,
   toggleUserStatusSchema,
   userIdParamSchema,
   userQuerySchema
@@ -79,14 +78,6 @@ export const validateUpdateUserDetails = validateBody(
 export const validateChangePassword = validateBody(
   changePasswordSchema,
   "Password change"
-);
-
-/**
- * Middleware per l'aggiornamento dei ruoli
- */
-export const validateUpdateUserRoles = validateBody(
-  updateUserRolesSchema,
-  "User roles update"
 );
 
 /**

@@ -3,7 +3,6 @@ import {
   validateUpdateUserProfile,
   validateUpdateUserDetails,
   validateChangePassword,
-  validateUpdateUserRoles,
   validateToggleUserStatus,
   validateUserId,
   validateUserQuery,
@@ -16,7 +15,6 @@ import {
   updateProfile,
   updateDetails,
   changePassword,
-  updateRole,
   toggleUserActive,
   deleteUser,
 } from "../controllers/user-controller";
@@ -128,19 +126,6 @@ userRoutes.put(
   validateUserId,
   validateUpdateUserDetails,
   updateDetails,
-);
-
-/**
- * @route   PUT /api/users/:id/roles
- * @desc    Aggiorna ruoli di un utente
- * @access  Private/Admin (user:manage)
- */
-userRoutes.put(
-  "/:id/roles",
-  authenticateToken,
-  authorize(["user:manage"]),
-  validateUpdateUserRoles,
-  updateRole,
 );
 
 /**

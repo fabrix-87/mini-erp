@@ -41,6 +41,7 @@ export * from "./tenant";
 export * from "./intrastat";
 export * from "./category";
 export * from "./dashboard";
+export * from "./user-membership";
 
 // Forms
 export * from "./forms/company-form";
