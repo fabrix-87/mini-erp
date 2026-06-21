@@ -11,7 +11,7 @@ import { UserQueryInput } from "@mini-erp/shared";
 import { useNavigation } from "@/hooks/use-navigation";
 import { Button } from "@/components/ui/button";
 import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
-import { useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 interface UsersContentProps {
   queryParams: UserQueryInput;
@@ -27,7 +27,7 @@ export default function UsersContent({
   canCreate,
 }: UsersContentProps) {
   const { navigateToNew } = useNavigation();
-  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const users = usersList.data;
   const pagination = usersList.pagination;
@@ -87,12 +87,11 @@ export default function UsersContent({
         initialActive={queryParams.active}
         initialSortBy={queryParams.sortBy}
         initialSortOrder={queryParams.sortOrder}
-        startTransition={startTransition}
-        isPending={isPending}
+        setLoading={setIsLoading}
       />
 
       {/* Table */}
-      <UsersTable users={users} isLoading={isPending} />
+      <UsersTable users={users} isLoading={isLoading} />
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 0 && (

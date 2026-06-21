@@ -23,8 +23,7 @@ interface UsersFilterBarProps {
   initialActive?: boolean | null;
   initialSortBy?: string;
   initialSortOrder?: "asc" | "desc";
-  startTransition: StartTransition;
-  isPending: boolean;
+  setLoading: (isLoading: boolean) => void;
 }
 
 export function UsersFilterBar({
@@ -32,11 +31,12 @@ export function UsersFilterBar({
   initialActive = null,
   initialSortBy = "createdAt",
   initialSortOrder = "desc",
-  startTransition,
-  isPending,
+  setLoading,
 }: UsersFilterBarProps) {
   const { getRoute } = useNavigation();
   const USERS_BASE_PATH = getRoute("users");
+
+  const [isPending, startTransition] = useTransition();
 
   /**
    * updateURL is bound to USERS_BASE_PATH so call sites don't repeat the path.
@@ -52,24 +52,35 @@ export function UsersFilterBar({
   const [sortBy, setSortBy] = useState(initialSortBy);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(initialSortOrder);
 
-  const isMounted = useRef(false);
+  const isFirstRender = useRef(true);
 
   // Debounce della ricerca testuale
   useEffect(() => {
-    // Skip al mount: non triggerare una navigazione con i valori iniziali
-    if (!isMounted.current) {
-      isMounted.current = true;
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
       return;
     }
-
+    setLoading(true);
     const timer = setTimeout(() => {
       startTransition(() => {
         updateURL({ search }, { replace: true, resetPage: true });
       });
     }, 500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      // Se l'utente digita ancora prima dei 500ms, resetta il loading
+      // solo se non c'è una transition in corso
+      if (!isPending) setLoading(false);
+    };
   }, [search]);
+
+  // Sync loading con isPending della transition (navigazione in corso)
+  useEffect(() => {
+    if (!isFirstRender.current) {
+      setLoading(isPending);
+    }
+  }, [isPending]);
 
   /**
    * Handles active status filter change.
