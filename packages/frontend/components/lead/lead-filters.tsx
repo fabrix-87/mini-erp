@@ -1,7 +1,7 @@
 // components/leads/lead-filters.tsx
 "use client";
 
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useCallback, useTransition } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { LeadStatus, LeadSource, LeadQuality } from "@mini-erp/shared/constants";
+import { useAppSearchParams } from "@/providers/search-params-provider";
 
 // ============================================================================
 // Constants
@@ -67,7 +68,7 @@ const QUALITY_OPTIONS: { value: LeadQuality | "ALL"; label: string }[] = [
 export function LeadFilters() {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const searchParams = useAppSearchParams();
   const [isPending, startTransition] = useTransition();
 
   const search  = searchParams.get("search") ?? "";

@@ -15,6 +15,7 @@ const Error = () => {
           <Image
             src={'/images/backgrounds/errorimg.svg'}
             alt='error'
+            loading="eager"
             className='mb-4'
             width={400}
             height={300}

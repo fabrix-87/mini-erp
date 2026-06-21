@@ -1,7 +1,6 @@
 "use client";
 
 import { RoleQueryInput, RoleSortField, SortOrder } from "@mini-erp/shared";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { DataPagination } from "../../../../../components/ui/data-pagination";
 import { BreadcrumbSetter } from "../../../../../components/ui/breadcrumb-setter";
@@ -13,13 +12,14 @@ import { RoleListApiResponse } from "@/types/role-types";
 import { deleteRoleAction } from "@/actions/role-actions";
 import { toast } from "sonner";
 import { useNavigation } from "@/hooks/use-navigation";
+import { useAppSearchParams } from "@/providers/search-params-provider";
 
 interface Props {
   data: RoleListApiResponse;
 }
 
 export default function RoleListPage({ data }: Props) {
-  const searchParams = useSearchParams();
+  const searchParams = useAppSearchParams();
   const { refresh, navigateToNew, navigateToDetail, navigateToEdit } = useNavigation();
 
   const { data: roles, pagination, results } = data;

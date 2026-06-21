@@ -1,7 +1,7 @@
 // frontend/components/users/users-filter-bar.tsx
 "use client";
 
-import { useTransition, useState, useEffect, useRef } from "react";
+import { useTransition, useState, useEffect, useRef, useMemo } from "react";
 import { Search, Filter, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ interface UsersFilterBarProps {
   initialActive?: boolean | null;
   initialSortBy?: string;
   initialSortOrder?: "asc" | "desc";
-  setLoading: (isLoading: boolean) => void;
+  onPendingChange: (isPending: boolean) => void;
 }
 
 export function UsersFilterBar({
@@ -31,12 +31,10 @@ export function UsersFilterBar({
   initialActive = null,
   initialSortBy = "createdAt",
   initialSortOrder = "desc",
-  setLoading,
+  onPendingChange,
 }: UsersFilterBarProps) {
   const { getRoute } = useNavigation();
-  const USERS_BASE_PATH = getRoute("users");
-
-  const [isPending, startTransition] = useTransition();
+  const USERS_BASE_PATH = useMemo(() => getRoute("users"), [getRoute]);
 
   /**
    * updateURL is bound to USERS_BASE_PATH so call sites don't repeat the path.
@@ -52,35 +50,28 @@ export function UsersFilterBar({
   const [sortBy, setSortBy] = useState(initialSortBy);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(initialSortOrder);
 
+  const [isPending, startTransition] = useTransition();
   const isFirstRender = useRef(true);
 
-  // Debounce della ricerca testuale
+  // Propaga isPending al parent — ma solo dopo il mount
+  useEffect(() => {
+    if (isFirstRender.current) return;
+    onPendingChange(isPending);
+  }, [isPending]);
+
+  // Debounce search — skippa il mount
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
-    setLoading(true);
     const timer = setTimeout(() => {
       startTransition(() => {
         updateURL({ search }, { replace: true, resetPage: true });
       });
     }, 500);
-
-    return () => {
-      clearTimeout(timer);
-      // Se l'utente digita ancora prima dei 500ms, resetta il loading
-      // solo se non c'è una transition in corso
-      if (!isPending) setLoading(false);
-    };
+    return () => clearTimeout(timer);
   }, [search]);
-
-  // Sync loading con isPending della transition (navigazione in corso)
-  useEffect(() => {
-    if (!isFirstRender.current) {
-      setLoading(isPending);
-    }
-  }, [isPending]);
 
   /**
    * Handles active status filter change.

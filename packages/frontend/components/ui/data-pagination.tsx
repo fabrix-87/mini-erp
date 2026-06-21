@@ -1,7 +1,7 @@
 // packages/frontend/components/ui/data-pagination.tsx
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useAppSearchParams } from '@/providers/search-params-provider';
 
 interface DataPaginationProps {
   currentPage: number;
@@ -41,7 +42,7 @@ export function DataPagination({
   pageSizeOptions = [10, 20, 50, 100],
 }: DataPaginationProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useAppSearchParams();
   const [isPending, startTransition] = useTransition();
 
   /**

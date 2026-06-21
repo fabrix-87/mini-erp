@@ -11,7 +11,7 @@ import { UserQueryInput } from "@mini-erp/shared";
 import { useNavigation } from "@/hooks/use-navigation";
 import { Button } from "@/components/ui/button";
 import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useState } from "react";
 
 interface UsersContentProps {
   queryParams: UserQueryInput;
@@ -87,9 +87,8 @@ export default function UsersContent({
         initialActive={queryParams.active}
         initialSortBy={queryParams.sortBy}
         initialSortOrder={queryParams.sortOrder}
-        setLoading={setIsLoading}
+        onPendingChange={setIsLoading}
       />
-
       {/* Table */}
       <UsersTable users={users} isLoading={isLoading} />
 

@@ -1,6 +1,7 @@
-import { useCallback, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import type { ReadonlyURLSearchParams } from "next/navigation";
+import { useAppSearchParams } from "@/providers/search-params-provider";
 
 // ============================================================================
 // Types
@@ -189,10 +190,7 @@ export function useUpdateURL(): (
 
 export function useUpdateURL(basePath?: string) {
   const router = useRouter();
-  const searchParamsRef = useRef<ReadonlyURLSearchParams | null>(null);
-
-  const currentSearchParams = useSearchParams();
-  searchParamsRef.current = currentSearchParams;
+  const searchParams = useAppSearchParams();
 
   return useCallback(
     (
@@ -200,9 +198,6 @@ export function useUpdateURL(basePath?: string) {
       updatesOrOptions?: URLParamsRecord | UpdateURLOptions,
       maybeOptions?: UpdateURLOptions,
     ): void => {
-      
-      const searchParams = searchParamsRef.current ?? new URLSearchParams();
-
       // -- Resolve overloaded arguments -----------------------------------
       let path: string;
       let updates: URLParamsRecord;
@@ -221,7 +216,13 @@ export function useUpdateURL(basePath?: string) {
       }
 
       // -- Navigation logic -----------------------------------------------
-      const { replace = false, scroll = false, resetPage = false, pageParam = "page", clearAll = false } = options;
+      const {
+        replace = false,
+        scroll = false,
+        resetPage = false,
+        pageParam = "page",
+        clearAll = false,
+      } = options;
 
       const finalUpdates: URLParamsRecord =
         resetPage && !(pageParam in updates) ? { ...updates, [pageParam]: null } : updates;
@@ -235,6 +236,6 @@ export function useUpdateURL(basePath?: string) {
         router.push(targetUrl, { scroll });
       }
     },
-    [router, basePath],
+    [router, searchParams, basePath],
   );
 }
