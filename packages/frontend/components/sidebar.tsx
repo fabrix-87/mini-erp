@@ -130,7 +130,7 @@ export function Sidebar({ sidebarOpen, onSidebarClose }: SidebarProps) {
         )}
       >
         {/* Logo */}
-        <div className="flex items-center gap-2 px-6 py-5 border-b border-border">
+        <div className="flex items-center gap-2 px-6 py-5 border-b border-border" suppressHydrationWarning>
           <div className="h-8 w-8 rounded-lg bg-linear-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground font-bold text-lg">
             {user?.currentTenant.name?.[0] || "M"}
           </div>
@@ -154,7 +154,7 @@ export function Sidebar({ sidebarOpen, onSidebarClose }: SidebarProps) {
         </nav>
 
         {/* User Menu */}
-        <div className="border-t border-border p-4">
+        <div className="border-t border-border p-4" suppressHydrationWarning>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="w-full justify-start gap-3 px-2">

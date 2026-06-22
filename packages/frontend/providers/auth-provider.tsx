@@ -51,15 +51,10 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // ============================================================================
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Inizializza user in modo sincrono al primo render
-  // evita il flash di stato non autenticato
-  const [user, setUser] = useState<UserSessionPayload | null>(() => {
-    // Lato server non abbiamo document, ritorna null
-    if (typeof document === "undefined") return null;
-    return getUserFromUserCookie();
-  });
-  // isLoading parte già a false se abbiamo letto il cookie sincrono
-  const [isLoading, setIsLoading] = useState(false);
+  // Inizia sempre null (SSR e primo render client sono allineati)
+  const [user, setUser] = useState<UserSessionPayload | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   const refreshTimerRef = useRef<NodeJS.Timeout>(null);
   const isRefreshingRef = useRef(false);
 
@@ -88,21 +83,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // ========================================
-  // Initial Auth Check — solo al mount
+  // Initial Auth Check — post-hydration
   // ========================================
-  /*
   useEffect(() => {
+    // Questo gira solo client-side, dopo l'hydration
+    // SSR e primo render client sono entrambi null → nessun mismatch
     try {
-      if (isAuthenticated()) {
-        setUser(getUserFromUserCookie());
-      }
+      const userData = getUserFromUserCookie();
+      setUser(userData);
     } catch (error) {
       console.error("Auth check failed:", error);
     } finally {
       setIsLoading(false);
     }
   }, []);
-  */
 
   // ========================================
   // Proactive Token Refresh
@@ -173,6 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [user, logout, refreshUser]);
 
+  /*
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -180,6 +175,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       </div>
     );
   }
+    */
 
   // ========================================
   // Context Value

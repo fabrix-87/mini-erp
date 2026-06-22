@@ -8,7 +8,9 @@ import { BreadcrumbItem, BreadcrumbState } from "@/types/breadcrumb-types";
 
 type Listener = () => void;
 
-let state: BreadcrumbState = { items: [], pathname: "" };
+const EMPTY_STATE: BreadcrumbState = { items: [], pathname: "" };
+
+let state: BreadcrumbState = EMPTY_STATE;
 const listeners = new Set<Listener>();
 
 function emit() {
@@ -29,7 +31,7 @@ export const breadcrumbStore = {
 
   /** Server snapshot — returns empty items (SSR safe) */
   getServerSnapshot(): BreadcrumbState {
-    return { items: [], pathname: "" };
+    return EMPTY_STATE;
   },
 
   /** Set a full items array */
@@ -40,7 +42,7 @@ export const breadcrumbStore = {
 
   /** Reset to empty */
   clear(): void {
-    state = { items: [], pathname: "" };
+    state = EMPTY_STATE;
     emit();
   },
 };
