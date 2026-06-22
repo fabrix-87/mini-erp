@@ -9,12 +9,13 @@ import { Prisma } from "@/generated/prisma/client";
  * Fetch team performance metrics
  */
 export async function fetchTeamPerformance(
+  tenantId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   limit: number = 10,
 ): Promise<
   Array<{
-    userId: number;
+    userId: string;
     username: string;
     leadsCount: number;
     opportunitiesCount: number;
@@ -31,16 +32,18 @@ export async function fetchTeamPerformance(
   const result = [];
 
   for (const user of users) {
-    const leadsWhere: Prisma.LeadWhereInput = { assignedUserId: user.id };
-    const oppsWhere: Prisma.OpportunityWhereInput = { assignedUserId: user.id };
+    const leadsWhere: Prisma.LeadWhereInput = { assignedUserId: user.id, tenantId };
+    const oppsWhere: Prisma.OpportunityWhereInput = { assignedUserId: user.id, tenantId };
     const actsWhere: Prisma.ActivityWhereInput = {
       assignedUserId: user.id,
       status: "COMPLETED",
+      tenantId
     };
     const docsWhere: Prisma.DocumentWhereInput = {
       assignedUserId: user.id,
       documentType: "INVOICE",
       status: "PAID",
+      tenantId
     };
 
     if (dateFrom || dateTo) {

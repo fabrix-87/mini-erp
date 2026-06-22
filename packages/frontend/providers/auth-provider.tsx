@@ -2,7 +2,6 @@
 "use client";
 
 import { createContext, useEffect, useState, ReactNode, useCallback, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { logoutAction } from "@/actions/auth";
 import { getUserFromUserCookie, isAuthenticated } from "@/lib/jwt";
 import { refreshToken } from "@/services/client/auth";
@@ -54,7 +53,6 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserSessionPayload | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
   const refreshTimerRef = useRef<NodeJS.Timeout>(null);
   const isRefreshingRef = useRef(false);
 

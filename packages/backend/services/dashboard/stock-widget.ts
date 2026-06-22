@@ -3,39 +3,82 @@
 // ============================================================================
 
 import { prisma } from "@/config/prisma-config";
-import { Prisma } from "@/generated/prisma/client";
+import { MovementType } from "@mini-erp/shared";
 
 /**
- * Fetch stock value (total inventory value)
+ * Fetch stock value (total inventory value based on confirmed movements).
+ * Stock quantity: net of CONFIRMED inbound - outbound movements.
+ * Stock value: net quantity × variant wholesalePrice (cost proxy).
  */
-export async function fetchStockValue(): Promise<{
+export async function fetchStockValue(tenantId: string): Promise<{
   totalValue: string;
   activeProducts: number;
   totalUnits: number;
 }> {
+  const INBOUND: MovementType[] = [
+    "PURCHASE",
+    "RETURN_IN",
+    "ADJUSTMENT_IN",
+    "TRANSFER_IN",
+    "INVENTORY_START",
+  ];
+  const OUTBOUND: MovementType[] = ["SALE", "RETURN_OUT", "ADJUSTMENT_OUT", "TRANSFER_OUT"];
+
+  // Aggregate confirmed movements per variant
+  const [inboundAgg, outboundAgg] = await Promise.all([
+    prisma.stockMovement.groupBy({
+      by: ["productVariantId"],
+      where: {
+        status: "CONFIRMED",
+        movementType: { in: INBOUND },
+        productVariant: { tenantId, deletedAt: null, active: true },
+      },
+      _sum: { quantity: true },
+    }),
+    prisma.stockMovement.groupBy({
+      by: ["productVariantId"],
+      where: {
+        status: "CONFIRMED",
+        movementType: { in: OUTBOUND },
+        productVariant: { tenantId, deletedAt: null, active: true },
+      },
+      _sum: { quantity: true },
+    }),
+  ]);
+
+  const inboundMap = new Map(inboundAgg.map((r) => [r.productVariantId, r._sum.quantity ?? 0]));
+  const outboundMap = new Map(outboundAgg.map((r) => [r.productVariantId, r._sum.quantity ?? 0]));
+
+  const allVariantIds = [...new Set([...inboundMap.keys(), ...outboundMap.keys()])];
+
+  // Fetch cost proxy (wholesalePrice) for valuation
   const variants = await prisma.productVariant.findMany({
     where: {
+      id: { in: allVariantIds },
+      tenantId,
       deletedAt: null,
       active: true,
     },
     select: {
-      quantity: true,
-      price: true,
+      id: true,
+      wholesalePrice: true,
     },
   });
 
   let totalValue = 0;
   let totalUnits = 0;
 
-  for (const variant of variants) {
-    const qty = parseFloat(variant.quantity.toString());
-    const price = parseFloat(variant.price?.toString() ?? "0");
-    totalValue += qty * price;
-    totalUnits += qty;
+  for (const v of variants) {
+    const netQty = (inboundMap.get(v.id) ?? 0) - (outboundMap.get(v.id) ?? 0);
+    if (netQty <= 0) continue;
+
+    const cost = parseFloat(v.wholesalePrice?.toString() ?? "0");
+    totalValue += netQty * cost;
+    totalUnits += netQty;
   }
 
   const activeProducts = await prisma.product.count({
-    where: { active: true, deletedAt: null },
+    where: { tenantId, active: true, deletedAt: null },
   });
 
   return {
@@ -46,22 +89,29 @@ export async function fetchStockValue(): Promise<{
 }
 
 /**
- * Fetch recent stock movements
+ * Fetch recent CONFIRMED stock movements for a tenant.
  */
 export async function fetchStockMovements(
+  tenantId: string,
   limit: number,
 ): Promise<
   Array<{
-    id: number;
-    productVariantId: number;
+    id: number; // StockMovement.id is Int @id @default(autoincrement())
+    productVariantId: string; // FK to ProductVariant — cuid string
+    sku: string;
+    productReference: string;
     warehouseName: string;
-    movementType: string;
+    movementType: MovementType;
     quantity: number;
     movementDate: Date;
-    reference: string | null;
+    referenceId: string | null;
   }>
 > {
   const movements = await prisma.stockMovement.findMany({
+    where: {
+      status: "CONFIRMED",
+      productVariant: { tenantId, deletedAt: null },
+    },
     take: limit,
     orderBy: { movementDate: "desc" },
     select: {
@@ -74,16 +124,26 @@ export async function fetchStockMovements(
       warehouse: {
         select: { name: true },
       },
+      productVariant: {
+        select: {
+          sku: true,
+          product: {
+            select: { reference: true },
+          },
+        },
+      },
     },
   });
 
   return movements.map((m) => ({
     id: m.id,
     productVariantId: m.productVariantId,
+    sku: m.productVariant.sku,
+    productReference: m.productVariant.product.reference,
     warehouseName: m.warehouse.name,
     movementType: m.movementType,
     quantity: m.quantity,
     movementDate: m.movementDate,
-    reference: m.referenceId,
+    referenceId: m.referenceId,
   }));
 }

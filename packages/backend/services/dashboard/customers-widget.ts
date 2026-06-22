@@ -10,7 +10,8 @@ import { DashboardScope } from "@mini-erp/shared";
  * Fetch customers KPI
  */
 export async function fetchCustomersKPI(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -22,7 +23,7 @@ export async function fetchCustomersKPI(
   vip: number;
   newCustomers: number;
 }> {
-  const where: Prisma.CustomerWhereInput = {};
+  const where: Prisma.CustomerWhereInput = { tenantId };
 
   if (dateFrom || dateTo) {
     where.createdAt = {};
@@ -41,7 +42,9 @@ export async function fetchCustomersKPI(
     prisma.customer.count({
       where: { ...where, type: "PROSPECT", company: { assignedUserId: userId } },
     }),
-    prisma.customer.count({ where: { ...where, segment: "VIP", company: { assignedUserId: userId } } }),
+    prisma.customer.count({
+      where: { ...where, segment: "VIP", company: { assignedUserId: userId } },
+    }),
   ]);
 
   // Count customers created in the period
@@ -67,12 +70,13 @@ export async function fetchCustomersKPI(
  * Fetch top customers by revenue in the period
  */
 export async function fetchTopCustomers(
+  tenantId: string,
   limit: number,
   dateFrom: Date | null,
   dateTo: Date | null,
 ): Promise<
   Array<{
-    id: number;
+    id: string;
     companyName: string;
     totalRevenue: string;
     documentCount: number;
@@ -80,6 +84,7 @@ export async function fetchTopCustomers(
 > {
   const documentWhere: Prisma.DocumentWhereInput = {
     status: { in: ["PAID", "PARTIALLY_PAID"] },
+    tenantId,
   };
 
   if (dateFrom || dateTo) {
@@ -132,10 +137,11 @@ export async function fetchTopCustomers(
  * Fetch customer lifecycle distribution (via Company.status: PROSPECT, ACTIVE, INACTIVE)
  */
 export async function fetchCustomerLifecycle(
+  tenantId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
 ): Promise<Array<{ status: string; count: number }>> {
-  const where: Prisma.CustomerWhereInput = {};
+  const where: Prisma.CustomerWhereInput = { tenantId };
 
   if (dateFrom || dateTo) {
     where.createdAt = {};

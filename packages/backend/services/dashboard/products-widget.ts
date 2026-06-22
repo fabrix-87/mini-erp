@@ -4,12 +4,73 @@
 
 import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
-import { Decimal } from "@prisma/client/runtime/client";
+import { DOCUMENT_STATUSES, DOCUMENT_TYPES } from "@mini-erp/shared";
 
-/**
- * Fetch products KPI
- */
-export async function fetchProductsKPI(): Promise<{
+// Sale document types: stock-affecting documents excluding inbound and corrections
+const SALE_DOCUMENT_TYPES = [DOCUMENT_TYPES.INVOICE, DOCUMENT_TYPES.DELIVERY_NOTE] as const;
+
+// Statuses to exclude from revenue/performance aggregation
+const EXCLUDED_STATUSES = [
+  DOCUMENT_STATUSES.DRAFT,
+  DOCUMENT_STATUSES.VOIDED,
+  DOCUMENT_STATUSES.REJECTED,
+] as const;
+
+// Statuses considered "overdue" for invoice alerts
+const OVERDUE_INVOICE_STATUSES = [
+  DOCUMENT_STATUSES.UNPAID,
+  DOCUMENT_STATUSES.PARTIALLY_PAID,
+  DOCUMENT_STATUSES.OVERDUE,
+] as const;
+
+// ─── Stock helpers ───────────────────────────────────────────────────────────
+
+const INBOUND_MOVEMENTS = [
+  "PURCHASE",
+  "RETURN_IN",
+  "ADJUSTMENT_IN",
+  "TRANSFER_IN",
+  "INVENTORY_START",
+] as const;
+
+const OUTBOUND_MOVEMENTS = ["SALE", "RETURN_OUT", "ADJUSTMENT_OUT", "TRANSFER_OUT"] as const;
+
+async function buildNetStockMap(tenantId: string): Promise<Map<string, number>> {
+  const [inboundAgg, outboundAgg] = await Promise.all([
+    prisma.stockMovement.groupBy({
+      by: ["productVariantId"],
+      where: {
+        status: "CONFIRMED",
+        movementType: { in: [...INBOUND_MOVEMENTS] },
+        productVariant: { tenantId, deletedAt: null },
+      },
+      _sum: { quantity: true },
+    }),
+    prisma.stockMovement.groupBy({
+      by: ["productVariantId"],
+      where: {
+        status: "CONFIRMED",
+        movementType: { in: [...OUTBOUND_MOVEMENTS] },
+        productVariant: { tenantId, deletedAt: null },
+      },
+      _sum: { quantity: true },
+    }),
+  ]);
+
+  const map = new Map<string, number>();
+  for (const r of inboundAgg) {
+    map.set(r.productVariantId, r._sum.quantity ?? 0);
+  }
+  for (const r of outboundAgg) {
+    const prev = map.get(r.productVariantId) ?? 0;
+    map.set(r.productVariantId, prev - (r._sum.quantity ?? 0));
+  }
+  return map;
+}
+
+// ─── fetchProductsKPI ────────────────────────────────────────────────────────
+
+export async function fetchProductsKPI(tenantId: string): Promise<{
   total: number;
   active: number;
   inactive: number;
@@ -18,28 +79,46 @@ export async function fetchProductsKPI(): Promise<{
   totalValue: string;
 }> {
   const [total, active, inactive] = await Promise.all([
-    prisma.product.count({ where: { deletedAt: null } }),
-    prisma.product.count({ where: { active: true, deletedAt: null } }),
-    prisma.product.count({ where: { active: false, deletedAt: null } }),
+    prisma.product.count({ where: { tenantId, deletedAt: null } }),
+    prisma.product.count({ where: { tenantId, active: true, deletedAt: null } }),
+    prisma.product.count({ where: { tenantId, active: false, deletedAt: null } }),
   ]);
 
-  const [lowStock, outOfStock] = await Promise.all([
-    prisma.productVariant.count({
-      where: { quantity: { gt: 0, lte: 10 }, deletedAt: null },
-    }),
-    prisma.productVariant.count({
-      where: { quantity: 0, deletedAt: null },
-    }),
-  ]);
+  const stockMap = await buildNetStockMap(tenantId);
 
   const variants = await prisma.productVariant.findMany({
-    where: { deletedAt: null },
-    select: { quantity: true, price: true },
+    where: { tenantId, deletedAt: null, active: true },
+    select: {
+      id: true,
+      lowStockThreshold: true,
+      lowStockAlertEnabled: true,
+      wholesalePrice: true,
+    },
   });
 
-  const totalValue = variants.reduce((sum, v) => {
-    return sum + parseFloat(v.quantity.toString()) * parseFloat(v.price?.toString() ?? "0");
-  }, 0);
+  let lowStock = 0;
+  let outOfStock = 0;
+  let totalValue = 0;
+
+  for (const v of variants) {
+    const netQty = stockMap.get(v.id) ?? 0;
+    const threshold = v.lowStockThreshold > 0 ? v.lowStockThreshold : 10;
+
+    if (netQty <= 0) {
+      outOfStock++;
+    } else if (v.lowStockAlertEnabled && netQty <= threshold) {
+      lowStock++;
+    }
+
+    if (netQty > 0) {
+      const cost = parseFloat(v.wholesalePrice?.toString() ?? "0");
+      totalValue += netQty * cost;
+    }
+  }
+
+  const activeProducts = await prisma.product.count({
+    where: { tenantId, active: true, deletedAt: null },
+  });
 
   return {
     total,
@@ -51,36 +130,42 @@ export async function fetchProductsKPI(): Promise<{
   };
 }
 
-/**
- * Fetch top selling products
- */
+// ─── fetchTopSellingProducts ─────────────────────────────────────────────────
+
 export async function fetchTopSellingProducts(
+  tenantId: string,
   limit: number,
   dateFrom: Date | null,
   dateTo: Date | null,
   preferredLanguageId: number,
 ): Promise<
   Array<{
-    productId: number;
+    productId: string;
     productName: string;
     reference: string;
-    quantitySold: number | Decimal;
+    quantitySold: number;
     revenue: string;
   }>
 > {
   const documentWhere: Prisma.DocumentWhereInput = {
-    status: { notIn: ["DRAFT", "VOIDED"] },
+    tenantId,
+    documentType: { in: [...SALE_DOCUMENT_TYPES] },
+    status: { notIn: [...EXCLUDED_STATUSES] },
+    deletedAt: null,
+    ...(dateFrom || dateTo
+      ? {
+          documentDate: {
+            ...(dateFrom ? { gte: dateFrom } : {}),
+            ...(dateTo ? { lte: dateTo } : {}),
+          },
+        }
+      : {}),
   };
-
-  if (dateFrom || dateTo) {
-    documentWhere.documentDate = {};
-    if (dateFrom) documentWhere.documentDate.gte = dateFrom;
-    if (dateTo) documentWhere.documentDate.lte = dateTo;
-  }
 
   const result = await prisma.documentLine.groupBy({
     by: ["productId"],
     where: {
+      tenantId,
       document: documentWhere,
       productId: { not: null },
     },
@@ -91,41 +176,46 @@ export async function fetchTopSellingProducts(
 
   if (result.length === 0) return [];
 
-  const productIds = result.map((r) => r.productId).filter((id): id is number => id !== null);
+  const productIds = result.map((r) => r.productId).filter((id): id is string => id !== null);
 
   const products = await prisma.product.findMany({
-    where: { id: { in: productIds } },
+    where: { id: { in: productIds }, tenantId, deletedAt: null },
     select: {
       id: true,
       reference: true,
       translations: {
         where: { languageId: preferredLanguageId },
-        select: { name: true },
         take: 1,
+        select: { name: true },
       },
     },
   });
 
+  const productMap = new Map(products.map((p) => [p.id, p]));
+
   return result.map((r) => {
-    const product = products.find((p) => p.id === r.productId);
+    const product = productMap.get(r.productId!);
     return {
       productId: r.productId!,
       productName: product?.translations[0]?.name ?? product?.reference ?? "N/A",
       reference: product?.reference ?? "N/A",
-      quantitySold: r._sum.quantity ?? 0,
-      revenue: r._sum.lineTotal?.toString() ?? "0",
+      quantitySold: parseFloat(r._sum.quantity?.toString() ?? "0"),
+      revenue: r._sum.lineTotal?.toFixed(2) ?? "0.00",
     };
   });
 }
 
-/**
- * Fetch products by category distribution
- */
-export async function fetchProductsByCategory(): Promise<
-  Array<{ categoryName: string; count: number }>
-> {
+// ─── fetchProductsByCategory ─────────────────────────────────────────────────
+
+export async function fetchProductsByCategory(
+  tenantId: string,
+  preferredLanguageId: number,
+): Promise<Array<{ categoryId: string; categoryName: string; count: number }>> {
   const result = await prisma.productCategory.groupBy({
     by: ["categoryId"],
+    where: {
+      product: { tenantId, deletedAt: null, active: true },
+    },
     _count: { productId: true },
     orderBy: { _count: { productId: "desc" } },
     take: 10,
@@ -134,49 +224,65 @@ export async function fetchProductsByCategory(): Promise<
   const categoryIds = result.map((r) => r.categoryId);
 
   const categories = await prisma.category.findMany({
-    where: { id: { in: categoryIds } },
+    where: { id: { in: categoryIds }, tenantId },
     select: {
       id: true,
       translations: {
+        where: { languageId: preferredLanguageId },
         take: 1,
         select: { name: true },
       },
     },
   });
 
-  return result.map((r) => {
-    const category = categories.find((c) => c.id === r.categoryId);
-    return {
-      categoryName: category?.translations[0]?.name ?? "N/A",
-      count: r._count.productId,
-    };
-  });
+  const categoryMap = new Map(categories.map((c) => [c.id, c]));
+
+  return result.map((r) => ({
+    categoryId: r.categoryId,
+    categoryName: categoryMap.get(r.categoryId)?.translations[0]?.name ?? "N/A",
+    count: r._count.productId,
+  }));
 }
 
-/**
- * Fetch product performance metrics
- */
+// ─── fetchProductsPerformance ────────────────────────────────────────────────
+
 export async function fetchProductsPerformance(
+  tenantId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
+  preferredLanguageId: number,
 ): Promise<{
-  bestPerformer: { productId: number; productName: string; revenue: string } | null;
-  worstPerformer: { productId: number; productName: string; revenue: string } | null;
+  bestPerformer: {
+    productId: string;
+    productName: string;
+    revenue: string;
+  } | null;
+  worstPerformer: {
+    productId: string;
+    productName: string;
+    revenue: string;
+  } | null;
   averageRevenue: string;
 }> {
   const documentWhere: Prisma.DocumentWhereInput = {
-    status: { notIn: ["DRAFT", "VOIDED"] },
+    tenantId,
+    documentType: { in: [...SALE_DOCUMENT_TYPES] },
+    status: { notIn: [...EXCLUDED_STATUSES] },
+    deletedAt: null,
+    ...(dateFrom || dateTo
+      ? {
+          documentDate: {
+            ...(dateFrom ? { gte: dateFrom } : {}),
+            ...(dateTo ? { lte: dateTo } : {}),
+          },
+        }
+      : {}),
   };
-
-  if (dateFrom || dateTo) {
-    documentWhere.documentDate = {};
-    if (dateFrom) documentWhere.documentDate.gte = dateFrom;
-    if (dateTo) documentWhere.documentDate.lte = dateTo;
-  }
 
   const result = await prisma.documentLine.groupBy({
     by: ["productId"],
     where: {
+      tenantId,
       document: documentWhere,
       productId: { not: null },
     },
@@ -184,50 +290,54 @@ export async function fetchProductsPerformance(
     orderBy: { _sum: { lineTotal: "desc" } },
   });
 
-  if (result.length === 0) {
-    return {
-      bestPerformer: null,
-      worstPerformer: null,
-      averageRevenue: "0.00",
-    };
+  const validResults = result.filter(
+    (r) => r._sum.lineTotal !== null && parseFloat(r._sum.lineTotal.toString()) > 0,
+  );
+
+  if (validResults.length === 0) {
+    return { bestPerformer: null, worstPerformer: null, averageRevenue: "0.00" };
   }
 
-  const best = result[0];
-  const worst = result[result.length - 1];
+  const best = validResults[0];
+  const worst = validResults[validResults.length - 1];
 
-  const totalRevenue = result.reduce(
-    (sum, r) => sum + parseFloat(r._sum.lineTotal?.toString() ?? "0"),
+  const totalRevenue = validResults.reduce(
+    (sum, r) => sum + parseFloat(r._sum.lineTotal!.toString()),
     0,
   );
-  const averageRevenue = (totalRevenue / result.length).toFixed(2);
+  const averageRevenue = (totalRevenue / validResults.length).toFixed(2);
 
-  // Fetch product details
-  const productIds = [best.productId, worst.productId].filter(
-    (id): id is number => id !== null,
-  );
+  const productIds = [
+    ...new Set([best.productId, worst.productId].filter((id): id is string => id !== null)),
+  ];
+
   const products = await prisma.product.findMany({
-    where: { id: { in: productIds } },
+    where: { id: { in: productIds }, tenantId, deletedAt: null },
     select: {
       id: true,
       reference: true,
-      translations: { take: 1, select: { name: true } },
+      translations: {
+        where: { languageId: preferredLanguageId },
+        take: 1,
+        select: { name: true },
+      },
     },
   });
 
-  const bestProduct = products.find((p) => p.id === best.productId);
-  const worstProduct = products.find((p) => p.id === worst.productId);
+  const productMap = new Map(products.map((p) => [p.id, p]));
+
+  const formatPerformer = (row: (typeof validResults)[number]) => {
+    const product = productMap.get(row.productId!);
+    return {
+      productId: row.productId!,
+      productName: product?.translations[0]?.name ?? product?.reference ?? "N/A",
+      revenue: parseFloat(row._sum.lineTotal!.toString()).toFixed(2),
+    };
+  };
 
   return {
-    bestPerformer: {
-      productId: best.productId!,
-      productName: bestProduct?.translations[0]?.name ?? bestProduct?.reference ?? "N/A",
-      revenue: best._sum.lineTotal?.toString() ?? "0",
-    },
-    worstPerformer: {
-      productId: worst.productId!,
-      productName: worstProduct?.translations[0]?.name ?? worstProduct?.reference ?? "N/A",
-      revenue: worst._sum.lineTotal?.toString() ?? "0",
-    },
+    bestPerformer: formatPerformer(best),
+    worstPerformer: formatPerformer(worst),
     averageRevenue,
   };
 }

@@ -10,7 +10,8 @@ import { DashboardScope } from "@mini-erp/shared";
  * Fetch sales KPI
  */
 export async function fetchSalesKPI(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -25,6 +26,7 @@ export async function fetchSalesKPI(
   const where: Prisma.DocumentWhereInput = {
     documentType: { in: ["ORDER", "INVOICE"] },
     status: { notIn: ["DRAFT", "VOIDED"] },
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {
@@ -75,7 +77,8 @@ export async function fetchSalesKPI(
  * Fetch sales trend by month
  */
 export async function fetchSalesTrend(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -90,6 +93,7 @@ export async function fetchSalesTrend(
   const where: Prisma.DocumentWhereInput = {
     documentType: { in: ["ORDER", "INVOICE"] },
     status: { notIn: ["DRAFT", "VOIDED"] },
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {
@@ -113,10 +117,7 @@ export async function fetchSalesTrend(
   });
 
   // Group by month
-  const grouped = new Map<
-    string,
-    { revenue: number; orders: number; invoices: number }
-  >();
+  const grouped = new Map<string, { revenue: number; orders: number; invoices: number }>();
 
   for (const doc of documents) {
     const date = new Date(doc.documentDate);

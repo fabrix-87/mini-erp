@@ -10,7 +10,8 @@ import { DashboardScope } from "@mini-erp/shared";
  * Fetch Opportunities KPI data
  */
 export async function fetchOpportunitiesKPI(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -24,7 +25,7 @@ export async function fetchOpportunitiesKPI(
   totalPipelineValue: string;
   winRate: string;
 }> {
-  const where: Prisma.OpportunityWhereInput = {};
+  const where: Prisma.OpportunityWhereInput = { tenantId };
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;
@@ -74,7 +75,8 @@ export async function fetchOpportunitiesKPI(
  * Fetch opportunities by sales stage (pipeline view)
  */
 export async function fetchOpportunitiesPipeline(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -86,7 +88,7 @@ export async function fetchOpportunitiesPipeline(
     avgProbability: string;
   }>
 > {
-  const where: Prisma.OpportunityWhereInput = { status: "OPEN" };
+  const where: Prisma.OpportunityWhereInput = { status: "OPEN", tenantId };
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;
@@ -118,7 +120,8 @@ export async function fetchOpportunitiesPipeline(
  * Fetch opportunities forecast (weighted pipeline value)
  */
 export async function fetchOpportunitiesForecast(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -128,7 +131,7 @@ export async function fetchOpportunitiesForecast(
   expectedCloseThisMonth: string;
   expectedCloseThisQuarter: string;
 }> {
-  const where: Prisma.OpportunityWhereInput = { status: "OPEN" };
+  const where: Prisma.OpportunityWhereInput = { status: "OPEN", tenantId };
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;

@@ -10,7 +10,8 @@ import { DashboardScope } from "@mini-erp/shared";
  * Fetch supplier orders KPI
  */
 export async function fetchSupplierOrdersKPI(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -24,6 +25,7 @@ export async function fetchSupplierOrdersKPI(
   const where: Prisma.DocumentWhereInput = {
     documentType: "SUPPLIER_ORDER",
     supplierId: { not: null },
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {
@@ -36,24 +38,22 @@ export async function fetchSupplierOrdersKPI(
     if (dateTo) where.documentDate.lte = dateTo;
   }
 
-  const [totalOrders, pendingOrders, completedOrders, totalAgg] =
-    await Promise.all([
-      prisma.document.count({ where }),
-      prisma.document.count({
-        where: { ...where, status: { in: ["PENDING_APPROVAL", "SENT"] } },
-      }),
-      prisma.document.count({
-        where: { ...where, status: { in: ["CLOSED", "DELIVERED"] } },
-      }),
-      prisma.document.aggregate({
-        where,
-        _sum: { totalAmount: true },
-      }),
-    ]);
+  const [totalOrders, pendingOrders, completedOrders, totalAgg] = await Promise.all([
+    prisma.document.count({ where }),
+    prisma.document.count({
+      where: { ...where, status: { in: ["PENDING_APPROVAL", "SENT"] } },
+    }),
+    prisma.document.count({
+      where: { ...where, status: { in: ["CLOSED", "DELIVERED"] } },
+    }),
+    prisma.document.aggregate({
+      where,
+      _sum: { totalAmount: true },
+    }),
+  ]);
 
   const totalValue = parseFloat(totalAgg._sum.totalAmount?.toString() ?? "0");
-  const averageOrderValue =
-    totalOrders > 0 ? (totalValue / totalOrders).toFixed(2) : "0.00";
+  const averageOrderValue = totalOrders > 0 ? (totalValue / totalOrders).toFixed(2) : "0.00";
 
   return {
     totalOrders,
@@ -68,7 +68,8 @@ export async function fetchSupplierOrdersKPI(
  * Fetch purchase trend by month
  */
 export async function fetchPurchaseTrend(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -82,6 +83,7 @@ export async function fetchPurchaseTrend(
   const where: Prisma.DocumentWhereInput = {
     documentType: "SUPPLIER_ORDER",
     supplierId: { not: null },
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {

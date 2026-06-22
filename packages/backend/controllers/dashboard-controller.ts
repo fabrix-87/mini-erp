@@ -34,7 +34,8 @@ export const getUnifiedDashboard = async (c: Context<AppBindings>) => {
     getValidatedQuery<DashboardQueryInput>(c);
 
   const currentUser = c.get("user")!;
-  const userRoles = currentUser.roles; // Array<{ id, code, name }>
+  const userRoles = currentUser.currentTenant.roles; 
+  const tenantId = c.get("currentTenantId")!
 
   // 1. Scope authorization
   if (!isScopeAllowedForRoles(userRoles, scope)) {
@@ -89,6 +90,7 @@ export const getUnifiedDashboard = async (c: Context<AppBindings>) => {
   for (const widgetType of enabledWidgets) {
     try {
       widgets[widgetType] = await fetchWidgetData(
+        tenantId,
         widgetType,
         effectiveUserId,
         dateFrom,
@@ -120,7 +122,8 @@ export const getUnifiedDashboard = async (c: Context<AppBindings>) => {
 export const updateDashboardLayout = async (c: Context<AppBindings>) => {
   const { widgets } = getValidatedBody<UpdateLayoutInput>(c);
   const userId = c.get("user")!.userId;
-  const userRoles = c.get("user")!.roles;
+  const userRoles = c.get("user")!.currentTenant.roles;
+  const tenantId = c.get("currentTenantId")!
 
   // Validate that all widgets are allowed for user's roles
   const allowedWidgets = getAllowedWidgets(userRoles);
@@ -180,8 +183,9 @@ export const resetDashboardLayout = async (c: Context<AppBindings>) => {
  * Dispatcher that routes to the appropriate widget service
  */
 async function fetchWidgetData(
+  tenantId: string,
   widgetType: DashboardWidgetType,
-  userId: number,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   feedLimit: number,
@@ -196,106 +200,107 @@ async function fetchWidgetData(
   switch (widgetType) {
     // ── CRM / SALES ───────────────────────────────────────────────────────
     case DashboardWidgetType.LEADS_KPI:
-      return dashboardServices.fetchLeadsKPI(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchLeadsKPI(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.LEADS_FUNNEL:
-      return dashboardServices.fetchLeadsFunnel(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchLeadsFunnel(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.LEADS_FOLLOWUP:
-      return dashboardServices.fetchLeadsFollowUp(userId, feedLimit, scope);
+      return dashboardServices.fetchLeadsFollowUp(tenantId, userId, feedLimit, scope);
     case DashboardWidgetType.LEADS_SOURCE:
-      return dashboardServices.fetchLeadsSourceDistribution(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchLeadsSourceDistribution(tenantId, userId, dateFrom, dateTo, scope);
 
     case DashboardWidgetType.OPPORTUNITIES_KPI:
-      return dashboardServices.fetchOpportunitiesKPI(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchOpportunitiesKPI(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.OPPORTUNITIES_PIPELINE:
-      return dashboardServices.fetchOpportunitiesPipeline(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchOpportunitiesPipeline(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.OPPORTUNITIES_FORECAST:
-      return dashboardServices.fetchOpportunitiesForecast(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchOpportunitiesForecast(tenantId, userId, dateFrom, dateTo, scope);
 
     case DashboardWidgetType.ACTIVITIES_FEED:
-      return dashboardServices.fetchActivitiesFeed(userId, feedLimit, scope);
+      return dashboardServices.fetchActivitiesFeed(tenantId, userId, feedLimit, scope);
     case DashboardWidgetType.ACTIVITIES_KPI:
-      return dashboardServices.fetchActivitiesKPI(userId, scope);
+      return dashboardServices.fetchActivitiesKPI(tenantId, userId, scope);
     case DashboardWidgetType.ACTIVITIES_BY_TYPE:
-      return dashboardServices.fetchActivitiesByType(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchActivitiesByType(tenantId, userId, dateFrom, dateTo, scope);
 
     case DashboardWidgetType.CUSTOMERS_KPI:
-      return dashboardServices.fetchCustomersKPI(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchCustomersKPI(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.TOP_CUSTOMERS:
-      return dashboardServices.fetchTopCustomers(feedLimit, dateFrom, dateTo);
+      return dashboardServices.fetchTopCustomers(tenantId, feedLimit, dateFrom, dateTo);
     case DashboardWidgetType.CUSTOMERS_LIFECYCLE:
-      return dashboardServices.fetchCustomerLifecycle(dateFrom, dateTo);
+      return dashboardServices.fetchCustomerLifecycle(tenantId, dateFrom, dateTo);
 
     // ── FINANCE / ACCOUNTING ──────────────────────────────────────────────
     case DashboardWidgetType.REVENUE_KPI:
-      return dashboardServices.fetchRevenueKPI(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchRevenueKPI(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.INVOICES_STATUS:
-      return dashboardServices.fetchInvoicesStatus(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchInvoicesStatus(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.OVERDUE_INSTALLMENTS:
-      return dashboardServices.fetchOverdueInstallments(userId, feedLimit, scope);
+      return dashboardServices.fetchOverdueInstallments(tenantId, userId, feedLimit, scope);
     case DashboardWidgetType.REVENUE_TREND:
-      return dashboardServices.fetchRevenueTrend(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchRevenueTrend(tenantId, userId, dateFrom, dateTo, scope);
 
     case DashboardWidgetType.SUPPLIER_ORDERS_KPI:
-      return dashboardServices.fetchSupplierOrdersKPI(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchSupplierOrdersKPI(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.PURCHASE_TREND:
-      return dashboardServices.fetchPurchaseTrend(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchPurchaseTrend(tenantId, userId, dateFrom, dateTo, scope);
 
     case DashboardWidgetType.CASH_FLOW:
-      return dashboardServices.fetchCashFlow(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchCashFlow(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.PROFIT_MARGIN:
-      return dashboardServices.fetchProfitMargin(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchProfitMargin(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.ACCOUNTS_PAYABLE:
-      return dashboardServices.fetchAccountsPayable(userId, scope);
+      return dashboardServices.fetchAccountsPayable(tenantId, userId, scope);
     case DashboardWidgetType.ACCOUNTS_RECEIVABLE:
-      return dashboardServices.fetchAccountsReceivable(userId, scope);
+      return dashboardServices.fetchAccountsReceivable(tenantId, userId, scope);
 
     // ── DOCUMENTS ─────────────────────────────────────────────────────────
     case DashboardWidgetType.DOCUMENTS_KPI:
-      return dashboardServices.fetchDocumentsKPI(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchDocumentsKPI(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.DOCUMENTS_BY_TYPE:
-      return dashboardServices.fetchDocumentsByType(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchDocumentsByType(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.RECENT_DOCUMENTS:
-      return dashboardServices.fetchRecentDocuments(userId, feedLimit, scope);
+      return dashboardServices.fetchRecentDocuments(tenantId, userId, feedLimit, scope);
     case DashboardWidgetType.DOCUMENTS_FULFILLMENT:
-      return dashboardServices.fetchDocumentsFulfillment(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchDocumentsFulfillment(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.EXPIRING_QUOTES:
-      return dashboardServices.fetchExpiringQuotes(userId, feedLimit, scope);
+      return dashboardServices.fetchExpiringQuotes(tenantId, userId, feedLimit, scope);
 
     // ── WAREHOUSE / LOGISTICS ─────────────────────────────────────────────
     case DashboardWidgetType.STOCK_ALERTS:
-      return dashboardServices.fetchStockAlerts(feedLimit);
+      return dashboardServices.fetchStockAlerts(tenantId, feedLimit);
     case DashboardWidgetType.STOCK_VALUE:
-      return dashboardServices.fetchStockValue();
+      return dashboardServices.fetchStockValue(tenantId);
     case DashboardWidgetType.STOCK_MOVEMENTS:
-      return dashboardServices.fetchStockMovements(feedLimit);
+      return dashboardServices.fetchStockMovements(tenantId, feedLimit);
 
     case DashboardWidgetType.DELIVERIES_KPI:
-      return dashboardServices.fetchDeliveriesKPI(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchDeliveriesKPI(tenantId, userId, dateFrom, dateTo, scope);
     case DashboardWidgetType.DELIVERY_PERFORMANCE:
-      return dashboardServices.fetchDeliveryPerformance(userId, dateFrom, dateTo, scope);
+      return dashboardServices.fetchDeliveryPerformance(tenantId, userId, dateFrom, dateTo, scope);
 
     // ── PRODUCTS ──────────────────────────────────────────────────────────
     case DashboardWidgetType.PRODUCTS_KPI:
-      return dashboardServices.fetchProductsKPI();
+      return dashboardServices.fetchProductsKPI(tenantId);
     case DashboardWidgetType.TOP_SELLING_PRODUCTS:
       return dashboardServices.fetchTopSellingProducts(
+        tenantId,
         feedLimit,
         dateFrom,
         dateTo,
         preferredLanguageId,
       );
     case DashboardWidgetType.PRODUCTS_BY_CATEGORY:
-      return dashboardServices.fetchProductsByCategory();
+      return dashboardServices.fetchProductsByCategory(tenantId, preferredLanguageId);
     case DashboardWidgetType.PRODUCTS_PERFORMANCE:
-      return dashboardServices.fetchProductsPerformance(dateFrom, dateTo);
+      return dashboardServices.fetchProductsPerformance(tenantId, dateFrom, dateTo, preferredLanguageId);
 
     // ── TEAM / COLLABORATION ──────────────────────────────────────────────
     case DashboardWidgetType.TEAM_PERFORMANCE:
-      return dashboardServices.fetchTeamPerformance(dateFrom, dateTo, feedLimit);
+      return dashboardServices.fetchTeamPerformance(tenantId, dateFrom, dateTo, feedLimit);
 
     // ── ALERTS / NOTIFICATIONS ────────────────────────────────────────────
     case DashboardWidgetType.ALERTS:
-      return dashboardServices.fetchAlerts(userId, feedLimit, scope);
+      return dashboardServices.fetchAlerts(tenantId, userId, feedLimit, scope);
 
     // ── PLACEHOLDERS (to implement later) ────────────────────────────────
     case DashboardWidgetType.USER_ACTIVITY:

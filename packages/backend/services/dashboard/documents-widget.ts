@@ -10,7 +10,8 @@ import { DashboardScope } from "@mini-erp/shared";
  * Fetch documents KPI
  */
 export async function fetchDocumentsKPI(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -24,7 +25,7 @@ export async function fetchDocumentsKPI(
   totalValue: string;
   paidValue: string;
 }> {
-  const where: Prisma.DocumentWhereInput = {};
+  const where: Prisma.DocumentWhereInput = { tenantId };
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;
@@ -80,12 +81,13 @@ export async function fetchDocumentsKPI(
  * Fetch documents breakdown by type (QUOTE, ORDER, INVOICE, DELIVERY_NOTE)
  */
 export async function fetchDocumentsByType(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
 ): Promise<Array<{ type: string; count: number; totalValue: string }>> {
-  const where: Prisma.DocumentWhereInput = {};
+  const where: Prisma.DocumentWhereInput = { tenantId };
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;
@@ -116,21 +118,22 @@ export async function fetchDocumentsByType(
  * Fetch recent documents (latest 10)
  */
 export async function fetchRecentDocuments(
-  userId: number,
+  tenantId: string,
+  userId: string,
   limit: number,
   scope: DashboardScope,
 ): Promise<
   Array<{
-    id: number;
+    id: string;
     documentNumber: string | null;
     documentType: string;
     status: string;
     documentDate: Date;
     totalAmount: any;
-    customerName: string | null;
+    counterpartyName: string | null;
   }>
 > {
-  const where: Prisma.DocumentWhereInput = {};
+  const where: Prisma.DocumentWhereInput = { tenantId };
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;
@@ -147,7 +150,7 @@ export async function fetchRecentDocuments(
       status: true,
       documentDate: true,
       totalAmount: true,
-      customerName: true,
+      counterpartyName: true,
     },
   });
 
@@ -158,14 +161,15 @@ export async function fetchRecentDocuments(
  * Fetch expiring quotes (quotes expiring within next 7 days)
  */
 export async function fetchExpiringQuotes(
-  userId: number,
+  tenantId: string,
+  userId: string,
   limit: number,
   scope: DashboardScope,
 ): Promise<
   Array<{
-    id: number;
+    id: string;
     documentNumber: string | null;
-    customerName: string | null;
+    counterpartyName: string | null;
     validUntil: Date;
     totalAmount: any;
     daysUntilExpiry: number;
@@ -179,6 +183,7 @@ export async function fetchExpiringQuotes(
     documentType: "QUOTE",
     status: "SENT",
     validUntil: { gte: now, lte: sevenDaysFromNow },
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {
@@ -192,7 +197,7 @@ export async function fetchExpiringQuotes(
     select: {
       id: true,
       documentNumber: true,
-      customerName: true,
+      counterpartyName: true,
       validUntil: true,
       totalAmount: true,
     },
@@ -205,7 +210,7 @@ export async function fetchExpiringQuotes(
     return {
       id: q.id,
       documentNumber: q.documentNumber,
-      customerName: q.customerName,
+      counterpartyName: q.counterpartyName,
       validUntil: q.validUntil!,
       totalAmount: q.totalAmount,
       daysUntilExpiry,

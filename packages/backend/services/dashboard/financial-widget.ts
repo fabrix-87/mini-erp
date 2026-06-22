@@ -10,7 +10,8 @@ import { DashboardScope } from "@mini-erp/shared";
  * Fetch financial KPI
  */
 export async function fetchFinancialKPI(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -24,6 +25,7 @@ export async function fetchFinancialKPI(
 }> {
   const where: Prisma.DocumentWhereInput = {
     documentType: "INVOICE",
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {
@@ -89,13 +91,15 @@ export async function fetchFinancialKPI(
  * Fetch payment status distribution
  */
 export async function fetchPaymentStatusDistribution(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
 ): Promise<Array<{ status: string; count: number; totalAmount: string }>> {
   const where: Prisma.DocumentWhereInput = {
     documentType: "INVOICE",
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {

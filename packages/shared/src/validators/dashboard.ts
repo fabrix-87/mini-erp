@@ -4,7 +4,7 @@
 
 import { z } from "zod";
 import { DashboardScope, DashboardPeriod, DashboardWidgetType } from "../constants/dashboard";
-import { createIdSchema } from "./primitives/id";
+import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { isoDateSchema } from "./primitives/date";
 import { queryNumberRangeSchema } from "./query/params";
 
@@ -28,7 +28,7 @@ export const dashboardQuerySchema = z
      * Target user ID — used only when scope is TEAM or ALL.
      * Ignored when scope is OWN.
      */
-    targetUserId: createIdSchema("Target user ID non valido").optional(),
+    targetUserId: createCuidSchema("Target user ID non valido").optional(),
 
     /**
      * Range start — required only when period is CUSTOM.

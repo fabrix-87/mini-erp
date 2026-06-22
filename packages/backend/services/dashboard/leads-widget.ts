@@ -10,7 +10,8 @@ import { DashboardScope } from "@mini-erp/shared";
  * Fetch Leads KPI data with correct LeadStatus enum values
  */
 export async function fetchLeadsKPI(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -26,7 +27,9 @@ export async function fetchLeadsKPI(
   unqualified: number;
   conversionRate: string;
 }> {
-  const where: Prisma.LeadWhereInput = {};
+  const where: Prisma.LeadWhereInput = {
+    tenantId,
+  };
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;
@@ -38,30 +41,21 @@ export async function fetchLeadsKPI(
     if (dateTo) where.createdAt.lte = dateTo;
   }
 
-  const [
-    total,
-    newLeads,
-    contacted,
-    qualified,
-    nurturing,
-    converted,
-    lost,
-    unqualified,
-  ] = await Promise.all([
-    prisma.lead.count({ where }),
-    prisma.lead.count({ where: { ...where, status: "NEW" } }),
-    prisma.lead.count({ where: { ...where, status: "CONTACTED" } }),
-    prisma.lead.count({ where: { ...where, status: "QUALIFIED" } }),
-    prisma.lead.count({ where: { ...where, status: "NURTURING" } }),
-    prisma.lead.count({ where: { ...where, status: "CONVERTED" } }),
-    prisma.lead.count({ where: { ...where, status: "LOST" } }),
-    prisma.lead.count({ where: { ...where, status: "UNQUALIFIED" } }),
-  ]);
+  const [total, newLeads, contacted, qualified, nurturing, converted, lost, unqualified] =
+    await Promise.all([
+      prisma.lead.count({ where }),
+      prisma.lead.count({ where: { ...where, status: "NEW" } }),
+      prisma.lead.count({ where: { ...where, status: "CONTACTED" } }),
+      prisma.lead.count({ where: { ...where, status: "QUALIFIED" } }),
+      prisma.lead.count({ where: { ...where, status: "NURTURING" } }),
+      prisma.lead.count({ where: { ...where, status: "CONVERTED" } }),
+      prisma.lead.count({ where: { ...where, status: "LOST" } }),
+      prisma.lead.count({ where: { ...where, status: "UNQUALIFIED" } }),
+    ]);
 
   const active = newLeads + contacted + qualified + nurturing;
   const closed = converted + lost + unqualified;
-  const conversionRate =
-    closed > 0 ? ((converted / closed) * 100).toFixed(1) : "0.0";
+  const conversionRate = closed > 0 ? ((converted / closed) * 100).toFixed(1) : "0.0";
 
   return {
     total,
@@ -81,7 +75,8 @@ export async function fetchLeadsKPI(
  * Fetch leads funnel visualization data (NEW → CONTACTED → QUALIFIED → CONVERTED)
  */
 export async function fetchLeadsFunnel(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -92,7 +87,9 @@ export async function fetchLeadsFunnel(
     percentage: string;
   }>
 > {
-  const where: Prisma.LeadWhereInput = {};
+  const where: Prisma.LeadWhereInput = {
+    tenantId,
+  };
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;
@@ -130,23 +127,25 @@ export async function fetchLeadsFunnel(
  * Fetch leads requiring follow-up
  */
 export async function fetchLeadsFollowUp(
-  userId: number,
+  tenantId: string,
+  userId: string,
   limit: number,
   scope: DashboardScope,
 ): Promise<
   Array<{
-    id: number;
+    id: string;
     companyName: string | null;
     status: string;
     lastContactDate: Date | null;
     assignedUser: {
-      id: number;
+      id: string;
       username: string;
     } | null;
   }>
 > {
   const where: Prisma.LeadWhereInput = {
     status: { in: ["CONTACTED", "QUALIFIED", "NURTURING"] },
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {
@@ -157,10 +156,7 @@ export async function fetchLeadsFollowUp(
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  where.OR = [
-    { lastContactDate: null },
-    { lastContactDate: { lt: sevenDaysAgo } },
-  ];
+  where.OR = [{ lastContactDate: null }, { lastContactDate: { lt: sevenDaysAgo } }];
 
   const leads = await prisma.lead.findMany({
     where,
@@ -187,12 +183,15 @@ export async function fetchLeadsFollowUp(
  * Maps to: LEADS_SOURCE widget
  */
 export async function fetchLeadsSourceDistribution(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
 ): Promise<Array<{ source: string; count: number; percentage: string }>> {
-  const where: Prisma.LeadWhereInput = {};
+  const where: Prisma.LeadWhereInput = {
+    tenantId,
+  };
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;

@@ -10,7 +10,8 @@ import { DashboardScope } from "@mini-erp/shared";
  * Fetch cash flow analysis
  */
 export async function fetchCashFlow(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -21,7 +22,7 @@ export async function fetchCashFlow(
   openingBalance: string;
   closingBalance: string;
 }> {
-  const where: Prisma.DocumentWhereInput = {};
+  const where: Prisma.DocumentWhereInput = { tenantId };
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;
@@ -74,7 +75,8 @@ export async function fetchCashFlow(
  * Fetch profit margin analysis
  */
 export async function fetchProfitMargin(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -85,7 +87,7 @@ export async function fetchProfitMargin(
   profitMargin: string;
   trend: Array<{ period: string; margin: string }>;
 }> {
-  const where: Prisma.DocumentWhereInput = {};
+  const where: Prisma.DocumentWhereInput = { tenantId };
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;
@@ -139,7 +141,8 @@ export async function fetchProfitMargin(
  * Fetch accounts payable summary
  */
 export async function fetchAccountsPayable(
-  userId: number,
+  tenantId: string,
+  userId: string,
   scope: DashboardScope,
 ): Promise<{
   total: string;
@@ -150,6 +153,7 @@ export async function fetchAccountsPayable(
   const where: Prisma.DocumentWhereInput = {
     documentType: "SUPPLIER_ORDER",
     status: { in: ["UNPAID", "PARTIALLY_PAID"] },
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {
@@ -188,7 +192,8 @@ export async function fetchAccountsPayable(
  * Fetch accounts receivable summary
  */
 export async function fetchAccountsReceivable(
-  userId: number,
+  tenantId: string,
+  userId: string,
   scope: DashboardScope,
 ): Promise<{
   total: string;
@@ -199,6 +204,7 @@ export async function fetchAccountsReceivable(
   const where: Prisma.DocumentWhereInput = {
     documentType: "INVOICE",
     status: { in: ["UNPAID", "PARTIALLY_PAID"] },
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {

@@ -10,12 +10,13 @@ import { DashboardScope } from "@mini-erp/shared";
  * Fetch recent activities feed
  */
 export async function fetchActivitiesFeed(
-  userId: number,
+  tenantId: string,
+  userId: string,
   limit: number,
   scope: DashboardScope,
 ): Promise<
   Array<{
-    id: number;
+    id: string;
     subject: string;
     type: string;
     priority: string | null;
@@ -23,18 +24,15 @@ export async function fetchActivitiesFeed(
     scheduledStart: Date;
     createdAt: Date;
     assignedUser: {
-      id: number;
+      id: string;
       username: string;
     } | null;
   }>
 > {
-  const where: Prisma.ActivityWhereInput = {};
+  const where: Prisma.ActivityWhereInput = { tenantId };
 
   if (scope === DashboardScope.OWN) {
-    where.OR = [
-      { assignedUserId: userId },
-      { participants: { some: { userId } } },
-    ];
+    where.OR = [{ assignedUserId: userId }, { participants: { some: { userId } } }];
   }
 
   const activities = await prisma.activity.findMany({
@@ -65,7 +63,8 @@ export async function fetchActivitiesFeed(
  * Fetch activities KPI (overdue, today, upcoming)
  */
 export async function fetchActivitiesKPI(
-  userId: number,
+  tenantId: string,
+  userId: string,
   scope: DashboardScope,
 ): Promise<{
   total: number;
@@ -76,13 +75,10 @@ export async function fetchActivitiesKPI(
   scheduled: number;
   inProgress: number;
 }> {
-  const where: Prisma.ActivityWhereInput = {};
+  const where: Prisma.ActivityWhereInput = { tenantId };
 
   if (scope === DashboardScope.OWN) {
-    where.OR = [
-      { assignedUserId: userId },
-      { participants: { some: { userId } } },
-    ];
+    where.OR = [{ assignedUserId: userId }, { participants: { some: { userId } } }];
   }
 
   const now = new Date();
@@ -95,34 +91,33 @@ export async function fetchActivitiesKPI(
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(endOfWeek.getDate() + 7);
 
-  const [total, overdue, today, thisWeek, completed, scheduled, inProgress] =
-    await Promise.all([
-      prisma.activity.count({ where }),
-      prisma.activity.count({
-        where: {
-          ...where,
-          scheduledStart: { lt: startOfDay },
-          status: { in: ["SCHEDULED", "IN_PROGRESS"] },
-        },
-      }),
-      prisma.activity.count({
-        where: {
-          ...where,
-          scheduledStart: { gte: startOfDay, lt: endOfDay },
-          status: { notIn: ["COMPLETED", "CANCELLED"] },
-        },
-      }),
-      prisma.activity.count({
-        where: {
-          ...where,
-          scheduledStart: { gte: startOfWeek, lt: endOfWeek },
-          status: { notIn: ["COMPLETED", "CANCELLED"] },
-        },
-      }),
-      prisma.activity.count({ where: { ...where, status: "COMPLETED" } }),
-      prisma.activity.count({ where: { ...where, status: "SCHEDULED" } }),
-      prisma.activity.count({ where: { ...where, status: "IN_PROGRESS" } }),
-    ]);
+  const [total, overdue, today, thisWeek, completed, scheduled, inProgress] = await Promise.all([
+    prisma.activity.count({ where }),
+    prisma.activity.count({
+      where: {
+        ...where,
+        scheduledStart: { lt: startOfDay },
+        status: { in: ["SCHEDULED", "IN_PROGRESS"] },
+      },
+    }),
+    prisma.activity.count({
+      where: {
+        ...where,
+        scheduledStart: { gte: startOfDay, lt: endOfDay },
+        status: { notIn: ["COMPLETED", "CANCELLED"] },
+      },
+    }),
+    prisma.activity.count({
+      where: {
+        ...where,
+        scheduledStart: { gte: startOfWeek, lt: endOfWeek },
+        status: { notIn: ["COMPLETED", "CANCELLED"] },
+      },
+    }),
+    prisma.activity.count({ where: { ...where, status: "COMPLETED" } }),
+    prisma.activity.count({ where: { ...where, status: "SCHEDULED" } }),
+    prisma.activity.count({ where: { ...where, status: "IN_PROGRESS" } }),
+  ]);
 
   return {
     total,
@@ -139,18 +134,16 @@ export async function fetchActivitiesKPI(
  * Fetch activities breakdown by type
  */
 export async function fetchActivitiesByType(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
 ): Promise<Array<{ type: string; count: number }>> {
-  const where: Prisma.ActivityWhereInput = {};
+  const where: Prisma.ActivityWhereInput = { tenantId };
 
   if (scope === DashboardScope.OWN) {
-    where.OR = [
-      { assignedUserId: userId },
-      { participants: { some: { userId } } },
-    ];
+    where.OR = [{ assignedUserId: userId }, { participants: { some: { userId } } }];
   }
 
   if (dateFrom || dateTo) {

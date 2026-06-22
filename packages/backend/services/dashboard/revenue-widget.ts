@@ -10,7 +10,8 @@ import { DashboardScope } from "@mini-erp/shared";
  * Fetch revenue KPI
  */
 export async function fetchRevenueKPI(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -25,6 +26,7 @@ export async function fetchRevenueKPI(
   const where: Prisma.DocumentWhereInput = {
     documentType: "INVOICE",
     status: { notIn: ["DRAFT", "VOIDED"] },
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {
@@ -55,9 +57,7 @@ export async function fetchRevenueKPI(
 
   const totalRevenue = parseFloat(totalAgg._sum.totalAmount?.toString() ?? "0");
   const paidRevenue = parseFloat(paidAgg._sum.paidAmount?.toString() ?? "0");
-  const pendingRevenue = parseFloat(
-    pendingAgg._sum.totalAmount?.toString() ?? "0",
-  );
+  const pendingRevenue = parseFloat(pendingAgg._sum.totalAmount?.toString() ?? "0");
 
   const averageInvoiceValue =
     invoicesCount > 0 ? (totalRevenue / invoicesCount).toFixed(2) : "0.00";
@@ -77,14 +77,9 @@ export async function fetchRevenueKPI(
       _sum: { totalAmount: true },
     });
 
-    const previousRevenue = parseFloat(
-      previousAgg._sum.totalAmount?.toString() ?? "0",
-    );
+    const previousRevenue = parseFloat(previousAgg._sum.totalAmount?.toString() ?? "0");
     if (previousRevenue > 0) {
-      growthRate = (
-        ((totalRevenue - previousRevenue) / previousRevenue) *
-        100
-      ).toFixed(1);
+      growthRate = (((totalRevenue - previousRevenue) / previousRevenue) * 100).toFixed(1);
     }
   }
 
@@ -102,13 +97,15 @@ export async function fetchRevenueKPI(
  * Fetch invoices status distribution
  */
 export async function fetchInvoicesStatus(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
 ): Promise<Array<{ status: string; count: number; totalAmount: string }>> {
   const where: Prisma.DocumentWhereInput = {
     documentType: "INVOICE",
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {
@@ -140,19 +137,20 @@ export async function fetchInvoicesStatus(
  * Fetch overdue installments
  */
 export async function fetchOverdueInstallments(
-  userId: number,
+  tenantId: string,
+  userId: string,
   limit: number,
   scope: DashboardScope,
 ): Promise<
   Array<{
-    id: number;
-    documentId: number;
+    id: string;
+    documentId: string;
     documentNumber: string | null;
     installmentNumber: number;
     amount: any;
     dueDate: Date;
     daysPastDue: number;
-    customerName: string | null;
+    counterpartyName: string | null;
   }>
 > {
   const now = new Date();
@@ -160,6 +158,7 @@ export async function fetchOverdueInstallments(
   const where: Prisma.DocumentPaymentInstallmentWhereInput = {
     dueDate: { lt: now },
     status: { in: ["PENDING", "PARTIAL"] },
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {
@@ -179,7 +178,7 @@ export async function fetchOverdueInstallments(
       document: {
         select: {
           documentNumber: true,
-          customerName: true,
+          counterpartyName: true,
         },
       },
     },
@@ -187,8 +186,7 @@ export async function fetchOverdueInstallments(
 
   return installments.map((inst) => {
     const daysPastDue = Math.floor(
-      (now.getTime() - new Date(inst.dueDate).getTime()) /
-        (1000 * 60 * 60 * 24),
+      (now.getTime() - new Date(inst.dueDate).getTime()) / (1000 * 60 * 60 * 24),
     );
     return {
       id: inst.id,
@@ -198,7 +196,7 @@ export async function fetchOverdueInstallments(
       amount: inst.amount,
       dueDate: inst.dueDate,
       daysPastDue,
-      customerName: inst.document.customerName,
+      counterpartyName: inst.document.counterpartyName,
     };
   });
 }
@@ -207,7 +205,8 @@ export async function fetchOverdueInstallments(
  * Fetch revenue trend by month
  */
 export async function fetchRevenueTrend(
-  userId: number,
+  tenantId: string,
+  userId: string,
   dateFrom: Date | null,
   dateTo: Date | null,
   scope: DashboardScope,
@@ -221,6 +220,7 @@ export async function fetchRevenueTrend(
   const where: Prisma.DocumentWhereInput = {
     documentType: "INVOICE",
     status: { notIn: ["DRAFT", "VOIDED"] },
+    tenantId,
   };
 
   if (scope === DashboardScope.OWN) {

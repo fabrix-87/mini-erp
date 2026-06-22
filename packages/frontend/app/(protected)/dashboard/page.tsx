@@ -13,6 +13,7 @@ import {
   useResetDashboardLayout,
   useSaveDashboardLayout,
 } from "@/hooks/use-dashboard";
+import DashboardSkeleton from "./loading";
 
 /**
  * Scopes visibili all'utente: in futuro derivare da useAuth() → user.roles.
@@ -94,13 +95,17 @@ export default function DashboardPage() {
         onResetLayout={handleResetLayout}
         onToggleEditMode={handleToggleEditMode}
       />
-      <DashboardGrid
-        layout={activeLayout}
-        widgets={dashboard?.data.widgets ?? {}}
-        isEditMode={isEditMode}
-        isLoading={isLoading}
-        onLayoutChange={handleLayoutChange}
-      />
+      {isLoading ? (
+        <DashboardSkeleton />
+      ) : (
+        <DashboardGrid
+          layout={activeLayout}
+          widgets={dashboard?.data.widgets ?? {}}
+          isEditMode={isEditMode}
+          isLoading={isLoading}
+          onLayoutChange={handleLayoutChange}
+        />
+      )}
     </div>
   );
 }
