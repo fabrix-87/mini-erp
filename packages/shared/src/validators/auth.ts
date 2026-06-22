@@ -13,7 +13,10 @@ import { passwordSchema } from "./user";
 export const loginSchema = z
   .object({
     email: emailSchema(),
-    password: z.string().min(1, "Password obbligatoria"),
+    password: z
+      .string()
+      .min(1, "Password obbligatoria")
+      .min(6, "La password deve contenere almeno 6 caratteri"),
   })
   .strict();
 

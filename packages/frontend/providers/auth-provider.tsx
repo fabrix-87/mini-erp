@@ -2,7 +2,7 @@
 "use client";
 
 import { createContext, useEffect, useState, ReactNode, useCallback, useRef } from "react";
-import { logoutAction } from "@/actions/auth";
+import { logoutAction } from "@/actions/auth-actions";
 import { getUserFromUserCookie, isAuthenticated } from "@/lib/jwt";
 import {
   ACCESS_TOKEN_LIFETIME_MS,
@@ -51,8 +51,15 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // ============================================================================
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserSessionPayload | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Inizializza user in modo sincrono al primo render
+  // evita il flash di stato non autenticato
+  const [user, setUser] = useState<UserSessionPayload | null>(() => {
+    // Lato server non abbiamo document, ritorna null
+    if (typeof document === "undefined") return null;
+    return getUserFromUserCookie();
+  });
+  // isLoading parte già a false se abbiamo letto il cookie sincrono
+  const [isLoading, setIsLoading] = useState(false);
   const refreshTimerRef = useRef<NodeJS.Timeout>(null);
   const isRefreshingRef = useRef(false);
 
@@ -83,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ========================================
   // Initial Auth Check — solo al mount
   // ========================================
+  /*
   useEffect(() => {
     try {
       if (isAuthenticated()) {
@@ -94,6 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     }
   }, []);
+  */
 
   // ========================================
   // Proactive Token Refresh

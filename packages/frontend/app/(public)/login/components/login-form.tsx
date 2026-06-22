@@ -3,7 +3,6 @@
 import { useState, useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -11,35 +10,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
-import { loginAction } from "@/actions/auth";
+import { loginAction } from "@/actions/auth-actions";
 import { toast } from "sonner";
 import { useFingerprint } from "@/hooks/use-fingerprint";
-
-// Schema di validazione
-const loginSchema = z.object({
-  email: z.string().email("Inserisci un'email valida"),
-  password: z
-    .string()
-    .min(1, "La password è obbligatoria")
-    .min(6, "La password deve contenere almeno 6 caratteri"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+import { LoginInput, loginSchema } from "@mini-erp/shared";
+import { useRouter } from "next/navigation";
 
 // ============================================================================
 // Submit Button Component
 // ============================================================================
-function SubmitButton({ isValid }: { isValid: boolean }) {
-  const { pending } = useFormStatus();
-
+function SubmitButton({ isValid, isPending }: { isValid: boolean; isPending: boolean }) {
   return (
     <Button
       type="submit"
       className="w-full h-11 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg shadow-blue-500/30 transition-all"
-      disabled={pending || !isValid}
+      disabled={isPending || !isValid}
     >
-      {pending ? (
+      {isPending ? (
         <>
           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
           Accesso in corso...
@@ -55,18 +42,19 @@ function SubmitButton({ isValid }: { isValid: boolean }) {
 // Login Form Component
 // ============================================================================
 export function LoginForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  // useActionState per gestire lo stato
-  const [state, formAction, isPending] = useActionState(loginAction, undefined);
-  const { fingerprint, isLoading: fpLoading } = useFingerprint();
+  const [state, formAction] = useActionState(loginAction, null);
+  const { fingerprint } = useFingerprint();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
     setError,
-  } = useForm<LoginFormData>({
+  } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     mode: "onBlur",
   });
@@ -76,28 +64,36 @@ export function LoginForm() {
   // ========================================
   useEffect(() => {
     if (state?.error) {
-      toast.error("Login fallito", {
-        description: state.error,
-      });
-
-      setError("root", {
-        type: "manual",
-        message: state.error,
-      });
+      toast.error("Login fallito", { description: state.error });
+      setError("root", { type: "manual", message: state.error });
     }
   }, [state, setError]);
 
-  if (fpLoading) {
-    return (
-      <div className="loading">
-        <p>Initializing device security...</p>
-      </div>
-    );
-  }
+  // ========================================
+  // Redirect su successo
+  // ========================================
+  useEffect(() => {
+    if (state?.success) {
+      router.refresh();
+      toast.success("Accesso eseguito");
+      window.location.href = "/dashboard";
+    }
+  }, [state, router]);
+
+  // ========================================
+  // Submit: valida con zod poi invia come FormData
+  // ========================================
+  const onSubmit = (data: LoginInput) => {
+    const formData = new FormData();
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    if (fingerprint) formData.append("fingerprint", fingerprint);
+
+    startTransition(() => formAction(formData));
+  };
 
   return (
-    <form action={formAction} className="space-y-6">
-      {/* Error Alert */}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {(state?.error || errors.root) && (
         <Alert variant="destructive" className="border-red-200 bg-red-50">
           <AlertCircle className="h-4 w-4" />
@@ -119,17 +115,12 @@ export function LoginForm() {
           autoComplete="email"
           className={cn(
             "h-11 bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500",
-            errors.email &&
-              "border-red-500 focus:border-red-500 focus:ring-red-500"
+            errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500",
           )}
           {...register("email")}
           aria-invalid={errors.email ? "true" : "false"}
         />
-        {errors.email && (
-          <p className="text-sm font-medium text-red-600">
-            {errors.email.message}
-          </p>
-        )}
+        {errors.email && <p className="text-sm font-medium text-red-600">{errors.email.message}</p>}
       </div>
 
       {/* Password Field */}
@@ -157,8 +148,7 @@ export function LoginForm() {
             autoComplete="current-password"
             className={cn(
               "h-11 pr-11 bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500",
-              errors.password &&
-                "border-red-500 focus:border-red-500 focus:ring-red-500"
+              errors.password && "border-red-500 focus:border-red-500 focus:ring-red-500",
             )}
             {...register("password")}
             aria-invalid={errors.password ? "true" : "false"}
@@ -170,22 +160,15 @@ export function LoginForm() {
             aria-label={showPassword ? "Nascondi password" : "Mostra password"}
             tabIndex={-1}
           >
-            {showPassword ? (
-              <EyeOff className="h-5 w-5" />
-            ) : (
-              <Eye className="h-5 w-5" />
-            )}
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         </div>
         {errors.password && (
-          <p className="text-sm font-medium text-red-600">
-            {errors.password.message}
-          </p>
+          <p className="text-sm font-medium text-red-600">{errors.password.message}</p>
         )}
       </div>
 
-      {/* Submit Button */}
-      <SubmitButton isValid={isValid} />
+      <SubmitButton isValid={isValid} isPending={isPending} />
     </form>
   );
 }

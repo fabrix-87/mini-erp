@@ -1,4 +1,4 @@
-// actions/auth.ts
+// actions/auth-actions.ts
 "use server";
 
 import { cookies } from "next/headers";
@@ -27,14 +27,13 @@ export async function loginAction(prevState: any, formData: FormData) {
     );
 
     setCookies(data.accessToken, data.refreshToken, data.user);
+    return { success: true };
   } catch (error) {
     if (error instanceof ServerApiError) {
       return { error: error.message };
     }
     return { error: "Errore di connessione al server" };
   }
-
-  redirect("/dashboard");
 }
 
 export async function logoutAction() {
