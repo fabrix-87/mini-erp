@@ -74,7 +74,7 @@ export function LoginForm() {
   // ========================================
   useEffect(() => {
     if (state?.success) {
-      router.refresh();
+      //router.refresh();
       toast.success("Accesso eseguito");
       window.location.href = "/dashboard";
     }
