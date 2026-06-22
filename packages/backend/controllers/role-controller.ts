@@ -110,14 +110,25 @@ export const getRoleById = async (c: Context<AppBindings>) => {
 
   const role = await prisma.role.findFirst({
     where: {
-      id: Number(id),
-      OR: [{ tenantId: tenantId }, { tenantId: null }],
+      id,
+      AND: [
+        {
+          OR: [{ tenantId: tenantId }, { tenantId: null }],
+        },
+      ],
     },
     select: getRoleSelect(tenantId),
   });
 
   if (!role) {
     throw new NotFoundError("Ruolo non trovato");
+  }
+
+  if (role) {
+    // Ordina i permessi in memoria prima di mandarli al client
+    role.permissions.sort((a, b) =>
+      (a.permission?.resource || "").localeCompare(b.permission?.resource || ""),
+    );
   }
 
   return sendSuccess(c, formatRolePermissions(role));

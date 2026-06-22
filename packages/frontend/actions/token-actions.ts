@@ -3,34 +3,37 @@
 
 import { cookies } from 'next/headers';
 import { performTokenRefresh } from '@/services/server/auth';
+import { clearAuthCookies } from '@/lib/server/cookies';
 
 /**
- * Server Action per refresh token
- * Chiamata dal client quando riceve 401
+ * Server Action for token refresh.
+ * If refresh fails due to invalid/expired refresh token (401),
+ * it forces logout by clearing all auth cookies to break the infinite loop.
  */
-export async function refreshTokenAction(): Promise<{ success: boolean }> {
+export async function refreshTokenAction(): Promise<{ success: boolean; forceLogout?: boolean }> {
   try { 
     const result = await performTokenRefresh();
 
     if (!result) {
       console.error('❌ Token refresh failed');
-      return { success: false };
+      // Clear cookies to prevent redirect loop
+      await clearAuthCookies();
+      return { success: false, forceLogout: true };
     }
 
     return { success: true };
   } catch (error) {
     console.error('❌ Refresh token action error:', error);
-    return { success: false };
+    await clearAuthCookies();
+    return { success: false, forceLogout: true };
   }
 }
 
 /**
- * Server Action per verificare se l'utente è autenticato
- * Utile per AuthProvider
+ * Server Action to check if the user is authenticated via cookie presence.
  */
 export async function checkAuthAction(): Promise<{ authenticated: boolean }> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get('accessToken')?.value;
-  
   return { authenticated: !!accessToken };
 }

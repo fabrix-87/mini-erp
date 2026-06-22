@@ -5,7 +5,7 @@ import api from "../../lib/client/api";
 import {
   addFingerprintHeader,
 } from "@/lib/client/fingerprint";
-import { refreshTokenAction } from "@/actions/token";
+import { refreshTokenAction } from "@/actions/token-actions";
 import type {
   ApiResponse,
 } from "@/types/api";

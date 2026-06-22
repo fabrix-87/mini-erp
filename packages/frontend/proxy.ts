@@ -1,19 +1,15 @@
 // proxy.ts
 import { NextRequest, NextResponse } from "next/server";
-import { decodeJWT, isTokenExpired } from './lib/jwt';
-import { 
-  getAccessToken, 
-  isAdmin, 
-  redirectToLogin 
-} from "./helpers/auth-helper";
-import { isPublicRoute, isAdminRoute } from './lib/constants/routes'; 
+import { decodeJWT, isTokenExpired } from "./lib/jwt";
+import { getAccessToken, isAdmin, redirectToLogin } from "./helpers/auth-helper";
+import { isPublicRoute, isAdminRoute } from "./lib/constants/routes";
 
 // ============================================================================
 // Configuration
 // ============================================================================
 
-const DEFAULT_AUTH_ROUTE = '/dashboard';
-const DEFAULT_PUBLIC_ROUTE = '/login';
+const DEFAULT_AUTH_ROUTE = "/dashboard";
+const DEFAULT_PUBLIC_ROUTE = "/login";
 
 // ============================================================================
 // Main Middleware Logic
@@ -25,11 +21,7 @@ export async function proxy(request: NextRequest) {
   // ========================================
   // 1. Exclude static files and API routes
   // ========================================
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.includes('.')
-  ) {
+  if (pathname.startsWith("/_next") || pathname.startsWith("/api") || pathname.includes(".")) {
     return NextResponse.next();
   }
 
@@ -43,12 +35,12 @@ export async function proxy(request: NextRequest) {
   // ========================================
   // 3. Root route handling
   // ========================================
-  if (pathname === '/') {
+  if (pathname === "/") {
     if (isAuthenticated) {
-      console.log('🔀 Root redirect: Authenticated → /dashboard');
+      console.log("🔀 Root redirect: Authenticated → /dashboard");
       return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, request.url));
     } else {
-      console.log('🔀 Root redirect: Not authenticated → /login');
+      console.log("🔀 Root redirect: Not authenticated → /login");
       return NextResponse.redirect(new URL(DEFAULT_PUBLIC_ROUTE, request.url));
     }
   }
@@ -58,7 +50,7 @@ export async function proxy(request: NextRequest) {
   // ========================================
   if (isPublicRoute(pathname)) {
     if (isAuthenticated) {
-      console.log('🔀 Already authenticated, redirecting to /dashboard');
+      console.log("🔀 Already authenticated, redirecting to /dashboard");
       return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, request.url));
     }
     return NextResponse.next();
@@ -68,17 +60,63 @@ export async function proxy(request: NextRequest) {
   // 5. Protected routes - Check authentication
   // ========================================
   if (!accessToken) {
-    console.log('⚠️ No access token found');
+    console.log("⚠️ No access token found");
     return redirectToLogin(request);
   }
 
   if (!payload) {
-    console.log('⚠️ Invalid token format');
+    console.log("⚠️ Invalid token format");
     return redirectToLogin(request);
   }
 
+  // NEW: se il token è scaduto, tenta un refresh server-side nel middleware
+  // Se fallisce (es. Redis reset), redirect a login pulendo i cookie
   if (isTokenExpired(payload)) {
-    console.log('⚠️ Token expired, will be refreshed by API interceptor');
+    console.log("⚠️ Token expired, attempting server-side refresh...");
+
+    const refreshToken = request.cookies.get("refreshToken")?.value;
+    if (!refreshToken) {
+      console.log("⚠️ No refresh token, redirecting to login");
+      return redirectToLogin(request);
+    }
+
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+      const refreshRes = await fetch(`${backendUrl}/api/auth/refresh-token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `refreshToken=${refreshToken}`,
+        },
+        body: JSON.stringify({}),
+      });
+
+      if (!refreshRes.ok) {
+        console.log("❌ Refresh failed in middleware, redirecting to login");
+        const response = redirectToLogin(request);
+        // Clear cookies on the redirect response
+        response.cookies.delete("accessToken");
+        response.cookies.delete("refreshToken");
+        response.cookies.delete("tokenTimestamp");
+        response.cookies.delete("user");
+        return response;
+      }
+
+      // Refresh ok: leggi i nuovi token dalla risposta e imposta i cookie
+      const data = await refreshRes.json();
+      const response = NextResponse.next();
+      // Imposta i nuovi cookie (adatta i nomi ai tuoi cookie effettivi)
+      if (data.accessToken) {
+        response.cookies.set("accessToken", data.accessToken, { httpOnly: true, path: "/" });
+      }
+      if (data.refreshToken) {
+        response.cookies.set("refreshToken", data.refreshToken, { httpOnly: true, path: "/" });
+      }
+      return response;
+    } catch (err) {
+      console.error("❌ Middleware refresh error:", err);
+      return redirectToLogin(request);
+    }
   }
 
   // ========================================
@@ -86,7 +124,7 @@ export async function proxy(request: NextRequest) {
   // ========================================
   if (isAdminRoute(pathname)) {
     if (!isAdmin(payload)) {
-      console.log('⛔ Admin access denied');
+      console.log("⛔ Admin access denied");
       return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, request.url));
     }
   }
@@ -102,5 +140,5 @@ export async function proxy(request: NextRequest) {
 // ============================================================================
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

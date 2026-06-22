@@ -40,6 +40,7 @@ import { PermissionDialogState, RoleFormProps, RoleFormValues } from "@/types/ro
 import { PermissionDialog } from "./role-form/permission-dialog";
 import { useNavigation } from "@/hooks/use-navigation";
 import { useCrumbMap } from "@/hooks/use-breadcrumb";
+import { toast } from "sonner";
 
 // ============================================================================
 // HELPER: group permissions by resource
@@ -136,8 +137,7 @@ export default function RoleFormPage({ mode, roleId }: RoleFormProps) {
   };
 
   // ── Submit role form ───────────────────────────────────────────────────────
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setServerError(null);
 
     const payload: CreateRoleInput | UpdateRoleInput = {
@@ -158,6 +158,7 @@ export default function RoleFormPage({ mode, roleId }: RoleFormProps) {
     } else if (roleId) {
       const result = await updateRoleAction(roleId, payload);
       if (result.success) {
+        toast.success(`Ruolo ${role?.name} (${role?.code}) aggiornato`)
         navigateToDetail("roles", roleId);
       } else {
         setServerError(result.error ?? "Errore sconosciuto");
@@ -172,9 +173,11 @@ export default function RoleFormPage({ mode, roleId }: RoleFormProps) {
   ) => {
     if (id) {
       const result = await updatePermissionAction(id, data); // code è opzionale in UpdatePermissionInput
+      toast.success(`Permesso ${data.code} aggiornato!`);
       if (!result.success) return;
     } else {
       const result = await createPermissionAction(data);
+      toast.success(`Permesso ${data.code} creato!`);
       if (!result.success) return;
     }
     await refetchPermissions();
@@ -210,7 +213,10 @@ export default function RoleFormPage({ mode, roleId }: RoleFormProps) {
   return (
     <div className="space-y-6">
       <BreadcrumbSetter
-        items={[crumbs.roles, { label: mode === "create" ? "Nuovo ruolo" : `Modifica ruolo: ${role?.name ?? ""}` }]}
+        items={[
+          crumbs.roles,
+          { label: mode === "create" ? "Nuovo ruolo" : `Modifica ruolo: ${role?.name ?? ""}` },
+        ]}
       />
 
       {/* ── Header ── */}

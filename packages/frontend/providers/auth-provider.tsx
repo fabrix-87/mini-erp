@@ -4,7 +4,6 @@
 import { createContext, useEffect, useState, ReactNode, useCallback, useRef } from "react";
 import { logoutAction } from "@/actions/auth";
 import { getUserFromUserCookie, isAuthenticated } from "@/lib/jwt";
-import { refreshToken } from "@/services/client/auth";
 import {
   ACCESS_TOKEN_LIFETIME_MS,
   REFRESH_BEFORE_EXPIRY_MS,
@@ -12,6 +11,7 @@ import {
 } from "@/lib/constants/auth";
 import { UserSessionPayload } from "@mini-erp/shared";
 import { Spinner } from "@/components/ui/spinner";
+import { refreshTokenAction } from "@/actions/token-actions";
 
 // ============================================================================
 // Types
@@ -125,13 +125,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isRefreshingRef.current = true;
 
         try {
-          const success = await refreshToken();
+          const result = await refreshTokenAction();
 
-          if (success) {
+          if (result.success) {
             console.log("✅ Token refreshed successfully");
             refreshUser();
           } else {
             console.error("❌ Token refresh failed");
+            if (result.forceLogout) {
+              // Cookie già puliti dal server action, forza redirect al login
+              window.location.href = "/login";
+            }
           }
         } catch (error) {
           console.error("❌ Token refresh error:", error);

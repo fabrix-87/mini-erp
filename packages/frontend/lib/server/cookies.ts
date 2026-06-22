@@ -31,16 +31,16 @@ export async function getUserFromCookiesSSR(): Promise<User | null> {
   try {
     const cookieStore = await cookies();
     const userCookie = cookieStore.get("user")?.value;
-    
+
     if (!userCookie) {
       console.log("❌ No user cookie found");
       return null;
     }
-    
+
     // Decodifica URL encoding prima di parsare JSON
     const decodedCookie = decodeURIComponent(userCookie);
     const user = JSON.parse(decodedCookie) as User;
-    
+
     return user;
   } catch (error) {
     console.error("❌ Failed to parse user cookie:", error);
@@ -57,7 +57,7 @@ export async function getUserFromCookiesSSR(): Promise<User | null> {
 export async function setCookies(
   accessToken: string,
   refreshToken: string,
-  user: User
+  user: User,
 ): Promise<void> {
   const isProduction = process.env.NODE_ENV === "production";
   const cookieStore = await cookies();
@@ -97,4 +97,16 @@ export async function setCookies(
     sameSite: "lax",
     maxAge: ACCESS_TOKEN_LIFETIME_SECONDS, // Stessa durata del token
   });
+}
+
+/**
+ * Clears all authentication cookies.
+ * Used to force logout when token refresh fails (e.g., Redis reset).
+ */
+export async function clearAuthCookies(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete("accessToken");
+  cookieStore.delete("refreshToken");
+  cookieStore.delete("tokenTimestamp");
+  cookieStore.delete("user");
 }
