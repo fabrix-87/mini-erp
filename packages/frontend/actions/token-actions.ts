@@ -3,7 +3,6 @@
 
 import { cookies } from 'next/headers';
 import { performTokenRefresh } from '@/services/server/auth';
-import { clearAuthCookies } from '@/lib/server/cookies';
 
 /**
  * Server Action for token refresh.
@@ -16,15 +15,12 @@ export async function refreshTokenAction(): Promise<{ success: boolean; forceLog
 
     if (!result) {
       console.error('❌ Token refresh failed');
-      // Clear cookies to prevent redirect loop
-      await clearAuthCookies();
       return { success: false, forceLogout: true };
     }
 
     return { success: true };
   } catch (error) {
     console.error('❌ Refresh token action error:', error);
-    await clearAuthCookies();
     return { success: false, forceLogout: true };
   }
 }

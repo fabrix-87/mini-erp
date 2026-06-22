@@ -1,11 +1,12 @@
 // services/auth.ts
 'use client'
 
+import { refreshTokenAction } from "@/actions/token-actions";
 import api from "../../lib/client/api";
 import {
   addFingerprintHeader,
 } from "@/lib/client/fingerprint";
-import { refreshTokenAction } from "@/actions/token-actions";
+
 import type {
   ApiResponse,
 } from "@/types/api";

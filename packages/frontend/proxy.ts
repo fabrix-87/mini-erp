@@ -19,6 +19,21 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // ========================================
+  // 0. Handle session expired cleanup
+  // ========================================
+  if (pathname === "/login" && request.nextUrl.searchParams.get("session_expired") === "true") {
+    console.log("🧹 Clearing stale auth cookies after session expiry");
+    // Redirect to /login clean (senza query param) cancellando i cookie
+    const cleanLoginUrl = new URL("/login", request.url);
+    const response = NextResponse.redirect(cleanLoginUrl);
+    response.cookies.delete("accessToken");
+    response.cookies.delete("refreshToken");
+    response.cookies.delete("tokenTimestamp");
+    response.cookies.delete("user");
+    return response;
+  }
+
+  // ========================================
   // 1. Exclude static files and API routes
   // ========================================
   if (pathname.startsWith("/_next") || pathname.startsWith("/api") || pathname.includes(".")) {
@@ -81,7 +96,7 @@ export async function proxy(request: NextRequest) {
     }
 
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+      const backendUrl = process.env.API_URL ?? "http://localhost:5000";
       const refreshRes = await fetch(`${backendUrl}/api/auth/refresh-token`, {
         method: "POST",
         headers: {

@@ -1,6 +1,7 @@
 // lib/api/server-modules/auth.ts
 import { RoleDTO, User, UserSessionPayload } from "@mini-erp/shared";
 import { serverApi } from "./api";
+import { redirect } from "next/navigation";
 
 // ============================================================================
 // Server-Side Auth API Functions
@@ -77,56 +78,63 @@ export async function isAdmin(): Promise<boolean> {
 }
 
 /**
- * Helper per require auth in server components
- * Lancia errore se non autenticato
+ * Requires authentication in server components.
+ * On invalid session (e.g. Redis reset), redirects to /login with
+ * session_expired=true flag so the login page can clear stale cookies.
+ *
+ * NOTE: cookies() cannot be mutated in Server Components — cleanup
+ * is delegated to the /api/auth/clear-session route handler via redirect.
  */
 export async function requireAuth(): Promise<User> {
   const user = await checkAuth();
 
   if (!user) {
-    throw new Error("Unauthorized - Authentication required");
+    redirect("/login?session_expired=true");
   }
 
   return user;
 }
 
 /**
- * Helper per require permission in server components
+ * Requires a specific permission. Redirects to /login if unauthenticated,
+ * or to /dashboard if the permission is missing.
  */
 export async function requirePermission(permissionCode: string): Promise<User> {
   const user = await requireAuth();
   const hasPermission = await checkUserPermission(permissionCode);
 
   if (!hasPermission) {
-    throw new Error(`Forbidden - Permission required: ${permissionCode}`);
+    redirect("/dashboard");
   }
 
   return user;
 }
 
 /**
- * Helper per require role in server components
+ * Requires a specific role. Redirects to /login if unauthenticated,
+ * or to /dashboard if the role is missing.
  */
 export async function requireRole(roleCode: string): Promise<User> {
   const user = await requireAuth();
   const hasRole = await checkUserRole(roleCode);
 
   if (!hasRole) {
-    throw new Error(`Forbidden - Role required: ${roleCode}`);
+    redirect("/dashboard");
   }
 
   return user;
 }
 
 /**
- * Helper per require admin in server components
+ * Requires admin access. Redirects to /login if unauthenticated,
+ * or to /dashboard if not admin.
  */
 export async function requireAdmin(): Promise<User> {
   const user = await requireAuth();
   const isAdminUser = await isAdmin();
 
   if (!isAdminUser) {
-    throw new Error("Forbidden - Admin access required");
+    redirect("/dashboard");
   }
 
   return user;
