@@ -14,7 +14,7 @@ export default async function CurrenciesPage({ searchParams }: PageProps) {
   const queryParams: CurrencyQueryInput = currencyQuerySchema.parse(await searchParams);
 
   const currencies = await getAllCurrencies(queryParams);
-  
+
   return <CurrenciesContent queryParams={queryParams} currenciesList={currencies} />;
 }
 

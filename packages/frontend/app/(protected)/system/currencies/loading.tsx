@@ -1,7 +1,7 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { PageSkeleton } from "@/components/page-skeleton";
 
 export default async function CurrencySkeleton() {
     return (
-        <Skeleton/>
+        <PageSkeleton variant="table"/>
     )
 }

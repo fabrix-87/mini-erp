@@ -11,7 +11,7 @@ import {
   updateCompanySchema,
 } from "./company";
 import { queryBooleanSchema, queryEnumOrAllSchema } from "./query/params";
-import { createIdSchema } from "./primitives/id";
+import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { creditLimitSchema } from "./business/currency";
 
 // ============================================================================
@@ -51,11 +51,11 @@ export const createCustomerSchema = z
     creditStatus: creditCheckStatusSchema.default("PENDING"),
 
     // ===== Dati Commerciali =====
-    defaultPriceListId: createIdSchema("Price List ID non valido").optional().nullable(),
+    defaultPriceListId: createCuidSchema("Price List ID non valido").optional().nullable(),
 
     customerTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
 
-    paymentMethodId: createIdSchema("Payment Method ID non valido").optional().nullable(),
+    paymentMethodId: createCuidSchema("Payment Method ID non valido").optional().nullable(),
 
     creditLimit: creditLimitSchema.optional().nullable(),
   })
@@ -73,11 +73,11 @@ export const updateCustomerSchema = z
     size: customerSizeSchema.optional(),
     creditStatus: creditCheckStatusSchema.optional(),
 
-    defaultPriceListId: createIdSchema("Price List ID non valido").optional().nullable(),
+    defaultPriceListId: createCuidSchema("Price List ID non valido").optional().nullable(),
 
     customerTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
 
-    paymentMethodId: createIdSchema("Payment Method ID non valido").optional().nullable(),
+    paymentMethodId: createCuidSchema("Payment Method ID non valido").optional().nullable(),
 
     // parent customer (Hierarchy)
     parentCustomerId: createIdSchema("Parent Customer ID non valido").optional().nullable(),

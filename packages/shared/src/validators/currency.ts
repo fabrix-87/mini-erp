@@ -2,8 +2,21 @@ import { z } from "zod";
 import { countryCodeBaseSchema, currencyCodeBaseSchema } from "./base";
 import { createIdSchema, positiveNumbersSchema } from "./primitives/id";
 import { createDecimalSchema } from "./primitives/decimal";
-import { limitSchema, pageSchema } from "./query/pagination";
+import { limitSchema, pageSchema, querySortOrderSchema } from "./query/pagination";
 import { queryBooleanSchema } from "./query/params";
+
+/**
+ * Allowed sort fields for currencies list queries.
+ */
+export const currencySortFieldSchema = z.enum([
+  "code",
+  "createdAt",
+  "updatedAt",
+  "symbol",
+  "numericCode",
+  "isBaseCurrency",
+  "priority",
+]);
 
 export const currencyCodeSchema = z.object({
   code: currencyCodeBaseSchema,
@@ -12,26 +25,16 @@ export const currencyCodeSchema = z.object({
 export const createCurrencySchema = z.object({
   code: currencyCodeBaseSchema,
 
+  numericCode: z.string().length(3).optional(),
+
   // Identificazione
   symbol: z.string("Simbolo valuta obbligatorio").max(10),
-  symbolNative: z.string("Simbolo nativo valuta obbligatorio").max(10),
+  symbolNative: z.string().max(10).optional(),
 
-  // formattazione
-  decimalDigits: positiveNumbersSchema.default(2),
-  rounding: createDecimalSchema(4, { positiveOnly: true }),
-  symbolPosition: z.enum(["before", "after"]).default("before"),
-  decimalSeparator: z.enum([",", "."]).default(","),
-  thousandSeparator: z.enum([",", "."]).default("."),
+  minorUnit: positiveNumbersSchema.default(2),
+  rounding: createDecimalSchema(4, { required: true, defaultValue: 0 }),
 
-  // tasso di cambio (verso valuta base)
   isBaseCurrency: z.boolean().default(false), // vero solo per valuta base
-  exchangeRate: createDecimalSchema(6, {
-    positiveOnly: true,
-    defaultValue: 1.0,
-  }),
-
-  // Provider tasso cambio
-  exchangeRateSource: z.string().max(50).optional(),
 
   // stato
   active: z.boolean().default(true),
@@ -49,8 +52,31 @@ export const currencyTranslationSchema = z.object({
 });
 
 export const currencyQuerySchema = z.object({
-  search: z.string().optional().nullable(),
+  search: z.string().optional(),
   page: pageSchema,
   limit: limitSchema,
-  active: queryBooleanSchema,
+  active: queryBooleanSchema.optional(),
+  numericCode: z.string().length(3).optional(),
+  isBaseCurrency: queryBooleanSchema.optional(),
+  sortBy: currencySortFieldSchema.optional(),
+  sortOrder: querySortOrderSchema("desc").optional(),
+});
+
+/**
+ * Schema for creating/updating the current exchange rate snapshot for a currency.
+ * Rate is expressed from the system base currency to this currency.
+ */
+export const createCurrencyRateSchema = z.object({
+  currencyId: createIdSchema("CurrencyId obbligatorio"),
+  rate: createDecimalSchema(8, { positiveOnly: true }),
+  effectiveAt: z.coerce.date(),
+  source: z.string().max(50).optional(),
+});
+
+export const createExchangeRateHistorySchema = z.object({
+  currencyId: createIdSchema("CurrencyId obbligatorio"),
+  rate: createDecimalSchema(8, { positiveOnly: true }),
+  effectiveAt: z.coerce.date(),
+  source: z.string().max(50).optional(),
+  batchKey: z.string().max(100).optional(),
 });

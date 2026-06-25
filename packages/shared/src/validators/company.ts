@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { countryCodeBaseSchema, inputJsonValueSchema, userIdSchema } from "./base";
-import { createIdSchema } from "./primitives/id";
+import { createCuidSchema, createIdSchema } from "./primitives/id";
 import {
   eoriNumberSchema,
   fiscalCodeSchema,
@@ -23,7 +23,7 @@ export const companyTypeEntitySchema = z.enum(["JURIDICAL", "NATURAL", "FOREIGN"
 /**
  * Schema base ID Company
  */
-const companyIdBaseSchema = createIdSchema("Company ID non valido");
+const companyIdBaseSchema = createCuidSchema("Company ID non valido");
 
 /**
  * Schema per ID Company come companyId

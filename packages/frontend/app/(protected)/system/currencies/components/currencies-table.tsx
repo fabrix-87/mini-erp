@@ -1,7 +1,6 @@
 // packages/frontend/app/(protected)/system/currencies/components/currencies-table.tsx
 "use client";
 
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -11,14 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ExternalLink } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Currency } from "@mini-erp/shared";
 import { useNavigation } from "@/hooks/use-navigation";
 import { formatDateIT } from "@/helpers/date-helper";
+import { Button } from "@/components/ui/button";
 
 interface CurrenciesTableProps {
   currencies: Currency[];
   isLoading: boolean;
+  onDetailSelected: (code: string) => void;
 }
 
 /**
@@ -30,7 +31,7 @@ interface CurrenciesTableProps {
  * @param currencies - Array of {@link Currency} entities to display
  * @param isLoading  - When true, shows a loading spinner instead of rows
  */
-export function CurrenciesTable({ currencies, isLoading }: CurrenciesTableProps) {
+export function CurrenciesTable({ currencies, isLoading, onDetailSelected }: CurrenciesTableProps) {
   if (isLoading) {
     return (
       <div className="rounded-lg border bg-card">
@@ -63,11 +64,12 @@ export function CurrenciesTable({ currencies, isLoading }: CurrenciesTableProps)
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Priorità</TableHead>
               <TableHead>Codice</TableHead>
               <TableHead>Simbolo</TableHead>
               <TableHead>Nome</TableHead>
-              <TableHead>Tasso di cambio</TableHead>
-              <TableHead>Formattazione</TableHead>
+              <TableHead>Codice numerico</TableHead>
+              <TableHead>Decimali</TableHead>
               <TableHead className="w-25">Valuta base</TableHead>
               <TableHead className="w-25">Stato</TableHead>
               <TableHead>Aggiornato</TableHead>
@@ -81,10 +83,10 @@ export function CurrenciesTable({ currencies, isLoading }: CurrenciesTableProps)
 
               return (
                 <TableRow key={currency.code} className="group">
+                  <TableCell className="font-mono font-medium">{currency.priority}</TableCell>
+
                   {/* ISO 4217 code */}
-                  <TableCell className="font-mono font-medium">
-                    {currency.code}
-                  </TableCell>
+                  <TableCell className="font-mono font-medium">{currency.code}</TableCell>
 
                   {/* Symbol + native symbol */}
                   <TableCell>
@@ -99,24 +101,14 @@ export function CurrenciesTable({ currencies, isLoading }: CurrenciesTableProps)
                   </TableCell>
 
                   {/* Translated name */}
-                  <TableCell className="text-muted-foreground">
-                    {translationName}
-                  </TableCell>
+                  <TableCell className="text-muted-foreground">{translationName}</TableCell>
 
-                  {/* Exchange rate toward base currency */}
-                  <TableCell className="tabular-nums">
-                    {currency.isBaseCurrency ? (
-                      <span className="text-muted-foreground text-sm">—</span>
-                    ) : (
-                      Number(currency.exchangeRate).toFixed(6)
-                    )}
-                  </TableCell>
+                  <TableCell className="font-mono font-medium">{currency.numericCode}</TableCell>
 
                   {/* Decimal digits + separators */}
                   <TableCell className="text-sm text-muted-foreground font-mono">
-                    {currency.decimalDigits}d &nbsp;
-                    {currency.decimalSeparator}
-                    {currency.thousandSeparator}
+                    {currency.minorUnit} (
+                    {currency.minorUnit === 0 ? "0" : `0,${"0".repeat(currency.minorUnit)}`})
                   </TableCell>
 
                   {/* Is base currency badge */}
@@ -147,13 +139,14 @@ export function CurrenciesTable({ currencies, isLoading }: CurrenciesTableProps)
 
                   {/* Detail link */}
                   <TableCell className="text-right">
-                    <Link
-                      href={getDetailRoute("currencies", currency.code)}
-                      className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onDetailSelected(currency.code)}
+                      title="Visualizza dettagli"
                     >
-                      Dettagli
-                      <ExternalLink className="h-3 w-3" />
-                    </Link>
+                      <Eye className="h-4 w-4" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               );

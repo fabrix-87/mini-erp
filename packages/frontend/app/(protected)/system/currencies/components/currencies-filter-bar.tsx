@@ -1,18 +1,19 @@
-"use client";
-
-import { useMemo } from "react";
 import { FilterBar, type FilterInitialValues } from "@/components/ui/filter-bar";
 import { useNavigation } from "@/hooks/use-navigation";
+import { currencySortLabels } from "@/types/currency-types";
 import { FilterFieldConfig } from "@/types/filter-types";
+import { CURRENCY_SORT_FIELDS } from "@mini-erp/shared";
+import { useMemo } from "react";
 
 // ── Field config ─────────────────────────────────────────────────────────────
 
-const USER_FILTER_FIELDS: FilterFieldConfig[] = [
+const CURRENCY_FILTER_FIELDS: FilterFieldConfig[] = [
   {
     type: "search",
     key: "search",
-    placeholder: "Cerca per username o email...",
+    placeholder: "Cerca per nome, simbolo o codice...",
     debounceMs: 500,
+    colSpan: 2,
   },
   {
     type: "select",
@@ -25,27 +26,34 @@ const USER_FILTER_FIELDS: FilterFieldConfig[] = [
     ],
   },
   {
+    type: "select",
+    key: "isBaseCurrency",
+    placeholder: "Valuta base",
+    options: [
+      { value: "all", label: "Tutti" },
+      { value: "true", label: "Solo base" },
+      { value: "false", label: "Solo non base" },
+    ],
+  },
+  {
     type: "sort",
     sortByKey: "sortBy",
     sortOrderKey: "sortOrder",
     defaultSortBy: "createdAt",
     defaultSortOrder: "desc",
-    options: [
-      { value: "createdAt", label: "Data Creazione" },
-      { value: "username", label: "Username" },
-      { value: "email", label: "Email" },
-    ],
+    options: Array.from(CURRENCY_SORT_FIELDS).map((field) => ({
+      value: field as string,
+      label: currencySortLabels[field],
+    })),
   },
 ];
 
-const USER_FILTER_DEFAULTS = {
-  sortBy: "createdAt",
-  sortOrder: "desc",
+const CURRENCY_FILTER_DEFAULTS = {
+  sortBy: "priority",
+  sortOrder: "asc" as "asc" | "desc",
 };
 
-// ── Props ─────────────────────────────────────────────────────────────────────
-
-interface UsersFilterBarProps {
+interface Props {
   initialSearch?: string;
   initialActive?: boolean | null;
   initialSortBy?: string;
@@ -53,21 +61,15 @@ interface UsersFilterBarProps {
   onPendingChange: (isPending: boolean) => void;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
-
-/**
- * Filter bar for the Users list page.
- * Thin wrapper around the generic FilterBar with Users-specific field config.
- */
-export function UsersFilterBar({
+export function CurrenciesFilterBar({
   initialSearch = "",
   initialActive = null,
-  initialSortBy = "createdAt",
-  initialSortOrder = "desc",
+  initialSortBy = CURRENCY_FILTER_DEFAULTS.sortBy,
+  initialSortOrder = CURRENCY_FILTER_DEFAULTS.sortOrder,
   onPendingChange,
-}: UsersFilterBarProps) {
+}: Props) {
   const { getRoute } = useNavigation();
-  const basePath = useMemo(() => getRoute("users"), [getRoute]);
+  const basePath = useMemo(() => getRoute("currencies"), [getRoute]);
 
   const initialValues: FilterInitialValues = {
     search: initialSearch,
@@ -79,10 +81,10 @@ export function UsersFilterBar({
   return (
     <FilterBar
       basePath={basePath}
-      fields={USER_FILTER_FIELDS}
-      initialValues={initialValues}
-      defaultValues={USER_FILTER_DEFAULTS}
+      fields={CURRENCY_FILTER_FIELDS}
       onPendingChange={onPendingChange}
+      defaultValues={CURRENCY_FILTER_DEFAULTS}
+      initialValues={initialValues}
     />
   );
 }

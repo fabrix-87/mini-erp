@@ -1,11 +1,16 @@
 import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
-import { Currency, CurrencyQueryInput, PaginatedResponse } from "@mini-erp/shared";
-import { formatPaginatedResponse } from "@/utils/response-utils";
+import {
+  Currency,
+  CurrencyCodeParam,
+  CurrencyQueryInput,
+  PaginatedResponse,
+} from "@mini-erp/shared";
+import { formatPaginatedResponse, sendNotFound, sendSuccess } from "@/utils/response-utils";
 import { buildCacheKey, getCache, setCache } from "@/utils/cache-utils";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
-import { getValidatedQuery } from "@/helpers/validated-context";
+import { getValidatedParams, getValidatedQuery } from "@/helpers/validated-context";
 
 /**
  * @desc    Lista tutte le valute con filtri
@@ -13,7 +18,15 @@ import { getValidatedQuery } from "@/helpers/validated-context";
  * @access  Private/Admin
  */
 export const getAllCurrencies = async (c: Context<AppBindings>) => {
-  const { limit = 100, page = 1, search, active } = getValidatedQuery<CurrencyQueryInput>(c);
+  const {
+    limit = 100,
+    page = 1,
+    search,
+    active,
+    isBaseCurrency,
+    sortBy = "priority",
+    sortOrder = "asc",
+  } = getValidatedQuery<CurrencyQueryInput>(c);
 
   const languageId = c.get("user")!.preferredLanguageId;
 
@@ -26,6 +39,7 @@ export const getAllCurrencies = async (c: Context<AppBindings>) => {
 
   const where: Prisma.CurrencyWhereInput = {
     ...(active !== undefined && { active }),
+    ...(isBaseCurrency !== undefined && { isBaseCurrency }),
     ...(search && {
       OR: [
         { code: { contains: search, mode: "insensitive" } },
@@ -50,6 +64,8 @@ export const getAllCurrencies = async (c: Context<AppBindings>) => {
     safePage,
     safeLimit,
     languageId,
+    sortBy,
+    sortOrder,
   });
 
   // Try cache
@@ -65,7 +81,7 @@ export const getAllCurrencies = async (c: Context<AppBindings>) => {
       where,
       skip: (safePage - 1) * safeLimit,
       take: safeLimit,
-      orderBy: { priority: "asc" },
+      orderBy: { [sortBy]: sortOrder },
       include: {
         translations: {
           where: { languageId },
@@ -85,4 +101,39 @@ export const getAllCurrencies = async (c: Context<AppBindings>) => {
   await setCache(cacheKey, response, { ttl: 600 });
 
   return c.json(response);
+};
+
+/**
+ * @desc    Dettaglio della valuta
+ * @route   GET /api/currencies/:code
+ * @access  Private/Admin
+ */
+export const getCurrencyByCode = async (c: Context<AppBindings>) => {
+  const { code } = getValidatedParams<CurrencyCodeParam>(c);
+
+  const languageId = c.get("user")!.preferredLanguageId;
+
+  if (!languageId) {
+    throw new Error("User language not defined");
+  }
+
+  const currency = await prisma.currency.findUnique({
+    where: { code },
+    include: {
+      translations: {
+        where: { languageId },
+        select: {
+          name: true,
+          namePlural: true,
+          language: {
+            select: { name: true }
+          }
+        },
+      },
+    },
+  });
+
+  if (!currency) return sendNotFound(c, "Valuta non trovata");
+
+  return sendSuccess(c, currency);
 };
