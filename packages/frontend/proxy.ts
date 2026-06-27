@@ -3,6 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { decodeJWT, isTokenExpired } from "./lib/jwt";
 import { getAccessToken, isAdmin, redirectToLogin } from "./helpers/auth-helper";
 import { isPublicRoute, isAdminRoute } from "./lib/constants/routes";
+import {
+  ACCESS_TOKEN_LIFETIME_SECONDS,
+  REFRESH_TOKEN_LIFETIME_SECONDS,
+} from "./lib/constants/auth";
+import { COOKIE_NAMES } from "./types/cookie-types";
 
 // ============================================================================
 // Configuration
@@ -10,6 +15,59 @@ import { isPublicRoute, isAdminRoute } from "./lib/constants/routes";
 
 const DEFAULT_AUTH_ROUTE = "/dashboard";
 const DEFAULT_PUBLIC_ROUTE = "/login";
+const API_BASE_URL = process.env.API_URL ?? "http://localhost:5000";
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+/**
+ * Deletes all auth cookies on a given NextResponse.
+ * NOTE: This operates on the *outgoing response* (Edge runtime),
+ * not the server-side cookie store — use the `clearAuthCookies` server
+ * helper from `lib/server/auth-cookie-helper.ts` in Server Actions instead.
+ */
+function clearResponseCookies(response: NextResponse): void {
+  Object.values(COOKIE_NAMES).forEach((name) => response.cookies.delete(name));
+}
+
+/**
+ * Copies `accessToken` and `refreshToken` from a backend `Set-Cookie` header
+ * into a NextResponse, preserving HttpOnly + security attributes.
+ *
+ * Uses `indexOf("=")` instead of `split("=")[1]` to handle Base64 padding
+ * characters (`=`) that may appear in JWT values.
+ *
+ * @param setCookieHeaders - Raw Set-Cookie strings from the backend response.
+ * @param response - The NextResponse to write cookies onto.
+ */
+function forwardTokenCookies(setCookieHeaders: string[], response: NextResponse): void {
+  for (const cookieStr of setCookieHeaders) {
+    const [nameValue] = cookieStr.split(";");
+    const eqIndex = nameValue.indexOf("=");
+    const name = nameValue.substring(0, eqIndex).trim();
+    const value = nameValue.substring(eqIndex + 1).trim();
+
+    if (name === COOKIE_NAMES.ACCESS_TOKEN) {
+      response.cookies.set(name, value, {
+        httpOnly: true,
+        secure: IS_PRODUCTION,
+        path: "/",
+        sameSite: "lax",
+        maxAge: ACCESS_TOKEN_LIFETIME_SECONDS,
+      });
+    } else if (name === COOKIE_NAMES.REFRESH_TOKEN) {
+      response.cookies.set(name, value, {
+        httpOnly: true,
+        secure: IS_PRODUCTION,
+        path: "/",
+        sameSite: "lax",
+        maxAge: REFRESH_TOKEN_LIFETIME_SECONDS,
+      });
+    }
+  }
+}
 
 // ============================================================================
 // Main Middleware Logic
@@ -19,52 +77,42 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // ========================================
-  // 0. Handle session expired cleanup
-  // ========================================
-  if (pathname === "/login" && request.nextUrl.searchParams.get("session_expired") === "true") {
-    console.log("🧹 Clearing stale auth cookies after session expiry");
-    // Redirect to /login clean (senza query param) cancellando i cookie
-    const cleanLoginUrl = new URL("/login", request.url);
-    const response = NextResponse.redirect(cleanLoginUrl);
-    response.cookies.delete("accessToken");
-    response.cookies.delete("refreshToken");
-    response.cookies.delete("tokenTimestamp");
-    response.cookies.delete("user");
-    return response;
-  }
-
-  // ========================================
-  // 1. Exclude static files and API routes
+  // 0. Static assets and API routes — skip
   // ========================================
   if (pathname.startsWith("/_next") || pathname.startsWith("/api") || pathname.includes(".")) {
     return NextResponse.next();
   }
 
   // ========================================
-  // 2. Get and validate token
+  // 1. Session expired cleanup
   // ========================================
-  const accessToken = getAccessToken(request);
-  const payload = accessToken ? decodeJWT(accessToken) : null;
-  const isAuthenticated = payload && !isTokenExpired(payload);
-
-  // ========================================
-  // 3. Root route handling
-  // ========================================
-  if (pathname === "/") {
-    if (isAuthenticated) {
-      console.log("🔀 Root redirect: Authenticated → /dashboard");
-      return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, request.url));
-    } else {
-      console.log("🔀 Root redirect: Not authenticated → /login");
-      return NextResponse.redirect(new URL(DEFAULT_PUBLIC_ROUTE, request.url));
-    }
+  if (pathname === "/login" && request.nextUrl.searchParams.get("session_expired") === "true") {
+    console.log("🧹 Clearing stale auth cookies after session expiry");
+    const response = NextResponse.redirect(new URL("/login", request.url));
+    clearResponseCookies(response);
+    return response;
   }
 
   // ========================================
-  // 4. Public routes handling
+  // 2. Get and validate access token
+  // ========================================
+  const accessToken = getAccessToken(request);
+  const payload = accessToken ? decodeJWT(accessToken) : null;
+  const authenticated = !!payload && !isTokenExpired(payload);
+
+  // ========================================
+  // 3. Root redirect
+  // ========================================
+  if (pathname === "/") {
+    const target = authenticated ? DEFAULT_AUTH_ROUTE : DEFAULT_PUBLIC_ROUTE;
+    return NextResponse.redirect(new URL(target, request.url));
+  }
+
+  // ========================================
+  // 4. Public routes
   // ========================================
   if (isPublicRoute(pathname)) {
-    if (isAuthenticated) {
+    if (authenticated) {
       console.log("🔀 Already authenticated, redirecting to /dashboard");
       return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, request.url));
     }
@@ -72,7 +120,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // ========================================
-  // 5. Protected routes - Check authentication
+  // 5. Protected routes — no token at all
   // ========================================
   if (!accessToken) {
     console.log("⚠️ No access token found");
@@ -84,63 +132,42 @@ export async function proxy(request: NextRequest) {
     return redirectToLogin(request);
   }
 
-  // NEW: se il token è scaduto, tenta un refresh server-side nel middleware
-  // Se fallisce (es. Redis reset), redirect a login pulendo i cookie
+  // ========================================
+  // 6. Protected routes — token expired, attempt server-side refresh
+  // ========================================
   if (isTokenExpired(payload)) {
     console.log("⚠️ Token expired, attempting server-side refresh...");
 
-    const refreshToken = request.cookies.get("refreshToken")?.value;
+    const refreshToken = request.cookies.get(COOKIE_NAMES.REFRESH_TOKEN)?.value;
     if (!refreshToken) {
-      console.log("⚠️ No refresh token, redirecting to login");
+      console.log("⚠️ No refresh token available");
       return redirectToLogin(request);
     }
 
     try {
-      const backendUrl = process.env.API_URL ?? "http://localhost:5000";
-      const refreshRes = await fetch(`${backendUrl}/auth/refresh-token`, {
+      const fingerprint =
+        request.cookies.get("device-fp")?.value ??
+        request.headers.get("x-device-fingerprint") ??
+        "";
+
+      const refreshRes = await fetch(`${API_BASE_URL}/api/auth/refresh-token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `refreshToken=${refreshToken}`,
+          Cookie: `${COOKIE_NAMES.REFRESH_TOKEN}=${refreshToken}`,
+          ...(fingerprint && { "X-Device-Fingerprint": fingerprint }),
         },
-        body: JSON.stringify({}),
       });
 
       if (!refreshRes.ok) {
         console.log("❌ Refresh failed in middleware, redirecting to login");
         const response = redirectToLogin(request);
-        response.cookies.delete("accessToken");
-        response.cookies.delete("refreshToken");
-        response.cookies.delete("tokenTimestamp");
-        response.cookies.delete("user");
+        clearResponseCookies(response);
         return response;
       }
 
-      // ✅ Leggi i token dai Set-Cookie headers (non dal body)
       const response = NextResponse.next();
-      const setCookieHeaders = refreshRes.headers.getSetCookie?.() ?? [];
-
-      for (const cookieStr of setCookieHeaders) {
-        if (cookieStr.startsWith("accessToken=")) {
-          const value = cookieStr.split(";")[0].split("=")[1];
-          response.cookies.set("accessToken", value, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            path: "/",
-            sameSite: "lax",
-          });
-        }
-        if (cookieStr.startsWith("refreshToken=")) {
-          const value = cookieStr.split(";")[0].split("=")[1];
-          response.cookies.set("refreshToken", value, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            path: "/",
-            sameSite: "lax",
-          });
-        }
-      }
-
+      forwardTokenCookies(refreshRes.headers.getSetCookie?.() ?? [], response);
       return response;
     } catch (err) {
       console.error("❌ Middleware refresh error:", err);
@@ -149,17 +176,15 @@ export async function proxy(request: NextRequest) {
   }
 
   // ========================================
-  // 6. Admin routes - Check permissions
+  // 7. Admin routes — check permissions
   // ========================================
-  if (isAdminRoute(pathname)) {
-    if (!isAdmin(payload)) {
-      console.log("⛔ Admin access denied");
-      return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, request.url));
-    }
+  if (isAdminRoute(pathname) && !isAdmin(payload)) {
+    console.log("⛔ Admin access denied");
+    return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, request.url));
   }
 
   // ========================================
-  // 7. Allow access
+  // 8. Allow access
   // ========================================
   return NextResponse.next();
 }

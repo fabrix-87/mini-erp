@@ -332,9 +332,7 @@ export const refreshToken = async (c: Context<AppBindings>) => {
   }
 
   // 2. Verifica che sia nella whitelist Redis
-  console.log("🔍 Checking Redis for:", { userId: decoded.userId, jti: decoded.jti });
   const isValid = await isRefreshTokenValid(decoded.userId, decoded.jti);
-  console.log("✅ Redis valid:", isValid);
 
   if (!isValid) {
     throw new UnauthorizedError("Refresh token non valido o già utilizzato");

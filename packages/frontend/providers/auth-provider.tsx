@@ -3,14 +3,13 @@
 
 import { createContext, useEffect, useState, ReactNode, useCallback, useRef } from "react";
 import { logoutAction } from "@/actions/auth-actions";
-import { getUserFromUserCookie, isAuthenticated } from "@/lib/jwt";
+import { getUserFromUserCookie } from "@/lib/jwt";
 import {
   ACCESS_TOKEN_LIFETIME_MS,
   REFRESH_BEFORE_EXPIRY_MS,
   TOKEN_CHECK_INTERVAL_MS,
 } from "@/lib/constants/auth";
 import { UserSessionPayload } from "@mini-erp/shared";
-import { Spinner } from "@/components/ui/spinner";
 import { refreshTokenAction } from "@/actions/token-actions";
 
 // ============================================================================
@@ -26,18 +25,30 @@ interface AuthContextType {
 }
 
 // ============================================================================
-// Helper: Get Token Timestamp
+// Helpers
 // ============================================================================
 
+/**
+ * Reads the tokenTimestamp cookie value from the browser.
+ * Returns null if not found or running server-side.
+ */
 function getTokenTimestamp(): number | null {
   if (typeof document === "undefined") return null;
-
-  const timestamp = document.cookie
+  const raw = document.cookie
     .split("; ")
     .find((row) => row.startsWith("tokenTimestamp="))
     ?.split("=")[1];
+  return raw ? Number(raw) : null;
+}
 
-  return timestamp ? Number(timestamp) : null;
+/**
+ * Returns true if the token was issued less than `thresholdMs` ago.
+ * Used to skip the refresh check immediately after login.
+ */
+function isTokenFresh(thresholdMs = 30_000): boolean {
+  const timestamp = getTokenTimestamp();
+  if (!timestamp) return false;
+  return Date.now() - timestamp < thresholdMs;
 }
 
 // ============================================================================
@@ -51,7 +62,6 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // ============================================================================
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Inizia sempre null (SSR e primo render client sono allineati)
   const [user, setUser] = useState<UserSessionPayload | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -59,38 +69,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isRefreshingRef = useRef(false);
 
   // ========================================
-  // Refresh User
+  // Refresh User from cookie
   // ========================================
+
+  /** Re-reads the user cookie and updates the context state. */
   const refreshUser = useCallback(() => {
-    const userData = getUserFromUserCookie();
-    setUser(userData);
+    setUser(getUserFromUserCookie());
   }, []);
 
   // ========================================
   // Logout
   // ========================================
-  const logout = useCallback(async () => {
-    try {
-      await logoutAction();
-      setUser(null);
 
-      if (refreshTimerRef.current) {
-        clearInterval(refreshTimerRef.current);
-      }
+  /** Clears server-side cookies, resets state and stops the refresh timer. */
+  const logout = useCallback(async () => {
+    if (refreshTimerRef.current) {
+      clearInterval(refreshTimerRef.current);
+      refreshTimerRef.current = null;
+    }
+    setUser(null);
+    try {
+      await logoutAction(); // handles cookie cleanup + redirect
     } catch (error) {
       console.error("Logout failed:", error);
     }
   }, []);
 
   // ========================================
-  // Initial Auth Check — post-hydration
+  // Initial Auth Check — post-hydration only
   // ========================================
+
   useEffect(() => {
-    // Questo gira solo client-side, dopo l'hydration
-    // SSR e primo render client sono entrambi null → nessun mismatch
     try {
-      const userData = getUserFromUserCookie();
-      setUser(userData);
+      setUser(getUserFromUserCookie());
     } catch (error) {
       console.error("Auth check failed:", error);
     } finally {
@@ -101,27 +112,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ========================================
   // Proactive Token Refresh
   // ========================================
+
   useEffect(() => {
-    if (!user) {
-      return;
-    }
+    if (!user) return;
 
     const checkAndRefreshToken = async () => {
+      // Prevent concurrent refresh calls
       if (isRefreshingRef.current) return;
 
-      const tokenTimestamp = getTokenTimestamp();
+      // Skip if token was just issued (e.g. immediately after login)
+      if (isTokenFresh()) return;
 
+      const tokenTimestamp = getTokenTimestamp();
       if (!tokenTimestamp) {
-        console.warn("⚠️ No token timestamp found");
+        console.warn("⚠️ No token timestamp found, skipping refresh check");
         return;
       }
 
       const tokenAge = Date.now() - tokenTimestamp;
       const timeUntilExpiry = ACCESS_TOKEN_LIFETIME_MS - tokenAge;
 
+      // Token expired too long ago — force logout
+      if (timeUntilExpiry < -60_000) {
+        console.error("❌ Token expired, logging out...");
+        await logout();
+        return;
+      }
 
-
-      // Usa costante per soglia refresh
+      // Proactive refresh window
       if (timeUntilExpiry <= REFRESH_BEFORE_EXPIRY_MS && timeUntilExpiry > 0) {
         console.log("🔄 Proactive token refresh triggered...");
         isRefreshingRef.current = true;
@@ -134,9 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             refreshUser();
           } else {
             console.error("❌ Token refresh failed");
-            if (result.forceLogout) {
-              await logout();
-            }
+            if (result.forceLogout) await logout();
           }
         } catch (error) {
           console.error("❌ Token refresh error:", error);
@@ -144,17 +160,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           isRefreshingRef.current = false;
         }
       }
-
-      // Se scaduto da più di 1 minuto, logout
-      if (timeUntilExpiry < -60000) {
-        console.error("❌ Token expired too long ago, logging out...");
-        await logout();
-      }
     };
 
     checkAndRefreshToken();
-
-    // Usa costante per intervallo
     refreshTimerRef.current = setInterval(checkAndRefreshToken, TOKEN_CHECK_INTERVAL_MS);
 
     return () => {
@@ -165,26 +173,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [user, logout, refreshUser]);
 
-  /*
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spinner className="h-8 w-8" />
-      </div>
-    );
-  }
-    */
-
   // ========================================
   // Context Value
   // ========================================
-  const value: AuthContextType = {
-    user,
-    logout,
-    refreshUser,
-    isLoading,
-    isAuthenticated: !!user,
-  };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        logout,
+        refreshUser,
+        isLoading,
+        isAuthenticated: !!user,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }

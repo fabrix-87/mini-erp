@@ -1,4 +1,4 @@
-// lib/api/server-modules/auth.ts
+// lib/server/auth.ts
 import {
   EntityPermissions,
   PermissionCode,
@@ -9,6 +9,13 @@ import {
 import { serverApi } from "./api";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+/** Role codes that grant admin-level access. */
+const ADMIN_ROLE_CODES = new Set(["ADMIN", "SUPER_ADMIN"]);
 
 // ============================================================================
 // Per-Request Memoized Session Fetch
@@ -33,6 +40,18 @@ const fetchSessionPayload = cache(
 );
 
 // ============================================================================
+// Internal helpers
+// ============================================================================
+
+/**
+ * Returns `true` if the given roles include an admin-level role code.
+ * @internal
+ */
+function hasAdminRole(roles: RoleDTO[]): boolean {
+  return roles.some((r) => ADMIN_ROLE_CODES.has(r.code));
+}
+
+// ============================================================================
 // Auth Check Functions
 // ============================================================================
 
@@ -46,8 +65,7 @@ const fetchSessionPayload = cache(
 export async function checkAuth(): Promise<UserSessionPayload | null> {
   try {
     return await fetchSessionPayload();
-  } catch (error) {
-    console.error("Auth check failed:", error);
+  } catch {
     return null;
   }
 }
@@ -55,7 +73,7 @@ export async function checkAuth(): Promise<UserSessionPayload | null> {
 /**
  * Retrieves the current authenticated user.
  * Uses per-request memoization for the no-cache path; falls back to
- * a tagged fetch with configurable ISR revalidation when `revalidate` is set.
+ * a tagged fetch with configurable ISR revalidation when `options` is set.
  *
  * @param options - Optional cache configuration.
  * @param options.revalidate - ISR TTL in seconds, or `false` to disable.
@@ -66,7 +84,6 @@ export async function getCurrentUser(options?: {
   revalidate?: number | false;
   tags?: string[];
 }): Promise<User> {
-  // When no options are passed, reuse the memoized fetch (zero extra cost).
   if (!options) {
     return fetchSessionPayload() as unknown as Promise<User>;
   }
@@ -78,11 +95,12 @@ export async function getCurrentUser(options?: {
 }
 
 // ============================================================================
-// Permission & Role Checks
+// Permission Checks
 // ============================================================================
 
 /**
  * Checks whether the current user has a specific permission.
+ *
  * @param permissionCode - The permission code to check.
  * @returns `true` if the user has the permission, `false` otherwise.
  */
@@ -90,8 +108,7 @@ export async function checkUserPermission(permissionCode: PermissionCode): Promi
   try {
     const session = await fetchSessionPayload();
     return session.currentTenant.permissions.includes(permissionCode);
-  } catch (error) {
-    console.error("Permission check failed:", error);
+  } catch {
     return false;
   }
 }
@@ -104,8 +121,8 @@ export async function checkUserPermission(permissionCode: PermissionCode): Promi
  * @returns A record mapping each permission code to `true` or `false`.
  *
  * @example
- * const perms = await checkUserPermissions(["invoice:read", "invoice:create", "user:manage"]);
- * // { 'invoice:read': true, 'invoice:create': true, 'user:manage': false }
+ * const perms = await checkUserPermissions(["invoice:read", "invoice:create"]);
+ * // { 'invoice:read': true, 'invoice:create': false }
  */
 export async function checkUserPermissions(
   permissionCodes: PermissionCode[],
@@ -114,14 +131,14 @@ export async function checkUserPermissions(
     const session = await fetchSessionPayload();
     const granted = new Set(session.currentTenant.permissions);
     return Object.fromEntries(permissionCodes.map((code) => [code, granted.has(code)]));
-  } catch (error) {
-    console.error("Permissions check failed:", error);
+  } catch {
     return Object.fromEntries(permissionCodes.map((code) => [code, false]));
   }
 }
 
 /**
  * Checks user permissions using a named map for ergonomic destructuring.
+ *
  * @example
  * const { canCreate, canRead } = await checkUserPermissionsMap({
  *   canCreate: "currency:create",
@@ -148,68 +165,70 @@ export async function checkUserPermissionsMap<K extends string>(
 /**
  * Checks all standard CRUD permissions for a given entity in a single fetch.
  *
- * Permissions are expected to follow the `entity:action` convention.
- * Missing permissions are treated as `false`.
+ * Permissions follow the `entity:action` convention.
+ * Holding `entity:manage` implicitly grants all actions.
  *
- * @param entity - The entity name (e.g. `"currency"`, `"invoice"`, `"user"`).
+ * @param entity - The entity name (e.g. `"currency"`, `"invoice"`).
  * @returns An {@link EntityPermissions} object with boolean flags for each action.
  *
  * @example
- * const { canCreate, canRead, canDelete } = await checkEntityPermissions("invoice");
+ * const { canCreate, canRead } = await checkEntityPermissions("invoice");
  */
 export async function checkEntityPermissions(entity: string): Promise<EntityPermissions> {
+  const denied: EntityPermissions = {
+    canCreate: false,
+    canRead: false,
+    canUpdate: false,
+    canDelete: false,
+    canManage: false,
+  };
+
   try {
     const session = await fetchSessionPayload();
     const granted = new Set(session.currentTenant.permissions);
-
-    const hasManage = granted.has(`${entity}:manage`);
+    const canManage = granted.has(`${entity}:manage`);
 
     return {
-      canCreate: hasManage || granted.has(`${entity}:create`),
-      canRead: hasManage || granted.has(`${entity}:read`),
-      canUpdate: hasManage || granted.has(`${entity}:update`),
-      canDelete: hasManage || granted.has(`${entity}:delete`),
-      canManage: hasManage,
+      canCreate: canManage || granted.has(`${entity}:create`),
+      canRead: canManage || granted.has(`${entity}:read`),
+      canUpdate: canManage || granted.has(`${entity}:update`),
+      canDelete: canManage || granted.has(`${entity}:delete`),
+      canManage,
     };
-  } catch (error) {
-    console.error(`Entity permission check failed for "${entity}":`, error);
-    return {
-      canCreate: false,
-      canRead: false,
-      canUpdate: false,
-      canDelete: false,
-      canManage: false,
-    };
+  } catch {
+    return denied;
   }
 }
 
+// ============================================================================
+// Role Checks
+// ============================================================================
+
 /**
  * Checks whether the current user has a specific role.
+ *
  * @param roleCode - The role code to check.
  * @returns `true` if the user has the role, `false` otherwise.
  */
 export async function checkUserRole(roleCode: string): Promise<boolean> {
   try {
     const session = await fetchSessionPayload();
-    return session.currentTenant.roles.some((role: RoleDTO) => role.code === roleCode);
-  } catch (error) {
-    console.error("Role check failed:", error);
+    return session.currentTenant.roles.some((r: RoleDTO) => r.code === roleCode);
+  } catch {
     return false;
   }
 }
 
 /**
  * Checks whether the current user has admin or super-admin role.
+ *
  * @returns `true` if the user is an admin, `false` otherwise.
  */
 export async function isAdmin(): Promise<boolean> {
   try {
     const session = await fetchSessionPayload();
-    return session.currentTenant.roles.some(
-      (role: RoleDTO) => role.code === "ADMIN" || role.code === "SUPER_ADMIN",
-    );
-  } catch (error) {
-    console.error("Admin check failed:", error);
+    return hasAdminRole(session.currentTenant.roles);
+  } catch {
     return false;
   }
 }
@@ -223,7 +242,7 @@ export async function isAdmin(): Promise<boolean> {
  * Redirects to `/login?session_expired=true` if unauthenticated.
  *
  * NOTE: `cookies()` cannot be mutated in Server Components — cookie cleanup
- * is delegated to the `/api/auth/clear-session` route handler via redirect.
+ * is delegated to the proxy middleware on the next request.
  *
  * @returns The authenticated `UserSessionPayload`.
  */
@@ -235,19 +254,21 @@ export async function requireAuth(): Promise<UserSessionPayload> {
 
 /**
  * Requires the current user to have a specific permission.
- * Redirects to `/login` if unauthenticated, or `/dashboard` if unauthorized.
- *
- * Performs a single `/users/me` call by reusing the session payload.
+ * Redirects to `/login?session_expired=true` if unauthenticated,
+ * or `/dashboard` if the permission is not granted.
  *
  * @param permissionCode - The required permission code.
- * @returns The authenticated `User`.
+ * @returns The authenticated `UserSessionPayload`.
  */
-export async function requirePermission(permissionCode: PermissionCode): Promise<User> {
+export async function requirePermission(
+  permissionCode: PermissionCode,
+): Promise<UserSessionPayload> {
   try {
     const session = await fetchSessionPayload();
-    const hasPermission = session.currentTenant.permissions.includes(permissionCode);
-    if (!hasPermission) redirect("/dashboard");
-    return session as unknown as User;
+    if (!session.currentTenant.permissions.includes(permissionCode)) {
+      redirect("/dashboard");
+    }
+    return session;
   } catch {
     redirect("/login?session_expired=true");
   }
@@ -255,17 +276,19 @@ export async function requirePermission(permissionCode: PermissionCode): Promise
 
 /**
  * Requires the current user to have a specific role.
- * Redirects to `/login` if unauthenticated, or `/dashboard` if unauthorized.
+ * Redirects to `/login?session_expired=true` if unauthenticated,
+ * or `/dashboard` if the role is not present.
  *
  * @param roleCode - The required role code.
- * @returns The authenticated `User`.
+ * @returns The authenticated `UserSessionPayload`.
  */
-export async function requireRole(roleCode: string): Promise<User> {
+export async function requireRole(roleCode: string): Promise<UserSessionPayload> {
   try {
     const session = await fetchSessionPayload();
-    const hasRole = session.currentTenant.roles.some((r: RoleDTO) => r.code === roleCode);
-    if (!hasRole) redirect("/dashboard");
-    return session as unknown as User;
+    if (!session.currentTenant.roles.some((r: RoleDTO) => r.code === roleCode)) {
+      redirect("/dashboard");
+    }
+    return session;
   } catch {
     redirect("/login?session_expired=true");
   }
@@ -273,18 +296,16 @@ export async function requireRole(roleCode: string): Promise<User> {
 
 /**
  * Requires admin or super-admin access.
- * Redirects to `/login` if unauthenticated, or `/dashboard` if not admin.
+ * Redirects to `/login?session_expired=true` if unauthenticated,
+ * or `/dashboard` if the user is not an admin.
  *
- * @returns The authenticated `User`.
+ * @returns The authenticated `UserSessionPayload`.
  */
-export async function requireAdmin(): Promise<User> {
+export async function requireAdmin(): Promise<UserSessionPayload> {
   try {
     const session = await fetchSessionPayload();
-    const admin = session.currentTenant.roles.some(
-      (r: RoleDTO) => r.code === "ADMIN" || r.code === "SUPER_ADMIN",
-    );
-    if (!admin) redirect("/dashboard");
-    return session as unknown as User;
+    if (!hasAdminRole(session.currentTenant.roles)) redirect("/dashboard");
+    return session;
   } catch {
     redirect("/login?session_expired=true");
   }

@@ -38,7 +38,7 @@ export interface ActionResult<T = any> {
  */
 export async function withAuth<T>(
   action: () => Promise<T>,
-  permission?: string,
+  permission?: `${string}:${string}`,
   role?: string,
 ): Promise<ActionResult<T>> {
   try {

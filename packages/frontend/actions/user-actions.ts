@@ -1,7 +1,6 @@
-// actions/user.ts
+// actions/user-actions.ts
 "use server";
 
-import { requireAdmin, requirePermission } from "@/lib/server/auth";
 import { userRevalidation } from "@/lib/server/revalidate";
 import {
   createUser,
@@ -22,11 +21,24 @@ import { CreateUserInput, UpdateUserFormInput, User } from "@mini-erp/shared";
 import { ActionResult, withAuth } from "@/lib/server/action";
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+/** Regex for valid username characters. */
+const USERNAME_REGEX = /^[a-zA-Z0-9_]+$/;
+
+/** Regex for basic email format validation. */
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// ============================================================================
 // User CRUD Actions
 // ============================================================================
 
 /**
- * Create new user
+ * Creates a new user. Requires `user:create` permission.
+ *
+ * @param data - The user creation payload.
+ * @returns The created `User` on success.
  */
 export async function createUserAction(data: CreateUserInput): Promise<ActionResult<User>> {
   const result = await withAuth(async () => {
@@ -35,15 +47,16 @@ export async function createUserAction(data: CreateUserInput): Promise<ActionRes
     return user;
   }, "user:create");
 
-  if (result.success) {
-    result.message = "Utente creato con successo";
-  }
-
+  if (result.success) result.message = "Utente creato con successo";
   return result;
 }
 
 /**
- * Update user
+ * Updates a user's core fields. Requires `user:update` permission.
+ *
+ * @param userId - Target user ID.
+ * @param data - Fields to update.
+ * @returns The updated `User` on success.
  */
 export async function updateUserAction(
   userId: string,
@@ -55,15 +68,15 @@ export async function updateUserAction(
     return user;
   }, "user:update");
 
-  if (result.success) {
-    result.message = "Utente modificato con successo";
-  }
-
+  if (result.success) result.message = "Utente modificato con successo";
   return result;
 }
 
 /**
- * Update user profile
+ * Updates a user's profile data. Requires `user:update` permission.
+ *
+ * @param userId - Target user ID.
+ * @param data - Profile fields to update.
  */
 export async function updateUserProfileAction(
   userId: string,
@@ -75,15 +88,15 @@ export async function updateUserProfileAction(
     return user;
   }, "user:update");
 
-  if (result.success) {
-    result.message = "Profilo aggiornato con successo";
-  }
-
+  if (result.success) result.message = "Profilo aggiornato con successo";
   return result;
 }
 
 /**
- * Update user details
+ * Updates a user's personal details. Requires `user:update` permission.
+ *
+ * @param userId - Target user ID.
+ * @param data - Detail fields to update.
  */
 export async function updateUserDetailsAction(
   userId: string,
@@ -95,15 +108,15 @@ export async function updateUserDetailsAction(
     return user;
   }, "user:update");
 
-  if (result.success) {
-    result.message = "Dettagli aggiornati con successo";
-  }
-
+  if (result.success) result.message = "Dettagli aggiornati con successo";
   return result;
 }
 
 /**
- * Update user roles
+ * Replaces the role set for a user. Requires `user:manage` permission.
+ *
+ * @param userId - Target user ID.
+ * @param roleIds - New role IDs to assign.
  */
 export async function updateUserRolesAction(
   userId: string,
@@ -115,15 +128,15 @@ export async function updateUserRolesAction(
     return user;
   }, "user:manage");
 
-  if (result.success) {
-    result.message = "Ruoli aggiornati con successo";
-  }
-
+  if (result.success) result.message = "Ruoli aggiornati con successo";
   return result;
 }
 
 /**
- * Toggle user active status
+ * Activates or deactivates a user account. Requires `user:update` permission.
+ *
+ * @param userId - Target user ID.
+ * @param active - `true` to activate, `false` to deactivate.
  */
 export async function toggleUserActiveAction(
   userId: string,
@@ -138,12 +151,13 @@ export async function toggleUserActiveAction(
   if (result.success) {
     result.message = active ? "Utente attivato con successo" : "Utente disattivato con successo";
   }
-
   return result;
 }
 
 /**
- * Delete user
+ * Permanently deletes a user. Requires `user:delete` permission.
+ *
+ * @param userId - Target user ID.
  */
 export async function deleteUserAction(userId: string): Promise<ActionResult> {
   const result = await withAuth(async () => {
@@ -152,63 +166,58 @@ export async function deleteUserAction(userId: string): Promise<ActionResult> {
     return null;
   }, "user:delete");
 
-  if (result.success) {
-    result.message = "Utente eliminato con successo";
-  }
-
+  if (result.success) result.message = "Utente eliminato con successo";
   return result;
 }
 
 // ============================================================================
-// Batch Actions (usando il service esistente)
+// Batch Actions
 // ============================================================================
 
 /**
- * Bulk toggle active status
+ * Activates or deactivates multiple users in parallel. Requires `user:manage` permission.
+ *
+ * @param userIds - List of user IDs to update.
+ * @param active - `true` to activate, `false` to deactivate.
  */
 export async function bulkToggleActiveAction(
   userIds: string[],
   active: boolean,
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
-    // Usa Promise.all per operazioni parallele
     await Promise.all(userIds.map((id) => toggleUserActive(id, active)));
-
-    // Revalidate all affected users
     userIds.forEach((id) => userRevalidation.user(id));
     userRevalidation.list();
-
     return { count: userIds.length };
   }, "user:manage");
 
   if (result.success) {
     result.message = `${userIds.length} utenti ${active ? "attivati" : "disattivati"} con successo`;
   }
-
   return result;
 }
 
 /**
- * Bulk delete users
+ * Permanently deletes multiple users in parallel. Requires `user:delete` permission.
+ *
+ * @param userIds - List of user IDs to delete.
  */
 export async function bulkDeleteUsersAction(userIds: string[]): Promise<ActionResult> {
   const result = await withAuth(async () => {
-    // Usa Promise.all per operazioni parallele
     await Promise.all(userIds.map((id) => deleteUser(id)));
-
     userRevalidation.list();
     return { count: userIds.length };
   }, "user:delete");
 
-  if (result.success) {
-    result.message = `${userIds.length} utenti eliminati con successo`;
-  }
-
+  if (result.success) result.message = `${userIds.length} utenti eliminati con successo`;
   return result;
 }
 
 /**
- * Bulk update user roles
+ * Assigns the same role set to multiple users in parallel. Requires `user:manage` permission.
+ *
+ * @param userIds - List of user IDs to update.
+ * @param roleIds - New role IDs to assign to each user.
  */
 export async function bulkUpdateRolesAction(
   userIds: string[],
@@ -216,98 +225,79 @@ export async function bulkUpdateRolesAction(
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
     await Promise.all(userIds.map((id) => updateUserRoles(id, roleIds)));
-
     userIds.forEach((id) => userRevalidation.user(id));
     userRevalidation.list();
-
     return { count: userIds.length };
   }, "user:manage");
 
-  if (result.success) {
-    result.message = `Ruoli aggiornati per ${userIds.length} utenti`;
-  }
-
+  if (result.success) result.message = `Ruoli aggiornati per ${userIds.length} utenti`;
   return result;
 }
 
 /**
- * Bulk update users (usando il service bulkUpdateUsers)
+ * Applies partial profile updates to multiple users. Requires `user:update` permission.
+ *
+ * @param updates - Array of `{ id, data }` pairs to apply.
  */
 export async function bulkUpdateUsersAction(
   updates: Array<{ id: string; data: Partial<UpdateUserProfileInput> }>,
 ): Promise<ActionResult> {
   const result = await withAuth(async () => {
     const users = await bulkUpdateUsers(updates);
-
     updates.forEach(({ id }) => userRevalidation.user(id));
     userRevalidation.list();
-
     return { users, count: users.length };
   }, "user:update");
 
-  if (result.success) {
-    result.message = `${updates.length} utenti aggiornati con successo`;
-  }
-
+  if (result.success) result.message = `${updates.length} utenti aggiornati con successo`;
   return result;
 }
 
 // ============================================================================
-// Search & Filter Actions (usando i services esistenti)
+// Search & Filter Actions
 // ============================================================================
 
 /**
- * Search users by query
+ * Searches users by a free-text query. Requires `user:read` permission.
+ *
+ * @param query - Search string.
+ * @param options.limit - Max results to return (default 10).
  */
 export async function searchUsersAction(
   query: string,
-  options?: {
-    limit?: number;
-  },
+  options?: { limit?: number },
 ): Promise<ActionResult> {
   return withAuth(async () => {
-    const result = await searchUsers(query, {
-      limit: options?.limit ?? 10,
-      revalidate: 30,
-    });
-    return result;
+    return searchUsers(query, { limit: options?.limit ?? 10, revalidate: 30 });
   }, "user:read");
 }
 
 /**
- * Get users by role
+ * Returns users belonging to a specific role. Requires `user:read` permission.
+ *
+ * @param roleId - Role ID to filter by.
+ * @param options - Pagination options.
  */
 export async function getUsersByRoleAction(
   roleId: number,
-  options?: {
-    page?: number;
-    limit?: number;
-  },
+  options?: { page?: number; limit?: number },
 ): Promise<ActionResult> {
   return withAuth(async () => {
-    const result = await getUsersByRole(roleId, {
-      page: options?.page,
-      limit: options?.limit,
-      revalidate: 30,
-    });
-    return result;
+    return getUsersByRole(roleId, { ...options, revalidate: 30 });
   }, "user:read");
 }
 
 /**
- * Get active users only
+ * Returns only active users. Requires `user:read` permission.
+ *
+ * @param options - Pagination options.
  */
 export async function getActiveUsersAction(options?: {
   page?: number;
   limit?: number;
 }): Promise<ActionResult> {
   return withAuth(async () => {
-    const result = await getActiveUsers({
-      page: options?.page,
-      limit: options?.limit,
-      revalidate: 30,
-    });
-    return result;
+    return getActiveUsers({ ...options, revalidate: 30 });
   }, "user:read");
 }
 
@@ -316,80 +306,54 @@ export async function getActiveUsersAction(options?: {
 // ============================================================================
 
 /**
- * Check if username is available
+ * Checks whether a username is available for registration or update.
+ * Performs basic format validation before querying the backend.
+ *
+ * @param username - Username to check.
+ * @param excludeUserId - Exclude this user ID from the uniqueness check (for edits).
+ * @returns `{ available: true }` if the username can be used.
  */
 export async function checkUsernameAvailabilityAction(
   username: string,
   excludeUserId?: string,
 ): Promise<ActionResult<{ available: boolean }>> {
+  if (username.length < 3 || !USERNAME_REGEX.test(username)) {
+    return { success: true, data: { available: false } };
+  }
+
   try {
-    // Validazione base lato client
-    if (username.length < 3) {
-      return {
-        success: true,
-        data: { available: false },
-      };
-    }
-
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      return {
-        success: true,
-        data: { available: false },
-      };
-    }
-
-    // Cerca utenti con lo stesso username
     const result = await searchUsers(username, { limit: 1, revalidate: 0 });
-
-    // Se trova utenti, controlla se è lo stesso da escludere
     const available =
       result.data.length === 0 || (!!excludeUserId && result.data[0].id === excludeUserId);
-
-    return {
-      success: true,
-      data: { available },
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: "Errore durante la verifica del username",
-    };
+    return { success: true, data: { available } };
+  } catch {
+    return { success: false, error: "Errore durante la verifica del username" };
   }
 }
 
 /**
- * Check if email is available
+ * Checks whether an email address is available for registration or update.
+ * Performs basic format validation before querying the backend.
+ *
+ * @param email - Email address to check.
+ * @param excludeUserId - Exclude this user ID from the uniqueness check (for edits).
+ * @returns `{ available: true }` if the email can be used.
  */
 export async function checkEmailAvailabilityAction(
   email: string,
   excludeUserId?: string,
 ): Promise<ActionResult<{ available: boolean }>> {
+  if (!EMAIL_REGEX.test(email)) {
+    return { success: true, data: { available: false } };
+  }
+
   try {
-    // Validazione base email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return {
-        success: true,
-        data: { available: false },
-      };
-    }
-
-    // Cerca utenti con la stessa email
     const result = await searchUsers(email, { limit: 1, revalidate: 0 });
-
-    // Se trova utenti, controlla se è lo stesso da escludere
     const available =
       result.data.length === 0 || (!!excludeUserId && result.data[0].id === excludeUserId);
-
-    return {
-      success: true,
-      data: { available },
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: "Errore durante la verifica dell'email",
-    };
+    return { success: true, data: { available } };
+  } catch {
+    return { success: false, error: "Errore durante la verifica dell'email" };
   }
 }
 
@@ -398,7 +362,11 @@ export async function checkEmailAvailabilityAction(
 // ============================================================================
 
 /**
- * Export users to CSV
+ * Builds the export URL for a CSV user export with optional filters.
+ * Requires `user:read` permission.
+ *
+ * @param filters - Optional filters to apply to the export.
+ * @returns `{ url }` containing the download endpoint.
  */
 export async function exportUsersAction(filters?: {
   active?: boolean;
@@ -406,22 +374,13 @@ export async function exportUsersAction(filters?: {
   search?: string;
 }): Promise<ActionResult<{ url: string }>> {
   return withAuth(async () => {
-    // Costruisci URL per export con filtri
     const params = new URLSearchParams();
+    if (filters?.active !== undefined) params.set("active", String(filters.active));
+    if (filters?.roleId) params.set("roleId", String(filters.roleId));
+    if (filters?.search) params.set("search", filters.search);
 
-    if (filters?.active !== undefined) {
-      params.set("active", filters.active.toString());
-    }
-    if (filters?.roleId) {
-      params.set("roleId", filters.roleId.toString());
-    }
-    if (filters?.search) {
-      params.set("search", filters.search);
-    }
-
-    const url = `/api/users/export${params.toString() ? `?${params.toString()}` : ""}`;
-
-    return { url };
+    const qs = params.toString();
+    return { url: `/api/users/export${qs ? `?${qs}` : ""}` };
   }, "user:read");
 }
 
@@ -430,47 +389,38 @@ export async function exportUsersAction(filters?: {
 // ============================================================================
 
 /**
- * Reset user password (admin)
+ * Resets a user's password (admin-initiated). Requires `user:manage` permission.
+ *
+ * @param userId - Target user ID.
+ * @param newPassword - The new password to set.
+ * @todo Implement when backend endpoint is ready.
  */
 export async function resetUserPasswordAction(
   userId: string,
   newPassword: string,
 ): Promise<ActionResult> {
   return withAuth(async () => {
-    // TODO: Implementa quando il backend è pronto
-    // await resetUserPassword(userId, newPassword);
-
-    // Per ora, placeholder
+    // TODO: await resetUserPassword(userId, newPassword);
     console.warn("resetUserPassword not implemented yet");
-
-    return {
-      success: true,
-      message: "Password reimpostata con successo",
-    };
+    return null;
   }, "user:manage");
 }
 
 /**
- * Send password reset email
+ * Sends a password reset email to a user (admin-initiated). Requires `user:manage` permission.
+ *
+ * @param userId - Target user ID.
+ * @todo Implement when backend endpoint is ready.
  */
 export async function sendPasswordResetEmailAction(userId: string): Promise<ActionResult> {
   const result = await withAuth(async () => {
-    // Ottieni l'utente per avere l'email
     const user = await getUserById(userId, { revalidate: 0 });
-
-    // TODO: Implementa quando il backend è pronto
-    // await sendPasswordResetEmail(user.email);
-
-    // Per ora, placeholder
+    // TODO: await sendPasswordResetEmail(user.email);
     console.warn("sendPasswordResetEmail not implemented yet for:", user.email);
-
     return { email: user.email };
   }, "user:manage");
 
-  if (result.success) {
-    result.message = "Email di reset inviata con successo";
-  }
-
+  if (result.success) result.message = "Email di reset inviata con successo";
   return result;
 }
 
@@ -479,26 +429,26 @@ export async function sendPasswordResetEmailAction(userId: string): Promise<Acti
 // ============================================================================
 
 /**
- * Get user by ID (wrapper action per form pre-fill)
+ * Fetches a single user by ID. Requires `user:read` permission.
+ * Primarily used to pre-fill edit forms.
+ *
+ * @param userId - Target user ID.
  */
 export async function getUserByIdAction(userId: string): Promise<ActionResult> {
   return withAuth(async () => {
-    const user = await getUserById(userId, { revalidate: 30 });
-    return user;
+    return getUserById(userId, { revalidate: 30 });
   }, "user:read");
 }
 
 /**
- * Refresh user cache
+ * Invalidates the Next.js cache for a user or the full user list.
+ * Requires `user:read` permission.
+ *
+ * @param userId - If provided, invalidates only this user's cache; otherwise invalidates the list.
  */
 export async function refreshUserCacheAction(userId?: string): Promise<ActionResult> {
   return withAuth(async () => {
-    if (userId) {
-      userRevalidation.userWithList(userId);
-    } else {
-      userRevalidation.list();
-    }
-
+    userId ? userRevalidation.userWithList(userId) : userRevalidation.list();
     return { refreshed: true };
   }, "user:read");
 }
