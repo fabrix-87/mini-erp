@@ -111,7 +111,7 @@ export function DataPagination({
             className="h-8 w-8 p-0"
           >
             <ChevronsLeft className="h-4 w-4" />
-            <span className="sr-only">{t("pagination.fist")}</span>
+            <span className="sr-only">{t("pagination.first")}</span>
           </Button>
 
           <Button
