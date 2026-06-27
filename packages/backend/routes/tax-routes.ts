@@ -1,4 +1,4 @@
-import { authenticateToken, authorize } from "../middleware/auth-middleware";
+import { authorize } from "../middleware/auth-middleware";
 import {
   // Tax Rule
   validateCreateTaxRule,
@@ -43,6 +43,7 @@ import {
   deleteVatNatureTranslation,
 } from "../controllers/tax-controller";
 import { createHonoApp } from "@/lib/hono-app";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const taxRoutes = createHonoApp();
 
@@ -52,7 +53,7 @@ const taxRoutes = createHonoApp();
 
 taxRoutes.get(
   "/rules",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:read", "tax:manage"]),
   validateTaxRuleQuery,
   getAllTaxRules,
@@ -60,7 +61,7 @@ taxRoutes.get(
 
 taxRoutes.get(
   "/rules/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:read", "tax:manage"]),
   validateTaxRuleId,
   getTaxRuleById,
@@ -68,7 +69,7 @@ taxRoutes.get(
 
 taxRoutes.post(
   "/rules",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:create", "tax:manage"]),
   validateCreateTaxRule,
   createTaxRule,
@@ -76,7 +77,7 @@ taxRoutes.post(
 
 taxRoutes.put(
   "/rules/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:update", "tax:manage"]),
   validateTaxRuleId,
   validateUpdateTaxRule,
@@ -85,7 +86,7 @@ taxRoutes.put(
 
 taxRoutes.patch(
   "/rules/:id/toggle-active",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:update", "tax:manage"]),
   validateTaxRuleId,
   validateToggleTaxStatus,
@@ -94,7 +95,7 @@ taxRoutes.patch(
 
 taxRoutes.delete(
   "/rules/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:delete", "tax:manage"]),
   validateTaxRuleId,
   deleteTaxRule,
@@ -106,7 +107,7 @@ taxRoutes.delete(
 
 taxRoutes.post(
   "/rules/:id/translations",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:update", "tax:manage"]),
   validateTaxRuleId,
   validateCreateTaxRuleTranslation,
@@ -115,7 +116,7 @@ taxRoutes.post(
 
 taxRoutes.put(
   "/rules/:taxRuleId/translations/:languageId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:update", "tax:manage"]),
   validateTaxRuleTranslationId,
   validateUpdateTaxRuleTranslation,
@@ -124,7 +125,7 @@ taxRoutes.put(
 
 taxRoutes.delete(
   "/rules/:taxRuleId/translations/:languageId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:delete", "tax:manage"]),
   validateTaxRuleTranslationId,
   deleteTaxRuleTranslation,
@@ -136,7 +137,7 @@ taxRoutes.delete(
 
 taxRoutes.get(
   "/vat-natures",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:read", "tax:manage"]),
   validateVatNatureQuery,
   getAllVatNatures,
@@ -144,7 +145,7 @@ taxRoutes.get(
 
 taxRoutes.get(
   "/vat-natures/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:read", "tax:manage"]),
   validateVatNatureId,
   getVatNatureById,
@@ -152,7 +153,7 @@ taxRoutes.get(
 
 taxRoutes.post(
   "/vat-natures",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:create", "tax:manage"]),
   validateCreateVatNature,
   createVatNature,
@@ -160,7 +161,7 @@ taxRoutes.post(
 
 taxRoutes.put(
   "/vat-natures/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:update", "tax:manage"]),
   validateVatNatureId,
   validateUpdateVatNature,
@@ -169,7 +170,7 @@ taxRoutes.put(
 
 taxRoutes.patch(
   "/vat-natures/:id/toggle-active",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:update", "tax:manage"]),
   validateVatNatureId,
   validateToggleTaxStatus,
@@ -178,7 +179,7 @@ taxRoutes.patch(
 
 taxRoutes.delete(
   "/vat-natures/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:delete", "tax:manage"]),
   validateVatNatureId,
   deleteVatNature,
@@ -190,7 +191,7 @@ taxRoutes.delete(
 
 taxRoutes.post(
   "/vat-natures/:id/translations",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:update", "tax:manage"]),
   validateVatNatureId,
   validateCreateVatNatureTranslation,
@@ -199,7 +200,7 @@ taxRoutes.post(
 
 taxRoutes.put(
   "/vat-natures/:vatNatureId/translations/:languageId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:update", "tax:manage"]),
   validateVatNatureTranslationId,
   validateUpdateVatNatureTranslation,
@@ -208,7 +209,7 @@ taxRoutes.put(
 
 taxRoutes.delete(
   "/vat-natures/:vatNatureId/translations/:languageId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["tax:delete", "tax:manage"]),
   validateVatNatureTranslationId,
   deleteVatNatureTranslation,

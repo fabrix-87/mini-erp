@@ -4,7 +4,7 @@
  * Registered before parametric routes to avoid :id matching conflicts.
  */
 import { createHonoApp } from "../../lib/hono-app";
-import { authenticateToken, authorize } from "../../middleware/auth-middleware";
+import { authorize } from "../../middleware/auth-middleware";
 import {
   validateBulkUpdateDocumentsStatus,
   validateBulkSendDocuments,
@@ -15,6 +15,7 @@ import {
   bulkSendDocuments,
   bulkExportDocuments,
 } from "../../controllers/document";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const bulkRoutes = createHonoApp();
 
@@ -25,7 +26,7 @@ const bulkRoutes = createHonoApp();
  */
 bulkRoutes.post(
   "/bulk-change-status",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateBulkUpdateDocumentsStatus,
   bulkChangeStatus,
@@ -38,7 +39,7 @@ bulkRoutes.post(
  */
 bulkRoutes.post(
   "/bulk-delete",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:delete", "document:manage"]),
   bulkDeleteDocuments,
 );
@@ -50,7 +51,7 @@ bulkRoutes.post(
  */
 bulkRoutes.post(
   "/bulk-send",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateBulkSendDocuments,
   bulkSendDocuments,
@@ -63,7 +64,7 @@ bulkRoutes.post(
  */
 bulkRoutes.post(
   "/bulk-export",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   bulkExportDocuments,
 );

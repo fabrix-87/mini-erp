@@ -4,7 +4,7 @@
  * Mounted at /reports in the document index router.
  */
 import { createHonoApp } from "../../lib/hono-app";
-import { authenticateToken, authorize } from "../../middleware/auth-middleware";
+import { authorize } from "../../middleware/auth-middleware";
 import { validateTopProductsReportQuery } from "../../validators/document-validator";
 import {
   getDocumentStats,
@@ -14,6 +14,7 @@ import {
   getDocumentTimeline,
   getOverdueInstallments,
 } from "../../controllers/document";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const reportsRoutes = createHonoApp();
 
@@ -24,7 +25,7 @@ const reportsRoutes = createHonoApp();
  */
 reportsRoutes.get(
   "/statistics",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   getDocumentStats,
 );
@@ -36,7 +37,7 @@ reportsRoutes.get(
  */
 reportsRoutes.get(
   "/sales",
-  authenticateToken,
+  requireTenantScope,
   authorize(["report:read", "document:manage"]),
   getSalesReport,
 );
@@ -48,7 +49,7 @@ reportsRoutes.get(
  */
 reportsRoutes.get(
   "/aging",
-  authenticateToken,
+  requireTenantScope,
   authorize(["report:read", "document:manage"]),
   getAgingReport,
 );
@@ -60,7 +61,7 @@ reportsRoutes.get(
  */
 reportsRoutes.get(
   "/top-products",
-  authenticateToken,
+  requireTenantScope,
   authorize(["report:read", "document:manage"]),
   validateTopProductsReportQuery,
   getTopProducts,
@@ -73,7 +74,7 @@ reportsRoutes.get(
  */
 reportsRoutes.get(
   "/timeline",
-  authenticateToken,
+  requireTenantScope,
   authorize(["report:read", "document:manage"]),
   getDocumentTimeline,
 );
@@ -85,7 +86,7 @@ reportsRoutes.get(
  */
 reportsRoutes.get(
   "/overdue-installments",
-  authenticateToken,
+  requireTenantScope,
   authorize(["report:read", "document:manage"]),
   getOverdueInstallments,
 );

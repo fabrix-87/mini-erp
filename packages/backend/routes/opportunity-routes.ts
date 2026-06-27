@@ -1,4 +1,4 @@
-import { authenticateToken, authorize } from "../middleware/auth-middleware";
+import { authorize } from "../middleware/auth-middleware";
 import {
   validateOpportunityId,
   validateCustomerIdParam,
@@ -40,6 +40,7 @@ import {
   deleteClosedReason,
 } from "../controllers/opportunity-controller";
 import { createHonoApp } from "@/lib/hono-app";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const opportunityRoutes = createHonoApp();
 
@@ -53,7 +54,7 @@ const opportunityRoutes = createHonoApp();
  */
 opportunityRoutes.get(
   "/stats/pipeline",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:read", "opportunity:manage"]),
   validateOpportunityStats,
   getPipelineStats,
@@ -65,7 +66,7 @@ opportunityRoutes.get(
  */
 opportunityRoutes.get(
   "/stats/funnel",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:read", "opportunity:manage"]),
   validateSalesFunnelQuery,
   getSalesFunnel,
@@ -81,7 +82,7 @@ opportunityRoutes.get(
  */
 opportunityRoutes.post(
   "/bulk/assign",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:update", "opportunity:manage"]),
   validateBulkAssignOpportunities,
   bulkAssignOpportunities,
@@ -93,7 +94,7 @@ opportunityRoutes.post(
  */
 opportunityRoutes.post(
   "/bulk/stage",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:update", "opportunity:manage"]),
   validateBulkUpdateStage,
   bulkUpdateStage,
@@ -109,7 +110,7 @@ opportunityRoutes.post(
  */
 opportunityRoutes.get(
   "/closed-reasons",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:read", "opportunity:manage"]),
   validateClosedReasonQuery,
   getAllClosedReasons,
@@ -121,7 +122,7 @@ opportunityRoutes.get(
  */
 opportunityRoutes.post(
   "/closed-reasons",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:manage"]),
   validateCreateClosedReason,
   createClosedReason,
@@ -133,7 +134,7 @@ opportunityRoutes.post(
  */
 opportunityRoutes.put(
   "/closed-reasons/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:manage"]),
   validateClosedReasonId,
   validateUpdateClosedReason,
@@ -146,7 +147,7 @@ opportunityRoutes.put(
  */
 opportunityRoutes.delete(
   "/closed-reasons/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:manage"]),
   validateClosedReasonId,
   deleteClosedReason,
@@ -162,7 +163,7 @@ opportunityRoutes.delete(
  */
 opportunityRoutes.get(
   "/customer/:customerId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:read", "opportunity:manage"]),
   validateCustomerIdParam,
   validateOpportunityQuery,
@@ -179,7 +180,7 @@ opportunityRoutes.get(
  */
 opportunityRoutes.get(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:read", "opportunity:manage"]),
   validateOpportunityQuery,
   getAllOpportunities,
@@ -191,7 +192,7 @@ opportunityRoutes.get(
  */
 opportunityRoutes.post(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:create", "opportunity:manage"]),
   validateCreateOpportunity,
   createOpportunity,
@@ -203,7 +204,7 @@ opportunityRoutes.post(
  */
 opportunityRoutes.get(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:read", "opportunity:manage"]),
   validateOpportunityId,
   getOpportunityById,
@@ -215,7 +216,7 @@ opportunityRoutes.get(
  */
 opportunityRoutes.put(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:update", "opportunity:manage"]),
   validateOpportunityId,
   validateUpdateOpportunity,
@@ -228,7 +229,7 @@ opportunityRoutes.put(
  */
 opportunityRoutes.patch(
   "/:id/stage",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:update", "opportunity:manage"]),
   validateOpportunityId,
   validateUpdateOpportunityStage,
@@ -241,7 +242,7 @@ opportunityRoutes.patch(
  */
 opportunityRoutes.patch(
   "/:id/status",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:update", "opportunity:manage"]),
   validateOpportunityId,
   validateUpdateOpportunityStatus,
@@ -254,7 +255,7 @@ opportunityRoutes.patch(
  */
 opportunityRoutes.patch(
   "/:id/close-won",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:update", "opportunity:manage"]),
   validateOpportunityId,
   validateWinOpportunity,
@@ -267,7 +268,7 @@ opportunityRoutes.patch(
  */
 opportunityRoutes.patch(
   "/:id/close-lost",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:update", "opportunity:manage"]),
   validateOpportunityId,
   validateLoseOpportunity,
@@ -280,7 +281,7 @@ opportunityRoutes.patch(
  */
 opportunityRoutes.patch(
   "/:id/assign",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:update", "opportunity:manage"]),
   validateOpportunityId,
   validateUpdateOpportunity,
@@ -293,7 +294,7 @@ opportunityRoutes.patch(
  */
 opportunityRoutes.delete(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["opportunity:delete", "opportunity:manage"]),
   validateOpportunityId,
   deleteOpportunity,

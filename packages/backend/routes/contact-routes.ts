@@ -1,4 +1,4 @@
-import { authenticateToken, authorize } from '../middleware/auth-middleware';
+import { authorize } from '../middleware/auth-middleware';
 import {  
   validateContactQuery,
   validateContactId,
@@ -21,6 +21,7 @@ import {
   getContactsByCompany,
 } from '../controllers/contact-controller';
 import { createHonoApp } from '@/lib/hono-app';
+import { requireTenantScope } from '@/middleware/tenant-scope-middleware';
 
 const contactRoutes = createHonoApp();
 
@@ -36,7 +37,7 @@ const contactRoutes = createHonoApp();
  */
 contactRoutes.get(
   '/',
-  authenticateToken,
+  requireTenantScope,
   authorize(['contact:read', 'contact:manage']),
   validateContactQuery,
   getAllContacts
@@ -50,7 +51,7 @@ contactRoutes.get(
  */
 contactRoutes.get(
   '/check-email',
-  authenticateToken,
+  requireTenantScope,
   authorize(['contact:read', 'contact:manage']),
   validateCheckEmail,
   checkEmail
@@ -64,7 +65,7 @@ contactRoutes.get(
  */
 contactRoutes.get(
   '/company/:companyId',
-  authenticateToken,
+  requireTenantScope,
   authorize(['contact:read', 'contact:manage']),
   validateCompanyId,
   getContactsByCompany
@@ -77,7 +78,7 @@ contactRoutes.get(
  */
 contactRoutes.get(
   '/company/:companyId/primary',
-  authenticateToken,
+  requireTenantScope,
   authorize(['contact:read', 'contact:manage']),
   validateCompanyId,
   getPrimaryContactByCompany
@@ -90,7 +91,7 @@ contactRoutes.get(
  */
 contactRoutes.get(
   '/:id',
-  authenticateToken,
+  requireTenantScope,
   authorize(['contact:read', 'contact:manage']),
   validateContactId,
   getContactById
@@ -103,7 +104,7 @@ contactRoutes.get(
  */
 contactRoutes.post(
   '/',
-  authenticateToken,
+  requireTenantScope,
   authorize(['contact:create', 'contact:manage']),
   validateCreateContact,
   createContact
@@ -116,7 +117,7 @@ contactRoutes.post(
  */
 contactRoutes.put(
   '/:id',
-  authenticateToken,
+  requireTenantScope,
   authorize(['contact:update', 'contact:manage']),
   validateContactId,
   validateUpdateContact,
@@ -130,7 +131,7 @@ contactRoutes.put(
  */
 contactRoutes.patch(
   '/:id/toggle-active',
-  authenticateToken,
+  requireTenantScope,
   authorize(['contact:update', 'contact:manage']),
   validateContactId,
   validateToggleContactActive,
@@ -144,7 +145,7 @@ contactRoutes.patch(
  */
 contactRoutes.patch(
   '/:id/set-primary',
-  authenticateToken,
+  requireTenantScope,
   authorize(['contact:update', 'contact:manage']),
   validateContactId,
   setPrimaryContact
@@ -157,7 +158,7 @@ contactRoutes.patch(
  */
 contactRoutes.delete(
   '/:id',
-  authenticateToken,
+  requireTenantScope,
   authorize(['contact:delete', 'contact:manage']),
   validateContactId,
   deleteContact

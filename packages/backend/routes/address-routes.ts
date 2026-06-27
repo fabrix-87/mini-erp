@@ -1,4 +1,4 @@
-import { authenticateToken, authorize } from "../middleware/auth-middleware";
+import { authorize } from "../middleware/auth-middleware";
 import {
   validateAddressId,
   validateAddressQuery,
@@ -15,33 +15,34 @@ import {
   updateAddress,
 } from "../controllers/address-controller";
 import { createHonoApp } from "@/lib/hono-app";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const addressRoutes = createHonoApp();
 
 addressRoutes.get(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["address:read", "address:manage"]),
   validateAddressQuery,
   getAllAddresses,
 );
 addressRoutes.get(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["address:read", "address:manage"]),
   validateAddressId,
   getAddressById,
 );
 addressRoutes.post(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["address:create", "address:manage"]),
   validateCreateAddress,
   createAddress,
 );
 addressRoutes.put(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["address:update", "address:manage"]),
   validateAddressId,
   validateUpdateAddress,
@@ -49,14 +50,14 @@ addressRoutes.put(
 );
 addressRoutes.patch(
   "/:id/set-primary",
-  authenticateToken,
+  requireTenantScope,
   authorize(["address:update", "address:manage"]),
   validateAddressId,
   setPrimaryAddress,
 );
 addressRoutes.delete(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["address:delete", "address:manage"]),
   validateAddressId,
   validateSetPrimaryAddress,

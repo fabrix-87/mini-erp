@@ -1,5 +1,5 @@
 import { createHonoApp } from "@/lib/hono-app";
-import { authenticateToken, authorize } from "../middleware/auth-middleware";
+import { authorize } from "../middleware/auth-middleware";
 import {
   validateCreatePriceList,
   validateUpdatePriceList,
@@ -26,6 +26,7 @@ import {
   bulkImportItems,
   calculatePrice,
 } from "../controllers/pricelist-controller";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const pricelistRoutes = createHonoApp();
 
@@ -41,7 +42,7 @@ const pricelistRoutes = createHonoApp();
  */
 pricelistRoutes.post(
   "/calculate-price",
-  authenticateToken,
+  requireTenantScope,
   authorize(["pricelist:read", "pricelist:manage"]),
   validateCalculatePrice,
   calculatePrice,
@@ -55,7 +56,7 @@ pricelistRoutes.post(
  */
 pricelistRoutes.get(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["pricelist:read", "pricelist:manage"]),
   validatePriceListQuery,
   getAllPriceLists,
@@ -68,7 +69,7 @@ pricelistRoutes.get(
  */
 pricelistRoutes.get(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["pricelist:read", "pricelist:manage"]),
   validatePriceListId,
   getPriceListById,
@@ -81,7 +82,7 @@ pricelistRoutes.get(
  */
 pricelistRoutes.post(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["pricelist:create", "pricelist:manage"]),
   validateCreatePriceList,
   createPriceList,
@@ -94,7 +95,7 @@ pricelistRoutes.post(
  */
 pricelistRoutes.put(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["pricelist:update", "pricelist:manage"]),
   validateUpdatePriceList,
   updatePriceList,
@@ -107,7 +108,7 @@ pricelistRoutes.put(
  */
 pricelistRoutes.delete(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["pricelist:delete", "pricelist:manage"]),
   validatePriceListId,
   deletePriceList,
@@ -125,7 +126,7 @@ pricelistRoutes.delete(
  */
 pricelistRoutes.get(
   "/:priceListId/items",
-  authenticateToken,
+  requireTenantScope,
   authorize(["pricelist:read", "pricelist:manage"]),
   validatePriceListId,
   validatePriceListItemQuery,
@@ -140,7 +141,7 @@ pricelistRoutes.get(
  */
 pricelistRoutes.post(
   "/:priceListId/items/bulk",
-  authenticateToken,
+  requireTenantScope,
   authorize(["pricelist:create", "pricelist:manage"]),
   validateBulkPriceListId,
   validateBulkImportItems,
@@ -154,7 +155,7 @@ pricelistRoutes.post(
  */
 pricelistRoutes.post(
   "/items",
-  authenticateToken,
+  requireTenantScope,
   authorize(["pricelist:create", "pricelist:manage"]),
   validateCreatePriceListItem,
   createPriceListItem,
@@ -167,7 +168,7 @@ pricelistRoutes.post(
  */
 pricelistRoutes.put(
   "/items/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["pricelist:update", "pricelist:manage"]),
   validateUpdatePriceListItem,
   updatePriceListItem,
@@ -180,7 +181,7 @@ pricelistRoutes.put(
  */
 pricelistRoutes.delete(
   "/items/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["pricelist:delete", "pricelist:manage"]),
   validatePriceListItemId,
   deletePriceListItem,

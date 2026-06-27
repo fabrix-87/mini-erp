@@ -5,7 +5,7 @@
  * Static sub-paths (/bulk, /reorder) are registered before /:lineId.
  */
 import { createHonoApp } from "../../lib/hono-app";
-import { authenticateToken, authorize } from "../../middleware/auth-middleware";
+import { authorize } from "../../middleware/auth-middleware";
 import {
   validateDocumentId,
   validateDocumentLineId,
@@ -20,6 +20,7 @@ import {
   deleteDocumentLine,
   reorderDocumentLines,
 } from "../../controllers/document";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const linesRoutes = createHonoApp();
 
@@ -30,7 +31,7 @@ const linesRoutes = createHonoApp();
  */
 linesRoutes.get(
   "/:id/lines",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentId,
   getDocumentLines,
@@ -43,7 +44,7 @@ linesRoutes.get(
  */
 linesRoutes.patch(
   "/:id/lines/reorder",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   reorderDocumentLines,
@@ -56,7 +57,7 @@ linesRoutes.patch(
  */
 linesRoutes.get(
   "/:id/lines/:lineId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentLineId,
   getDocumentLineById,
@@ -69,7 +70,7 @@ linesRoutes.get(
  */
 linesRoutes.post(
   "/:id/lines",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   validateAddDocumentLine,
@@ -83,7 +84,7 @@ linesRoutes.post(
  */
 linesRoutes.put(
   "/:id/lines/:lineId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentLineId,
   validateUpdateDocumentLine,
@@ -97,7 +98,7 @@ linesRoutes.put(
  */
 linesRoutes.delete(
   "/:id/lines/:lineId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentLineId,
   deleteDocumentLine,

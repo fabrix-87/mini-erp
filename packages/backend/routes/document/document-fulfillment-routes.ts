@@ -5,7 +5,7 @@
  * and delivery note generation from an order.
  */
 import { createHonoApp } from "../../lib/hono-app";
-import { authenticateToken, authorize } from "../../middleware/auth-middleware";
+import { authorize } from "../../middleware/auth-middleware";
 import { validateDocumentId, validateDocumentLineId } from "../../validators/document-validator";
 import {
   getDocumentFulfillment,
@@ -13,6 +13,7 @@ import {
   updateLineDelivered,
   createDeliveryNote,
 } from "../../controllers/document";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const fulfillmentRoutes = createHonoApp();
 
@@ -23,7 +24,7 @@ const fulfillmentRoutes = createHonoApp();
  */
 fulfillmentRoutes.get(
   "/:id/fulfillment",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentId,
   getDocumentFulfillment,
@@ -36,7 +37,7 @@ fulfillmentRoutes.get(
  */
 fulfillmentRoutes.get(
   "/:id/fulfillment/status",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentId,
   getFulfillmentStatus,
@@ -49,7 +50,7 @@ fulfillmentRoutes.get(
  */
 fulfillmentRoutes.patch(
   "/:id/lines/:lineId/delivered",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   validateDocumentLineId,
@@ -63,7 +64,7 @@ fulfillmentRoutes.patch(
  */
 fulfillmentRoutes.post(
   "/:id/create-delivery-note",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:create", "document:manage"]),
   validateDocumentId,
   createDeliveryNote,

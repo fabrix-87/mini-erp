@@ -1,7 +1,7 @@
 // packages/backend/routes/membership-roles-routes.ts
 
 import { createHonoApp } from "@/lib/hono-app";
-import { authenticateToken, authorize } from "@/middleware/auth-middleware";
+import { authorize } from "@/middleware/auth-middleware";
 import {
   validateMembershipUserId,
   validateAssignMembershipRoles,
@@ -14,6 +14,7 @@ import {
   addMembershipRoles,
   removeMembershipRoles,
 } from "../controllers/user-membership-roles-controller";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const membershipRolesRoutes = createHonoApp();
 
@@ -28,7 +29,7 @@ const membershipRolesRoutes = createHonoApp();
  */
 membershipRolesRoutes.get(
   "/:userId/roles",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:read", "user:manage"]),
   validateMembershipUserId,
   getMembershipRoles,
@@ -41,7 +42,7 @@ membershipRolesRoutes.get(
  */
 membershipRolesRoutes.get(
   "/:userId/permissions",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:read", "user:manage"]),
   validateMembershipUserId,
   getMembershipPermissions,
@@ -58,7 +59,7 @@ membershipRolesRoutes.get(
  */
 membershipRolesRoutes.put(
   "/:userId/roles",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:manage"]),
   validateMembershipUserId,
   validateAssignMembershipRoles,
@@ -72,7 +73,7 @@ membershipRolesRoutes.put(
  */
 membershipRolesRoutes.post(
   "/:userId/roles",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:manage"]),
   validateMembershipUserId,
   validateAssignMembershipRoles,
@@ -86,7 +87,7 @@ membershipRolesRoutes.post(
  */
 membershipRolesRoutes.delete(
   "/:userId/roles",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:manage"]),
   validateMembershipUserId,
   validateRemoveMembershipRoles,

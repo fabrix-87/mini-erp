@@ -1,5 +1,5 @@
 
-import { authenticateToken, authorize } from '../middleware/auth-middleware';
+import { authorize } from '../middleware/auth-middleware';
 import {
   validateCreateSupplier,
   validateUpdateSupplier,
@@ -22,6 +22,7 @@ import {
   getSupplierListStats,
 } from '../controllers/supplier-controller';
 import { createHonoApp } from '@/lib/hono-app';
+import { requireTenantScope } from '@/middleware/tenant-scope-middleware';
 
 const supplierRoutes = createHonoApp();
 
@@ -37,7 +38,7 @@ const supplierRoutes = createHonoApp();
  */
 supplierRoutes.get(
   '/',
-  authenticateToken,
+  requireTenantScope,
   authorize(['supplier:read', 'supplier:manage']),
   validateSupplierQuery,
   getAllSuppliers
@@ -51,7 +52,7 @@ supplierRoutes.get(
  */
 supplierRoutes.get(
   '/stats',
-  authenticateToken,
+  requireTenantScope,
   authorize(['supplier:read', 'supplier:manage']),
   validateSupplierQuery,
   getSupplierListStats
@@ -64,7 +65,7 @@ supplierRoutes.get(
  */
 supplierRoutes.get(
   '/:id/stats',
-  authenticateToken,
+  requireTenantScope,
   authorize(['supplier:read', 'supplier:manage']),
   validateSupplierId,
   getSupplierStats
@@ -77,7 +78,7 @@ supplierRoutes.get(
  */
 supplierRoutes.post(
   '/',
-  authenticateToken,
+  requireTenantScope,
   authorize(['supplier:create', 'supplier:manage']),
   validateCreateSupplier,
   createSupplier
@@ -90,7 +91,7 @@ supplierRoutes.post(
 */
 supplierRoutes.put(
   '/:id/company',
-  authenticateToken,
+  requireTenantScope,
   authorize(['supplier:update', 'supplier:manage']),
   validateSupplierId,
   validateUpdateSupplierCompany,
@@ -104,7 +105,7 @@ supplierRoutes.put(
  */
 supplierRoutes.put(
   '/:id',
-  authenticateToken,
+  requireTenantScope,
   authorize(['supplier:update', 'supplier:manage']),
   validateSupplierId,
   validateUpdateSupplier,
@@ -118,7 +119,7 @@ supplierRoutes.put(
  */
 supplierRoutes.patch(
   '/:id/rating',
-  authenticateToken,
+  requireTenantScope,
   authorize(['supplier:update', 'supplier:manage']),
   validateSupplierId,
   validateUpdateSupplierRating,
@@ -132,7 +133,7 @@ supplierRoutes.patch(
  */
 supplierRoutes.delete(
   '/:id',
-  authenticateToken,
+  requireTenantScope,
   authorize(['supplier:delete', 'supplier:manage']),
   validateSupplierId,
   deleteSupplier
@@ -145,7 +146,7 @@ supplierRoutes.delete(
  */
 supplierRoutes.post(
   '/:id/validate-fiscal',
-  authenticateToken,
+  requireTenantScope,
   authorize(['supplier:read', 'supplier:manage']),
   validateSupplierId,
   validateSupplierFiscal
@@ -158,7 +159,7 @@ supplierRoutes.post(
  */
 supplierRoutes.get(
   '/:id',
-  authenticateToken,
+  requireTenantScope,
   authorize(['supplier:read', 'supplier:manage']),
   validateSupplierId,
   getSupplierById

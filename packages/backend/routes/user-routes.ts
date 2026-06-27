@@ -23,7 +23,8 @@ import {
 
 import { createHonoApp } from "@/lib/hono-app";
 
-import { authenticateToken, authorize } from "@/middleware/auth-middleware";
+import { authorize } from "@/middleware/auth-middleware";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const userRoutes = createHonoApp();
 
@@ -36,28 +37,28 @@ const userRoutes = createHonoApp();
  * @desc    Ottieni info utente corrente
  * @access  Private
  */
-userRoutes.get("/me", authenticateToken, getMe);
+userRoutes.get("/me", getMe);
 
 /**
  * @route   PUT /api/users/me/profile
  * @desc    Aggiorna profilo utente corrente (username, email, preferenze)
  * @access  Private
  */
-userRoutes.put("/me/profile", authenticateToken, validateUpdateUserProfile, updateProfile);
+userRoutes.put("/me/profile", validateUpdateUserProfile, updateProfile);
 
 /**
  * @route   PUT /api/users/me/details
  * @desc    Aggiorna dettagli personali utente corrente (nome, cognome, indirizzo, etc.)
  * @access  Private
  */
-userRoutes.put("/me/details", authenticateToken, validateUpdateUserDetails, updateDetails);
+userRoutes.put("/me/details", validateUpdateUserDetails, updateDetails);
 
 /**
  * @route   PUT /api/users/me/change-password
  * @desc    Cambia password utente corrente
  * @access  Private
  */
-userRoutes.put("/me/change-password", authenticateToken, validateChangePassword, changePassword);
+userRoutes.put("/me/change-password", validateChangePassword, changePassword);
 
 // ============================================================================
 // ADMIN ROUTES - User Management
@@ -71,7 +72,7 @@ userRoutes.put("/me/change-password", authenticateToken, validateChangePassword,
  */
 userRoutes.get(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:read", "user:manage"]),
   validateUserQuery,
   getAllUsers,
@@ -84,7 +85,7 @@ userRoutes.get(
  */
 userRoutes.get(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:read", "user:manage"]),
   validateUserId,
   getUserById,
@@ -97,7 +98,7 @@ userRoutes.get(
  */
 userRoutes.post(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:create", "user:manage"]),
   validateCreateUser,
   createUser,
@@ -110,7 +111,7 @@ userRoutes.post(
  */
 userRoutes.put(
   "/:id/profile",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:update", "user:manage"]),
   validateUpdateUserProfile,
   updateProfile,
@@ -123,7 +124,7 @@ userRoutes.put(
  */
 userRoutes.put(
   "/:id/details",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:update", "user:manage"]),
   validateUserId,
   validateUpdateUserDetails,
@@ -137,7 +138,7 @@ userRoutes.put(
  */
 userRoutes.put(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:update", "user:manage"]),
   validateUserId,
   validateUpdateUser,
@@ -151,7 +152,7 @@ userRoutes.put(
  */
 userRoutes.patch(
   "/:id/toggle-active",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:manage"]),
   validateUserId,
   validateToggleUserStatus,
@@ -165,7 +166,7 @@ userRoutes.patch(
  */
 userRoutes.delete(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["user:delete", "user:manage"]),
   validateUserId,
   deleteUser,

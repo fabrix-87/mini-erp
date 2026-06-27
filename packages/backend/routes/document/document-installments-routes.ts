@@ -5,7 +5,7 @@
  * Static sub-paths (/generate-plan) are registered before /:installmentId.
  */
 import { createHonoApp } from "../../lib/hono-app";
-import { authenticateToken, authorize } from "../../middleware/auth-middleware";
+import { authorize } from "../../middleware/auth-middleware";
 import {
   validateDocumentId,
   validateDocumentInstallmentIdParam,
@@ -21,6 +21,7 @@ import {
   payInstallment,
   generateInstallmentPlan,
 } from "../../controllers/document";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const installmentRoutes = createHonoApp();
 
@@ -31,7 +32,7 @@ const installmentRoutes = createHonoApp();
  */
 installmentRoutes.get(
   "/:id/installments",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentId,
   getDocumentInstallments,
@@ -44,7 +45,7 @@ installmentRoutes.get(
  */
 installmentRoutes.post(
   "/:id/installments/generate-plan",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   generateInstallmentPlan,
@@ -57,7 +58,7 @@ installmentRoutes.post(
  */
 installmentRoutes.post(
   "/:id/installments",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   validateCreateDocumentInstallments,
@@ -71,7 +72,7 @@ installmentRoutes.post(
  */
 installmentRoutes.get(
   "/:id/installments/:installmentId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentId,
   validateDocumentInstallmentIdParam,
@@ -85,7 +86,7 @@ installmentRoutes.get(
  */
 installmentRoutes.put(
   "/:id/installments/:installmentId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   validateDocumentInstallmentIdParam,
@@ -100,7 +101,7 @@ installmentRoutes.put(
  */
 installmentRoutes.post(
   "/:id/installments/:installmentId/pay",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   validateDocumentInstallmentIdParam,
@@ -114,7 +115,7 @@ installmentRoutes.post(
  */
 installmentRoutes.delete(
   "/:id/installments/:installmentId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   validateDocumentInstallmentIdParam,

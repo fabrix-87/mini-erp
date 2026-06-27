@@ -1,4 +1,4 @@
-import { authenticateToken, authorize } from "../middleware/auth-middleware";
+import { authorize } from "../middleware/auth-middleware";
 import {
   validateCreateCompanyContact,
   validateUpdateCompanyContact,
@@ -10,6 +10,7 @@ import {
   deleteCompanyContact,
 } from "../controllers/company-contact-controller";
 import { createHonoApp } from "@/lib/hono-app";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const companyContactRoutes = createHonoApp();
 
@@ -25,7 +26,7 @@ const companyContactRoutes = createHonoApp();
  */
 companyContactRoutes.post(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["contact:update", "contact:manage"]),
   validateCreateCompanyContact,
   createCompanyContact,
@@ -39,7 +40,7 @@ companyContactRoutes.post(
  */
 companyContactRoutes.patch(
   "/:contactId/:companyId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["contact:update", "contact:manage"]),
   validateCompanyContactParams,
   validateUpdateCompanyContact,
@@ -53,7 +54,7 @@ companyContactRoutes.patch(
  */
 companyContactRoutes.delete(
   "/:contactId/:companyId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["contact:delete", "contact:manage"]),
   validateCompanyContactParams,
   deleteCompanyContact,

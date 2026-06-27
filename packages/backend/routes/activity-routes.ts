@@ -1,4 +1,4 @@
-import { authenticateToken, authorize } from "../middleware/auth-middleware";
+import { authorize } from "../middleware/auth-middleware";
 import {
   validateActivityStatsQuery,
   validateCreateActivity,
@@ -40,6 +40,7 @@ import {
   toggleTemplateActive,
 } from "../controllers/activity";
 import { createHonoApp } from "@/lib/hono-app";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const activityRoutes = createHonoApp();
 
@@ -55,7 +56,7 @@ const activityRoutes = createHonoApp();
  */
 activityRoutes.get(
   "/stats",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:read", "activity:manage"]),
   validateActivityStatsQuery,
   getActivityStats,
@@ -73,7 +74,7 @@ activityRoutes.get(
  */
 activityRoutes.get(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:read", "activity:manage"]),
   validateActivityQuery,
   getAllActivities,
@@ -86,7 +87,7 @@ activityRoutes.get(
  */
 activityRoutes.get(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:read", "activity:manage"]),
   validateActivityId,
   getActivityById,
@@ -99,7 +100,7 @@ activityRoutes.get(
  */
 activityRoutes.post(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:create", "activity:manage"]),
   validateCreateActivity,
   createActivity,
@@ -112,7 +113,7 @@ activityRoutes.post(
  */
 activityRoutes.put(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:update", "activity:manage"]),
   validateActivityId,
   validateUpdateActivity,
@@ -126,7 +127,7 @@ activityRoutes.put(
  */
 activityRoutes.patch(
   "/:id/status",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:update", "activity:manage"]),
   validateActivityId,
   validateUpdateActivityStatus,
@@ -140,7 +141,7 @@ activityRoutes.patch(
  */
 activityRoutes.patch(
   "/:id/complete",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:update", "activity:manage"]),
   validateActivityId,
   validateCompleteActivityStatus,
@@ -154,7 +155,7 @@ activityRoutes.patch(
  */
 activityRoutes.delete(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:delete", "activity:manage"]),
   validateActivityId,
   deleteActivity,
@@ -171,7 +172,7 @@ activityRoutes.delete(
  */
 activityRoutes.get(
   "/:activityId/participants",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:read", "activity:manage"]),
   validateActivityIdAsActivityId,
   getActivityParticipants,
@@ -184,7 +185,7 @@ activityRoutes.get(
  */
 activityRoutes.post(
   "/:activityId/participants",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:update", "activity:manage"]),
   validateActivityIdAsActivityId,
   addActivityParticipant,
@@ -197,7 +198,7 @@ activityRoutes.post(
  */
 activityRoutes.post(
   "/:activityId/participants/bulk",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:update", "activity:manage"]),
   validateActivityIdAsActivityId,
   addBulkParticipants,
@@ -210,7 +211,7 @@ activityRoutes.post(
  */
 activityRoutes.put(
   "/participants/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:update", "activity:manage"]),
   validateActivityPartecipantId,
   validateUpdateActivityPartecipant,
@@ -224,7 +225,7 @@ activityRoutes.put(
  */
 activityRoutes.delete(
   "/participants/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:update", "activity:manage"]),
   validateActivityPartecipantId,
   removeActivityParticipant,
@@ -242,7 +243,7 @@ activityRoutes.delete(
  */
 activityRoutes.get(
   "/templates",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:read", "activity:manage"]),
   getAllActivityTemplates,
 );
@@ -254,7 +255,7 @@ activityRoutes.get(
  */
 activityRoutes.get(
   "/templates/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:read", "activity:manage"]),
   validateActivityTemplateId,
   getActivityTemplateById,
@@ -267,7 +268,7 @@ activityRoutes.get(
  */
 activityRoutes.post(
   "/templates",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:manage"]),
   validateCreateActivityTemplate,
   createActivityTemplate,
@@ -280,7 +281,7 @@ activityRoutes.post(
  */
 activityRoutes.post(
   "/templates/:id/create-activity",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:create", "activity:manage"]),
   validateActivityTemplateId,
   validateCreateActivityFromTemplate,
@@ -294,7 +295,7 @@ activityRoutes.post(
  */
 activityRoutes.put(
   "/templates/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:manage"]),
   validateActivityTemplateId,
   validateUpdateActivityTemplate,
@@ -308,7 +309,7 @@ activityRoutes.put(
  */
 activityRoutes.patch(
   "/templates/:id/toggle-active",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:manage"]),
   validateActivityTemplateId,
   toggleTemplateActive,
@@ -321,7 +322,7 @@ activityRoutes.patch(
  */
 activityRoutes.delete(
   "/templates/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["activity:manage"]),
   validateActivityTemplateId,
   deleteActivityTemplate,

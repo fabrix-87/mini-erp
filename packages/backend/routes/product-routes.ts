@@ -1,4 +1,4 @@
-import { authenticateToken, authorize } from "../middleware/auth-middleware";
+import { authorize } from "../middleware/auth-middleware";
 import {
   validateCreateProduct,
   validateUpdateProduct,
@@ -60,6 +60,7 @@ import {
   bulkDeleteProducts,
 } from "../controllers/product-controller";
 import { createHonoApp } from "@/lib/hono-app";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const productRoutes = createHonoApp();
 
@@ -121,7 +122,7 @@ productRoutes.get("/:id/translations", validateProductId, getProductTranslations
  */
 productRoutes.post(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:create", "product:manage"]),
   validateCreateProduct,
   createProduct,
@@ -134,7 +135,7 @@ productRoutes.post(
  */
 productRoutes.put(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:update", "product:manage"]),
   validateProductId,
   validateUpdateProduct,
@@ -148,7 +149,7 @@ productRoutes.put(
  */
 productRoutes.delete(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:delete", "product:manage"]),
   validateProductId,
   deleteProduct,
@@ -161,7 +162,7 @@ productRoutes.delete(
  */
 productRoutes.post(
   "/bulk-update",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:update", "product:manage"]),
   bulkUpdateProducts,
 );
@@ -173,7 +174,7 @@ productRoutes.post(
  */
 productRoutes.post(
   "/bulk-delete",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:delete", "product:manage"]),
   bulkDeleteProducts,
 );
@@ -196,7 +197,7 @@ productRoutes.get("/:productId/variants/:id", validateVariantId, getVariantById)
  */
 productRoutes.post(
   "/:id/variants",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:create", "product:manage"]),
   validateCreateVariant,
   createVariant,
@@ -209,7 +210,7 @@ productRoutes.post(
  */
 productRoutes.put(
   "/:productId/variants/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:update", "product:manage"]),
   validateVariantId,
   validateUpdateVariant,
@@ -223,7 +224,7 @@ productRoutes.put(
  */
 productRoutes.delete(
   "/:productId/variants/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:delete", "product:manage"]),
   validateProductIdAsProductId,
   validateVariantId,
@@ -241,7 +242,7 @@ productRoutes.delete(
  */
 productRoutes.post(
   "/:id/translations",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:create", "product:manage"]),
   validateCreateTranslation,
   createProductTranslation,
@@ -254,7 +255,7 @@ productRoutes.post(
  */
 productRoutes.put(
   "/:id/translations/:languageId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:update", "product:manage"]),
   validateProductIdLanguageId,
   validateUpdateTranslation,
@@ -268,7 +269,7 @@ productRoutes.put(
  */
 productRoutes.delete(
   "/:id/translations/:languageId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:delete", "product:manage"]),
   validateProductIdLanguageId,
   deleteProductTranslation,
@@ -285,7 +286,7 @@ productRoutes.delete(
  */
 productRoutes.post(
   "/:id/images",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:create", "product:manage"]),
   validateProductId,
   validateCreateImage,
@@ -299,7 +300,7 @@ productRoutes.post(
  */
 productRoutes.put(
   "/:productId/images/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:update", "product:manage"]),
   validateProductImageId,
   validateUpdateImage,
@@ -313,7 +314,7 @@ productRoutes.put(
  */
 productRoutes.delete(
   "/:productId/images/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:delete", "product:manage"]),
   validateProductImageId,
   deleteImage,
@@ -326,7 +327,7 @@ productRoutes.delete(
  */
 productRoutes.patch(
   "/:productId/images/:id/set-cover",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:update", "product:manage"]),
   validateProductImageId,
   setCoverImage,
@@ -343,7 +344,7 @@ productRoutes.patch(
  */
 productRoutes.post(
   "/:id/categories",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:update", "product:manage"]),
   validateProductId,
   validateCreateProductCategory,
@@ -357,7 +358,7 @@ productRoutes.post(
  */
 productRoutes.delete(
   "/:productId/categories/:categoryId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:update", "product:manage"]),
   validatProductCategoryId,
   removeCategory,
@@ -370,7 +371,7 @@ productRoutes.delete(
  */
 productRoutes.patch(
   "/:productId/categories/:categoryId/position",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:update", "product:manage"]),
   validatProductCategoryId,
   updateCategoryPosition,
@@ -401,7 +402,7 @@ productRoutes.get("/manufacturers/:id", validateManufacturerId, getManufacturerB
  */
 productRoutes.post(
   "/manufacturers",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:create", "product:manage"]),
   validateCreateManufacturer,
   createManufacturer,
@@ -414,7 +415,7 @@ productRoutes.post(
  */
 productRoutes.put(
   "/manufacturers/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:update", "product:manage"]),
   validateManufacturerId,
   validateUpdateManufacturer,
@@ -428,7 +429,7 @@ productRoutes.put(
  */
 productRoutes.delete(
   "/manufacturers/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["product:delete", "product:manage"]),
   validateManufacturerId,
   deleteManufacturer,

@@ -36,7 +36,7 @@ import {
   syncPermissions,
 } from '../controllers/role-controller'
 import { createHonoApp } from '@/lib/hono-app';
-import { authenticateToken, authorize } from '@/middleware/auth-middleware';
+import { authorize } from '@/middleware/auth-middleware';
 import { requireTenantScope } from '@/middleware/tenant-scope-middleware';
 
 const roleRoutes = createHonoApp();
@@ -53,7 +53,6 @@ const roleRoutes = createHonoApp();
  */
 roleRoutes.get(
   '/permissions',
-  authenticateToken,
   requireTenantScope,
   authorize(['permission:read', 'permission:manage', 'role:manage']),
   validatePermissionQuery,
@@ -67,7 +66,6 @@ roleRoutes.get(
  */
 roleRoutes.get(
   '/permissions/:id',
-  authenticateToken,
   requireTenantScope,
   authorize(['permission:read', 'permission:manage', 'role:manage']),
   validatePermissionId,
@@ -81,7 +79,6 @@ roleRoutes.get(
  */
 roleRoutes.get(
   '/permissions/:id/roles',
-  authenticateToken,
   requireTenantScope,
   authorize(['permission:read', 'permission:manage', 'role:manage']),
   validatePermissionId,
@@ -99,7 +96,6 @@ roleRoutes.get(
  */
 roleRoutes.post(
   '/permissions',
-  authenticateToken,
   requireTenantScope,
   authorize(['permission:create', 'permission:manage']),
   validateCreatePermission,
@@ -113,7 +109,6 @@ roleRoutes.post(
  */
 roleRoutes.put(
   '/permissions/:id',
-  authenticateToken,
   requireTenantScope,
   authorize(['permission:update', 'permission:manage']),
   validatePermissionId,
@@ -128,7 +123,6 @@ roleRoutes.put(
  */
 roleRoutes.delete(
   '/permissions/:id',
-  authenticateToken,
   requireTenantScope,
   authorize(['permission:delete', 'permission:manage']),
   validatePermissionId,
@@ -146,7 +140,6 @@ roleRoutes.delete(
  */
 roleRoutes.post(
   '/sync-permissions',
-  authenticateToken,
   authorize(['permission:manage']),
   syncPermissions
 );
@@ -162,7 +155,6 @@ roleRoutes.post(
  */
 roleRoutes.post(
   '/',
-  authenticateToken,
   requireTenantScope,
   authorize(['role:create', 'role:manage']),
   validateCreateRole,
@@ -176,7 +168,6 @@ roleRoutes.post(
  */
 roleRoutes.put(
   '/:id',
-  authenticateToken,
   requireTenantScope,
   authorize(['role:update', 'role:manage']),
   validateRoleId,
@@ -191,7 +182,6 @@ roleRoutes.put(
  */
 roleRoutes.delete(
   '/:id',
-  authenticateToken,
   requireTenantScope,
   authorize(['role:delete', 'role:manage']),
   validateRoleId,
@@ -205,7 +195,6 @@ roleRoutes.delete(
  */
 roleRoutes.post(
   '/:id/permissions',
-  authenticateToken,
   requireTenantScope,
   authorize(['role:manage']),
   validateRoleId,
@@ -220,7 +209,6 @@ roleRoutes.post(
  */
 roleRoutes.delete(
   '/:id/permissions',
-  authenticateToken,
   requireTenantScope,
   authorize(['role:manage']),
   validateRoleId,
@@ -240,7 +228,6 @@ roleRoutes.delete(
  */
 roleRoutes.get(
   '/',
-  authenticateToken,
   requireTenantScope,
   authorize(['role:read', 'role:manage']),
   validateRoleQuery,
@@ -254,7 +241,6 @@ roleRoutes.get(
 */
 roleRoutes.get(
   '/code/:code',
-  authenticateToken,
   requireTenantScope,
   authorize(['role:read', 'role:manage']),
   validateRoleCode,
@@ -268,7 +254,6 @@ roleRoutes.get(
 */
 roleRoutes.get(
   '/:id/permissions',
-  authenticateToken,
   requireTenantScope,
   authorize(['role:read', 'role:manage']),
   validateRoleId,
@@ -282,7 +267,6 @@ roleRoutes.get(
 */
 roleRoutes.get(
   '/:id/users',
-  authenticateToken,
   requireTenantScope,
   authorize(['role:read', 'role:manage']),
   validateRoleId,
@@ -296,7 +280,6 @@ roleRoutes.get(
  */
 roleRoutes.get(
   '/:id',
-  authenticateToken,
   requireTenantScope,
   authorize(['role:read', 'role:manage']),
   validateRoleId,

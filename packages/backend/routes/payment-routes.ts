@@ -1,4 +1,4 @@
-import { authenticateToken, authorize } from "../middleware/auth-middleware";
+import { authorize } from "../middleware/auth-middleware";
 
 import {
   getAllPaymentMethods,
@@ -20,6 +20,7 @@ import {
   validateCalcolateDueDates,
 } from "@/validators/payment-validator";
 import { createHonoApp } from "@/lib/hono-app";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const paymentRoutes = createHonoApp();
 
@@ -35,7 +36,7 @@ const paymentRoutes = createHonoApp();
  */
 paymentRoutes.get(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["payment:read", "payment:manage"]),
   validatePaymentQuery,
   getAllPaymentMethods,
@@ -48,7 +49,7 @@ paymentRoutes.get(
  */
 paymentRoutes.get(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["payment:read", "payment:manage"]),
   validatePaymentMethodIdParam,
   getPaymentMethodById,
@@ -61,7 +62,7 @@ paymentRoutes.get(
  */
 paymentRoutes.post(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["payment:create", "payment:manage"]),
   validateCreatePaymentMethod,
   createPaymentMethod,
@@ -74,7 +75,7 @@ paymentRoutes.post(
  */
 paymentRoutes.put(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["payment:update", "payment:manage"]),
   validatePaymentMethodIdParam,
   validateUpdatePaymentMethod,
@@ -88,7 +89,7 @@ paymentRoutes.put(
  */
 paymentRoutes.put(
   "/:id/details",
-  authenticateToken,
+  requireTenantScope,
   authorize(["payment:update", "payment:manage"]),
   validatePaymentMethodIdParam,
   validateUpdatePaymentTermDetails,
@@ -102,7 +103,7 @@ paymentRoutes.put(
  */
 paymentRoutes.patch(
   "/:id/toggle-active",
-  authenticateToken,
+  requireTenantScope,
   authorize(["payment:update", "payment:manage"]),
   validatePaymentMethodIdParam,
   validateTogglePaymentMethod,
@@ -117,7 +118,7 @@ paymentRoutes.patch(
  */
 paymentRoutes.post(
   "/:id/calculate-due-dates",
-  authenticateToken,
+  requireTenantScope,
   authorize(["payment:read", "payment:manage"]),
   validatePaymentMethodIdParam,
   validateCalcolateDueDates,
@@ -131,7 +132,7 @@ paymentRoutes.post(
  */
 paymentRoutes.delete(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["payment:delete", "payment:manage"]),
   validatePaymentMethodIdParam,
   deletePaymentMethod,

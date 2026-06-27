@@ -1,7 +1,8 @@
 import { validateCompanyQuery } from "../validators/company-validator";
 import { listCompanies } from "../controllers/company-controller";
-import { authenticateToken, authorize } from "@/middleware/auth-middleware";
+import { authorize } from "@/middleware/auth-middleware";
 import { createHonoApp } from "@/lib/hono-app";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const companyRoutes = createHonoApp();
 
@@ -17,7 +18,7 @@ const companyRoutes = createHonoApp();
  */
 companyRoutes.get(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["company:read", "company:manage"]),
   validateCompanyQuery,
   listCompanies,

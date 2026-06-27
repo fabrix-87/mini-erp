@@ -2,17 +2,14 @@
 // UNIFIED DASHBOARD ROUTES
 // ============================================================================
 
-import { authenticateToken } from "@/middleware/auth-middleware";
-import {
-  validateDashboardQuery,
-  validateUpdateLayout,
-} from "@/validators/dashboard-validator";
+import { validateDashboardQuery, validateUpdateLayout } from "@/validators/dashboard-validator";
 import {
   getUnifiedDashboard,
   updateDashboardLayout,
   resetDashboardLayout,
 } from "@/controllers/dashboard-controller";
 import { createHonoApp } from "@/lib/hono-app";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const dashboardRoutes = createHonoApp();
 
@@ -20,32 +17,18 @@ const dashboardRoutes = createHonoApp();
  * GET /api/dashboard
  * Fetch unified dashboard data with all authorized widgets
  */
-dashboardRoutes.get(
-  "/",
-  authenticateToken,
-  validateDashboardQuery,
-  getUnifiedDashboard,
-);
+dashboardRoutes.get("/", requireTenantScope, validateDashboardQuery, getUnifiedDashboard);
 
 /**
  * PUT /api/dashboard/layout
  * Save user's custom widget layout
  */
-dashboardRoutes.put(
-  "/layout",
-  authenticateToken,
-  validateUpdateLayout,
-  updateDashboardLayout,
-);
+dashboardRoutes.put("/layout", requireTenantScope, validateUpdateLayout, updateDashboardLayout);
 
 /**
  * DELETE /api/dashboard/layout
  * Reset layout to role default
  */
-dashboardRoutes.delete(
-  "/layout",
-  authenticateToken,
-  resetDashboardLayout,
-);
+dashboardRoutes.delete("/layout", requireTenantScope, resetDashboardLayout);
 
 export default dashboardRoutes;

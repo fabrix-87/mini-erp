@@ -26,8 +26,9 @@ import {
   deleteLead,
   getLeadStats,
 } from "../controllers/lead-controller";
-import { authenticateToken, authorize } from "@/middleware/auth-middleware";
+import { authorize } from "@/middleware/auth-middleware";
 import { createHonoApp } from "@/lib/hono-app";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const leadRoutes = createHonoApp();
 
@@ -41,7 +42,7 @@ const leadRoutes = createHonoApp();
  */
 leadRoutes.get(
   "/stats",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:read", "lead:manage"]),
   validateLeadStats,
   getLeadStats,
@@ -57,7 +58,7 @@ leadRoutes.get(
  */
 leadRoutes.post(
   "/bulk/assign",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:update", "lead:manage"]),
   validateBulkAssignLeads,
   bulkAssignLeads,
@@ -69,7 +70,7 @@ leadRoutes.post(
  */
 leadRoutes.post(
   "/bulk/status",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:update", "lead:manage"]),
   validateBulkUpdateLeadStatus,
   bulkUpdateLeadStatus,
@@ -85,7 +86,7 @@ leadRoutes.post(
  */
 leadRoutes.get(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:read", "lead:manage"]),
   validateLeadQuery,
   getAllLeads,
@@ -97,7 +98,7 @@ leadRoutes.get(
  */
 leadRoutes.post(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:create", "lead:manage"]),
   validateCreateLead,
   createLead,
@@ -109,7 +110,7 @@ leadRoutes.post(
  */
 leadRoutes.get(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:read", "lead:manage"]),
   validateLeadId,
   getLeadById,
@@ -121,7 +122,7 @@ leadRoutes.get(
  */
 leadRoutes.put(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:update", "lead:manage"]),
   validateLeadId,
   validateUpdateLead,
@@ -134,7 +135,7 @@ leadRoutes.put(
  */
 leadRoutes.patch(
   "/:id/status",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:update", "lead:manage"]),
   validateLeadId,
   validateUpdateLeadStatus,
@@ -147,7 +148,7 @@ leadRoutes.patch(
  */
 leadRoutes.patch(
   "/:id/score",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:update", "lead:manage"]),
   validateLeadId,
   validateUpdateLeadScore,
@@ -160,7 +161,7 @@ leadRoutes.patch(
  */
 leadRoutes.patch(
   "/:id/qualify",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:update", "lead:manage"]),
   validateLeadId,
   validateQualifyLead,
@@ -173,7 +174,7 @@ leadRoutes.patch(
  */
 leadRoutes.post(
   "/:id/convert",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:convert", "lead:manage"]),
   validateLeadId,
   validateConvertLead,
@@ -186,7 +187,7 @@ leadRoutes.post(
  */
 leadRoutes.patch(
   "/:id/assign",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:update", "lead:manage"]),
   validateLeadId,
   validateUpdateLead,
@@ -199,7 +200,7 @@ leadRoutes.patch(
  */
 leadRoutes.delete(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["lead:delete", "lead:manage"]),
   validateLeadId,
   deleteLead,

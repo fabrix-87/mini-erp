@@ -4,7 +4,7 @@
  * status update, send, approve, reject, void, and audit history.
  */
 import { createHonoApp } from "../../lib/hono-app";
-import { authenticateToken, authorize } from "../../middleware/auth-middleware";
+import { authorize } from "../../middleware/auth-middleware";
 import {
   validateDocumentId,
   validateUpdateDocumentStatus,
@@ -17,6 +17,7 @@ import {
   voidDocument,
   getDocumentHistory,
 } from "../../controllers/document";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const statusRoutes = createHonoApp();
 
@@ -27,7 +28,7 @@ const statusRoutes = createHonoApp();
  */
 statusRoutes.patch(
   "/:id/status",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   validateUpdateDocumentStatus,
@@ -41,7 +42,7 @@ statusRoutes.patch(
  */
 statusRoutes.post(
   "/:id/send",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   sendDocument,
@@ -54,7 +55,7 @@ statusRoutes.post(
  */
 statusRoutes.post(
   "/:id/approve",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   approveDocument,
@@ -67,7 +68,7 @@ statusRoutes.post(
  */
 statusRoutes.post(
   "/:id/reject",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   rejectDocument,
@@ -80,7 +81,7 @@ statusRoutes.post(
  */
 statusRoutes.post(
   "/:id/void",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   voidDocument,
@@ -93,7 +94,7 @@ statusRoutes.post(
  */
 statusRoutes.get(
   "/:id/history",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentId,
   getDocumentHistory,

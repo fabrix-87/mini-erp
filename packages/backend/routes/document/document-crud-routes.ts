@@ -4,7 +4,7 @@
  * by type (quotes, orders, invoices, delivery-notes) and by entity (customer, supplier).
  */
 import { createHonoApp } from "../../lib/hono-app";
-import { authenticateToken, authorize } from "../../middleware/auth-middleware";
+import { authorize } from "../../middleware/auth-middleware";
 import {
   validateCreateDocument,
   validateUpdateDocument,
@@ -23,6 +23,7 @@ import {
   recalculateDocument,
 } from "../../controllers/document";
 import { getAllDeliveryNotes, getAllInvoices, getAllOrders, getAllQuotes } from "@/controllers/document/document-crud-controller";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const crudRoutes = createHonoApp();
 
@@ -33,7 +34,7 @@ const crudRoutes = createHonoApp();
  */
 crudRoutes.get(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentQuery,
   getAllDocuments,
@@ -46,7 +47,7 @@ crudRoutes.get(
  */
 crudRoutes.get(
   "/quotes",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentQuery,
   getAllQuotes,
@@ -59,7 +60,7 @@ crudRoutes.get(
  */
 crudRoutes.get(
   "/orders",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentQuery,
   getAllOrders,
@@ -72,7 +73,7 @@ crudRoutes.get(
  */
 crudRoutes.get(
   "/invoices",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentQuery,
   getAllInvoices,
@@ -85,7 +86,7 @@ crudRoutes.get(
  */
 crudRoutes.get(
   "/delivery-notes",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentQuery,
   getAllDeliveryNotes,
@@ -98,7 +99,7 @@ crudRoutes.get(
  */
 crudRoutes.get(
   "/customer/:customerId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentCustomerIdParam,
   getAllDocuments,
@@ -111,7 +112,7 @@ crudRoutes.get(
  */
 crudRoutes.get(
   "/supplier/:supplierId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentSupplierIdParam,
   getAllDocuments,
@@ -124,7 +125,7 @@ crudRoutes.get(
  */
 crudRoutes.post(
   "/",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:create", "document:manage"]),
   validateCreateDocument,
   createDocument,
@@ -137,7 +138,7 @@ crudRoutes.post(
  */
 crudRoutes.get(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentId,
   getDocumentById,
@@ -150,7 +151,7 @@ crudRoutes.get(
  */
 crudRoutes.put(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   validateUpdateDocument,
@@ -164,7 +165,7 @@ crudRoutes.put(
  */
 crudRoutes.delete(
   "/:id",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:delete", "document:manage"]),
   validateDocumentId,
   deleteDocument,
@@ -177,7 +178,7 @@ crudRoutes.delete(
  */
 crudRoutes.post(
   "/:id/recalculate",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:update", "document:manage"]),
   validateDocumentId,
   validateRecalculateDocument,

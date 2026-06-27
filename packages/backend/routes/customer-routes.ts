@@ -4,7 +4,7 @@ import {
   validateUpdateCustomerCompany,
   validateCustomerId,
   validateCustomerQuery,
-} from '../validators/customer-validator';
+} from "../validators/customer-validator";
 
 import {
   getAllCustomers,
@@ -16,11 +16,12 @@ import {
   deleteCustomer,
   validateCustomerFiscal,
   getCustomerListStats,
-} from '../controllers/customer-controller';
-import { createHonoApp } from '@/lib/hono-app';
-import { authenticateToken, authorize } from '@/middleware/auth-middleware';
+} from "../controllers/customer-controller";
+import { createHonoApp } from "@/lib/hono-app";
+import { authorize } from "@/middleware/auth-middleware";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
-const customerRoutes = createHonoApp()
+const customerRoutes = createHonoApp();
 
 // ============================================================================
 // CUSTOMER ROUTES
@@ -33,11 +34,11 @@ const customerRoutes = createHonoApp()
  * @query   page, limit, search, type, priority, segment, leadStatus, creditStatus, size
  */
 customerRoutes.get(
-  '/',
-  authenticateToken,
-  authorize(['customer:read', 'customer:manage']),
+  "/",
+  requireTenantScope,
+  authorize(["customer:read", "customer:manage"]),
   validateCustomerQuery,
-  getAllCustomers
+  getAllCustomers,
 );
 
 /**
@@ -47,11 +48,11 @@ customerRoutes.get(
  * @query   page, limit, search, type, priority, segment, leadStatus, creditStatus, size
  */
 customerRoutes.get(
-  '/stats',
-  authenticateToken,
-  authorize(['customer:read', 'customer:manage']),
+  "/stats",
+  requireTenantScope,
+  authorize(["customer:read", "customer:manage"]),
   validateCustomerQuery,
-  getCustomerListStats
+  getCustomerListStats,
 );
 
 /**
@@ -60,11 +61,11 @@ customerRoutes.get(
  * @access  Private (customer:read)
  */
 customerRoutes.get(
-  '/:id/stats',
-  authenticateToken,
-  authorize(['customer:read', 'customer:manage']),
+  "/:id/stats",
+  requireTenantScope,
+  authorize(["customer:read", "customer:manage"]),
   validateCustomerId,
-  getCustomerStats
+  getCustomerStats,
 );
 
 /**
@@ -73,25 +74,25 @@ customerRoutes.get(
  * @access  Private (customer:create)
  */
 customerRoutes.post(
-  '/',
-  authenticateToken,
-  authorize(['customer:create', 'customer:manage']),
+  "/",
+  requireTenantScope,
+  authorize(["customer:create", "customer:manage"]),
   validateCreateCustomer,
-  createCustomer
+  createCustomer,
 );
 
 /**
  * @route   PUT /api/customers/:id/company
  * @desc    Aggiorna dati anagrafici company del customer
  * @access  Private (customer:update)
-*/
+ */
 customerRoutes.put(
-  '/:id/company',
-  authenticateToken,
-  authorize(['customer:update', 'customer:manage']),
+  "/:id/company",
+  requireTenantScope,
+  authorize(["customer:update", "customer:manage"]),
   validateCustomerId,
   validateUpdateCustomerCompany,
-  updateCustomerCompany
+  updateCustomerCompany,
 );
 
 /**
@@ -100,12 +101,12 @@ customerRoutes.put(
  * @access  Private (customer:update)
  */
 customerRoutes.put(
-  '/:id',
-  authenticateToken,
-  authorize(['customer:update', 'customer:manage']),
+  "/:id",
+  requireTenantScope,
+  authorize(["customer:update", "customer:manage"]),
   validateCustomerId,
   validateUpdateCustomer,
-  updateCustomer
+  updateCustomer,
 );
 
 /**
@@ -114,11 +115,11 @@ customerRoutes.put(
  * @access  Private (customer:delete)
  */
 customerRoutes.delete(
-  '/:id',
-  authenticateToken,
-  authorize(['customer:delete', 'customer:manage']),
+  "/:id",
+  requireTenantScope,
+  authorize(["customer:delete", "customer:manage"]),
   validateCustomerId,
-  deleteCustomer
+  deleteCustomer,
 );
 
 /**
@@ -127,11 +128,11 @@ customerRoutes.delete(
  * @access  Private (customer:read)
  */
 customerRoutes.get(
-  '/:id/validate-fiscal',
-  authenticateToken,
-  authorize(['customer:read', 'customer:manage']),
+  "/:id/validate-fiscal",
+  requireTenantScope,
+  authorize(["customer:read", "customer:manage"]),
   validateCustomerId,
-  validateCustomerFiscal
+  validateCustomerFiscal,
 );
 
 /**
@@ -140,14 +141,12 @@ customerRoutes.get(
  * @access  Private (customer:read)
  */
 customerRoutes.get(
-  '/:id',
-  authenticateToken,
-  authorize(['customer:read', 'customer:manage']),
+  "/:id",
+  requireTenantScope,
+  authorize(["customer:read", "customer:manage"]),
   validateCustomerId,
-  getCustomerById
+  getCustomerById,
 );
-
-
 
 // ============================================================================
 // EXPORT

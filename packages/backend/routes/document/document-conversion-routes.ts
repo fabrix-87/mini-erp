@@ -4,7 +4,7 @@
  * clone, convert to another type, and manage document relations.
  */
 import { createHonoApp } from "../../lib/hono-app";
-import { authenticateToken, authorize } from "../../middleware/auth-middleware";
+import { authorize } from "../../middleware/auth-middleware";
 import {
   validateDocumentId,
   validateConvertDocument,
@@ -17,6 +17,7 @@ import {
   getDocumentRelations,
   deleteDocumentRelation,
 } from "../../controllers/document";
+import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const conversionRoutes = createHonoApp();
 
@@ -27,7 +28,7 @@ const conversionRoutes = createHonoApp();
  */
 conversionRoutes.post(
   "/:id/clone",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:create", "document:manage"]),
   validateDocumentId,
   validateDuplicateDocument,
@@ -41,7 +42,7 @@ conversionRoutes.post(
  */
 conversionRoutes.post(
   "/:id/convert",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:create", "document:manage"]),
   validateDocumentId,
   validateConvertDocument,
@@ -55,7 +56,7 @@ conversionRoutes.post(
  */
 conversionRoutes.get(
   "/:id/relations",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:read", "document:manage"]),
   validateDocumentId,
   getDocumentRelations,
@@ -68,7 +69,7 @@ conversionRoutes.get(
  */
 conversionRoutes.post(
   "/:id/relations",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:create", "document:manage"]),
   validateDocumentId,
   createDocumentRelation,
@@ -81,7 +82,7 @@ conversionRoutes.post(
  */
 conversionRoutes.delete(
   "/:id/relations/:relationId",
-  authenticateToken,
+  requireTenantScope,
   authorize(["document:delete", "document:manage"]),
   validateDocumentId,
   deleteDocumentRelation,
