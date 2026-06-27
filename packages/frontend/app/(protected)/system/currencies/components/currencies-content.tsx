@@ -1,14 +1,13 @@
 "use client";
 
 import { CurrencyListApiResponse } from "@/types/currency-types";
-import { Currency, CurrencyQueryInput, EntityPermissions } from "@mini-erp/shared";
+import { CurrencyQueryInput, EntityPermissions } from "@mini-erp/shared";
 import { CurrenciesTable } from "./currencies-table";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { CurrenciesFilterBar } from "./currencies-filter-bar";
 import { useState } from "react";
 import { CurrencyDetailDialog } from "./currency-detail-dialog";
 import { toast } from "sonner";
-import { getCurrencyByCode } from "@/services/client/currency";
 import { useCurrency } from "@/hooks/use-currency";
 import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 

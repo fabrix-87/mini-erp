@@ -12,9 +12,7 @@ import { SECTION_NAMESPACE_MAP } from "@/lib/navigation-config";
  */
 function resolveNamespace(pathname: string): string | null {
   // Sort by length descending to match the most specific prefix first
-  const sortedPaths = Object.keys(SECTION_NAMESPACE_MAP).sort(
-    (a, b) => b.length - a.length
-  );
+  const sortedPaths = Object.keys(SECTION_NAMESPACE_MAP).sort((a, b) => b.length - a.length);
   const match = sortedPaths.find((path) => pathname.startsWith(path));
   return match ? SECTION_NAMESPACE_MAP[match] : null;
 }
@@ -32,8 +30,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   }
 
   const headersList = await headers();
-  const pathname = headersList.get("x-invoke-path") ?? 
-                   headersList.get("x-pathname") ?? "";
+  const xPathname = headersList.get("x-pathname") ?? '';
 
   // Always-loaded namespaces
   const [nav, common, errors] = await Promise.all([
@@ -49,7 +46,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   };
 
   // Lazy-load section namespace derived from NAVIGATION_TREE
-  const namespace = resolveNamespace(pathname);
+  const namespace = resolveNamespace(xPathname);
   if (namespace && namespace !== "overview") {
     try {
       const sectionMessages = await import(`../messages/${locale}/${namespace}.json`);

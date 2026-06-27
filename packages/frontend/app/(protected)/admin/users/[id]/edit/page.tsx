@@ -7,7 +7,7 @@ import { UserForm } from "@/app/(protected)/admin/users/components/user-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getAllRoles } from "@/services/server/role-service";
-import { getAllLanguages } from "@/services/server/language";
+import { getAllLanguages } from "@/services/server/language-service";
 import { getDetailRoute } from "@/lib/navigation-routes";
 
 interface PageProps {

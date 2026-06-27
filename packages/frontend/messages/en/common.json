@@ -53,6 +53,7 @@
 
   "table": {
     "no_results": "No results found",
+    "try_to_change_search_term": "Try to change the search term",
     "loading": "Loading...",
     "rows_per_page": "Rows per page",
     "page_of": "Page {current} of {total}",
@@ -94,7 +95,8 @@
     "next": "Next",
     "first": "First page",
     "last": "Last page",
-    "showing": "Showing {from}–{to} of {total}"
+    "show_entries": "Show",
+    "showing": "Showing {from}-{to} of {total}"
   },
 
   "datetime": {

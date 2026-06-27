@@ -69,6 +69,19 @@ function forwardTokenCookies(setCookieHeaders: string[], response: NextResponse)
   }
 }
 
+/**
+ * Creates a NextResponse.next() with the current pathname injected as
+ * `x-pathname` header, so that next-intl `request.ts` can resolve
+ * the correct i18n namespace without needing a separate middleware.
+ *
+ * @param request - The incoming NextRequest.
+ */
+function nextWithPathname(request: NextRequest): NextResponse {
+  const response = NextResponse.next();
+  response.headers.set("x-pathname", request.nextUrl.pathname);
+  return response;
+}
+
 // ============================================================================
 // Main Middleware Logic
 // ============================================================================
@@ -116,7 +129,7 @@ export async function proxy(request: NextRequest) {
       console.log("🔀 Already authenticated, redirecting to /dashboard");
       return NextResponse.redirect(new URL(DEFAULT_AUTH_ROUTE, request.url));
     }
-    return NextResponse.next();
+    return nextWithPathname(request);
   }
 
   // ========================================
@@ -168,6 +181,7 @@ export async function proxy(request: NextRequest) {
 
       const response = NextResponse.next();
       forwardTokenCookies(refreshRes.headers.getSetCookie?.() ?? [], response);
+      response.headers.set("x-pathname", pathname);
       return response;
     } catch (err) {
       console.error("❌ Middleware refresh error:", err);
@@ -186,7 +200,7 @@ export async function proxy(request: NextRequest) {
   // ========================================
   // 8. Allow access
   // ========================================
-  return NextResponse.next();
+  return nextWithPathname(request);
 }
 
 // ============================================================================

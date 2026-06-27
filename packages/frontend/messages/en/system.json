@@ -1,0 +1,13 @@
+{
+  "localization": {
+    "id": "ID",
+    "title": "Manage Languages",
+    "description": "Manage the languages of the system",
+    "name": "Language Name",
+    "isoCode": "ISO Code",
+    "languageCode": "Language Code",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "searchPlaceholder": "Search by name or code..."
+  }
+}

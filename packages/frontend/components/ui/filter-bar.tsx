@@ -165,7 +165,7 @@ export function FilterBar({
   const renderField = (field: FilterFieldConfig, index: number) => {
     if (field.type === "search") {
       return (
-        <div key={field.key} className={`relative ${field.colSpan !== 1 ? "sm:col-span-2" : ""}`}>
+        <div key={field.key} className={`relative ${field.colSpan !== 1 ? "sm:col-span-3" : ""}`}>
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
@@ -280,7 +280,17 @@ export function FilterBar({
         </div>
 
         {/* Fields */}
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">{fields.map(renderField)}</div>
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Left: search + select fields */}
+          <div className="flex flex-1 flex-wrap gap-3 min-w-0">
+            {fields.filter((f) => f.type !== "sort").map(renderField)}
+          </div>
+
+          {/* Right: sort fields always aligned to the right */}
+          <div className="flex gap-2 shrink-0">
+            {fields.filter((f) => f.type === "sort").map((f, i) => renderField(f, i))}
+          </div>
+        </div>
       </div>
     </div>
   );

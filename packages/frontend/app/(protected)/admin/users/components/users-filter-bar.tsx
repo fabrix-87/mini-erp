@@ -13,6 +13,7 @@ const USER_FILTER_FIELDS: FilterFieldConfig[] = [
     key: "search",
     placeholder: "Cerca per username o email...",
     debounceMs: 500,
+    colSpan: 2,
   },
   {
     type: "select",

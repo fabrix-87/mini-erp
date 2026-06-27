@@ -1,0 +1,13 @@
+{
+  "localization": {
+    "id": "ID",
+    "title": "Gestione Lingue",
+    "description": "Amministra le lingue del sistema",
+    "name": "Nome della lingua",
+    "isoCode": "Codice ISO",
+    "languageCode": "Codice lingua",
+    "createdAt": "Data creazione",
+    "updatedAt": "Ultimo aggiornamento",
+    "searchPlaceholder": "Cerca per nome o codice..."    
+  }
+}

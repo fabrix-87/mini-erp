@@ -10,7 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useUpdateURL } from "@/hooks/use-update-url"; 
+import { useUpdateURL } from "@/hooks/use-update-url";
+import { useTranslations } from "next-intl";
 
 interface DataPaginationProps {
   currentPage: number;
@@ -42,6 +43,7 @@ export function DataPagination({
   // Inizializziamo l'hook senza passare un path fisso: userà dinamicamente quello corrente
   const updateURL = useUpdateURL();
   const [isPending, startTransition] = useTransition();
+  const t = useTranslations("common");
 
   /**
    * Navigates to the specified page.
@@ -76,16 +78,14 @@ export function DataPagination({
     <div className="border-t px-4 py-3">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {/* Info */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-10">
           <p className="text-sm text-muted-foreground">
-            Visualizzati <span className="font-medium">{startItem}</span> -{" "}
-            <span className="font-medium">{endItem}</span> di{" "}
-            <span className="font-medium">{totalItems}</span> {itemLabel}
+            {t("pagination.showing", { from: startItem, to: endItem, total: totalItems })}
           </p>
 
           {/* Items per page */}
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Mostra:</span>
+            <span className="text-sm text-muted-foreground">{t("pagination.show_entries")}:</span>
             <Select value={limit.toString()} onValueChange={changeLimit} disabled={isPending}>
               <SelectTrigger className="h-8 w-20">
                 <SelectValue />
@@ -111,7 +111,7 @@ export function DataPagination({
             className="h-8 w-8 p-0"
           >
             <ChevronsLeft className="h-4 w-4" />
-            <span className="sr-only">Prima pagina</span>
+            <span className="sr-only">{t("pagination.fist")}</span>
           </Button>
 
           <Button
@@ -122,14 +122,11 @@ export function DataPagination({
             className="h-8 w-8 p-0"
           >
             <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Pagina precedente</span>
+            <span className="sr-only">{t("pagination.previous")}</span>
           </Button>
 
           <div className="flex items-center gap-1 text-sm select-none">
-            <span className="text-muted-foreground">Pagina</span>
-            <span className="font-medium">{currentPage}</span>
-            <span className="text-muted-foreground">di</span>
-            <span className="font-medium">{totalPages || 1}</span>
+            {t("table.page_of", { current: currentPage, total: totalPages })}
           </div>
 
           <Button
@@ -140,7 +137,7 @@ export function DataPagination({
             className="h-8 w-8 p-0"
           >
             <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">Pagina successiva</span>
+            <span className="sr-only">{t("pagination.next")}</span>
           </Button>
 
           <Button
@@ -151,7 +148,7 @@ export function DataPagination({
             className="h-8 w-8 p-0"
           >
             <ChevronsRight className="h-4 w-4" />
-            <span className="sr-only">Ultima pagina</span>
+            <span className="sr-only">{t("pagination.last")}</span>
           </Button>
         </div>
       </div>
@@ -159,7 +156,7 @@ export function DataPagination({
       {isPending && (
         <div className="mt-2 flex items-center justify-center gap-2 text-xs text-muted-foreground animate-pulse">
           <div className="h-3 w-3 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          Aggiornamento dati in corso...
+          {t("feedback.loading")}
         </div>
       )}
     </div>

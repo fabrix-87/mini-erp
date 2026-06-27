@@ -49,6 +49,7 @@
   "tenants": "Tenants",
   "currencies": "Currencies",
   "localization": "Localization",
+  "languages": "Languages",
 
   "desc_dashboard": "KPI overview and business metrics",
   "desc_activities": "Tasks and calendar management",
