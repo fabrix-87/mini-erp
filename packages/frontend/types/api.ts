@@ -10,15 +10,9 @@ export interface PaginationQueryType {
   sortOrder?: string;
 }
 
-// ============ Auth Specific Types ============
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-}
-
 // La risposta del backend per login/refresh solitamente è wrappata in ApiResponse
 // Quindi ApiResponse<AuthResponse> conterrà questo oggetto in .data
-export interface AuthResponse extends AuthTokens {
+export interface AuthResponse {
   user: User;
 }
 

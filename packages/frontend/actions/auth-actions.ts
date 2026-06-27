@@ -12,6 +12,7 @@ import { LoginInput } from "@/types/user-types";
 export async function loginAction(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const fingerprint = formData.get("fingerprint") as string;
 
   if (!email || !password) return { error: "Campi obbligatori mancanti" };
 
@@ -22,7 +23,7 @@ export async function loginAction(prevState: any, formData: FormData) {
     // Output atteso: AuthResponse
     const response = await fetch(`${(await import("@/lib/server/api")).API_BASE_URL}/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-Device-Fingerprint": fingerprint },
       body: JSON.stringify(credentials),
     });
 

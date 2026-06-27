@@ -138,7 +138,7 @@ export const passwordResetRateLimiter = createRedisRateLimiter({
  * Refresh token rate limiter — 30 refreshes / 5 min per user (fallback to IP).
  */
 export const refreshTokenRateLimiter = createRedisRateLimiter({
-  windowMs: 5 * 60 * 1000,
+  windowMs: (process.env.NODE_ENV === "development" ? 1 : 5) * 60 * 1000,
   maxRequests: 30,
   keyGenerator: (c) => {
     const user = c.get("user");

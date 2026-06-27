@@ -84,7 +84,7 @@ export const requireTenantScope: MiddlewareHandler<AppBindings> = async (
     return;
   }
 
-  if (authUserValue.tenantId === undefined) {
+  if (authUserValue.currentTenant.tenantId === undefined) {
     throw new BadRequestError("Tenant context is required for this operation");
   }
 

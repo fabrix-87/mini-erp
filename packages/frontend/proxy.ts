@@ -97,7 +97,7 @@ export async function proxy(request: NextRequest) {
 
     try {
       const backendUrl = process.env.API_URL ?? "http://localhost:5000";
-      const refreshRes = await fetch(`${backendUrl}/api/auth/refresh-token`, {
+      const refreshRes = await fetch(`${backendUrl}/auth/refresh-token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,7 +109,6 @@ export async function proxy(request: NextRequest) {
       if (!refreshRes.ok) {
         console.log("❌ Refresh failed in middleware, redirecting to login");
         const response = redirectToLogin(request);
-        // Clear cookies on the redirect response
         response.cookies.delete("accessToken");
         response.cookies.delete("refreshToken");
         response.cookies.delete("tokenTimestamp");
@@ -117,16 +116,31 @@ export async function proxy(request: NextRequest) {
         return response;
       }
 
-      // Refresh ok: leggi i nuovi token dalla risposta e imposta i cookie
-      const data = await refreshRes.json();
+      // ✅ Leggi i token dai Set-Cookie headers (non dal body)
       const response = NextResponse.next();
-      // Imposta i nuovi cookie (adatta i nomi ai tuoi cookie effettivi)
-      if (data.accessToken) {
-        response.cookies.set("accessToken", data.accessToken, { httpOnly: true, path: "/" });
+      const setCookieHeaders = refreshRes.headers.getSetCookie?.() ?? [];
+
+      for (const cookieStr of setCookieHeaders) {
+        if (cookieStr.startsWith("accessToken=")) {
+          const value = cookieStr.split(";")[0].split("=")[1];
+          response.cookies.set("accessToken", value, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            path: "/",
+            sameSite: "lax",
+          });
+        }
+        if (cookieStr.startsWith("refreshToken=")) {
+          const value = cookieStr.split(";")[0].split("=")[1];
+          response.cookies.set("refreshToken", value, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            path: "/",
+            sameSite: "lax",
+          });
+        }
       }
-      if (data.refreshToken) {
-        response.cookies.set("refreshToken", data.refreshToken, { httpOnly: true, path: "/" });
-      }
+
       return response;
     } catch (err) {
       console.error("❌ Middleware refresh error:", err);

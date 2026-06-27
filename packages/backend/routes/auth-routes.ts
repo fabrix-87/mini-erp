@@ -48,7 +48,7 @@ authRoutes.post("/logout", authenticateToken, logout);
  * @desc    Refresh access token usando refresh token
  * @access  Public
  */
-authRoutes.post("/refresh-token", authenticateToken, refreshTokenRateLimiter, refreshToken);
+authRoutes.post("/refresh-token", refreshTokenRateLimiter, refreshToken);
 
 /**
  * @route   POST /api/users/forgot-password

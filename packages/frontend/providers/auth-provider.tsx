@@ -107,10 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const checkAndRefreshToken = async () => {
-      if (isRefreshingRef.current) {
-        console.log("⏳ Refresh already in progress, skipping...");
-        return;
-      }
+      if (isRefreshingRef.current) return;
 
       const tokenTimestamp = getTokenTimestamp();
 
@@ -121,6 +118,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const tokenAge = Date.now() - tokenTimestamp;
       const timeUntilExpiry = ACCESS_TOKEN_LIFETIME_MS - tokenAge;
+
+
 
       // Usa costante per soglia refresh
       if (timeUntilExpiry <= REFRESH_BEFORE_EXPIRY_MS && timeUntilExpiry > 0) {
@@ -136,8 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           } else {
             console.error("❌ Token refresh failed");
             if (result.forceLogout) {
-              // Cookie già puliti dal server action, forza redirect al login
-              window.location.href = "/login";
+              await logout();
             }
           }
         } catch (error) {
