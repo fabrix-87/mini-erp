@@ -3,8 +3,6 @@ import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
 import {
   AssignPermissionsInput,
-  AssignRolesToUserInput,
-  CheckUserPermissionInput,
   CreatePermissionInput,
   CreateRoleInput,
   PermissionQueryInput,
@@ -29,13 +27,12 @@ import {
   getValidatedQuery,
 } from "@/helpers/validated-context";
 import {
-  defaultPermissions,
   formatPermissionRoles,
   formatRolePermissions,
   getPermissionSelection,
   getRoleSelect,
 } from "@/helpers/role-helper";
-import { checkUserTenantMembership } from "@/helpers/user-helper";
+import { syncPermissionsService } from "@/services/role";
 
 // ============================================================================
 // ROLES - CRUD Operations
@@ -718,129 +715,16 @@ export const getPermissionRoles = async (c: Context<AppBindings>) => {
   );
 };
 
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
-
 /**
- * @desc    Sincronizza permessi dal codice al database
- * @route   POST /api/roles/sync-permissions
- * @access  Private/Admin
+ * Synchronizes permissions from source code to the database.
+ *
+ * @param c - Hono request context.
+ * @returns HTTP response with synchronization details.
  */
-export const syncPermissions = async (c: Context<AppBindings>) => {
-  // Lista di permessi predefiniti da sincronizzare
+export const syncPermissions = async (c: Context<AppBindings>): Promise<Response> => {
+  const result = await syncPermissionsService();
 
-  const results = {
-    created: 0,
-    updated: 0,
-    skipped: 0,
-    adminAssigned: 0,
-  };
-
-  // Array per tracciare tutti gli ID dei permessi (esistenti + nuovi)
-  const allPermissionIds: number[] = [];
-
-  // Sincronizza ogni permesso
-  for (const permission of defaultPermissions) {
-    const existing = await prisma.permission.findUnique({
-      where: { code: permission.code },
-    });
-
-    if (existing) {
-      // Traccia l'ID
-      allPermissionIds.push(existing.id);
-
-      // Aggiorna se necessario
-      if (
-        existing.description !== permission.description ||
-        existing.resource !== permission.resource ||
-        existing.action !== permission.action
-      ) {
-        await prisma.permission.update({
-          where: { id: existing.id },
-          data: {
-            description: permission.description,
-            resource: permission.resource,
-            action: permission.action,
-          },
-        });
-        results.updated++;
-      } else {
-        results.skipped++;
-      }
-    } else {
-      // Crea nuovo permesso
-      const newPermission = await prisma.permission.create({
-        data: permission,
-      });
-      allPermissionIds.push(newPermission.id);
-      results.created++;
-    }
-  }
-
-  // ============================================================================
-  // ASSEGNA TUTTI I PERMESSI AL RUOLO ADMIN
-  // ============================================================================
-
-  // Trova o crea il ruolo ADMIN
-  let adminRole = await prisma.role.findUnique({
-    where: { code: "ADMIN" },
-    include: {
-      permissions: {
-        select: { permissionId: true },
-      },
-    },
+  return sendSuccess(c, result, {
+    message: "Sincronizzazione completata",
   });
-
-  if (!adminRole) {
-    // Crea ruolo ADMIN se non esiste
-    adminRole = await prisma.role.create({
-      data: {
-        code: "ADMIN",
-        name: "Amministratore",
-        description: "Accesso completo a tutte le funzionalità del sistema",
-        isDefault: false,
-      },
-      include: {
-        permissions: {
-          select: { permissionId: true },
-        },
-      },
-    });
-  }
-
-  // Ottieni gli ID dei permessi già assegnati
-  const existingPermissionIds = adminRole.permissions.map((p) => p.permissionId);
-
-  // Trova i permessi da assegnare (nuovi permessi non ancora assegnati)
-  const permissionsToAssign = allPermissionIds.filter((id) => !existingPermissionIds.includes(id));
-
-  // Assegna i nuovi permessi al ruolo ADMIN
-  if (permissionsToAssign.length > 0) {
-    await prisma.rolePermission.createMany({
-      data: permissionsToAssign.map((permissionId) => ({
-        roleId: adminRole.id,
-        permissionId,
-      })),
-      skipDuplicates: true,
-    });
-    results.adminAssigned = permissionsToAssign.length;
-  }
-
-  sendSuccess(
-    c,
-    {
-      permissions: results,
-      adminRole: {
-        id: adminRole.id,
-        code: adminRole.code,
-        name: adminRole.name,
-        totalPermissions: allPermissionIds.length,
-        newlyAssigned: results.adminAssigned,
-      },
-    },
-    {
-      message: "Sincronizzazione completata",
-    },
-  );
 };

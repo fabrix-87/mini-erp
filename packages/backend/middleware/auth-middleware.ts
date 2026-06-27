@@ -2,8 +2,6 @@
 import { getCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
 import jwt from "jsonwebtoken";
-import { UnauthorizedError, ForbiddenError } from "../utils/app-error-utils";
-import type { UserPayload } from "../types/user-types";
 import authConfig from "../config/auth-config";
 import type { AppBindings } from "../lib/hono-app";
 import {
@@ -15,6 +13,7 @@ import {
   hasPermission,
 } from "../helpers/user-helper";
 import { sendAuthenticationError, sendFail } from "@/utils/response-utils";
+import { UserSessionPayload } from "@mini-erp/shared";
 
 // ============================================================================
 // AUTHENTICATION MIDDLEWARE
@@ -40,9 +39,9 @@ export const authenticateToken = createMiddleware<AppBindings>(async (c, next) =
   }
 
   // 2. Verifica firma JWT + exp
-  let decoded: UserPayload;
+  let decoded: UserSessionPayload;
   try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
+    decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserSessionPayload;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       return sendAuthenticationError(c, "Token scaduto");
@@ -124,9 +123,9 @@ export const authenticateTokenLightweight = createMiddleware<AppBindings>(async 
     return sendAuthenticationError(c, "Token di autenticazione mancante");
   }
 
-  let decoded: UserPayload;
+  let decoded: UserSessionPayload;
   try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
+    decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserSessionPayload;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       return sendAuthenticationError(c, "Token scaduto");
@@ -276,7 +275,7 @@ export const optionalAuth = createMiddleware<AppBindings>(async (c, next) => {
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserSessionPayload;
 
       if (decoded.iss === authConfig.jwt.issuer && decoded.aud === authConfig.jwt.audience) {
         c.set("user", decoded);

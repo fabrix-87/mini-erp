@@ -12,9 +12,6 @@ import {
   validateUpdatePermission,
   validatePermissionId,
   validatePermissionQuery,
-  // Utility validators
-  validateAssignRolesToUser,
-  validateCheckPermission,
 } from '../validators/role-validator';
 import {
   // Roles
