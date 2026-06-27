@@ -10,7 +10,7 @@ import { apiRateLimiter } from "./middleware/rate-limit-middleware";
 import { globalErrorHandler, notFoundHandler } from "./middleware/error-handler-middleware";
 import validateEnv from "./config/env-config";
 import logger from "./config/logger-config";
-import { publicRoutes, protectedRoutes } from "./routes";
+import apiRoutes from "./routes";
 import healthRoutes from "./routes/health-routes";
 
 /**
@@ -70,8 +70,7 @@ export const createApp = async () => {
   app.route("/health", healthRoutes);
 
   // 9. Route API
-  app.route("/api", publicRoutes);
-  app.route("/api", protectedRoutes);
+  app.route("/api", apiRoutes);
 
   // 10. 404 e error handler
   app.notFound(notFoundHandler);

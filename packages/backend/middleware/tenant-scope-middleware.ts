@@ -11,6 +11,10 @@ interface AuthRole {
 interface AuthUserTenantScope {
   tenantId?: number | undefined;
   roles?: AuthRole[] | undefined;
+  currentTenant?: {
+    tenantId?: number | undefined;
+    roles?: AuthRole[] | undefined;
+  } | undefined;
 }
 
 /**
@@ -53,7 +57,8 @@ function isAuthUserTenantScope(value: unknown): value is AuthUserTenantScope {
  * @returns Whether the user is a super admin.
  */
 function isSuperAdmin(user: AuthUserTenantScope): boolean {
-  return user.roles?.some((role) => role.code === "SUPER_ADMIN") ?? false;
+  const roles = user.currentTenant?.roles ?? user.roles ?? [];
+  return roles.some((role) => role.code === "SUPER_ADMIN");
 }
 
 /**

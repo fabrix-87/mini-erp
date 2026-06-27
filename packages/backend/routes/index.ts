@@ -1,5 +1,4 @@
-import { authenticateToken } from "@/middleware/auth-middleware";
-import { AppBindings, createHonoApp } from "../lib/hono-app";
+import { createHonoApp } from "../lib/hono-app";
 import addressRoutes from "./address-routes";
 import authRoutes from "./auth-routes";
 import companyContactRoutes from "./company-contact-routes";
@@ -19,41 +18,34 @@ import productRoutes from "./product-routes";
 import roleRoutes from "./role-routes";
 import supplierRoutes from "./supplier-routes";
 import taxRoutes from "./tax-routes";
-import tenantRoutes from "./tenant-routes";
 import membershipRolesRoutes from "./user-membership-roles-routes";
 import userRoutes from "./user-routes";
-import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
-export const publicRoutes = createHonoApp();
-export const protectedRoutes = createHonoApp();
-
-publicRoutes.route("/auth", authRoutes);
-publicRoutes.route("/tenant", tenantRoutes);
-
-protectedRoutes.use("*", authenticateToken);
-protectedRoutes.use("*", requireTenantScope);
+const apiRoutes = createHonoApp();
 
 /**
  * Registers all API route groups.
  */
-protectedRoutes.route("/users", userRoutes);
-protectedRoutes.route("/roles", roleRoutes);
-protectedRoutes.route("/leads", leadRoutes);
-protectedRoutes.route("/customers", customerRoutes);
-protectedRoutes.route("/companies", companyRoutes);
-protectedRoutes.route("/dashboard", dashboardRoutes);
-protectedRoutes.route("/countries", countryRoutes);
-protectedRoutes.route("/languages", languageRoutes);
-protectedRoutes.route("/currencies", currencyRoutes);
-protectedRoutes.route("/addresses", addressRoutes);
-protectedRoutes.route("/contacts", contactRoutes);
-protectedRoutes.route("/payments", paymentRoutes);
-protectedRoutes.route("/pricelists", pricelistRoutes);
-protectedRoutes.route("/tax", taxRoutes);
-protectedRoutes.route("/opportunity", opportunityRoutes);
-protectedRoutes.route("/products", productRoutes);
-protectedRoutes.route("/documents", documentRoutes);
-protectedRoutes.route("/suppliers", supplierRoutes);
-protectedRoutes.route("/company-contacts", companyContactRoutes);
-protectedRoutes.route("/memberships", membershipRolesRoutes);
+apiRoutes.route("/auth", authRoutes);
+apiRoutes.route("/users", userRoutes);
+apiRoutes.route("/roles", roleRoutes);
+apiRoutes.route("/leads", leadRoutes);
+apiRoutes.route("/customers", customerRoutes);
+apiRoutes.route("/companies", companyRoutes);
+apiRoutes.route("/dashboard", dashboardRoutes);
+apiRoutes.route("/countries", countryRoutes);
+apiRoutes.route("/languages", languageRoutes);
+apiRoutes.route("/currencies", currencyRoutes);
+apiRoutes.route("/addresses", addressRoutes);
+apiRoutes.route("/contacts", contactRoutes);
+apiRoutes.route("/payments", paymentRoutes);
+apiRoutes.route("/pricelists", pricelistRoutes);
+apiRoutes.route("/tax", taxRoutes);
+apiRoutes.route("/opportunity", opportunityRoutes);
+apiRoutes.route("/products", productRoutes);
+apiRoutes.route("/documents", documentRoutes);
+apiRoutes.route("/suppliers", supplierRoutes);
+apiRoutes.route("/company-contacts", companyContactRoutes);
+apiRoutes.route("/memberships", membershipRolesRoutes);
 
+export default apiRoutes;
