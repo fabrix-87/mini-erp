@@ -101,52 +101,6 @@ export const authenticateToken = createMiddleware<AppBindings>(async (c, next) =
 });
 
 // ============================================================================
-// LIGHTWEIGHT AUTHENTICATION MIDDLEWARE
-// ============================================================================
-
-/**
- * Lightweight authentication middleware for edge-compatible contexts.
- * Only verifies JWT signature and base claims — does NOT check Redis.
- *
- * ⚠️ Does NOT verify:
- * - Blacklist
- * - Redis session
- * Must be followed by full validation in the route handler if needed.
- *
- * @example
- * app.get("/lightweight", authenticateTokenLightweight, handler);
- */
-export const authenticateTokenLightweight = createMiddleware<AppBindings>(async (c, next) => {
-  const token = getCookie(c, "accessToken");
-
-  if (!token) {
-    return sendAuthenticationError(c, "Token di autenticazione mancante");
-  }
-
-  let decoded: UserSessionPayload;
-  try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserSessionPayload;
-  } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
-      return sendAuthenticationError(c, "Token scaduto");
-    }
-    return sendAuthenticationError(c, "Token non valido");
-  }
-
-  if (decoded.iss !== authConfig.jwt.issuer || decoded.aud !== authConfig.jwt.audience) {
-    return sendAuthenticationError(c, "Claims non validi");
-  }
-
-  if (!decoded.currentTenant?.tenantId) {
-    return sendAuthenticationError(c, "Tenant corrente non presente nel token");
-  }
-
-  c.set("user", decoded);
-  c.set("currentTenantId", decoded.currentTenant.tenantId);
-  await next();
-});
-
-// ============================================================================
 // AUTHORIZATION MIDDLEWARE
 // ============================================================================
 
