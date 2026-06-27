@@ -54,31 +54,9 @@ export async function getUserFromCookiesSSR(): Promise<User | null> {
 /**
  * Imposta i cookie di autenticazione (access token, refresh token, user, timestamp)
  */
-export async function setCookies(
-  accessToken: string,
-  refreshToken: string,
-  user: User,
-): Promise<void> {
+export async function setCookies(user: User): Promise<void> {
   const isProduction = process.env.NODE_ENV === "production";
   const cookieStore = await cookies();
-
-  // Access Token (httpOnly)
-  cookieStore.set("accessToken", accessToken, {
-    httpOnly: true,
-    secure: isProduction,
-    path: "/",
-    sameSite: "lax",
-    maxAge: ACCESS_TOKEN_LIFETIME_SECONDS, // In secondi
-  });
-
-  // Refresh Token (httpOnly)
-  cookieStore.set("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: isProduction,
-    path: "/",
-    sameSite: "lax",
-    maxAge: REFRESH_TOKEN_LIFETIME_SECONDS, // In secondi
-  });
 
   // User Data (readable da JS)
   cookieStore.set("user", JSON.stringify(user), {
@@ -109,4 +87,56 @@ export async function clearAuthCookies(): Promise<void> {
   cookieStore.delete("refreshToken");
   cookieStore.delete("tokenTimestamp");
   cookieStore.delete("user");
+}
+
+/**
+ * Forwards `accessToken` and `refreshToken` from a backend `Response`'s
+ * `Set-Cookie` headers into the Next.js server-side cookie store,
+ * so they are propagated to the browser as HttpOnly cookies.
+ *
+ * This is necessary because server-side `fetch()` calls (Server Actions,
+ * Route Handlers) do not automatically forward `Set-Cookie` headers from
+ * upstream responses to the client — they must be re-set explicitly via
+ * the Next.js cookie store.
+ *
+ * Token attributes (httpOnly, secure, sameSite, maxAge) are re-applied
+ * consistently regardless of what the backend originally set.
+ *
+ * @param response - The raw `Response` object returned by a `fetch()` call
+ *                   to the backend authentication endpoints (login, refresh).
+ * @returns A promise that resolves when all token cookies have been set.
+ *
+ * @example
+ * ```ts
+ * const response = await fetch(`${API_BASE_URL}/auth/login`, { ... });
+ * await forwardTokenCookiesFromResponse(response);
+ * ```
+ */
+export async function forwardTokenCookiesFromResponse(response: Response): Promise<void> {
+  const isProduction = process.env.NODE_ENV === "production";
+  const setCookieHeaders = response.headers.getSetCookie?.() ?? [];
+  const cookieStore = await cookies();
+
+  for (const cookieStr of setCookieHeaders) {
+    if (cookieStr.startsWith("accessToken=")) {
+      const value = cookieStr.split(";")[0].split("=")[1];
+      cookieStore.set("accessToken", value, {
+        httpOnly: true,
+        secure: isProduction,
+        path: "/",
+        sameSite: "lax",
+        maxAge: ACCESS_TOKEN_LIFETIME_SECONDS,
+      });
+    }
+    if (cookieStr.startsWith("refreshToken=")) {
+      const value = cookieStr.split(";")[0].split("=")[1];
+      cookieStore.set("refreshToken", value, {
+        httpOnly: true,
+        secure: isProduction,
+        path: "/",
+        sameSite: "lax",
+        maxAge: REFRESH_TOKEN_LIFETIME_SECONDS,
+      });
+    }
+  }
 }

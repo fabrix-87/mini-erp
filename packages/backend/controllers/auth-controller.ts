@@ -238,8 +238,6 @@ export const login = async (c: Context<AppBindings>) => {
       user: userPayload,
       // Opzionale: ritorna exp per frontend
       expiresIn: authConfig.jwt.expiresInMs,
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
     },
     {
       message: "Login effettuato con successo",
@@ -350,7 +348,9 @@ export const refreshToken = async (c: Context<AppBindings>) => {
     throw new UnauthorizedError("Utente non valido o disabilitato");
   }
 
-  const currentMembership = pickCurrentMembership(user.memberships);
+  const currentMembership =
+    user.memberships.find((m) => m.tenantId === decoded.currentTenant?.tenantId) ??
+    pickCurrentMembership(user.memberships);
 
   if (!currentMembership) {
     throw new UnauthorizedError("Nessun tenant attivo disponibile");
@@ -439,8 +439,6 @@ export const refreshToken = async (c: Context<AppBindings>) => {
         },
       },
       expiresIn: authConfig.jwt.expiresInMs,
-      accessToken: newTokens.accessToken,
-      refreshToken: newTokens.refreshToken,
     },
     {
       message: "Token aggiornato con successo",

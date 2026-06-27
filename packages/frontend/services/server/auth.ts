@@ -1,52 +1,81 @@
 // services/server/auth.ts
-import { cookies } from 'next/headers';
-import { serverApi } from '@/lib/server/api';
-import { AuthResponse } from '@/types/api'; 
-import { setCookies } from '@/lib/server/cookies';
+import { cookies } from "next/headers";
+import { API_BASE_URL } from "@/lib/server/api";
+import { AuthResponse } from "@/types/api";
+import { forwardTokenCookiesFromResponse, setCookies } from "@/lib/server/cookies";
+import { getCookiesString } from "@/lib/server/cookies";
+import { getFingerprintForSSR } from "@/lib/server/fingerprint";
 
 /**
- * Esegue refresh dei token chiamando il backend
- * ✅ Usa il body JSON per ricevere i nuovi token
+ * Performs a token refresh by calling the backend.
+ * Reads the new tokens from Set-Cookie response headers and forwards them
+ * to the browser via the Next.js cookie store.
+ *
+ * @returns The AuthResponse payload on success, null on failure.
  */
 export async function performTokenRefresh(): Promise<AuthResponse | null> {
   const cookieStore = await cookies();
-  const currentRefreshToken = cookieStore.get('refreshToken')?.value;
-  
+  const currentRefreshToken = cookieStore.get("refreshToken")?.value;
+
   if (!currentRefreshToken) {
-    console.log('⚠️ No refresh token available');
+    console.log("⚠️ No refresh token available");
     return null;
   }
 
-  try {    
-    // Backend restituisce token nel body (come per login)
-    const data = await serverApi.post<AuthResponse>('/auth/refresh-token', {});
+  try {
+    const cookiesString = await getCookiesString();
+    const fingerprint = await getFingerprintForSSR();
 
-    if (!data.accessToken || !data.refreshToken) {
-      console.error('❌ Tokens missing in refresh response');
+    const response = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookiesString,
+        "X-Device-Fingerprint": fingerprint,
+      },
+      body: JSON.stringify({}),
+    });
+
+    if (!response.ok) {
+      console.error("❌ Token refresh failed with status:", response.status);
       return null;
     }
 
-    // Aggiorna i cookie
-    setCookies(data.accessToken, data.refreshToken, data.user)
+    const json = await response.json();
+    const data: AuthResponse = json.data;
+
+    // Forward tokens from Set-Cookie headers to the browser
+    await forwardTokenCookiesFromResponse(response);
+
+    // Aggiorna solo i cookie non sensibili
+    await setCookies(data.user);
 
     return data;
   } catch (error) {
-    console.error('❌ Token refresh failed:', error);
+    console.error("❌ Token refresh failed:", error);
     return null;
   }
 }
 
 /**
- * Notifica il backend del logout.
- * Non lancia errori se fallisce: il logout locale deve avvenire comunque.
+ * Notifies the backend of a logout attempt.
+ * Does not throw on failure — local cookie cleanup must happen regardless.
  */
 export async function logoutUser(): Promise<void> {
   try {
-    await serverApi.post('/auth/logout', {}); 
+    const cookiesString = await getCookiesString();
+    const fingerprint = await getFingerprintForSSR();
+
+    await fetch(`${API_BASE_URL}/auth/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookiesString,
+        "X-Device-Fingerprint": fingerprint,
+      },
+      body: JSON.stringify({}),
+    });
   } catch (error) {
-    // Logghiamo l'errore ma non blocchiamo il flusso.
-    // Se il token è scaduto o il server è giù, vogliamo comunque
-    // pulire i cookie locali.
-    console.warn('⚠️ Backend logout failed (cleaning up locally anyway):', error);
+    console.warn("⚠️ Backend logout failed (cleaning up locally anyway):", error);
   }
 }

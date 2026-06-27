@@ -3,12 +3,11 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { serverApi } from "@/lib/server/api";
 import { ServerApiError } from "@/types/server-client";
 import { AuthResponse } from "@/types/api";
 import { logoutUser } from "@/services/server/auth";
-import { setCookies } from "@/lib/server/cookies";
-import { LoginInput } from "@/types/user-types"
+import { forwardTokenCookiesFromResponse, setCookies } from "@/lib/server/cookies";
+import { LoginInput } from "@/types/user-types";
 
 export async function loginAction(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
@@ -21,12 +20,26 @@ export async function loginAction(prevState: any, formData: FormData) {
     const credentials: LoginInput = { email, password };
 
     // Output atteso: AuthResponse
-    const data = await serverApi.post<AuthResponse>(
-      "/auth/login",
-      credentials
-    );
+    const response = await fetch(`${(await import("@/lib/server/api")).API_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(credentials),
+    });
 
-    setCookies(data.accessToken, data.refreshToken, data.user);
+    if (!response.ok) {
+      const err = await response.json();
+      return { error: err.message || "Credenziali non valide" };
+    }
+
+    const json = await response.json();
+    const data: AuthResponse = json.data;
+
+    // Forward tokens from Set-Cookie headers to the browser
+    await forwardTokenCookiesFromResponse(response);
+
+    // Setta solo i cookie non sensibili (user, tokenTimestamp)
+    await setCookies(data.user);
+
     return { success: true };
   } catch (error) {
     if (error instanceof ServerApiError) {
