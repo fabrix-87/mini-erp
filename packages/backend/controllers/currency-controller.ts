@@ -125,6 +125,7 @@ export const getCurrencyByCode = async (c: Context<AppBindings>) => {
         select: {
           name: true,
           namePlural: true,
+          languageId: true,
           language: {
             select: { name: true }
           }

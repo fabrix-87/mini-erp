@@ -1,7 +1,7 @@
 "use client";
 
 import { CurrencyListApiResponse } from "@/types/currency-types";
-import { Currency, CurrencyQueryInput } from "@mini-erp/shared";
+import { Currency, CurrencyQueryInput, EntityPermissions } from "@mini-erp/shared";
 import { CurrenciesTable } from "./currencies-table";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { CurrenciesFilterBar } from "./currencies-filter-bar";
@@ -10,13 +10,19 @@ import { CurrencyDetailDialog } from "./currency-detail-dialog";
 import { toast } from "sonner";
 import { getCurrencyByCode } from "@/services/client/currency";
 import { useCurrency } from "@/hooks/use-currency";
+import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 
 interface Props {
   queryParams: CurrencyQueryInput;
   currenciesList: CurrencyListApiResponse;
+  permissions: EntityPermissions;
 }
 
-export default function CurrenciesContent({ queryParams, currenciesList }: Props) {
+export default function CurrenciesContent({
+  queryParams,
+  currenciesList,
+  permissions,
+}: Props) {
   const { data: currencies, pagination } = currenciesList;
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -26,20 +32,36 @@ export default function CurrenciesContent({ queryParams, currenciesList }: Props
   const onDetailSelected = async (code: string) => {
     setSelectedCode(code);
   };
+  const onUpdateSelected = async (code: string) => {
+    toast.info(`Modifica ${code}`)
+    return;
+  };
+  const onDeleteSelected = async (code: string) => {
+    toast.info(`Elimina ${code}`)
+    return;
+  };
+
 
   return (
     <>
+      {/* Breadcrumb */}
+      <BreadcrumbSetter title="Gestione valute" />
+      
       {/* Header */}
       <CurrenciesFilterBar
         onPendingChange={setIsLoading}
         initialActive={queryParams.active}
         initialSearch={queryParams.search}
+        canCreate={permissions.canCreate}
       />
       {/* Table */}
       <CurrenciesTable
         currencies={currencies}
         isLoading={isLoading}
+        permissions={permissions}
         onDetailSelected={onDetailSelected}
+        onDeleteSelected={onDeleteSelected}
+        onUpdateSelected={onUpdateSelected}
       />
       {/* Pagination */}
       {pagination && pagination.totalPages > 0 && (

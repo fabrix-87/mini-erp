@@ -28,7 +28,8 @@
     "send": "Send",
     "approve": "Approve",
     "reject": "Reject",
-    "logout": "Logout"
+    "logout": "Logout",
+    "back_to_home": "Go back to home"
   },
 
   "status": {

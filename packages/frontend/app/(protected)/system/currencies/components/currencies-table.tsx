@@ -10,8 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Eye } from "lucide-react";
-import { Currency } from "@mini-erp/shared";
+import { Delete, Edit, Eye, Trash2 } from "lucide-react";
+import { Currency, EntityPermissions } from "@mini-erp/shared";
 import { useNavigation } from "@/hooks/use-navigation";
 import { formatDateIT } from "@/helpers/date-helper";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,10 @@ import { Button } from "@/components/ui/button";
 interface CurrenciesTableProps {
   currencies: Currency[];
   isLoading: boolean;
+  permissions: EntityPermissions;
   onDetailSelected: (code: string) => void;
+  onUpdateSelected: (code: string) => void;
+  onDeleteSelected: (code: string) => void;
 }
 
 /**
@@ -31,7 +34,14 @@ interface CurrenciesTableProps {
  * @param currencies - Array of {@link Currency} entities to display
  * @param isLoading  - When true, shows a loading spinner instead of rows
  */
-export function CurrenciesTable({ currencies, isLoading, onDetailSelected }: CurrenciesTableProps) {
+export function CurrenciesTable({
+  currencies,
+  isLoading,
+  permissions,
+  onDetailSelected,
+  onUpdateSelected,
+  onDeleteSelected,
+}: CurrenciesTableProps) {
   if (isLoading) {
     return (
       <div className="rounded-lg border bg-card">
@@ -148,6 +158,32 @@ export function CurrenciesTable({ currencies, isLoading, onDetailSelected }: Cur
                       <Eye className="h-4 w-4" />
                     </Button>
                   </TableCell>
+                  {/* Update link */}
+                  {permissions.canUpdate && (
+                    <TableCell className="text-right">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onUpdateSelected(currency.code)}
+                        title="Modifica"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  )}
+                  {/* Delete link */}
+                  {permissions.canDelete && !currency.isBaseCurrency && (
+                    <TableCell className="text-right">
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => onDeleteSelected(currency.code)}
+                        title="Elimina"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  )}
                 </TableRow>
               );
             })}

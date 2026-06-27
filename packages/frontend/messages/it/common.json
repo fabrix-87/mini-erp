@@ -28,7 +28,8 @@
     "send": "Invia",
     "approve": "Approva",
     "reject": "Rifiuta",
-    "logout": "Esci"
+    "logout": "Esci",
+    "back_to_home": "Ritorna alla home"
   },
 
   "status": {

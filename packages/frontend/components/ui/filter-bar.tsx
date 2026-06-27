@@ -1,14 +1,7 @@
 "use client";
 
-import {
-  useTransition,
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-  useCallback,
-} from "react";
-import { Search, Filter, X } from "lucide-react";
+import { useTransition, useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { Search, Filter, X, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { FilterFieldConfig } from "@/types/filter-types";
+import { useNavigation } from "@/hooks/use-navigation";
 
 // ============================================================================
 // Types
@@ -44,8 +38,12 @@ export interface FilterBarProps {
    * Keys must match field `key` / `sortByKey` / `sortOrderKey`.
    */
   defaultValues?: FilterDefaultValues;
+  /** Whether to show a create button */
+  canCreate?: boolean;
   /** Callback fired whenever a navigation transition starts/ends */
   onPendingChange: (isPending: boolean) => void;
+  handleNewClick?: () => void;
+  newButtonText?: string;
 }
 
 // ============================================================================
@@ -69,9 +67,12 @@ export interface FilterBarProps {
 export function FilterBar({
   basePath,
   fields,
+  canCreate = false,
   initialValues = {},
   defaultValues = {},
   onPendingChange,
+  handleNewClick,
+  newButtonText,
 }: FilterBarProps) {
   const updateURL = useUpdateURL(basePath);
   const [isPending, startTransition] = useTransition();
@@ -79,10 +80,7 @@ export function FilterBar({
 
   // ── State: one entry per key across all fields ──────────────────────────
   const allKeys = useMemo(
-    () =>
-      fields.flatMap((f) =>
-        f.type === "sort" ? [f.sortByKey, f.sortOrderKey] : [f.key],
-      ),
+    () => fields.flatMap((f) => (f.type === "sort" ? [f.sortByKey, f.sortOrderKey] : [f.key])),
     [fields],
   );
 
@@ -119,10 +117,7 @@ export function FilterBar({
         }, debounceMs);
       } else {
         startTransition(() => {
-          updateURL(
-            { [key]: value || null },
-            { replace: true, resetPage: true, ...extraOptions },
-          );
+          updateURL({ [key]: value || null }, { replace: true, resetPage: true, ...extraOptions });
         });
       }
     },
@@ -170,18 +165,13 @@ export function FilterBar({
   const renderField = (field: FilterFieldConfig, index: number) => {
     if (field.type === "search") {
       return (
-        <div
-          key={field.key}
-          className={`relative ${field.colSpan !== 1 ? "sm:col-span-2" : ""}`}
-        >
+        <div key={field.key} className={`relative ${field.colSpan !== 1 ? "sm:col-span-2" : ""}`}>
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             placeholder={field.placeholder}
             value={values[field.key] ?? ""}
-            onChange={(e) =>
-              handleChange(field.key, e.target.value, field.debounceMs ?? 500)
-            }
+            onChange={(e) => handleChange(field.key, e.target.value, field.debounceMs ?? 500)}
             className="pl-9"
             disabled={isPending}
           />
@@ -267,23 +257,30 @@ export function FilterBar({
               </Badge>
             )}
           </div>
-          {hasActiveFilters && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClearFilters}
-              className="h-8 text-xs"
-            >
-              <X className="h-3 w-3 mr-1" />
-              Reimposta
-            </Button>
-          )}
+
+          <div className="flex items-center gap-2">
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearFilters}
+                className="h-8 text-xs"
+              >
+                <X className="h-3 w-3 mr-1" />
+                Reimposta
+              </Button>
+            )}
+            {canCreate && handleNewClick && (
+              <Button size="sm" className="h-8 text-xs" onClick={handleNewClick}>
+                <Plus className="h-3 w-3 mr-1" />
+                {newButtonText ?? "Nuovo"}
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Fields */}
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {fields.map(renderField)}
-        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">{fields.map(renderField)}</div>
       </div>
     </div>
   );

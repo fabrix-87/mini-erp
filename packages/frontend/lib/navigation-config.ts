@@ -213,3 +213,12 @@ export type NavTreeItem = (typeof NAVIGATION_TREE)[number]["items"][number];
  * and should be excluded from auto-generated breadcrumb trails.
  */
 export const SECTION_PATHS = new Set<string>(NAVIGATION_TREE.map((section) => section.path));
+
+/**
+ * Maps a section path prefix to its i18n namespace (= messages filename).
+ * Derived at module load time from NAVIGATION_TREE.
+ * e.g. "/crm" → "crm", "/finance" → "finance"
+ */
+export const SECTION_NAMESPACE_MAP = Object.fromEntries(
+  NAVIGATION_TREE.map((section) => [section.path, section.titleKey]),
+) as Record<string, string>;
