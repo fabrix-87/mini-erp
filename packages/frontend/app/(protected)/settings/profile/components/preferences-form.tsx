@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { upsertSettingsAction } from "@/actions/settings/update-setting-actions";
 import type { PathValue } from "react-hook-form";
+import { IconPalette, IconWorld, IconBell, IconLayoutDashboard } from "@tabler/icons-react";
 
 interface PreferencesFormProps {
   settings: UserSettingValueMap;
@@ -64,20 +65,24 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
   const K = USER_SETTING_KEYS;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-      {/* UI */}
-      <section className="space-y-4">
-        <h2 className="text-base font-semibold">Interfaccia</h2>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* Interfaccia */}
+      <div className="rounded-lg border bg-card p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <IconPalette size={16} className="text-muted-foreground" />
+          <h2 className="text-sm font-semibold">Interfaccia</h2>
+        </div>
+        <Separator />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label>Tema</Label>
+            <Label className="text-xs text-muted-foreground">Tema</Label>
             <Select
               value={watch(K.UI_THEME)}
               onValueChange={(v) =>
                 setField(K.UI_THEME, v as PathValue<UserSettingValueMap, typeof K.UI_THEME>)
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -88,14 +93,14 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label>Densità</Label>
+            <Label className="text-xs text-muted-foreground">Densità</Label>
             <Select
               value={watch(K.UI_DENSITY)}
               onValueChange={(v) =>
                 setField(K.UI_DENSITY, v as PathValue<UserSettingValueMap, typeof K.UI_DENSITY>)
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -106,16 +111,18 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
             </Select>
           </div>
         </div>
-      </section>
+      </div>
 
-      <Separator />
-
-      {/* Locale */}
-      <section className="space-y-4">
-        <h2 className="text-base font-semibold">Localizzazione</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Localizzazione */}
+      <div className="rounded-lg border bg-card p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <IconWorld size={16} className="text-muted-foreground" />
+          <h2 className="text-sm font-semibold">Localizzazione</h2>
+        </div>
+        <Separator />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1.5">
-            <Label>Formato data</Label>
+            <Label className="text-xs text-muted-foreground">Formato data</Label>
             <Select
               value={watch(K.LOCALE_DATE_FORMAT)}
               onValueChange={(v) =>
@@ -125,7 +132,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
                 )
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -136,7 +143,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label>Formato ora</Label>
+            <Label className="text-xs text-muted-foreground">Formato ora</Label>
             <Select
               value={watch(K.LOCALE_TIME_FORMAT)}
               onValueChange={(v) =>
@@ -146,7 +153,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
                 )
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -156,7 +163,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label>Formato numeri</Label>
+            <Label className="text-xs text-muted-foreground">Formato numeri</Label>
             <Select
               value={watch(K.LOCALE_NUMBER_FORMAT)}
               onValueChange={(v) =>
@@ -166,7 +173,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
                 )
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -176,27 +183,52 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
             </Select>
           </div>
         </div>
-      </section>
-
-      <Separator />
+      </div>
 
       {/* Notifiche */}
-      <section className="space-y-4">
-        <h2 className="text-base font-semibold">Notifiche</h2>
-        <div className="space-y-3">
+      <div className="rounded-lg border bg-card p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <IconBell size={16} className="text-muted-foreground" />
+          <h2 className="text-sm font-semibold">Notifiche</h2>
+        </div>
+        <Separator />
+        <div className="divide-y divide-border">
           {(
             [
-              { key: K.NOTIFICATIONS_EMAIL, label: "Notifiche via email" },
-              { key: K.NOTIFICATIONS_BROWSER, label: "Notifiche browser" },
-              { key: K.NOTIFICATIONS_ACTIVITY_REMINDER, label: "Promemoria attività" },
-              { key: K.NOTIFICATIONS_NEW_LEAD, label: "Nuovo lead assegnato" },
-              { key: K.NOTIFICATIONS_DOCUMENT, label: "Aggiornamenti documenti" },
+              {
+                key: K.NOTIFICATIONS_EMAIL,
+                label: "Notifiche via email",
+                description: "Ricevi aggiornamenti via email",
+              },
+              {
+                key: K.NOTIFICATIONS_BROWSER,
+                label: "Notifiche browser",
+                description: "Notifiche push nel browser",
+              },
+              {
+                key: K.NOTIFICATIONS_ACTIVITY_REMINDER,
+                label: "Promemoria attività",
+                description: "Ricordati delle attività in scadenza",
+              },
+              {
+                key: K.NOTIFICATIONS_NEW_LEAD,
+                label: "Nuovo lead assegnato",
+                description: "Avviso quando ti viene assegnato un lead",
+              },
+              {
+                key: K.NOTIFICATIONS_DOCUMENT,
+                label: "Aggiornamenti documenti",
+                description: "Modifiche ai documenti condivisi",
+              },
             ] as const
-          ).map(({ key, label }) => (
-            <div key={key} className="flex items-center justify-between">
-              <Label htmlFor={key} className="font-normal cursor-pointer">
-                {label}
-              </Label>
+          ).map(({ key, label, description }) => (
+            <div key={key} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+              <div className="space-y-0.5">
+                <Label htmlFor={key} className="text-sm font-normal cursor-pointer leading-none">
+                  {label}
+                </Label>
+                <p className="text-xs text-muted-foreground">{description}</p>
+              </div>
               <Switch
                 id={key}
                 checked={watch(key) === "true"}
@@ -210,16 +242,18 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
             </div>
           ))}
         </div>
-      </section>
-
-      <Separator />
+      </div>
 
       {/* Dashboard */}
-      <section className="space-y-4">
-        <h2 className="text-base font-semibold">Dashboard</h2>
+      <div className="rounded-lg border bg-card p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <IconLayoutDashboard size={16} className="text-muted-foreground" />
+          <h2 className="text-sm font-semibold">Dashboard</h2>
+        </div>
+        <Separator />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label>Layout widget</Label>
+            <Label className="text-xs text-muted-foreground">Layout widget</Label>
             <Select
               value={watch(K.DASHBOARD_LAYOUT)}
               onValueChange={(v) =>
@@ -229,7 +263,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
                 )
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -239,7 +273,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label>Periodo di default</Label>
+            <Label className="text-xs text-muted-foreground">Periodo di default</Label>
             <Select
               value={watch(K.DASHBOARD_DEFAULT_PERIOD)}
               onValueChange={(v) =>
@@ -249,7 +283,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
                 )
               }
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -261,7 +295,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
             </Select>
           </div>
         </div>
-      </section>
+      </div>
 
       <div className="flex justify-end pt-2">
         <Button type="submit" disabled={isPending}>

@@ -1,7 +1,6 @@
 // packages/frontend/app/(protected)/settings/profile/layout.tsx
 import type { ReactNode } from "react";
 import { SettingsNav } from "./components/settings-nav";
-import { Separator } from "@/components/ui/separator";
 
 interface SettingsProfileLayoutProps {
   children: ReactNode;
@@ -13,16 +12,15 @@ interface SettingsProfileLayoutProps {
  */
 export default function SettingsProfileLayout({ children }: SettingsProfileLayoutProps) {
   return (
-    <div className="container max-w-4xl py-8 space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Impostazioni profilo</h1>
-        <p className="text-sm text-muted-foreground mt-1">
+    <div className="container max-w-4xl py-8 space-y-1">
+      <div className="pb-4">
+        <h1 className="text-xl font-semibold tracking-tight">Impostazioni profilo</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">
           Gestisci le informazioni del tuo account e le preferenze personali.
         </p>
       </div>
       <SettingsNav />
-      <Separator />
-      <div className="pb-10">{children}</div>
+      <div className="pt-4 pb-10">{children}</div>
     </div>
   );
 }

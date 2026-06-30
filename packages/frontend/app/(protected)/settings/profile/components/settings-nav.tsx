@@ -4,11 +4,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { IconUser, IconShield, IconAdjustments } from "@tabler/icons-react";
 
 const NAV_ITEMS = [
-  { label: "Profilo", href: "/settings/profile" },
-  { label: "Sicurezza", href: "/settings/profile/security" },
-  { label: "Preferenze", href: "/settings/profile/preferences" },
+  { label: "Profilo", href: "/settings/profile", icon: IconUser },
+  { label: "Sicurezza", href: "/settings/profile/security", icon: IconShield },
+  { label: "Preferenze", href: "/settings/profile/preferences", icon: IconAdjustments },
 ] as const;
 
 /**
@@ -19,8 +20,8 @@ export function SettingsNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-1 border-b">
-      {NAV_ITEMS.map(({ label, href }) => {
+    <nav className="flex gap-0.5 border-b">
+      {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
         const isActive =
           href === "/settings/profile" ? pathname === href : pathname.startsWith(href);
 
@@ -29,12 +30,13 @@ export function SettingsNav() {
             key={href}
             href={href}
             className={cn(
-              "px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors",
+              "inline-flex items-center gap-1.5 px-3 py-2 text-sm border-b-2 -mb-px transition-colors",
               isActive
-                ? "border-primary text-primary"
+                ? "border-primary text-primary font-medium"
                 : "border-transparent text-muted-foreground hover:text-foreground hover:border-border",
             )}
           >
+            <Icon size={14} />
             {label}
           </Link>
         );

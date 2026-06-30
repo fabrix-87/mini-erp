@@ -32,6 +32,7 @@ import {
   type ProfileFormValues,
 } from "@mini-erp/shared";
 import { updateProfileAction } from "@/actions/settings/update-profile-actions";
+import { IconUser, IconId, IconMapPin, IconLock } from "@tabler/icons-react";
 
 interface ProfileFormProps {
   user: User;
@@ -59,9 +60,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
       zipCode: d?.zipCode ?? "",
       countryCode: d?.countryCode ?? "",
       gender: d?.gender ?? "PREFER_NOT_TO_SAY",
-      dateOfBirth: d?.dateOfBirth
-        ? new Date(d.dateOfBirth).toISOString().split("T")[0]
-        : "",
+      dateOfBirth: d?.dateOfBirth ? new Date(d.dateOfBirth).toISOString().split("T")[0] : "",
       preferredLanguageId: user.preferredLanguageId,
     },
   });
@@ -77,48 +76,80 @@ export function ProfileForm({ user }: ProfileFormProps) {
     });
   }
 
+  /** Derives initials from the user's name or falls back to email. */
+  const initials =
+    [d?.firstName, d?.lastName]
+      .filter(Boolean)
+      .map((n) => n![0].toUpperCase())
+      .join("") || user.email[0].toUpperCase();
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {/* Account */}
-        <section className="space-y-4">
-          <h2 className="text-base font-semibold">Account</h2>
+        <div className="rounded-lg border bg-card p-5 space-y-4">
+          <div className="flex items-center gap-2">
+            <IconUser size={16} className="text-muted-foreground" />
+            <h2 className="text-sm font-semibold">Account</h2>
+          </div>
+          <Separator />
+
+          {/* Avatar row */}
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground font-semibold text-lg select-none">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium truncate">
+                {d?.firstName && d?.lastName ? `${d.firstName} ${d.lastName}` : user.username}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel className="text-xs text-muted-foreground">Username</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
                   <FormMessage />
+                  <p className="text-xs text-muted-foreground mt-1">&nbsp;</p>
                 </FormItem>
               )}
             />
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-xs text-muted-foreground flex items-center gap-1">
+                Email
+                <IconLock size={11} className="text-muted-foreground/60" />
+              </FormLabel>
               <Input value={user.email} disabled readOnly />
               <p className="text-xs text-muted-foreground mt-1">
                 Per cambiare email contatta l&apos;amministratore.
               </p>
             </FormItem>
           </div>
-        </section>
-
-        <Separator />
+        </div>
 
         {/* Dati personali */}
-        <section className="space-y-4">
-          <h2 className="text-base font-semibold">Dati personali</h2>
+        <div className="rounded-lg border bg-card p-5 space-y-4">
+          <div className="flex items-center gap-2">
+            <IconId size={16} className="text-muted-foreground" />
+            <h2 className="text-sm font-semibold">Dati personali</h2>
+          </div>
+          <Separator />
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome</FormLabel>
+                  <FormLabel className="text-xs text-muted-foreground">Nome</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -131,7 +162,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
               name="lastName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cognome</FormLabel>
+                  <FormLabel className="text-xs text-muted-foreground">Cognome</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -144,7 +175,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Telefono</FormLabel>
+                  <FormLabel className="text-xs text-muted-foreground">Telefono</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value ?? ""} />
                   </FormControl>
@@ -157,7 +188,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
               name="dateOfBirth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Data di nascita</FormLabel>
+                  <FormLabel className="text-xs text-muted-foreground">Data di nascita</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} value={field.value ?? ""} />
                   </FormControl>
@@ -170,10 +201,10 @@ export function ProfileForm({ user }: ProfileFormProps) {
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Genere</FormLabel>
+                  <FormLabel className="text-xs text-muted-foreground">Genere</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
@@ -191,12 +222,13 @@ export function ProfileForm({ user }: ProfileFormProps) {
               )}
             />
           </div>
+
           <FormField
             control={form.control}
             name="bio"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Bio</FormLabel>
+                <FormLabel className="text-xs text-muted-foreground">Bio</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
@@ -210,20 +242,24 @@ export function ProfileForm({ user }: ProfileFormProps) {
               </FormItem>
             )}
           />
-        </section>
-
-        <Separator />
+        </div>
 
         {/* Indirizzo */}
-        <section className="space-y-4">
-          <h2 className="text-base font-semibold">Indirizzo</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="rounded-lg border bg-card p-5 space-y-4">
+          <div className="flex items-center gap-2">
+            <IconMapPin size={16} className="text-muted-foreground" />
+            <h2 className="text-sm font-semibold">Indirizzo</h2>
+          </div>
+          <Separator />
+
+          <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
+            {/* Via — full width */}
             <FormField
               control={form.control}
               name="address"
               render={({ field }) => (
-                <FormItem className="sm:col-span-2">
-                  <FormLabel>Indirizzo</FormLabel>
+                <FormItem className="sm:col-span-6">
+                  <FormLabel className="text-xs text-muted-foreground">Via / Indirizzo</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value ?? ""} />
                   </FormControl>
@@ -231,12 +267,13 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 </FormItem>
               )}
             />
+            {/* Città — 3 col */}
             <FormField
               control={form.control}
               name="city"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Città</FormLabel>
+                <FormItem className="sm:col-span-3">
+                  <FormLabel className="text-xs text-muted-foreground">Città</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value ?? ""} />
                   </FormControl>
@@ -244,12 +281,13 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 </FormItem>
               )}
             />
+            {/* CAP — 1 col */}
             <FormField
               control={form.control}
               name="zipCode"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>CAP</FormLabel>
+                <FormItem className="sm:col-span-1">
+                  <FormLabel className="text-xs text-muted-foreground">CAP</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value ?? ""} />
                   </FormControl>
@@ -257,12 +295,15 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 </FormItem>
               )}
             />
+            {/* Provincia — 2 col */}
             <FormField
               control={form.control}
               name="state"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Provincia / Regione</FormLabel>
+                <FormItem className="sm:col-span-2">
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Provincia / Regione
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value ?? ""} />
                   </FormControl>
@@ -270,18 +311,20 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 </FormItem>
               )}
             />
+            {/* Paese ISO — 2 col */}
             <FormField
               control={form.control}
               name="countryCode"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Paese (codice ISO)</FormLabel>
+                <FormItem className="sm:col-span-2">
+                  <FormLabel className="text-xs text-muted-foreground">Paese (ISO)</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       value={field.value ?? ""}
                       placeholder="IT"
                       maxLength={2}
+                      className="uppercase"
                     />
                   </FormControl>
                   <FormMessage />
@@ -289,7 +332,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
               )}
             />
           </div>
-        </section>
+        </div>
 
         <div className="flex justify-end pt-2">
           <Button type="submit" disabled={isPending}>

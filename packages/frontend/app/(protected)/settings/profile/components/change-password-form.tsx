@@ -17,7 +17,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { updatePasswordAction } from "@/actions/settings/update-password-actions";
+import { IconLock } from "@tabler/icons-react";
 
 /**
  * Form for changing the current user's password.
@@ -31,7 +33,7 @@ export function ChangePasswordForm() {
     defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
   });
 
-  function onSubmit(values: ChangePasswordInput) {
+  function onSubmit(values: ChangePasswordInput): void {
     startTransition(async () => {
       const result = await updatePasswordAction(values);
       if (result.success) {
@@ -44,21 +46,23 @@ export function ChangePasswordForm() {
   }
 
   return (
-    <section className="space-y-4">
-      <div>
-        <h2 className="text-base font-semibold">Cambia password</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Usa una password lunga almeno 8 caratteri con lettere, numeri e simboli.
-        </p>
+    <div className="rounded-lg border bg-card p-5 space-y-4">
+      <div className="flex items-center gap-2">
+        <IconLock size={16} className="text-muted-foreground" />
+        <h2 className="text-sm font-semibold">Cambia password</h2>
       </div>
+      <Separator />
+      <p className="text-xs text-muted-foreground">
+        Usa una password lunga almeno 8 caratteri con lettere, numeri e simboli.
+      </p>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-w-md">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 max-w-sm">
           <FormField
             control={form.control}
             name="currentPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password attuale</FormLabel>
+                <FormLabel className="text-xs text-muted-foreground">Password attuale</FormLabel>
                 <FormControl>
                   <Input type="password" {...field} />
                 </FormControl>
@@ -71,7 +75,7 @@ export function ChangePasswordForm() {
             name="newPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nuova password</FormLabel>
+                <FormLabel className="text-xs text-muted-foreground">Nuova password</FormLabel>
                 <FormControl>
                   <Input type="password" {...field} />
                 </FormControl>
@@ -84,7 +88,7 @@ export function ChangePasswordForm() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Conferma nuova password</FormLabel>
+                <FormLabel className="text-xs text-muted-foreground">Conferma nuova password</FormLabel>
                 <FormControl>
                   <Input type="password" {...field} />
                 </FormControl>
@@ -92,11 +96,13 @@ export function ChangePasswordForm() {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Aggiornamento..." : "Aggiorna password"}
-          </Button>
+          <div className="pt-1">
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Aggiornamento..." : "Aggiorna password"}
+            </Button>
+          </div>
         </form>
       </Form>
-    </section>
+    </div>
   );
 }
