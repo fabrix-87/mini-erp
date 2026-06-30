@@ -28,6 +28,7 @@ export const getUserSelection = () =>
     username: true,
     email: true,
     active: true,
+    twoFactorEnabled: true,
     preferredLanguageId: true,
     details: {
       select: {
@@ -85,6 +86,7 @@ export const getUserDetailedSelection = () =>
     username: true,
     email: true,
     active: true,
+    twoFactorEnabled: true,
     preferredLanguageId: true,
     details: {
       select: {
@@ -551,6 +553,7 @@ export const mapUserResponse = <
     username: string;
     email: string;
     active: boolean;
+    twoFactorEnabled: boolean;
     preferredLanguageId: number | null;
     details: unknown;
     createdAt: Date;
@@ -596,6 +599,7 @@ export const mapUserResponse = <
     username: user.username,
     email: user.email,
     active: user.active,
+    twoFactorEnabled: user.twoFactorEnabled,
     preferredLanguageId: user.preferredLanguageId,
     details: user.details,
     createdAt: user.createdAt,

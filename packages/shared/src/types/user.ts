@@ -30,8 +30,8 @@ import {
   updateConsentSchema,
   requestDataExportSchema,
   requestAccountDeletionSchema,
+  profileFormSchema,
 } from "../validators/user";
-import { Country } from "./country";
 
 // ============================================================================
 // ENTITY TYPES — mirror del Prisma schema (solo campi safe, no secrets)
@@ -152,6 +152,8 @@ export type RequestAccountDeletionInput = z.infer<typeof requestAccountDeletionS
 export type UserFormInput = z.infer<typeof userFormSchema>;
 export type CreateUserFormInput = z.infer<typeof createUserFormSchema>;
 export type UpdateUserFormInput = z.infer<typeof updateUserFormSchema>;
+export type ProfileFormValues = z.infer<typeof profileFormSchema>;
+export type ProfileFormInput = z.input<typeof profileFormSchema>;
 
 // ============================================================================
 // PARAM TYPES — z.infer from validators

@@ -13,6 +13,7 @@ export * from "./tenant";
 export * from "./payment";
 export * from "./tax";
 export * from "./user";
+export * from "./user-settings";
 export * from "./intrastat";
 export * from "./category";
 export * from "./role";

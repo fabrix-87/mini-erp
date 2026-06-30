@@ -189,6 +189,11 @@ export const updateUserDetailsSchema = userDetailsSchema
   .required({ firstName: true, lastName: true })
   .strict();
 
+export const profileFormSchema = updateUserDetailsSchema.extend({
+  username: usernameSchema,
+  preferredLanguageId: z.number().int().positive().optional().nullable(),
+});
+
 /**
  * Partial update of core User fields + optional details block.
  * All fields are optional; omit a key to leave it unchanged.

@@ -148,3 +148,21 @@ export const documentRevalidation = {
   documentWithList: (id: number) =>
     revalidateEntityWithList("document", id, { pathRoot: "documents" }),
 };
+
+/**
+ * Revalidate settings-related cache for the current user.
+ * Route: /settings/profile
+ */
+export const settingsRevalidation = {
+  /** Revalidate user profile tag (shared with userRevalidation). */
+  profile: () => revalidateTag('user-profile'),
+
+  /** Revalidate user settings tag. */
+  settings: () => revalidateTag('user-settings'),
+
+  /** Revalidate both profile and settings. */
+  all: () => {
+    revalidateTag('user-profile');
+    revalidateTag('user-settings');
+  },
+};

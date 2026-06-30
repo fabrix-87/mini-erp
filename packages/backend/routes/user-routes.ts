@@ -19,6 +19,7 @@ import {
   toggleUserActive,
   deleteUser,
   updateUser,
+  getSettings,
 } from "../controllers/user-controller";
 
 import { createHonoApp } from "@/lib/hono-app";
@@ -31,6 +32,13 @@ const userRoutes = createHonoApp();
 // ============================================================================
 // PRIVATE ROUTES - Current User (Authenticated)
 // ============================================================================
+
+/**
+ * @route   GET /api/users/me/settings
+ * @desc    Ottieni i settaggi dell'utente corrente
+ * @access  Private
+ */
+userRoutes.get("/me/settings", getSettings);
 
 /**
  * @route   GET /api/users/me

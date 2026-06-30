@@ -29,33 +29,23 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale = routing.defaultLocale;
   }
 
-  const headersList = await headers();
-  const xPathname = headersList.get("x-pathname") ?? '';
+  // Load all namespaces upfront — avoids missing messages on client-side navigation
+  const namespaces = ["nav", "common", "errors", "system", "crm", "finance", "admin", "overview"];
 
-  // Always-loaded namespaces
-  const [nav, common, errors] = await Promise.all([
-    import(`../messages/${locale}/nav.json`),
-    import(`../messages/${locale}/common.json`),
-    import(`../messages/${locale}/errors.json`),
-  ]);
+  const loaded = await Promise.all(
+    namespaces.map((ns) =>
+      import(`../messages/${locale}/${ns}.json`)
+        .then((m) => [ns, m.default] as const)
+        .catch(() => {
+          console.warn(`[i18n] Missing: ${locale}/${ns}.json`);
+          return [ns, {}] as const;
+        })
+    )
+  );
 
-  const messages: Record<string, unknown> = {
-    nav: nav.default,
-    common: common.default,
-    errors: errors.default,
+  return {
+    locale,
+    messages: Object.fromEntries(loaded),
   };
-
-  // Lazy-load section namespace derived from NAVIGATION_TREE
-  const namespace = resolveNamespace(xPathname);
-  if (namespace && namespace !== "overview") {
-    try {
-      const sectionMessages = await import(`../messages/${locale}/${namespace}.json`);
-      messages[namespace] = sectionMessages.default;
-    } catch {
-      // File not yet created for this namespace — silently skip
-      console.warn(`[i18n] Missing messages file: ${locale}/${namespace}.json`);
-    }
-  }
-
-  return { locale, messages };
 });
+

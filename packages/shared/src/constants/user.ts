@@ -6,6 +6,7 @@ import { z } from "zod";
 // ============================================================================
 
 export type Gender = z.infer<typeof genderSchema>;
+export const Gender = genderSchema.enum
 
 export type UserSortField = z.infer<typeof userSortFieldSchema>;
 

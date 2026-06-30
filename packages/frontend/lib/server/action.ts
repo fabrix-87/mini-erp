@@ -2,7 +2,7 @@
 // Helper utilities for Next.js Server Actions
 
 import { redirect } from "next/navigation";
-import { requireAdmin, requirePermission, requireRole } from "@/lib/server/auth";
+import { requireAdmin, requireAuth, requirePermission, requireRole } from "@/lib/server/auth";
 import { ServerApiError } from "@/types/server-client";
 
 // ============================================================================
@@ -67,6 +67,32 @@ export async function withAuth<T>(
       return { success: false, error: error.message };
     }
 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Errore imprevisto",
+    };
+  }
+}
+
+/**
+ * Wraps a server action that operates on the authenticated user's own data.
+ * Does NOT require admin privileges — only a valid session.
+ * Use for profile updates, settings changes, password change, etc.
+ *
+ * @param action - Async function containing the business logic
+ */
+export async function withSelf<T>(action: () => Promise<T>): Promise<ActionResult<T>> {
+  try {
+    // requireSession verifica solo che esista un token valido
+    await requireAuth();
+    const data = await action();
+    return { success: true, data };
+  } catch (error) {
+    console.error("Server action error (self):", error);
+    if (error instanceof ServerApiError) {
+      if (error.statusCode === 401) redirect("/login");
+      return { success: false, error: error.message };
+    }
     return {
       success: false,
       error: error instanceof Error ? error.message : "Errore imprevisto",

@@ -38,7 +38,7 @@ import {
   getValidatedQuery,
 } from "@/helpers/validated-context";
 
-import { Prisma } from "@/generated/prisma/client";
+import { Prisma, UserSetting } from "@/generated/prisma/client";
 import { connectById, connectOrDisconnectByCode } from "@/helpers/prisma-helper";
 
 // ============================================================================
@@ -52,10 +52,6 @@ import { connectById, connectOrDisconnectByCode } from "@/helpers/prisma-helper"
  */
 export const getMe = async (c: Context<AppBindings>) => {
   const { userId } = c.get("user")!;
-
-  if (!userId) {
-    throw new NotFoundError("ID utente non trovato");
-  }
 
   const cacheKey = `user:profile:${userId}`;
   const cached = await redisClient.get(cacheKey);
@@ -79,6 +75,34 @@ export const getMe = async (c: Context<AppBindings>) => {
   await redisClient.setEx(cacheKey, 3600, JSON.stringify(userData));
 
   return sendSuccess(c, userData);
+};
+
+/**
+ * Retrieves the settings for the currently authenticated user, with Redis cache.
+ * Returns a cached version if available; otherwise fetches from DB and primes the cache.
+ *
+ * @route   GET /api/users/settings
+ * @access  Private
+ */
+export const getSettings = async (c: Context<AppBindings>) => {
+  const { userId } = c.get("user")!;
+
+  const cacheKey = `user:settings:${userId}`;
+  const cached = await redisClient.get(cacheKey);
+
+  if (cached) {
+    return sendSuccess(c, JSON.parse(cached) as UserSetting[]);
+  }
+
+  const userSettings = await prisma.userSetting.findMany({
+    where: {
+      userId
+    },
+  });
+
+  await redisClient.setEx(cacheKey, 3600, JSON.stringify(userSettings));
+
+  return sendSuccess(c, userSettings);
 };
 
 /**
@@ -649,7 +673,7 @@ export const deleteUser = async (c: Context<AppBindings>) => {
       },
       data: {
         deletedAt: new Date(),
-        deletedByUser: {connect: {id: currentUserId}},
+        deletedByUser: { connect: { id: currentUserId } },
       },
     });
   } catch (error) {

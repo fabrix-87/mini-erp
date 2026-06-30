@@ -43,6 +43,7 @@ export * from "./intrastat";
 export * from "./category";
 export * from "./dashboard";
 export * from "./user-membership";
+export * from "./user-setting";
 
 // Forms
 export * from "./forms/company-form";

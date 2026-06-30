@@ -2,82 +2,18 @@
 
 import { serverApi } from "@/lib/server/api";
 
-import type {
-  User,
-  UpdateUserDetailsInput,
-  UpdateUserProfileInput,
-  UserListApiResponse,
-  UserStatsResponse,
+import {
+  type User,
+  type UpdateUserDetailsInput,
+  type UpdateUserProfileInput,
+  type UserListApiResponse,
+  type UserStatsResponse,
+  USER_TAGS,
 } from "@/types/user-types";
 import {
-  ApiResponse,
-  CreateUserFormInput,
   CreateUserInput,
   UpdateUserFormInput,
 } from "@mini-erp/shared";
-import { PaginatedResponse } from "@mini-erp/shared/types";
-
-// ============================================================================
-// Cache Tags
-// ============================================================================
-
-const USER_TAGS = {
-  list: "users-list",
-  detail: (id: string) => `user-${id}`,
-  profile: "user-profile",
-};
-
-// ============================================================================
-// Current User Functions
-// ============================================================================
-
-/**
- * Get current user data
- * Con cache strategy
- */
-export async function getUser(options?: { revalidate?: number | false }): Promise<User> {
-  return serverApi.get<User>("/users/me", {
-    revalidate: options?.revalidate ?? 60,
-    tags: [USER_TAGS.profile],
-  });
-}
-
-/**
- * Update current user profile
- * Invalida cache automaticamente
- */
-export async function updateProfile(data: UpdateUserProfileInput): Promise<User> {
-  return serverApi.put<User>("/users/me/profile", data, {
-    tags: [USER_TAGS.profile],
-    revalidate: false,
-  });
-}
-
-/**
- * Update current user details
- */
-export async function updateDetails(data: UpdateUserDetailsInput): Promise<User> {
-  return serverApi.put<User>("/users/me/details", data, {
-    tags: [USER_TAGS.profile],
-    revalidate: false,
-  });
-}
-
-/**
- * Change current user password
- */
-export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
-  await serverApi.put<void>(
-    "/users/me/change-password",
-    {
-      currentPassword,
-      newPassword,
-    },
-    {
-      revalidate: false,
-    },
-  );
-}
 
 // ============================================================================
 // Admin User Management Functions
