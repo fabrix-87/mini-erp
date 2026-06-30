@@ -50,7 +50,7 @@ export const clientUserService = {
         stats.inactive++;
       }
 
-      user.roles?.forEach((role: any) => {
+      user.currentTenant.roles?.forEach((role: any) => {
         stats.byRole[role.code] = (stats.byRole[role.code] || 0) + 1;
       });
     });

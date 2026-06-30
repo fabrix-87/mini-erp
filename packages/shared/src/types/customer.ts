@@ -36,8 +36,8 @@ import { Lead } from "./lead";
  * Customer entity
  */
 export type Customer = {
-  id: number;
-  companyId: number;
+  id: string;
+  companyId: string;
   company: Company;
   // Dati specifici Cliente/CRM
   priority: CustomerPriority;
@@ -47,11 +47,11 @@ export type Customer = {
   creditStatus: CreditCheckStatus;
 
   // Dati Commerciali
-  defaultPriceListId?: number | null;
+  defaultPriceListId?: string | null;
   defaultPriceList?: PriceList | null;
   customerTaxRuleId?: number | null;
   customerTaxRule?: TaxRule | null;
-  paymentMethodId?: number | null;
+  paymentMethodId?: string | null;
   paymentMethod?: PaymentMethod | null;
 
   creditLimit?: Decimal | null;

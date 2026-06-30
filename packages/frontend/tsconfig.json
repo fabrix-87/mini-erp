@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,7 +15,7 @@
     "incremental": true,
     "plugins": [
       {
-        "name": "next",
+        "name": "next"
       },
       {
         "name": "next-intl/plugin"
@@ -27,7 +23,15 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@mini-erp/shared": ["../shared/src"]
+      "@mini-erp/shared": ["../shared/src/index.ts"],
+      "@mini-erp/shared/validators": ["../shared/src/validators/index.ts"],
+      "@mini-erp/shared/validators/*": ["../shared/src/validators/*.ts"],
+      "@mini-erp/shared/types": ["../shared/src/types/index.ts"],
+      "@mini-erp/shared/constants": ["../shared/src/constants/index.ts"],
+      "@mini-erp/shared/utils": ["../shared/src/utils/index.ts"],
+      "react-hook-form": ["../node_modules/react-hook-form"],
+      "@hookform/resolvers": ["../node_modules/@hookform/resolvers"],
+      "@hookform/resolvers/*": ["../node_modules/@hookform/resolvers/*"]
     }
   },
   "include": [
@@ -36,8 +40,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-, "../shared/src/utils/currency.utils.ts"  ],
-  "exclude": [
-    "node_modules"
-  ]
+  ],
+  "exclude": ["node_modules"]
 }

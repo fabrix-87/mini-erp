@@ -1,6 +1,7 @@
-import { Product, ProductImage, ProductPreview } from "@/types/product";
+import { Product, ProductPreview } from "@/types/product";
 import api from "../api";
 import { ApiResponse } from "@/types/api";
+import { ProductImage } from "@mini-erp/shared";
 
 // ============ PRODUCTS ============
 export const getProducts = async (params?: {

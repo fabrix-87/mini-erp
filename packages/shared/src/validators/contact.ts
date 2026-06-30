@@ -145,7 +145,7 @@ export const contactQuerySchema = z.object({
   position: z.string().trim().optional(),
   page: pageSchema,
   limit: limitSchema,
-  sortBy: queryEnumOrAllSchema(contactSortFieldSchema.options),
+  sortBy: queryEnumOrAllSchema(contactSortFieldSchema),
   sortOrder: querySortOrderSchema(),
 });
 

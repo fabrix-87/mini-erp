@@ -1,4 +1,4 @@
-export type { Address, AddressIdInput } from "@mini-erp/shared/types";
+export type { Address } from "@mini-erp/shared/types";
 
 // Interfaccia per l'oggetto 'shippingAddress' utilizzato nel DTO e nel Joi validator
 // (È solo un sottoinsieme dei campi salvati come snapshot sul Documento)

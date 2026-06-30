@@ -62,7 +62,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
             <Label>Tema</Label>
             <Select
               value={watch(K.UI_THEME)}
-              onValueChange={(v) => setValue(K.UI_THEME, v as UserSettingValueMap['ui.theme'] 'system')}
+              onValueChange={(v) => setValue(K.UI_THEME, v as UserSettingValueMap['ui.theme'])}
             >
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>

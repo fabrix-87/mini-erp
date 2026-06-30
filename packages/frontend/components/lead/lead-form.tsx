@@ -1008,7 +1008,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             Data consenso privacy <span className="text-destructive">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input type="date" {...field} value={field.value ?? ""} />
+                            <Input type="date" {...field} value={field.value} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

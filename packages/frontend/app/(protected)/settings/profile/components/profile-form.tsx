@@ -1,11 +1,11 @@
 // packages/frontend/app/(protected)/settings/profile/components/profile-form.tsx
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTransition } from 'react';
-import { toast } from 'sonner';
-import type { User } from '@mini-erp/shared/types';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import type { User } from "@mini-erp/shared/types";
 import {
   Form,
   FormControl,
@@ -13,20 +13,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Gender, ProfileFormInput, profileFormSchema, ProfileFormValues } from '@mini-erp/shared';
-import { updateProfileAction } from '@/actions/settings/update-profile-actions';
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Gender, ProfileFormInput, profileFormSchema, ProfileFormValues } from "@mini-erp/shared";
+import { updateProfileAction } from "@/actions/settings/update-profile-actions";
 
 interface ProfileFormProps {
   user: User;
@@ -40,32 +40,34 @@ export function ProfileForm({ user }: ProfileFormProps) {
   const [isPending, startTransition] = useTransition();
   const d = user.details;
 
-  const form = useForm<ProfileFormValues, any, ProfileFormInput>({
-    resolver: zodResolver(profileFormSchema),
-    defaultValues: {
-      username: user.username,
-      firstName: d?.firstName ?? '',
-      lastName: d?.lastName ?? '',
-      bio: d?.bio ?? '',
-      phone: d?.phone ?? '',
-      address: d?.address ?? '',
-      city: d?.city ?? '',
-      state: d?.state ?? '',
-      zipCode: d?.zipCode ?? '',
-      countryCode: d?.countryCode ?? '',
-      gender: d?.gender ?? Gender.PREFER_NOT_TO_SAY,
-      dateOfBirth: d?.dateOfBirth ? new Date(d.dateOfBirth).toISOString().split('T')[0] : '',    
-      preferredLanguageId: user.preferredLanguageId,
-    },
-  });
+  const form = useForm({
+  resolver: zodResolver(profileFormSchema),
+  defaultValues: {
+    username: user.username,
+    firstName: d?.firstName ?? "",
+    lastName: d?.lastName ?? "",
+    bio: d?.bio ?? "",
+    phone: d?.phone ?? "",
+    address: d?.address ?? "",
+    city: d?.city ?? "",
+    state: d?.state ?? "",
+    zipCode: d?.zipCode ?? "",
+    countryCode: d?.countryCode ?? "",
+    gender: d?.gender ?? "PREFER_NOT_TO_SAY",
+    dateOfBirth: d?.dateOfBirth
+      ? new Date(d.dateOfBirth).toISOString().split("T")[0]
+      : "",
+    preferredLanguageId: user.preferredLanguageId,
+  },
+});
 
   function onSubmit(values: ProfileFormValues) {
     startTransition(async () => {
       const result = await updateProfileAction(values);
       if (result.success) {
-        toast.success('Profilo aggiornato con successo.');
+        toast.success("Profilo aggiornato con successo.");
       } else {
-        toast.error(result.error ?? 'Errore durante il salvataggio.');
+        toast.error(result.error ?? "Errore durante il salvataggio.");
       }
     });
   }
@@ -73,7 +75,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-
         {/* Account */}
         <section className="space-y-4">
           <h2 className="text-base font-semibold">Account</h2>
@@ -84,7 +85,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Username</FormLabel>
-                  <FormControl><Input {...field} /></FormControl>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -111,7 +114,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
-                  <FormControl><Input {...field} /></FormControl>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -122,7 +127,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Cognome</FormLabel>
-                  <FormControl><Input {...field} /></FormControl>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -133,7 +140,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Telefono</FormLabel>
-                  <FormControl><Input {...field} value={field.value ?? ''} /></FormControl>
+                  <FormControl>
+                    <Input {...field} value={field.value ?? ""} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -146,7 +155,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
                   <FormLabel>Genere</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       <SelectItem value={Gender.MALE}>Uomo</SelectItem>
@@ -171,7 +182,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 <FormControl>
                   <Textarea
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                     rows={3}
                     placeholder="Descrivi brevemente il tuo ruolo..."
                     className="resize-none"
@@ -195,7 +206,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
               render={({ field }) => (
                 <FormItem className="sm:col-span-2">
                   <FormLabel>Indirizzo</FormLabel>
-                  <FormControl><Input {...field} value={field.value ?? ''} /></FormControl>
+                  <FormControl>
+                    <Input {...field} value={field.value ?? ""} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -206,7 +219,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Città</FormLabel>
-                  <FormControl><Input {...field} value={field.value ?? ''} /></FormControl>
+                  <FormControl>
+                    <Input {...field} value={field.value ?? ""} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -217,7 +232,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>CAP</FormLabel>
-                  <FormControl><Input {...field} value={field.value ?? ''} /></FormControl>
+                  <FormControl>
+                    <Input {...field} value={field.value ?? ""} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -228,7 +245,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Provincia / Regione</FormLabel>
-                  <FormControl><Input {...field} value={field.value ?? ''} /></FormControl>
+                  <FormControl>
+                    <Input {...field} value={field.value ?? ""} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -240,7 +259,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 <FormItem>
                   <FormLabel>Paese (codice ISO)</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value ?? ''} placeholder="IT" maxLength={2} />
+                    <Input {...field} value={field.value ?? ""} placeholder="IT" maxLength={2} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -251,7 +270,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
         <div className="flex justify-end pt-2">
           <Button type="submit" disabled={isPending}>
-            {isPending ? 'Salvataggio...' : 'Salva modifiche'}
+            {isPending ? "Salvataggio..." : "Salva modifiche"}
           </Button>
         </div>
       </form>

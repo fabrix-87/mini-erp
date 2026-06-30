@@ -54,37 +54,36 @@ export const queryNumberSchema = (errorMessage = "Valore numerico non valido") =
     });
 
 /**
- * Schema factory for numeric query string parameters that may contain sentinel
- * values such as `"all"` to represent an empty filter.
+ * Schema factory for numeric query parameters that may contain sentinel values
+ * such as "all" to represent an empty filter.
  *
  * @param errorMessage - Custom error message when the value cannot be parsed as a number.
  * @param emptyValues - String values treated as empty filters.
- * @example
- * queryNumberOrAllSchema().parse("all") // → undefined
- * queryNumberOrAllSchema().parse("4")   // → 4
  */
 export const queryNumberOrAllSchema = (
   errorMessage = "Valore numerico non valido",
   emptyValues: string[] = ["all"],
 ) =>
-  z
-    .string()
-    .optional()
-    .nullable()
-    .transform((val, ctx) => {
+  z.preprocess(
+    (val) => {
+      if (typeof val !== "string" && val !== null && val !== undefined) {
+        return val;
+      }
+
       const normalized = normalizeQueryString(val);
+
       if (normalized === undefined || emptyValues.includes(normalized)) {
         return undefined;
       }
 
-      const n = Number(normalized);
-      if (Number.isNaN(n)) {
-        ctx.addIssue({ code: "custom", message: errorMessage });
-        return z.NEVER;
-      }
-
-      return n;
-    });
+      return normalized;
+    },
+    z.coerce
+      .number({
+        error: errorMessage,
+      })
+      .optional(),
+  );
 
 /**
  * Schema factory for non-negative numeric query string parameters.
@@ -156,64 +155,61 @@ export const queryNumberRangeSchema = (
  * values such as `"all"` to represent an empty filter.
  *
  * Converts `null`, `undefined`, empty strings, and configured sentinel values
- * to `undefined`, then validates the remaining value against the allowed enum values.
+ * to `undefined`, then validates the remaining value against the provided enum schema.
  *
- * @param values - Allowed string values.
+ * @param enumSchema - Source Zod enum schema.
  * @param emptyValues - String values treated as empty filters.
- *                      Defaults to `["all"]`.
- *
- * @example
- * queryEnumOrAllSchema(["asc", "desc"]).parse("asc") // → "asc"
- * queryEnumOrAllSchema(["asc", "desc"]).parse("all") // → undefined
- * queryEnumOrAllSchema(["asc", "desc"]).parse("")    // → undefined
  */
-export const queryEnumOrAllSchema = <TValue extends string>(
-  values: readonly TValue[],
+export const queryEnumOrAllSchema = <
+  TValue extends string,
+  TEnum extends z.ZodEnum<Record<string, TValue>>,
+>(
+  enumSchema: TEnum,
   emptyValues: readonly string[] = ["all"],
 ) =>
-  z
-    .string()
-    .optional()
-    .nullable()
-    .transform((val) => {
-      const normalized = normalizeQueryString(val);
+  z.preprocess((val) => {
+    if (val === null || val === undefined) {
+      return undefined;
+    }
 
-      if (normalized === undefined || emptyValues.includes(normalized)) {
-        return undefined;
-      }
+    if (typeof val !== "string") {
+      return val;
+    }
 
-      return normalized;
-    })
-    .refine((val) => val === undefined || values.includes(val as TValue), {
-      message: `Value must be one of: ${values.join(", ")}`,
-    })
-    .transform((val) => val as TValue | undefined);
+    const normalized = normalizeQueryString(val);
+
+    if (normalized === undefined || emptyValues.includes(normalized)) {
+      return undefined;
+    }
+
+    return normalized;
+  }, enumSchema.optional());
 
 /**
  * Schema factory for optional enum query string parameters.
- * Trims the input and converts empty strings, `null`, and `undefined` to `undefined`.
- * Non-empty values must be included in the provided list.
  *
- * @param values - Allowed string values.
- * @returns A schema that parses an optional enum value.
+ * Converts `null`, `undefined`, and empty strings to `undefined`,
+ * then validates the remaining value against the provided enum schema.
  *
- * @example
- * queryEnumSchema(["asc", "desc"]).parse("asc") // → "asc"
- * queryEnumSchema(["asc", "desc"]).parse("")    // → undefined
+ * @param enumSchema - Source Zod enum schema.
  */
-export const queryEnumSchema = <TValue extends string>(values: readonly TValue[]) =>
-  z
-    .string()
-    .optional()
-    .nullable()
-    .transform((val) => {
-      const normalized = normalizeQueryString(val);
-      return normalized;
-    })
-    .refine((val) => val === undefined || values.includes(val as TValue), {
-      message: `Value must be one of: ${values.join(", ")}`,
-    })
-    .transform((val) => val as TValue | undefined);
+export const queryEnumSchema = <
+  TValue extends string,
+  TEnum extends z.ZodEnum<Record<string, TValue>>,
+>(
+  enumSchema: TEnum,
+) =>
+  z.preprocess((val) => {
+    if (val === null || val === undefined) {
+      return undefined;
+    }
+
+    if (typeof val !== "string") {
+      return val;
+    }
+
+    return normalizeQueryString(val);
+  }, enumSchema.optional());
 
 /**
  * Schema for boolean query string parameters with support for sentinel values
@@ -234,12 +230,15 @@ export const queryEnumSchema = <TValue extends string>(values: readonly TValue[]
  * queryBooleanOrAllSchema.parse(undefined)   // → undefined
  */
 export const queryBooleanOrAllSchema = (emptyValues: readonly string[] = ["all"]) =>
-  z
-    .string()
-    .optional()
-    .nullable()
-    .transform((val) => {
-      if (val === null || val === undefined) return undefined;
+  z.preprocess(
+    (val) => {
+      if (val === null || val === undefined) {
+        return undefined;
+      }
+
+      if (typeof val !== "string") {
+        return val;
+      }
 
       const normalized = val.trim().toLowerCase();
 
@@ -248,11 +247,9 @@ export const queryBooleanOrAllSchema = (emptyValues: readonly string[] = ["all"]
       }
 
       return normalized;
-    })
-    .refine((val) => val === undefined || val === "true" || val === "false", {
-      message: 'Value must be "true", "false", or an allowed empty sentinel',
-    })
-    .transform((val) => {
-      if (val === undefined) return undefined;
-      return val === "true";
-    });
+    },
+    z
+      .enum(["true", "false"])
+      .transform((val) => val === "true")
+      .optional(),
+  );

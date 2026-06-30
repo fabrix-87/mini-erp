@@ -1,3 +1,6 @@
+import { ProductImage, ProductTranslation, ProductVariant } from '@mini-erp/shared';
+import { AttributeGroup } from '../../shared/src/types/attribute';
+
 // ============ Product Types ============
 export interface ProductPreview {
   id: number;

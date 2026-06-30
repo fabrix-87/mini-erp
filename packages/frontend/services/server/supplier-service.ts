@@ -64,6 +64,7 @@ export async function searchSuppliers(
       sortOrder: options?.sortOrder ?? "asc",
       hasProducts: options?.hasProducts,
       hasOrders: options?.hasOrders,
+      
     },
     options?.revalidate ?? false,
   );

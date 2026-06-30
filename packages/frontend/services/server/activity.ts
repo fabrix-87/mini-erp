@@ -2,8 +2,8 @@
 import { serverApi } from "@/lib/server/api";
 import { 
   Activity, 
-  ActivityDashboardStats, 
-  getActivitiesParams 
+  ActivityDashboardStats,
+  ActivityQueryInput, 
 } from "@/types/activitiy";
 import { ApiResponse } from "@/types/api";
 import { getUserFromCookiesSSR } from "@/lib/server/cookies";
@@ -13,7 +13,7 @@ import { getUserFromCookiesSSR } from "@/lib/server/cookies";
  * This runs on the server and uses serverApi with automatic cookie handling
  */
 export async function fetchActivitiesServer(
-  params: getActivitiesParams
+  params: ActivityQueryInput
 ): Promise<ApiResponse<Activity[]>> {
   try {
     // unwrapData: false per ottenere l'intera risposta con pagination
@@ -37,7 +37,7 @@ export async function fetchActivitiesServer(
  * Server-side function to fetch activity statistics (for SSR)
  */
 export async function fetchActivityStatsServer(
-  userId: number
+  userId: string
 ): Promise<ApiResponse<ActivityDashboardStats>> {
   try {
     const response = await serverApi.get<ApiResponse<ActivityDashboardStats>>(
@@ -79,7 +79,7 @@ export async function fetchActivityByIdServer(
  * Gets userId from cookies automatically
  */
 export async function fetchActivitiesPageData(
-  params: getActivitiesParams
+  params: ActivityQueryInput
 ) {
   try {
     // Get user from cookies server-side

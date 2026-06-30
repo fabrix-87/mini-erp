@@ -98,9 +98,9 @@ export const updateCustomerCompanySchema = updateCompanySchema;
  */
 export const customerQuerySchema = companyQueryBaseSchema.extend({
   // Filtri Customer-specific
-  type: queryEnumOrAllSchema(customerTypeSchema.options),
-  priority: queryEnumOrAllSchema(customerPrioritySchema.options),
-  segment: queryEnumOrAllSchema(customerSegmentSchema.options),
+  type: queryEnumOrAllSchema(customerTypeSchema),
+  priority: queryEnumOrAllSchema(customerPrioritySchema),
+  segment: queryEnumOrAllSchema(customerSegmentSchema),
   creditStatus: creditCheckStatusSchema.optional(),
   size: customerSizeSchema.optional(),
 

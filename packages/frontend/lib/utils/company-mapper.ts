@@ -152,7 +152,7 @@ export function extractCompanyData(data: CompanyFormValues): CreateCompanyInput 
     eoriNumber: data.eoriNumber,
     mainEmail: data.mainEmail,
     mainPhone: data.mainPhone,
-    assignedUserId: data.assignedUserId != null ? Number(data.assignedUserId) : undefined,
+    assignedUserId: data.assignedUserId ?? undefined,
     customFields: data.customFields,
     legalAddress: data.legalAddress,
   };

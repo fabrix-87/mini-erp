@@ -1,6 +1,6 @@
 import { ApiResponse } from "@/types/api";
 import api from "../api";
-import { Opportunity, OpportunityDashboardStats } from "@/types/opportunity";
+import { Opportunity } from "@/types/opportunity";
 
 /**
  * Ricava le statistiche per la dashboard delle attività
@@ -9,7 +9,7 @@ import { Opportunity, OpportunityDashboardStats } from "@/types/opportunity";
  */
 export const getOpportunityStats = async (
   userId: number
-): Promise<ApiResponse<OpportunityDashboardStats>> => {
+): Promise<ApiResponse<any>> => {
   const response = await api.get("/opportunities/dashboard/stats", {
     params: { userId },
   });

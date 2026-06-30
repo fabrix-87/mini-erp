@@ -61,7 +61,7 @@ type DetailsFormData = z.infer<typeof detailsSchema>;
 
 interface UserFormProps {
   user: {
-    id: number;
+    id: string;
     username: string;
     email: string;
     active: boolean;

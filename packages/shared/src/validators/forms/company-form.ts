@@ -2,7 +2,7 @@
 import { z } from "zod";
 
 import { countryCodeBaseSchema, inputJsonValueSchema, userIdSchema } from "../base";
-import { createIdSchema } from "../primitives/id";
+import { createCuidSchema, createIdSchema } from "../primitives/id";
 import {
   eoriNumberSchema,
   fiscalCodeSchema,
@@ -65,9 +65,9 @@ export const companyFormSchema = z.object({
   size: customerSizeSchema.default("SMALL"),
   type: customerTypeSchema.default("CUSTOMER"),
   creditStatus: creditCheckStatusSchema.default("PENDING"),
-  defaultPriceListId: createIdSchema("Price List ID non valido").optional().nullable(),
+  defaultPriceListId: createCuidSchema("Price List ID non valido").optional().nullable(),
   customerTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
-  paymentMethodId: createIdSchema("Payment Method ID non valido").optional().nullable(),
+  paymentMethodId: createCuidSchema("Payment Method ID non valido").optional().nullable(),
 
   // ── Supplier fields ───────────────────────────────────────────
   parentSupplierId: createIdSchema("Parent Supplier ID non valido").optional().nullable(),

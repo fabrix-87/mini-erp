@@ -6,9 +6,8 @@ import {
   DocumentLineDTO,
   DocumentType,
 } from "@/types/document";
-import { Company } from "@/types/company-types";
-import { Contact } from "@/types/contact-types";
 import { createDocument, updateDocument } from "@/lib/client/modules/document";
+import { Company, Contact } from "@mini-erp/shared";
 // import { createDocument, updateDocument } from "@/services/documentService"; // I tuoi service reali
 
 interface UseDocumentFormProps {

@@ -1,7 +1,6 @@
 "use client";
 
 import { getProductById } from "@/lib/client/modules/product";
-import { Product, ProductVariant } from "@/types/product";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ProductSkeleton } from "./components/ProductSkeleton";
@@ -15,6 +14,7 @@ import { ProductVariantSelector } from "./components/ProductVariantSelector";
 import { Separator } from "@/components/ui/separator";
 import { ProductVariantDetails } from "./components/ProductVariantDetails";
 import { ProductInfoTabs } from "./components/ProductInfoTabs";
+import { Product, ProductVariant } from "@mini-erp/shared";
 
 export default function ProductDetailPage() {
   const params = useParams();
