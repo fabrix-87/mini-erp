@@ -25,7 +25,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Gender, ProfileFormInput, profileFormSchema, ProfileFormValues } from "@mini-erp/shared";
+import {
+  Gender,
+  type ProfileFormInput,
+  profileFormSchema,
+  type ProfileFormValues,
+} from "@mini-erp/shared";
 import { updateProfileAction } from "@/actions/settings/update-profile-actions";
 
 interface ProfileFormProps {
@@ -40,28 +45,28 @@ export function ProfileForm({ user }: ProfileFormProps) {
   const [isPending, startTransition] = useTransition();
   const d = user.details;
 
-  const form = useForm({
-  resolver: zodResolver(profileFormSchema),
-  defaultValues: {
-    username: user.username,
-    firstName: d?.firstName ?? "",
-    lastName: d?.lastName ?? "",
-    bio: d?.bio ?? "",
-    phone: d?.phone ?? "",
-    address: d?.address ?? "",
-    city: d?.city ?? "",
-    state: d?.state ?? "",
-    zipCode: d?.zipCode ?? "",
-    countryCode: d?.countryCode ?? "",
-    gender: d?.gender ?? "PREFER_NOT_TO_SAY",
-    dateOfBirth: d?.dateOfBirth
-      ? new Date(d.dateOfBirth).toISOString().split("T")[0]
-      : "",
-    preferredLanguageId: user.preferredLanguageId,
-  },
-});
+  const form = useForm<ProfileFormInput>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      username: user.username,
+      firstName: d?.firstName ?? "",
+      lastName: d?.lastName ?? "",
+      bio: d?.bio ?? "",
+      phone: d?.phone ?? "",
+      address: d?.address ?? "",
+      city: d?.city ?? "",
+      state: d?.state ?? "",
+      zipCode: d?.zipCode ?? "",
+      countryCode: d?.countryCode ?? "",
+      gender: d?.gender ?? "PREFER_NOT_TO_SAY",
+      dateOfBirth: d?.dateOfBirth
+        ? new Date(d.dateOfBirth).toISOString().split("T")[0]
+        : "",
+      preferredLanguageId: user.preferredLanguageId,
+    },
+  });
 
-  function onSubmit(values: ProfileFormValues) {
+  function onSubmit(values: ProfileFormValues): void {
     startTransition(async () => {
       const result = await updateProfileAction(values);
       if (result.success) {
@@ -96,7 +101,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
               <FormLabel>Email</FormLabel>
               <Input value={user.email} disabled readOnly />
               <p className="text-xs text-muted-foreground mt-1">
-                Per cambiare email contatta l'amministratore.
+                Per cambiare email contatta l&apos;amministratore.
               </p>
             </FormItem>
           </div>
@@ -142,6 +147,19 @@ export function ProfileForm({ user }: ProfileFormProps) {
                   <FormLabel>Telefono</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value ?? ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="dateOfBirth"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Data di nascita</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} value={field.value ?? ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -259,7 +277,12 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 <FormItem>
                   <FormLabel>Paese (codice ISO)</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value ?? ""} placeholder="IT" maxLength={2} />
+                    <Input
+                      {...field}
+                      value={field.value ?? ""}
+                      placeholder="IT"
+                      maxLength={2}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,6 +1,7 @@
 // packages/frontend/app/(protected)/settings/profile/layout.tsx
 import type { ReactNode } from "react";
 import { SettingsNav } from "./components/settings-nav";
+import { Separator } from "@/components/ui/separator";
 
 interface SettingsProfileLayoutProps {
   children: ReactNode;
@@ -20,7 +21,8 @@ export default function SettingsProfileLayout({ children }: SettingsProfileLayou
         </p>
       </div>
       <SettingsNav />
-      <div>{children}</div>
+      <Separator />
+      <div className="pb-10">{children}</div>
     </div>
   );
 }

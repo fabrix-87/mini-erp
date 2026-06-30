@@ -92,7 +92,7 @@ export const userBaseSchema = z.object({
 export const userDetailsSchema = z.object({
   firstName: z.string().trim().min(1, "Nome obbligatorio").max(100, "Nome troppo lungo"),
   lastName: z.string().trim().min(1, "Cognome obbligatorio").max(100, "Cognome troppo lungo"),
-  profilePicture: urlSchema().optional().nullable(),
+  profilePicture: urlSchema(),
   phone: phoneSchema.optional().nullable(),
   address: z.string().max(255, "Indirizzo troppo lungo").optional().nullable(),
   city: z.string().max(100, "Città troppo lunga").optional().nullable(),
@@ -110,9 +110,7 @@ export const userDetailsSchema = z.object({
       max: "La data di nascita non può essere futura",
       min: "La data di nascita non è valida (massimo 120 anni fa)",
     },
-  })
-    .optional()
-    .nullable(),
+  }),
   gender: genderSchema.default("PREFER_NOT_TO_SAY"),
   bio: z.string().max(1000, "Biografia troppo lunga").optional().nullable(),
 });
@@ -189,10 +187,30 @@ export const updateUserDetailsSchema = userDetailsSchema
   .required({ firstName: true, lastName: true })
   .strict();
 
-export const profileFormSchema = updateUserDetailsSchema.extend({
-  username: usernameSchema,
-  preferredLanguageId: z.number().int().positive().optional().nullable(),
-});
+export const profileFormSchema = updateUserDetailsSchema
+  .omit({ dateOfBirth: true }) // rimuove il campo con output Date
+  .extend({
+    username: usernameSchema,
+    preferredLanguageId: z.number().int().positive().optional().nullable(),
+    // dateOfBirth rimane stringa nel form — la trasformazione avviene lato action
+    dateOfBirth: z
+      .string()
+      .optional()
+      .nullable()
+      .refine((val) => !val || !isNaN(new Date(val).getTime()), { message: "Data non valida" })
+      .refine((val) => !val || new Date(val) <= new Date(), {
+        message: "La data di nascita non può essere futura",
+      })
+      .refine(
+        (val) => {
+          if (!val) return true;
+          const min = new Date();
+          min.setFullYear(min.getFullYear() - 120);
+          return new Date(val) >= min;
+        },
+        { message: "La data di nascita non è valida (massimo 120 anni fa)" },
+      ),
+  });
 
 /**
  * Partial update of core User fields + optional details block.

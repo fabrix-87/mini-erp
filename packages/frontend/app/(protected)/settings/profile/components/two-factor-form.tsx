@@ -23,7 +23,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { confirmTwoFactorAction, disableTwoFactorAction, enableTwoFactorAction } from "@/actions/settings/toggle-two-factor-actions";
+import {
+  confirmTwoFactorAction,
+  disableTwoFactorAction,
+  enableTwoFactorAction,
+} from "@/actions/settings/toggle-two-factor-actions";
+import Image from "next/image";
 
 interface TwoFactorFormProps {
   twoFactorEnabled: boolean;
@@ -112,7 +117,14 @@ export function TwoFactorForm({ twoFactorEnabled }: TwoFactorFormProps) {
             inserisci il codice generato.
           </p>
           {/* Il QR code viene renderizzato dal backend come data-URL o URI */}
-          <img src={setupData.qrCode} alt="QR code 2FA" className="w-40 h-40 border rounded-md" />
+          <Image
+            src={setupData.qrCode}
+            alt="QR code 2FA"
+            width={160}
+            height={160}
+            className="border rounded-md"
+            unoptimized // necessario per data-URL
+          />
           <Form {...confirmForm}>
             <form onSubmit={confirmForm.handleSubmit(onConfirm)} className="flex gap-2">
               <FormField
