@@ -1,472 +1,252 @@
-# 🚀 Enterprise ERP - Frontend
+# 🖥️ Mini-ERP — Frontend
 
-Next.js 16 frontend with advanced JWT authentication, Redis session store, and enterprise-grade security.
+### Enterprise-Grade React Application · Next.js 16 · React 19 · TypeScript 5
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue)](https://www.typescriptlang.org/)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC)](https://tailwindcss.com/)
-[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-latest-black)](https://ui.shadcn.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38B2AC?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![TanStack Query](https://img.shields.io/badge/TanStack_Query-v5-FF4154?logo=reactquery&logoColor=white)](https://tanstack.com/query)
+[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-latest-000?logo=shadcnui&logoColor=white)](https://ui.shadcn.com/)
 
----
+> Production-oriented frontend package of the Mini-ERP monorepo.  
+> A modular, component-first Next.js application covering CRM, admin, sales, and dashboard modules —  
+> designed with the architecture standards expected in senior frontend engineering roles.
 
-## ✨ Features
-
-### 🔐 Authentication System
-
-- ✅ **Local JWT Verification** - No backend calls for token validation
-- ✅ **Proactive Token Refresh** - Auto-refresh 5 minutes before expiry
-- ✅ **Auto-Retry on 401** - Transparent token refresh and request retry
-- ✅ **Browser Fingerprinting** - Prevent token theft
-- ✅ **httpOnly Cookies** - Secure token storage
-- ✅ **Redis Session Store** - Scalable session management
-- ✅ **Token Rotation** - New tokens on every refresh
-- ✅ **Blacklist (JTI)** - Instant token invalidation on logout
-
-### 🎨 UI/UX
-
-- Modern responsive design with Tailwind CSS
-- shadcn/ui component library
-- Dark mode support
-- Toast notifications
-- Loading states
-- Form validation with Zod
-- Real-time session status
-
-### 🏗️ Architecture
-
-- Next.js 16 App Router
-- Server Components for performance
-- Client Components for interactivity
-- API Route Handlers for backend proxy
-- Middleware for auth protection
+Part of the [`fabrix-87/mini-erp`](https://github.com/fabrix-87/mini-erp) monorepo.
 
 ---
 
-## 📦 Quick Start
+## 🎯 What This Demonstrates
+
+This is **not a UI kit showcase** — it's a real application layer built around production patterns
+a senior frontend engineer would apply in a SaaS or ERP product:
+
+- **App Router** architecture with protected and public route groups
+- **Server Actions** as the mutation layer (no REST calls from the client for writes)
+- **End-to-end type safety** via shared Zod validators from `@mini-erp/shared`
+- **Feature-colocated components** — domain logic lives next to its route, not in a global folder
+- **Zero duplication** — types and validators defined once, consumed everywhere
+- **i18n-first** — all user-facing strings managed through `next-intl`, locale resolved from user preference (no URL segment)
+- **Accessibility** — semantic HTML, keyboard navigation, ARIA attributes on interactive elements
+
+---
+
+## 🧠 Engineering Highlights
+
+| Pattern | Implementation |
+|---|---|
+| **Routing** | Next.js App Router with `(protected)` / `(public)` route groups |
+| **Auth guard** | Middleware-based session validation via `jose` (JWT) |
+| **Server Actions** | Mutations handled server-side with `revalidatePath` after every write |
+| **Server State** | TanStack Query v5 — query keys, invalidation, optimistic updates |
+| **Forms** | React Hook Form v7 + Zod v4, schema imported from `@mini-erp/shared` |
+| **Tables** | TanStack Table v8 — sortable, filterable, paginated data grids |
+| **DnD** | `@dnd-kit` for drag-and-drop interactions (e.g. Kanban boards) |
+| **Charts** | Recharts for dashboard analytics |
+| **Theming** | `next-themes` with light/dark mode support |
+| **API Layer** | Axios-based typed service clients with a reverse proxy (`proxy.ts`) |
+| **Type Safety** | Strict TypeScript 5.9, `declaration: true`, no `any` |
+| **i18n** | `next-intl` v4, locale from user preference, keys organized by domain |
+| **Notifications** | `sonner` toasts for all mutation feedback |
+| **Containerization** | Dockerfile with multi-stage build |
+
+---
+
+## 🗂️ Application Modules
+
+The app covers a realistic cross-section of a CRM/ERP product surface:
+
+- **Dashboard** — KPI widgets, charts, recent activity
+- **CRM** — Companies, Contacts, Leads, Documents
+- **Sales** — Sales pipeline and deal management
+- **Activities** — Task and activity tracking
+- **Admin** — User management, roles, permissions
+- **Settings** — User preferences, locale, theme
+- **System** — System-level configuration
+
+---
+
+## 📁 Package Structure
+
+```
+
+packages/frontend/
+├── app/
+│   ├── (protected)/            \# Auth-guarded routes
+│   │   ├── admin/users/
+│   │   │   ├── components/     \# Domain components (co-located)
+│   │   │   └── page.tsx
+│   │   ├── crm/companies/
+│   │   ├── crm/contacts/
+│   │   ├── crm/leads/
+│   │   ├── crm/documents/
+│   │   ├── dashboard/
+│   │   ├── sales/
+│   │   ├── activities/
+│   │   ├── settings/
+│   │   └── system/
+│   └── (public)/               \# Login and unauthenticated routes
+├── actions/                    \# Server Actions — one file per domain
+├── components/                 \# Global/shared components only
+│   └── ui/                     \# shadcn/ui primitives (never modified directly)
+├── hooks/                      \# Custom React hooks
+├── helpers/                    \# Pure utility functions
+├── utils/                      \# Formatting and transform helpers
+├── services/                   \# Axios API client layer
+├── providers/                  \# React context providers
+├── i18n/ + messages/           \# next-intl config and translation files
+├── types/                      \# Frontend-only TypeScript types
+├── lib/
+│   └── server/revalidate.ts    \# Revalidation utility for Server Actions
+└── proxy.ts                    \# Reverse proxy for API routing
+
+```
+
+### Component Placement Rule
+
+Domain components are **always co-located with their route**, not dumped in a global folder:
+
+```
+
+✅ app/(protected)/crm/leads/components/lead-kanban.tsx
+✅ app/(protected)/admin/users/components/user-form.tsx
+
+❌ components/lead-kanban.tsx   ← global folder is for shared-only
+
+```
+
+Each domain folder follows a consistent split:
+
+```
+
+users/components/
+├── user-table.tsx
+├── user-form.tsx
+├── user-form.schema.ts   ← extends @mini-erp/shared validator
+├── user-columns.tsx
+├── user-delete-dialog.tsx
+└── index.ts              ← barrel export
+
+```
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Library / Tool |
+|---|---|
+| Framework | Next.js 16.2.4 (App Router) |
+| UI Runtime | React 19 |
+| Language | TypeScript 5.9 (strict) |
+| Styling | Tailwind CSS v4 |
+| Components | shadcn/ui + Radix UI |
+| Server State | TanStack Query v5 |
+| Tables | TanStack Table v8 |
+| Forms | React Hook Form v7 + Zod v4 |
+| Drag & Drop | @dnd-kit |
+| Charts | Recharts |
+| i18n | next-intl v4 |
+| Auth | jose (JWT) |
+| HTTP Client | Axios |
+| Notifications | sonner |
+| Icons | @tabler/icons-react · lucide-react |
+| Date Utilities | date-fns v4 |
+| Package Manager | Bun |
+
+---
+
+## 🚀 Local Development
 
 ### Prerequisites
 
-- Node.js 18+
-- Redis 7+
-- Backend Express server running
+- [Bun](https://bun.sh) >= 1.0
+- Backend running (see [`packages/backend`](../backend/README.md))
 
-### Installation
-
-```bash
-# Clone repository
-git clone <repo-url>
-cd frontend
-
-# Install dependencies
-npm install
-
-# Copy environment template
-cp .env.example .env.local
-
-# Edit .env.local with your values
-nano .env.local
-```
-
-### Configuration
-
-Update `.env.local`:
+### Install & Run
 
 ```bash
-# API Configuration
-NEXT_PUBLIC_API_URL=http://localhost:5000
-API_URL=http://localhost:5000
+# From monorepo root
+bun install
 
-# JWT Configuration (must match backend)
-JWT_SECRET=your-secret-key-min-32-chars
-JWT_ISSUER=your-app-backend
-JWT_AUDIENCE=your-app-frontend
+# Configure environment
+cp packages/frontend/.env.example packages/frontend/.env
+
+# Start shared in watch mode (required)
+cd packages/shared && bun run dev
+
+# Start frontend dev server
+cd packages/frontend && bun run dev
 ```
 
-### Run Development Server
+Frontend available at **http://localhost:3000**
+
+### Environment Variables
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+
+---
+
+## 📦 Available Scripts
 
 ```bash
-# Start Redis (if not running)
-docker run -d --name redis-auth -p 6379:6379 redis:7-alpine
-
-# Start backend (separate terminal)
-cd ../backend && npm run dev
-
-# Start frontend
-npm run dev
-
-# Open browser
-open http://localhost:3000
+bun run dev       # Start development server with hot reload
+bun run build     # Production build
+bun run start     # Start production server
+bun run lint      # ESLint check
+bun run check     # TypeScript type-check
 ```
+
 
 ---
 
-## 📁 Project Structure
+## 🏗️ Coding Standards
 
+All public functions, hooks, and components carry **mandatory JSDoc** in English:
+
+```typescript
+/**
+ * Fetches paginated leads from the CRM API.
+ * @param filters - Active filter state from the leads toolbar
+ * @returns TanStack Query result with lead list and pagination metadata
+ */
+export function useLeads(filters: LeadFilters): UseQueryResult<PaginatedLeads> { ... }
 ```
-frontend/
-├── app/                          # Next.js App Router
-│   ├── api/                      # API Route Handlers
-│   │   ├── auth/                 # Auth endpoints (login, logout, refresh)
-│   │   └── token-info/           # Token info endpoint
-│   ├── login/                    # Login page
-│   └── dashboard/                # Protected dashboard
-│
-├── components/                   # React Components
-│   ├── auth/                     # Auth-related components
-│   │   ├── login-form.tsx
-│   │   └── session-status.tsx
-│   ├── dashboard/                # Dashboard components
-│   └── ui/                       # shadcn/ui components
-│
-├── lib/                          # Utilities
-│   ├── api/                      # API client
-│   │   ├── client.ts             # Axios with interceptors
-│   │   └── modules/              # API method modules
-│   │       ├── auth.ts
-│   │       └── user.ts
-│   ├── jwt.ts                    # JWT utilities (jose)
-│   └── fingerprint.ts            # Browser fingerprinting
-│
-├── providers/                    # React Context Providers
-│   └── auth-provider.tsx         # Auth context
-│
-├── types/                        # TypeScript types
-│   └── api.ts                    # API response types
-│
-├── docs/                         # Documentation
-│   ├── AUTH_FLOW.md              # Auth flow documentation
-│   ├── SETUP_CHECKLIST.md        # Setup guide
-│   └── FILES_CREATED.md          # Implementation summary
-│
-├── tests/                        # E2E tests
-│   └── auth.spec.ts              # Authentication tests
-│
-├── proxy.ts                      # Next.js 16 Middleware
-├── .env.example                  # Environment template
-└── README.md                     # This file
-```
+
+Key conventions enforced across the codebase:
+
+- **No `any`** — strict TypeScript everywhere
+- **No local type duplication** — domain types live in `@mini-erp/shared`, UI-only types in `types/`
+- **No CSS modules or inline styles** — Tailwind utility classes only
+- **No global state libraries** — TanStack Query for server state, `useState`/Context for UI state
+- **Every mutation revalidates** — `lib/server/revalidate.ts` called after every Server Action
+- **Every folder has a barrel** — `index.ts` with named exports
 
 ---
 
-## 🔄 Authentication Flow
+## 🔗 Related Packages
 
-### 1️⃣ Login Flow
+| Package | Description |
+| :-- | :-- |
+| [`@mini-erp/shared`](../shared/) | Zod validators, shared TypeScript types, constants |
+| [`@mini-erp/backend`](../backend/) | Hono REST API, Prisma, BullMQ, Socket.io |
 
-```
-User → LoginForm → /api/auth/login → Express Backend
-                        ↓
-              Generate JWT + Redis Session
-                        ↓
-              Set httpOnly Cookies
-                        ↓
-              Redirect to Dashboard
-```
-
-### 2️⃣ Protected Request Flow
-
-```
-User → Dashboard (Server Component)
-          ↓
-    proxy.ts (Middleware)
-          ↓
-    Verify JWT Locally (jose)
-          ↓
-    Token OK? → Continue
-    Expiring Soon? → Proactive Refresh
-    Expired? → Redirect Login
-```
-
-### 3️⃣ API Call with Auto-Refresh
-
-```
-Component → updateProfile() → Axios
-                ↓
-          401 Unauthorized
-                ↓
-      Axios Interceptor
-                ↓
-      /api/auth/refresh
-                ↓
-      Get New Tokens
-                ↓
-      Retry Original Request
-                ↓
-      Success ✅
-```
-
-### 4️⃣ Logout Flow
-
-```
-User → Logout Button → /api/auth/logout
-              ↓
-    Express Backend: Redis MULTI/EXEC
-    - DEL session:{userId}
-    - DEL refresh:{userId}
-    - SET blacklist:{jti}
-              ↓
-    Clear Cookies
-              ↓
-    Redirect to Login
-```
 
 ---
 
-## 🧪 Testing
+## 👤 Author
 
-### Run E2E Tests
+**Fabrizio Menza** — Senior Full-Stack Engineer · Rome, Italy
 
-```bash
-# Install Playwright (first time only)
-npx playwright install
+- GitHub: [@fabrix-87](https://github.com/fabrix-87)
+- Specializations: TypeScript · React / Next.js · ERP/SaaS product architecture · DX \& code quality
 
-# Run tests
-npm test
+---
 
-# Run tests with UI
-npm run test:ui
+*Part of the [Mini-ERP](https://github.com/fabrix-87/mini-erp) open-source project — released under [AGPLv3](../../LICENSE).*
 
-# Debug tests
-npm run test:debug
-
-# Generate new tests
-npm run test:codegen
 ```
-
-### Manual Testing
-
-```bash
-# Test login
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "admin@example.com", "password": "admin123"}' \
-  -c cookies.txt -v
-
-# Test protected endpoint
-curl http://localhost:3000/api/users/me -b cookies.txt
-
-# Test refresh
-curl -X POST http://localhost:3000/api/auth/refresh -b cookies.txt
-
-# Test logout
-curl -X POST http://localhost:3000/api/auth/logout -b cookies.txt
-```
-
----
-
-## 🔒 Security Features
-
-### Token Security
-
-- ✅ httpOnly cookies (no JavaScript access)
-- ✅ Secure flag in production
-- ✅ SameSite=Strict
-- ✅ Short-lived access tokens (15 min)
-- ✅ Long-lived refresh tokens (7 days)
-- ✅ Token rotation on refresh
-
-### Session Security
-
-- ✅ Redis session store
-- ✅ Browser fingerprinting
-- ✅ JTI blacklist on logout
-- ✅ Sliding session expiry
-- ✅ Max concurrent sessions (configurable)
-
-### Request Security
-
-- ✅ Rate limiting (backend)
-- ✅ CORS configuration
-- ✅ Request queue during refresh
-- ✅ Automatic retry with backoff
-
----
-
-## 📊 Performance
-
-### Optimizations
-
-- **Local JWT Verification**: ~95% reduction in auth calls
-- **Proactive Refresh**: No user-visible delays
-- **Request Queue**: No duplicate refresh calls
-- **Server Components**: Reduced client-side JavaScript
-
-### Metrics
-
-| Operation | Time |
-|-----------|------|
-| JWT Verification (local) | <1ms |
-| Protected Page Load (SSR) | ~50ms |
-| Token Refresh | ~100ms |
-| Login | ~200ms |
-
----
-
-## 🛠️ Development
-
-### Available Scripts
-
-```bash
-npm run dev          # Start dev server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run type-check   # TypeScript type checking
-npm run format       # Format with Prettier
-npm test             # Run E2E tests
-```
-
-### Code Style
-
-- TypeScript strict mode
-- ESLint + Prettier
-- Conventional commits
-- Component-driven development
-
-### Git Hooks (Optional)
-
-```bash
-# Install husky
-npm install -D husky
-
-# Add pre-commit hook
-npx husky add .husky/pre-commit "npm run type-check && npm run lint"
-```
-
----
-
-## 📚 Documentation
-
-Detailed documentation available in `/docs`:
-
-- **[AUTH_FLOW.md](docs/AUTH_FLOW.md)** - Complete authentication flow
-- **[AUTH_FLOW.mermaid](docs/AUTH_FLOW.mermaid)** - Complete authentication flow (Mermaid)
-- **[SETUP_CHECKLIST.md](docs/SETUP_CHECKLIST.md)** - Setup and troubleshooting
-- **[FILES_CREATED.md](docs/FILES_CREATED.md)** - Implementation details
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-#### "JWT verification failed"
-
-**Cause:** JWT_SECRET mismatch
-
-**Solution:**
-```bash
-# Ensure secrets match in both .env files
-# Frontend: JWT_SECRET=same-key
-# Backend: JWT_SECRET=same-key
-```
-
-#### "Redis connection failed"
-
-**Solution:**
-```bash
-# Check Redis is running
-docker ps | grep redis
-redis-cli ping  # Should return PONG
-```
-
-#### "Cannot set cookies"
-
-**Solution:**
-```bash
-# Ensure correct cookie settings in route handlers
-httpOnly: true
-secure: process.env.NODE_ENV === 'production'
-sameSite: 'strict'
-```
-
-#### "401 on every request"
-
-**Solution:**
-```bash
-# Check:
-# 1. Cookies are being sent (withCredentials: true)
-# 2. Fingerprint matches
-# 3. Token not blacklisted in Redis
-```
-
----
-
-## 🚀 Deployment
-
-### Production Checklist
-
-- [ ] Set strong JWT_SECRET (min 32 chars)
-- [ ] Enable secure cookies (HTTPS)
-- [ ] Configure CORS properly
-- [ ] Set up Redis with persistence
-- [ ] Enable Redis AUTH
-- [ ] Set up monitoring (Sentry)
-- [ ] Configure CDN (if needed)
-- [ ] Enable rate limiting
-- [ ] Test with production domain
-- [ ] Verify HTTPS enforced
-
-### Deploy to Vercel
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-
-# Set environment variables in Vercel dashboard
-# - JWT_SECRET
-# - NEXT_PUBLIC_API_URL
-# - API_URL
-```
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License.
-
----
-
-## 👥 Team
-
-- **Frontend Lead:** Your Name
-- **Backend Lead:** Backend Dev
-- **DevOps:** DevOps Engineer
-
----
-
-## 🙏 Acknowledgments
-
-- [Next.js](https://nextjs.org/)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [jose](https://github.com/panva/jose)
-- [FingerprintJS](https://fingerprintjs.com/)
-
----
-
-## 📞 Support
-
-For issues and questions:
-
-- 📧 Email: support@example.com
-- 💬 Slack: #frontend-support
-- 📖 Docs: `/docs/`
-
----
-
-**Version:** 1.0.0  
-**Status:** ✅ Production Ready  
-**Last Updated:** December 2025
