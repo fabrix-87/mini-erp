@@ -17,6 +17,7 @@ import {
   companyIdAsCompanyIdSchema,
   createCompanyNoteSchema,
   updateCompanyNoteSchema,
+  companyFiltersSchema,
 } from "../validators/company";
 
 import { Address } from "./address";
@@ -69,6 +70,12 @@ export type CompanyNote = {
 };
 
 // ============================================================================
+// FILTERS (using z.infer)
+// ============================================================================
+
+export type CompanyFilters = z.output<typeof companyFiltersSchema>;
+
+// ============================================================================
 // INPUT TYPES (using z.infer)
 // ============================================================================
 
@@ -90,6 +97,7 @@ export type CompanyQueryInput = z.infer<typeof companyQueryBaseSchema>;
 
 export type CompanyIdParam = z.infer<typeof companyIdSchema>;
 export type CompanyIdAsCompanyIdParam = z.infer<typeof companyIdAsCompanyIdSchema>;
+
 // ============================================================================
 // UTILITY TYPES
 // ============================================================================

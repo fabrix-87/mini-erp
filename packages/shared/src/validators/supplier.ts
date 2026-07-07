@@ -1,13 +1,20 @@
 import { z } from "zod";
 import {
   baseCompanySchema,
+  companyFiltersSchema,
   companyIdSchema,
   companyQueryBaseSchema,
   updateCompanySchema,
 } from "./company";
 import { creditLimitSchema } from "./business/currency";
-import { queryBooleanSchema, queryNumberOrAllSchema, queryNumberSchema } from "./query/params";
+import {
+  queryBooleanOrAllSchema,
+  queryBooleanSchema,
+  queryNumberOrAllSchema,
+  queryNumberSchema,
+} from "./query/params";
 import { createIdSchema } from "./primitives";
+import { paginationSchema, sortOrderSchema } from "./query";
 
 // ============================================================================
 // SUPPLIER SCHEMAS (Extended from Base)
@@ -103,11 +110,7 @@ export const updateSupplierRatingSchema = z
   })
   .strict();
 
-/**
- * Schema per Query Parameters Supplier
- * Estende CompanyQueryBaseSchema con filtri Procurement
- */
-export const supplierQuerySchema = companyQueryBaseSchema.extend({
+export const supplierFiltersSchema = companyFiltersSchema.extend({
   // Filtri Supplier-specific
 
   // Supporta "all" per indicare nessun filtro
@@ -133,6 +136,18 @@ export const supplierQuerySchema = companyQueryBaseSchema.extend({
     (val) => val === undefined || (Number.isInteger(val) && val >= 0),
     { message: "Lead Time non valido" },
   ),
+  isDeleted: queryBooleanOrAllSchema(),
+});
+
+/**
+ * Schema per Query Parameters Supplier
+ * Estende CompanyQueryBaseSchema con filtri Procurement
+ */
+export const supplierQuerySchema = z.object({
+  ...supplierFiltersSchema.shape,
+  ...paginationSchema.shape,
+  sortBy: z.string().optional().default("id"),
+  sortOrder: sortOrderSchema,
 });
 
 /**

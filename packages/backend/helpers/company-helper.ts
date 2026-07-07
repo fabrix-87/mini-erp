@@ -12,13 +12,14 @@ import {
   CompanyTypeEntity,
   CreditCheckStatus,
 } from "../generated/prisma/client";
-import type {
+import {
+  AddressFilters,
+  COMPANY_CODE_PREFIX_MAP,
   CompanyFilters,
+  CompanySortField,
   CustomerFilters,
   SupplierFilters,
-  AddressFilters,
-  CompanySortField,
-} from "../types/company-types";
+} from "@mini-erp/shared";
 
 // ============================================================================
 // WHERE CLAUSE BUILDERS
@@ -29,9 +30,13 @@ import type {
  * All filter fields are optional; undefined values are ignored.
  *
  * @param filters - CompanyFilters object from query params
+ * @param tenantId - Tenant ID from the authenticated request context
  */
-export const buildCompanyWhereClause = (filters: CompanyFilters): Prisma.CompanyWhereInput => {
-  const where: Prisma.CompanyWhereInput = {};
+export const buildCompanyWhereClause = (
+  filters: CompanyFilters,
+  tenantId: string,
+): Prisma.CompanyWhereInput => {
+  const where: Prisma.CompanyWhereInput = { tenantId };
 
   if (filters.search) {
     where.OR = [
@@ -57,10 +62,15 @@ export const buildCompanyWhereClause = (filters: CompanyFilters): Prisma.Company
  * Composes buildCompanyWhereClause for shared company-level filters.
  *
  * @param filters - CustomerFilters object from query params
+ * @param tenantId - Tenant ID from the authenticated request context
  */
-export const buildCustomerWhereClause = (filters: CustomerFilters): Prisma.CustomerWhereInput => {
+export const buildCustomerWhereClause = (
+  filters: CustomerFilters,
+  tenantId: string,
+): Prisma.CustomerWhereInput => {
   const where: Prisma.CustomerWhereInput = {
-    company: buildCompanyWhereClause(filters),
+    tenantId,
+    company: buildCompanyWhereClause(filters, tenantId),
   };
 
   if (filters.type) where.type = filters.type as CustomerType;
@@ -78,10 +88,14 @@ export const buildCustomerWhereClause = (filters: CustomerFilters): Prisma.Custo
  * Builds a Prisma WHERE clause for Supplier queries.
  *
  * @param filters - SupplierFilters object from query params
+ * @param tenantId - Tenant ID from the authenticated request context
  */
-export const buildSupplierWhereClause = (filters: SupplierFilters): Prisma.SupplierWhereInput => {
+export const buildSupplierWhereClause = (
+  filters: SupplierFilters,
+  tenantId: string,
+): Prisma.SupplierWhereInput => {
   const where: Prisma.SupplierWhereInput = {
-    company: buildCompanyWhereClause(filters),
+    company: buildCompanyWhereClause(filters, tenantId),
   };
 
   if (filters.minRating !== undefined) {
@@ -318,35 +332,6 @@ export const getAddressInclude = () => ({
 // ============================================================================
 
 /**
- * Checks whether a company can be safely deleted (no active relations).
- * Accepts a transaction client to be callable within a broader transaction.
- *
- * @param tx        - Prisma client or transaction client
- * @param companyId - ID of the company to check
- */
-export const canDeleteCompany = async (
-  tx: PrismaClientOrTx,
-  companyId: number,
-): Promise<{ canDelete: boolean; reason?: string }> => {
-  const company = await (tx as PrismaClient).company.findUnique({
-    where: { id: companyId },
-    include: {
-      _count: { select: { documents: true, customers: true, suppliers: true } },
-    },
-  });
-
-  if (!company) return { canDelete: false, reason: "Company non trovata" };
-
-  const total = company._count.documents + company._count.customers + company._count.suppliers;
-
-  if (total > 0) {
-    return { canDelete: false, reason: `Company ha ${total} relazioni attive` };
-  }
-
-  return { canDelete: true };
-};
-
-/**
  * Checks whether a given address can be set as primary for a company and type.
  *
  * @param tx          - Prisma client or transaction client
@@ -356,8 +341,8 @@ export const canDeleteCompany = async (
  */
 export const canSetPrimaryAddress = async (
   tx: PrismaClientOrTx,
-  addressId: number,
-  companyId: number,
+  addressId: string,
+  companyId: string,
   addressType: AddressType,
 ): Promise<{ canSet: boolean; reason?: string }> => {
   const address = await (tx as PrismaClient).companyAddress.findUnique({
@@ -381,7 +366,7 @@ export const canSetPrimaryAddress = async (
  * @param tx        - Prisma client or transaction client (wraps own tx if needed)
  * @param addressId - ID of the address to promote
  */
-export const setPrimaryAddressAtomic = async (tx: PrismaClientOrTx, addressId: number) => {
+export const setPrimaryAddressAtomic = async (tx: PrismaClientOrTx, addressId: string) => {
   const address = await (tx as PrismaClient).companyAddress.findUnique({
     where: { id: addressId },
   });
@@ -417,13 +402,9 @@ export const setPrimaryAddressAtomic = async (tx: PrismaClientOrTx, addressId: n
 // CODE GENERATION
 // ============================================================================
 
-const PREFIX_MAP: Readonly<Record<string, string>> = {
-  lead: "LEA",
-  prospect: "PRO",
-  customer: "CLI",
-  partner: "PAR",
-  supplier: "SUP",
-};
+// ============================================================================
+// CODE GENERATION
+// ============================================================================
 
 /**
  * Generates a unique sequential company code based on entity type.
@@ -435,17 +416,18 @@ const PREFIX_MAP: Readonly<Record<string, string>> = {
  *
  * @param type - Entity type key (customer, supplier, lead, prospect, partner)
  * @param tx   - Optional Prisma transaction client (defaults to global client)
- * @throws     - If the type key is not in PREFIX_MAP
+ * @throws     - If the type key is not in COMPANY_CODE_PREFIX_MAP
  */
 export const generateUniqueCompanyCode = async (
   type: string,
   tx: PrismaClientOrTx = prismaGlobal,
 ): Promise<string> => {
-  const prefix = PREFIX_MAP[type.toLowerCase()];
+  const prefix =
+    COMPANY_CODE_PREFIX_MAP[type.toLowerCase() as keyof typeof COMPANY_CODE_PREFIX_MAP];
 
   if (!prefix) {
     throw new Error(
-      `Tipo di azienda non valido: "${type}". Valori accettati: ${Object.keys(PREFIX_MAP).join(", ")}`,
+      `Tipo di azienda non valido: "${type}". Valori accettati: ${Object.keys(COMPANY_CODE_PREFIX_MAP).join(", ")}`,
     );
   }
 
@@ -470,7 +452,7 @@ export const generateUniqueCompanyCode = async (
  */
 export const validatePrimaryAddress = async (
   tx: PrismaClientOrTx,
-  companyId: number,
+  companyId: string,
   addressType: AddressType,
 ): Promise<{ valid: boolean; error?: string }> => {
   const count = await (tx as PrismaClient).companyAddress.count({

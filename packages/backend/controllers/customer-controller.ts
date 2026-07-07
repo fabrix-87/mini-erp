@@ -19,6 +19,7 @@ import {
 
 import {
   CreateCustomerInput,
+  CustomerFilters,
   CustomerIdParam,
   CustomerQueryInput,
   UpdateCustomerCompanyInput,
@@ -26,7 +27,6 @@ import {
 } from "@mini-erp/shared";
 import { AddressType, Prisma } from "@/generated/prisma/client";
 import { buildPagination } from "@/utils/query-utils";
-import { CustomerFilters } from "@/types/company-types";
 import {
   buildAddressCreateData,
   buildCompanyCreateData,
@@ -58,8 +58,9 @@ export const getAllCustomers = async (c: Context<AppBindings>) => {
     sortOrder = "desc",
     ...filters
   } = getValidatedQuery<CustomerQueryInput>(c);
+  const tenantId = c.get("currentTenantId")!
 
-  const where = buildCustomerWhereClause(filters as CustomerFilters);
+  const where = buildCustomerWhereClause(filters as CustomerFilters, tenantId);
   const { skip, take } = buildPagination(page, limit);
 
   const [customers, total] = await Promise.all([

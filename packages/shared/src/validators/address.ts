@@ -1,8 +1,9 @@
 import { z } from "zod";
-import { createIdSchema } from "./primitives/id";
+import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { countryCodeBaseSchema, inputJsonValueSchema } from "./base";
 import { phoneSchema } from "./primitives/string";
 import { queryBooleanSchema } from "./query/params";
+import { paginationSchema, querySortOrderSchema } from "./query";
 
 // ============================================================================
 // ADDRESS ENUMS
@@ -26,7 +27,7 @@ export const addressTypeSchema = z.enum([
  */
 export const createAddressSchema = z
   .object({
-    companyId: createIdSchema("Company ID non valido"),
+    companyId: createCuidSchema("Company ID non valido"),
     addressType: addressTypeSchema.default("LEGAL"),
     address: z
       .string()
@@ -77,19 +78,29 @@ export const updateAddressSchema = createAddressSchema.omit({ companyId: true })
  * Schema per ID Address
  */
 export const addressIdSchema = z.object({
-  id: createIdSchema("ID indirizzo non valido"),
+  id: createCuidSchema("ID indirizzo non valido"),
+});
+
+/**
+ * Schema per Address Filters
+ */
+export const addressFiltersSchema = z.object({
+  companyId: createCuidSchema("Company ID non valido"),
+  addressType: addressTypeSchema.optional(),
+  countryCode: countryCodeBaseSchema,
+  isPrimary: queryBooleanSchema,
+  provinceCode: z.string().length(2).optional(),
+  city: z.string().optional(),
 });
 
 /**
  * Schema per Query Parameters Address
  */
 export const addressQuerySchema = z.object({
-  companyId: createIdSchema("Company ID non valido"),
-  addressType: addressTypeSchema.optional(),
-  countryCode: countryCodeBaseSchema,
-  isPrimary: queryBooleanSchema,
-  provinceCode: z.string().length(2).optional(),
-  city: z.string().optional(),
+  ...addressFiltersSchema.shape,
+  ...paginationSchema.shape,
+  sortBy: z.string().optional().default("id"),
+  sortOrder: querySortOrderSchema,
 });
 
 /**

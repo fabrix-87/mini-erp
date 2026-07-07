@@ -325,7 +325,7 @@ enum AddressType {
 }
 
 model CompanyAddress {
-    id        Int     @id @default(autoincrement())
+    id        String  @id @default(cuid())
     companyId String  @map("company_id")
     company   Company @relation("CompanyAddresses", fields: [companyId], references: [id], onDelete: Cascade)
 

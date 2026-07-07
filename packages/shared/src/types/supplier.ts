@@ -11,6 +11,7 @@ import {
   updateSupplierRatingSchema,
   supplierQuerySchema,
   supplierIdSchema,
+  supplierFiltersSchema,
 } from "../validators/supplier";
 import { Company } from "./company";
 import { Document } from "./document";
@@ -66,6 +67,7 @@ export type UpdateSupplierRatingInput = z.infer<typeof updateSupplierRatingSchem
 // ============================================================================
 
 export type SupplierQueryInput = z.infer<typeof supplierQuerySchema>;
+export type SupplierFilters = z.output<typeof supplierFiltersSchema>;
 
 // ============================================================================
 // PARAM TYPES (using z.infer)

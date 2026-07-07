@@ -10,6 +10,7 @@ import {
   updateCustomerCompanySchema,
   customerQuerySchema,
   customerIdSchema,
+  customerFiltersSchema,
 } from "../validators/customer";
 import { Document } from "./document";
 import { Opportunity } from "./opportunity";
@@ -115,6 +116,7 @@ export type UpdateCustomerCompanyInput = z.infer<typeof updateCustomerCompanySch
 // ============================================================================
 
 export type CustomerQueryInput = z.infer<typeof customerQuerySchema>;
+export type CustomerFilters = z.output<typeof customerFiltersSchema>;
 
 // ============================================================================
 // PARAM TYPES (using z.infer)

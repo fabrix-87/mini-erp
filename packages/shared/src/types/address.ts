@@ -4,6 +4,7 @@
 
 import { z } from "zod";
 import {
+  addressFiltersSchema,
   addressIdSchema,
   addressQuerySchema,
   createAddressSchema,
@@ -53,6 +54,7 @@ export type UpdateAddressInput = z.infer<typeof updateAddressSchema>;
 // ============================================================================
 
 export type AddressQueryInput = z.infer<typeof addressQuerySchema>;
+export type AddressFilters = z.output<typeof addressFiltersSchema>;
 
 // ============================================================================
 // PARAM TYPES (using z.infer)

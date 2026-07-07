@@ -1,8 +1,18 @@
 import { z } from "zod";
-import { companyStatusSchema, companyTypeEntitySchema } from "../validators";
+import {
+  companySortFieldSchema,
+  companyStatusSchema,
+  companyTypeEntitySchema,
+} from "../validators";
 import { AddressType } from "./address";
 import { CompanyFormValues } from "../types";
-import { CreditCheckStatus, CustomerPriority, CustomerSegment, CustomerSize, CustomerType } from "./customer";
+import {
+  CreditCheckStatus,
+  CustomerPriority,
+  CustomerSegment,
+  CustomerSize,
+  CustomerType,
+} from "./customer";
 
 // ============================================================================
 // ENUM TYPES
@@ -10,9 +20,25 @@ import { CreditCheckStatus, CustomerPriority, CustomerSegment, CustomerSize, Cus
 
 export type CompanyStatus = z.infer<typeof companyStatusSchema>;
 export type CompanyTypeEntity = z.infer<typeof companyTypeEntitySchema>;
+export type CompanySortField = z.infer<typeof companySortFieldSchema>;
 
 export const CompanyStatus = companyStatusSchema.enum;
 export const CompanyTypeEntity = companyTypeEntitySchema.enum;
+
+/**
+ * Maps the commercial role of a company to its generated code prefix.
+ * @example COMPANY_CODE_PREFIX_MAP["customer"] // → "CLI"
+ */
+export const COMPANY_CODE_PREFIX_MAP = {
+  lead: "LEA",
+  prospect: "PRO",
+  customer: "CLI",
+  partner: "PAR",
+  supplier: "SUP",
+} as const satisfies Record<string, string>;
+
+export type CompanyEntityKey = keyof typeof COMPANY_CODE_PREFIX_MAP;
+export type CompanyCodePrefix = (typeof COMPANY_CODE_PREFIX_MAP)[CompanyEntityKey];
 
 /** Default values aligned with Zod defaults — use in useForm({ defaultValues }) */
 export const companyFormDefaultValues: CompanyFormValues = {

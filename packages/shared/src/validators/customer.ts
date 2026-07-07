@@ -6,13 +6,15 @@ import { z } from "zod";
 
 import {
   baseCompanySchema,
+  companyFiltersSchema,
   companyIdSchema,
   companyQueryBaseSchema,
   updateCompanySchema,
 } from "./company";
-import { queryBooleanSchema, queryEnumOrAllSchema } from "./query/params";
+import { queryBooleanOrAllSchema, queryBooleanSchema, queryEnumOrAllSchema } from "./query/params";
 import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { creditLimitSchema } from "./business/currency";
+import { paginationSchema, sortOrderSchema } from "./query";
 
 // ============================================================================
 // CUSTOMER-SPECIFIC ENUMS
@@ -93,10 +95,10 @@ export const updateCustomerSchema = z
 export const updateCustomerCompanySchema = updateCompanySchema;
 
 /**
- * Schema per Query Parameters Customer
- * Estende CompanyQueryBaseSchema con filtri CRM
+ * Schema for company list/search filters. Extends company filters
+ * All filters are optional and can be combined freely.
  */
-export const customerQuerySchema = companyQueryBaseSchema.extend({
+export const customerFiltersSchema = companyFiltersSchema.extend({
   // Filtri Customer-specific
   type: queryEnumOrAllSchema(customerTypeSchema),
   priority: queryEnumOrAllSchema(customerPrioritySchema),
@@ -109,6 +111,18 @@ export const customerQuerySchema = companyQueryBaseSchema.extend({
 
   hasOrders: queryBooleanSchema.optional(),
   hasOpportunities: queryBooleanSchema.optional(),
+  isDeleted: queryBooleanOrAllSchema(),
+});
+
+/**
+ * Schema per Query Parameters Customer
+ * Estende CompanyQueryBaseSchema con filtri CRM
+ */
+export const customerQuerySchema = z.object({
+  ...customerFiltersSchema.shape,
+  ...paginationSchema.shape,
+  sortBy: z.string().optional().default("id"),
+  sortOrder: sortOrderSchema,
 });
 
 /**
