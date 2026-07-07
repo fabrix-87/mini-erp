@@ -125,7 +125,7 @@ model Company {
 
     @@unique([tenantId, code])
     @@index([tenantId, vatNumber])
-    @@index([taxCode])
+    @@index([tenantId, taxCode])
     @@map("companies")
 }
 
@@ -216,7 +216,7 @@ model Customer {
     deletedBy     String? @map("deleted_by")
     deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
-    @@index([tenantId])
+    @@unique([tenantId, companyId])
     @@index([tenantId, type])
     @@index([tenantId, segment])
     @@index([tenantId, creditStatus])
@@ -308,7 +308,7 @@ model Supplier {
     deletedBy     String? @map("deleted_by")
     deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
-    @@index([tenantId])
+    @@unique([tenantId, companyId])
     @@index([tenantId, deletedAt])
     @@index([parentSupplierId])
     @@index([deletedAt])

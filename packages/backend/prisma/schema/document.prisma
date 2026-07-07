@@ -357,9 +357,9 @@ model Document {
     deletedAt DateTime? @map("deleted_at")
 
     // === UNIQUE CONSTRAINTS ===
-    @@unique([tenantId, documentType, documentYear, sequenceNumber])
     @@unique([tenantId, direction, vatRegisterYear, vatRegisterProtocol], where: { vatRegisterProtocol: { not: null } })
     @@unique([tenantId, supplierId, counterpartyDocumentNumber, documentDate], where: { direction: "INBOUND" }, map: "unique_inbound_supplier_document")
+    @@unique([tenantId, documentType, documentYear, sequenceNumber], where: { sequenceNumber: { not: null }, direction: "OUTBOUND" } )
     // === OPERATIONAL INDEXES (active documents only) ===
     @@index([tenantId, status], where: { deletedAt: null })
     @@index([tenantId, documentType], where: { deletedAt: null })
