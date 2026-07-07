@@ -11,10 +11,12 @@ interface AuthRole {
 interface AuthUserTenantScope {
   tenantId?: number | undefined;
   roles?: AuthRole[] | undefined;
-  currentTenant?: {
-    tenantId?: number | undefined;
-    roles?: AuthRole[] | undefined;
-  } | undefined;
+  currentTenant?:
+    | {
+        tenantId?: number | undefined;
+        roles?: AuthRole[] | undefined;
+      }
+    | undefined;
 }
 
 /**
@@ -84,7 +86,7 @@ export const requireTenantScope: MiddlewareHandler<AppBindings> = async (
     return;
   }
 
-  if (authUserValue.currentTenant.tenantId === undefined) {
+  if (!authUserValue.currentTenant?.tenantId) {
     throw new BadRequestError("Tenant context is required for this operation");
   }
 

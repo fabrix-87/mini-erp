@@ -2,54 +2,56 @@ import { Prisma } from "../generated/prisma/client";
 import { Decimal } from "@prisma/client/runtime/client";
 
 /**
- * Applica una trasformazione solo se il valore è definito.
+ * Applies a transformation only if the value is defined.
  *
- * Utile per costruire oggetti dinamici (es. Prisma update input)
- * evitando di includere proprietà con valore `undefined`.
+ * Useful for building dynamic objects (e.g. Prisma update input)
+ * without including properties with an `undefined` value.
  *
- * @param value - Valore opzionale da controllare
- * @param mapper - Funzione che trasforma il valore se presente
- * @returns Il risultato del mapper oppure `undefined`
+ * @param value  - Optional value to check
+ * @param mapper - Function that transforms the value if present
+ * @returns The mapper result, or `undefined`
  */
-export const ifDefined = <T>(value: T | undefined, mapper: (v: T) => any) =>
+export const ifDefined = <T, U>(value: T | undefined, mapper: (v: T) => U): U | undefined =>
   value !== undefined ? mapper(value) : undefined;
 
 /**
- * Converte un numero o stringa in Prisma.Decimal.
+ * Converts a number or string to a Prisma.Decimal.
  *
- * Se il valore è `undefined` non viene effettuata alcuna conversione,
- * permettendo a Prisma di ignorare il campo durante un update.
+ * When the value is `undefined`, no conversion is performed,
+ * allowing Prisma to ignore the field during an update.
  *
- * @param value - Numero o stringa rappresentante un valore decimale
- * @returns Prisma.Decimal oppure `undefined`
+ * @param value - Number or string representing a decimal value
+ * @returns Prisma.Decimal or `undefined`
  */
 export const toDecimal = (value: number | string | undefined) =>
   value !== undefined ? new Prisma.Decimal(value.toString()) : undefined;
 
 /**
- * Converte una stringa in Date per Prisma.
+ * Converts a string to a Date for Prisma optional DateTime? fields.
  *
- * Comportamento:
- * - `undefined` → campo non aggiornato
- * - string valida → Date
- * - valore falsy esplicito (es. null passato dal form) → null (reset DB)
+ * Behaviour:
+ * - `undefined` → field not updated
+ * - valid string → Date
+ * - explicit falsy (e.g. null from a form) → null (DB reset)
  *
- * Utile per distinguere tra:
- * - "non modificare il campo"
- * - "impostare NULL nel database"
+ * Use this helper only for nullable DateTime? fields.
+ * For required DateTime fields use `toRequiredDate` instead.
  *
- * @param value - Data in formato stringa (ISO consigliato)
- * @returns Date, null o undefined
+ * @param value - Date string (ISO recommended)
+ * @returns Date, null, or undefined
  */
 export const toDate = (value: string | undefined) =>
   value ? new Date(value) : value === undefined ? undefined : null;
 
 /**
- * Converte input date del DTO in formato Prisma-safe.
+ * Converts optional nullable DTO date input to a Prisma-safe value.
  *
- * undefined → non aggiornare
- * null → setta NULL
- * string → parse Date
+ * - undefined → field not updated
+ * - null      → set NULL in DB
+ * - string    → parsed Date (returns null if invalid)
+ *
+ * @param value - Date string, null, or undefined
+ * @returns Date, null, or undefined
  */
 export const parseOptionalDate = (value: string | null | undefined): Date | null | undefined => {
   if (value === undefined) return undefined;
@@ -60,9 +62,17 @@ export const parseOptionalDate = (value: string | null | undefined): Date | null
 };
 
 /**
- * Converts an optional nullable string value to a Prisma-compatible Decimal or undefined.
- * Returns undefined when the input is undefined (field not included in update).
- * Returns null when the input is null/empty (explicit clear).
+ * Converts an optional nullable value to a Prisma-compatible Decimal.
+ *
+ * - undefined     → field not included in update
+ * - null / falsy  → null (explicit clear)
+ * - number/string → new Prisma.Decimal
+ *
+ * Note: when `val` is already a Decimal instance it is reconstructed via
+ * its numeric representation — functionally correct but slightly redundant.
+ *
+ * @param val - Decimal, string, number, null, or undefined
+ * @returns Prisma.Decimal, null, or undefined
  */
 export const parseOptionalDecimal = (
   val: Decimal | string | number | null | undefined,
@@ -73,6 +83,7 @@ export const parseOptionalDecimal = (
 
 /**
  * Converts a string to Date for required (non-nullable) DateTime fields.
+ *
  * - `undefined` → field not updated
  * - string      → Date
  *
@@ -86,49 +97,62 @@ export const toRequiredDate = (value: string | undefined): Date | undefined =>
   value ? new Date(value) : undefined;
 
 /**
- * Handles nullable Prisma relations connected via `id` (numeric FK).
+ * Handles nullable Prisma relations connected via a `id` FK.
  * For relations with custom unique keys (e.g. `code`), use `ifDefined` directly.
  *
- * @param id - Numeric ID of the relation
+ * - undefined → field not updated
+ * - falsy (0/null) → disconnect
+ * - number | string → connect
+ *
+ * @param id - ID of the related record
  * @returns Prisma connect/disconnect object or undefined
  */
-export const connectOrDisconnectById = (id: number | null | undefined) =>
+export const connectOrDisconnectById = (id: string | number | null | undefined) =>
   id === undefined ? undefined : id ? { connect: { id } } : { disconnect: true as const };
 
 /**
- * Handles nullable Prisma relations on CREATE operations.
- * Returns connect if id is provided, undefined otherwise (null is not valid on create).
+ * Handles nullable Prisma relations on CREATE operations via an `id` FK.
+ * Returns connect if id is provided, undefined otherwise.
+ * null is not valid on create — use `connectOrDisconnectById` for updates.
  *
- * @param id - Numeric ID of the relation
+ * @param id - ID of the related record
  * @returns Prisma connect object or undefined
  */
-export const connectById = (id: number | null | undefined) =>
-  id ? { connect: { id } } : undefined;
+export function connectById(id: string): { connect: { id: string } };
+export function connectById(id: number): { connect: { id: number } };
+export function connectById(id: null | undefined): undefined;
+export function connectById(id: string | number | null | undefined) {
+  return id ? { connect: { id } } : undefined;
+}
 
 /**
- * Handles nullable Prisma relations connected via a string `code` field.
+ * Handles nullable Prisma relations connected via a string `code` unique field.
  *
- * @param code - Unique string code of the relation
+ * - undefined → field not updated
+ * - falsy (null/"") → disconnect
+ * - string → connect
+ *
+ * @param code - Unique string code of the related record
  * @returns Prisma connect/disconnect object or undefined
  */
 export const connectOrDisconnectByCode = (code: string | null | undefined) =>
   code === undefined ? undefined : code ? { connect: { code } } : { disconnect: true as const };
 
 /**
- * Rimuove tutte le proprietà con valore `undefined` da un oggetto.
+ * Removes all properties with an `undefined` value from an object.
  *
- * Utile prima di passare un oggetto a Prisma per evitare campi inutili.
- * NON rimuove null (che ha significato semantico nei DB).
+ * Useful before passing an object to Prisma to avoid unnecessary fields.
+ * Does NOT remove null, which carries semantic meaning in the database.
  *
- * @param obj - Oggetto da pulire
- * @returns Nuovo oggetto senza proprietà undefined
+ * @param obj - Object to clean
+ * @returns New object without undefined properties
  */
 export const clean = <T extends object>(obj: T) =>
   Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined)) as T;
 
 /**
  * Converts a nullable JS value to a Prisma-compatible nullable JSON value.
- * Prisma requires Prisma.JsonNull instead of native null for Json? fields.
+ * Prisma requires `Prisma.JsonNull` instead of native null for Json? fields.
  *
  * @param value - Any serializable value or null/undefined
  * @returns Prisma.JsonNull or the value cast as InputJsonValue
@@ -138,10 +162,11 @@ export function toJsonField(value: unknown): typeof Prisma.JsonNull | Prisma.Inp
 }
 
 /**
- * Converts all null values to undefined in an object.
- * Use before passing form/DTO data to Prisma create/update when
- * optional FK fields are typed as `T | null | undefined` but Prisma
- * expects `T | undefined` (null is reserved for explicit DB NULL on non-FK fields).
+ * Converts all null values to undefined in a plain object.
+ *
+ * Use before passing form/DTO data to Prisma create/update when optional FK
+ * fields are typed as `T | null | undefined` but Prisma expects `T | undefined`
+ * (null is reserved for explicit DB NULL on non-FK fields).
  *
  * @param obj - Object with potentially null values
  * @returns Same object with null replaced by undefined
@@ -149,11 +174,16 @@ export function toJsonField(value: unknown): typeof Prisma.JsonNull | Prisma.Inp
 export const nullToUndefined = <T extends Record<string, unknown>>(obj: T): T =>
   Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, v === null ? undefined : v])) as T;
 
-// In packages/backend/helpers/prisma-helper.ts
-
 /**
- * Builds a Prisma-safe soft-delete filter.
- * Adds deletedAt: null unless `includeDeleted` is true.
+ * Builds a Prisma-safe soft-delete filter by injecting `deletedAt: null`.
+ *
+ * Composable with `withTenantId`:
+ * @example
+ * const filter = withSoftDelete(withTenantId({}, tenantId));
+ *
+ * @param where          - Existing Prisma where clause
+ * @param includeDeleted - When true, soft-deleted records are included (default: false)
+ * @returns New where clause with soft-delete guard applied
  */
 export const withSoftDelete = (
   where: Record<string, unknown>,
@@ -161,8 +191,35 @@ export const withSoftDelete = (
 ): Record<string, unknown> => (includeDeleted ? where : { ...where, deletedAt: null });
 
 /**
- * Converts a numeric string or number to a Prisma-safe integer.
- * Throws if the value is not a valid integer.
+ * Injects a mandatory tenantId filter into a Prisma where clause.
+ *
+ * Use this on every query against tenant-scoped models (leads, customers,
+ * companies, contacts, documents, opportunities, products, pricelists,
+ * payments, suppliers, addresses, …) to prevent cross-tenant data leakage.
+ *
+ * Composable with `withSoftDelete`:
+ * @example
+ * const filter = withSoftDelete(withTenantId({}, tenantId));
+ *
+ * @param where    - Existing Prisma where clause
+ * @param tenantId - Tenant ID from the authenticated request context
+ * @returns New where clause with tenantId enforced
+ */
+export const withTenantId = (
+  where: Record<string, unknown>,
+  tenantId: string,
+): Record<string, unknown> => ({ ...where, tenantId });
+
+/**
+ * Converts a numeric string or number to a Prisma-safe positive integer.
+ *
+ * Only applicable to Int @default(autoincrement()) models.
+ * Never call this on CUID-based models — params are already strings.
+ *
+ * @param value     - String or number to convert
+ * @param fieldName - Field name used in the error message (default: "id")
+ * @returns Positive integer
+ * @throws Error if the value is missing, non-integer, or non-positive
  */
 export const toIntId = (value: string | number | undefined, fieldName = "id"): number => {
   if (!value) {
@@ -176,7 +233,14 @@ export const toIntId = (value: string | number | undefined, fieldName = "id"): n
 };
 
 /**
- * Builds pagination skip/take from page and limit.
+ * Builds Prisma-compatible `skip` / `take` pagination values from page and limit.
+ *
+ * - Page is clamped to a minimum of 1.
+ * - Limit is clamped between 1 and 100.
+ *
+ * @param page  - Page number (1-based, default: 1)
+ * @param limit - Items per page (default: 20, max: 100)
+ * @returns Object with `skip` and `take` ready for Prisma queries
  */
 export const toPagination = (
   page: number | string = 1,

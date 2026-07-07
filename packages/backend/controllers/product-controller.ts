@@ -39,6 +39,7 @@ import {
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
+import { connectById, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 
 // ============================================================================
 // PRODUCTS - CRUD Operations
@@ -66,11 +67,12 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
     sortBy = "createdAt",
     sortOrder = "desc",
   } = getValidatedQuery<ProductQueryInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   const skip = (page - 1) * limit;
 
   // Costruisci filtri dinamici
-  const where: Prisma.ProductWhereInput = {};
+  const where: Prisma.ProductWhereInput = withSoftDelete(withTenantId({}, tenantId));
 
   // Filtro ricerca testuale
   if (search) {
@@ -109,8 +111,6 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
     if (maxPrice) where.price.lte = maxPrice;
   }
 
-  where.deletedAt = null;
-
   // Query con paginazione
   const [products, total] = await Promise.all([
     prisma.product.findMany({
@@ -133,9 +133,10 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
  */
 export const getProductById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductIdParam>(c);
+  const tenantId = c.get("currentTenantId")!;
 
-  const product = await prisma.product.findUnique({
-    where: { id, deletedAt: null },
+  const product = await prisma.product.findFirst({
+    where: withSoftDelete(withTenantId({ id }, tenantId)),
     select: getProductSelection(),
   });
 
@@ -153,18 +154,19 @@ export const getProductById = async (c: Context<AppBindings>) => {
  */
 export const createProduct = async (c: Context<AppBindings>) => {
   const { variants, ...productData } = getValidatedBody<CreateProductInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   // Verifica unicità reference
-  const existingProduct = await prisma.product.findUnique({
-    where: { reference: productData.reference },
+  const existingProduct = await prisma.product.findFirst({
+    where: withTenantId({ reference: productData.reference }, tenantId),
   });
   if (existingProduct) throw new ConflictError("Reference prodotto già esistente");
 
   // Verifica unicità variantCode
   for (const variant of variants) {
     if (variant.variantCode) {
-      const existingVariant = await prisma.productVariant.findUnique({
-        where: { variantCode: variant.variantCode },
+      const existingVariant = await prisma.productVariant.findFirst({
+        where: withTenantId({ variantCode: variant.variantCode }, tenantId),
       });
       if (existingVariant) {
         throw new ConflictError(`Codice variante '${variant.variantCode}' già esistente`);
@@ -181,7 +183,10 @@ export const createProduct = async (c: Context<AppBindings>) => {
   const product = await prisma.$transaction(async (tx) => {
     // Crea il prodotto
     const newProduct = await tx.product.create({
-      data: productData as Prisma.ProductCreateInput,
+      data: {
+        ...productData,
+        tenant: connectById(tenantId),
+      } as Prisma.ProductCreateInput,
     });
 
     // Crea le varianti
@@ -214,15 +219,18 @@ export const createProduct = async (c: Context<AppBindings>) => {
 export const updateProduct = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductIdParam>(c);
   const updateData = getValidatedBody<UpdateProductInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   // Verifica esistenza
-  const existing = await prisma.product.findUnique({ where: { id } });
+  const existing = await prisma.product.findFirst({
+    where: withSoftDelete(withTenantId({ id }, tenantId)),
+  });
   if (!existing) throw new NotFoundError("Prodotto non trovato");
 
   // Verifica unicità reference se modificato
   if (updateData.reference && updateData.reference !== existing.reference) {
-    const duplicate = await prisma.product.findUnique({
-      where: { reference: updateData.reference },
+    const duplicate = await prisma.product.findFirst({
+      where: withTenantId({ reference: updateData.reference }, tenantId),
     });
     if (duplicate) throw new ConflictError("Reference prodotto già esistente");
   }
@@ -250,9 +258,12 @@ export const updateProduct = async (c: Context<AppBindings>) => {
 export const deleteProduct = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductIdParam>(c);
   const deletedBy = c.get("user")!.userId;
+  const tenantId = c.get("currentTenantId")!;
 
-  const product = await prisma.product.findUnique({ where: { id } });
-  if (!product) throw new NotFoundError("Prodotto non trovato");
+  const existing = await prisma.product.findFirst({
+    where: withSoftDelete(withTenantId({ id }, tenantId)),
+  });
+  if (!existing) throw new NotFoundError("Prodotto non trovato");
 
   await prisma.product.update({
     where: { id },
@@ -272,9 +283,10 @@ export const deleteProduct = async (c: Context<AppBindings>) => {
  */
 export const getProductVariants = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductIdParam>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   const variants = await prisma.productVariant.findMany({
-    where: { productId: id, deletedAt: null },
+    where: withSoftDelete(withTenantId({ productId: id }, tenantId)),
     include: {
       attributes: {
         include: {
@@ -297,9 +309,10 @@ export const getProductVariants = async (c: Context<AppBindings>) => {
  */
 export const getVariantById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductVariantIdParam>(c);
+  const tenantId = c.get("currentTenantId")!;
 
-  const variant = await prisma.productVariant.findUnique({
-    where: { id, deletedAt: null },
+  const variant = await prisma.productVariant.findFirst({
+    where: withSoftDelete(withTenantId({ id }, tenantId)),
     include: {
       product: { select: { id: true, reference: true } },
       attributes: {
@@ -325,9 +338,12 @@ export const getVariantById = async (c: Context<AppBindings>) => {
 export const createVariant = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductIdParam>(c);
   const variantData = getValidatedBody<CreateProductVariantInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   // Verifica esistenza prodotto
-  const product = await prisma.product.findUnique({ where: { id } });
+  const product = await prisma.product.findFirst({
+    where: withSoftDelete(withTenantId({ id }, tenantId)),
+  });
   if (!product) throw new NotFoundError("Prodotto non trovato");
 
   // Verifica unicità variantCode
@@ -340,7 +356,8 @@ export const createVariant = async (c: Context<AppBindings>) => {
   const variant = await prisma.productVariant.create({
     data: {
       ...variantData,
-      productId: id,
+      product: connectById(id),
+      tenant: connectById(tenantId),
     } as Prisma.ProductVariantCreateInput,
   });
 
@@ -355,14 +372,17 @@ export const createVariant = async (c: Context<AppBindings>) => {
 export const updateVariant = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductVariantIdParam>(c);
   const updateData = getValidatedBody<UpdateProductVariantInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
-  const existing = await prisma.productVariant.findUnique({ where: { id } });
+  const existing = await prisma.productVariant.findFirst({
+    where: withSoftDelete(withTenantId({ id }, tenantId)),
+  });
   if (!existing) throw new NotFoundError("Variante non trovata");
 
   // Verifica unicità variantCode se modificato
   if (updateData.variantCode && updateData.variantCode !== existing.variantCode) {
-    const duplicate = await prisma.productVariant.findUnique({
-      where: { variantCode: updateData.variantCode },
+    const duplicate = await prisma.productVariant.findFirst({
+      where: withSoftDelete(withTenantId({ variantCode: updateData.variantCode }, tenantId)),
     });
     if (duplicate) throw new ConflictError("Codice variante già esistente");
   }
@@ -376,49 +396,65 @@ export const updateVariant = async (c: Context<AppBindings>) => {
 };
 
 /**
- * @desc    Elimina una variante
+ * Soft-deletes a product variant by ID.
+ *
+ * Business rules enforced:
+ * - The variant must belong to the specified product and tenant.
+ * - The last variant of a product cannot be deleted.
+ * - If the deleted variant is the default, the next variant by position
+ *   is promoted to default atomically in the same transaction.
+ *
  * @route   DELETE /api/products/:productId/variants/:id
- * @access  Private (Admin)
+ * @access  Private — requires Admin permission
  */
 export const deleteVariant = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductVariantIdParam>(c);
   const { productId } = getValidatedParams<ProductIdAsProductIdParam>(c);
   const deletedBy = c.get("user")!.userId;
+  const tenantId = c.get("currentTenantId")!;
 
-  const variant = await prisma.productVariant.findUnique({ where: { id } });
-  if (!variant) throw new NotFoundError("Variante non trovata");
-
-  // Verifica che non sia l'ultima variante del prodotto
-  const variantCount = await prisma.productVariant.count({
-    where: { productId },
+  // Verify the variant exists, belongs to this tenant, and is not soft-deleted
+  const variant = await prisma.productVariant.findFirst({
+    where: withSoftDelete(withTenantId({ id }, tenantId)),
   });
+  if (!variant) throw new NotFoundError("Variant not found");
 
+  // Verify the variant belongs to the requested product
+  if (variant.productId !== productId) throw new NotFoundError("Variant not found");
+
+  // A product must always have at least one active variant
+  const variantCount = await prisma.productVariant.count({
+    where: withSoftDelete(withTenantId({ productId }, tenantId)),
+  });
   if (variantCount <= 1) {
     throw new BadRequestError(
-      "Impossibile eliminare l'ultima variante. Un prodotto deve avere almeno una variante.",
+      "Cannot delete the last variant. A product must have at least one variant.",
     );
   }
 
-  // Se è la variante default, imposta un'altra come default
+  // If deleting the default variant, resolve the new default before the transaction
+  let newDefaultId: string | undefined;
   if (variant.isDefault) {
     const newDefault = await prisma.productVariant.findFirst({
-      where: { productId, id: { not: id } },
+      where: withSoftDelete(withTenantId({ productId, id: { not: id } }, tenantId)),
       orderBy: { position: "asc" },
     });
-    if (newDefault) {
-      await prisma.productVariant.update({
-        where: { id: newDefault.id },
-        data: { isDefault: true },
-      });
-    }
+    if (newDefault) newDefaultId = newDefault.id;
   }
 
-  await prisma.productVariant.update({
-    where: { id },
-    data: {
-      deletedAt: new Date(),
-      deletedBy,
-    },
+  // Promote new default and soft-delete atomically
+  await prisma.$transaction(async (tx) => {
+    if (newDefaultId) {
+      await tx.productVariant.update({
+        where: { id: newDefaultId },
+        data: { isDefault: true, updatedByUserId: deletedBy },
+      });
+    }
+
+    await tx.productVariant.update({
+      where: { id },
+      data: { deletedAt: new Date(), deletedBy },
+    });
   });
 
   return sendDeleted(c);
@@ -725,9 +761,13 @@ export const getManufacturerById = async (c: Context<AppBindings>) => {
  */
 export const createManufacturer = async (c: Context<AppBindings>) => {
   const manufacturerData = getValidatedBody<CreateManufacturerInput>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   const manufacturer = await prisma.manufacturer.create({
-    data: manufacturerData,
+    data: {
+      ...manufacturerData,
+      tenantId,
+    },
   });
 
   return sendCreated(c, manufacturer, "Produttore creato con successo");
@@ -779,13 +819,14 @@ export const bulkUpdateProducts = async (c: Context<AppBindings>) => {
     productIds: number[];
     updateData: Prisma.ProductUpdateInput;
   }>(c);
+  const tenantId = c.get("currentTenantId")!;
 
   if (!Array.isArray(productIds) || productIds.length === 0) {
     throw new BadRequestError("Array di ID prodotti richiesto");
   }
 
   const result = await prisma.product.updateMany({
-    where: { id: { in: productIds } },
+    where: withSoftDelete(withTenantId({ id: { in: productIds } }, tenantId)),
     data: updateData,
   });
 
@@ -805,13 +846,19 @@ export const bulkUpdateProducts = async (c: Context<AppBindings>) => {
  */
 export const bulkDeleteProducts = async (c: Context<AppBindings>) => {
   const { productIds } = getValidatedBody<{ productIds: number[] }>(c);
+  const tenantId = c.get("currentTenantId")!;
+  const { userId } = c.get("user")!;
 
   if (!Array.isArray(productIds) || productIds.length === 0) {
     throw new BadRequestError("Array di ID prodotti richiesto");
   }
 
-  const result = await prisma.product.deleteMany({
-    where: { id: { in: productIds } },
+  const result = await prisma.product.updateMany({
+    where: withSoftDelete(withTenantId({ id: { in: productIds } }, tenantId)),
+    data: {
+      deletedAt: new Date(),
+      deletedBy: userId,
+    },
   });
 
   return sendSuccess(

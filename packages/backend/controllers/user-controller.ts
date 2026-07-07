@@ -96,7 +96,7 @@ export const getSettings = async (c: Context<AppBindings>) => {
 
   const userSettings = await prisma.userSetting.findMany({
     where: {
-      userId
+      userId,
     },
   });
 
@@ -528,7 +528,7 @@ export const updateUser = async (c: Context<AppBindings>) => {
   const profileData: Prisma.UserUpdateInput = {};
   if (username !== undefined) profileData.username = username;
   if (email !== undefined) profileData.email = email;
-  if (preferredLanguageId !== undefined)
+  if (preferredLanguageId !== undefined && preferredLanguageId !== null)
     profileData.preferredLanguage = connectById(preferredLanguageId);
 
   // Campi tabella UserDetails
