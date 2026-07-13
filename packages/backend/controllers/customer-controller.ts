@@ -12,6 +12,7 @@ import {
 import {
   sendCreated,
   sendDeleted,
+  sendError,
   sendNotFound,
   sendPaginatedResponse,
   sendSuccess,
@@ -36,10 +37,13 @@ import {
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredLanguageId,
+  getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
+import { tenantFilter, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 
 // ============================================================================
 // CUSTOMER CONTROLLERS
@@ -58,7 +62,7 @@ export const getAllCustomers = async (c: Context<AppBindings>) => {
     sortOrder = "desc",
     ...filters
   } = getValidatedQuery<CustomerQueryInput>(c);
-  const tenantId = c.get("currentTenantId")!
+  const tenantId = getRequiredTenantId(c);
 
   const where = buildCustomerWhereClause(filters as CustomerFilters, tenantId);
   const { skip, take } = buildPagination(page, limit);
@@ -83,9 +87,10 @@ export const getAllCustomers = async (c: Context<AppBindings>) => {
  */
 export const getCustomerById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<CustomerIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const customer = await prisma.customer.findUnique({
-    where: { id },
+  const customer = await prisma.customer.findFirst({
+    where: tenantFilter(tenantId, { id }),
     include: getCustomerInclude(true),
   });
 
@@ -108,6 +113,7 @@ export const getCustomerById = async (c: Context<AppBindings>) => {
  */
 export const createCustomer = async (c: Context<AppBindings>) => {
   const { company: companyData, ...customerData } = getValidatedBody<CreateCustomerInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   // -------------------------------------------------------------------------
   // 1. Verifica esistenza relazioni — in parallelo per minimizzare la latenza
@@ -119,7 +125,7 @@ export const createCustomer = async (c: Context<AppBindings>) => {
     }),
     customerData.defaultPriceListId
       ? prisma.priceList.findUnique({
-          where: { id: customerData.defaultPriceListId },
+          where: { id: customerData.defaultPriceListId, tenantId },
           select: { id: true },
         })
       : Promise.resolve(true), // null check skippato se non fornito
@@ -131,7 +137,7 @@ export const createCustomer = async (c: Context<AppBindings>) => {
       : Promise.resolve(true),
     customerData.paymentMethodId
       ? prisma.paymentMethod.findUnique({
-          where: { id: customerData.paymentMethodId },
+          where: { id: customerData.paymentMethodId, tenantId },
           select: { id: true },
         })
       : Promise.resolve(true),
@@ -156,9 +162,13 @@ export const createCustomer = async (c: Context<AppBindings>) => {
   //    conditions in ambienti con richieste concorrenti.
   // -------------------------------------------------------------------------
   const customer = await prisma.$transaction(async (tx) => {
-    const code = await generateUniqueCompanyCode("customer", tx);
+    const code = await generateUniqueCompanyCode("customer", tenantId, tx);
     return tx.customer.create({
-      data: buildCustomerCreateData(customerData, buildCompanyCreateData(companyData, code)),
+      data: buildCustomerCreateData(
+        customerData,
+        buildCompanyCreateData(companyData, code, tenantId),
+        tenantId,
+      ),
       include: getCustomerInclude(true),
     });
   });
@@ -174,9 +184,10 @@ export const createCustomer = async (c: Context<AppBindings>) => {
 export const updateCustomer = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<CustomerIdParam>(c);
   const data = getValidatedBody<UpdateCustomerInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.customer.findUnique({
-    where: { id },
+  const existing = await prisma.customer.findFirst({
+    where: tenantFilter(tenantId, { id }),
   });
 
   if (!existing) {
@@ -186,7 +197,7 @@ export const updateCustomer = async (c: Context<AppBindings>) => {
   // Verifica relazioni se modificate
   if (data.defaultPriceListId) {
     const priceList = await prisma.priceList.findUnique({
-      where: { id: data.defaultPriceListId },
+      where: { id: data.defaultPriceListId, tenantId },
     });
     if (!priceList) {
       return sendNotFound(c, "Price List non trovata");
@@ -194,7 +205,7 @@ export const updateCustomer = async (c: Context<AppBindings>) => {
   }
 
   const customer = await prisma.customer.update({
-    where: { id },
+    where: { id, tenantId },
     data: buildCustomerUpdateData(data),
     include: getCustomerInclude(true),
   });
@@ -212,8 +223,9 @@ export const updateCustomer = async (c: Context<AppBindings>) => {
 export const updateCustomerCompany = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<CustomerIdParam>(c);
   const companyData = getValidatedBody<UpdateCustomerCompanyInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const customer = await prisma.customer.findUnique({ where: { id } });
+  const customer = await prisma.customer.findFirst({ where: tenantFilter(tenantId, { id }) });
 
   if (!customer) {
     return sendNotFound(c, "Customer non trovato");
@@ -225,7 +237,7 @@ export const updateCustomerCompany = async (c: Context<AppBindings>) => {
     // 1. Aggiorna i campi scalari della company
     if (Object.keys(companyScalarData).length > 0) {
       await tx.company.update({
-        where: { id: customer.companyId },
+        where: { id: customer.companyId, tenantId },
         data: companyScalarData as Prisma.CompanyUpdateInput,
       });
     }
@@ -259,7 +271,7 @@ export const updateCustomerCompany = async (c: Context<AppBindings>) => {
 
     // 3. Ritorna il customer aggiornato con tutti i dati
     return tx.customer.findUnique({
-      where: { id },
+      where: { id, tenantId },
       include: getCustomerInclude(true),
     });
   });
@@ -276,9 +288,10 @@ export const updateCustomerCompany = async (c: Context<AppBindings>) => {
  */
 export const validateCustomerFiscal = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<CustomerIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const customer = await prisma.customer.findUnique({
-    where: { id },
+  const customer = await prisma.customer.findFirst({
+    where: tenantFilter(tenantId, { id }),
     include: { company: true },
   });
 
@@ -308,10 +321,11 @@ export const validateCustomerFiscal = async (c: Context<AppBindings>) => {
  */
 export const getCustomerStats = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<CustomerIdParam>(c);
-  const { preferredLanguageId } = c.get("user")!;
+  const languageId = getRequiredLanguageId(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const customer = await prisma.customer.findUnique({
-    where: { id },
+  const customer = await prisma.customer.findFirst({
+    where: tenantFilter(tenantId, { id }),
     include: {
       _count: {
         select: {
@@ -329,10 +343,10 @@ export const getCustomerStats = async (c: Context<AppBindings>) => {
   const [recentOrders, topProducts] = await Promise.all([
     // Ultimi ordini
     prisma.document.findMany({
-      where: {
+      where: tenantFilter(tenantId, {
         customerId: customer.id,
         documentType: { in: ["ORDER", "INVOICE"] },
-      },
+      }),
       orderBy: { documentDate: "desc" },
       take: 10,
       select: {
@@ -348,13 +362,13 @@ export const getCustomerStats = async (c: Context<AppBindings>) => {
     // Prodotti più acquistati
     prisma.documentLine.groupBy({
       by: ["productId", "productVariantId"],
-      where: {
+      where: tenantFilter(tenantId, {
         document: {
           customerId: customer.id,
           documentType: { in: ["ORDER", "INVOICE"] },
         },
         productId: { not: null },
-      },
+      }),
       _sum: {
         quantity: true,
       },
@@ -373,8 +387,8 @@ export const getCustomerStats = async (c: Context<AppBindings>) => {
   // Arricchisci prodotti con dettagli
   const enrichedProducts = await Promise.all(
     topProducts.map(async (item) => {
-      const product = await prisma.product.findUnique({
-        where: { id: item.productId! },
+      const product = await prisma.product.findFirst({
+        where: tenantFilter(tenantId, { id: item.productId! }),
         select: {
           id: true,
           reference: true,
@@ -386,7 +400,7 @@ export const getCustomerStats = async (c: Context<AppBindings>) => {
           },
           translations: {
             where: {
-              languageId: preferredLanguageId,
+              languageId,
             },
             take: 1,
             select: {
@@ -427,9 +441,10 @@ export const getCustomerStats = async (c: Context<AppBindings>) => {
 export const deleteCustomer = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<CustomerIdParam>(c);
   const { userId } = c.get("user")!;
+  const tenantId = getRequiredTenantId(c);
 
-  const customer = await prisma.customer.findUnique({
-    where: { id },
+  const customer = await prisma.customer.findFirst({
+    where: tenantFilter(tenantId, { id }),
     include: {
       _count: {
         select: {
@@ -466,7 +481,7 @@ export const deleteCustomer = async (c: Context<AppBindings>) => {
 
   // Elimina customer (cascade elimina anche company)
   await prisma.customer.update({
-    where: { id },
+    where: { id, tenantId },
     data: {
       deletedBy: userId,
       deletedAt: new Date(),
@@ -483,7 +498,8 @@ export const deleteCustomer = async (c: Context<AppBindings>) => {
  */
 export const getCustomerListStats = async (c: Context<AppBindings>) => {
   const filters = getValidatedQuery<CustomerQueryInput>(c);
-  const where = buildCustomerWhereClause(filters as CustomerFilters);
+  const tenantId = getRequiredTenantId(c);
+  const where = buildCustomerWhereClause(filters as CustomerFilters, tenantId);
 
   const [total, revenueAgg, bySegment] = await Promise.all([
     // Totale customers (rispettando i filtri attivi)

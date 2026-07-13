@@ -107,8 +107,14 @@ export const toRequiredDate = (value: string | undefined): Date | undefined =>
  * @param id - ID of the related record
  * @returns Prisma connect/disconnect object or undefined
  */
-export const connectOrDisconnectById = (id: string | number | null | undefined) =>
-  id === undefined ? undefined : id ? { connect: { id } } : { disconnect: true as const };
+export function connectOrDisconnectById(id: string): { connect: { id: string } };
+export function connectOrDisconnectById(id: number): { connect: { id: number } };
+export function connectOrDisconnectById(id: null | undefined): undefined;
+export function connectOrDisconnectById(id: string | null | undefined): { connect: { id: string } } | undefined;
+export function connectOrDisconnectById(id: number | null | undefined): { connect: { id: number } } | undefined;
+export function connectOrDisconnectById(id: string | number | null | undefined) {
+  return id === undefined ? undefined : id ? { connect: { id } } : { disconnect: true as const };
+}
 
 /**
  * Handles nullable Prisma relations on CREATE operations via an `id` FK.
@@ -121,6 +127,8 @@ export const connectOrDisconnectById = (id: string | number | null | undefined) 
 export function connectById(id: string): { connect: { id: string } };
 export function connectById(id: number): { connect: { id: number } };
 export function connectById(id: null | undefined): undefined;
+export function connectById(id: string | null | undefined): { connect: { id: string } } | undefined;
+export function connectById(id: number | null | undefined): { connect: { id: number } } | undefined;
 export function connectById(id: string | number | null | undefined) {
   return id ? { connect: { id } } : undefined;
 }
@@ -209,6 +217,28 @@ export const withTenantId = (
   where: Record<string, unknown>,
   tenantId: string,
 ): Record<string, unknown> => ({ ...where, tenantId });
+
+/**
+ * Builds a tenant-scoped, soft-delete-safe Prisma where clause.
+ *
+ * Combines `withTenantId` and `withSoftDelete` in a single call, covering
+ * the most common filter pattern in tenant-scoped controllers.
+ *
+ * Variants:
+ * - `tenantFilter(tenantId)`           → { tenantId, deletedAt: null }
+ * - `tenantFilter(tenantId, { id })`   → { tenantId, id, deletedAt: null }
+ * - `tenantFilter(tenantId, {}, true)` → { tenantId }  (soft-deleted included)
+ *
+ * @param tenantId       - Tenant ID from the authenticated request context
+ * @param where          - Additional Prisma where fields to merge (default: {})
+ * @param includeDeleted - When true, soft-deleted records are included (default: false)
+ * @returns Merged where clause with tenantId and optional deletedAt guard
+ */
+export const tenantFilter = (
+  tenantId: string,
+  where: Record<string, unknown> = {},
+  includeDeleted = false,
+): Record<string, unknown> => withSoftDelete(withTenantId(where, tenantId), includeDeleted);
 
 /**
  * Converts a numeric string or number to a Prisma-safe positive integer.

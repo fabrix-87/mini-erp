@@ -6,6 +6,7 @@ import { Prisma } from "@/generated/prisma/client";
 import {
   connectById,
   connectOrDisconnectById,
+  ifDefined,
   parseOptionalDecimal,
   toJsonField,
 } from "@/helpers/prisma-helper";
@@ -31,7 +32,7 @@ export const buildAddressCreateData = (
   address: address.address,
   city: address.city,
   zipCode: address.zipCode,
-  countryCode: address.countryCode,
+  countryCode: address.countryCode ?? "IT",
   addressType: address.addressType,
   isPrimary: address.isPrimary ?? false,
   provinceCode: address.provinceCode ?? undefined,
@@ -45,13 +46,15 @@ export const buildAddressCreateData = (
 
 /**
  * Builds Prisma-compatible nested `company.create` data.
- * Handles legalAddress as nested create and assignedUserId as connect.
+ * Handles legalAddress as nested create, country as relation connect,
+ * and assignedUserId as optional user connect.
  */
 export const buildCompanyCreateData = (
   companyData: CreateCompanyInput,
   code: string,
+  tenantId: string,
 ): Prisma.CompanyCreateInput => {
-  const { legalAddress, assignedUserId, customFields, ...scalars } = companyData;
+  const { legalAddress, assignedUserId, customFields, countryCode, ...scalars } = companyData;
 
   return {
     ...scalars,
@@ -67,8 +70,13 @@ export const buildCompanyCreateData = (
     vatId: scalars.vatId ?? undefined,
     eoriNumber: scalars.eoriNumber ?? undefined,
     customFields: toJsonField(customFields),
-
-    user: connectOrDisconnectById(assignedUserId),
+    tenant: connectById(tenantId),
+    country: {
+      connect: {
+        code: countryCode ?? "IT",
+      },
+    },
+    user: connectById(assignedUserId),
     ...(legalAddress && {
       addresses: {
         create: buildAddressCreateData(legalAddress, {
@@ -103,6 +111,7 @@ export const buildCompanyUpdateData = (
 export const buildCustomerCreateData = (
   customerData: Omit<CreateCustomerInput, "company">,
   companyCreate: Prisma.CompanyCreateInput,
+  tenantId: string,
 ): Prisma.CustomerCreateInput => ({
   priority: customerData.priority,
   segment: customerData.segment ?? undefined,
@@ -110,6 +119,7 @@ export const buildCustomerCreateData = (
   type: customerData.type ?? undefined,
   creditStatus: customerData.creditStatus ?? undefined,
   creditLimit: parseOptionalDecimal(customerData.creditLimit) ?? undefined,
+  tenant: connectById(tenantId),
   parentCustomer: connectById(customerData.parentCustomerId),
   defaultPriceList: connectById(customerData.defaultPriceListId),
   customerTaxRule: connectById(customerData.customerTaxRuleId),
@@ -139,9 +149,11 @@ export const buildCustomerUpdateData = (data: UpdateCustomerInput): Prisma.Custo
 export const buildSupplierCreateData = (
   supplierData: Omit<CreateSupplierInput, "company">,
   companyCreate: Prisma.CompanyCreateInput,
+  tenantId: string,
 ): Prisma.SupplierCreateInput => ({
   rating: supplierData.rating ?? undefined,
-  paymentTerms: supplierData.paymentTerms ?? undefined,
+  tenant: connectById(tenantId),
+  paymentMethod: connectById(supplierData.paymentMethod),
   parentSupplier: connectById(supplierData.parentSupplierId),
   supplierTaxRule: connectById(supplierData.supplierTaxRuleId),
   company: { create: companyCreate },
@@ -152,11 +164,10 @@ export const buildSupplierCreateData = (
  */
 export const buildSupplierUpdateData = (data: UpdateSupplierInput): Prisma.SupplierUpdateInput => ({
   rating: data.rating ?? undefined,
-  paymentTerms: data.paymentTerms ?? undefined,
-  bankAccount: data.bankAccount ?? undefined,
   leadTimeDays: data.leadTimeDays ?? undefined,
   transportCost: data.transportCost ?? undefined,
   creditLimit: data.creditLimit ?? undefined,
+  paymentMethod: connectOrDisconnectById(data.paymentMethod),
   parentSupplier: connectOrDisconnectById(data.parentSupplierId),
   supplierTaxRule: connectOrDisconnectById(data.supplierTaxRuleId),
 });

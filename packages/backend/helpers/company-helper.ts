@@ -414,12 +414,14 @@ export const setPrimaryAddressAtomic = async (tx: PrismaClientOrTx, addressId: s
  * Format: PREFIX-NNNN (e.g. CLI-0001, SUP-0042).
  * Padding expands automatically beyond 9999 (e.g. CLI-10000).
  *
- * @param type - Entity type key (customer, supplier, lead, prospect, partner)
- * @param tx   - Optional Prisma transaction client (defaults to global client)
- * @throws     - If the type key is not in COMPANY_CODE_PREFIX_MAP
+ * @param type     - Entity type key (customer, supplier, lead, prospect, partner)
+ * @param tenantId - Tenant ID from the authenticated request context
+ * @param tx       - Optional Prisma transaction client (defaults to global client)
+ * @throws         - If the type key is not in COMPANY_CODE_PREFIX_MAP
  */
 export const generateUniqueCompanyCode = async (
   type: string,
+  tenantId: string,
   tx: PrismaClientOrTx = prismaGlobal,
 ): Promise<string> => {
   const prefix =
@@ -432,9 +434,10 @@ export const generateUniqueCompanyCode = async (
   }
 
   const result = await (tx as PrismaClient).$queryRaw<[{ max_num: number | null }]>`
-    SELECT MAX(CAST(SPLIT_PART(code, '-', 2) AS INTEGER)) AS max_num
-    FROM "Company"
+  SELECT MAX(CAST(SPLIT_PART(code, '-', 2) AS INTEGER)) AS max_num
+    FROM "companies"
     WHERE code LIKE ${`${prefix}-%`}
+      AND tenant_id = ${tenantId}
       AND code ~ ${`^${prefix}-[0-9]+$`}
   `;
 

@@ -86,8 +86,6 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
 
     // Campi supplier (default — sovrascritti sotto se type === SUPPLIER)
     parentSupplierId: null,
-    paymentTerms: null,
-    bankAccount: null,
     leadTimeDays: 0,
     transportCost: null,
     rating: 5,
@@ -118,8 +116,6 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
   return {
     ...base,
     parentSupplierId: s.parentSupplierId ?? null,
-    paymentTerms: s.paymentTerms ?? null,
-    bankAccount: s.bankAccount ?? null,
     leadTimeDays: s.leadTimeDays ?? 0,
     transportCost: s.transportCost ?? null,
     supplierTaxRuleId: s.supplierTaxRuleId ?? null,
@@ -182,8 +178,6 @@ export function extractCustomerData(data: CompanyFormValues): Omit<CreateCustome
 export function extractSupplierData(data: CompanyFormValues): Omit<CreateSupplierForm, "company"> {
   return {
     parentSupplierId: data.parentSupplierId,
-    paymentTerms: data.paymentTerms,
-    bankAccount: data.bankAccount,
     leadTimeDays: data.leadTimeDays ?? 0,
     transportCost: toNumber(data.transportCost),
     rating: data.rating ?? 5,

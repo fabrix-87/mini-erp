@@ -12,6 +12,7 @@ import {
 import {
   sendCreated,
   sendDeleted,
+  sendFail,
   sendNotFound,
   sendPaginatedResponse,
   sendSuccess,
@@ -22,6 +23,7 @@ import { buildPagination } from "@/utils/query-utils";
 
 import {
   CreateSupplierInput,
+  SupplierFilters,
   SupplierIdParam,
   SupplierQueryInput,
   UpdateSupplierCompanyInput,
@@ -39,11 +41,12 @@ import {
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
-import { SupplierFilters } from "@/types/company-types";
+import { tenantFilter, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 
 // ============================================================================
 // SUPPLIER CONTROLLERS
@@ -56,8 +59,9 @@ import { SupplierFilters } from "@/types/company-types";
  */
 export const getAllSuppliers = async (c: Context<AppBindings>) => {
   const { page = 1, limit = 10, ...filters } = getValidatedQuery<SupplierQueryInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const where = buildSupplierWhereClause(filters as SupplierFilters);
+  const where = buildSupplierWhereClause(filters as SupplierFilters, tenantId);
   const { skip, take } = buildPagination(page, limit);
 
   const [suppliers, total] = await Promise.all([
@@ -81,9 +85,10 @@ export const getAllSuppliers = async (c: Context<AppBindings>) => {
  */
 export const getSupplierById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<SupplierIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const supplier = await prisma.supplier.findUnique({
-    where: { id },
+  const supplier = await prisma.supplier.findFirst({
+    where: withSoftDelete(withTenantId({ id }, tenantId)),
     include: getSupplierInclude(true),
   });
 
@@ -106,6 +111,7 @@ export const getSupplierById = async (c: Context<AppBindings>) => {
  */
 export const createSupplier = async (c: Context<AppBindings>) => {
   const { company: companyData, ...supplierData } = getValidatedBody<CreateSupplierInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   // Verifica country esiste
   const country = await prisma.country.findUnique({
@@ -117,9 +123,13 @@ export const createSupplier = async (c: Context<AppBindings>) => {
   }
 
   const supplier = await prisma.$transaction(async (tx) => {
-    const code = await generateUniqueCompanyCode("supplier", tx);
+    const code = await generateUniqueCompanyCode("supplier", tenantId, tx);
     return tx.supplier.create({
-      data: buildSupplierCreateData(supplierData, buildCompanyCreateData(companyData, code)),
+      data: buildSupplierCreateData(
+        supplierData,
+        buildCompanyCreateData(companyData, code, tenantId),
+        tenantId,
+      ),
       include: getSupplierInclude(true),
     });
   });
@@ -135,10 +145,11 @@ export const createSupplier = async (c: Context<AppBindings>) => {
 export const updateSupplier = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<SupplierIdParam>(c);
   const data = getValidatedBody<UpdateSupplierInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const [existing, taxRule, parent] = await Promise.all([
-    prisma.supplier.findUnique({
-      where: { id },
+    prisma.supplier.findFirst({
+      where: withSoftDelete(withTenantId({ id }, tenantId)),
     }),
     data.supplierTaxRuleId
       ? prisma.taxRule.findUnique({
@@ -147,8 +158,8 @@ export const updateSupplier = async (c: Context<AppBindings>) => {
         })
       : Promise.resolve(true),
     data.parentSupplierId
-      ? prisma.supplier.findUnique({
-          where: { id: data.parentSupplierId },
+      ? prisma.supplier.findFirst({
+          where: withSoftDelete(withTenantId({ id: data.parentSupplierId }, tenantId)),
           select: { id: true },
         })
       : Promise.resolve(true),
@@ -165,7 +176,7 @@ export const updateSupplier = async (c: Context<AppBindings>) => {
   }
 
   const supplier = await prisma.supplier.update({
-    where: { id },
+    where: { id, tenantId },
     data: buildSupplierUpdateData(data),
     include: getSupplierInclude(true),
   });
@@ -182,9 +193,10 @@ export const updateSupplier = async (c: Context<AppBindings>) => {
  */
 export const validateSupplierFiscal = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<SupplierIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const supplier = await prisma.supplier.findUnique({
-    where: { id },
+  const supplier = await prisma.supplier.findFirst({
+    where: withSoftDelete(withTenantId({ id }, tenantId)),
     include: { company: true },
   });
 
@@ -215,9 +227,10 @@ export const validateSupplierFiscal = async (c: Context<AppBindings>) => {
 export const updateSupplierCompany = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<SupplierIdParam>(c);
   const companyData = getValidatedBody<UpdateSupplierCompanyInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const supplier = await prisma.supplier.findUnique({
-    where: { id },
+  const supplier = await prisma.supplier.findFirst({
+    where: tenantFilter(tenantId, { id }),
   });
 
   if (!supplier) {
@@ -262,8 +275,8 @@ export const updateSupplierCompany = async (c: Context<AppBindings>) => {
     }
   });
 
-  const updatedSupplier = await prisma.supplier.findUnique({
-    where: { id },
+  const updatedSupplier = await prisma.supplier.findFirst({
+    where: tenantFilter(tenantId, { id }),
     include: getSupplierInclude(true),
   });
 
@@ -280,9 +293,10 @@ export const updateSupplierCompany = async (c: Context<AppBindings>) => {
 export const updateSupplierRating = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<SupplierIdParam>(c);
   const { rating, notes } = getValidatedBody<UpdateSupplierRatingInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const supplier = await prisma.supplier.findUnique({
-    where: { id },
+  const supplier = await prisma.supplier.findFirst({
+    where: tenantFilter(tenantId, { id }),
   });
 
   if (!supplier) {
@@ -290,7 +304,7 @@ export const updateSupplierRating = async (c: Context<AppBindings>) => {
   }
 
   const updatedSupplier = await prisma.supplier.update({
-    where: { id },
+    where: { id, tenantId },
     data: { rating },
     include: getSupplierInclude(false),
   });
@@ -318,9 +332,10 @@ export const updateSupplierRating = async (c: Context<AppBindings>) => {
  */
 export const getSupplierStats = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<SupplierIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const supplier = await prisma.supplier.findUnique({
-    where: { id },
+  const supplier = await prisma.supplier.findFirst({
+    where: tenantFilter(tenantId, { id }),
     include: {
       _count: {
         select: {
@@ -338,10 +353,10 @@ export const getSupplierStats = async (c: Context<AppBindings>) => {
   const [recentOrders, topProducts] = await Promise.all([
     // Ultimi ordini
     prisma.document.findMany({
-      where: {
+      where: tenantFilter(tenantId, {
         supplierId: supplier.id,
         documentType: { in: ["SUPPLIER_ORDER", "INVOICE"] },
-      },
+      }),
       orderBy: { documentDate: "desc" },
       take: 10,
       select: {
@@ -356,9 +371,9 @@ export const getSupplierStats = async (c: Context<AppBindings>) => {
 
     // Prodotti forniti più ordinati
     prisma.product.findMany({
-      where: {
+      where: tenantFilter(tenantId, {
         supplierId: supplier.id,
-      },
+      }),
       select: {
         id: true,
         reference: true,
@@ -408,9 +423,10 @@ export const getSupplierStats = async (c: Context<AppBindings>) => {
 export const deleteSupplier = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<SupplierIdParam>(c);
   const { userId } = c.get("user")!;
+  const tenantId = getRequiredTenantId(c);
 
-  const supplier = await prisma.supplier.findUnique({
-    where: { id },
+  const supplier = await prisma.supplier.findFirst({
+    where: tenantFilter(tenantId, { id }),
     include: {
       _count: {
         select: {
@@ -428,8 +444,7 @@ export const deleteSupplier = async (c: Context<AppBindings>) => {
   const totalRelations = supplier._count.documentsIn + supplier._count.products;
 
   if (totalRelations > 0) {
-    return c.json({
-      success: false,
+    return sendFail(c, {
       statusCode: 409,
       message: `Impossibile eliminare: Supplier ha ${totalRelations} relazioni attive`,
     });
@@ -437,7 +452,7 @@ export const deleteSupplier = async (c: Context<AppBindings>) => {
 
   // Elimina supplier (cascade elimina anche company)
   await prisma.supplier.update({
-    where: { id },
+    where: { id, tenantId },
     data: {
       deletedBy: userId,
       deletedAt: new Date(),
@@ -454,7 +469,9 @@ export const deleteSupplier = async (c: Context<AppBindings>) => {
  */
 export const getSupplierListStats = async (c: Context<AppBindings>) => {
   const filters = getValidatedQuery<SupplierQueryInput>(c);
-  const where = buildSupplierWhereClause(filters as SupplierFilters);
+  const tenantId = getRequiredTenantId(c);
+
+  const where = buildSupplierWhereClause(filters as SupplierFilters, tenantId);
 
   const [total, spentAgg, byRating] = await Promise.all([
     prisma.supplier.count({ where }),
@@ -473,9 +490,7 @@ export const getSupplierListStats = async (c: Context<AppBindings>) => {
   ]);
 
   const byRatingMap = Object.fromEntries(
-    byRating
-      .filter((r) => r.rating !== null)
-      .map((r) => [String(r.rating), r._count.id])
+    byRating.filter((r) => r.rating !== null).map((r) => [String(r.rating), r._count.id]),
   );
 
   const avgRatingAgg = await prisma.supplier.aggregate({

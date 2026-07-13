@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createIdSchema } from "./primitives/id";
+import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { emailSchema, phoneSchema } from "./primitives/string";
 import { queryBooleanOrAllSchema, queryEnumOrAllSchema } from "./query/params";
 import { limitSchema, pageSchema, querySortOrderSchema } from "./query/pagination";
@@ -55,8 +55,8 @@ export const companyContactFieldsSchema = z.object({
  */
 export const createCompanyContactSchema = companyContactFieldsSchema
   .extend({
-    contactId: createIdSchema("Contact ID deve essere positivo"),
-    companyId: createIdSchema("Company ID deve essere positivo"),
+    contactId: createCuidSchema("Contact ID deve essere positivo"),
+    companyId: createCuidSchema("Company ID deve essere positivo"),
   })
   .strict();
 
@@ -71,7 +71,7 @@ export const updateCompanyContactSchema = companyContactFieldsSchema.partial().s
  */
 export const contactCompanyEntrySchema = z
   .object({
-    companyId: createIdSchema("Company ID deve essere positivo"),
+    companyId: createCuidSchema("Company ID deve essere positivo"),
     ...companyContactFieldsSchema.shape,
   })
   .strict();
@@ -130,14 +130,14 @@ export const updateContactSchema = createContactSchema
  * Schema for Contact ID param.
  */
 export const contactIdSchema = z.object({
-  id: createIdSchema("ID contatto non valido"),
+  id: createCuidSchema("ID contatto non valido"),
 });
 
 /**
  * Schema for Contact query parameters.
  */
 export const contactQuerySchema = z.object({
-  companyId: createIdSchema("Company ID non valido").optional(),
+  companyId: createCuidSchema("Company ID non valido").optional(),
   active: queryBooleanOrAllSchema(),
   isPrimaryContact: queryBooleanOrAllSchema(),
   search: z.string().trim().optional(),
@@ -164,5 +164,9 @@ export const toggleContactActiveSchema = z
  */
 export const checkEmailSchema = z.object({
   email: emailSchema("Campo email necessario"),
-  contactId: createIdSchema("Contact ID non valido").optional()
+  contactId: createCuidSchema("Contact ID non valido").optional(),
+});
+
+export const setPrimaryContactSchema = contactIdSchema.extend({
+  companyId: createCuidSchema("ID contatto non valido"),
 });

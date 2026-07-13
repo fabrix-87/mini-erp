@@ -86,7 +86,7 @@ export type Customer = {
   activities: Activity[];
 
   // Relazioni tra clienti (gruppi e gerarchie)
-  parentCustomerId?: number | null;
+  parentCustomerId?: string | null;
   parentCustomer?: Customer;
   subsidiaries?: Customer[];
 

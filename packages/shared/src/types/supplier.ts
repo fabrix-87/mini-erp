@@ -28,14 +28,14 @@ import { StockBatch } from "./warehouse";
  * Supplier entity
  */
 export type Supplier = Omit<CreateSupplierInput, "company"> & {
-  id: number;
-  companyId: number;
+  id: string;
+  companyId: string;
   company: Company;
   supplierTaxRule?: TaxRule | null;
   documentsIn: Document[];
   products: Product[];
   stockBatchs: StockBatch[];
-  deletedBy?: number | null;
+  deletedBy?: string | null;
   deletedByUser?: User | null;
   createdAt: Date;
   updatedAt: Date;

@@ -59,7 +59,7 @@ export const companyFormSchema = z.object({
   legalAddress: createNestedAddressSchema,
 
   // ── Customer fields ───────────────────────────────────────────
-  parentCustomerId: createIdSchema("Parent Customer ID non valido").optional().nullable(),
+  parentCustomerId: createCuidSchema("Parent Customer ID non valido").optional().nullable(),
   priority: customerPrioritySchema.default("MEDIUM"),
   segment: customerSegmentSchema.default("STANDARD"),
   size: customerSizeSchema.default("SMALL"),
@@ -70,7 +70,7 @@ export const companyFormSchema = z.object({
   paymentMethodId: createCuidSchema("Payment Method ID non valido").optional().nullable(),
 
   // ── Supplier fields ───────────────────────────────────────────
-  parentSupplierId: createIdSchema("Parent Supplier ID non valido").optional().nullable(),
+  parentSupplierId: createCuidSchema("Parent Supplier ID non valido").optional().nullable(),
   paymentTerms: z.string().max(100).optional().nullable(),
   bankAccount: z.string().max(100).optional().nullable(),
   leadTimeDays: toNumberSchema({ min: 0, required: true }), 

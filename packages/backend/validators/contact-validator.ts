@@ -6,6 +6,7 @@ import {
   contactIdSchema,
   contactQuerySchema,
   createContactSchema,
+  setPrimaryContactSchema,
   toggleContactActiveSchema,
   updateContactSchema,
 } from "@mini-erp/shared/validators";
@@ -24,6 +25,10 @@ export const validateUpdateContact = validateBody(updateContactSchema, "Contact 
 
 export const validateContactId = validateParams(contactIdSchema, "Contact ID");
 export const validateCompanyId = validateParams(companyIdAsCompanyIdSchema, "Company ID");
+export const validateSetPrimaryContactId = validateParams(
+  setPrimaryContactSchema,
+  "contact ID - company ID",
+);
 
 export const validateContactQuery = validateQuery(contactQuerySchema, "Contact query");
 

@@ -7,6 +7,7 @@ import {
   validateCheckEmail,
   validateCompanyId,
   validateToggleContactActive,
+  validateSetPrimaryContactId,
 } from '../validators/contact-validator';
 import {
   getAllContacts,
@@ -139,15 +140,15 @@ contactRoutes.patch(
 );
 
 /**
- * @route   PATCH /api/contacts/:id/set-primary
+ * @route   PATCH /api/contacts/:id/set-primary/:companyId
  * @desc    Imposta contatto come primario per la company
  * @access  Private (contact:update)
  */
 contactRoutes.patch(
-  '/:id/set-primary',
+  '/:id/set-primary/:companyId',
   requireTenantScope,
   authorize(['contact:update', 'contact:manage']),
-  validateContactId,
+  validateSetPrimaryContactId,
   setPrimaryContact
 );
 

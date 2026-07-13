@@ -43,7 +43,7 @@ export const createCustomerSchema = z
     company: baseCompanySchema,
 
     // parent customer (Hierarchy)
-    parentCustomerId: createIdSchema("Parent Customer ID non valido").optional().nullable(),
+    parentCustomerId: createCuidSchema("Parent Customer ID non valido").optional().nullable(),
 
     // ===== Dati CRM Specifici Customer =====
     priority: customerPrioritySchema.default("MEDIUM"),
@@ -82,7 +82,7 @@ export const updateCustomerSchema = z
     paymentMethodId: createCuidSchema("Payment Method ID non valido").optional().nullable(),
 
     // parent customer (Hierarchy)
-    parentCustomerId: createIdSchema("Parent Customer ID non valido").optional().nullable(),
+    parentCustomerId: createCuidSchema("Parent Customer ID non valido").optional().nullable(),
 
     creditLimit: creditLimitSchema.optional().nullable(),
   })

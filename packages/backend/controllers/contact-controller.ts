@@ -14,10 +14,12 @@ import {
   ContactIdParam,
   ContactQueryInput,
   CreateContactInput,
+  SetPrimaryContactIdParams,
   ToggleContactActiveInput,
   UpdateContactInput,
 } from "@mini-erp/shared/types";
 import {
+  getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
@@ -27,6 +29,8 @@ import { AppBindings } from "@/lib/hono-app";
 import { Prisma } from "@/generated/prisma/client";
 import { CONTACT_SORT_FIELDS } from "@mini-erp/shared";
 import { getContactCompaniesInclude } from "@/helpers/contact-helper";
+import { connectById, tenantFilter, withTenantId } from "@/helpers/prisma-helper";
+import { ConflictError } from "@/utils/app-error-utils";
 
 // ============================================================================
 // GET ALL
@@ -49,8 +53,9 @@ export const getAllContacts = async (c: Context<AppBindings>) => {
     sortBy = "lastName",
     sortOrder = "asc",
   } = getValidatedQuery<ContactQueryInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const where: Prisma.ContactWhereInput = {
+  const where: Prisma.ContactWhereInput = tenantFilter(tenantId, {
     ...(active !== undefined && { active }),
     ...(search && {
       OR: [
@@ -69,7 +74,7 @@ export const getAllContacts = async (c: Context<AppBindings>) => {
         },
       },
     }),
-  };
+  });
 
   const skip = (page - 1) * limit;
 
@@ -100,9 +105,10 @@ export const getAllContacts = async (c: Context<AppBindings>) => {
  */
 export const getContactById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ContactIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const contact = await prisma.contact.findUnique({
-    where: { id },
+  const contact = await prisma.contact.findFirst({
+    where: tenantFilter(tenantId, { id }),
     include: getContactCompaniesInclude(),
   });
 
@@ -124,11 +130,12 @@ export const getContactById = async (c: Context<AppBindings>) => {
  */
 export const createContact = async (c: Context<AppBindings>) => {
   const { companies, ...contactData } = getValidatedBody<CreateContactInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   // Verifica che tutte le company esistano
   const companyIds = companies.map((entry) => entry.companyId);
   const foundCompanies = await prisma.company.findMany({
-    where: { id: { in: companyIds } },
+    where: withTenantId({ id: { in: companyIds } }, tenantId),
     select: { id: true },
   });
 
@@ -141,7 +148,7 @@ export const createContact = async (c: Context<AppBindings>) => {
   // Verifica email duplicata
   if (contactData.email) {
     const existingEmail = await prisma.contact.findFirst({
-      where: { email: contactData.email },
+      where: tenantFilter(tenantId, { email: contactData.email }),
     });
     if (existingEmail) {
       return sendFail(c, { message: "Email già utilizzata da un altro contatto" });
@@ -164,6 +171,7 @@ export const createContact = async (c: Context<AppBindings>) => {
     return tx.contact.create({
       data: {
         ...contactData,
+        tenant: connectById(tenantId),
         companies: {
           create: companies.map((entry) => ({
             companyId: entry.companyId,
@@ -192,17 +200,19 @@ export const createContact = async (c: Context<AppBindings>) => {
 export const updateContact = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ContactIdParam>(c);
   const data = getValidatedBody<UpdateContactInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  console.log(data);
-
-  const existing = await prisma.contact.findUnique({ where: { id } });
+  const existing = await prisma.contact.findFirst({
+    where: tenantFilter(tenantId, { id }),
+    select: { email: true },
+  });
   if (!existing) {
     return sendNotFound(c, "Contatto non trovato");
   }
 
   if (data.email && data.email !== existing.email) {
     const duplicate = await prisma.contact.findFirst({
-      where: { email: data.email, NOT: { id } },
+      where: tenantFilter(tenantId, { email: data.email, NOT: { id } }),
     });
     if (duplicate) {
       return sendFail(c, { message: "Email già utilizzata da un altro contatto" });
@@ -213,7 +223,7 @@ export const updateContact = async (c: Context<AppBindings>) => {
   const { companies: _companies, ...contactData } = data;
 
   const contact = await prisma.contact.update({
-    where: { id },
+    where: { id, tenantId },
     data: contactData,
     include: getContactCompaniesInclude(),
   });
@@ -231,14 +241,15 @@ export const updateContact = async (c: Context<AppBindings>) => {
 export const toggleContactActive = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ContactIdParam>(c);
   const { active } = getValidatedBody<ToggleContactActiveInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.contact.findUnique({ where: { id } });
+  const existing = await prisma.contact.findFirst({ where: tenantFilter(tenantId, { id }) });
   if (!existing) {
     return sendNotFound(c, "Contatto non trovato");
   }
 
   const contact = await prisma.contact.update({
-    where: { id },
+    where: { id, tenantId },
     data: { active },
     include: getContactCompaniesInclude(),
   });
@@ -260,8 +271,7 @@ export const toggleContactActive = async (c: Context<AppBindings>) => {
  * @param companyId - Company ID (from query param)
  */
 export const setPrimaryContact = async (c: Context<AppBindings>) => {
-  const { id } = getValidatedParams<ContactIdParam>(c);
-  const { companyId } = getValidatedQuery<{ companyId: number }>(c);
+  const { id, companyId } = getValidatedParams<SetPrimaryContactIdParams>(c);
 
   const link = await prisma.companyContact.findUnique({
     where: { companyId_contactId: { contactId: id, companyId } },
@@ -298,9 +308,11 @@ export const setPrimaryContact = async (c: Context<AppBindings>) => {
  */
 export const deleteContact = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ContactIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
+  const { userId } = c.get("user")!;
 
-  const contact = await prisma.contact.findUnique({
-    where: { id },
+  const contact = await prisma.contact.findFirst({
+    where: tenantFilter(tenantId, { id }),
     include: { _count: { select: { documents: true } } },
   });
 
@@ -309,12 +321,18 @@ export const deleteContact = async (c: Context<AppBindings>) => {
   }
 
   if (contact._count.documents > 0) {
-    return sendFail(c, {
-      message: `Impossibile eliminare: ${contact._count.documents} documenti associati`,
-    });
+    throw new ConflictError(
+      `Impossibile eliminare il contatto: ${contact._count.documents} document${contact._count.documents === 1 ? "o associato" : "i associati"}`,
+    );
   }
 
-  await prisma.contact.delete({ where: { id } });
+  await prisma.contact.update({
+    where: { id, tenantId },
+    data: {
+      deletedAt: new Date(),
+      deletedBy: userId,
+    },
+  });
 
   return sendDeleted(c, "Contatto eliminato");
 };
@@ -328,8 +346,12 @@ export const deleteContact = async (c: Context<AppBindings>) => {
  */
 export const checkEmail = async (c: Context<AppBindings>) => {
   const { email, contactId } = getValidatedQuery<CheckEmailInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.contact.findFirst({ where: { email }, select: { id: true } });
+  const existing = await prisma.contact.findFirst({
+    where: tenantFilter(tenantId, { email }),
+    select: { id: true },
+  });
 
   // se sto modificando lo stesso utente, non devo dare errore
   if (existing && existing.id !== contactId) {
@@ -348,18 +370,21 @@ export const checkEmail = async (c: Context<AppBindings>) => {
  * Uses the CompanyContact join table instead of a direct companyId field.
  */
 export const getContactsByCompany = async (c: Context<AppBindings>) => {
-  const companyId = Number(c.req.param("companyId"));
+  const { companyId } = getValidatedParams<CompanyIdAsCompanyIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const company = await prisma.company.findUnique({ where: { id: companyId } });
+  const company = await prisma.company.findFirst({
+    where: tenantFilter(tenantId, { id: companyId }),
+  });
   if (!company) {
     return sendNotFound(c, "Company non trovata");
   }
 
   const contacts = await prisma.contact.findMany({
-    where: {
+    where: tenantFilter(tenantId, {
       active: true,
       companies: { some: { companyId } },
-    },
+    }),
     include: getContactCompaniesInclude(companyId),
   });
 
@@ -374,18 +399,21 @@ export const getContactsByCompany = async (c: Context<AppBindings>) => {
  * Returns the primary active contact for a specific company.
  */
 export const getPrimaryContactByCompany = async (c: Context<AppBindings>) => {
-  const companyId = Number(c.req.param("companyId"));
+  const { companyId } = getValidatedParams<CompanyIdAsCompanyIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const company = await prisma.company.findUnique({ where: { id: companyId } });
+  const company = await prisma.company.findFirst({
+    where: tenantFilter(tenantId, { id: companyId }),
+  });
   if (!company) {
     return sendNotFound(c, "Company non trovata");
   }
 
   const primaryContact = await prisma.contact.findFirst({
-    where: {
+    where: tenantFilter(tenantId, {
       active: true,
       companies: { some: { companyId, isPrimaryContact: true } },
-    },
+    }),
     include: getContactCompaniesInclude(companyId),
   });
 

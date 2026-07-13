@@ -10,6 +10,7 @@ import {
   contactQuerySchema,
   createCompanyContactSchema,
   createContactSchema,
+  setPrimaryContactSchema,
   toggleContactActiveSchema,
   updateCompanyContactSchema,
   updateContactSchema,
@@ -99,5 +100,6 @@ export type CompanyContactFields = z.infer<typeof companyContactFieldsSchema>;
 
 export type ContactQueryInput = z.infer<typeof contactQuerySchema>;
 export type ContactIdParam = z.infer<typeof contactIdSchema>;
+export type SetPrimaryContactIdParams = z.infer<typeof setPrimaryContactSchema>;
 export type CheckEmailInput = z.infer<typeof checkEmailSchema>;
 export type ToggleContactActiveInput = z.infer<typeof toggleContactActiveSchema>;

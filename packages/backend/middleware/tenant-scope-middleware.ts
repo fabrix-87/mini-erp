@@ -9,11 +9,11 @@ interface AuthRole {
 }
 
 interface AuthUserTenantScope {
-  tenantId?: number | undefined;
+  tenantId?: string | undefined;
   roles?: AuthRole[] | undefined;
   currentTenant?:
     | {
-        tenantId?: number | undefined;
+        tenantId?: string | undefined;
         roles?: AuthRole[] | undefined;
       }
     | undefined;

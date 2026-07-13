@@ -101,6 +101,7 @@ model User {
   // Soft-Delete / Auditing Attribution Targets
   deletedDocuments       Document[]       @relation("DeletedBy")
   deletedProducts        Product[]        @relation("ProductDeletedBy")
+  deletedContacts        Contact[]        @relation("ContactDeletedBy")
   deletedProductVariants ProductVariant[] @relation("ProductVariantDeletedBy")
   deletedCustomers       Customer[]       @relation("DeletedBy")
   deletedSuppliers       Supplier[]       @relation("DeletedBy")

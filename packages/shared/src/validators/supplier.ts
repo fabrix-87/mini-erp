@@ -13,7 +13,7 @@ import {
   queryNumberOrAllSchema,
   queryNumberSchema,
 } from "./query/params";
-import { createIdSchema } from "./primitives";
+import { createCuidSchema, createIdSchema } from "./primitives";
 import { paginationSchema, sortOrderSchema } from "./query";
 
 // ============================================================================
@@ -27,15 +27,13 @@ import { paginationSchema, sortOrderSchema } from "./query";
 export const createSupplierSchema = z
   .object({
     // parent supplier (Hierarchy)
-    parentSupplierId: createIdSchema("Parent Supplier ID non valido").optional().nullable(),
+    parentSupplierId: createCuidSchema("Parent Supplier ID non valido").optional().nullable(),
 
     // Nested Company (usa il base schema)
     company: baseCompanySchema,
 
     // ===== Dati Procurement Specifici Supplier =====
-    paymentTerms: z
-      .string()
-      .max(100, "Payment terms non può superare 100 caratteri")
+    paymentMethod: createCuidSchema("Payment method non valido")
       .optional()
       .nullable(),
 
@@ -77,11 +75,10 @@ export const createSupplierSchema = z
 export const updateSupplierSchema = z
   .object({
     // parent supplier (Hierarchy)
-    parentSupplierId: createIdSchema("Parent Supplier ID non valido").optional().nullable(),
+    parentSupplierId: createCuidSchema("Parent Supplier ID non valido").optional().nullable(),
     supplierTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
-    paymentTerms: z.string().max(100).optional().nullable(),
+    paymentMethod: createCuidSchema("Payment Method ID non valido").optional().nullable(),
     creditLimit: creditLimitSchema.optional().nullable(),
-    bankAccount: z.string().max(100).optional().nullable(),
     leadTimeDays: z.number().int().nonnegative().optional().nullable(),
     transportCost: z.number().nonnegative().optional().nullable(),
     rating: z.number().int().min(1).max(5).optional().nullable(),
