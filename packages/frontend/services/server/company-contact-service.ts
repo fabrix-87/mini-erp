@@ -35,8 +35,8 @@ export async function createCompanyContact(data: CreateCompanyContactInput): Pro
  * @returns The updated Contact with all company associations
  */
 export async function updateCompanyContact(
-  contactId: number,
-  companyId: number,
+  contactId: string,
+  companyId: string,
   data: UpdateCompanyContactInput,
 ): Promise<Contact> {
   return serverApi.patch<Contact>(`/company-contacts/${contactId}/${companyId}`, data);
@@ -52,6 +52,6 @@ export async function updateCompanyContact(
  * @param contactId - The contact ID
  * @param companyId - The company ID
  */
-export async function deleteCompanyContact(contactId: number, companyId: number): Promise<void> {
+export async function deleteCompanyContact(contactId: string, companyId: string): Promise<void> {
   return serverApi.delete<void>(`/company-contacts/${contactId}/${companyId}`);
 }

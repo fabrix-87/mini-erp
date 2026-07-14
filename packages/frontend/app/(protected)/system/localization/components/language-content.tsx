@@ -25,9 +25,16 @@ export default function LanguageContent({
   const t = useTranslations();
 
   return (
-    <>
+    <div className="space-y-6">
       {/* Breadcrumb */}
       <BreadcrumbSetter title={t("system.localization.title")} />
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">{t('nav.languages')}</h1>
+          <p className="text-muted-foreground">{t('system.localization.description')}</p>
+        </div>
+      </div>
       {/* Filter bar */}
       <LanguageFilterBar
         initialSearch={queryParams.search}
@@ -49,6 +56,6 @@ export default function LanguageContent({
           itemLabel={t("nav.languages")}
         />
       )}
-    </>
+    </div>
   );
 }

@@ -1,10 +1,18 @@
-'use client';
+"use client";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Checkbox } from '@/components/ui/checkbox';
-import type { Contact, ContactSortField } from '@/types/contact-types';
-import ContactTableRow from './table-row';
-import { SortOrder } from '@mini-erp/shared';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import type { Contact, ContactSortField } from "@/types/contact-types";
+import ContactTableRow from "./contact-table-row";
+import { SortOrder } from "@mini-erp/shared";
+import { useTranslations } from "next-intl";
 
 interface ContactTableProps {
   contacts: Contact[];
@@ -33,15 +41,20 @@ export default function ContactTable({
   onDelete,
   onToggleActive,
 }: ContactTableProps) {
-  const SortableHeader = ({ field, children }: { field: ContactSortField; children: React.ReactNode }) => (
-    <TableHead
-      className="cursor-pointer hover:bg-gray-100"
-      onClick={() => onSort(field)}
-    >
+  const t = useTranslations();
+
+  const SortableHeader = ({
+    field,
+    children,
+  }: {
+    field: ContactSortField;
+    children: React.ReactNode;
+  }) => (
+    <TableHead className="cursor-pointer hover:bg-gray-100" onClick={() => onSort(field)}>
       <div className="flex items-center gap-2">
         {children}
         {sort.field === field && (
-          <span className="text-xs">{sort.order === 'asc' ? '↑' : '↓'}</span>
+          <span className="text-xs">{sort.order === "asc" ? "↑" : "↓"}</span>
         )}
       </div>
     </TableHead>
@@ -71,14 +84,14 @@ export default function ContactTable({
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={8} className="h-24 text-center">
-                Caricamento...
+              <TableCell colSpan={9} className="h-24 text-center">
+                {t('common.table.loading')}
               </TableCell>
             </TableRow>
           ) : contacts.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} className="h-24 text-center">
-                Nessun contatto trovato
+              <TableCell colSpan={9} className="h-24 text-center">
+                {t('common.table.no_results')}
               </TableCell>
             </TableRow>
           ) : (

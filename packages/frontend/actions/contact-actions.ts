@@ -40,7 +40,7 @@ export async function createContactAction(
  * Server Action per aggiornare contatto
  */
 export async function updateContactAction(
-  id: number,
+  id: string,
   data: UpdateContactInput,
 ): Promise<ActionResult<Contact>> {
   return withAuth(async () => {
@@ -54,7 +54,7 @@ export async function updateContactAction(
  * Server Action per eliminare contatto
  */
 export async function deleteContactAction(
-  id: number,
+  id: string,
 ): Promise<ActionResult<ContactDeleteApiResponse>> {
   return withAuth(async () => {
     const response = deleteContact(id);
@@ -67,7 +67,7 @@ export async function deleteContactAction(
  * Server Action per toggle active
  */
 export async function toggleContactActiveAction(
-  id: number,
+  id: string,
   active: boolean,
 ): Promise<ActionResult<ContactOperationApiResponse>> {
   return withAuth(async () => {
@@ -80,7 +80,7 @@ export async function toggleContactActiveAction(
 /**
  * Server Action per set primary
  */
-export async function setContactPrimaryAction(id: number) {
+export async function setContactPrimaryAction(id: string) {
   try {
     const response = await setContactAsPrimary(id);
     revalidatePath("/contacts");
@@ -94,7 +94,7 @@ export async function setContactPrimaryAction(id: number) {
 /**
  * Server Action per bulk operations
  */
-export async function bulkActivateContactsAction(contactIds: number[]) {
+export async function bulkActivateContactsAction(contactIds: string[]) {
   try {
     const response = await bulkActivateContacts(contactIds);
     revalidatePath("/contacts");
@@ -104,7 +104,7 @@ export async function bulkActivateContactsAction(contactIds: number[]) {
   }
 }
 
-export async function bulkDeactivateContactsAction(contactIds: number[]) {
+export async function bulkDeactivateContactsAction(contactIds: string[]) {
   try {
     const response = await bulkDeactivateContacts(contactIds);
     revalidatePath("/contacts");
@@ -114,7 +114,7 @@ export async function bulkDeactivateContactsAction(contactIds: number[]) {
   }
 }
 
-export async function bulkDeleteContactsAction(contactIds: number[]) {
+export async function bulkDeleteContactsAction(contactIds: string[]) {
   try {
     const response = await bulkDeleteContacts(contactIds);
     revalidatePath("/contacts");

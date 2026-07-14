@@ -53,7 +53,7 @@ export async function getAllContacts(params: ContactQueryInput): Promise<Contact
  * Ottieni contatti per company
  */
 export async function getContactsByCompany(
-  companyId: number,
+  companyId: string,
   active?: boolean,
 ): Promise<ContactListApiResponse> {
   const url = `/contacts/company/${companyId}${active !== undefined ? `?active=${active}` : ""}`;
@@ -64,7 +64,7 @@ export async function getContactsByCompany(
  * Ottieni contatto primario per company
  */
 export async function getPrimaryContactByCompany(
-  companyId: number,
+  companyId: string,
 ): Promise<ContactSingleApiResponse> {
   return serverApi.get<ContactSingleApiResponse>(`/contacts/company/${companyId}/primary`);
 }
@@ -72,7 +72,7 @@ export async function getPrimaryContactByCompany(
 /**
  * Ottieni singolo contatto per ID
  */
-export async function getContactById(id: number): Promise<Contact> {
+export async function getContactById(id: string): Promise<Contact> {
   return serverApi.get<Contact>(`/contacts/${id}`);
 }
 
@@ -89,7 +89,7 @@ export async function createContact(
  * Aggiorna contatto esistente
  */
 export async function updateContact(
-  id: number,
+  id: string,
   contactData: UpdateContactInput,
 ): Promise<Contact> {
   return serverApi.put<Contact>(`/contacts/${id}`, contactData);
@@ -99,7 +99,7 @@ export async function updateContact(
  * Attiva/Disattiva contatto
  */
 export async function toggleContactActive(
-  id: number,
+  id: string,
   active: boolean,
 ): Promise<ContactOperationApiResponse> {
   return serverApi.patch<ContactOperationApiResponse>(`/contacts/${id}/toggle-active`, { active });
@@ -108,14 +108,14 @@ export async function toggleContactActive(
 /**
  * Imposta contatto come primario
  */
-export async function setContactAsPrimary(id: number): Promise<ContactOperationApiResponse> {
+export async function setContactAsPrimary(id: string): Promise<ContactOperationApiResponse> {
   return serverApi.patch<ContactOperationApiResponse>(`/contacts/${id}/set-primary`);
 }
 
 /**
  * Elimina contatto
  */
-export async function deleteContact(id: number): Promise<ContactDeleteApiResponse> {
+export async function deleteContact(id: string): Promise<ContactDeleteApiResponse> {
   return serverApi.delete<ContactDeleteApiResponse>(`/contacts/${id}`);
 }
 
@@ -124,8 +124,8 @@ export async function deleteContact(id: number): Promise<ContactDeleteApiRespons
  */
 export async function checkContactEmailUnique(
   email: string,
-  companyId: number,
-  contactId?: number,
+  companyId: string,
+  contactId?: string,
 ): Promise<boolean> {
   try {
     const params = new URLSearchParams({
@@ -164,7 +164,7 @@ export async function exportContactsExcel(params: ContactQueryInput): Promise<Bl
  * Bulk activate contatti
  */
 export async function bulkActivateContacts(
-  contactIds: number[],
+  contactIds: string[],
 ): Promise<ContactOperationApiResponse> {
   return serverApi.patch<ContactOperationApiResponse>("/contacts/bulk/activate", { contactIds });
 }
@@ -173,7 +173,7 @@ export async function bulkActivateContacts(
  * Bulk deactivate contatti
  */
 export async function bulkDeactivateContacts(
-  contactIds: number[],
+  contactIds: string[],
 ): Promise<ContactOperationApiResponse> {
   return serverApi.patch<ContactOperationApiResponse>("/contacts/bulk/deactivate", { contactIds });
 }
@@ -182,7 +182,7 @@ export async function bulkDeactivateContacts(
  * Bulk delete contatti
  */
 export async function bulkDeleteContacts(
-  contactIds: number[],
+  contactIds: string[],
 ): Promise<ContactOperationApiResponse> {
   return serverApi.delete<ContactOperationApiResponse>("/contacts/bulk/delete", {
     data: { contactIds },

@@ -8,12 +8,12 @@ interface Props {
   }>;
 }
 
-export default async function ContactNewPage({ params }: Props) {
+export default async function ContactEditPage({ params }: Props) {
   await requirePermission("contact:update");
 
   const { id } = await params;
 
-  const data = await getContactById(Number(id));
+  const data = await getContactById(id);
   
   return <ContactForm isNew={false} contact={data} />;
 }

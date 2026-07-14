@@ -70,17 +70,17 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
    * @param contactId - The contact being edited
    * @param submitted - Company entries from the submitted form
    */
-  const syncCompanies = async (contactId: number, submitted: CreateContactForm["companies"]) => {
+  const syncCompanies = async (contactId: string, submitted: CreateContactForm["companies"]) => {
     const original = originalCompaniesRef.current;
 
     const originalMap = new Map(original.map((c) => [c.companyId, c]));
-    const submittedMap = new Map(submitted.map((c) => [Number(c.companyId), c]));
+    const submittedMap = new Map(submitted.map((c) => [c.companyId, c]));
 
     const promises: Promise<unknown>[] = [];
 
     // ── Aggiunte: presenti nel form ma non nell'originale ──────────────────────
     for (const entry of submitted) {
-      const id = Number(entry.companyId);
+      const id = entry.companyId;
       if (!originalMap.has(id)) {
         promises.push(
           createCompanyContactAction({
@@ -103,7 +103,7 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
 
     // ── Modificate: presenti in entrambi ma con campi diversi ─────────────────
     for (const entry of submitted) {
-      const id = Number(entry.companyId);
+      const id = entry.companyId;
       const orig = originalMap.get(id);
       if (!orig) continue; // è un'aggiunta, già gestita sopra
 
@@ -181,7 +181,7 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
       }
     },
     (errors) => {
-      console.log(errors);
+      console.error(errors);
       displayFormErrors(errors);
     },
   );
@@ -210,7 +210,7 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
     if (!isFormatValid || !email) return;
 
     // Poi valida l'unicità
-    const isUnique = await validateEmailUnique(email, isNew ? undefined : contactId || undefined);
+    const isUnique = await validateEmailUnique(email, isNew ? undefined : contactId);
 
     if (!isUnique) {
       setError("email", {

@@ -85,13 +85,13 @@ export const supplierRevalidation = {
  */
 export const contactRevalidation = {
   /** Revalidate specific contact detail and path. */
-  contact: (id: number) => revalidateEntity("contact", id, { routeKey: "contacts" }),
+  contact: (id: string) => revalidateEntity("contact", id, { routeKey: "contacts" }),
 
   /** Revalidate contacts list. */
   list: () => revalidateEntity("contact", undefined, { routeKey: "contacts" }),
 
   /** Revalidate specific contact and contacts list. */
-  contactWithList: (id: number) =>
+  contactWithList: (id: string) =>
     revalidateEntityWithList("contact", id, { routeKey: "contacts" }),
 };
 

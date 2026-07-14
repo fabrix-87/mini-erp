@@ -3,6 +3,8 @@ import { getAllCurrencies } from "@/services/server/currency-service";
 import { CurrencyQueryInput } from "@mini-erp/shared";
 import { currencyQuerySchema } from "@mini-erp/shared/validators/currency";
 import CurrenciesContent from "./components/currencies-content";
+import { getTranslations } from "next-intl/server";
+import { Metadata } from "next";
 
 interface PageProps {
   searchParams: Promise<CurrencyQueryInput>;
@@ -26,7 +28,11 @@ export default async function CurrenciesPage({ searchParams }: PageProps) {
   );
 }
 
-export const metadata = {
-  title: `Gestione Valute | ${process.env.APP_NAME}`,
-  description: "Amministra le valute sistema",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("system");
+
+  return {
+    title: `${t("currencies.title")} | ${process.env.APP_NAME}`,
+    description: t("currencies.description"),
+  };
+}

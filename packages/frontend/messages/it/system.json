@@ -9,5 +9,19 @@
     "createdAt": "Data creazione",
     "updatedAt": "Ultimo aggiornamento",
     "searchPlaceholder": "Cerca per nome o codice..."    
+  },
+  "currencies": {
+    "title": "Gestione Valute",
+    "description":"Amministra le valute del sistema",
+    "searchPlaceholder": "Cerca per nome, simbolo o codice...",
+    "activeFilterPlaceholder": "Tutti gli stati",
+    "activeFilterAll": "Tutti gli stati",
+    "activeFilterEnabled": "Solo Attivi",
+    "activeFilterDisabled": "Solo Inattivi",
+    "baseCurrencyPlaceholder": "Valuta base",
+    "onlyNotBase": "Solo non base",
+    "onlyBase": "Solo base",
+    "all": "Tutti",
+    "createNewButton": "Aggiungi nuova valuta"
   }
 }

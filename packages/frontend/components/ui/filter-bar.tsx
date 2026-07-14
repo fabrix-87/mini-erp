@@ -163,9 +163,14 @@ export function FilterBar({
   // ============================================================================
 
   const renderField = (field: FilterFieldConfig, index: number) => {
+    // renderField — search
     if (field.type === "search") {
+      const isWide = (field.colSpan ?? 1) > 1;
       return (
-        <div key={field.key} className={`relative ${field.colSpan !== 1 ? "sm:col-span-3" : ""}`}>
+        <div
+          key={field.key}
+          className={`relative ${isWide ? "flex-[2_1_200px]" : "flex-[1_1_140px]"}`}
+        >
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
@@ -179,25 +184,27 @@ export function FilterBar({
       );
     }
 
+    // renderField — select
     if (field.type === "select") {
       return (
-        <Select
-          key={field.key}
-          value={values[field.key] ?? ""}
-          onValueChange={(v) => handleChange(field.key, v === "all" ? "" : v)}
-          disabled={isPending}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={field.placeholder} />
-          </SelectTrigger>
-          <SelectContent>
-            {field.options.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div key={field.key} className="shrink-0">
+          <Select
+            value={values[field.key] ?? ""}
+            onValueChange={(v) => handleChange(field.key, v === "all" ? "" : v)}
+            disabled={isPending}
+          >
+            <SelectTrigger className="w-auto min-w-27.5">
+              <SelectValue placeholder={field.placeholder} />
+            </SelectTrigger>
+            <SelectContent>
+              {field.options.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       );
     }
 

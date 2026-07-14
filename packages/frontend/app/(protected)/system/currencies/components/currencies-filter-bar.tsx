@@ -3,50 +3,8 @@ import { useNavigation } from "@/hooks/use-navigation";
 import { currencySortLabels } from "@/types/currency-types";
 import { FilterFieldConfig } from "@/types/filter-types";
 import { CURRENCY_SORT_FIELDS } from "@mini-erp/shared";
+import { useTranslations } from "next-intl";
 import { useMemo } from "react";
-
-// ── Field config ─────────────────────────────────────────────────────────────
-
-const CURRENCY_FILTER_FIELDS: FilterFieldConfig[] = [
-  {
-    type: "search",
-    key: "search",
-    placeholder: "Cerca per nome, simbolo o codice...",
-    debounceMs: 500,
-    colSpan: 2,
-  },
-  {
-    type: "select",
-    key: "active",
-    placeholder: "Tutti gli stati",
-    options: [
-      { value: "all", label: "Tutti gli stati" },
-      { value: "true", label: "Solo Attivi" },
-      { value: "false", label: "Solo Inattivi" },
-    ],
-  },
-  {
-    type: "select",
-    key: "isBaseCurrency",
-    placeholder: "Valuta base",
-    options: [
-      { value: "all", label: "Tutti" },
-      { value: "true", label: "Solo base" },
-      { value: "false", label: "Solo non base" },
-    ],
-  },
-  {
-    type: "sort",
-    sortByKey: "sortBy",
-    sortOrderKey: "sortOrder",
-    defaultSortBy: "createdAt",
-    defaultSortOrder: "desc",
-    options: Array.from(CURRENCY_SORT_FIELDS).map((field) => ({
-      value: field as string,
-      label: currencySortLabels[field],
-    })),
-  },
-];
 
 const CURRENCY_FILTER_DEFAULTS = {
   sortBy: "priority",
@@ -73,6 +31,51 @@ export function CurrenciesFilterBar({
   const { getRoute, navigateToNew } = useNavigation();
   const basePath = useMemo(() => getRoute("currencies"), [getRoute]);
 
+  const t = useTranslations("system.currencies");
+
+  // ── Field config ─────────────────────────────────────────────────────────────
+
+  const CURRENCY_FILTER_FIELDS: FilterFieldConfig[] = [
+    {
+      type: "search",
+      key: "search",
+      placeholder: t("searchPlaceholder"),
+      debounceMs: 500,
+      colSpan: 2,
+    },
+    {
+      type: "select",
+      key: "active",
+      placeholder: t("activeFilterPlaceholder"),
+      options: [
+        { value: "all", label: t("activeFilterAll") },
+        { value: "true", label: t("activeFilterEnabled") },
+        { value: "false", label: t("activeFilterDisabled") },
+      ],
+    },
+    {
+      type: "select",
+      key: "isBaseCurrency",
+      placeholder: t("baseCurrencyPlaceholder"),
+      options: [
+        { value: "all", label: t("all") },
+        { value: "true", label: t("onlyBase") },
+        { value: "false", label: t("onlyNotBase") },
+      ],
+    },
+    {
+      type: "sort",
+      sortByKey: "sortBy",
+      sortOrderKey: "sortOrder",
+      defaultSortBy: "createdAt",
+      defaultSortOrder: "desc",
+      options: Array.from(CURRENCY_SORT_FIELDS).map((field) => ({
+        value: field as string,
+        label: currencySortLabels[field],
+      })),
+    },
+  ];
+
   const handleNewClick = () => {
     navigateToNew("currencies");
   };
@@ -93,7 +96,7 @@ export function CurrenciesFilterBar({
       initialValues={initialValues}
       canCreate={canCreate}
       handleNewClick={handleNewClick}
-      newButtonText="Aggiungi nuova valuta"
+      newButtonText={t("createNewButton")}
     />
   );
 }

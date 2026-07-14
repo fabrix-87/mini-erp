@@ -47,8 +47,8 @@ export async function createCompanyContactAction(
  * @param data      - Fields to update: position?, department?, isPrimaryContact?
  */
 export async function updateCompanyContactAction(
-  contactId: number,
-  companyId: number,
+  contactId: string,
+  companyId: string,
   data: UpdateCompanyContactInput,
 ): Promise<ActionResult<Contact>> {
   return withAuth(async () => {
@@ -70,8 +70,8 @@ export async function updateCompanyContactAction(
  * @param companyId - The company ID
  */
 export async function deleteCompanyContactAction(
-  contactId: number,
-  companyId: number,
+  contactId: string,
+  companyId: string,
 ): Promise<ActionResult<void>> {
   return withAuth(async () => {
     await deleteCompanyContact(contactId, companyId);

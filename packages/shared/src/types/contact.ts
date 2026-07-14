@@ -29,8 +29,8 @@ import { Document } from "./document";
  */
 export type CompanyContactContext = {
   id: number;
-  contactId: number;
-  companyId: number;
+  contactId: string;
+  companyId: string;
   isPrimaryContact: boolean;
   position: string | null;
   department: string | null;
@@ -59,7 +59,7 @@ export type CompanyContactSummary = Pick<
  * companies contains the list of CompanyContact relations with contextual data.
  */
 export type Contact = {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string | null;
   email: string | null;

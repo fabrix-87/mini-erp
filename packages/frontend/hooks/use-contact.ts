@@ -215,19 +215,19 @@ export function useContactMutations() {
       return response.data;
     },
 
-    updateContact: async (id: number, data: UpdateContactInput) => {
+    updateContact: async (id: string, data: UpdateContactInput) => {
       const response = await runAction(() => updateContactAction(id, data));
       if (response.message) toast.success(response.message);
       return response.data;
     },
 
-    deleteContact: async (id: number) => {
+    deleteContact: async (id: string) => {
       const response = await runAction(() => deleteContactAction(id));
       if (response.success) toast.success("Contatto eliminato");
       else toast.error(response.message ?? "Errore durante eliminazione contatto");
     },
 
-    toggleActive: async (id: number, active: boolean) => {
+    toggleActive: async (id: string, active: boolean) => {
       const response = await runAction(() => toggleContactActiveAction(id, active));
       if (response.success) toast.success("Stato modificato");
     },
@@ -347,7 +347,7 @@ export function useContactValidation() {
 
   const validateEmailUnique = async (
     email: string,
-    contactId?: number,
+    contactId?: string,
   ): Promise<boolean> => {
     setIsValidating(true);
     try {

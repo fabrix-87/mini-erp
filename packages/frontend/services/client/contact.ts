@@ -131,7 +131,7 @@ export const clientContactService = {
    */
   async checkEmailUnique(
     email: string,
-    contactId?: number
+    contactId?: string
   ): Promise<boolean> {
     try {
       const params = new URLSearchParams({

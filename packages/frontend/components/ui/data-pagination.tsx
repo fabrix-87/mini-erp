@@ -80,7 +80,7 @@ export function DataPagination({
         {/* Info */}
         <div className="flex items-center gap-10">
           <p className="text-sm text-muted-foreground">
-            {t("pagination.showing", { from: startItem, to: endItem, total: totalItems })}
+            {t("pagination.showing", { from: startItem, to: endItem, total: totalItems })} {itemLabel}
           </p>
 
           {/* Items per page */}

@@ -16,13 +16,11 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
     notFound();
   }
 
-  const contactId = Number(validated.data.id);
-
-  const data = await getContactById(Number(contactId));
+  const data = await getContactById(id);
 
   if (!data) {
     notFound();
   }
 
-  return <ContactDetailsPage contact={data} contactId={contactId} />;
+  return <ContactDetailsPage contact={data} contactId={id} />;
 }

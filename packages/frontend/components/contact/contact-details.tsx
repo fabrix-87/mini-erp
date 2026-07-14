@@ -52,7 +52,7 @@ import { useNavigation } from "@/hooks/use-navigation";
 // ============================================================================
 
 interface Props {
-  contactId: number;
+  contactId: string;
   contact: Contact;
 }
 

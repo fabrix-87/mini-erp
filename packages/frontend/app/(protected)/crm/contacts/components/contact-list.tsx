@@ -12,13 +12,14 @@ import type {
   ContactQueryInput,
   ContactListApiResponse,
 } from "@/types/contact-types";
-import ContactToolbar from "./contact-list/toolbar";
-import ContactFiltersComponent from "./contact-list/filters";
-import ContactBulkActions from "./contact-list/bulk-actions";
-import ContactTable from "./contact-list/table";
-import { DataPagination } from "../ui/data-pagination";
+import ContactBulkActions from "../../../../../components/contact/contact-list/bulk-actions";
+import ContactTable from "./contact-table";
+import { DataPagination } from "../../../../../components/ui/data-pagination";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { useNavigation } from "@/hooks/use-navigation";
+import { useTranslations } from "next-intl";
+import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
+import ContactFilterBar from "./contact-filter-bar";
 
 interface Props {
   data: ContactListApiResponse;
@@ -28,6 +29,7 @@ interface Props {
 export default function ContactListPage({ data, params }: Props) {
   const { navigateToNew, navigateToEdit, navigateToDetail, getRoute } = useNavigation();
   const updateURL = useUpdateURL(getRoute("contacts"));
+  const t = useTranslations();
 
   // Hook semplice per la lista (si sincronizza con SSR)
   const { data: contacts, pagination } = data;
@@ -38,26 +40,13 @@ export default function ContactListPage({ data, params }: Props) {
   const { bulkDelete, bulkActivate, bulkDeactivate, isProcessing } = useContactBulkOperations();
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [showFilters, setShowFilters] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Gestisci sort e filters localmente (derivati da params)
   const sort = {
     field: params.sortBy || "firstName",
     order: params.sortOrder || "asc",
   };
-
-  const filters = {
-    search: params.search,
-    companyId: params.companyId,
-    active: params.active,
-    isPrimaryContact: params.isPrimaryContact,
-    department: params.department,
-    position: params.position,
-    page: params.page,
-    limit: params.limit,
-    sortBy: params.sortBy,
-    sortOrder: params.sortOrder,
-  } satisfies ContactQueryInput;
 
   const handleResetFilters = () => {
     updateURL({}, { replace: true, clearAll: true });
@@ -82,32 +71,21 @@ export default function ContactListPage({ data, params }: Props) {
 
   return (
     <div className="space-y-6">
+      <BreadcrumbSetter title={t("crm.contacts.title")} />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Contatti</h1>
-          <p className="text-muted-foreground">Gestisci i contatti delle aziende</p>
+          <h1 className="text-3xl font-bold">{t("nav.contacts")}</h1>
+          <p className="text-muted-foreground">{t("crm.contacts.description")}</p>
         </div>
       </div>
 
-      <ContactToolbar
-        onSearch={handleSearch}
-        onToggleFilters={() => setShowFilters(!showFilters)}
-        onNewContact={() => navigateToNew("contacts")}
-        onReset={handleResetFilters}
+      <ContactFilterBar
+        filters={params}
         onExport={exportExcel}
         isExporting={isExporting}
-        showFilters={showFilters}
-        initialSearch={params.search || ""}
-        params={params}
+        canCreate={true}
+        onPendingChange={setIsLoading}
       />
-
-      {showFilters && (
-        <ContactFiltersComponent
-          filters={filters}
-          onFiltersChange={handleFilterChange}
-          onReset={handleResetFilters}
-        />
-      )}
 
       <ContactBulkActions
         selectedIds={selectedIds}
@@ -128,7 +106,7 @@ export default function ContactListPage({ data, params }: Props) {
 
       <ContactTable
         contacts={contacts}
-        loading={isPending}
+        loading={isPending || isLoading}
         selectedIds={selectedIds}
         onSelectAll={(checked) => setSelectedIds(checked ? contacts.map((c) => c.id) : [])}
         onSelectOne={(id, checked) => {
@@ -148,7 +126,7 @@ export default function ContactListPage({ data, params }: Props) {
         }}
       />
 
-      {pagination && pagination.totalPages > 1 && (
+      {pagination && pagination.totalPages > 0 && (
         <DataPagination
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}
@@ -156,7 +134,7 @@ export default function ContactListPage({ data, params }: Props) {
           limit={params.limit}
           hasNextPage={pagination.hasNextPage}
           hasPrevPage={pagination.hasPrevPage}
-          itemLabel="contatti"
+          itemLabel={t('nav.contacts')}
         />
       )}
     </div>

@@ -1,0 +1,16 @@
+{
+    "contacts": {
+        "title": "Gestione Contatti",
+        "description": "Gestisci i contatti delle aziende",
+        "searchFilterPlaceholder": "Cerca per nome, email, posizione...",
+        "activeFilterPlaceholder": "Stato",
+        "active": "Attivi",
+        "inactive": "Inattivi",
+        "all": "Tutti",
+        "departmentFilterPlaceholder": "Filtra per dipartimento",
+        "contact_type": "Tipo contatto",
+        "primary": "Primario",
+        "secondary": "Secondario",
+        "createNewButton": "Crea nuovo contatto"
+    }
+}
