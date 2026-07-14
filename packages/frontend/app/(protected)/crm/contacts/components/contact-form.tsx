@@ -14,9 +14,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import CompanyCard from "./contact-form/company-card";
+import CompanyCard from "../../../../../components/contact/contact-form/company-card";
 import { Controller, FormProvider, useFieldArray, useForm } from "react-hook-form";
-import { CreateContactForm, createContactSchema } from "@mini-erp/shared";
+import { contactFormSchema, CreateContactForm } from "@mini-erp/shared";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { displayFormErrors } from "@/helpers/form-helper";
 import { useRef } from "react";
@@ -26,12 +26,12 @@ import {
   deleteCompanyContactAction,
 } from "@/actions/company-contact-actions";
 import type { CompanyContactSummary } from "@mini-erp/shared";
-import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
+import { BreadcrumbSetter } from "../../../../../components/ui/breadcrumb-setter";
 import { useActionLabels, useCrumbMap } from "@/hooks/use-breadcrumb";
 import { useNavigation } from "@/hooks/use-navigation";
 import { toast } from "sonner";
 
-export default function ContactForm({ isNew, contact }: ContactFormProps) {
+export default function ContactForm({ isNew, contact, initialCompany }: ContactFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const actionLabels = useActionLabels();
   const crumbs = useCrumbMap();
@@ -41,17 +41,22 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
 
   /**
    * Pre-populated name map built from the contact's already-loaded company
-   * associations. Prevents "Company #id" flash while the search fetch completes.
+   * associations and an optional pre-selected company. Prevents "Company #id"
+   * flash while the search fetch completes.
    */
-  const initialCompanyNameMap = useMemo<Record<string, string>>(
-    () =>
-      Object.fromEntries(
-        (contact?.companies ?? []).map((c) => [c.companyId.toString(), c.company.companyName]),
-      ),
-    // Stable reference: contact viene dal server e non cambia durante il ciclo di vita
+  const initialCompanyNameMap = useMemo<Record<string, string>>(() => {
+    const fromContact = Object.fromEntries(
+      (contact?.companies ?? []).map((c) => [c.companyId.toString(), c.company.companyName]),
+    );
+
+    const fromInitial = initialCompany
+      ? { [initialCompany.id.toString()]: initialCompany.companyName }
+      : {};
+
+    return { ...fromContact, ...fromInitial };
+    // Stable reference: contact e initialCompany vengono dal server e non cambiano
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  }, []);
 
   /**
    * Snapshot of the original company associations loaded from the API.
@@ -130,7 +135,7 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
   const { validateEmailUnique, isValidating } = useContactValidation();
 
   const form = useForm<CreateContactForm>({
-    resolver: standardSchemaResolver(createContactSchema),
+    resolver: standardSchemaResolver(contactFormSchema),
     defaultValues: contact
       ? {
           firstName: contact.firstName,
@@ -156,7 +161,16 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
           mobilePhone: "",
           active: true,
           notes: "",
-          companies: [],
+          companies: initialCompany
+            ? [
+                {
+                  companyId: initialCompany.id.toString(),
+                  position: null,
+                  department: null,
+                  isPrimaryContact: false,
+                },
+              ]
+            : [],
         },
     mode: "onBlur",
   });
@@ -181,7 +195,7 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
       }
     },
     (errors) => {
-      console.error(errors);
+      console.log(errors);
       displayFormErrors(errors);
     },
   );
@@ -210,7 +224,7 @@ export default function ContactForm({ isNew, contact }: ContactFormProps) {
     if (!isFormatValid || !email) return;
 
     // Poi valida l'unicità
-    const isUnique = await validateEmailUnique(email, isNew ? undefined : contactId);
+    const isUnique = await validateEmailUnique(email, isNew ? undefined : contactId || undefined);
 
     if (!isUnique) {
       setError("email", {

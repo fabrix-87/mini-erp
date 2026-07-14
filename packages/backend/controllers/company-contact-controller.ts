@@ -11,15 +11,14 @@ import { getValidatedBody, getValidatedParams } from "@/helpers/validated-contex
 import { AppBindings } from "@/lib/hono-app";
 import { CreateCompanyContactInput, UpdateCompanyContactInput } from "@mini-erp/shared/types";
 import { getContactCompaniesInclude } from "@/helpers/contact-helper";
+import { z } from "zod";
+import { companyContactParamsSchema } from "@/validators/company-contact-validator";
 
 // ============================================================================
 // PARAM TYPE (locale al controller)
 // ============================================================================
 
-type CompanyContactParams = {
-  contactId: number;
-  companyId: number;
-};
+type CompanyContactParams = z.infer<typeof companyContactParamsSchema>;
 
 // ============================================================================
 // CREATE

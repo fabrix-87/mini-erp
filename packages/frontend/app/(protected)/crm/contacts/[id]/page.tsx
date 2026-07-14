@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import ContactDetailsPage from "@/components/contact/contact-details";
+import ContactDetailsPage from "@/app/(protected)/crm/contacts/components/contact-details";
 import { contactIdSchema } from "@mini-erp/shared";
 import { getContactById } from "@/services/server/contact-service";
 

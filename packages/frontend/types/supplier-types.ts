@@ -10,7 +10,7 @@ export const supplierKeys = {
   all: ["supplier"] as const,
   lists: () => [...supplierKeys.all, "list"] as const,
   list: (params: object) => [...supplierKeys.lists(), params] as const,
-  detail: (id: number) => [...supplierKeys.all, "detail", id] as const,
+  detail: (id: string) => [...supplierKeys.all, "detail", id] as const,
   stats: () => [...supplierKeys.all, "stats"] as const,
 };
 
@@ -20,7 +20,7 @@ export const supplierKeys = {
 
 export const SUPPLIER_TAGS = {
   list: "supplier-list",
-  detail: (id: number) => `supplier-${id}`,
+  detail: (id: string) => `supplier-${id}`,
 };
 
 // ============================================================================

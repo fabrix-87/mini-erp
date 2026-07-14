@@ -24,6 +24,8 @@ import { Address } from "./address";
 import { Contact } from "./contact";
 import { CompanyStatus, CompanyTypeEntity } from "../constants";
 import { companyFormSchema } from "../validators";
+import { Customer } from "./customer";
+import { Supplier } from "./supplier";
 
 // ============================================================================
 // ENTITY TYPES
@@ -33,7 +35,7 @@ import { companyFormSchema } from "../validators";
  * Company entity (base for Customer and Supplier)
  */
 export type Company = Omit<CreateCompanyInput, "legalAddress"> & {
-  id: number;
+  id: string;
   code: string;
   country: Country;
   assignedUser?: User | null;
@@ -42,8 +44,9 @@ export type Company = Omit<CreateCompanyInput, "legalAddress"> & {
   legalAddress: Address;
   contacts: Contact[];
   tenants: TenantSettings[];
-  documents: Document[];
   notes: CompanyNote[];
+  customer: Customer;
+  supplier: Supplier;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -148,4 +151,10 @@ export type CompanySearchResult = {
   taxCode: string | null;
   city: string | null;
   countryCode: string;
+};
+
+/** Ruolo commerciale della company nel contesto del tenant */
+export type CompanyRole = {
+  isCustomer: boolean;
+  isSupplier: boolean;
 };

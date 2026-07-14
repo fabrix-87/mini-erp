@@ -67,7 +67,7 @@ export async function searchCustomers(
  * Get customer by ID
  */
 export async function getCustomerById(
-  id: number,
+  id: string,
   revalidate?: number | false,
 ): Promise<Customer> {
   return serverApi.get<Customer>(`/customers/${id}`, { // usare CustomerSingleApiResponse con unwrapData: false
@@ -92,7 +92,7 @@ export async function createCustomer(data: CreateCustomerInput): Promise<Custome
  * Update customer CRM-specific fields (priority, segment, taxRule, etc.)
  * @route PUT /api/customers/:id
  */
-export async function updateCustomer(id: number, data: UpdateCustomerInput): Promise<Customer> {
+export async function updateCustomer(id: string, data: UpdateCustomerInput): Promise<Customer> {
   return serverApi.put<Customer>(`/customers/${id}`, data);
 }
 
@@ -101,7 +101,7 @@ export async function updateCustomer(id: number, data: UpdateCustomerInput): Pro
  * @route PUT /api/customers/:id/company
  */
 export async function updateCustomerCompany(
-  id: number,
+  id: string,
   data: UpdateCustomerCompanyInput,
 ): Promise<Customer> {
   return serverApi.put<Customer>(`/customers/${id}/company`, data);
@@ -110,6 +110,6 @@ export async function updateCustomerCompany(
 /**
  * Delete a customer by ID
  */
-export async function deleteCustomer(id: number): Promise<CustomerDeleteApiResponse> {
+export async function deleteCustomer(id: string): Promise<CustomerDeleteApiResponse> {
   return serverApi.delete<CustomerDeleteApiResponse>(`/customers/${id}`);
 }

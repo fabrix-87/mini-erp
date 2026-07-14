@@ -74,7 +74,7 @@ export async function searchSuppliers(
  * Get supplier by ID
  */
 export async function getSupplierById(
-  id: number,
+  id: string,
   revalidate?: number | false,
 ): Promise<Supplier> {
   return serverApi.get<Supplier>(`/suppliers/${id}`, {
@@ -102,7 +102,7 @@ export async function createSupplier(
  * @route PUT /api/suppliers/:id
  */
 export async function updateSupplier(
-  id: number,
+  id: string,
   data: UpdateSupplierForm,
 ): Promise<Supplier> {
   return serverApi.put<Supplier>(`/suppliers/${id}`, data);
@@ -113,7 +113,7 @@ export async function updateSupplier(
  * @route PUT /api/suppliers/:id/company
  */
 export async function updateSupplierCompany(
-  id: number,
+  id: string,
   data: UpdateSupplierCompanyInput,
 ): Promise<Supplier> {
   return serverApi.put<Supplier>(`/suppliers/${id}/company`, data);
@@ -123,7 +123,7 @@ export async function updateSupplierCompany(
  * Delete a supplier by ID
  */
 export async function deleteSupplier(
-  id: number,
+  id: string,
 ): Promise<SupplierDeleteApiResponse> {
   return serverApi.delete<SupplierDeleteApiResponse>(`/suppliers/${id}`);
 }

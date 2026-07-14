@@ -16,7 +16,7 @@ import {
   updateContactSchema,
 } from "../validators";
 import { Activity, ActivityParticipant } from "./activity";
-import { Company } from "./company";
+import { Company, CompanyRole } from "./company";
 import { Document } from "./document";
 
 // ============================================================================
@@ -47,7 +47,16 @@ export type CompanyContactSummary = Pick<
   CompanyContactContext,
   "id" | "companyId" | "isPrimaryContact" | "position" | "department"
 > & {
-  company: Company;
+  company: {
+    id: string;
+    code: string;
+    companyName: string;
+    tradeName: string | null;
+    mainEmail: string | null;
+    mainPhone: string | null;
+    customer: { id: string } | null;
+    supplier: { id: string } | null;
+  } & CompanyRole;
 };
 
 // ============================================================================

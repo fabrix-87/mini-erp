@@ -26,7 +26,7 @@ export const customerKeys = {
   all: ["customer"] as const,
   lists: () => [...customerKeys.all, "list"] as const,
   list: (params: object) => [...customerKeys.lists(), params] as const,
-  detail: (id: number) => [...customerKeys.all, "detail", id] as const,
+  detail: (id: string) => [...customerKeys.all, "detail", id] as const,
   stats: () => [...customerKeys.all, "stats"] as const,
 };
 
@@ -36,7 +36,7 @@ export const customerKeys = {
 
 export const CUSTOMER_TAGS = {
   list: "customer-list",
-  detail: (id: number) => `customer-${id}`,
+  detail: (id: string) => `customer-${id}`,
 };
 
 // ============================================================================

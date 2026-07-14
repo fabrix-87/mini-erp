@@ -3,9 +3,8 @@
 // types/contact.ts
 // ============================================================================
 
-import { Contact, CreateContactInput, UpdateContactInput } from "@mini-erp/shared/types";
-import { ApiResponse, PaginatedResponse, PaginationInfo } from "./api";
-import { ContactSortField, SortOrder } from "@mini-erp/shared/constants";
+import { Company, Contact } from "@mini-erp/shared/types";
+import { ApiResponse, PaginatedResponse } from "./api";
 import { ContactQueryInput } from "@mini-erp/shared";
 
 export type {
@@ -94,7 +93,7 @@ export interface ContactFiltersType {
 export interface ContactFormProps {
   contact?: Contact | null;
   isNew?: boolean;
-  companyId?: string;
+  initialCompany?: Company | null;
 }
 
 /**

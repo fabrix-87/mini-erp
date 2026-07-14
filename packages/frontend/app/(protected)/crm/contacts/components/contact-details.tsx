@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Contact } from "@mini-erp/shared";
 import { formatDateIT } from "@/helpers/date-helper";
-import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
+import { BreadcrumbSetter } from "../../../../../components/ui/breadcrumb-setter";
 import { useCrumbMap } from "@/hooks/use-breadcrumb";
 import { useNavigation } from "@/hooks/use-navigation";
 
@@ -307,7 +307,11 @@ export default function ContactDetails({ contact, contactId }: Props) {
                         size="icon"
                         className="h-7 w-7 shrink-0"
                         title="Apri scheda azienda"
-                        onClick={() => navigateToDetail("company", entry.companyId)}
+                        onClick={() =>
+                          entry.company.isCustomer
+                            ? navigateToDetail("customers", entry.company.customer!.id)
+                            : navigateToDetail("suppliers", entry.company.supplier!.id)
+                        }
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                       </Button>

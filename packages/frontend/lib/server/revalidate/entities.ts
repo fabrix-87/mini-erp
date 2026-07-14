@@ -53,13 +53,13 @@ export const leadRevalidation = {
  */
 export const customerRevalidation = {
   /** Revalidate specific customer detail and path. */
-  customer: (id: number) => revalidateEntity("customer", id, { routeKey: "customers" }),
+  customer: (id: string) => revalidateEntity("customer", id, { routeKey: "customers" }),
 
   /** Revalidate customers list. */
   list: () => revalidateEntity("customer", undefined, { routeKey: "customers" }),
 
   /** Revalidate specific customer and customers list. */
-  customerWithList: (id: number) =>
+  customerWithList: (id: string) =>
     revalidateEntityWithList("customer", id, { routeKey: "customers" }),
 };
 
@@ -69,13 +69,13 @@ export const customerRevalidation = {
  */
 export const supplierRevalidation = {
   /** Revalidate specific supplier detail and path. */
-  supplier: (id: number) => revalidateEntity("supplier", id, { routeKey: "suppliers" }),
+  supplier: (id: string) => revalidateEntity("supplier", id, { routeKey: "suppliers" }),
 
   /** Revalidate suppliers list. */
   list: () => revalidateEntity("supplier", undefined, { routeKey: "suppliers" }),
 
   /** Revalidate specific supplier and suppliers list. */
-  supplierWithList: (id: number) =>
+  supplierWithList: (id: string) =>
     revalidateEntityWithList("supplier", id, { routeKey: "suppliers" }),
 };
 

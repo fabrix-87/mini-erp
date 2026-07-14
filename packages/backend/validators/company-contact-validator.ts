@@ -1,10 +1,10 @@
 import { validateBody, validateParams } from "../middleware/validation-middleware";
 import {
   createCompanyContactSchema,
+  createCuidSchema,
   updateCompanyContactSchema,
 } from "@mini-erp/shared/validators";
 import { z } from "zod";
-import { createIdSchema } from "@mini-erp/shared/validators";
 
 // ============================================================================
 // PARAMS SCHEMA (backend-only — not in shared)
@@ -14,8 +14,8 @@ import { createIdSchema } from "@mini-erp/shared/validators";
  * Composite param schema for routes using /:contactId/:companyId.
  */
 export const companyContactParamsSchema = z.object({
-  contactId: createIdSchema("Contact ID non valido"),
-  companyId: createIdSchema("Company ID non valido"),
+  contactId: createCuidSchema("Contact ID non valido"),
+  companyId: createCuidSchema("Company ID non valido"),
 });
 
 // ============================================================================

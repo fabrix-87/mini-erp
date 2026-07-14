@@ -46,7 +46,7 @@ export async function searchSupplierAction(
 /**
  * Get supplier by ID
  */
-export async function getSupplierByIdAction(id: number): Promise<ActionResult<Supplier>> {
+export async function getSupplierByIdAction(id: string): Promise<ActionResult<Supplier>> {
   return withAuth(async () => {
     return await getSupplierById(id, false);
   }, "supplier:read");
@@ -74,7 +74,7 @@ export async function createSupplierAction(
  * Update supplier procurement-specific fields
  */
 export async function updateSupplierAction(
-  id: number,
+  id: string,
   data: UpdateSupplierForm,
 ): Promise<ActionResult<Supplier>> {
   const result = await withAuth(async () => {
@@ -90,7 +90,7 @@ export async function updateSupplierAction(
  * Update company data of a supplier
  */
 export async function updateSupplierCompanyAction(
-  id: number,
+  id: string,
   data: UpdateSupplierCompanyInput,
 ): Promise<ActionResult<Supplier>> {
   const result = await withAuth(async () => {
@@ -105,7 +105,7 @@ export async function updateSupplierCompanyAction(
 /**
  * Delete a supplier and redirect to list
  */
-export async function deleteSupplierAction(id: number): Promise<ActionResult> {
+export async function deleteSupplierAction(id: string): Promise<ActionResult> {
   const result = await withAuth(async () => {
     const response = await deleteSupplier(id);
     supplierRevalidation.list();

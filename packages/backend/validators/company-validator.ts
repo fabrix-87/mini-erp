@@ -1,5 +1,5 @@
-import { validateQuery } from "../middleware/validation-middleware";
-import { companyQueryBaseSchema } from "@mini-erp/shared/validators";
+import { validateParams, validateQuery } from "../middleware/validation-middleware";
+import { companyIdSchema, companyQueryBaseSchema } from "@mini-erp/shared/validators";
 
 // ============================================================================
 // MIDDLEWARE
@@ -8,4 +8,9 @@ import { companyQueryBaseSchema } from "@mini-erp/shared/validators";
 export const validateCompanyQuery = validateQuery(
   companyQueryBaseSchema,
   "Company search"
+);
+
+export const validateCompanyIdParam = validateParams(
+  companyIdSchema,
+  "Company ID"
 );

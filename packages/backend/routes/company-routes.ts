@@ -1,5 +1,5 @@
-import { validateCompanyQuery } from "../validators/company-validator";
-import { listCompanies } from "../controllers/company-controller";
+import { validateCompanyIdParam, validateCompanyQuery } from "../validators/company-validator";
+import { getCompanyById, listCompanies } from "../controllers/company-controller";
 import { authorize } from "@/middleware/auth-middleware";
 import { createHonoApp } from "@/lib/hono-app";
 import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
@@ -22,6 +22,19 @@ companyRoutes.get(
   authorize(["company:read", "company:manage"]),
   validateCompanyQuery,
   listCompanies,
+);
+
+/**
+ * @route   GET /api/companies/:id
+ * @desc    Ottieni l'azienda da ID
+ * @access  Private (company:read)
+ */
+companyRoutes.get(
+  "/:id",
+  requireTenantScope,
+  authorize(["company:read", "company:manage"]),
+  validateCompanyIdParam,
+  getCompanyById,
 );
 
 export default companyRoutes;

@@ -28,7 +28,7 @@ import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import { Prisma } from "@/generated/prisma/client";
 import { CONTACT_SORT_FIELDS } from "@mini-erp/shared";
-import { getContactCompaniesInclude } from "@/helpers/contact-helper";
+import { getContactCompaniesInclude, mapContactCompanyFlags } from "@/helpers/contact-helper";
 import { connectById, tenantFilter, withTenantId } from "@/helpers/prisma-helper";
 import { ConflictError } from "@/utils/app-error-utils";
 
@@ -70,7 +70,7 @@ export const getAllContacts = async (c: Context<AppBindings>) => {
           ...(companyId !== undefined && { companyId }),
           ...(isPrimaryContact !== undefined && { isPrimaryContact }),
           ...(department && { department: { contains: department, mode: "insensitive" } }),
-          ...(position && { position: { contains: position, mode: "insensitive" } }),
+          ...(search && { position: { contains: search, mode: "insensitive" } }),
         },
       },
     }),
@@ -116,7 +116,7 @@ export const getContactById = async (c: Context<AppBindings>) => {
     return sendNotFound(c, "Contatto non trovato");
   }
 
-  return sendSuccess(c, contact);
+  return sendSuccess(c, mapContactCompanyFlags(contact));
 };
 
 // ============================================================================

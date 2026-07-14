@@ -39,7 +39,7 @@ export async function searchCustomerAction(
 /**
  * Get customer by ID
  */
-export async function getCustomerByIdAction(id: number): Promise<ActionResult<Customer>> {
+export async function getCustomerByIdAction(id: string): Promise<ActionResult<Customer>> {
   return withAuth(async () => {
     return await getCustomerById(id, false);
   }, "customer:read");
@@ -67,7 +67,7 @@ export async function createCustomerAction(
  * Update customer CRM-specific fields
  */
 export async function updateCustomerAction(
-  id: number,
+  id: string,
   data: UpdateCustomerInput,
 ): Promise<ActionResult<Customer>> {
   const result = await withAuth(async () => {
@@ -83,7 +83,7 @@ export async function updateCustomerAction(
  * Update company data of a customer
  */
 export async function updateCustomerCompanyAction(
-  id: number,
+  id: string,
   data: UpdateCustomerCompanyInput,
 ): Promise<ActionResult<Customer>> {
   const result = await withAuth(async () => {
@@ -98,7 +98,7 @@ export async function updateCustomerCompanyAction(
 /**
  * Delete a customer and redirect to list
  */
-export async function deleteCustomerAction(id: number): Promise<ActionResult> {
+export async function deleteCustomerAction(id: string): Promise<ActionResult> {
   const result = await withAuth(async () => {
     const response = await deleteCustomer(id);
     customerRevalidation.list();

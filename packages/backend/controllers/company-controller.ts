@@ -11,6 +11,7 @@ import {
 } from "@/helpers/validated-context";
 import { CompanyWhereInput } from "@/generated/prisma/models";
 import { withTenantId } from "@/helpers/prisma-helper";
+import { AddressType } from "@/generated/prisma/enums";
 
 /**
  * GET /companies
@@ -80,24 +81,31 @@ export const listCompanies = async (c: Context<AppBindings>) => {
 };
 
 /**
- * GET /companies/:id
+ * Retrieves a single company by ID, scoped to the current tenant.
+ * Includes legal address, notes, and commercial role (customer/supplier).
+ *
+ * @route GET /companies/:id
  */
 export const getCompanyById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<CompanyIdParam>(c);
   const tenantId = getRequiredTenantId(c);
 
-  const company = await prisma.company.findFirst({
-    where: withTenantId({ id }, tenantId),
+  const company = await prisma.company.findUnique({
+    where: { id, tenantId },
     include: {
       addresses: {
         where: {
-          addressType: "LEGAL",
+          addressType: AddressType.LEGAL,
         },
       },
-      documents: true,
-      notes: true,
+      customer: true,
+      supplier: true,
+      notes: {
+        include: { author: true },
+      },
     },
   });
+
   if (!company) return sendNotFound(c, "Company not found");
   return sendSuccess(c, company);
 };

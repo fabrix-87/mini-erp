@@ -9,8 +9,8 @@ export default async function CustomerDetailPage({ params }: PageIdProps) {
 
   const { id } = await params;
 
-  const result = await getCustomerByIdAction(parseInt(id));
-
+  const result = await getCustomerByIdAction(id);
+  
   if (!result.success || !result.data) notFound();
 
   return <CompanyDetailPage data={result.data} companyType="CUSTOMER" />;

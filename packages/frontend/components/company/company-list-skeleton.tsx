@@ -31,9 +31,9 @@ export function CompanyListSkeleton() {
       {/* Filters */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center">
         <Skeleton className="h-10 flex-1" />
-        <Skeleton className="h-10 w-[180px]" />
-        <Skeleton className="h-10 w-[180px]" />
-        <Skeleton className="h-10 w-[180px]" />
+        <Skeleton className="h-10 w-45" />
+        <Skeleton className="h-10 w-45" />
+        <Skeleton className="h-10 w-45" />
         <Skeleton className="h-10 w-10" />
       </div>
 

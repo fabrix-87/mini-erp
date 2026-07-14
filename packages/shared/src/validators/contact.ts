@@ -110,6 +110,17 @@ export const createContactSchema = z
   })
   .strict();
 
+export const contactFormSchema = createContactSchema.extend({
+  companies: z
+    .array(
+      z.object({
+        companyId: createCuidSchema("Company ID deve essere positivo"),
+        ...companyContactFieldsSchema.shape,
+      }),
+    )
+    .min(1, "Almeno una company è obbligatoria"),
+});
+
 /**
  * Schema for updating a Contact.
  * companies is optional — associations can be managed separately via CompanyContact endpoints.

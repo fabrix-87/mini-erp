@@ -1,4 +1,4 @@
-import ContactForm from "@/components/contact/contact-form";
+import ContactForm from "@/app/(protected)/crm/contacts/components/contact-form";
 import { requirePermission } from "@/lib/server/auth";
 import { getContactById } from "@/services/server/contact-service";
 

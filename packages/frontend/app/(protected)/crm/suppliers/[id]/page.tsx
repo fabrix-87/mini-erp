@@ -9,7 +9,7 @@ export default async function SupplierDetailPage({ params }: PageIdProps) {
 
   const { id } = await params;
 
-  const result = await getSupplierByIdAction(parseInt(id));
+  const result = await getSupplierByIdAction(id);
 
   if (!result.success || !result.data) notFound();
 
