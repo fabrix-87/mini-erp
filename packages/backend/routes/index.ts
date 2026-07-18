@@ -31,7 +31,7 @@ publicRoutes.route("/auth", authRoutes);
 
 /** TODO: add system routes */
 systemRoutes.use("*", authenticateToken);
-systemRoutes.route("/tenant", tenantRoutes);
+systemRoutes.route("/tenants", tenantRoutes);
 systemRoutes.route("/languages", languageRoutes);
 systemRoutes.route("/currencies", currencyRoutes);
 systemRoutes.route("/countries", countryRoutes);

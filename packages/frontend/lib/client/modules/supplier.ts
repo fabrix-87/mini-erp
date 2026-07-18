@@ -26,7 +26,7 @@ export const getDashboardStats = async (): Promise<ApiResponse<SupplierStats>> =
  * Recupera un singolo fornitore per ID
  */
 export const getSupplierById = async (
-  id: number
+  id: string
 ): Promise<ApiResponse<Supplier>> => {
   const response = await api.get(`/suppliers/${id}`);
   return response.data;
@@ -46,7 +46,7 @@ export const createSupplier = async (
  * Aggiorna un fornitore esistente
  */
 export const updateSupplier = async (
-  id: number,
+  id: string,
   data: Partial<Supplier>
 ): Promise<ApiResponse<Supplier>> => {
   const response = await api.put(`/suppliers/${id}`, data);
@@ -57,7 +57,7 @@ export const updateSupplier = async (
  * Elimina un fornitore
  */
 export const deleteSupplier = async (
-  id: number
+  id: string
 ): Promise<ApiResponse<void>> => {
   const response = await api.delete(`/suppliers/${id}`);
   return response.data;
@@ -67,7 +67,7 @@ export const deleteSupplier = async (
  * Recupera i prodotti di un fornitore
  */
 export const getSupplierProducts = async (
-  id: number
+  id: string
 ): Promise<ApiResponse<any[]>> => {
   const response = await api.get(`/suppliers/${id}/products`);
   return response.data;
@@ -77,7 +77,7 @@ export const getSupplierProducts = async (
  * Recupera gli ordini di acquisto di un fornitore
  */
 export const getSupplierOrders = async (
-  id: number,
+  id: string,
   params?: { page?: number; limit?: number }
 ): Promise<ApiResponse<any[]>> => {
   const response = await api.get(`/suppliers/${id}/orders`, { params });

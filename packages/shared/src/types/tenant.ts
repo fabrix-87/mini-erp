@@ -32,7 +32,7 @@ export interface Tenant {
   code: string;
   status: TenantStatus;
   plan: TenantPlan;
-  companyId: number;
+  companyId: string;
   taxRegime: TaxRegime;
   defaultSalesTaxRuleId: number | null;
   defaultPurchasesTaxRuleId: number | null;
@@ -42,6 +42,20 @@ export interface Tenant {
   sdiCertificatePath: string | null;
   createdAt: Date;
   updatedAt: Date;
+}
+
+/**
+ * Tenant with company data and relations counts eagerly loaded.
+ */
+export interface TenantWithDetails extends Tenant {
+  company: Company;
+  _count: {
+    memberships: number;
+    customers: number;
+    suppliers: number;
+    products: number;
+    leads: number;
+  }
 }
 
 /**

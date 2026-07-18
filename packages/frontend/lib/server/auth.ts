@@ -94,6 +94,31 @@ export async function getCurrentUser(options?: {
   });
 }
 
+/**
+ * Returns the current tenant ID from the authenticated session.
+ *
+ * Leverages per-request memoization via {@link fetchSessionPayload} —
+ * no extra network call is made if the session was already fetched
+ * in the same render pass (e.g. by `requireAuth` or `getCurrentUser`).
+ *
+ * @throws {Error} If the session has no `currentTenant.id` (unauthenticated
+ *   or tenant not resolved by the backend).
+ * @returns The current tenant ID as a string.
+ */
+export async function getCurrentTenantId(): Promise<string> {
+  const session = await fetchSessionPayload();
+  const tenantId = session.currentTenant?.tenantId;
+
+  if (!tenantId) {
+    throw new Error(
+      'getCurrentTenantId: no active tenant found in session. ' +
+      'Ensure the user is authenticated and has a resolved currentTenant.',
+    );
+  }
+
+  return tenantId;
+}
+
 // ============================================================================
 // Permission Checks
 // ============================================================================

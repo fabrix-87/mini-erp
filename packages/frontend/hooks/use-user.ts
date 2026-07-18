@@ -2,21 +2,9 @@
 "use client";
 
 import { clientUserService } from "@/services/client/user";
+import { userKeys } from "@/types/user-types";
 import { UserQueryInput } from "@mini-erp/shared";
 import { useQuery } from "@tanstack/react-query";
-
-// ============================================================================
-// Query Keys
-// ============================================================================
-
-export const userKeys = {
-  all: ["users"] as const,
-  lists: () => [...userKeys.all, "list"] as const,
-  list: (params: UserQueryInput) => [...userKeys.lists(), params] as const,
-  details: () => [...userKeys.all, "detail"] as const,
-  detail: (id: number) => [...userKeys.details(), id] as const,
-  stats: () => [...userKeys.all, "stats"] as const,
-};
 
 // ============================================================================
 // Hooks
@@ -35,7 +23,7 @@ export function useUsers(params: UserQueryInput) {
 /**
  * Hook per una singolo user
  */
-export function useUser(id: number | undefined, enabled = true) {
+export function useUser(id: string | undefined, enabled = true) {
   return useQuery({
     queryKey: userKeys.detail(id!),
     queryFn: () => clientUserService.getUserById(id!),

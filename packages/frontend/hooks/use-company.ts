@@ -66,7 +66,7 @@ export function useCustomers(
 /**
  * Fetches a single customer by ID.
  */
-export function useCustomer(id: number | undefined, enabled = true) {
+export function useCustomer(id: string | undefined, enabled = true) {
   return useQuery({
     queryKey: ["customer", id],
     queryFn: () => getCustomerById(id!),
@@ -92,7 +92,7 @@ export function useDeleteCustomer() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => deleteCustomer(id),
+    mutationFn: (id: string) => deleteCustomer(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
       toast.success("Cliente eliminato con successo");
@@ -131,7 +131,7 @@ export function useSuppliers(
 /**
  * Fetches a single supplier by ID.
  */
-export function useSupplier(id: number | undefined, enabled = true) {
+export function useSupplier(id: string | undefined, enabled = true) {
   return useQuery({
     queryKey: ["supplier", id],
     queryFn: () => getSupplierById(id!),
@@ -156,7 +156,7 @@ export function useDeleteSupplier() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => deleteSupplier(id),
+    mutationFn: (id: string) => deleteSupplier(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       toast.success("Fornitore eliminato con successo");
@@ -176,7 +176,7 @@ export function useDeleteSupplier() {
  */
 export function useCompanyEntity(
   type: "CUSTOMER" | "SUPPLIER",
-  id: number | undefined,
+  id: string | undefined,
   enabled = true,
 ) {
   return useQuery({

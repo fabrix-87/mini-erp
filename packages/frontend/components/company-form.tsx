@@ -46,7 +46,7 @@ export default function CompanyFormPage({ initialData, companyType }: CompanyFor
   const entityType = companyType === "CUSTOMER" ? "customers" : "suppliers";
 
   const isEditMode = !!initialData;
-  const entityId = initialData ? (initialData as { id: number }).id : undefined;
+  const entityId = initialData ? (initialData as { id: string }).id : undefined;
 
   const [isPending, startTransition] = useTransition();
 

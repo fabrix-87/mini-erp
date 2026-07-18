@@ -18,7 +18,7 @@ export const clientUserService = {
     return data;
   },
 
-  async getUserById(id: number): Promise<UserSingleApiResponse> {
+  async getUserById(id: string): Promise<UserSingleApiResponse> {
     const { data } = await api.get<UserSingleApiResponse>(`/users/${id}`);
     return data;
   },

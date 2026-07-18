@@ -9,7 +9,7 @@ import {
   sdiCodeSchema,
   vatNumberSchema,
 } from "./business/italian-codes";
-import { emailSchema, phoneSchema } from "./primitives/string";
+import { emailSchema, phoneSchema, urlSchema } from "./primitives/string";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import { createNestedAddressSchema } from "./address";
 
@@ -117,6 +117,9 @@ const baseCompanyShape = z.object({
 
   /** Primary contact phone number. */
   mainPhone: phoneSchema.optional().nullable(),
+
+  /** Company website URL. */
+  mainWebsite: urlSchema(false, 255),
 
   // ===== Relations =====
 

@@ -10,7 +10,7 @@ import {
   sdiCodeSchema,
   vatNumberSchema,
 } from "../business/italian-codes";
-import { emailSchema, phoneSchema } from "../primitives/string";
+import { emailSchema, phoneSchema, urlSchema } from "../primitives/string";
 import { companyStatusSchema, companyTypeEntitySchema } from "../company";
 import {
   customerTypeSchema,
@@ -53,6 +53,7 @@ export const companyFormSchema = z.object({
   countryCode: countryCodeBaseSchema.default("IT"),
   mainEmail: emailSchema().optional().nullable(),
   mainPhone: phoneSchema.optional().nullable(),
+  mainWebsite: urlSchema(false, 255).optional().nullable(),
   assignedUserId: userIdSchema.optional().nullable(),
   customFields: inputJsonValueSchema.optional().nullable(),
 

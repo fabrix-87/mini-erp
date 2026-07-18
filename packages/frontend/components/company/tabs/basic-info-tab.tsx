@@ -117,6 +117,11 @@ export function BasicInfoTab() {
               <Input id="mainPhone" {...register("mainPhone")} placeholder="+39 02 1234567" />
               <FormFieldError error={errors.mainPhone} />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="mainWebsite">Sito web</Label>
+              <Input id="mainWebsite" {...register("mainWebsite")} placeholder="https://www.example.com" />
+              <FormFieldError error={errors.mainWebsite} />
+            </div>
           </div>
         </CardContent>
       </Card>

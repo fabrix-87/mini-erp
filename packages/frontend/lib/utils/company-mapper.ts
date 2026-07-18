@@ -54,6 +54,7 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
     countryCode: company.countryCode ?? "IT",
     mainEmail: company.mainEmail ?? null,
     mainPhone: company.mainPhone ?? null,
+    mainWebsite: company.mainWebsite ?? null,
     assignedUserId: company.assignedUserId ?? null,
     customFields: company.customFields ?? null,
 
@@ -148,6 +149,7 @@ export function extractCompanyData(data: CompanyFormValues): CreateCompanyInput 
     eoriNumber: data.eoriNumber,
     mainEmail: data.mainEmail,
     mainPhone: data.mainPhone,
+    mainWebsite: data.mainWebsite,
     assignedUserId: data.assignedUserId ?? undefined,
     customFields: data.customFields,
     legalAddress: data.legalAddress,

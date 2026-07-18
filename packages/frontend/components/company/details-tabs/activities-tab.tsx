@@ -11,7 +11,7 @@ import { Plus, Calendar, User, Clock } from "lucide-react";
 import { getActivities } from "@/services/client/activity";
 
 interface CompanyActivitiesTabProps {
-  companyId: number;
+  companyId: string;
 }
 
 export function CompanyActivitiesTab({ companyId }: CompanyActivitiesTabProps) {

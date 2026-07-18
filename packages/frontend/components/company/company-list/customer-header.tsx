@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { CustomerQueryInput } from "@mini-erp/shared";
 import { CompanyListStats } from "../company-list-stats";
-import { useRouter } from "next/navigation";
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface Props {
     searchParams: CustomerQueryInput;
@@ -27,7 +27,7 @@ export default function CustomerHeaderListPage({
   handleSearchChange,
   handleFilterChange
 }: Props) {
-  const router = useRouter();
+  const { navigateToNew } = useNavigation()
 
   return (
     <>
@@ -41,7 +41,7 @@ export default function CustomerHeaderListPage({
             <Download className="mr-2 h-4 w-4" />
             Esporta
           </Button>
-          <Button onClick={() => router.push("/customers/new")}>
+          <Button onClick={() => navigateToNew('customers')}>
             <Plus className="mr-2 h-4 w-4" />
             Nuovo Cliente
           </Button>

@@ -21,7 +21,7 @@ import { getDocuments } from "@/lib/client/modules/document";
 import { formatCurrency } from "@mini-erp/shared";
 
 interface CompanyDocumentsTabProps {
-  companyId: number;
+  companyId: string;
   companyType: CompanyType;
 }
 

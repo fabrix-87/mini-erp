@@ -3,14 +3,7 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  FileText,
-  Users,
-  MapPin,
-  Activity,
-  FileCheck,
-  Package,
-} from "lucide-react";
+import { FileText, Users, MapPin, Activity, FileCheck, Package } from "lucide-react";
 import { Customer } from "@/types/customer-types";
 import { Supplier } from "@/types/supplier-types";
 import { CompanyType } from "@/types/company-types";
@@ -25,10 +18,7 @@ interface CompanyDetailTabsProps {
   companyType: CompanyType;
 }
 
-export function CompanyDetailTabs({
-  data,
-  companyType,
-}: CompanyDetailTabsProps) {
+export function CompanyDetailTabs({ data, companyType }: CompanyDetailTabsProps) {
   const [activeTab, setActiveTab] = useState("info");
 
   return (
@@ -57,7 +47,11 @@ export function CompanyDetailTabs({
       </TabsList>
 
       <TabsContent value="info" className="mt-6">
-        <CompanyInfoTab data={data} companyType={companyType} />
+        {companyType === "CUSTOMER" ? (
+          <CompanyInfoTab data={data as Customer} companyType="CUSTOMER" />
+        ) : (
+          <CompanyInfoTab data={data as Supplier} companyType="SUPPLIER" />
+        )}
       </TabsContent>
 
       <TabsContent value="contacts" className="mt-6">
@@ -69,10 +63,7 @@ export function CompanyDetailTabs({
       </TabsContent>
 
       <TabsContent value="documents" className="mt-6">
-        <CompanyDocumentsTab
-          companyId={data.companyId}
-          companyType={companyType}
-        />
+        <CompanyDocumentsTab companyId={data.companyId} companyType={companyType} />
       </TabsContent>
 
       <TabsContent value="activities" className="mt-6">

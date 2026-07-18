@@ -6,30 +6,21 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Customer } from "@/types/customer-types";
 import { Supplier } from "@/types/supplier-types";
-import { CompanyType } from "@/types/company-types";
-import {
-  Building2,
-  FileText,
-  CreditCard,
-  TrendingUp,
-  Calendar,
-  Tag,
-} from "lucide-react";
+import { Building2, FileText, CreditCard, TrendingUp, Tag } from "lucide-react";
+import { formatDateIT } from "@/helpers/date-helper";
 
-interface CompanyInfoTabProps {
-  data: Customer | Supplier;
-  companyType: CompanyType;
-}
+type CompanyInfoTabProps =
+  | {
+      companyType: "CUSTOMER";
+      data: Customer; // Quando è CUSTOMER, data è un Customer
+    }
+  | {
+      companyType: "SUPPLIER";
+      data: Supplier; // Quando è SUPPLIER, data è un Supplier
+    };
 
 export function CompanyInfoTab({ data, companyType }: CompanyInfoTabProps) {
   const companyData = data.company;
-
-  const formatDate = (date?: string) => {
-    if (!date) return "N/A";
-    return new Intl.DateTimeFormat("it-IT", {
-      dateStyle: "medium",
-    }).format(new Date(date));
-  };
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -44,42 +35,28 @@ export function CompanyInfoTab({ data, companyType }: CompanyInfoTabProps) {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Ragione Sociale
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Ragione Sociale</p>
               <p className="text-sm">{companyData?.companyName || "N/A"}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Nome Commerciale
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Nome Commerciale</p>
               <p className="text-sm">{companyData?.tradeName || "N/A"}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Forma Giuridica
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Forma Giuridica</p>
               <p className="text-sm">{companyData?.legalForm || "N/A"}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Codice
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Codice</p>
               <p className="text-sm font-mono">{companyData?.code || "N/A"}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Tipo Entità
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Tipo Entità</p>
               <Badge variant="outline">{companyData?.entityType || "N/A"}</Badge>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Stato</p>
-              <Badge
-                variant={
-                  companyData?.status === "ACTIVE" ? "default" : "secondary"
-                }
-              >
+              <Badge variant={companyData?.status === "ACTIVE" ? "default" : "secondary"}>
                 {companyData?.status || "N/A"}
               </Badge>
             </div>
@@ -90,13 +67,33 @@ export function CompanyInfoTab({ data, companyType }: CompanyInfoTabProps) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium text-muted-foreground">Email</p>
-              <p className="text-sm">{companyData?.mainEmail || "N/A"}</p>
+              <p className="text-sm">
+                {companyData?.mainEmail ? (
+                  <a href={`mailto:${companyData.mainEmail}`}>{companyData.mainEmail}</a>
+                ) : (
+                  "N/A"
+                )}
+              </p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Telefono
+              <p className="text-sm font-medium text-muted-foreground">Telefono</p>
+              <p className="text-sm">
+                {companyData?.mainPhone ? (
+                  <a href={`tel:${companyData.mainPhone}`}>{companyData.mainPhone}</a>
+                ) : (
+                  "N/A"
+                )}
               </p>
-              <p className="text-sm">{companyData?.mainPhone || "N/A"}</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Sito web</p>
+              <p className="text-sm">
+                {companyData?.mainWebsite ? (
+                  <a href={companyData.mainWebsite}>{companyData.mainWebsite}</a>
+                ) : (
+                  "N/A"
+                )}
+              </p>
             </div>
           </div>
         </CardContent>
@@ -113,25 +110,15 @@ export function CompanyInfoTab({ data, companyType }: CompanyInfoTabProps) {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Partita IVA
-              </p>
-              <p className="text-sm font-mono">
-                {companyData?.vatNumber || "N/A"}
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Partita IVA</p>
+              <p className="text-sm font-mono">{companyData?.vatNumber || "N/A"}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Codice Fiscale
-              </p>
-              <p className="text-sm font-mono">
-                {companyData?.taxCode || "N/A"}
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Codice Fiscale</p>
+              <p className="text-sm font-mono">{companyData?.taxCode || "N/A"}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Codice SDI
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Codice SDI</p>
               <p className="text-sm font-mono">{companyData?.sdiCode || "N/A"}</p>
             </div>
             <div>
@@ -139,23 +126,15 @@ export function CompanyInfoTab({ data, companyType }: CompanyInfoTabProps) {
               <p className="text-sm">{companyData?.pec || "N/A"}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Codice EORI
-              </p>
-              <p className="text-sm font-mono">
-                {companyData?.eoriNumber || "N/A"}
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Codice EORI</p>
+              <p className="text-sm font-mono">{companyData?.eoriNumber || "N/A"}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                VAT ID (UE)
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">VAT ID (UE)</p>
               <p className="text-sm font-mono">{companyData?.vatId || "N/A"}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Nazione Fiscale
-              </p>
+              <p className="text-sm font-medium text-muted-foreground">Nazione Fiscale</p>
               <Badge variant="outline">{companyData?.countryCode || "IT"}</Badge>
             </div>
           </div>
@@ -175,58 +154,26 @@ export function CompanyInfoTab({ data, companyType }: CompanyInfoTabProps) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Tipo</p>
-                <Badge>{(data as Customer).type || "N/A"}</Badge>
+                <Badge>{data.type || "N/A"}</Badge>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Segmento
-                </p>
-                <Badge variant="secondary">
-                  {(data as Customer).segment || "N/A"}
+                <p className="text-sm font-medium text-muted-foreground">Segmento</p>
+                <Badge variant="secondary">{data.segment || "N/A"}</Badge>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Priorità</p>
+                <Badge variant={data.priority === "HIGH" ? "destructive" : "outline"}>
+                  {data.priority || "N/A"}
                 </Badge>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Priorità
-                </p>
-                <Badge
-                  variant={
-                    (data as Customer).priority === "HIGH"
-                      ? "destructive"
-                      : "outline"
-                  }
-                >
-                  {(data as Customer).priority || "N/A"}
-                </Badge>
+                <p className="text-sm font-medium text-muted-foreground">Dimensione</p>
+                <Badge variant="outline">{data.size || "N/A"}</Badge>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Status Lead
-                </p>
-                <Badge variant="outline">
-                  {(data as Customer).leadStatus || "N/A"}
-                </Badge>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Dimensione
-                </p>
-                <Badge variant="outline">
-                  {(data as Customer).size || "N/A"}
-                </Badge>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Credit Status
-                </p>
-                <Badge
-                  variant={
-                    (data as Customer).creditStatus === "APPROVED"
-                      ? "default"
-                      : "secondary"
-                  }
-                >
-                  {(data as Customer).creditStatus || "N/A"}
+                <p className="text-sm font-medium text-muted-foreground">Credit Status</p>
+                <Badge variant={data.creditStatus === "APPROVED" ? "default" : "secondary"}>
+                  {data.creditStatus || "N/A"}
                 </Badge>
               </div>
             </div>
@@ -246,37 +193,22 @@ export function CompanyInfoTab({ data, companyType }: CompanyInfoTabProps) {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Termini Pagamento
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Termini Pagamento</p>
+                <p className="text-sm">{data.paymentMethod || "N/A"}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Tempo Consegna</p>
+                <p className="text-sm">{data.leadTimeDays || 0} giorni</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Valutazione</p>
                 <p className="text-sm">
-                  {(data as Supplier).paymentTerms || "N/A"}
+                  {"⭐".repeat(data.rating || 0)} {data.rating}/5
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Tempo Consegna
-                </p>
-                <p className="text-sm">
-                  {(data as Supplier).leadTimeDays || 0} giorni
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Valutazione
-                </p>
-                <p className="text-sm">
-                  {"⭐".repeat((data as Supplier).rating || 0)}{" "}
-                  {(data as Supplier).rating}/5
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Conto Bancario
-                </p>
-                <p className="text-sm font-mono">
-                  {(data as Supplier).bankAccount || "N/A"}
-                </p>
+                <p className="text-sm font-medium text-muted-foreground">Conto Bancario</p>
+                <p className="text-sm font-mono">{data.bankAccount || "N/A"}</p>
               </div>
             </div>
           </CardContent>
@@ -296,54 +228,34 @@ export function CompanyInfoTab({ data, companyType }: CompanyInfoTabProps) {
             {companyType === "CUSTOMER" && (
               <>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Prima Vendita
-                  </p>
-                  <p className="text-sm">
-                    {formatDate((data as Customer).firstSaleDate)}
-                  </p>
+                  <p className="text-sm font-medium text-muted-foreground">Prima Vendita</p>
+                  <p className="text-sm">{formatDateIT(data.firstSaleDate)}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Ultima Vendita
-                  </p>
-                  <p className="text-sm">
-                    {formatDate((data as Customer).lastSaleDate)}
-                  </p>
+                  <p className="text-sm font-medium text-muted-foreground">Ultima Vendita</p>
+                  <p className="text-sm">{formatDateIT(data.lastSaleDate)}</p>
                 </div>
               </>
             )}
             {companyType === "SUPPLIER" && (
               <>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Primo Ordine
-                  </p>
-                  <p className="text-sm">
-                    {formatDate((data as Supplier).firstOrderDate)}
-                  </p>
+                  <p className="text-sm font-medium text-muted-foreground">Primo Ordine</p>
+                  <p className="text-sm">{formatDateIT(data.firstOrderDate)}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Ultimo Ordine
-                  </p>
-                  <p className="text-sm">
-                    {formatDate((data as Supplier).lastOrderDate)}
-                  </p>
+                  <p className="text-sm font-medium text-muted-foreground">Ultimo Ordine</p>
+                  <p className="text-sm">{formatDateIT(data.lastOrderDate)}</p>
                 </div>
               </>
             )}
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Creato il
-              </p>
-              <p className="text-sm">{formatDate(companyData?.createdAt)}</p>
+              <p className="text-sm font-medium text-muted-foreground">Creato il</p>
+              <p className="text-sm">{formatDateIT(companyData?.createdAt)}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Aggiornato il
-              </p>
-              <p className="text-sm">{formatDate(companyData?.updatedAt)}</p>
+              <p className="text-sm font-medium text-muted-foreground">Aggiornato il</p>
+              <p className="text-sm">{formatDateIT(companyData?.updatedAt)}</p>
             </div>
           </div>
         </CardContent>

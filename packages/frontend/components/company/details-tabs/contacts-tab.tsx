@@ -21,7 +21,7 @@ import { useUpdateURL } from "@/hooks/use-update-url";
 import { useNavigation } from "@/hooks/use-navigation";
 
 interface CompanyContactsTabProps {
-  companyId: number;
+  companyId: string;
 }
 
 export function CompanyContactsTab({ companyId }: CompanyContactsTabProps) {

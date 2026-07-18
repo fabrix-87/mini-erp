@@ -2,7 +2,7 @@ import z from "zod";
 
 import { userIdSchema } from "./base";
 import { isoDateSchema } from "./primitives/date";
-import { createIdSchema, positiveNumbersSchema } from "./primitives/id";
+import { createCuidSchema, createIdSchema, positiveNumbersSchema } from "./primitives/id";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import { queryBooleanSchema } from "./query/params";
 import { emailSchema } from "./primitives/string";
@@ -146,28 +146,28 @@ export const activityQuerySchema = z
   .object({
     page: pageSchema,
     limit: limitSchema,
-    search: z.string().optional(),
+    search: z.string().optional().nullable(),
 
     // Filtri
-    type: activityTypeSchema.optional(),
-    status: activityStatusSchema.optional(),
-    priority: activityPrioritySchema.optional(),
-    outcome: activityOutcomeSchema.optional(),
+    type: activityTypeSchema.optional().nullable(),
+    status: activityStatusSchema.optional().nullable(),
+    priority: activityPrioritySchema.optional().nullable(),
+    outcome: activityOutcomeSchema.optional().nullable(),
 
-    companyId: createIdSchema("CompanyId non valido").optional(),
-    customerId: createIdSchema("CustomerId non valido").optional(),
-    opportunityId: createIdSchema("OpportunityId non valido").optional(),
-    assignedUserId: createIdSchema("Assigned User ID non valido").optional(),
-    leadId: createIdSchema("Lead ID non valido").optional(),
+    companyId: createCuidSchema("CompanyId non valido").optional().nullable(),
+    customerId: createCuidSchema("CustomerId non valido").optional().nullable(),
+    opportunityId: createCuidSchema("OpportunityId non valido").optional().nullable(),
+    assignedUserId: createCuidSchema("Assigned User ID non valido").optional().nullable(),
+    leadId: createCuidSchema("Lead ID non valido").optional().nullable(),
 
     // Filtri data
     startDate: isoDateSchema({ message: "Data inizio non valida" }),
     endDate: isoDateSchema({ message: "Data fine non valida" }),
 
     // Filtri speciali
-    overdue: queryBooleanSchema,
-    hasFollowUpActivity: queryBooleanSchema,
-    myActivities: queryBooleanSchema, // Solo le mie attività
+    overdue: queryBooleanSchema.optional().nullable(),
+    hasFollowUpActivity: queryBooleanSchema.optional().nullable(),
+    myActivities: queryBooleanSchema.optional().nullable(), // Solo le mie attività
 
     sortBy: activitySortFieldsSchema.default("scheduledStart"),
     sortOrder: sortOrderSchema,

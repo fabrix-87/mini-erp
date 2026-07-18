@@ -12,7 +12,7 @@ import { getAddresses } from "@/lib/client/modules/address";
 import { Address } from "@/types/address";
 
 interface CompanyAddressesTabProps {
-  companyId: number;
+  companyId: string;
 }
 
 export function CompanyAddressesTab({ companyId }: CompanyAddressesTabProps) {

@@ -53,7 +53,7 @@ export const getDashboardStats = async (): Promise<ApiResponse<CustomerStats>> =
  * Recupera un singolo cliente per ID
  */
 export const getCustomerById = async (
-  id: number
+  id: string
 ): Promise<ApiResponse<Customer>> => {
   const response = await api.get(`/customers/${id}`)
   return response.data
@@ -73,7 +73,7 @@ export const createCustomer = async (
  * Aggiorna un cliente esistente
  */
 export const updateCustomer = async (
-  id: number,
+  id: string,
   data: Partial<Customer>
 ): Promise<ApiResponse<Customer>> => {
   const response = await api.put(`/customers/${id}`, data)
@@ -84,7 +84,7 @@ export const updateCustomer = async (
  * Elimina un cliente
  */
 export const deleteCustomer = async (
-  id: number
+  id: string
 ): Promise<ApiResponse<void>> => {
   const response = await api.delete(`/customers/${id}`)
   return response.data

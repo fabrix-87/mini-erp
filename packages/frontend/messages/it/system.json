@@ -23,5 +23,44 @@
     "onlyBase": "Solo base",
     "all": "Tutti",
     "createNewButton": "Aggiungi nuova valuta"
+  },
+  "tenant": {
+    "title":"Gestione Azienda",
+    "description":"Amministra l'azienda del sistema",
+    "sections": {
+      "company": "Azienda",
+      "fiscal": "Configurazione fiscale",
+      "plan": "Piano e stato",
+      "stats": "Riepilogo dati"
+    },
+    "fields": {
+      "companyName": "Ragione sociale",
+      "vatNumber": "Partita IVA",
+      "taxCode": "Codice fiscale",
+      "sdiCode": "Codice SDI",
+      "pec": "PEC",
+      "email": "Email",
+      "phone": "Telefono",
+      "website": "Sito web",
+      "address": "Indirizzo",
+      "city": "Città",
+      "zipCode": "CAP",
+      "province": "Provincia",
+      "country": "Paese",
+      "taxRegime": "Regime fiscale",
+      "defaultCurrency": "Valuta predefinita",
+      "sdiFormat": "Formato trasmissione SDI",
+      "tenantCode": "Codice tenant",
+      "plan": "Piano",
+      "status": "Stato",
+      "createdAt": "Creato il"
+    },
+    "stats": {
+      "memberships": "Utenti",
+      "customers": "Clienti",
+      "suppliers": "Fornitori",
+      "products": "Prodotti",
+      "leads": "Lead"
+    }
   }
 }

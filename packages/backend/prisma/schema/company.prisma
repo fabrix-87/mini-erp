@@ -89,8 +89,9 @@ model Company {
 
     // === CONTACTS ===
 
-    mainEmail String? @map("main_email") @db.VarChar(255)
-    mainPhone String? @map("main_phone") @db.VarChar(50)
+    mainEmail   String? @map("main_email") @db.VarChar(255)
+    mainPhone   String? @map("main_phone") @db.VarChar(50)
+    mainWebsite String? @map("main_website") @db.VarChar(255)
 
     // === OWNERSHIP ===
 
@@ -377,18 +378,18 @@ model Contact {
     activities           Activity[]            @relation("ContactActivities")
     activityParticipants ActivityParticipant[]
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")  
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
 
     deletedBy     String? @map("deleted_by")
     deletedByUser User?   @relation("ContactDeletedBy", fields: [deletedBy], references: [id], onDelete: SetNull)
 
     /// Email unique per tenant. Partial: allows multiple NULL emails within the same tenant.
-    @@unique([tenantId, email], where: { email: { not: null }, deletedAt: null }, map: "unique_tenant_contact_email")  
+    @@unique([tenantId, email], where: { email: { not: null }, deletedAt: null }, map: "unique_tenant_contact_email")
     @@index([tenantId])
     @@index([tenantId, active])
-    @@index([tenantId, deletedAt])  
+    @@index([tenantId, deletedAt])
     @@map("contacts")
 }
 

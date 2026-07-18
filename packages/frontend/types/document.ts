@@ -231,9 +231,9 @@ export const VALID_TYPES = [
 export interface DocumentListFilters {
   page: number;
   limit: number;
-  documentType: string;
+  documentType?: string;
   status?: string;
-  companyId?: number;
+  companyId?: string;
   dateFrom?: string;
   dateTo?: string;
   search?: string;
@@ -243,7 +243,7 @@ export interface DocumentListFilters {
 
 export interface DocumentLineDTO {
   // Id è opzionale: esiste se stiamo modificando, assente se stiamo creando
-  id?: number;
+  id?: string;
 
   // Dati inviati per il calcolo
   lineType:

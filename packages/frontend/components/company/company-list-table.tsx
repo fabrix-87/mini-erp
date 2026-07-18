@@ -58,15 +58,15 @@ export function CompanyListTable({
     return "ERRORE!!!!";
   }
 
-  const handleView = (id: number) => {
+  const handleView = (id: string) => {
     navigateToDetail(navigateEntity, id)
   };
 
-  const handleEdit = (id: number) => {
+  const handleEdit = (id: string) => {
     navigateToEdit(navigateEntity, id)
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     console.log("delete");
     return;
   };

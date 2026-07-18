@@ -9,5 +9,59 @@
     "createdAt": "Created At",
     "updatedAt": "Updated At",
     "searchPlaceholder": "Search by name or code..."
+  },
+
+  "currencies": {
+    "title": "Gestione Valute",
+    "description": "Amministra le valute del sistema",
+    "searchPlaceholder": "Cerca per nome, simbolo o codice...",
+    "activeFilterPlaceholder": "Tutti gli stati",
+    "activeFilterAll": "Tutti gli stati",
+    "activeFilterEnabled": "Solo Attivi",
+    "activeFilterDisabled": "Solo Inattivi",
+    "baseCurrencyPlaceholder": "Valuta base",
+    "onlyNotBase": "Solo non base",
+    "onlyBase": "Solo base",
+    "all": "Tutti",
+    "createNewButton": "Aggiungi nuova valuta"
+  },
+  "tenant": {
+    "title": "Gestione Azienda",
+    "description": "Amministra l'azienda del sistema",
+    "sections": {
+      "company": "Company",
+      "fiscal": "Fiscal Configuration",
+      "plan": "Plan & Status",
+      "stats": "Data Summary"
+    },
+    "fields": {
+      "companyName": "Company Name",
+      "vatNumber": "VAT Number",
+      "taxCode": "Tax Code",
+      "sdiCode": "SDI Code",
+      "pec": "PEC",
+      "email": "Email",
+      "phone": "Phone",
+      "website": "Website",
+      "address": "Address",
+      "city": "City",
+      "zipCode": "ZIP Code",
+      "province": "Province",
+      "country": "Country",
+      "taxRegime": "Tax Regime",
+      "defaultCurrency": "Default Currency",
+      "sdiFormat": "SDI Transmission Format",
+      "tenantCode": "Tenant Code",
+      "plan": "Plan",
+      "status": "Status",
+      "createdAt": "Created At"
+    },
+    "stats": {
+      "memberships": "Users",
+      "customers": "Customers",
+      "suppliers": "Suppliers",
+      "products": "Products",
+      "leads": "Leads"
+    }
   }
 }
