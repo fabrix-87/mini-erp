@@ -14,6 +14,7 @@ model Country {
   // Relazioni inverse
   companyAddresses CompanyAddress[] @relation("AddressCountry")
   companies        Company[]        @relation("CompanyCountry")
+  companyVersions  CompanyVersion[] @relation("CompanyVersionCountry")
   userDetails      UserDetails[]    @relation("UserDetailCountry")
 
   documentCountry         Document[] @relation("DocumentCountry")

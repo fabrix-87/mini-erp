@@ -111,6 +111,7 @@ model Company {
     // === RELATIONS ===
 
     addresses    CompanyAddress[] @relation("CompanyAddresses")
+    versions     CompanyVersion[] @relation("CompanyVersions")
     contacts     CompanyContact[]
     customer     Customer?
     supplier     Supplier?
@@ -128,6 +129,66 @@ model Company {
     @@index([tenantId, vatNumber])
     @@index([tenantId, taxCode])
     @@map("companies")
+}
+
+/// Historical snapshot of Company anagraphic data.
+/// Created when a user chooses to "storicize" instead of direct edit.
+/// Only one version can have isCurrent = true per company at any time —
+/// enforced by partial unique index.
+model CompanyVersion {
+    id        String @id @default(cuid())
+    companyId String @map("company_id")
+    tenantId  String @map("tenant_id")
+
+    // === TEMPORAL VALIDITY ===
+
+    validFrom DateTime  @map("valid_from")
+    validTo   DateTime? @map("valid_to")
+    isCurrent Boolean   @default(true) @map("is_current")
+
+    // === ANAGRAPHIC SNAPSHOT (mirrors Company fiscal fields) ===
+
+    companyName String            @map("company_name") @db.VarChar(255)
+    tradeName   String?           @map("trade_name") @db.VarChar(255)
+    legalForm   String?           @map("legal_form") @db.VarChar(100)
+    entityType  CompanyTypeEntity @default(JURIDICAL) @map("entity_type")
+
+    vatNumber  String? @map("vat_number") @db.VarChar(20)
+    taxCode    String? @map("tax_code") @db.VarChar(20)
+    sdiCode    String? @map("sdi_code") @db.VarChar(7)
+    pec        String? @db.VarChar(255)
+    eoriNumber String? @map("eori_number") @db.VarChar(20)
+    vatId      String? @map("vat_id") @db.VarChar(20)
+
+    countryCode String  @default("IT") @map("country_code") @db.Char(2)
+    country     Country @relation("CompanyVersionCountry", fields: [countryCode], references: [code], onDelete: Restrict)
+
+    // === BILLING ADDRESS SNAPSHOT ===
+
+    address      String? @db.VarChar(255)
+    city         String? @db.VarChar(100)
+    provinceCode String? @map("province_code") @db.Char(2)
+    zipCode      String? @map("zip_code") @db.VarChar(20)
+
+    mainEmail String? @map("main_email") @db.VarChar(255)
+    mainPhone String? @map("main_phone") @db.VarChar(50)
+
+    // === RELATIONS ===
+
+    company   Company    @relation("CompanyVersions", fields: [companyId], references: [id], onDelete: Cascade)
+    tenant    Tenant     @relation("TenantCompanyVersions", fields: [tenantId], references: [id], onDelete: Cascade)
+    documents Document[] @relation("CompanyVersionDocuments")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([companyId, validFrom])
+    @@unique([companyId], where: { isCurrent: true })
+    @@index([tenantId, companyId, validFrom])
+    @@index([tenantId, companyId, isCurrent])
+    @@index([tenantId, vatNumber], where: { vatNumber: { not: null } })
+    @@index([tenantId, taxCode], where: { taxCode: { not: null } })
+    @@map("company_versions")
 }
 
 /// CRM and commercial profile of a customer, extending Company 1-to-1.

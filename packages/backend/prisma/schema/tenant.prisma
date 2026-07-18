@@ -79,6 +79,7 @@ model Tenant {
   documentInstallments      DocumentPaymentInstallment[] @relation("TenantInstallments")
   taxRules                  TaxRule[]                    @relation("TenantOwnedTaxRules")
   companies                 Company[]                    @relation("TenantCompanies")
+  companyVersions           CompanyVersion[]             @relation("TenantCompanyVersions")
   customers                 Customer[]                   @relation("TenantCustomers")
   suppliers                 Supplier[]                   @relation("TenantSuppliers")
   paymentBatches            PaymentBatch[]               @relation("TenantPaymentBatches")

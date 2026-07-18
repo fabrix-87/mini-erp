@@ -351,6 +351,12 @@ model Document {
     journalEntries            JournalEntry[]                @relation("DocumentJournalEntries")
     withholdingSettlementLine WithholdingTaxSettlementLine? @relation("DocumentWithholdingLines")
 
+    /// Anagraphic version used at document emission.
+    /// Set when document is created from the current CompanyVersion.
+    /// Immutable once document is confirmed.
+    companyVersionId String?         @map("company_version_id")
+    companyVersion   CompanyVersion? @relation("CompanyVersionDocuments", fields: [companyVersionId], references: [id], onDelete: Restrict)
+
     createdAt DateTime  @default(now()) @map("created_at")
     updatedAt DateTime  @updatedAt @map("updated_at")
     /// Soft-delete timestamp. Non-null = logically deleted; excluded from all active queries.
@@ -359,7 +365,7 @@ model Document {
     // === UNIQUE CONSTRAINTS ===
     @@unique([tenantId, direction, vatRegisterYear, vatRegisterProtocol], where: { vatRegisterProtocol: { not: null } })
     @@unique([tenantId, supplierId, counterpartyDocumentNumber, documentDate], where: { direction: "INBOUND" }, map: "unique_inbound_supplier_document")
-    @@unique([tenantId, documentType, documentYear, sequenceNumber], where: { sequenceNumber: { not: null }, direction: "OUTBOUND" } )
+    @@unique([tenantId, documentType, documentYear, sequenceNumber], where: { sequenceNumber: { not: null }, direction: "OUTBOUND" })
     // === OPERATIONAL INDEXES (active documents only) ===
     @@index([tenantId, status], where: { deletedAt: null })
     @@index([tenantId, documentType], where: { deletedAt: null })
