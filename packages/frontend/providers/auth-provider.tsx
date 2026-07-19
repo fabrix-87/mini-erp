@@ -11,6 +11,7 @@ import {
 } from "@/lib/constants/auth";
 import { UserSessionPayload } from "@mini-erp/shared";
 import { refreshTokenAction } from "@/actions/token-actions";
+import { useQueryClient } from "@tanstack/react-query";
 
 // ============================================================================
 // Types
@@ -65,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserSessionPayload | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const queryClient = useQueryClient();
   const refreshTimerRef = useRef<NodeJS.Timeout>(null);
   const isRefreshingRef = useRef(false);
 
@@ -88,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       refreshTimerRef.current = null;
     }
     setUser(null);
+    queryClient.clear();
     try {
       await logoutAction(); // handles cookie cleanup + redirect
     } catch (error) {
