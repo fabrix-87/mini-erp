@@ -231,13 +231,22 @@ export const strictCompanySchema = strictCompanyBase
     },
   );
 
+export const storicizeParamsSchema = z.object({
+  /** Data di efficacia in formato ISO 8601 (YYYY-MM-DD o datetime). Defaults a now() se assente. */
+  effectiveDate: z.date().optional(),
+  /** Motivazione obbligatoria della storicizzazione. */
+  reason: z.string().min(3).max(500),
+});
+
 /**
  * Schema for partial company updates.
  * All fields are optional; cross-field fiscal refinements are intentionally
  * omitted because a partial payload may not carry all fields required to
  * evaluate fiscal consistency.
  */
-export const updateCompanySchema = baseCompanyShape.partial().strict();
+export const updateCompanySchema = baseCompanyShape.partial().strict().extend({
+  storicize: storicizeParamsSchema.optional(),
+});
 
 /**
  * Schema for company list/search filters.

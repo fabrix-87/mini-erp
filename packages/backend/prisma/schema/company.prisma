@@ -173,6 +173,19 @@ model CompanyVersion {
     mainEmail String? @map("main_email") @db.VarChar(255)
     mainPhone String? @map("main_phone") @db.VarChar(50)
 
+    // === HISTORIZATION AUDIT ===
+
+    /// User who triggered the historization. Nullable: preserved as NULL if the user is later deleted.
+    createdByUserId String? @map("created_by_user_id")
+    createdByUser   User?   @relation("CompanyVersionCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+    /// User who edited the historization. Nullable: preserved as NULL if the user is later deleted.
+    updatedByUserId String? @map("updated_by_user_id")
+    updatedByUser   User?   @relation("CompanyVersionUpdatedBy", fields: [updatedByUserId], references: [id], onDelete: SetNull)
+
+    /// Mandatory reason for the historization, enforced at application level (min 3, max 500 chars).
+    storicizeReason String? @map("storicize_reason") @db.VarChar(500)
+
     // === RELATIONS ===
 
     company   Company    @relation("CompanyVersions", fields: [companyId], references: [id], onDelete: Cascade)

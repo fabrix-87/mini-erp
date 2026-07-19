@@ -134,6 +134,18 @@ export function connectById(id: string | number | null | undefined) {
 }
 
 /**
+ * Handles nullable Prisma relations on CREATE operations via a `code` FK.
+ * Returns connect if code is provided, undefined otherwise.
+ * null is not valid on create — use `connectOrDisconnectByCode` for updates.
+ *
+ * @param code - Unique string code of the related record
+ * @returns Prisma connect object or undefined
+ */
+export function connectByCode(code: string | null | undefined) {
+  return code ? { connect: { code } } : undefined;
+}
+
+/**
  * Handles nullable Prisma relations connected via a string `code` unique field.
  *
  * - undefined → field not updated

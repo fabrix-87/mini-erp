@@ -46,45 +46,38 @@ export const buildAddressCreateData = (
 
 /**
  * Builds Prisma-compatible nested `company.create` data.
- * Handles legalAddress as nested create, country as relation connect,
- * and assignedUserId as optional user connect.
+ * Address creation is handled separately via upsertLegalAddress
+ * inside the calling transaction — not as a nested write here.
+ * Handles country as relation connect and assignedUserId as optional user connect.
  */
 export const buildCompanyCreateData = (
   companyData: CreateCompanyInput,
   code: string,
   tenantId: string,
 ): Prisma.CompanyCreateInput => {
-  const { legalAddress, assignedUserId, customFields, countryCode, ...scalars } = companyData;
+  const { legalAddress: _legalAddress, assignedUserId, customFields, countryCode, ...scalars } = companyData;
 
   return {
     ...scalars,
     code,
-    vatNumber: scalars.vatNumber ?? undefined,
-    taxCode: scalars.taxCode ?? undefined,
-    sdiCode: scalars.sdiCode ?? undefined,
-    pec: scalars.pec ?? undefined,
-    tradeName: scalars.tradeName ?? undefined,
-    legalForm: scalars.legalForm ?? undefined,
-    mainEmail: scalars.mainEmail ?? undefined,
-    mainPhone: scalars.mainPhone ?? undefined,
-    vatId: scalars.vatId ?? undefined,
-    eoriNumber: scalars.eoriNumber ?? undefined,
+    vatNumber:    scalars.vatNumber  ?? undefined,
+    taxCode:      scalars.taxCode    ?? undefined,
+    sdiCode:      scalars.sdiCode    ?? undefined,
+    pec:          scalars.pec        ?? undefined,
+    tradeName:    scalars.tradeName  ?? undefined,
+    legalForm:    scalars.legalForm  ?? undefined,
+    mainEmail:    scalars.mainEmail  ?? undefined,
+    mainPhone:    scalars.mainPhone  ?? undefined,
+    vatId:        scalars.vatId      ?? undefined,
+    eoriNumber:   scalars.eoriNumber ?? undefined,
     customFields: toJsonField(customFields),
-    tenant: connectById(tenantId),
+    tenant:       connectById(tenantId),
     country: {
       connect: {
         code: countryCode ?? "IT",
       },
     },
     user: connectById(assignedUserId),
-    ...(legalAddress && {
-      addresses: {
-        create: buildAddressCreateData(legalAddress, {
-          addressType: "LEGAL",
-          isPrimary: true,
-        }),
-      },
-    }),
   };
 };
 

@@ -43,7 +43,9 @@ import {
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
-import { tenantFilter, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
+import { tenantFilter } from "@/helpers/prisma-helper";
+import { createInitialCompanyVersion, storicizeCompany, syncCurrentVersion } from "@/helpers/company-version-helper";
+import { upsertLegalAddress } from "@/helpers/address-helper";
 
 // ============================================================================
 // CUSTOMER CONTROLLERS
@@ -114,6 +116,7 @@ export const getCustomerById = async (c: Context<AppBindings>) => {
 export const createCustomer = async (c: Context<AppBindings>) => {
   const { company: companyData, ...customerData } = getValidatedBody<CreateCustomerInput>(c);
   const tenantId = getRequiredTenantId(c);
+  const { userId } = c.get("user")!;
 
   // -------------------------------------------------------------------------
   // 1. Verifica esistenza relazioni — in parallelo per minimizzare la latenza
@@ -163,7 +166,8 @@ export const createCustomer = async (c: Context<AppBindings>) => {
   // -------------------------------------------------------------------------
   const customer = await prisma.$transaction(async (tx) => {
     const code = await generateUniqueCompanyCode("customer", tenantId, tx);
-    return tx.customer.create({
+
+    const created = await tx.customer.create({
       data: buildCustomerCreateData(
         customerData,
         buildCompanyCreateData(companyData, code, tenantId),
@@ -171,6 +175,31 @@ export const createCustomer = async (c: Context<AppBindings>) => {
       ),
       include: getCustomerInclude(true),
     });
+
+    if (companyData.legalAddress) {
+      await upsertLegalAddress(tx, created.company.id, companyData.legalAddress);
+    }
+
+    await createInitialCompanyVersion(tx, {
+      companyId: created.company.id,
+      tenantId,
+      userId,
+      companyName: created.company.companyName,
+      tradeName: created.company.tradeName,
+      legalForm: created.company.legalForm,
+      entityType: created.company.entityType,
+      vatNumber: created.company.vatNumber,
+      taxCode: created.company.taxCode,
+      sdiCode: created.company.sdiCode,
+      pec: created.company.pec,
+      eoriNumber: created.company.eoriNumber,
+      vatId: created.company.vatId,
+      countryCode: created.company.countryCode,
+      mainEmail: created.company.mainEmail,
+      mainPhone: created.company.mainPhone,
+    });
+
+    return created;
   });
 
   return sendCreated(c, formatCompanyResponse(customer), "Customer creato con successo");
@@ -216,68 +245,65 @@ export const updateCustomer = async (c: Context<AppBindings>) => {
 };
 
 /**
- * @desc    Aggiorna company del customer
- * @route   PUT /api/customers/:id/company
- * @access  Private (customer:update)
+ * Updates the anagraphic data of a company linked to a customer.
+ * When `storicize` is provided in the body, the current company state is
+ * historized BEFORE the update is applied, so the new CompanyVersion
+ * snapshot captures the incoming (post-update) data.
+ *
+ * Route:   PUT /customers/:id/company
+ * Access:  Protected — requires customer:update permission
  */
 export const updateCustomerCompany = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<CustomerIdParam>(c);
-  const companyData = getValidatedBody<UpdateCustomerCompanyInput>(c);
+  const data = getValidatedBody<UpdateCustomerCompanyInput>(c);
   const tenantId = getRequiredTenantId(c);
+  const { userId } = c.get("user")!;
 
-  const customer = await prisma.customer.findFirst({ where: tenantFilter(tenantId, { id }) });
+  const customer = await prisma.customer.findFirst({
+    where: tenantFilter(tenantId, { id }),
+    select: { companyId: true },
+  });
 
   if (!customer) {
     return sendNotFound(c, "Customer non trovato");
   }
 
-  const { legalAddress, ...companyScalarData } = companyData;
+  const { storicize, legalAddress, ...companyScalarData } = data;
 
-  const updatedCustomer = await prisma.$transaction(async (tx) => {
-    // 1. Aggiorna i campi scalari della company
+  const result = await prisma.$transaction(async (tx) => {
     if (Object.keys(companyScalarData).length > 0) {
       await tx.company.update({
-        where: { id: customer.companyId, tenantId },
-        data: companyScalarData as Prisma.CompanyUpdateInput,
+        where: { id: customer.companyId },
+        data: companyScalarData,
       });
     }
 
-    // 2. Upsert indirizzo legale tramite buildAddressCreateData
     if (legalAddress) {
-      const addressData = buildAddressCreateData(legalAddress, {
-        addressType: AddressType.LEGAL,
-        isPrimary: true,
-      });
-
-      const existingLegal = await tx.companyAddress.findFirst({
-        where: {
-          companyId: customer.companyId,
-          addressType: AddressType.LEGAL,
-        },
-        select: { id: true },
-      });
-
-      if (existingLegal) {
-        await tx.companyAddress.update({
-          where: { id: existingLegal.id },
-          data: addressData,
-        });
-      } else {
-        await tx.companyAddress.create({
-          data: { ...addressData, companyId: customer.companyId },
-        });
-      }
+      await upsertLegalAddress(tx, customer.companyId, legalAddress);
     }
 
-    // 3. Ritorna il customer aggiornato con tutti i dati
-    return tx.customer.findUnique({
-      where: { id, tenantId },
+    if (storicize) {
+      await storicizeCompany(tx, {
+        companyId: customer.companyId,
+        tenantId,
+        userId,
+        storicizeReason: storicize.reason,
+        effectiveDate: storicize.effectiveDate ? new Date(storicize.effectiveDate) : undefined,
+      });
+    } else {
+      await syncCurrentVersion(tx, customer.companyId, userId);
+    }
+
+    return await tx.customer.findUniqueOrThrow({
+      where: { id },
       include: getCustomerInclude(true),
     });
   });
 
-  return sendSuccess(c, updatedCustomer, {
-    message: "Company aggiornata con successo",
+  return sendSuccess(c, result, {
+    message: storicize
+      ? "Company updated and previous version historized successfully."
+      : "Company updated successfully.",
   });
 };
 

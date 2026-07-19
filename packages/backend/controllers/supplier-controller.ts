@@ -47,6 +47,8 @@ import {
   getValidatedQuery,
 } from "@/helpers/validated-context";
 import { tenantFilter, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
+import { createInitialCompanyVersion, storicizeCompany, syncCurrentVersion } from "@/helpers/company-version-helper";
+import { upsertLegalAddress } from "@/helpers/address-helper";
 
 // ============================================================================
 // SUPPLIER CONTROLLERS
@@ -112,6 +114,7 @@ export const getSupplierById = async (c: Context<AppBindings>) => {
 export const createSupplier = async (c: Context<AppBindings>) => {
   const { company: companyData, ...supplierData } = getValidatedBody<CreateSupplierInput>(c);
   const tenantId = getRequiredTenantId(c);
+  const { userId } = c.get("user")!;
 
   // Verifica country esiste
   const country = await prisma.country.findUnique({
@@ -124,7 +127,8 @@ export const createSupplier = async (c: Context<AppBindings>) => {
 
   const supplier = await prisma.$transaction(async (tx) => {
     const code = await generateUniqueCompanyCode("supplier", tenantId, tx);
-    return tx.supplier.create({
+
+    const created = await tx.supplier.create({
       data: buildSupplierCreateData(
         supplierData,
         buildCompanyCreateData(companyData, code, tenantId),
@@ -132,6 +136,31 @@ export const createSupplier = async (c: Context<AppBindings>) => {
       ),
       include: getSupplierInclude(true),
     });
+
+    if (companyData.legalAddress) {
+      await upsertLegalAddress(tx, created.company.id, companyData.legalAddress);
+    }
+
+    await createInitialCompanyVersion(tx, {
+      companyId: created.company.id,
+      tenantId,
+      userId,
+      companyName: created.company.companyName,
+      tradeName: created.company.tradeName,
+      legalForm: created.company.legalForm,
+      entityType: created.company.entityType,
+      vatNumber: created.company.vatNumber,
+      taxCode: created.company.taxCode,
+      sdiCode: created.company.sdiCode,
+      pec: created.company.pec,
+      eoriNumber: created.company.eoriNumber,
+      vatId: created.company.vatId,
+      countryCode: created.company.countryCode,
+      mainEmail: created.company.mainEmail,
+      mainPhone: created.company.mainPhone,
+    });
+
+    return created;
   });
 
   return sendCreated(c, formatCompanyResponse(supplier), "Supplier creato con successo");
@@ -220,68 +249,64 @@ export const validateSupplierFiscal = async (c: Context<AppBindings>) => {
 };
 
 /**
- * @desc    Aggiorna company del supplier
- * @route   PUT /api/suppliers/:id/company
- * @access  Private (supplier:update)
+ * Updates the anagraphic data of a company linked to a supplier.
+ * When `storicize` is provided in the body, the current supplier state is
+ * historized BEFORE the update is applied, so the new CompanyVersion
+ * snapshot captures the incoming (post-update) data.
+ *
+ * Route:   PUT /suppliers/:id/company
+ * Access:  Protected — requires supplier:update permission
  */
 export const updateSupplierCompany = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<SupplierIdParam>(c);
-  const companyData = getValidatedBody<UpdateSupplierCompanyInput>(c);
+  const data = getValidatedBody<UpdateSupplierCompanyInput>(c);
   const tenantId = getRequiredTenantId(c);
+  const { userId } = c.get("user")!;
 
   const supplier = await prisma.supplier.findFirst({
     where: tenantFilter(tenantId, { id }),
+    select: { companyId: true },
   });
 
   if (!supplier) {
     return sendNotFound(c, "Supplier non trovato");
   }
-  const { legalAddress, ...companyScalarData } = companyData;
+  const { storicize, legalAddress, ...companyScalarData } = data;
 
-  await prisma.$transaction(async (tx) => {
-    // 1. Aggiorna i campi scalari della company
+  const result = await prisma.$transaction(async (tx) => {
     if (Object.keys(companyScalarData).length > 0) {
       await tx.company.update({
         where: { id: supplier.companyId },
-        data: companyScalarData as Prisma.CompanyUpdateInput,
+        data: companyScalarData,
       });
     }
 
-    // 2. Upsert indirizzo legale tramite buildAddressCreateData
     if (legalAddress) {
-      const addressData = buildAddressCreateData(legalAddress, {
-        addressType: AddressType.LEGAL,
-        isPrimary: true,
-      });
-
-      const existingLegal = await tx.companyAddress.findFirst({
-        where: {
-          companyId: supplier.companyId,
-          addressType: AddressType.LEGAL,
-        },
-        select: { id: true },
-      });
-
-      if (existingLegal) {
-        await tx.companyAddress.update({
-          where: { id: existingLegal.id },
-          data: addressData,
-        });
-      } else {
-        await tx.companyAddress.create({
-          data: { ...addressData, companyId: supplier.companyId },
-        });
-      }
+      await upsertLegalAddress(tx, supplier.companyId, legalAddress);
     }
+
+    if (storicize) {
+      await storicizeCompany(tx, {
+        companyId: supplier.companyId,
+        tenantId,
+        userId,
+        storicizeReason: storicize.reason,
+        effectiveDate: storicize.effectiveDate ? new Date(storicize.effectiveDate) : undefined,
+      });
+    } else {
+      await syncCurrentVersion(tx, supplier.companyId, userId);
+    }
+
+    return tx.supplier.findUniqueOrThrow({
+      where: { id },
+      include: getSupplierInclude(true),
+    });
   });
 
-  const updatedSupplier = await prisma.supplier.findFirst({
-    where: tenantFilter(tenantId, { id }),
-    include: getSupplierInclude(true),
-  });
-
-  return sendSuccess(c, updatedSupplier, {
-    message: "Supplier Company aggiornata con successo",
+  return sendSuccess(c, result, {
+    message: storicize
+      ? "Company updated and previous version historized successfully."
+      : "Company updated successfully.",
   });
 };
 
