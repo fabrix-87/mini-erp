@@ -41,7 +41,12 @@ function SubmitButton({ isValid, isPending }: { isValid: boolean; isPending: boo
 // ============================================================================
 // Login Form Component
 // ============================================================================
-export function LoginForm() {
+interface LoginFormProps {
+  /** URL a cui tornare dopo il login riuscito. Fallback: /dashboard */
+  callbackUrl?: string;
+}
+
+export function LoginForm({ callbackUrl }: LoginFormProps) {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -76,7 +81,9 @@ export function LoginForm() {
     if (state?.success) {
       //router.refresh();
       toast.success("Accesso eseguito");
-      window.location.href = "/dashboard";
+      // Sanity check: accetta solo path interni (no redirect aperti)
+      const destination = callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/dashboard";
+      window.location.href = destination;
     }
   }, [state, router]);
 

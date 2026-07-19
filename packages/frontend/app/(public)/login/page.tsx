@@ -1,7 +1,13 @@
 import { LoginForm } from "./components/login-form";
 import { Lock } from "lucide-react";
 
-export default function LoginPage() {
+interface LoginPageProps {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { callbackUrl } = await searchParams;
+
   return (
     <div className="min-h-screen w-full bg-linear-to-br from-slate-50 via-blue-50 to-slate-100 flex items-center justify-center p-4">
       {/* Background Pattern */}
@@ -19,7 +25,7 @@ export default function LoginPage() {
 
         {/* Main Card */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 p-8">
-          <LoginForm />
+          <LoginForm callbackUrl={callbackUrl} />
         </div>
       </div>
     </div>

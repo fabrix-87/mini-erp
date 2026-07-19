@@ -64,16 +64,22 @@ export function addUserHeaders(response: NextResponse, payload: UserSessionPaylo
 }
 
 /**
- * Creates a redirect response to `/login`, deleting all auth cookies
- * from the outgoing response so the browser clears the stale session.
+ * Creates a redirect response to `/login?callbackUrl=<currentPath>`,
+ * deleting all auth cookies so the browser clears the stale session.
  *
- * NOTE: This operates on the Edge response — not the server-side cookie store.
- *
- * @param request - The incoming NextRequest (used to build the redirect URL).
+ * @param request - The incoming NextRequest.
  * @returns A redirect `NextResponse` with auth cookies deleted.
  */
 export function redirectToLogin(request: NextRequest): NextResponse {
-  const response = NextResponse.redirect(new URL(LOGIN_ROUTE, request.url));
+  const loginUrl = new URL(LOGIN_ROUTE, request.url);
+
+  // Preserva il path originale (escludi /login stesso per evitare loop)
+  const { pathname, search } = request.nextUrl;
+  if (pathname !== LOGIN_ROUTE) {
+    loginUrl.searchParams.set("callbackUrl", `${pathname}${search}`);
+  }
+
+  const response = NextResponse.redirect(loginUrl);
   Object.values(COOKIE_NAMES).forEach((name) => response.cookies.delete(name));
   return response;
 }
