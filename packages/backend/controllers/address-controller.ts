@@ -16,6 +16,7 @@ import {
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
@@ -27,9 +28,24 @@ import {
   sendNotFound,
   sendSuccess,
 } from "@/utils/response-utils";
+import { withTenantId } from "@/helpers/prisma-helper";
+import { NotFoundError } from "@/utils/app-error-utils";
 
 export const getAllAddresses = async (c: Context<AppBindings>) => {
-  const where = buildAddressWhereClause(getValidatedQuery<AddressQueryInput>(c));
+  const filters = getValidatedQuery<AddressQueryInput>(c);
+  const tenantId = getRequiredTenantId(c);
+
+  const company = await prisma.company.findFirst({
+    where: withTenantId({ id: filters.companyId }, tenantId),
+    select: { id: true },
+  });
+
+  if (!company) {
+    throw new NotFoundError("Company not found");
+  }
+
+  const where = buildAddressWhereClause(filters);
+
   const addresses = await prisma.companyAddress.findMany({
     where,
     include: getAddressInclude(),

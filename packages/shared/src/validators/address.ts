@@ -86,8 +86,8 @@ export const addressIdSchema = z.object({
  */
 export const addressFiltersSchema = z.object({
   companyId: createCuidSchema("Company ID non valido"),
-  addressType: addressTypeSchema.optional(),
-  countryCode: countryCodeBaseSchema,
+  addressType: addressTypeSchema.optional().nullable(),
+  countryCode: countryCodeBaseSchema.optional().nullable(),
   isPrimary: queryBooleanSchema,
   provinceCode: z.string().length(2).optional(),
   city: z.string().optional(),
@@ -100,7 +100,7 @@ export const addressQuerySchema = z.object({
   ...addressFiltersSchema.shape,
   ...paginationSchema.shape,
   sortBy: z.string().optional().default("id"),
-  sortOrder: querySortOrderSchema,
+  sortOrder: querySortOrderSchema("asc"),
 });
 
 /**
