@@ -20,6 +20,9 @@ import {
   CustomerFilters,
   SupplierFilters,
 } from "@mini-erp/shared";
+import { tenantFilter } from "./prisma-helper";
+import { AddressUpsertInput, upsertLegalAddress } from "./address-helper";
+import { storicizeCompany, syncCurrentVersion } from "./company-version-helper";
 
 // ============================================================================
 // WHERE CLAUSE BUILDERS
@@ -95,6 +98,7 @@ export const buildSupplierWhereClause = (
   tenantId: string,
 ): Prisma.SupplierWhereInput => {
   const where: Prisma.SupplierWhereInput = {
+    tenantId,
     company: buildCompanyWhereClause(filters, tenantId),
   };
 
@@ -104,6 +108,10 @@ export const buildSupplierWhereClause = (
 
   if (filters.hasProducts !== undefined) {
     where.products = filters.hasProducts ? { some: {} } : { none: {} };
+  }
+
+  if (filters.isDeleted !== undefined) {
+    where.deletedAt = filters.isDeleted ? { not: null } : null;
   }
 
   return where;
@@ -471,3 +479,50 @@ export const validatePrimaryAddress = async (
 
   return { valid: true };
 };
+
+export interface CompanyUpdateOptions {
+  companyId: string;
+  tenantId: string;
+  userId: string;
+  companyScalarData: Prisma.CompanyUpdateInput;
+  legalAddress?: AddressUpsertInput;
+  storicize?: { reason: string; effectiveDate?: Date };
+}
+
+/**
+ * Executes a company scalar update + optional legal address upsert +
+ * optional historization, all within a single transaction.
+ *
+ * Shared by updateCustomerCompany and updateSupplierCompany to avoid
+ * duplication. The caller is responsible for wrapping this inside
+ * prisma.$transaction and providing the tx client.
+ *
+ * @param tx   - Open Prisma transaction client
+ * @param opts - Update options
+ */
+export async function executeCompanyUpdate(
+  tx: Prisma.TransactionClient,
+  opts: CompanyUpdateOptions,
+): Promise<void> {
+  const { companyId, tenantId, userId, companyScalarData, legalAddress, storicize } = opts;
+
+  if (Object.keys(companyScalarData).length > 0) {
+    await tx.company.update({ where: { id: companyId }, data: companyScalarData });
+  }
+
+  if (legalAddress) {
+    await upsertLegalAddress(tx, companyId, legalAddress);
+  }
+
+  if (storicize) {
+    await storicizeCompany(tx, {
+      companyId,
+      tenantId,
+      userId,
+      storicizeReason: storicize.reason,
+      effectiveDate: storicize.effectiveDate ? new Date(storicize.effectiveDate) : undefined,
+    });
+  } else {
+    await syncCurrentVersion(tx, companyId, userId);
+  }
+}

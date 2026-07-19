@@ -1,5 +1,6 @@
 import {
   buildSupplierWhereClause,
+  executeCompanyUpdate,
   generateUniqueCompanyCode,
   getSupplierInclude,
 } from "../helpers/company-helper";
@@ -12,7 +13,6 @@ import {
 import {
   sendCreated,
   sendDeleted,
-  sendFail,
   sendNotFound,
   sendPaginatedResponse,
   sendSuccess,
@@ -30,10 +30,8 @@ import {
   UpdateSupplierInput,
   UpdateSupplierRatingInput,
 } from "@mini-erp/shared";
-import { AddressType, Prisma } from "@/generated/prisma/client";
 
 import {
-  buildAddressCreateData,
   buildCompanyCreateData,
   buildSupplierCreateData,
   buildSupplierUpdateData,
@@ -47,8 +45,9 @@ import {
   getValidatedQuery,
 } from "@/helpers/validated-context";
 import { tenantFilter, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
-import { createInitialCompanyVersion, storicizeCompany, syncCurrentVersion } from "@/helpers/company-version-helper";
+import { createInitialCompanyVersion } from "@/helpers/company-version-helper";
 import { upsertLegalAddress } from "@/helpers/address-helper";
+import { ConflictError } from "@/utils/app-error-utils";
 
 // ============================================================================
 // SUPPLIER CONTROLLERS
@@ -90,7 +89,7 @@ export const getSupplierById = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const supplier = await prisma.supplier.findFirst({
-    where: withSoftDelete(withTenantId({ id }, tenantId)),
+    where: tenantFilter(tenantId, { id }),
     include: getSupplierInclude(true),
   });
 
@@ -178,7 +177,7 @@ export const updateSupplier = async (c: Context<AppBindings>) => {
 
   const [existing, taxRule, parent] = await Promise.all([
     prisma.supplier.findFirst({
-      where: withSoftDelete(withTenantId({ id }, tenantId)),
+      where: tenantFilter(tenantId, { id }),
     }),
     data.supplierTaxRuleId
       ? prisma.taxRule.findUnique({
@@ -188,7 +187,7 @@ export const updateSupplier = async (c: Context<AppBindings>) => {
       : Promise.resolve(true),
     data.parentSupplierId
       ? prisma.supplier.findFirst({
-          where: withSoftDelete(withTenantId({ id: data.parentSupplierId }, tenantId)),
+          where: tenantFilter(tenantId, { id: data.parentSupplierId }),
           select: { id: true },
         })
       : Promise.resolve(true),
@@ -225,7 +224,7 @@ export const validateSupplierFiscal = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const supplier = await prisma.supplier.findFirst({
-    where: withSoftDelete(withTenantId({ id }, tenantId)),
+    where: tenantFilter(tenantId, { id }),
     include: { company: true },
   });
 
@@ -274,28 +273,14 @@ export const updateSupplierCompany = async (c: Context<AppBindings>) => {
   const { storicize, legalAddress, ...companyScalarData } = data;
 
   const result = await prisma.$transaction(async (tx) => {
-    if (Object.keys(companyScalarData).length > 0) {
-      await tx.company.update({
-        where: { id: supplier.companyId },
-        data: companyScalarData,
-      });
-    }
-
-    if (legalAddress) {
-      await upsertLegalAddress(tx, supplier.companyId, legalAddress);
-    }
-
-    if (storicize) {
-      await storicizeCompany(tx, {
-        companyId: supplier.companyId,
-        tenantId,
-        userId,
-        storicizeReason: storicize.reason,
-        effectiveDate: storicize.effectiveDate ? new Date(storicize.effectiveDate) : undefined,
-      });
-    } else {
-      await syncCurrentVersion(tx, supplier.companyId, userId);
-    }
+    await executeCompanyUpdate(tx, {
+      companyId: supplier.companyId,
+      tenantId,
+      userId,
+      companyScalarData,
+      legalAddress,
+      storicize,
+    });
 
     return tx.supplier.findUniqueOrThrow({
       where: { id },
@@ -469,10 +454,9 @@ export const deleteSupplier = async (c: Context<AppBindings>) => {
   const totalRelations = supplier._count.documentsIn + supplier._count.products;
 
   if (totalRelations > 0) {
-    return sendFail(c, {
-      statusCode: 409,
-      message: `Impossibile eliminare: Supplier ha ${totalRelations} relazioni attive`,
-    });
+    throw new ConflictError(
+      `Impossibile eliminare: Supplier ha ${totalRelations} relazioni attive`,
+    );
   }
 
   // Elimina supplier (cascade elimina anche company)

@@ -2,6 +2,7 @@ import {
   buildCustomerWhereClause,
   getCustomerInclude,
   generateUniqueCompanyCode,
+  executeCompanyUpdate,
 } from "../helpers/company-helper";
 import { prisma } from "../config/prisma-config";
 import {
@@ -26,10 +27,8 @@ import {
   UpdateCustomerCompanyInput,
   UpdateCustomerInput,
 } from "@mini-erp/shared";
-import { AddressType, Prisma } from "@/generated/prisma/client";
 import { buildPagination } from "@/utils/query-utils";
 import {
-  buildAddressCreateData,
   buildCompanyCreateData,
   buildCustomerCreateData,
   buildCustomerUpdateData,
@@ -44,8 +43,11 @@ import {
   getValidatedQuery,
 } from "@/helpers/validated-context";
 import { tenantFilter } from "@/helpers/prisma-helper";
-import { createInitialCompanyVersion, storicizeCompany, syncCurrentVersion } from "@/helpers/company-version-helper";
+import {
+  createInitialCompanyVersion,
+} from "@/helpers/company-version-helper";
 import { upsertLegalAddress } from "@/helpers/address-helper";
+import { ConflictError } from "@/utils/app-error-utils";
 
 // ============================================================================
 // CUSTOMER CONTROLLERS
@@ -271,30 +273,16 @@ export const updateCustomerCompany = async (c: Context<AppBindings>) => {
   const { storicize, legalAddress, ...companyScalarData } = data;
 
   const result = await prisma.$transaction(async (tx) => {
-    if (Object.keys(companyScalarData).length > 0) {
-      await tx.company.update({
-        where: { id: customer.companyId },
-        data: companyScalarData,
-      });
-    }
+    await executeCompanyUpdate(tx, {
+      companyId: customer.companyId,
+      tenantId,
+      userId,
+      companyScalarData,
+      legalAddress,
+      storicize,
+    });
 
-    if (legalAddress) {
-      await upsertLegalAddress(tx, customer.companyId, legalAddress);
-    }
-
-    if (storicize) {
-      await storicizeCompany(tx, {
-        companyId: customer.companyId,
-        tenantId,
-        userId,
-        storicizeReason: storicize.reason,
-        effectiveDate: storicize.effectiveDate ? new Date(storicize.effectiveDate) : undefined,
-      });
-    } else {
-      await syncCurrentVersion(tx, customer.companyId, userId);
-    }
-
-    return await tx.customer.findUniqueOrThrow({
+    return tx.customer.findUniqueOrThrow({
       where: { id },
       include: getCustomerInclude(true),
     });
@@ -410,41 +398,35 @@ export const getCustomerStats = async (c: Context<AppBindings>) => {
     }),
   ]);
 
-  // Arricchisci prodotti con dettagli
-  const enrichedProducts = await Promise.all(
-    topProducts.map(async (item) => {
-      const product = await prisma.product.findFirst({
-        where: tenantFilter(tenantId, { id: item.productId! }),
-        select: {
-          id: true,
-          reference: true,
-          variants: {
-            where: { id: item.productVariantId! },
-            select: {
-              id: true,
-            },
-          },
-          translations: {
-            where: {
-              languageId,
-            },
-            take: 1,
-            select: {
-              name: true,
-            },
-          },
-        },
-      });
+  const productIds = topProducts
+    .map((item) => item.productId)
+    .filter((id): id is string => id !== null);
 
-      return {
-        productId: item.productId,
-        variantId: item.productVariantId,
-        productName: product?.translations[0].name || product?.reference,
-        totalQuantity: item._sum.quantity,
-        orderCount: item._count.id,
-      };
-    }),
-  );
+  const products = await prisma.product.findMany({
+    where: tenantFilter(tenantId, { id: { in: productIds } }),
+    select: {
+      id: true,
+      reference: true,
+      translations: {
+        where: { languageId },
+        take: 1,
+        select: { name: true },
+      },
+    },
+  });
+
+  const productMap = new Map(products.map((p) => [p.id, p]));
+
+  const enrichedProducts = topProducts.map((item) => {
+    const product = productMap.get(item.productId!);
+    return {
+      productId: item.productId,
+      variantId: item.productVariantId,
+      productName: product?.translations[0]?.name ?? product?.reference,
+      totalQuantity: item._sum.quantity,
+      orderCount: item._count.id,
+    };
+  });
 
   const stats = calculateCustomerStats(customer);
 
@@ -488,21 +470,9 @@ export const deleteCustomer = async (c: Context<AppBindings>) => {
   const totalRelations = customer._count.documentsOut + customer._count.opportunities;
 
   if (totalRelations > 0) {
-    return c.json({
-      success: false,
-      statusCode: 409,
-      message: `Impossibile eliminare: Customer ha ${totalRelations} relazioni attive`,
-      errors: [
-        {
-          field: "documents",
-          message: customer._count.documentsOut.toString(),
-        },
-        {
-          field: "opportunities",
-          message: customer._count.opportunities.toString(),
-        },
-      ],
-    });
+    throw new ConflictError(
+      `Impossibile eliminare: Customer ha ${totalRelations} relazioni attive`,
+    );
   }
 
   // Elimina customer (cascade elimina anche company)
