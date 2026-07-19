@@ -1,3 +1,14 @@
 {
-    "prisma.pinToPrisma6": false
+  "prisma.pinToPrisma6": false,
+  "js/ts.tsserver.maxMemory": 2048,
+  "js/ts.workspaceSymbols.scope": "currentProject",
+  "search.exclude": {
+    "**/.next": true,
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "watcher.exclude": {
+    "**/.next/**": true,
+    "**/node_modules/**": true
+  }
 }
