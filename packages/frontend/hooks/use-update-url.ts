@@ -81,8 +81,21 @@ function paramsToMultiMap(params: CompatibleParams): Map<string, string[]> {
   }
 
   // Plain object
-  for (const [key, value] of Object.entries(params as URLParamsRecord)) {
-    const values = normalizeToStrings(value);
+  for (const [key, value] of Object.entries(params as Record<string, unknown>)) {
+    if (value === null || value === undefined) {
+      continue;
+    }
+
+    const values = Array.isArray(value)
+      ? value
+          .filter((item): item is string | number | boolean => {
+            return (
+              typeof item === "string" || typeof item === "number" || typeof item === "boolean"
+            );
+          })
+          .map(String)
+      : [String(value)];
+
     if (values.length > 0) {
       map.set(key, values);
     }

@@ -55,6 +55,7 @@ export function TaxRuleTable({
 
   const basePath = useMemo(() => getRoute("taxes"), [getRoute]);
   const updateURL = useUpdateURL(basePath);
+  const { getDetailRoute } = useNavigation();
 
   const sort = {
     field: sortField,
@@ -89,8 +90,6 @@ export function TaxRuleTable({
       </div>
     );
   }
-
-  const { getDetailRoute } = useNavigation();
 
   return (
     <div className="rounded-lg border bg-card">

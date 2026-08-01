@@ -9,8 +9,19 @@ import { TaxesFilterBar } from "./tax-rules-filter-bar";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { TaxRuleTable } from "./tax-rules-table";
 
+/**
+ * Serializable tax-rule query values received from a Server Component.
+ */
+export type TaxRuleClientQueryParams = Omit<
+  TaxRuleQueryInput,
+  "minRate" | "maxRate"
+> & {
+  minRate?: string;
+  maxRate?: string;
+};
+
 export interface TaxesContentProps {
-  queryParams: TaxRuleQueryInput;
+  queryParams: TaxRuleClientQueryParams;
   taxesList: TaxListApiResponse;
   permissions: EntityPermissions;
 }
@@ -39,8 +50,8 @@ export default function TaxesContent({ queryParams, taxesList, permissions}: Tax
             onPendingChange={setIsLoading}
             initialActive={queryParams.active}
             initialSearch={queryParams.search}
-            initialMaxRate={queryParams.maxRate?.toString() || ""}
-            initialMinRate={queryParams.minRate?.toString() || ""}
+            initialMaxRate={queryParams.maxRate || ""}
+            initialMinRate={queryParams.minRate || ""}
             canCreate={permissions.canCreate}
           />
           {/* Table */}

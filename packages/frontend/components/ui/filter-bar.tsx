@@ -75,7 +75,6 @@ export function FilterBar({
 }: FilterBarProps) {
   const updateURL = useUpdateURL(basePath);
   const [isPending, startTransition] = useTransition();
-  const isFirstRender = useRef(true);
 
   // ── State: one entry per key across all fields ──────────────────────────
   const allKeys = useMemo(
@@ -89,12 +88,22 @@ export function FilterBar({
 
   // ── Propagate isPending to parent ────────────────────────────────────────
   useEffect(() => {
-    if (isFirstRender.current) return;
-    onPendingChange(isPending);
-  }, [isPending]); // eslint-disable-line react-hooks/exhaustive-deps
+    onPendingChange?.(isPending);
+  }, [isPending, onPendingChange]);
 
   // ── Debounced search refs ─────────────────────────────────────────────────
   const searchTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+
+  /**
+   * Cancels pending debounced URL updates when the filter bar unmounts.
+   */
+  useEffect(() => {
+    return (): void => {
+      Object.values(searchTimers.current).forEach((timer) => {
+        clearTimeout(timer);
+      });
+    };
+  }, []);
 
   /**
    * Updates a single key in local state and pushes to URL.
@@ -151,11 +160,6 @@ export function FilterBar({
     () => allKeys.some((k) => values[k] !== (defaultValues[k] ?? "")),
     [allKeys, values, defaultValues],
   );
-
-  // ── Skip effects on first render ──────────────────────────────────────────
-  useEffect(() => {
-    isFirstRender.current = false;
-  }, []);
 
   // ============================================================================
   // Render helpers

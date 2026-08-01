@@ -18,7 +18,13 @@ export default async function TaxesPage({ searchParams }: PageProps) {
     checkEntityPermissions("tax"),
   ]);
 
-  return <TaxesContent permissions={permissions} taxesList={taxes} queryParams={queryParams} />;
+  const clientQueryParams = {
+    ...queryParams,
+    minRate: queryParams.minRate?.toString(),
+    maxRate: queryParams.maxRate?.toString(),
+  };
+
+  return <TaxesContent permissions={permissions} taxesList={taxes} queryParams={clientQueryParams} />;
 }
 
 export async function generateMetadata(): Promise<Metadata> {
