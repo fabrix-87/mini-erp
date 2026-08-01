@@ -1,7 +1,12 @@
 import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
 import { NotFoundError, BadRequestError, ConflictError } from "@/utils/app-error-utils";
-import { sendCreated, sendDeleted, sendSuccess } from "@/utils/response-utils";
+import {
+  sendCreated,
+  sendDeleted,
+  sendPaginatedResponse,
+  sendSuccess,
+} from "@/utils/response-utils";
 import {
   // Tax Rule
   CreateTaxRuleInput,
@@ -34,6 +39,7 @@ import {
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
@@ -60,9 +66,20 @@ export const getAllTaxRules = async (c: Context<AppBindings>) => {
     maxRate,
     sortBy = "displayOrder",
     sortOrder = "asc",
+    page = 1,
+    limit = 20,
   } = getValidatedQuery<TaxRuleQueryInput>(c);
 
-  const where: Prisma.TaxRuleWhereInput = {};
+  const tenantId = getRequiredTenantId(c);
+  const languageId = c.get("user")?.preferredLanguageId!;
+
+  const tenantScope: Prisma.TaxRuleWhereInput = {
+    OR: [{ tenantId: null }, { tenantId }],
+  };
+
+  const where: Prisma.TaxRuleWhereInput = {
+    AND: [tenantScope], // inizializza sempre con lo scope tenant
+  };
 
   if (active !== undefined) where.active = active;
   if (isDefault !== undefined) where.isDefault = isDefault;
@@ -71,10 +88,12 @@ export const getAllTaxRules = async (c: Context<AppBindings>) => {
   if (vatNatureId) where.vatNatureId = vatNatureId;
 
   if (search) {
-    where.OR = [
-      { code: { contains: search, mode: "insensitive" } },
-      { name: { contains: search, mode: "insensitive" } },
-    ];
+    (where.AND as Prisma.TaxRuleWhereInput[]).push({
+      OR: [
+        { code: { contains: search, mode: "insensitive" } },
+        { name: { contains: search, mode: "insensitive" } },
+      ],
+    });
   }
 
   if (minRate || maxRate) {
@@ -84,20 +103,23 @@ export const getAllTaxRules = async (c: Context<AppBindings>) => {
     };
   }
 
-  const taxRules = await prisma.taxRule.findMany({
-    where,
-    orderBy: { [sortBy]: sortOrder },
-    include: {
-      vatNature: { select: { id: true, code: true, description: true } },
-      translations: {
-        include: {
-          language: { select: { id: true, name: true, iso_code: true } },
+  const [taxRules, total] = await Promise.all([
+    prisma.taxRule.findMany({
+      where,
+      orderBy: { [sortBy]: sortOrder },
+      include: {
+        vatNature: { select: { id: true, code: true, description: true } },
+        translations: {
+          where: { languageId },
         },
       },
-    },
-  });
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.taxRule.count({ where }),
+  ]);
 
-  return sendSuccess(c, taxRules, { results: taxRules.length });
+  return sendPaginatedResponse(c, taxRules, total, page, limit);
 };
 
 /**

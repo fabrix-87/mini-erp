@@ -14,7 +14,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { FilterFieldConfig } from "@/types/filter-types";
-import { useNavigation } from "@/hooks/use-navigation";
 
 // ============================================================================
 // Types
@@ -162,87 +161,106 @@ export function FilterBar({
   // Render helpers
   // ============================================================================
 
-  const renderField = (field: FilterFieldConfig, index: number) => {
-    // renderField — search
-    if (field.type === "search") {
-      const isWide = (field.colSpan ?? 1) > 1;
-      return (
-        <div
-          key={field.key}
-          className={`relative ${isWide ? "flex-[2_1_200px]" : "flex-[1_1_140px]"}`}
-        >
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder={field.placeholder}
-            value={values[field.key] ?? ""}
-            onChange={(e) => handleChange(field.key, e.target.value, field.debounceMs ?? 500)}
-            className="pl-9"
-            disabled={isPending}
-          />
-        </div>
-      );
-    }
-
-    // renderField — select
-    if (field.type === "select") {
-      return (
-        <div key={field.key} className="shrink-0">
-          <Select
-            value={values[field.key] ?? ""}
-            onValueChange={(v) => handleChange(field.key, v === "all" ? "" : v)}
-            disabled={isPending}
+  const renderField = (field: FilterFieldConfig, index: number): React.ReactNode => {
+    switch (field.type) {
+      case "search":
+        return (
+          <div
+            key={field.key}
+            className={`relative ${(field.colSpan ?? 1) > 1 ? "flex-[2_1_200px]" : "flex-[1_1_140px]"}`}
           >
-            <SelectTrigger className="w-auto min-w-27.5">
-              <SelectValue placeholder={field.placeholder} />
-            </SelectTrigger>
-            <SelectContent>
-              {field.options.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      );
-    }
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder={field.placeholder}
+              value={values[field.key] ?? ""}
+              onChange={(event) =>
+                handleChange(field.key, event.target.value, field.debounceMs ?? 500)
+              }
+              className="pl-9"
+              disabled={isPending}
+            />
+          </div>
+        );
 
-    if (field.type === "sort") {
-      return (
-        <div key={`sort-${index}`} className="flex gap-2">
-          <Select
-            value={values[field.sortByKey] ?? field.defaultSortBy}
-            onValueChange={(v) => handleSortChange(field.sortByKey, v)}
-            disabled={isPending}
-          >
-            <SelectTrigger className="flex-1">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {field.options.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      case "select":
+        return (
+          <div key={field.key} className="shrink-0">
+            <Select
+              value={values[field.key] ?? ""}
+              onValueChange={(value) => handleChange(field.key, value === "all" ? "" : value)}
+              disabled={isPending}
+            >
+              <SelectTrigger className="w-auto min-w-27.5">
+                <SelectValue placeholder={field.placeholder} />
+              </SelectTrigger>
+              <SelectContent>
+                {field.options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        );
 
-          <Select
-            value={values[field.sortOrderKey] ?? field.defaultSortOrder}
-            onValueChange={(v) => handleSortChange(field.sortOrderKey, v)}
-            disabled={isPending}
-          >
-            <SelectTrigger className="w-25">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="asc">↑ Asc</SelectItem>
-              <SelectItem value="desc">↓ Desc</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      );
+      case "number":
+        return (
+          <div key={field.key} className="shrink-0">
+            <Input
+              id={field.key}
+              type="number"
+              inputMode="decimal"
+              min={field.min}
+              max={field.max}
+              step={field.step ?? "any"}
+              value={values[field.key] ?? ""}
+              onChange={(event) => handleChange(field.key, event.target.value, 300)}
+              placeholder={field.placeholder}
+              disabled={isPending}
+            />
+          </div>
+        );
+
+      case "sort":
+        return (
+          <div key={`sort-${index}`} className="flex gap-2">
+            <Select
+              value={values[field.sortByKey] ?? field.defaultSortBy}
+              onValueChange={(value) => handleSortChange(field.sortByKey, value)}
+              disabled={isPending}
+            >
+              <SelectTrigger className="flex-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {field.options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={values[field.sortOrderKey] ?? field.defaultSortOrder}
+              onValueChange={(value) => handleSortChange(field.sortOrderKey, value)}
+              disabled={isPending}
+            >
+              <SelectTrigger className="w-25">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="asc">↑ Asc</SelectItem>
+                <SelectItem value="desc">↓ Desc</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        );
+
+      default:
+        return null;
     }
   };
 

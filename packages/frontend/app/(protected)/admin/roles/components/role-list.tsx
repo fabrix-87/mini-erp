@@ -13,6 +13,7 @@ import { deleteRoleAction } from "@/actions/role-actions";
 import { toast } from "sonner";
 import { useNavigation } from "@/hooks/use-navigation";
 import { useAppSearchParams } from "@/providers/search-params-provider";
+import { getRoute } from "@/lib/navigation-routes";
 
 interface Props {
   data: RoleListApiResponse;
@@ -46,7 +47,9 @@ export default function RoleListPage({ data }: Props) {
     order: params.sortOrder || "asc",
   };
 
-  const updateURL = useUpdateURL("/settings/roles");
+  const basePath = useMemo(() => getRoute("roles"), [getRoute]);
+
+  const updateURL = useUpdateURL(basePath);
 
   const handleSearch = (searchTerm: string) => {
     updateURL({ search: searchTerm }, { replace: true });

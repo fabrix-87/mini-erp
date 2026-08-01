@@ -1,0 +1,37 @@
+{
+  "taxes": {
+    "title": "Gestione regole fiscali",
+    "description": "Gestisci le regole fiscali della azienda",
+    "no_results": "Nessuna regola trovata",
+    "rule_displayOrder": "Ordine",
+    "rule_code": "Codice",
+    "rule_name": "Nome",
+    "rule_description": "Descrizione",
+    "rule_rate": "Aliquota",
+    "rule_valid_from": "Valida da",
+    "rule_valid_to": "Valida fino al",
+    "rule_active": "Attiva",
+    "placeholder": {
+      "search": "Ricerca per Codice, Nome o Descrizione",
+      "applicableFor": "Applicabile per",
+      "active": "Attivo",
+      "minRate": "Tasso Minimo",
+      "maxRate": "Tasso Massimo"
+    },
+    "applicableFor": {
+      "all": "Qualsiasi",
+      "sales": "Solo vendite",
+      "purchases": "Solo acquisti",
+      "both": "Entrambi"
+    },
+    "active": {
+      "all": "Qualsiasi",
+      "enabled": "Attivo",
+      "disabled": "Disattivato"
+    },
+    "createNewButton": "Crea nuova regola"
+  },
+  "payments": {},
+  "credit-notes": {},
+  "invoices": {}
+}

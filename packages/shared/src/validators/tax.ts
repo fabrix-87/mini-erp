@@ -1,11 +1,7 @@
 import { z } from "zod";
-import {
-  createDecimalSchema,
-  createIdSchema,
-  isoDateSchema,
-} from "./primitives";
+import { createDecimalSchema, createIdSchema, isoDateSchema } from "./primitives";
 import { countryCodeBaseSchema } from "./base";
-import { queryBooleanSchema, sortOrderSchema } from "./query";
+import { paginationSchema, queryBooleanSchema, sortOrderSchema } from "./query";
 
 // ============================================================================
 // ENUMS
@@ -27,10 +23,23 @@ export const vatNatureCategorySchema = z.enum([
 /**
  * Tax Rule applicability enum
  */
-export const taxRuleApplicabilitySchema = z.enum([
-  "sales",
-  "purchases",
-  "both",
+export const taxRuleApplicabilitySchema = z.enum(["SALES", "PURCHASES", "BOTH"]);
+
+/**
+ * Tax Rule Counterparty type enum
+ */
+export const taxRuleCustomerTypeSchema = z.enum(["B2B", "B2C", "PA", "FOREIGN", "ANY"]);
+
+/**
+ * Tax Rule Sortable fields
+ */
+export const taxRuleSortFieldsSchema = z.enum([
+  "code",
+  "name",
+  "rate",
+  "countryCode",
+  "displayOrder",
+  "createdAt",
 ]);
 
 // ============================================================================
@@ -133,10 +142,7 @@ export const createVatNatureSchema = vatNatureShape.strict();
  * Schema for updating a VatNature — partial of shape without `code`,
  * no refinements (partial updates may not include all fiscal fields).
  */
-export const updateVatNatureSchema = vatNatureShape
-  .omit({ code: true })
-  .partial()
-  .strict();
+export const updateVatNatureSchema = vatNatureShape.omit({ code: true }).partial().strict();
 
 // ============================================================================
 // TAX RULE SCHEMAS
@@ -174,20 +180,16 @@ const taxRuleShape = z.object({
     .trim()
     .toUpperCase(),
 
-  name: z
-    .string()
-    .min(1, "Nome obbligatorio")
-    .max(255, "Nome max 255 caratteri")
-    .trim(),
+  name: z.string().min(1, "Nome obbligatorio").max(255, "Nome max 255 caratteri").trim(),
 
   description: z.string().max(5000).optional().nullable(),
   rate: taxRateSchema,
   vatNatureId: vatNatureIdSchema.optional().nullable(),
   normativeReference: z.string().max(255).optional().nullable(),
   countryCode: countryCodeBaseSchema.default("IT"),
-  applicableFor: taxRuleApplicabilitySchema.default("both"),
+  applicableFor: taxRuleApplicabilitySchema.default("BOTH"),
   productCategory: z.string().max(50).optional().nullable(),
-  customerType: z.string().max(20).optional().nullable(),
+  customerType: taxRuleCustomerTypeSchema.optional(),
   isSplitPayment: z.boolean().default(false),
   deductibilityPercent: deductibilityPercentSchema,
   vatDeductible: z.boolean().default(true),
@@ -241,8 +243,7 @@ export const createTaxRuleSchema = taxRuleShape
       return true;
     },
     {
-      message:
-        "La data di fine validità deve essere successiva alla data di inizio",
+      message: "La data di fine validità deve essere successiva alla data di inizio",
       path: ["validTo"],
     },
   );
@@ -253,10 +254,7 @@ export const createTaxRuleSchema = taxRuleShape
  * carry all fields needed to validate rate/vatNature consistency.
  * That validation is handled at the controller level when merging with DB data.
  */
-export const updateTaxRuleSchema = taxRuleShape
-  .omit({ code: true })
-  .partial()
-  .strict();
+export const updateTaxRuleSchema = taxRuleShape.omit({ code: true }).partial().strict();
 
 // ============================================================================
 // VAT NATURE TRANSLATION SCHEMAS
@@ -336,7 +334,7 @@ export const vatNatureQuerySchema = z.object({
 /**
  * Schema for Tax Rule queries
  */
-export const taxRuleQuerySchema = z.object({
+export const taxRuleQuerySchema = paginationSchema.extend({
   active: queryBooleanSchema,
   isDefault: queryBooleanSchema,
   applicableFor: taxRuleApplicabilitySchema.optional(),
@@ -345,9 +343,7 @@ export const taxRuleQuerySchema = z.object({
   minRate: taxRateSchema.optional(),
   maxRate: taxRateSchema.optional(),
   search: z.string().optional(),
-  sortBy: z
-    .enum(["code", "name", "rate", "countryCode", "displayOrder", "createdAt"])
-    .default("displayOrder"),
+  sortBy: taxRuleSortFieldsSchema.default("displayOrder"),
   sortOrder: sortOrderSchema,
 });
 

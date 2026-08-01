@@ -14,6 +14,19 @@ export interface FilterFieldSearch {
   debounceMs?: number;
 }
 
+/**
+ * Config for a numeric filter field.
+ */
+export interface FilterNumberFieldConfig {
+  type: 'number';
+  key: string;
+  placeholder?: string;
+  min?: number;
+  max?: number;
+  step?: number | 'any';
+  resetPageOnChange?: boolean;
+}
+
 /** Config for a select (dropdown) field */
 export interface FilterFieldSelect {
   type: "select";
@@ -32,4 +45,4 @@ export interface FilterFieldSort {
   defaultSortOrder: "asc" | "desc";
 }
 
-export type FilterFieldConfig = FilterFieldSearch | FilterFieldSelect | FilterFieldSort;
+export type FilterFieldConfig = FilterFieldSearch | FilterFieldSelect | FilterFieldSort | FilterNumberFieldConfig;
