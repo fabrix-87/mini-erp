@@ -35,46 +35,49 @@ export function CurrenciesFilterBar({
 
   // ── Field config ─────────────────────────────────────────────────────────────
 
-  const CURRENCY_FILTER_FIELDS: FilterFieldConfig[] = [
-    {
-      type: "search",
-      key: "search",
-      placeholder: t("searchPlaceholder"),
-      debounceMs: 500,
-      colSpan: 2,
-    },
-    {
-      type: "select",
-      key: "active",
-      placeholder: t("activeFilterPlaceholder"),
-      options: [
-        { value: "all", label: t("activeFilterAll") },
-        { value: "true", label: t("activeFilterEnabled") },
-        { value: "false", label: t("activeFilterDisabled") },
-      ],
-    },
-    {
-      type: "select",
-      key: "isBaseCurrency",
-      placeholder: t("baseCurrencyPlaceholder"),
-      options: [
-        { value: "all", label: t("all") },
-        { value: "true", label: t("onlyBase") },
-        { value: "false", label: t("onlyNotBase") },
-      ],
-    },
-    {
-      type: "sort",
-      sortByKey: "sortBy",
-      sortOrderKey: "sortOrder",
-      defaultSortBy: "createdAt",
-      defaultSortOrder: "desc",
-      options: Array.from(CURRENCY_SORT_FIELDS).map((field) => ({
-        value: field as string,
-        label: currencySortLabels[field],
-      })),
-    },
-  ];
+  const CURRENCY_FILTER_FIELDS = useMemo<FilterFieldConfig[]>(
+    () => [
+      {
+        type: "search",
+        key: "search",
+        placeholder: t("searchPlaceholder"),
+        debounceMs: 500,
+        colSpan: 2,
+      },
+      {
+        type: "select",
+        key: "active",
+        placeholder: t("activeFilterPlaceholder"),
+        options: [
+          { value: "all", label: t("activeFilterAll") },
+          { value: "true", label: t("activeFilterEnabled") },
+          { value: "false", label: t("activeFilterDisabled") },
+        ],
+      },
+      {
+        type: "select",
+        key: "isBaseCurrency",
+        placeholder: t("baseCurrencyPlaceholder"),
+        options: [
+          { value: "all", label: t("all") },
+          { value: "true", label: t("onlyBase") },
+          { value: "false", label: t("onlyNotBase") },
+        ],
+      },
+      {
+        type: "sort",
+        sortByKey: "sortBy",
+        sortOrderKey: "sortOrder",
+        defaultSortBy: "createdAt",
+        defaultSortOrder: "desc",
+        options: Array.from(CURRENCY_SORT_FIELDS).map((field) => ({
+          value: field as string,
+          label: currencySortLabels[field],
+        })),
+      },
+    ],
+    [t],
+  );
 
   const handleNewClick = () => {
     navigateToNew("currencies");

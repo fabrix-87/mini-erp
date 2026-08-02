@@ -2,13 +2,19 @@
 export interface FilterSelectOption {
   value: string;
   label: string;
+  default?: boolean;
+}
+
+// Base config shared by all filters field
+interface BaseFilterField<TType extends string = string> {
+  type: TType;
+  key: string;
+  placeholder?: string;
+  label?: string;
 }
 
 /** Config for a search (text input) field */
-export interface FilterFieldSearch {
-  type: "search";
-  key: string;
-  placeholder?: string;
+export interface FilterFieldSearch extends BaseFilterField<"search"> {
   /** Grid column span on sm+ screens. Default: 2 */
   colSpan?: number;
   debounceMs?: number;
@@ -17,10 +23,7 @@ export interface FilterFieldSearch {
 /**
  * Config for a numeric filter field.
  */
-export interface FilterNumberFieldConfig {
-  type: 'number';
-  key: string;
-  placeholder?: string;
+export interface FilterNumberFieldConfig extends BaseFilterField<"number">  {
   min?: number;
   max?: number;
   step?: number | 'any';
@@ -28,10 +31,7 @@ export interface FilterNumberFieldConfig {
 }
 
 /** Config for a select (dropdown) field */
-export interface FilterFieldSelect {
-  type: "select";
-  key: string;
-  placeholder?: string;
+export interface FilterFieldSelect extends BaseFilterField<"select">  {
   options: FilterSelectOption[];
 }
 
@@ -43,6 +43,7 @@ export interface FilterFieldSort {
   options: FilterSelectOption[];
   defaultSortBy: string;
   defaultSortOrder: "asc" | "desc";
+  label?: string;
 }
 
 export type FilterFieldConfig = FilterFieldSearch | FilterFieldSelect | FilterFieldSort | FilterNumberFieldConfig;

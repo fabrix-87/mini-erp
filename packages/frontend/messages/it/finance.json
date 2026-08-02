@@ -15,8 +15,8 @@
       "search": "Ricerca per Codice, Nome o Descrizione",
       "applicableFor": "Applicabile per",
       "active": "Attivo",
-      "minRate": "Tasso Minimo",
-      "maxRate": "Tasso Massimo"
+      "minRate": "Aliquota Minima",
+      "maxRate": "Aliquota Massima"
     },
     "applicableFor": {
       "all": "Qualsiasi",

@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { FilterFieldConfig } from "@/types/filter-types";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group";
 
 // ============================================================================
 // Types
@@ -161,41 +162,74 @@ export function FilterBar({
     [allKeys, values, defaultValues],
   );
 
-  // ============================================================================
-  // Render helpers
-  // ============================================================================
-
+  /**
+   * Renders a declarative filter control with an optional label.
+   * @param field - Filter field configuration.
+   * @param index - Field index, used to create a stable sort key.
+   * @returns Filter control markup.
+   */
   const renderField = (field: FilterFieldConfig, index: number): React.ReactNode => {
+    const fieldId = field.type === "sort" ? `filter-sort-${index}` : `filter-${field.key}`;
+    const labelId = `${fieldId}-label`;
+
+    const label = field.label ? (
+      <span
+        id={labelId}
+        className="truncate text-xs font-medium leading-none text-muted-foreground"
+      >
+        {field.label}
+      </span>
+    ) : null;
+
     switch (field.type) {
       case "search":
         return (
           <div
             key={field.key}
-            className={`relative ${(field.colSpan ?? 1) > 1 ? "flex-[2_1_200px]" : "flex-[1_1_140px]"}`}
+            className={
+              (field.colSpan ?? 1) > 1
+                ? "flex min-w-50 flex-[2_1_20rem] flex-col gap-1.5"
+                : "flex min-w-35 flex-1 flex-col gap-1.5"
+            }
           >
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder={field.placeholder}
-              value={values[field.key] ?? ""}
-              onChange={(event) =>
-                handleChange(field.key, event.target.value, field.debounceMs ?? 500)
-              }
-              className="pl-9"
-              disabled={isPending}
-            />
+            {label}
+
+            <InputGroup className="w-full">
+              <InputGroupInput
+                id={fieldId}
+                type="search"
+                placeholder={field.placeholder}
+                value={values[field.key] ?? ""}
+                onChange={(event) =>
+                  handleChange(field.key, event.target.value, field.debounceMs ?? 500)
+                }
+                disabled={isPending}
+                title={field.placeholder}
+                aria-label={field.label ?? field.placeholder}
+              />
+              <InputGroupAddon align="inline-start">
+                <Search className="size-4 text-muted-foreground" />
+              </InputGroupAddon>
+            </InputGroup>
           </div>
         );
 
       case "select":
         return (
-          <div key={field.key} className="shrink-0">
+          <div key={field.key} className="flex min-w-36 flex-col gap-1.5">
+            {label}
+
             <Select
               value={values[field.key] ?? ""}
               onValueChange={(value) => handleChange(field.key, value === "all" ? "" : value)}
               disabled={isPending}
+              defaultValue={field.options.find((option) => option.default)?.value}
             >
-              <SelectTrigger className="w-auto min-w-27.5">
+              <SelectTrigger
+                className="w-full min-w-36"
+                aria-label={field.label ?? field.placeholder}
+                aria-labelledby={field.label ? labelId : undefined}
+              >
                 <SelectValue placeholder={field.placeholder} />
               </SelectTrigger>
               <SelectContent>
@@ -211,9 +245,11 @@ export function FilterBar({
 
       case "number":
         return (
-          <div key={field.key} className="shrink-0">
+          <div key={field.key} className="flex min-w-32 flex-col gap-1.5">
+            {label}
+
             <Input
-              id={field.key}
+              id={fieldId}
               type="number"
               inputMode="decimal"
               min={field.min}
@@ -223,43 +259,54 @@ export function FilterBar({
               onChange={(event) => handleChange(field.key, event.target.value, 300)}
               placeholder={field.placeholder}
               disabled={isPending}
+              title={field.placeholder}
+              className="w-full"
+              aria-label={field.label ?? field.placeholder}
             />
           </div>
         );
 
       case "sort":
         return (
-          <div key={`sort-${index}`} className="flex gap-2">
-            <Select
-              value={values[field.sortByKey] ?? field.defaultSortBy}
-              onValueChange={(value) => handleSortChange(field.sortByKey, value)}
-              disabled={isPending}
-            >
-              <SelectTrigger className="flex-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {field.options.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div key={`sort-${index}`} className="flex min-w-60 flex-col gap-1.5">
+            {label}
 
-            <Select
-              value={values[field.sortOrderKey] ?? field.defaultSortOrder}
-              onValueChange={(value) => handleSortChange(field.sortOrderKey, value)}
-              disabled={isPending}
-            >
-              <SelectTrigger className="w-25">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="asc">↑ Asc</SelectItem>
-                <SelectItem value="desc">↓ Desc</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2">
+              <Select
+                value={values[field.sortByKey] ?? field.defaultSortBy}
+                onValueChange={(value) => handleSortChange(field.sortByKey, value)}
+                disabled={isPending}
+              >
+                <SelectTrigger
+                  className="min-w-0 flex-1"
+                  aria-label={field.label ?? "Ordinamento"}
+                  aria-labelledby={field.label ? labelId : undefined}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {field.options.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={values[field.sortOrderKey] ?? field.defaultSortOrder}
+                onValueChange={(value) => handleSortChange(field.sortOrderKey, value)}
+                disabled={isPending}
+              >
+                <SelectTrigger className="w-25" aria-label="Direzione ordinamento">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="asc">↑ Asc</SelectItem>
+                  <SelectItem value="desc">↓ Desc</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         );
 
@@ -309,15 +356,17 @@ export function FilterBar({
         </div>
 
         {/* Fields */}
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Left: search + select fields */}
-          <div className="flex flex-1 flex-wrap gap-3 min-w-0">
-            {fields.filter((f) => f.type !== "sort").map(renderField)}
+        <div className="flex flex-wrap items-end gap-3">
+          {/* Left: search, select and number fields */}
+          <div className="flex min-w-0 flex-1 flex-wrap items-end gap-3">
+            {fields.filter((field) => field.type !== "sort").map(renderField)}
           </div>
 
-          {/* Right: sort fields always aligned to the right */}
-          <div className="flex gap-2 shrink-0">
-            {fields.filter((f) => f.type === "sort").map((f, i) => renderField(f, i))}
+          {/* Right: sort fields */}
+          <div className="flex shrink-0 flex-wrap items-end gap-3">
+            {fields
+              .filter((field) => field.type === "sort")
+              .map((field, index) => renderField(field, index))}
           </div>
         </div>
       </div>

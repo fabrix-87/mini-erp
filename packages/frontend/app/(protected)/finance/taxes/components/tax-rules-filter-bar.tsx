@@ -43,15 +43,16 @@ export function TaxesFilterBar({
         type: "search",
         key: "search",
         placeholder: t("placeholder.search"),
+        label: t("placeholder.search"),
         debounceMs: 500,
-        colSpan: 1,
+        colSpan: 2,
       },
       {
         type: "select",
         key: "applicableFor",
-        placeholder: t("placeholder.applicableFor"),
+        label: t("placeholder.applicableFor"),
         options: [
-          { value: "all", label: t("applicableFor.all") },
+          { value: "all", label: t("applicableFor.all"), default: true },
           { value: "SALES", label: t("applicableFor.sales") },
           { value: "PURCHASES", label: t("applicableFor.purchases") },
           { value: "BOTH", label: t("applicableFor.both") },
@@ -59,8 +60,8 @@ export function TaxesFilterBar({
       },
       {
         type: "number",
-        key: "minRate",
-        placeholder: t("placeholder.minRate"),
+        key: "minRate",        
+        label: t("placeholder.minRate"),
         min: 0,
         max: 100,
         step: 0.01,
@@ -68,7 +69,7 @@ export function TaxesFilterBar({
       {
         type: "number",
         key: "maxRate",
-        placeholder: t("placeholder.maxRate"),
+        label: t("placeholder.maxRate"),
         min: 0,
         max: 100,
         step: 0.01,
@@ -76,9 +77,9 @@ export function TaxesFilterBar({
       {
         type: "select",
         key: "active",
-        placeholder: t("placeholder.active"),
+        label: t("placeholder.active"),
         options: [
-          { value: "all", label: t("active.all") },
+          { value: "all", label: t("active.all"), default: true },
           { value: "true", label: t("active.enabled") },
           { value: "false", label: t("active.disabled") },
         ],
