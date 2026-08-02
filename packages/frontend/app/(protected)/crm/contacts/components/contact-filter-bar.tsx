@@ -34,41 +34,48 @@ export default function ContactFilterBar({
   const t = useTranslations("crm.contacts");
 
   // ── Field config ─────────────────────────────────────────────────────────────
-  const CONTACT_FILTER_FIELDS: FilterFieldConfig[] = [
-    {
-      type: "search",
-      key: "search",
-      placeholder: t("searchFilterPlaceholder"),
-      debounceMs: 500,
-      colSpan: 2,
-    },
-    {
-      type: "select",
-      key: "active",
-      placeholder: t("activeFilterPlaceholder"),
-      options: [
-        { value: "all", label: t("all") },
-        { value: "true", label: t("active") },
-        { value: "false", label: t("inactive") },
-      ],
-    },
-    {
-      type: "select",
-      key: "isPrimaryContact",
-      placeholder: t("contact_type"),
-      options: [
-        { value: "all", label: t("all") },
-        { value: "true", label: t("primary") },
-        { value: "false", label: t("secondary") },
-      ],
-    },
-    {
-      type: "search",
-      key: "department",
-      placeholder: t("departmentFilterPlaceholder"),
-      debounceMs: 500,
-    },
-  ];
+  const CONTACT_FILTER_FIELDS = useMemo<FilterFieldConfig[]>(
+    () => [
+      {
+        type: "search",
+        key: "search",
+        placeholder: t("searchFilterPlaceholder"),
+        label: t("searchFilterPlaceholder"),
+        debounceMs: 500,
+        colSpan: 2,
+      },
+      {
+        type: "select",
+        key: "active",
+        placeholder: t("activeFilterPlaceholder"),
+        label: t("activeFilterPlaceholder"),
+        options: [
+          { value: "all", label: t("all") },
+          { value: "true", label: t("active") },
+          { value: "false", label: t("inactive") },
+        ],
+      },
+      {
+        type: "select",
+        key: "isPrimaryContact",
+        placeholder: t("contact_type"),
+        label: t("contact_type"),
+        options: [
+          { value: "all", label: t("all") },
+          { value: "true", label: t("primary") },
+          { value: "false", label: t("secondary") },
+        ],
+      },
+      {
+        type: "search",
+        key: "department",
+        placeholder: t("departmentFilterPlaceholder"),
+        label: t("departmentFilterPlaceholder"),
+        debounceMs: 500,
+      },
+    ],
+    [t],
+  );
 
   const initialValues: FilterInitialValues = {
     search: filters.search ?? DEFAULT_VALUES.search,

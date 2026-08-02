@@ -24,8 +24,6 @@ import { Tooltip } from "@radix-ui/react-tooltip";
 
 interface ContactTableRowProps {
   contact: Contact;
-  isSelected: boolean;
-  onSelect: (checked: boolean) => void;
   onView: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -34,8 +32,6 @@ interface ContactTableRowProps {
 
 export default function ContactTableRow({
   contact,
-  isSelected,
-  onSelect,
   onView,
   onEdit,
   onDelete,
@@ -43,9 +39,6 @@ export default function ContactTableRow({
 }: ContactTableRowProps) {
   return (
     <TableRow>
-      <TableCell>
-        <Checkbox checked={isSelected} onCheckedChange={onSelect} />
-      </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
           <div>

@@ -12,9 +12,8 @@ import type {
   ContactQueryInput,
   ContactListApiResponse,
 } from "@/types/contact-types";
-import ContactBulkActions from "../../../../../components/contact/contact-list/bulk-actions";
 import ContactTable from "./contact-table";
-import { DataPagination } from "../../../../../components/ui/data-pagination";
+import { DataPagination } from "@/components/ui/data-pagination";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { useNavigation } from "@/hooks/use-navigation";
 import { useTranslations } from "next-intl";
@@ -27,7 +26,7 @@ interface Props {
 }
 
 export default function ContactListPage({ data, params }: Props) {
-  const { navigateToNew, navigateToEdit, navigateToDetail, getRoute } = useNavigation();
+  const { navigateToEdit, navigateToDetail, getRoute } = useNavigation();
   const updateURL = useUpdateURL(getRoute("contacts"));
   const t = useTranslations();
 
@@ -37,9 +36,7 @@ export default function ContactListPage({ data, params }: Props) {
   // Hook per mutazioni
   const { deleteContact, toggleActive, isPending } = useContactMutations();
   const { exportCSV, exportExcel, isExporting } = useContactExport();
-  const { bulkDelete, bulkActivate, bulkDeactivate, isProcessing } = useContactBulkOperations();
 
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // Gestisci sort e filters localmente (derivati da params)
@@ -48,25 +45,9 @@ export default function ContactListPage({ data, params }: Props) {
     order: params.sortOrder || "asc",
   };
 
-  const handleResetFilters = () => {
-    updateURL({}, { replace: true, clearAll: true });
-  };
-
-  const handleSearch = (searchTerm: string) => {
-    updateURL({ search: searchTerm, page: 1 });
-  };
-
   const handleSort = (field: ContactSortField) => {
     const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
     updateURL({ sortBy: field, sortOrder: newOrder });
-  };
-
-  const handlePageChange = (newPage: number) => {
-    updateURL({ page: newPage });
-  };
-
-  const handleFilterChange = (newFilters: Record<string, any>) => {
-    updateURL({ ...newFilters, page: 1 });
   };
 
   return (
@@ -87,31 +68,9 @@ export default function ContactListPage({ data, params }: Props) {
         onPendingChange={setIsLoading}
       />
 
-      <ContactBulkActions
-        selectedIds={selectedIds}
-        onActivate={async () => {
-          await bulkActivate(selectedIds);
-          setSelectedIds([]);
-        }}
-        onDeactivate={async () => {
-          await bulkDeactivate(selectedIds);
-          setSelectedIds([]);
-        }}
-        onDelete={async () => {
-          await bulkDelete(selectedIds);
-          setSelectedIds([]);
-        }}
-        isProcessing={isProcessing}
-      />
-
       <ContactTable
         contacts={contacts}
         loading={isPending || isLoading}
-        selectedIds={selectedIds}
-        onSelectAll={(checked) => setSelectedIds(checked ? contacts.map((c) => c.id) : [])}
-        onSelectOne={(id, checked) => {
-          setSelectedIds((prev) => (checked ? [...prev, id] : prev.filter((i) => i !== id)));
-        }}
         onSort={handleSort}
         sort={sort}
         onView={(id) => navigateToDetail("contacts", id)}
@@ -134,7 +93,7 @@ export default function ContactListPage({ data, params }: Props) {
           limit={params.limit}
           hasNextPage={pagination.hasNextPage}
           hasPrevPage={pagination.hasPrevPage}
-          itemLabel={t('nav.contacts')}
+          itemLabel={t("nav.contacts")}
         />
       )}
     </div>

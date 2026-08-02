@@ -17,23 +17,17 @@ import { useTranslations } from "next-intl";
 interface ContactTableProps {
   contacts: Contact[];
   loading: boolean;
-  selectedIds: number[];
-  onSelectAll: (checked: boolean) => void;
-  onSelectOne: (id: number, checked: boolean) => void;
   onSort: (field: ContactSortField) => void;
   sort: { field: ContactSortField; order: SortOrder };
-  onView: (id: number) => void;
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => Promise<void>;
-  onToggleActive: (id: number, currentActive: boolean) => Promise<void>;
+  onView: (id: string) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
+  onToggleActive: (id: string, currentActive: boolean) => Promise<void>;
 }
 
 export default function ContactTable({
   contacts,
   loading,
-  selectedIds,
-  onSelectAll,
-  onSelectOne,
   onSort,
   sort,
   onView,
@@ -64,13 +58,7 @@ export default function ContactTable({
     <div className="rounded-md border">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead className="w-12">
-              <Checkbox
-                checked={contacts.length > 0 && selectedIds.length === contacts.length}
-                onCheckedChange={onSelectAll}
-              />
-            </TableHead>
+          <TableRow>           
             <SortableHeader field="firstName">Nome</SortableHeader>
             <SortableHeader field="email">Email</SortableHeader>
             <TableHead>Telefono</TableHead>
@@ -99,8 +87,6 @@ export default function ContactTable({
               <ContactTableRow
                 key={contact.id}
                 contact={contact}
-                isSelected={selectedIds.includes(contact.id)}
-                onSelect={(checked) => onSelectOne(contact.id, checked)}
                 onView={() => onView(contact.id)}
                 onEdit={() => onEdit(contact.id)}
                 onDelete={() => onDelete(contact.id)}
