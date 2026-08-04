@@ -1,6 +1,6 @@
 # 🏢 Mini-ERP
 
-### Enterprise Resource Planning System — Full-Stack, Production-Ready
+### Enterprise Resource Planning System — Full-Stack, Not yet Production-Ready
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
