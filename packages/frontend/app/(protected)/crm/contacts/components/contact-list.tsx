@@ -52,19 +52,11 @@ export default function ContactListPage({ data, params }: Props) {
 
   return (
     <div className="space-y-6">
-      <BreadcrumbSetter title={t("crm.contacts.title")} />
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{t("nav.contacts")}</h1>
-          <p className="text-muted-foreground">{t("crm.contacts.description")}</p>
-        </div>
-      </div>
-
       <ContactFilterBar
         filters={params}
         onExport={exportExcel}
         isExporting={isExporting}
-        canCreate={true}
+        canCreate={false}
         onPendingChange={setIsLoading}
       />
 
