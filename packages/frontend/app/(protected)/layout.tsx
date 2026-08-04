@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { Sidebar } from "@/components/sidebar";
 import { ShellBar } from "@/components/shell-bar";
 import { SearchParamsProvider } from "@/providers/search-params-provider";
-import { Breadcrumbs } from "@/components/breadcrumbs";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
@@ -41,9 +40,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps): Rea
           )}
         >
           <main className="min-h-[calc(100vh-3rem)] overflow-x-hidden">
-            <div className="px-4 py-4 lg:px-6 lg:py-5">
-              {children}
-            </div>
+            <div className="px-4 py-4 lg:px-6 lg:py-5">{children}</div>
           </main>
         </div>
       </div>

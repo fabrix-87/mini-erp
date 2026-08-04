@@ -1,5 +1,4 @@
 import { PageHeaderAction } from "@/types/page-types";
-import { Plus, Pencil, Trash2 } from "lucide-react";
 
 export function createCreateAction(
   key: string,
@@ -32,5 +31,43 @@ export function createEditAction(
     icon: "pencil",
     variant: "outline",
     order: 20,
+  };
+}
+
+export function createExportAction(
+  key: string,
+  label: string,
+  onClick: () => void | Promise<void>,
+  visible: boolean = true,
+  disabled: boolean = false,
+): PageHeaderAction {
+  return {
+    key,
+    label,
+    onClick,
+    visible,
+    disabled,
+    icon: "download",
+    intent: "export",
+    order: 30,
+  };
+}
+
+export function createDeleteAction(
+  key: string,
+  label: string,
+  onClick: () => void | Promise<void>,
+  visible: boolean = true,
+  disabled: boolean = false,
+): PageHeaderAction {
+  return {
+    key,
+    label,
+    onClick,
+    visible,
+    disabled,
+    icon: "trash",
+    intent: "delete",
+    order: 40,
   };
 }

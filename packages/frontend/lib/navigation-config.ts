@@ -1,3 +1,4 @@
+import { NavigationSectionConfig } from "@/types/navigation-types";
 import {
   Home,
   PhoneCall,
@@ -31,7 +32,7 @@ import {
  * Contains structure, paths, icons and i18n keys — no translated strings.
  * Translation keys follow the pattern used in `messages/{locale}/nav.json`.
  */
-export const NAVIGATION_TREE = [
+export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
   {
     titleKey: "overview",
     path: "/dashboard",
@@ -86,6 +87,7 @@ export const NAVIGATION_TREE = [
   {
     titleKey: "purchasing",
     path: "/purchasing",
+    hidden: false,
     items: [
       {
         nameKey: "purchase_orders",
@@ -98,6 +100,7 @@ export const NAVIGATION_TREE = [
   {
     titleKey: "warehouse",
     path: "/warehouse",
+    hidden: false,
     items: [
       {
         nameKey: "warehouses",
@@ -128,6 +131,7 @@ export const NAVIGATION_TREE = [
   {
     titleKey: "finance",
     path: "/finance",
+    hidden: false,
     items: [
       { nameKey: "invoices", href: "/finance/invoices", icon: Receipt, descKey: "desc_invoices" },
       {
@@ -148,6 +152,7 @@ export const NAVIGATION_TREE = [
   {
     titleKey: "compliance",
     path: "/compliance",
+    hidden: false,
     items: [
       {
         nameKey: "intrastat",
@@ -160,6 +165,7 @@ export const NAVIGATION_TREE = [
   {
     titleKey: "administration",
     path: "/admin",
+    hidden: false,
     items: [
       {
         nameKey: "users",
@@ -180,6 +186,7 @@ export const NAVIGATION_TREE = [
   {
     titleKey: "system",
     path: "/system",
+    hidden: false,
     items: [
       { nameKey: "company", href: "/system/company", icon: Building2, descKey: "desc_company" },
       {
@@ -201,6 +208,14 @@ export const NAVIGATION_TREE = [
         icon: Languages,
         descKey: "desc_localization",
       },
+    ],
+  },
+  {
+    titleKey: "settings",
+    path: "/settings",
+    hidden: true,
+    items: [
+      { nameKey: "profile", href: "/settings/profile", hidden: true },
     ],
   },
 ] as const;

@@ -1,9 +1,10 @@
 import { checkEntityPermissions, requirePermission } from "@/lib/server/auth";
-import {  LanguageQueryInput, languageQuerySchema } from "@mini-erp/shared";
+import { LanguageQueryInput, languageQuerySchema } from "@mini-erp/shared";
 import LanguageContent from "./components/language-content";
 import { getAllLanguages } from "@/services/server/language-service";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { PageHeader } from "@/components/page-header";
 
 interface PageProps {
   searchParams: Promise<LanguageQueryInput>;
@@ -13,17 +14,20 @@ export default async function CurrenciesPage({ searchParams }: PageProps) {
   await requirePermission("language:read");
 
   const queryParams: LanguageQueryInput = languageQuerySchema.parse(await searchParams);
-  const [languages, permissions ] = await Promise.all([
+  const [languages, permissions] = await Promise.all([
     getAllLanguages(queryParams),
     checkEntityPermissions("language"),
   ]);
 
   return (
-    <LanguageContent
-      queryParams={queryParams}
-      languagesList={languages}
-      permissions={permissions}
-    />
+    <>
+      <PageHeader />
+      <LanguageContent
+        queryParams={queryParams}
+        languagesList={languages}
+        permissions={permissions}
+      />
+    </>
   );
 }
 

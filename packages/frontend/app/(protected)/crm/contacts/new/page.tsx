@@ -1,4 +1,5 @@
 import ContactForm from "@/app/(protected)/crm/contacts/components/contact-form";
+import { PageHeader } from "@/components/page-header";
 import { requirePermission } from "@/lib/server/auth";
 import { getCompanyById } from "@/services/server/company-service";
 
@@ -13,7 +14,12 @@ export default async function ContactNewPage({ searchParams }: Props) {
 
   const { companyId } = await searchParams;
 
-  const initialCompany = await getCompanyById(companyId);
+  const initialCompany = companyId ? await getCompanyById(companyId) : null;
 
-  return <ContactForm isNew={true} initialCompany={initialCompany} />;
+  return (
+    <>
+      <PageHeader />
+      <ContactForm isNew={true} initialCompany={initialCompany} />;
+    </>
+  );
 }

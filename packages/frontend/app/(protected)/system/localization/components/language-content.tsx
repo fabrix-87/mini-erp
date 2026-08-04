@@ -1,6 +1,5 @@
 "use client";
 
-import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 import { LanguageListApiResponse } from "@/types/language";
 import { EntityPermissions, LanguageQueryInput } from "@mini-erp/shared";
 import { useTranslations } from "next-intl";
@@ -26,15 +25,6 @@ export default function LanguageContent({
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
-      <BreadcrumbSetter title={t("system.localization.title")} />
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{t('nav.languages')}</h1>
-          <p className="text-muted-foreground">{t('system.localization.description')}</p>
-        </div>
-      </div>
       {/* Filter bar */}
       <LanguageFilterBar
         initialSearch={queryParams.search}

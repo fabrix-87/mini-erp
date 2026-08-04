@@ -10,13 +10,13 @@ import {
   HelpCircle,
   LogOut,
   Settings,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
-import { useNavigationContext } from "@/hooks/use-navigation-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getRoute } from "@/lib/navigation-routes";
 
 interface ShellBarProps {
   collapsed: boolean;
@@ -32,8 +33,8 @@ interface ShellBarProps {
 }
 
 /**
- * Global application shell bar inspired by SAP Fiori.
- * It provides branding, route context, and global user actions.
+ * Global application shell bar.
+ * Blue-centered header aligned with the application theme.
  */
 export function ShellBar({
   collapsed,
@@ -42,20 +43,33 @@ export function ShellBar({
 }: ShellBarProps): React.JSX.Element {
   const { user, logout } = useAuth();
   const { resolvedTheme, setTheme } = useTheme();
-  const tNav = useTranslations("nav");
-  const { sectionKey, itemKey, descriptionKey } = useNavigationContext();
+
+  const isDark = resolvedTheme === "dark";
 
   const tenantInitial = user?.currentTenant?.name?.[0] ?? "M";
   const tenantName = user?.currentTenant?.name ?? "Mini ERP";
-  const sectionLabel = sectionKey ? tNav(sectionKey) : null;
-  const itemLabel = itemKey ? tNav(itemKey) : null;
-  const descriptionLabel = descriptionKey ? tNav(descriptionKey) : null;
+
+  const iconButtonBase =
+    "h-8 w-8 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors";
+
+  const iconButtonTone = isDark
+    ? "text-muted-foreground hover:bg-primary/12 hover:text-foreground"
+    : "text-slate-500 hover:bg-primary/8 hover:text-slate-900";
+
+  const brandBadgeTone = isDark
+    ? "bg-primary/90 text-primary-foreground shadow-[0_0_0_1px_rgba(15,23,42,0.55)]"
+    : "bg-primary text-primary-foreground shadow-[0_0_0_1px_rgba(15,23,42,0.06)]";
+
+  const brandMetaTone = isDark ? "text-sky-300/90" : "text-blue-700/80";
 
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 flex h-12 items-center border-b border-primary/20",
-        "bg-primary text-primary-foreground",
+        "fixed inset-x-0 top-0 z-50 flex h-12 items-center border-b",
+        isDark
+          ? "border-slate-800 bg-slate-950/90 backdrop-blur"
+          : "border-slate-200 bg-slate-50/90 backdrop-blur",
+        "shadow-[0_1px_0_rgba(15,23,42,0.04)]",
       )}
     >
       <div className="flex h-full w-full items-center gap-2 px-3 lg:px-4">
@@ -64,7 +78,7 @@ export function ShellBar({
             type="button"
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-primary-foreground hover:bg-primary/80 lg:hidden"
+            className={cn(iconButtonBase, iconButtonTone, "lg:hidden")}
             onClick={onOpenMobileSidebar}
             aria-label="Open navigation menu"
           >
@@ -75,7 +89,7 @@ export function ShellBar({
             type="button"
             variant="ghost"
             size="icon"
-            className="hidden h-8 w-8 text-primary-foreground hover:bg-primary/80 lg:inline-flex"
+            className={cn(iconButtonBase, iconButtonTone, "hidden lg:inline-flex")}
             onClick={onToggleCollapsed}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
@@ -89,14 +103,27 @@ export function ShellBar({
 
         <Link
           href="/dashboard"
-          className="flex min-w-0 items-center gap-2 rounded-md px-1 py-1 hover:bg-primary/80"
+          className={cn(
+            "flex min-w-0 items-center gap-2 rounded-full px-2 py-1 text-sm font-medium transition-colors",
+            isDark
+              ? "hover:bg-slate-800/80"
+              : "border border-transparent shadow-sm hover:border-slate-200 hover:bg-white hover:shadow-md",
+          )}
         >
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary-foreground/15 text-xs font-semibold text-primary-foreground">
+          <div
+            className={cn(
+              "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold",
+              brandBadgeTone,
+            )}
+          >
             {tenantInitial}
           </div>
 
-          <div className="min-w-0">
-            <span className="truncate text-sm font-semibold">{tenantName}</span>
+          <div className="min-w-0 flex flex-col">
+            <span className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100">
+              {tenantName}
+            </span>
+            <span className={cn("truncate text-[10px] font-medium", brandMetaTone)}>Mini ERP</span>
           </div>
         </Link>
 
@@ -107,7 +134,7 @@ export function ShellBar({
             type="button"
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-primary-foreground hover:bg-primary/80"
+            className={cn(iconButtonBase, iconButtonTone)}
             aria-label="Global search"
           >
             <Search className="h-4 w-4" />
@@ -117,7 +144,7 @@ export function ShellBar({
             type="button"
             variant="ghost"
             size="icon"
-            className="hidden h-8 w-8 text-primary-foreground hover:bg-primary/80 sm:inline-flex"
+            className={cn(iconButtonBase, iconButtonTone, "hidden sm:inline-flex")}
             aria-label="Notifications"
           >
             <Bell className="h-4 w-4" />
@@ -127,7 +154,7 @@ export function ShellBar({
             type="button"
             variant="ghost"
             size="icon"
-            className="hidden h-8 w-8 text-primary-foreground hover:bg-primary/80 md:inline-flex"
+            className={cn(iconButtonBase, iconButtonTone, "hidden md:inline-flex")}
             aria-label="Help"
           >
             <HelpCircle className="h-4 w-4" />
@@ -137,11 +164,11 @@ export function ShellBar({
             type="button"
             variant="ghost"
             size="icon"
-            className="hidden h-8 w-8 text-primary-foreground hover:bg-primary/80 md:inline-flex"
-            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            className={cn(iconButtonBase, iconButtonTone, "hidden md:inline-flex")}
+            onClick={() => setTheme(isDark ? "light" : "dark")}
             aria-label="Toggle theme"
           >
-            <span className="text-xs font-medium">{resolvedTheme === "dark" ? "L" : "D"}</span>
+            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
 
           <DropdownMenu>
@@ -149,33 +176,46 @@ export function ShellBar({
               <Button
                 type="button"
                 variant="ghost"
-                className="ml-1 hidden h-8 items-center gap-2 px-2 text-primary-foreground hover:bg-primary/80 sm:inline-flex"
+                className={cn(
+                  "ml-1 hidden h-8 items-center gap-2 rounded-full px-2 text-xs font-medium sm:inline-flex",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  isDark
+                    ? "text-slate-200 hover:bg-slate-800/80"
+                    : "text-slate-700 hover:bg-white hover:shadow-sm",
+                )}
                 aria-label="Open user menu"
               >
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-foreground/15 text-[10px] font-semibold text-primary-foreground">
-                  {user?.details.firstName?.[0]}
-                  {user?.details.lastName?.[0]}
-                </div>
+                <span className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold",
+                      brandBadgeTone,
+                    )}
+                  >
+                    {user?.details.firstName?.[0]}
+                    {user?.details.lastName?.[0]}
+                  </span>
 
-                <span className="max-w-32 truncate text-xs font-medium">
-                  {user?.details.firstName} {user?.details.lastName}
+                  <span className="max-w-32 truncate">
+                    {user?.details.firstName} {user?.details.lastName}
+                  </span>
                 </span>
               </Button>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuItem asChild>
-                <Link href="/settings/profile">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Impostazioni
+                <Link href={getRoute("profile")} className="group flex w-full items-center gap-2">
+                  <Settings className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
+                  <span>Impostazioni</span>
                 </Link>
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem onClick={logout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
+              <DropdownMenuItem onClick={logout} className="group cursor-pointer">
+                <LogOut className="mr-2 h-4 w-4 text-muted-foreground transition-colors group-hover:text-red-500" />
+                <span className="group-hover:text-red-500">Logout</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

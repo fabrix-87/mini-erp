@@ -121,5 +121,8 @@
     "password": "Password",
     "forgot_password": "Password dimenticata?",
     "welcome_back": "Bentornato"
-  }
+  },
+  "new" : "Aggiungi",
+  "edit" : "Modifica",
+  "delete" : "Elimina"
 }

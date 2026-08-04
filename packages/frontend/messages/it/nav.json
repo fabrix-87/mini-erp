@@ -51,6 +51,9 @@
   "localization": "Localizzazione",
   "languages": "Lingue",
 
+  "settings": "Impostazioni",
+  "profile": "Profilo",
+
   "desc_dashboard": "KPI e metriche aziendali",
   "desc_activities": "Attività e calendario",
   "desc_reports": "Analisi e report",

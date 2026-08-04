@@ -31,11 +31,12 @@ export function buildNavigationConfig(
   return NAVIGATION_TREE.map((section) => ({
     title: t(section.titleKey),
     path: section.path,
+    hidden: section.hidden ?? false,
     items: section.items.map((item) => ({
       ...item,
       name: t(item.nameKey),
-      description: "descKey" in item ? t(item.descKey) : undefined,
-      items: "items" in item
+      description: "descKey" in item && item.descKey ? t(item.descKey) : undefined,
+      items: "items" in item && item.items
         ? item.items.map((sub) => ({ ...sub, name: t(sub.nameKey) }))
         : undefined,
     })),
@@ -82,7 +83,7 @@ export function useFilteredNavigation(): NavigationSection[] {
 
     return config
       .map((section) => ({ ...section, items: filterItemsByRoles(section.items, userRoleCodes) }))
-      .filter((section) => section.items.length > 0);
+      .filter((section) => section.items.length > 0 && section.hidden !== true);
   }, [user?.currentTenant.roles, t]);
 }
 

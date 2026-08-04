@@ -6,10 +6,24 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useNavigationContext } from "@/hooks/use-navigation-context";
 
+interface BreadcrumbsProps {
+  className?: string;
+  /**
+   * Overrides the label of the last (current) breadcrumb segment.
+   * Use this on detail pages to show the entity's own name/number
+   * (e.g. a company name or document number) instead of the generic
+   * translated section label (e.g. "Cliente").
+   */
+  currentLabel?: string;
+}
+
 /**
  * Renders the current breadcrumb trail from navigation metadata.
  */
-export function Breadcrumbs(): React.JSX.Element | null {
+export function Breadcrumbs({
+  className,
+  currentLabel,
+}: BreadcrumbsProps = {}): React.JSX.Element | null {
   const tNav = useTranslations("nav");
   const { breadcrumbItems, isSectionRoot } = useNavigationContext();
 
@@ -18,11 +32,11 @@ export function Breadcrumbs(): React.JSX.Element | null {
   }
 
   return (
-    <nav aria-label="Breadcrumb" className="mb-3">
+    <nav aria-label="Breadcrumb" className={cn("mb-3", className)}>
       <ol className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
         {breadcrumbItems.map((item, index) => {
           const isLast = index === breadcrumbItems.length - 1;
-          const label = tNav(item.key);
+          const label = isLast && currentLabel ? currentLabel : tNav(item.key);
 
           return (
             <li key={item.href} className="flex items-center gap-1">

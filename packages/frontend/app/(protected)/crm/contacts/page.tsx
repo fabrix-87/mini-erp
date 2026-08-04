@@ -32,7 +32,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
 
   const actionItems = [
     createCreateAction(
-      "create-contact",
+      "create",
       t("createNewButton") ?? "Nuovo",
       getNewRoute("contacts"),
       permissions.canCreate,
