@@ -54,13 +54,17 @@ export function ShellBar({
 
   const iconButtonTone = isDark
     ? "text-muted-foreground hover:bg-primary/12 hover:text-foreground"
-    : "text-slate-500 hover:bg-primary/8 hover:text-slate-900";
+    : "text-primary-foreground/80 hover:bg-white/15 hover:text-primary-foreground";
 
   const brandBadgeTone = isDark
     ? "bg-primary/90 text-primary-foreground shadow-[0_0_0_1px_rgba(15,23,42,0.55)]"
-    : "bg-primary text-primary-foreground shadow-[0_0_0_1px_rgba(15,23,42,0.06)]";
+    : "bg-white/20 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.25)]";
 
-  const brandMetaTone = isDark ? "text-sky-300/90" : "text-blue-700/80";
+  const brandMetaTone = isDark ? "text-sky-300/90" : "text-white/70";
+
+  const userMenuTriggerTone = isDark
+    ? "text-slate-200 hover:bg-slate-800/80 hover:text-slate-100"
+    : "text-white/90 hover:bg-white/15 hover:text-white";
 
   return (
     <header
@@ -68,7 +72,7 @@ export function ShellBar({
         "fixed inset-x-0 top-0 z-50 flex h-12 items-center border-b",
         isDark
           ? "border-slate-800 bg-slate-950/90 backdrop-blur"
-          : "border-slate-200 bg-slate-50/90 backdrop-blur",
+          : "border-primary/20 bg-primary backdrop-blur",
         "shadow-[0_1px_0_rgba(15,23,42,0.04)]",
       )}
     >
@@ -105,9 +109,7 @@ export function ShellBar({
           href="/dashboard"
           className={cn(
             "flex min-w-0 items-center gap-2 rounded-full px-2 py-1 text-sm font-medium transition-colors",
-            isDark
-              ? "hover:bg-slate-800/80"
-              : "border border-transparent shadow-sm hover:border-slate-200 hover:bg-white hover:shadow-md",
+            isDark ? "hover:bg-slate-800/80" : "hover:bg-white/15 rounded-full",
           )}
         >
           <div
@@ -120,7 +122,12 @@ export function ShellBar({
           </div>
 
           <div className="min-w-0 flex flex-col">
-            <span className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100">
+            <span
+              className={cn(
+                "truncate text-xs font-semibold",
+                isDark ? "text-slate-100" : "text-white",
+              )}
+            >
               {tenantName}
             </span>
             <span className={cn("truncate text-[10px] font-medium", brandMetaTone)}>Mini ERP</span>
@@ -179,9 +186,7 @@ export function ShellBar({
                 className={cn(
                   "ml-1 hidden h-8 items-center gap-2 rounded-full px-2 text-xs font-medium sm:inline-flex",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  isDark
-                    ? "text-slate-200 hover:bg-slate-800/80"
-                    : "text-slate-700 hover:bg-white hover:shadow-sm",
+                  userMenuTriggerTone,
                 )}
                 aria-label="Open user menu"
               >

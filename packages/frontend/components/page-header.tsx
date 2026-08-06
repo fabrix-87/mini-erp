@@ -44,12 +44,12 @@ export function PageHeader({
   const { pageKey, descriptionKey, isNewRoute, isEditRoute, isDetailRoute } =
     useNavigationContext();
 
-  const baseTitle = pageKey ? tNav(pageKey) : tCommon("page");
+  const baseTitle = pageKey ? tNav(pageKey) : tCommon("page_header.generic_page");
 
   const computedTitle = (() => {
-    if (isNewRoute) return `${tCommon("new")} ${baseTitle}`;
-    if (isEditRoute) return `${tCommon("edit")} ${baseTitle}`;
-    if (isDetailRoute) return `${baseTitle} ${tCommon("details")}`;
+    if (isNewRoute) return `${tCommon("page_header.new")} ${baseTitle}`;
+    if (isEditRoute) return `${tCommon("page_header.edit")} ${baseTitle}`;
+    if (isDetailRoute) return `${baseTitle} ${tCommon("page_header.details")}`;
     return baseTitle;
   })();
 

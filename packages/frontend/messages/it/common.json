@@ -122,7 +122,10 @@
     "forgot_password": "Password dimenticata?",
     "welcome_back": "Bentornato"
   },
-  "new" : "Aggiungi",
-  "edit" : "Modifica",
-  "delete" : "Elimina"
+  "page_header": {
+    "new": "Nuovo",
+    "edit": "Modifica",
+    "details": "Dettagli",
+    "generic_page": "Pagina"
+  }
 }
