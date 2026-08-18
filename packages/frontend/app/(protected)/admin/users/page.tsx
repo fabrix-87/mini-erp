@@ -1,10 +1,12 @@
 // app/settings/users/page.tsx
-import { redirect } from "next/navigation";
 import { checkUserPermission, requirePermission } from "@/lib/server/auth";
 import { getAllUsers, getUserStats } from "@/services/server/user-service";
-import { ServerApiError } from "@/types/server-client";
 import UsersContent from "@/app/(protected)/admin/users/components/users-content";
 import { UserQueryInput, userQuerySchema } from "@mini-erp/shared";
+import { getTranslations } from "next-intl/server";
+import { createCreateAction } from "@/helpers/page-header-actions-helper";
+import { getNewRoute } from "@/lib/navigation-routes";
+import { PageHeader } from "@/components/page-header";
 
 interface PageProps {
   searchParams: Promise<UserQueryInput>;
@@ -12,15 +14,7 @@ interface PageProps {
 
 export default async function UsersPage({ searchParams }: PageProps) {
   // Authorization
-  try {
-    await requirePermission("user:read");
-  } catch (error) {
-    if (error instanceof ServerApiError) {
-      if (error.statusCode === 401) redirect("/login");
-      if (error.statusCode === 403) redirect("/dashboard");
-    }
-    throw error;
-  }
+  await requirePermission("user:read");
 
   const queryParams: UserQueryInput = userQuerySchema.parse(await searchParams);
 
@@ -30,21 +24,21 @@ export default async function UsersPage({ searchParams }: PageProps) {
     checkUserPermission("user:create"),
   ]);
 
+  const t = await getTranslations("admin.users");
+
+  const actionItems = [
+    createCreateAction("create", t("createNewButton") ?? "Nuovo", getNewRoute("users"), canCreate),
+  ];
+
   return (
-    <div className="container mx-auto p-6">
-      <div className="space-y-6">
-        <UsersContent
-          queryParams={queryParams}
-          usersList={users}
-          stats={stats}
-          canCreate={canCreate}
-        />
-      </div>
-    </div>
+    <>
+      <PageHeader actionItems={actionItems} />
+      <UsersContent
+        queryParams={queryParams}
+        usersList={users}
+        stats={stats}
+        canCreate={canCreate}
+      />
+    </>
   );
 }
-
-export const metadata = {
-  title: `Gestione Utenti | ${process.env.APP_NAME}`,
-  description: "Amministra gli utenti del sistema",
-};

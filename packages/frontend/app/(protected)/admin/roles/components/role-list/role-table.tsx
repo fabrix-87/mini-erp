@@ -1,7 +1,7 @@
 'use client';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import RoleTableRow from './table-row';
+import RoleTableRow from './role-table-row';
 import { Role, RoleSortField, SortOrder } from '@mini-erp/shared';
 import { SortableTableHead } from '@/components/ui/sortable-table-head';
 
@@ -25,7 +25,7 @@ export default function RoleTable({
   onDelete,
 }: RoleTableProps) {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border bg-card">
       <Table>
         <TableHeader>
           <TableRow>

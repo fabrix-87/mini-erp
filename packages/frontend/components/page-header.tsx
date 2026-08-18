@@ -22,6 +22,11 @@ interface PageHeaderProps {
   subtitle?: string;
   /** Overrides the last breadcrumb segment label. See `Breadcrumbs` `currentLabel`. */
   breadcrumbLabel?: string;
+  /**
+   * Extra breadcrumb items added after the auto-resolved trail.
+   * Use on detail pages to append the entity name as final segment.
+   */
+  extraBreadcrumbs?: { label: string; href?: string }[];
 }
 
 /**
@@ -38,6 +43,7 @@ export function PageHeader({
   title: titleOverride,
   subtitle: subtitleOverride,
   breadcrumbLabel,
+  extraBreadcrumbs,
 }: PageHeaderProps): React.JSX.Element {
   const tNav = useTranslations("nav");
   const tCommon = useTranslations("common");
@@ -58,12 +64,12 @@ export function PageHeader({
 
   return (
     <header className={cn("mb-5 border-b border-border pb-4", className)}>
-      <Breadcrumbs currentLabel={breadcrumbLabel ?? titleOverride} />
+      <Breadcrumbs currentLabel={breadcrumbLabel ?? titleOverride} extraItems={extraBreadcrumbs} />
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="truncate text-2xl font-semibold tracking-tight text-foreground">
+            <h1 className="truncate text-3xl font-semibold tracking-tight text-foreground">
               {title}
             </h1>
             {status && <div className="shrink-0">{status}</div>}

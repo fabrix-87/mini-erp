@@ -45,6 +45,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
+    timeZone: 'Europe/Rome',
     messages: Object.fromEntries(loaded),
   };
 });

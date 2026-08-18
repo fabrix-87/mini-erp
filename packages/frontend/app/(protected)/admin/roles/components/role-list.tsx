@@ -2,11 +2,10 @@
 
 import { RoleQueryInput, RoleSortField, SortOrder } from "@mini-erp/shared";
 import { useMemo, useState, useTransition } from "react";
-import { DataPagination } from "../../../../../components/ui/data-pagination";
-import { BreadcrumbSetter } from "../../../../../components/ui/breadcrumb-setter";
-import RoleTable from "./role-list/table";
-import RoleToolbar from "./role-list/toolbar";
-import DeleteDialog from "../../../../../components/dialog/delete-dialog";
+import { DataPagination } from "@/components/ui/data-pagination";
+import RoleTable from "./role-list/role-table";
+import RoleToolbar from "./role-list/role-toolbar";
+import DeleteDialog from "@/components/dialog/delete-dialog";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { RoleListApiResponse } from "@/types/role-types";
 import { deleteRoleAction } from "@/actions/role-actions";
@@ -21,10 +20,11 @@ interface Props {
 
 export default function RoleListPage({ data }: Props) {
   const searchParams = useAppSearchParams();
-  const { refresh, navigateToNew, navigateToDetail, navigateToEdit } = useNavigation();
+  const { refresh, navigateToDetail, navigateToEdit } = useNavigation();
 
   const { data: roles, pagination, results } = data;
   const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
@@ -91,26 +91,18 @@ export default function RoleListPage({ data }: Props) {
 
   return (
     <div className="space-y-6">
-      <BreadcrumbSetter title="Gestione ruoli" />
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Ruoli</h1>
-          <p className="text-muted-foreground">Gestisci i ruoli degli utenti</p>
-        </div>
-      </div>
       <h1 className="text-red-600">*** TODO: Rendere modificabili solo da SUPERADMIN (globale) i RUOLI di sistema ***</h1>
 
       <RoleToolbar
-        onSearch={handleSearch}
-        onNewRole={() => navigateToNew("roles")}
         initialSearch={params.search || ""}
+        onPendingChange={setIsLoading}
       />
 
       <RoleTable
         roles={roles}
         onSort={handleSort}
         sort={sort}
-        loading={isPending}
+        loading={isPending || isLoading}
         onView={(id) => navigateToDetail("roles", id)}
         onEdit={(id) => navigateToEdit("roles", id)}
         onDelete={async (id, name) => {

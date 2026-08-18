@@ -8,9 +8,6 @@ import { StatisticCard } from "@/components/ui/statistic-card";
 import { Users, UserCheck, UserX, Shield, Plus } from "lucide-react";
 import { UserListApiResponse, UserStatsResponse } from "@/types/user-types";
 import { UserQueryInput } from "@mini-erp/shared";
-import { useNavigation } from "@/hooks/use-navigation";
-import { Button } from "@/components/ui/button";
-import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 import { useState } from "react";
 
 interface UsersContentProps {
@@ -24,30 +21,14 @@ export default function UsersContent({
   queryParams,
   usersList,
   stats,
-  canCreate,
 }: UsersContentProps) {
-  const { navigateToNew } = useNavigation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const users = usersList.data;
   const pagination = usersList.pagination;
 
   return (
-    <>
-      <BreadcrumbSetter title="Gestione Utenti" />
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Gestione Utenti</h1>
-          <p className="text-muted-foreground mt-2">Amministra gli utenti del sistema.</p>
-        </div>
-        {canCreate && (
-          <Button onClick={() => navigateToNew("users")}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nuovo utente
-          </Button>
-        )}
-      </div>
+    <div className="space-y-6">      
       {/* Statistics Cards */}
       {stats && (
         <div className="grid gap-4 md:grid-cols-4">
@@ -104,6 +85,6 @@ export default function UsersContent({
           itemLabel="utenti"
         />
       )}
-    </>
+    </div>
   );
 }

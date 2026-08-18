@@ -1,0 +1,14 @@
+{
+    "roles": {
+        "createNewButton": "Nuovo Ruolo",
+        "searchFilterPlaceholder": "Cerca per nome, codice o descrizione"
+    },
+    "users": {
+        "createNewButton": "Nuovo utente",
+        "searchFilterPlaceholder": "Cerca per username o email",
+        "activeFilterPlaceholder": "Tutti gli stati",
+        "all": "Tutti",
+        "activeOnly": "Solo attivi",
+        "inactiveOnly": "Solo inattivi"
+    }
+}

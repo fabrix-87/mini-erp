@@ -66,7 +66,7 @@ function PageHeaderActionButton({ action }: { action: PageHeaderAction }): React
         asChild
         size="sm"
         variant={variant}
-        className="h-8 text-xs"
+        className="h-8"
         disabled={action.disabled}
       >
         <Link href={action.href}>

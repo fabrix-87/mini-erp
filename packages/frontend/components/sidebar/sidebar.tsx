@@ -18,7 +18,6 @@ interface SidebarProps {
 export function Sidebar({ mobileOpen, collapsed, onMobileClose }: SidebarProps): React.JSX.Element {
   const pathname = usePathname();
   const filteredNavigation = useFilteredNavigation();
-  console.log(filteredNavigation)
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   useEffect(() => {
