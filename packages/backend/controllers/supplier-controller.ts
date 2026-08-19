@@ -39,6 +39,7 @@ import {
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredLanguageId,
   getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
@@ -87,10 +88,11 @@ export const getAllSuppliers = async (c: Context<AppBindings>) => {
 export const getSupplierById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<SupplierIdParam>(c);
   const tenantId = getRequiredTenantId(c);
-
+  const languageId = getRequiredLanguageId(c);
+  
   const supplier = await prisma.supplier.findFirst({
     where: tenantFilter(tenantId, { id }),
-    include: getSupplierInclude(true),
+    include: getSupplierInclude(true, languageId),
   });
 
   if (!supplier) {

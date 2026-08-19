@@ -1,69 +1,51 @@
 "use client";
 
 import { CompanyListTable } from "@/components/company/company-list-table";
-import { CustomerQueryInput, SupplierQueryInput } from "@mini-erp/shared";
+import {
+  CustomerQueryInput,
+  CustomerStats,
+  SupplierQueryInput,
+  SupplierStats,
+} from "@mini-erp/shared";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import SupplierHeaderListPage from "./company-list/supplier-header";
 import CustomerHeaderListPage from "./company-list/customer-header";
 import { CustomerListApiResponse } from "@/types/customer-types";
 import { SupplierListApiResponse } from "@/types/supplier-types";
-import { useCallback, useState } from "react";
-import { debounce } from "@/lib/utils";
+import { useEffect, useState } from "react";
 import { useNavigation } from "@/hooks/use-navigation";
 
 type CustomerCompanyListPageProps = {
   companyType: "CUSTOMER";
   paginatedData: CustomerListApiResponse;
   searchParams: CustomerQueryInput;
+  stats: CustomerStats;
 };
 
 type SupplierCompanyListPageProps = {
   companyType: "SUPPLIER";
   paginatedData: SupplierListApiResponse;
   searchParams: SupplierQueryInput;
+  stats: SupplierStats;
 };
 
 type Props = CustomerCompanyListPageProps | SupplierCompanyListPageProps;
 
-export default function CompanyListPage({ searchParams, paginatedData, companyType }: Props) {
+export default function CompanyListPage({
+  searchParams,
+  paginatedData,
+  companyType,
+  stats,
+}: Props) {
   const { getRoute } = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
+
   const updateURL = useUpdateURL(
     companyType == "CUSTOMER" ? getRoute("customers") : getRoute("suppliers"),
   );
 
-  const handlePageChange = (page: number) => {
-    updateURL({ page });
-  };
-
   const handleSort = (sortBy: string, sortOrder: "asc" | "desc") => {
     updateURL({ sortBy, sortOrder });
-  };
-
-  // stato locale per l'input di ricerca
-  const [searchInputValue, setSearchInputValue] = useState(searchParams.search || "");
-
-  // FUNZIONE BASE CHE AGGIORNA I PARAMETRI REALI (Quella da debouncare)
-  const updateSearchParams = (search: string) => {
-    updateURL({ search });
-  };
-
-  // FUNZIONE DEBOUNCED:
-  // Creata una sola volta (grazie a useCallback) e ritarda l'esecuzione di updateSearchParams
-  const debouncedSetSearchParams = useCallback(
-    debounce(updateSearchParams, 400), // Ritardo di 400ms (regolabile)
-    [],
-  );
-
-  const handleSearchChange = (search: string) => {
-    setSearchInputValue(search); // Aggiorna subito l'input visivo
-    debouncedSetSearchParams(search); // Aggiorna i parametri con debounce
-  };
-
-  const customerHandleFilterChange = (key: keyof CustomerQueryInput, value: any) => {
-    updateURL({ [key]: value, page: 1 });
-  };
-  const supplierHandleFilterChange = (key: keyof SupplierQueryInput, value: any) => {
-    updateURL({ [key]: value, page: 1 });
   };
 
   return (
@@ -72,27 +54,25 @@ export default function CompanyListPage({ searchParams, paginatedData, companyTy
       {companyType == "CUSTOMER" ? (
         <CustomerHeaderListPage
           searchParams={searchParams}
-          handleSearchChange={handleSearchChange}
-          handleFilterChange={customerHandleFilterChange}
-          searchInputValue={searchInputValue}
+          stats={stats}
+          onPendingChange={setIsLoading}
         />
       ) : (
         <SupplierHeaderListPage
           searchParams={searchParams}
-          handleSearchChange={handleSearchChange}
-          handleFilterChange={supplierHandleFilterChange}
-          searchInputValue={searchInputValue}
+          onPendingChange={setIsLoading}
+          stats={stats}
         />
       )}
 
       {/* Table */}
       <CompanyListTable
         data={paginatedData.data}
+        pagination={paginatedData.pagination}
         type={companyType}
         onSort={handleSort}
-        currentPage={paginatedData.pagination?.currentPage || 1}
-        totalPages={paginatedData.pagination?.totalPages || 1}
-        onPageChange={handlePageChange}
+        paginationLimit={searchParams.limit}
+        isLoading={isLoading}
       />
     </div>
   );

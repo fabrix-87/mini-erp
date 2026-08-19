@@ -19,6 +19,7 @@ import { TaxRule } from "./tax";
 import { Product } from "./product";
 import { User } from "./user";
 import { StockBatch } from "./warehouse";
+import { PaymentMethod } from "./payment";
 
 // ============================================================================
 // ENTITY TYPES
@@ -49,6 +50,7 @@ export type Supplier = Omit<CreateSupplierInput, "company"> & {
   // relationships
   parentSupplier?: Supplier;
   subsidiaries?: Supplier[];
+  paymentMethod?: PaymentMethod
 };
 
 // ============================================================================

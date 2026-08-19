@@ -17,17 +17,15 @@ import {
 import { Customer } from "@/types/customer-types";
 import { Supplier } from "@/types/supplier-types";
 import { CompanyType } from "@/types/company-types";
+import { formatCurrency } from "@/utils/format-currency";
 
 interface CompanyDetailHeaderProps {
   data: Customer | Supplier;
   companyType: CompanyType;
 }
 
-export function CompanyDetailHeader({
-  data,
-  companyType,
-}: CompanyDetailHeaderProps) {
-  const companyData = data;
+export function CompanyDetailHeader({ data, companyType }: CompanyDetailHeaderProps) {
+  const companyData = data.company;
 
   const getStatusBadge = () => {
     const statusColors: Record<string, string> = {
@@ -71,15 +69,6 @@ export function CompanyDetailHeader({
   };
 
   const typeInfo = getTypeInfo();
-
-  const formatCurrency = (value: string | number | undefined) => {
-    if (!value) return "€0.00";
-    const num = typeof value === "string" ? parseFloat(value) : value;
-    return new Intl.NumberFormat("it-IT", {
-      style: "currency",
-      currency: "EUR",
-    }).format(num);
-  };
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -143,9 +132,7 @@ export function CompanyDetailHeader({
             </div>
             <div className="space-y-2">
               <div>
-                <p className="text-2xl font-bold">
-                  {(data as Customer).totalSales || 0}
-                </p>
+                <p className="text-2xl font-bold">{(data as Customer).totalSales || 0}</p>
                 <p className="text-xs text-muted-foreground">Ordini totali</p>
               </div>
               <div>
@@ -194,9 +181,7 @@ export function CompanyDetailHeader({
             </div>
             <div className="space-y-2">
               <div>
-                <p className="text-2xl font-bold">
-                  {(data as Supplier).totalOrders || 0}
-                </p>
+                <p className="text-2xl font-bold">{(data as Supplier).totalOrders || 0}</p>
                 <p className="text-xs text-muted-foreground">Ordini totali</p>
               </div>
               <div>
@@ -221,9 +206,7 @@ export function CompanyDetailHeader({
                 <p className="text-xs text-muted-foreground">Tempo consegna</p>
               </div>
               <div>
-                <p className="text-sm">
-                  {(data as Supplier).paymentTerms || "Non specificato"}
-                </p>
+                <p className="text-sm">{(data as Supplier).paymentMethod?.translations[0].description || "Non specificato"}</p>
                 <p className="text-xs text-muted-foreground">Termini pagamento</p>
               </div>
             </div>

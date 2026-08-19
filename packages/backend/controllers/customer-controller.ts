@@ -92,10 +92,11 @@ export const getAllCustomers = async (c: Context<AppBindings>) => {
 export const getCustomerById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<CustomerIdParam>(c);
   const tenantId = getRequiredTenantId(c);
+  const languageId = getRequiredLanguageId(c);
 
   const customer = await prisma.customer.findFirst({
     where: tenantFilter(tenantId, { id }),
-    include: getCustomerInclude(true),
+    include: getCustomerInclude(true, languageId),
   });
 
   if (!customer) {
@@ -119,6 +120,7 @@ export const createCustomer = async (c: Context<AppBindings>) => {
   const { company: companyData, ...customerData } = getValidatedBody<CreateCustomerInput>(c);
   const tenantId = getRequiredTenantId(c);
   const { userId } = c.get("user")!;
+  const languageId = getRequiredLanguageId(c);
 
   // -------------------------------------------------------------------------
   // 1. Verifica esistenza relazioni — in parallelo per minimizzare la latenza
@@ -175,7 +177,7 @@ export const createCustomer = async (c: Context<AppBindings>) => {
         buildCompanyCreateData(companyData, code, tenantId),
         tenantId,
       ),
-      include: getCustomerInclude(true),
+      include: getCustomerInclude(true, languageId),
     });
 
     if (companyData.legalAddress) {
@@ -216,6 +218,7 @@ export const updateCustomer = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<CustomerIdParam>(c);
   const data = getValidatedBody<UpdateCustomerInput>(c);
   const tenantId = getRequiredTenantId(c);
+  const languageId = getRequiredLanguageId(c);
 
   const existing = await prisma.customer.findFirst({
     where: tenantFilter(tenantId, { id }),
@@ -238,7 +241,7 @@ export const updateCustomer = async (c: Context<AppBindings>) => {
   const customer = await prisma.customer.update({
     where: { id, tenantId },
     data: buildCustomerUpdateData(data),
-    include: getCustomerInclude(true),
+    include: getCustomerInclude(true, languageId),
   });
 
   return sendSuccess(c, customer, {
@@ -259,6 +262,7 @@ export const updateCustomerCompany = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<CustomerIdParam>(c);
   const data = getValidatedBody<UpdateCustomerCompanyInput>(c);
   const tenantId = getRequiredTenantId(c);
+  const languageId = getRequiredLanguageId(c);
   const { userId } = c.get("user")!;
 
   const customer = await prisma.customer.findFirst({
@@ -284,7 +288,7 @@ export const updateCustomerCompany = async (c: Context<AppBindings>) => {
 
     return tx.customer.findUniqueOrThrow({
       where: { id },
-      include: getCustomerInclude(true),
+      include: getCustomerInclude(true, languageId),
     });
   });
 

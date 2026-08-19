@@ -16,6 +16,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LeadStats } from "@mini-erp/shared";
+import { formatCurrency } from "@/utils/format-currency";
 
 // ============================================================================
 // Props
@@ -24,23 +25,6 @@ import { LeadStats } from "@mini-erp/shared";
 interface LeadStatsBarProps {
   stats: LeadStats | undefined;
   isLoading: boolean;
-}
-
-// ============================================================================
-// Helpers
-// ============================================================================
-
-/**
- * Formats a Decimal-like value (string | number) as a localized currency string.
- */
-function formatCurrency(val: unknown): string {
-  const n = parseFloat(String(val ?? 0));
-  if (isNaN(n)) return "€ 0";
-  return new Intl.NumberFormat("it-IT", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(n);
 }
 
 // ============================================================================

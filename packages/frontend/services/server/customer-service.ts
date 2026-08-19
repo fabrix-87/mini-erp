@@ -11,6 +11,7 @@ import {
   CreateCustomerInput,
   Customer,
   CustomerQueryInput,
+  CustomerStats,
   UpdateCustomerCompanyInput,
   UpdateCustomerInput,
 } from "@mini-erp/shared";
@@ -66,15 +67,20 @@ export async function searchCustomers(
 /**
  * Get customer by ID
  */
-export async function getCustomerById(
-  id: string,
-  revalidate?: number | false,
-): Promise<Customer> {
-  return serverApi.get<Customer>(`/customers/${id}`, { // usare CustomerSingleApiResponse con unwrapData: false
+export async function getCustomerById(id: string, revalidate?: number | false): Promise<Customer> {
+  return serverApi.get<Customer>(`/customers/${id}`, {
+    // usare CustomerSingleApiResponse con unwrapData: false
     revalidate: revalidate ?? false,
     tags: [CUSTOMER_TAGS.detail(id)],
     //unwrapData: false,
   });
+}
+
+// ============================================================================
+// Stats
+// ============================================================================
+export async function getCustomerStats(): Promise<CustomerStats> {
+  return serverApi.get<CustomerStats>("/customers/stats");
 }
 
 // ============================================================================

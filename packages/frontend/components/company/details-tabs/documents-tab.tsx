@@ -18,7 +18,7 @@ import {
 import { Plus, FileText, Eye, Calendar } from "lucide-react";
 import { CompanyType } from "@/types/company-types";
 import { getDocuments } from "@/lib/client/modules/document";
-import { formatCurrency } from "@mini-erp/shared";
+import { formatCurrency } from "@/utils/format-currency";
 
 interface CompanyDocumentsTabProps {
   companyId: string;

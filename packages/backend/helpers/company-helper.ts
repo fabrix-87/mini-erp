@@ -248,7 +248,15 @@ type CompanyFullInclude = ReturnType<typeof getCompanyFullInclude>;
 type CustomerDetailedFields = {
   defaultPriceList: { select: { id: true; code: true; name: true; currency: true } };
   customerTaxRule: { select: { id: true; code: true; name: true } };
-  paymentMethod: { include: { translations: true } };
+  paymentMethod: {
+    select: {
+      code: true;
+      active: true;
+      translations: {
+        select: { name: true; description: true };
+      };
+    };
+  };
   _count: { select: { documentsOut: true; opportunities: true } };
 };
 
@@ -260,10 +268,20 @@ type CustomerBaseFields = {
 };
 
 type SupplierDetailedFields = {
+  paymentMethod: {
+    select: {
+      code: true;
+      active: true;
+      translations: {
+        select: { name: true; description: true };
+      };
+    };
+  };
   _count: { select: { documentsIn: true; products: true } };
 };
 
 type SupplierBaseFields = {
+  paymentMethod: undefined;
   _count: undefined;
 };
 
@@ -276,20 +294,31 @@ type SupplierBaseFields = {
  * When detailed = true, includes full company data + commercial relations.
  * When detailed = false (default), includes base company data only.
  */
-export function getCustomerInclude(detailed: true): {
+export function getCustomerInclude(detailed: true, languageId: number): {
   company: { include: CompanyFullInclude };
 } & CustomerDetailedFields;
 export function getCustomerInclude(detailed?: false): {
   company: { include: CompanyBaseInclude };
 } & CustomerBaseFields;
-export function getCustomerInclude(detailed = false) {
+export function getCustomerInclude(detailed = false, languageId?: number) {
   return {
     company: { include: detailed ? getCompanyFullInclude() : getCompanyBaseInclude() },
     defaultPriceList: detailed
       ? { select: { id: true, code: true, name: true, currency: true } }
       : undefined,
     customerTaxRule: detailed ? { select: { id: true, code: true, name: true } } : undefined,
-    paymentMethod: detailed ? { include: { translations: true } } : undefined,
+    paymentMethod: detailed
+      ? {
+          select: {
+            code: true,
+            active: true,
+            translations: {
+              select: { name: true, description: true },
+              ...(languageId !== undefined && { where: { languageId } }),
+            },
+          },
+        }
+      : undefined,
     _count: detailed ? { select: { documentsOut: true, opportunities: true } } : undefined,
   };
 }
@@ -299,15 +328,33 @@ export function getCustomerInclude(detailed = false) {
  * When detailed = true, includes full company data + document/product counts.
  * When detailed = false (default), includes base company data only.
  */
-export function getSupplierInclude(detailed: true): {
+export function getSupplierInclude(
+  detailed: true,
+  languageId?: number,
+): {
   company: { include: CompanyFullInclude };
 } & SupplierDetailedFields;
-export function getSupplierInclude(detailed?: false): {
+export function getSupplierInclude(
+  detailed?: false,
+  languageId?: number,
+): {
   company: { include: CompanyBaseInclude };
 } & SupplierBaseFields;
-export function getSupplierInclude(detailed = false) {
+export function getSupplierInclude(detailed = false, languageId?: number) {
   return {
     company: { include: detailed ? getCompanyFullInclude() : getCompanyBaseInclude() },
+    paymentMethod: detailed
+      ? {
+          select: {
+            code: true,
+            active: true,
+            translations: {
+              select: { name: true, description: true },
+              ...(languageId !== undefined && { where: { languageId } }),
+            },
+          },
+        }
+      : undefined,
     _count: detailed ? { select: { documentsIn: true, products: true } } : undefined,
   };
 }

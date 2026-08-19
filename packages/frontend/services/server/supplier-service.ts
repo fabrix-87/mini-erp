@@ -12,6 +12,7 @@ import {
   CreateSupplierInput,
   Supplier,
   SupplierQueryInput,
+  SupplierStats,
   UpdateSupplierCompanyInput,
   UpdateSupplierForm,
   UpdateSupplierInput,
@@ -83,6 +84,14 @@ export async function getSupplierById(
     //unwrapData: false,
   });
 }
+
+// ============================================================================
+// Stats
+// ============================================================================
+export async function getSupplierStats(): Promise<SupplierStats> {
+  return serverApi.get<SupplierStats>("/suppliers/stats");
+}
+
 
 // ============================================================================
 // MUTATIONS

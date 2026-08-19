@@ -1,6 +1,6 @@
 // components/providers/translation-provider.tsx
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTimeZone } from "next-intl/server";
 
 interface TranslationProviderProps {
   namespace: string;
@@ -19,9 +19,16 @@ export default async function TranslationProvider({
   children,
 }: TranslationProviderProps) {
   const locale = await getLocale();
+  const timeZone = await getTimeZone();
   const messages = (await import(`@/messages/${locale}/${namespace}.json`)).default;
 
   return (
-    <NextIntlClientProvider messages={{ [namespace]: messages }}>{children}</NextIntlClientProvider>
+    <NextIntlClientProvider
+      locale={locale}
+      messages={{ [namespace]: messages }}
+      timeZone={timeZone}
+    >
+      {children}
+    </NextIntlClientProvider>
   );
 }
