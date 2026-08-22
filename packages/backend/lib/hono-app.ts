@@ -12,7 +12,7 @@ import { Hono } from "hono";
  * Variables: typed context variables set/get via c.set() / c.get().
  */
 export interface AppBindings {
-  Bindings: Record<string, never>;
+  Bindings: {};
   Variables: AppContextVariables;
 }
 
