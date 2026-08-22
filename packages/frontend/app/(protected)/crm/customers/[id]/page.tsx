@@ -47,7 +47,7 @@ export default async function CustomerDetailPage({ params }: PageIdProps) {
       deleteAction,
       {
         title: t("deleteDialogTitle", {
-          companyName: `${result.company.companyName} [${result.company.code}]`,
+          name: `${result.company.companyName} [${result.company.code}]`,
         }),
         description: t("deleteDialogDescription"),
         confirmLabel: t("deleteDialogConfirm"),

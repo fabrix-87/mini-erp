@@ -12,16 +12,15 @@ import {
   bulkDeleteContacts,
 } from "@/services/server/contact-service";
 import type {
-  ContactDeleteApiResponse,
   ContactOperationApiResponse,
   ContactQueryInput,
-  ContactSingleApiResponse,
   CreateContactInput,
   UpdateContactInput,
 } from "@/types/contact-types";
 import { Contact } from "@mini-erp/shared";
 import { ActionResult, withAuth } from "@/lib/server/action";
 import { contactRevalidation } from "@/lib/server/revalidate";
+import { DeleteApiResponse } from "@/types/api";
 
 /**
  * Server Action per creare contatto
@@ -55,7 +54,7 @@ export async function updateContactAction(
  */
 export async function deleteContactAction(
   id: string,
-): Promise<ActionResult<ContactDeleteApiResponse>> {
+): Promise<ActionResult<DeleteApiResponse>> {
   return withAuth(async () => {
     const response = deleteContact(id);
     contactRevalidation.list();

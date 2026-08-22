@@ -10,7 +10,44 @@ import { PageHeaderAction } from "@/types/page-types";
 interface PageHeaderProps {
   actions?: React.ReactNode;
   actionItems?: PageHeaderAction[];
+  /**
+   * Inline status/badge rendered immediately after the title text.
+   * Use for a single prominent status indicator.
+   * For multiple badges, prefer the `badges` prop.
+   */
   status?: React.ReactNode;
+  /**
+   * Array of badge/chip nodes rendered inline after the title (and after `status`).
+   * Use this for multiple tags, labels or status indicators.
+   *
+   * @example
+   * badges={[
+   *   <Badge key="active" variant="default">Attivo</Badge>,
+   *   <Badge key="vip" variant="outline">VIP</Badge>,
+   * ]}
+   */
+  badges?: React.ReactNode[];
+  /**
+   * Leading slot rendered to the left of the title block.
+   * Typically an avatar, entity icon or company logo.
+   *
+   * @example
+   * leading={
+   *   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold shrink-0">
+   *     {getInitials(contact.firstName, contact.lastName)}
+   *   </div>
+   * }
+   */
+  leading?: React.ReactNode;
+  /**
+   * Metadata slot rendered below the title row.
+   * Use for secondary info: position, company, email, tags, etc.
+   * Replaces `subtitle` when richer markup is needed.
+   *
+   * @example
+   * meta={<p className="text-sm text-muted-foreground">CTO · Acme S.r.l.</p>}
+   */
+  meta?: React.ReactNode;
   className?: string;
   /**
    * Overrides the computed title (which otherwise comes from the matched
@@ -39,6 +76,9 @@ export function PageHeader({
   actions,
   actionItems = [],
   status,
+  badges,
+  leading,
+  meta,
   className,
   title: titleOverride,
   subtitle: subtitleOverride,
@@ -62,22 +102,47 @@ export function PageHeader({
   const title = titleOverride ?? computedTitle;
   const subtitle = subtitleOverride ?? (descriptionKey ? tNav(descriptionKey) : null);
 
+  // `meta` slot ha precedenza su `subtitle` quando entrambi sono presenti
+  const hasMetaContent = meta != null;
+  const hasSubtitle = !hasMetaContent && subtitle != null;
+
   return (
     <header className={cn("mb-5 border-b border-border pb-4", className)}>
       <Breadcrumbs currentLabel={breadcrumbLabel ?? titleOverride} extraItems={extraBreadcrumbs} />
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="truncate text-3xl font-semibold tracking-tight text-foreground">
-              {title}
-            </h1>
-            {status && <div className="shrink-0">{status}</div>}
-          </div>
+        {/* Left block: leading slot + title row + meta */}
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          {/* Leading slot (avatar, icon, logo) */}
+          {leading && <div className="shrink-0">{leading}</div>}
 
-          {subtitle && <p className="mt-1 max-w-3xl text-sm text-muted-foreground">{subtitle}</p>}
+          {/* Title + badges + subtitle/meta */}
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="truncate text-3xl font-semibold tracking-tight text-foreground">
+                {title}
+              </h1>
+
+              {/* Single status node (legacy compat) */}
+              {status && <div className="shrink-0">{status}</div>}
+
+              {/* Badge array */}
+              {badges?.map((badge, i) => (
+                <div key={i} className="shrink-0">
+                  {badge}
+                </div>
+              ))}
+            </div>
+
+            {/* Meta slot (rich markup) takes precedence over plain subtitle */}
+            {hasMetaContent && <div className="mt-1">{meta}</div>}
+            {hasSubtitle && (
+              <p className="mt-1 max-w-3xl text-sm text-muted-foreground">{subtitle}</p>
+            )}
+          </div>
         </div>
 
+        {/* Right block: actions */}
         {actions ? (
           <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>
         ) : actionItems?.length ? (

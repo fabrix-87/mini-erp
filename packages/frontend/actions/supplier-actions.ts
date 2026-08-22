@@ -23,6 +23,7 @@ import type {
   SupplierQueryInput,
 } from "@mini-erp/shared";
 import { SupplierSingleApiResponse } from "@/types/supplier-types";
+import { DeleteApiResponse } from "@/types/api";
 
 // ============================================================================
 // READ
@@ -96,12 +97,12 @@ export async function updateSupplierCompanyAction(
 /**
  * Delete a supplier and redirect to list
  */
-export async function deleteSupplierAction(id: string): Promise<void> {
+export async function deleteSupplierAction(id: string): Promise<ActionResult<DeleteApiResponse>> {
   const result = await withAuth(async () => {
     const response = await deleteSupplier(id);
     supplierRevalidation.list();
     return response;
   }, "supplier:delete");
   if (result.success) redirect("/suppliers");
-  return ;
+  return result;
 }

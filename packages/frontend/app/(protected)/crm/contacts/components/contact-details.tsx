@@ -2,10 +2,6 @@
 
 import { useState } from "react";
 import {
-  ArrowLeft,
-  Edit,
-  Trash2,
-  MoreVertical,
   Mail,
   Phone,
   Smartphone,
@@ -15,22 +11,12 @@ import {
   Star,
   Calendar,
   MessageSquare,
-  UserCheck,
-  UserX,
   ExternalLink,
 } from "lucide-react";
 import { useContactMutations } from "@/hooks/use-contact";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,7 +29,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Contact } from "@mini-erp/shared";
 import { formatDateIT } from "@/helpers/date-helper";
-import { BreadcrumbSetter } from "../../../../../components/ui/breadcrumb-setter";
 import { useCrumbMap } from "@/hooks/use-breadcrumb";
 import { useNavigation } from "@/hooks/use-navigation";
 
@@ -54,17 +39,6 @@ import { useNavigation } from "@/hooks/use-navigation";
 interface Props {
   contactId: string;
   contact: Contact;
-}
-
-// ============================================================================
-// HELPERS
-// ============================================================================
-
-/**
- * Returns up to two uppercase initials from first + last name.
- */
-function getInitials(firstName: string, lastName?: string | null): string {
-  return [firstName[0], lastName?.[0]].filter(Boolean).join("").toUpperCase();
 }
 
 // ============================================================================
@@ -147,82 +121,7 @@ export default function ContactDetails({ contact, contactId }: Props) {
   // ============================================================================
 
   return (
-    <div className="space-y-6">
-      <BreadcrumbSetter
-        items={[crumbs.contacts, { label: `${contact.firstName} ${contact.lastName}` }]}
-      />
-
-      {/* ── Header ───────────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("contacts")}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-
-          {/* Avatar + name */}
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-base shrink-0 select-none">
-              {getInitials(contact.firstName, contact.lastName)}
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold leading-tight">
-                  {contact.firstName} {contact.lastName}
-                </h1>
-                <Badge variant={contact.active ? "default" : "secondary"}>
-                  {contact.active ? "Attivo" : "Inattivo"}
-                </Badge>
-              </div>
-              {primaryCompany && (
-                <p className="text-sm text-muted-foreground mt-0.5">
-                  {primaryCompany.position && `${primaryCompany.position} · `}
-                  {primaryCompany.company.companyName}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-2">
-          <Button onClick={handleEdit}>
-            <Edit className="w-4 h-4 mr-2" />
-            Modifica
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleToggleActive} disabled={isPending}>
-                {contact.active ? (
-                  <>
-                    <UserX className="w-4 h-4 mr-2" />
-                    Disattiva contatto
-                  </>
-                ) : (
-                  <>
-                    <UserCheck className="w-4 h-4 mr-2" />
-                    Attiva contatto
-                  </>
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="text-destructive"
-                onClick={() => setShowDeleteDialog(true)}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Elimina contatto
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-
+    <div className="space-y-6">   
       {/* ── Body ─────────────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main column */}

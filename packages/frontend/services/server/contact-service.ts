@@ -3,14 +3,15 @@
 
 import { serverApi } from "@/lib/server/api";
 import type { ApiResponse } from "@/types/api";
-import type {
-  CreateContactInput,
-  UpdateContactInput,
-  ContactQueryInput,
-  ContactListApiResponse,
-  ContactSingleApiResponse,
-  ContactOperationApiResponse,
-  ContactDeleteApiResponse,
+import {
+  type CreateContactInput,
+  type UpdateContactInput,
+  type ContactQueryInput,
+  type ContactListApiResponse,
+  type ContactSingleApiResponse,
+  type ContactOperationApiResponse,
+  type ContactDeleteApiResponse,
+  CONTACT_TAGS,
 } from "@/types/contact-types";
 import { Contact } from "@mini-erp/shared";
 
@@ -43,10 +44,17 @@ function buildQueryString(params: ContactQueryInput): string {
 /**
  * Ottieni tutti i contatti con filtri e paginazione
  */
-export async function getAllContacts(params: ContactQueryInput): Promise<ContactListApiResponse> {
+export async function getAllContacts(
+  params: ContactQueryInput,
+  revalidate?: number | false,
+): Promise<ContactListApiResponse> {
   const queryString = buildQueryString(params);
   const url = queryString ? `/contacts?${queryString}` : "/contacts";
-  return await serverApi.get<ContactListApiResponse>(url, { unwrapData: false });
+  return await serverApi.get<ContactListApiResponse>(url, {
+    revalidate: revalidate ?? false,
+    tags: [CONTACT_TAGS.list],
+    unwrapData: false,
+  });
 }
 
 /**
@@ -72,26 +80,24 @@ export async function getPrimaryContactByCompany(
 /**
  * Ottieni singolo contatto per ID
  */
-export async function getContactById(id: string): Promise<Contact> {
-  return serverApi.get<Contact>(`/contacts/${id}`);
+export async function getContactById(id: string, revalidate?: number | false): Promise<Contact> {
+  return serverApi.get<Contact>(`/contacts/${id}`, {
+    revalidate: revalidate ?? false,
+    tags: [CONTACT_TAGS.detail(id)],
+  });
 }
 
 /**
  * Crea nuovo contatto
  */
-export async function createContact(
-  contactData: CreateContactInput,
-): Promise<Contact> {
+export async function createContact(contactData: CreateContactInput): Promise<Contact> {
   return serverApi.post<Contact>("/contacts", contactData);
 }
 
 /**
  * Aggiorna contatto esistente
  */
-export async function updateContact(
-  id: string,
-  contactData: UpdateContactInput,
-): Promise<Contact> {
+export async function updateContact(id: string, contactData: UpdateContactInput): Promise<Contact> {
   return serverApi.put<Contact>(`/contacts/${id}`, contactData);
 }
 

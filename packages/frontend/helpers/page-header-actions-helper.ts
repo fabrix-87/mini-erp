@@ -1,3 +1,5 @@
+import { ActionResult } from "@/lib/server/action";
+import { DeleteApiResponse } from "@/types/api";
 import { PageHeaderAction, PageHeaderActionConfirm } from "@/types/page-types";
 
 export function createCreateAction(
@@ -86,7 +88,7 @@ export function createDeleteAction(
 export function createDeleteServerAction(
   key: string,
   label: string,
-  action: () => Promise<void>,
+  action: () => Promise<ActionResult<DeleteApiResponse>>,
   confirm: PageHeaderActionConfirm,
   visible: boolean = true,
   disabled: boolean = false,

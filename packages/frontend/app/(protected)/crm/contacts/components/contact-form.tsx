@@ -265,32 +265,7 @@ export default function ContactForm({ isNew, contact, initialCompany }: ContactF
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
-      {/* Setter breadcrumb - Solo in modifica*/}
-      {contact && (
-        <BreadcrumbSetter
-          items={[
-            crumbs.contacts,
-            { label: `${actionLabels.edit}: ${contact.firstName} ${contact.lastName}` },
-          ]}
-        />
-      )}
-      {/* Header */}
-      <div className="mb-6">
-        <Button
-          variant="ghost"
-          onClick={() => (isNew ? navigate("contacts") : navigateToDetail("contacts", contactId!))}
-          className="mb-4"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Indietro
-        </Button>
-        <h1 className="text-3xl font-bold">{isNew ? "Nuovo Contatto" : "Modifica Contatto"}</h1>
-        <p className="text-muted-foreground">
-          {isNew ? "Inserisci i dati del nuovo contatto" : "Aggiorna le informazioni del contatto"}
-        </p>
-      </div>
-
+    <div className="mx-auto space-y-6 max-w-4xl">
       <FormProvider {...form}>
         <form onSubmit={onSubmit} className="space-y-6">
           {/* Azienda */}

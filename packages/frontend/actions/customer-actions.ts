@@ -11,6 +11,7 @@ import {
   updateCustomer,
   createCustomer,
 } from "@/services/server/customer-service";
+import { DeleteApiResponse } from "@/types/api";
 import {
   CreateCustomerInput,
   Customer,
@@ -89,12 +90,12 @@ export async function updateCustomerCompanyAction(
 /**
  * Delete a customer and redirect to list
  */
-export async function deleteCustomerAction(id: string): Promise<void> {
+export async function deleteCustomerAction(id: string): Promise<ActionResult<DeleteApiResponse>> {
   const result = await withAuth(async () => {
     const response = await deleteCustomer(id);
     customerRevalidation.list();
     return response;
   }, "customer:delete");
   if (result.success) redirect("/customers");
-  return;
+  return result;
 }

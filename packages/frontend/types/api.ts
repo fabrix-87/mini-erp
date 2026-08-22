@@ -1,5 +1,6 @@
 // types/api.ts
 
+import { ApiResponse } from "@mini-erp/shared";
 import { User } from "./user-types";
 
 // ============ API Query Types ============
@@ -27,4 +28,4 @@ export type {
 } from '@mini-erp/shared'
 
 
-
+export interface DeleteApiResponse extends ApiResponse<null> {}

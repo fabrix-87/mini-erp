@@ -51,8 +51,8 @@ export default function ContactFilterBar({
         label: t("activeFilterPlaceholder"),
         options: [
           { value: "all", label: t("all") },
-          { value: "true", label: t("active") },
-          { value: "false", label: t("inactive") },
+          { value: "true", label: t("onlyActive") },
+          { value: "false", label: t("onlyInactive") },
         ],
       },
       {
