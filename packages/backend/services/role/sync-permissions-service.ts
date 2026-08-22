@@ -3,6 +3,7 @@
 import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
 import { defaultPermissions } from "@/helpers/role-helper";
+import { invalidatePermissionsCacheForRole } from "@/helpers/user-helper";
 
 export interface SyncPermissionsResult {
   permissions: {
@@ -206,6 +207,17 @@ export async function syncPermissionsService(): Promise<SyncPermissionsResult> {
 
     result.permissions.superAdminAssigned = superAdminSync.newlyAssigned;
     result.roles.superAdmin = superAdminSync;
+
+    // Invalida cache di tutti gli utenti ADMIN e SUPER_ADMIN dopo la sync
+    const adminRole = await prisma.role.findUnique({ where: { code: "ADMIN" } });
+    const superAdminRole = await prisma.role.findUnique({ where: { code: "SUPER_ADMIN" } });
+
+    await Promise.all(
+      [
+        adminRole && invalidatePermissionsCacheForRole(adminRole.id),
+        superAdminRole && invalidatePermissionsCacheForRole(superAdminRole.id),
+      ].filter(Boolean),
+    );
 
     return result;
   });

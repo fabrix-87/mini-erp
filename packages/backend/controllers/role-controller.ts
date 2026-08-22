@@ -33,6 +33,7 @@ import {
   getRoleSelect,
 } from "@/helpers/role-helper";
 import { syncPermissionsService } from "@/services/role";
+import { invalidatePermissionsCacheForRole } from "@/helpers/user-helper";
 
 // ============================================================================
 // ROLES - CRUD Operations
@@ -263,6 +264,9 @@ export const updateRole = async (c: Context<AppBindings>) => {
     select: getRoleSelect(tenantId),
   });
 
+  // Reset user cache
+  await invalidatePermissionsCacheForRole(Number(id));
+
   return sendSuccess(c, formatRolePermissions(role), {
     message: "Ruolo aggiornato con successo",
   });
@@ -399,6 +403,9 @@ export const assignPermissionsToRole = async (c: Context<AppBindings>) => {
     skipDuplicates: true,
   });
 
+  // Reset user cache
+  await invalidatePermissionsCacheForRole(Number(id));
+
   // Ricarica ruolo con permessi aggiornati
   const updatedRole = await prisma.role.findUnique({
     where: { id: Number(id) },
@@ -436,6 +443,9 @@ export const removePermissionsFromRole = async (c: Context<AppBindings>) => {
       permissionId: { in: permissionIds },
     },
   });
+
+  // Reset user cache
+  await invalidatePermissionsCacheForRole(Number(id));
 
   // Ricarica ruolo con permessi aggiornati
   const updatedRole = await prisma.role.findUnique({
