@@ -66,10 +66,8 @@ export function CurrenciesTable({
     );
   }
 
-  const { getDetailRoute } = useNavigation();
-
   return (
-    <div className="rounded-lg border bg-card">
+    <div className="rounded-md border bg-card">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>

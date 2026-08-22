@@ -1,9 +1,7 @@
 "use client"
 
-import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 import { TaxListApiResponse } from "@/types/tax-types";
 import { EntityPermissions, TaxRuleQueryInput } from "@mini-erp/shared";
-import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { TaxesFilterBar } from "./tax-rules-filter-bar";
 import { DataPagination } from "@/components/ui/data-pagination";
@@ -30,21 +28,8 @@ export default function TaxesContent({ queryParams, taxesList, permissions}: Tax
     const {data: taxes, pagination } = taxesList;
     const [isLoading, setIsLoading] = useState(false);
 
-    const t = useTranslations()
-
     return (
-        <div className="space-y-6">
-          {/* Breadcrumb */}
-          <BreadcrumbSetter title={t("nav.taxes")} />
-    
-          {/* Title */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">{t('nav.taxes')}</h1>
-              <p className="text-muted-foreground">{t('finance.taxes.description')}</p>
-            </div>
-          </div>
-          
+        <div className="space-y-6">                   
           {/* Header */}
           <TaxesFilterBar
             onPendingChange={setIsLoading}
@@ -52,7 +37,6 @@ export default function TaxesContent({ queryParams, taxesList, permissions}: Tax
             initialSearch={queryParams.search}
             initialMaxRate={queryParams.maxRate || ""}
             initialMinRate={queryParams.minRate || ""}
-            canCreate={permissions.canCreate}
           />
           {/* Table */}
           <TaxRuleTable

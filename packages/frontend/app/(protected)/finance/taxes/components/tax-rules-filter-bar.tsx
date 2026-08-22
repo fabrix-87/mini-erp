@@ -6,7 +6,11 @@ import { FilterFieldConfig } from "@/types/filter-types";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 
-const TAX_RULES_FILTER_DEFAULTS = {
+const TAX_RULES_DEFAULTS = {
+  applicableFor: 'all',
+  minRate: '0',
+  maxRate: '100',
+  active: "all",
   sortBy: "displayOrder",
   sortOrder: "asc" as "asc" | "desc",
 };
@@ -17,7 +21,6 @@ interface Props {
   initialApplicableFor?: string;
   initialMinRate: string;
   initialMaxRate: string;
-  canCreate: boolean;
   onPendingChange: (isPending: boolean) => void;
 }
 
@@ -27,10 +30,9 @@ export function TaxesFilterBar({
   initialApplicableFor = "",
   initialMinRate = "",
   initialMaxRate = "",
-  canCreate = false,
   onPendingChange,
 }: Props) {
-  const { getRoute, navigateToNew } = useNavigation();
+  const { getRoute } = useNavigation();
   const basePath = useMemo(() => getRoute("taxes"), [getRoute]);
 
   const t = useTranslations("finance.taxes");
@@ -88,17 +90,13 @@ export function TaxesFilterBar({
     [t],
   );
 
-  const handleNewClick = () => {
-    navigateToNew("taxes");
-  };
-
   const initialValues: FilterInitialValues = useMemo(
     () => ({
       search: initialSearch,
-      applicableFor: initialApplicableFor,
-      minRate: initialMinRate,
-      maxRate: initialMaxRate,
-      active: initialActive === null ? "" : String(initialActive),
+      applicableFor: initialApplicableFor || 'all',
+      minRate: initialMinRate || '0',
+      maxRate: initialMaxRate || '100',
+      active: initialActive === null ? "all" : String(initialActive),
     }),
     [initialSearch, initialApplicableFor, initialMinRate, initialMaxRate, initialActive],
   );
@@ -108,11 +106,8 @@ export function TaxesFilterBar({
       basePath={basePath}
       fields={fields}
       onPendingChange={onPendingChange}
-      defaultValues={TAX_RULES_FILTER_DEFAULTS}
+      defaultValues={TAX_RULES_DEFAULTS}
       initialValues={initialValues}
-      canCreate={canCreate}
-      handleNewClick={handleNewClick}
-      newButtonText={t("createNewButton")}
     />
   );
 }

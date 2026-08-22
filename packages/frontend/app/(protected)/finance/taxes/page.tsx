@@ -4,6 +4,9 @@ import { TaxRuleQueryInput, taxRuleQuerySchema } from "@mini-erp/shared";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import TaxesContent from "./components/tax-rules-content";
+import { PageHeader } from "@/components/page-header";
+import { createCreateAction } from "@/helpers/page-header-actions-helper";
+import { getNewRoute } from "@/lib/navigation-routes";
 
 interface PageProps {
   searchParams: Promise<TaxRuleQueryInput>;
@@ -13,9 +16,10 @@ export default async function TaxesPage({ searchParams }: PageProps) {
   await requirePermission("tax:read");
 
   const queryParams: TaxRuleQueryInput = taxRuleQuerySchema.parse(await searchParams);
-  const [taxes, permissions] = await Promise.all([
+  const [taxes, permissions, t] = await Promise.all([
     getAllTaxRules(queryParams),
     checkEntityPermissions("tax"),
+    getTranslations("finance.taxes"),
   ]);
 
   const clientQueryParams = {
@@ -24,7 +28,21 @@ export default async function TaxesPage({ searchParams }: PageProps) {
     maxRate: queryParams.maxRate?.toString(),
   };
 
-  return <TaxesContent permissions={permissions} taxesList={taxes} queryParams={clientQueryParams} />;
+  const actionItems = [
+      createCreateAction(
+        "create",
+        t("createNewButton") ?? "Nuovo",
+        getNewRoute("taxes"),
+        permissions.canCreate,
+      ),
+    ];
+
+  return (
+    <>
+      <PageHeader subtitle={t('description')} actionItems={actionItems} />
+      <TaxesContent permissions={permissions} taxesList={taxes} queryParams={clientQueryParams} />
+    </>
+  );
 }
 
 export async function generateMetadata(): Promise<Metadata> {

@@ -16,7 +16,6 @@ interface Props {
   initialActive?: boolean | null;
   initialSortBy?: string;
   initialSortOrder?: "asc" | "desc";
-  canCreate: boolean;
   onPendingChange: (isPending: boolean) => void;
 }
 
@@ -25,10 +24,9 @@ export function CurrenciesFilterBar({
   initialActive = null,
   initialSortBy = CURRENCY_FILTER_DEFAULTS.sortBy,
   initialSortOrder = CURRENCY_FILTER_DEFAULTS.sortOrder,
-  canCreate = false,
   onPendingChange,
 }: Props) {
-  const { getRoute, navigateToNew } = useNavigation();
+  const { getRoute } = useNavigation();
   const basePath = useMemo(() => getRoute("currencies"), [getRoute]);
 
   const t = useTranslations("system.currencies");
@@ -79,10 +77,6 @@ export function CurrenciesFilterBar({
     [t],
   );
 
-  const handleNewClick = () => {
-    navigateToNew("currencies");
-  };
-
   const initialValues: FilterInitialValues = {
     search: initialSearch,
     active: initialActive === null ? "" : String(initialActive),
@@ -97,9 +91,6 @@ export function CurrenciesFilterBar({
       onPendingChange={onPendingChange}
       defaultValues={CURRENCY_FILTER_DEFAULTS}
       initialValues={initialValues}
-      canCreate={canCreate}
-      handleNewClick={handleNewClick}
-      newButtonText={t("createNewButton")}
     />
   );
 }

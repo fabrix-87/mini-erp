@@ -9,7 +9,6 @@ import { useState } from "react";
 import { CurrencyDetailDialog } from "./currency-detail-dialog";
 import { toast } from "sonner";
 import { useCurrency } from "@/hooks/use-currency";
-import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 import { useTranslations } from "next-intl";
 
 interface Props {
@@ -45,24 +44,12 @@ export default function CurrenciesContent({
 
 
   return (
-    <div className="space-y-6">
-      {/* Breadcrumb */}
-      <BreadcrumbSetter title="Gestione valute" />
-
-      {/* Title */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{t('nav.currencies')}</h1>
-          <p className="text-muted-foreground">{t('system.currencies.description')}</p>
-        </div>
-      </div>
-      
+    <div className="space-y-6">     
       {/* Header */}
       <CurrenciesFilterBar
         onPendingChange={setIsLoading}
         initialActive={queryParams.active}
         initialSearch={queryParams.search}
-        canCreate={permissions.canCreate}
       />
       {/* Table */}
       <CurrenciesTable

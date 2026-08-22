@@ -5,6 +5,9 @@ import { currencyQuerySchema } from "@mini-erp/shared/validators/currency";
 import CurrenciesContent from "./components/currencies-content";
 import { getTranslations } from "next-intl/server";
 import { Metadata } from "next";
+import { PageHeader } from "@/components/page-header";
+import { createCreateAction } from "@/helpers/page-header-actions-helper";
+import { getNewRoute } from "@/lib/navigation-routes";
 
 interface PageProps {
   searchParams: Promise<CurrencyQueryInput>;
@@ -14,17 +17,30 @@ export default async function CurrenciesPage({ searchParams }: PageProps) {
   await requirePermission("currency:read");
 
   const queryParams: CurrencyQueryInput = currencyQuerySchema.parse(await searchParams);
-  const [currencies, permissions ] = await Promise.all([
+  const [currencies, permissions, t] = await Promise.all([
     getAllCurrencies(queryParams),
     checkEntityPermissions("currency"),
+    getTranslations("system.currencies"),
   ]);
 
+  const actionItems = [
+    createCreateAction(
+      "create",
+      t("createNewButton") ?? "Nuovo",
+      getNewRoute("currencies"),
+      permissions.canCreate,
+    ),
+  ];
+
   return (
-    <CurrenciesContent
-      queryParams={queryParams}
-      currenciesList={currencies}
-      permissions={permissions}
-    />
+    <>
+      <PageHeader actionItems={actionItems} subtitle={t("description")} />
+      <CurrenciesContent
+        queryParams={queryParams}
+        currenciesList={currencies}
+        permissions={permissions}
+      />
+    </>
   );
 }
 
