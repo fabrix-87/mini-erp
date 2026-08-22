@@ -19,6 +19,7 @@ import { useNavigation } from "@/hooks/use-navigation";
 import { useTranslations } from "next-intl";
 import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 import ContactFilterBar from "./contact-filter-bar";
+import { toggleContactActiveAction } from "@/actions/contact-actions";
 
 interface Props {
   data: ContactListApiResponse;
@@ -73,7 +74,7 @@ export default function ContactListPage({ data, params }: Props) {
           }
         }}
         onToggleActive={async (id, active) => {
-          await toggleActive(id, !active);
+          await toggleContactActiveAction(id, !active);
         }}
       />
 

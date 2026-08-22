@@ -43,10 +43,9 @@ interface Props {
  */
 export default async function LeadDetailPage({ params }: Props) {
   const { id } = await params;
-  const numId = Number(id);
-  if (isNaN(numId)) notFound();
 
-  const response = await getLeadByIdServer(numId).catch(() => null);
+  const response = await getLeadByIdServer(id);
+  
   if (!response?.data) notFound();
 
   const lead = response.data;

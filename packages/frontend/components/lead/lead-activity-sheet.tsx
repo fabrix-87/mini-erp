@@ -32,7 +32,7 @@ import type { Activity } from "@mini-erp/shared";
 // ─── types ───────────────────────────────────────────────────────────────────
 
 interface LeadActivitySheetProps {
-  leadId: number;
+  leadId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** Optional callback invoked after a successful creation */
@@ -151,7 +151,6 @@ export function LeadActivitySheet({
           ? new Date(formData.scheduledEnd).toISOString()
           : undefined,
         duration: formData.duration ? parseInt(formData.duration) : undefined,
-        assignedUserId: user?.id ?? 0,
       };
 
       const result = await createActivity(payload);

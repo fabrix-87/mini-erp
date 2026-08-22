@@ -6,6 +6,7 @@ import { createCuidSchema, createIdSchema, positiveNumbersSchema } from "./primi
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import { queryBooleanSchema } from "./query/params";
 import { emailSchema } from "./primitives/string";
+import { leadIdSchema } from "./lead";
 
 // ============================================================================
 // ENUMS
@@ -100,7 +101,7 @@ export const createActivitySchema = z
     customerId: positiveNumbersSchema.optional().nullable(),
     contactId: positiveNumbersSchema.optional().nullable(),
     opportunityId: positiveNumbersSchema.optional().nullable(),
-    leadId: positiveNumbersSchema.optional().nullable(),
+    leadId: leadIdSchema.nullable(),
 
     // Utente assegnato (obbligatorio)
     assignedUserId: userIdSchema,

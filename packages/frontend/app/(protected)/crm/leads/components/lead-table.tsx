@@ -32,10 +32,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { SortableTableHead, type SortState } from "@/components/ui/sortable-table-head";
 import { DataPagination } from "@/components/ui/data-pagination";
-import { LeadStatusBadge } from "./lead-status-badge";
-import { LeadQualityBadge } from "./lead-quality-badge";
-import { LeadSourceBadge } from "./lead-source-badge";
-import { LeadScoreDisplay } from "./lead-score-display";
+import { LeadStatusBadge } from "../../../../../components/lead/lead-status-badge";
+import { LeadQualityBadge } from "../../../../../components/lead/lead-quality-badge";
+import { LeadSourceBadge } from "../../../../../components/lead/lead-source-badge";
+import { LeadScoreDisplay } from "../../../../../components/lead/lead-score-display";
 import type { Lead } from "@/types/lead-types";
 import type { PaginationInfo } from "@/types/api";
 import { formatDateIT } from "@/helpers/date-helper";

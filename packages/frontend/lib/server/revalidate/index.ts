@@ -102,6 +102,9 @@ interface RevalidateOptions {
    * @deprecated Preferire `routeKey` quando disponibile.
    */
   pathRoot?: string;
+  listTag?: string;
+  detailTag?: string;
+  listTagOverride?: string;
 }
 
 // ============================================================================
@@ -142,11 +145,14 @@ function resolveBasePath(
  * @param options - Revalidation options; use `routeKey` for type-safe path resolution
  *
  * @example
- * // List - path resolved from navigation tree
- * revalidateEntity("role", undefined, { routeKey: "roles" });
- *
- * // Detail
- * revalidateEntity("role", 1, { routeKey: "roles" });
+ * revalidateEntity("contact", id, {
+ *   routeKey: "contacts",
+ *   detailTag: CONTACT_TAGS.detail(id),
+ * });
+ * revalidateEntity("contact", undefined, {
+ *   routeKey: "contacts",
+ *   listTag: CONTACT_TAGS.list,
+ * });
  */
 export function revalidateEntity(
   entity: string,
@@ -157,10 +163,12 @@ export function revalidateEntity(
   const basePath = resolveBasePath(entity, options, id !== undefined);
 
   if (id !== undefined) {
-    revalidateTag(`${tag}-${id}`, options?.tagProfile);
+    const detailTag = options?.detailTag ?? `${tag}-${id}`;
+    revalidateTag(detailTag, options?.tagProfile);
     revalidatePath(`${basePath}/${id}`, options?.pathType);
   } else {
-    revalidateTag(`${tag}s-list`, options?.tagProfile);
+    const listTag = options?.listTag ?? `${tag}s-list`;
+    revalidateTag(listTag, options?.tagProfile);
     revalidatePath(basePath, options?.pathType);
   }
 }
@@ -173,7 +181,11 @@ export function revalidateEntity(
  * @param options - Revalidation options; use `routeKey` for type-safe path resolution
  *
  * @example
- * revalidateEntityWithList("role", 1, { routeKey: "roles" });
+ * revalidateEntityWithList("contact", id, {
+ *   routeKey: "contacts",
+ *   detailTag: CONTACT_TAGS.detail(id),
+ *   listTag: CONTACT_TAGS.list,
+ * });
  */
 export function revalidateEntityWithList(
   entity: string,
@@ -183,12 +195,12 @@ export function revalidateEntityWithList(
   const tag = options?.tagPrefix ?? entity;
   const basePath = resolveBasePath(entity, options, true);
 
-  // Singolo
-  revalidateTag(`${tag}-${id}`, options?.tagProfile);
-  revalidatePath(`${basePath}/${id}`, options?.pathType);
+  const detailTag = options?.detailTag ?? `${tag}-${id}`;
+  const listTag = options?.listTag ?? `${tag}s-list`;
 
-  // Lista
-  revalidateTag(`${tag}s-list`, options?.tagProfile);
+  revalidateTag(detailTag, options?.tagProfile);
+  revalidatePath(`${basePath}/${id}`, options?.pathType);
+  revalidateTag(listTag, options?.tagProfile);
   revalidatePath(basePath, options?.pathType);
 }
 

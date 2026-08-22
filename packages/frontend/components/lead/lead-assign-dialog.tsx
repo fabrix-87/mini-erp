@@ -68,7 +68,7 @@ export function LeadAssignDialog({ lead, open, onOpenChange }: LeadAssignDialogP
   const isPending = form.formState.isSubmitting;
 
   const onSubmit = async (data: AssignUserIdFormValues) => {
-    const result = await assignLeadAction(lead.id, Number(data.assignedUserId));
+    const result = await assignLeadAction(lead.id, data.assignedUserId);
     if (result.success) {
       toast.success("Lead assegnata");
       onOpenChange(false);

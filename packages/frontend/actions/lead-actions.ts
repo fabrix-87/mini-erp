@@ -39,7 +39,7 @@ export async function createLeadAction(data: CreateLeadFormInput) {
 }
 
 /** Server Action — Aggiorna lead */
-export async function updateLeadAction(id: number, data: UpdateLeadFormInput) {
+export async function updateLeadAction(id: string, data: UpdateLeadFormInput) {
   try {
     const response = await updateLeadServer(id, data);
     leadRevalidation.lead(id);
@@ -50,7 +50,7 @@ export async function updateLeadAction(id: number, data: UpdateLeadFormInput) {
 }
 
 /** Server Action — Elimina lead */
-export async function deleteLeadAction(id: number) {
+export async function deleteLeadAction(id: string) {
   try {
     await deleteLeadServer(id);
     leadRevalidation.lead(id);
@@ -61,7 +61,7 @@ export async function deleteLeadAction(id: number) {
 }
 
 /** Server Action — Aggiorna status lead */
-export async function updateLeadStatusAction(id: number, data: UpdateLeadStatusInput) {
+export async function updateLeadStatusAction(id: string, data: UpdateLeadStatusInput) {
   try {
     const response = await updateLeadStatusServer(id, data);
     leadRevalidation.lead(id);
@@ -72,7 +72,7 @@ export async function updateLeadStatusAction(id: number, data: UpdateLeadStatusI
 }
 
 /** Server Action — Aggiorna score lead */
-export async function updateLeadScoreAction(id: number, data: UpdateLeadScoreFormInput) {
+export async function updateLeadScoreAction(id: string, data: UpdateLeadScoreFormInput) {
   try {
     const response = await updateLeadScoreServer(id, data);
     leadRevalidation.lead(id);
@@ -83,7 +83,7 @@ export async function updateLeadScoreAction(id: number, data: UpdateLeadScoreFor
 }
 
 /** Server Action — Qualifica lead (BANT) */
-export async function qualifyLeadAction(id: number, data: QualifyLeadFormInput) {
+export async function qualifyLeadAction(id: string, data: QualifyLeadFormInput) {
   try {
     const response = await qualifyLeadServer(id, data);
     leadRevalidation.lead(id);
@@ -94,7 +94,7 @@ export async function qualifyLeadAction(id: number, data: QualifyLeadFormInput) 
 }
 
 /** Server Action — Converti lead in Customer */
-export async function convertLeadAction(id: number, data: ConvertLeadFormInput) {
+export async function convertLeadAction(id: string, data: ConvertLeadFormInput) {
   try {
     const response = await convertLeadServer(id, data);
     leadRevalidation.lead(id);
@@ -105,7 +105,7 @@ export async function convertLeadAction(id: number, data: ConvertLeadFormInput) 
 }
 
 /** Server Action — Assegna lead a utente */
-export async function assignLeadAction(id: number, assignedUserId: number) {
+export async function assignLeadAction(id: string, assignedUserId: string) {
   try {
     const response = await assignLeadServer(id, assignedUserId);
     leadRevalidation.lead(id);

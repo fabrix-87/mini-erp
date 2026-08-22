@@ -248,7 +248,7 @@ export function CompanyListTable({
       </div>
 
       {/* Pagination */}
-      {pagination && pagination.totalPages > 1 && (
+      {pagination && (
         <DataPagination
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}

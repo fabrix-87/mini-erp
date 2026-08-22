@@ -1,4 +1,5 @@
 // lib/server/revalidate/entities.ts
+import { CONTACT_TAGS } from "@/types/contact-types";
 import { revalidateEntity, revalidateEntityWithList, revalidatePath, revalidateTag } from ".";
 
 // ============================================================================
@@ -41,7 +42,7 @@ export const roleRevalidation = {
  */
 export const leadRevalidation = {
   /** Revalidate specific lead detail and leads list. */
-  lead: (id: number) => revalidateEntityWithList("lead", id, { routeKey: "leads" }),
+  lead: (id: string) => revalidateEntityWithList("lead", id, { routeKey: "leads" }),
 
   /** Revalidate leads list. */
   list: () => revalidateEntity("lead", undefined, { routeKey: "leads" }),
@@ -85,14 +86,26 @@ export const supplierRevalidation = {
  */
 export const contactRevalidation = {
   /** Revalidate specific contact detail and path. */
-  contact: (id: string) => revalidateEntity("contact", id, { routeKey: "contacts" }),
+  contact: (id: string) =>
+    revalidateEntity("contact", id, {
+      routeKey: "contacts",
+      detailTag: CONTACT_TAGS.detail(id),
+    }),
 
   /** Revalidate contacts list. */
-  list: () => revalidateEntity("contact", undefined, { routeKey: "contacts" }),
+  list: () =>
+    revalidateEntity("contact", undefined, {
+      routeKey: "contacts",
+      listTag: CONTACT_TAGS.list,
+    }),
 
   /** Revalidate specific contact and contacts list. */
   contactWithList: (id: string) =>
-    revalidateEntityWithList("contact", id, { routeKey: "contacts" }),
+    revalidateEntityWithList("contact", id, {
+      routeKey: "contacts",
+      detailTag: CONTACT_TAGS.detail(id),
+      listTag: CONTACT_TAGS.list,
+    }),
 };
 
 /**
@@ -155,14 +168,14 @@ export const documentRevalidation = {
  */
 export const settingsRevalidation = {
   /** Revalidate user profile tag (shared with userRevalidation). */
-  profile: () => revalidateTag('user-profile'),
+  profile: () => revalidateTag("user-profile"),
 
   /** Revalidate user settings tag. */
-  settings: () => revalidateTag('user-settings'),
+  settings: () => revalidateTag("user-settings"),
 
   /** Revalidate both profile and settings. */
   all: () => {
-    revalidateTag('user-profile');
-    revalidateTag('user-settings');
+    revalidateTag("user-profile");
+    revalidateTag("user-settings");
   },
 };

@@ -494,23 +494,19 @@ export const invalidateUserPermissionsCache = async (userId: string): Promise<vo
  * Invalidates the permissions cache for all users assigned to a given role.
  * Must be called after any mutation to role permissions.
  */
-export async function invalidatePermissionsCacheForRole(
-  roleId: number
-): Promise<void> {
-  // Find all userIds linked to this role via their tenant membership
+export async function invalidatePermissionsCacheForRole(roleId: number): Promise<void> {
   const memberships = await prisma.userTenantMembershipRole.findMany({
     where: { roleId },
     select: { membership: { select: { userId: true } } },
   });
 
   const userIds = [...new Set(memberships.map((m) => m.membership.userId))];
-
   if (userIds.length === 0) return;
 
-  // Bulk DEL: one pipeline call instead of N round-trips
   const pipeline = redisClient.multi();
   for (const userId of userIds) {
     pipeline.del(sessionKeys.permissions(userId));
+    pipeline.del(`user:profile:${userId}`);
   }
   await pipeline.exec();
 }

@@ -190,7 +190,7 @@ export interface ContactExport {
 // ============================================================================
 
 export const CONTACT_TAGS = {
-  list: "contact-list",
+  list: "contacts-list",
   detail: (id: string) => `contact-${id}`,
 };
 

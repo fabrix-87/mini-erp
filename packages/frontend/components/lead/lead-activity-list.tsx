@@ -12,7 +12,7 @@ import { LeadActivitySheet } from "./lead-activity-sheet";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 interface LeadActivityListProps {
-  leadId: number;
+  leadId: string;
   activities: Activity[];
 }
 

@@ -44,7 +44,7 @@ export type ProposedProduct = z.infer<typeof proposedProductSchema>;
  * Opportunity entity
  */
 export type Opportunity = Omit<CreateOpportunityInput, "proposedProducts"> & {
-  id: number;
+  id: string;
   lead?: Lead | null;
   customer: Customer;
   source: OpportunitySource;
@@ -62,7 +62,7 @@ export type Opportunity = Omit<CreateOpportunityInput, "proposedProducts"> & {
   daysInCurrentStage: number;
   totalActivities: number;
   lastActivityDate: Date | null;
-  proposedProducts: Record<string, any> | null;
+  proposedProducts: ProposedProduct[] | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -71,7 +71,7 @@ export type Opportunity = Omit<CreateOpportunityInput, "proposedProducts"> & {
  * Closed Reason entity
  */
 export type ClosedReason = {
-  id: number;
+  id: string;
   code: string;
   description: string;
   isWon: boolean;
@@ -131,7 +131,7 @@ export type OpportunityCustomerIdParam = z.infer<typeof customerIdParamSchema>;
  * Simplified opportunity for list views
  */
 export type OpportunityListItem = {
-  id: number;
+  id: string;
   title: string;
   customerName: string;
   status: OpportunityStatus;
@@ -141,7 +141,7 @@ export type OpportunityListItem = {
   weightedValue: Decimal;
   probability: number;
   expectedCloseDate: Date | null;
-  assignedUserId: number | null;
+  assignedUserId: string | null;
   assignedUserName: string | null;
   daysInCurrentStage: number;
   lastActivityDate: Date | null;

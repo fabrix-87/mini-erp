@@ -13,6 +13,7 @@ import {
   LEAD_TAGS,
   LeadListApiResponse,
   LeadStatsApiResponse,
+  LeadSingleApiResponse,
 } from "@/types/lead-types";
 import {
   Activity,
@@ -45,7 +46,7 @@ export async function getAllLeads(
 /**
  * Ottieni singola lead per ID
  */
-export async function getLeadByIdServer(id: number): Promise<ApiResponse<Lead>> {
+export async function getLeadByIdServer(id: string): Promise<LeadSingleApiResponse> {
   return serverApi.get<ApiResponse<Lead>>(`/leads/${id}`, { unwrapData: false });
 }
 
@@ -77,43 +78,43 @@ export async function createLeadServer(data: CreateLeadFormInput): Promise<ApiRe
 }
 
 export async function updateLeadServer(
-  id: number,
+  id: string,
   data: UpdateLeadFormInput,
 ): Promise<ApiResponse<Lead>> {
   return serverApi.put<ApiResponse<Lead>>(`/leads/${id}`, data);
 }
 
 export async function updateLeadStatusServer(
-  id: number,
+  id: string,
   data: UpdateLeadStatusInput,
 ): Promise<ApiResponse<Lead>> {
   return serverApi.patch<ApiResponse<Lead>>(`/leads/${id}/status`, data);
 }
 
 export async function updateLeadScoreServer(
-  id: number,
+  id: string,
   data: UpdateLeadScoreFormInput,
 ): Promise<ApiResponse<Lead>> {
   return serverApi.patch<ApiResponse<Lead>>(`/leads/${id}/score`, data);
 }
 
 export async function qualifyLeadServer(
-  id: number,
+  id: string,
   data: QualifyLeadFormInput,
 ): Promise<ApiResponse<Lead>> {
   return serverApi.patch<ApiResponse<Lead>>(`/leads/${id}/qualify`, data);
 }
 
 export async function convertLeadServer(
-  id: number,
+  id: string,
   data: ConvertLeadFormInput,
 ): Promise<ApiResponse<Lead>> {
   return serverApi.post<ApiResponse<Lead>>(`/leads/${id}/convert`, data);
 }
 
 export async function assignLeadServer(
-  id: number,
-  assignedUserId: number,
+  id: string,
+  assignedUserId: string,
 ): Promise<ApiResponse<Lead>> {
   return serverApi.patch<ApiResponse<Lead>>(`/leads/${id}/assign`, { assignedUserId });
 }
@@ -130,6 +131,6 @@ export async function bulkUpdateLeadStatusServer(
   return serverApi.post<ApiResponse<null>>("/leads/bulk/status", data);
 }
 
-export async function deleteLeadServer(id: number): Promise<ApiResponse<null>> {
+export async function deleteLeadServer(id: string): Promise<ApiResponse<null>> {
   return serverApi.delete<ApiResponse<null>>(`/leads/${id}`);
 }

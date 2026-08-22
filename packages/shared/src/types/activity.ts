@@ -37,7 +37,7 @@ import { ActivityStatus, ActivityType } from "../constants/activity";
  * Type Activity
  */
 export type Activity = z.infer<typeof createActivitySchema> & {
-  id: number;
+  id: string;
   company?: Company;
   lead?: Lead;
   customer?: Customer;
