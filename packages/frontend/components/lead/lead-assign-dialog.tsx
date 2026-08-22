@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import type { Lead } from "@/types/lead";
-import { assignLeadAction } from "@/actions/lead";
+import type { Lead } from "@/types/lead-types";
+import { assignLeadAction } from "@/actions/lead-actions";
 
 import {
   Dialog,

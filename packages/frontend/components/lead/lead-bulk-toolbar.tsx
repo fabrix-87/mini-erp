@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { bulkAssignLeadsAction, bulkUpdateLeadStatusAction } from "@/actions/lead";
+import { bulkAssignLeadsAction, bulkUpdateLeadStatusAction } from "@/actions/lead-actions";
 import type { LeadStatus } from "@mini-erp/shared/constants";
 
 // ============================================================================

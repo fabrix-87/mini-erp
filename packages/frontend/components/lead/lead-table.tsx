@@ -1,8 +1,7 @@
 // components/leads/lead-table.tsx
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, useCallback } from "react";
+import { useMemo, useState } from "react";
 import { Mail, Phone, MoreHorizontal, Pencil, Trash2, UserCheck, Eye } from "lucide-react";
 import {
   Table,
@@ -12,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -38,12 +36,14 @@ import { LeadStatusBadge } from "./lead-status-badge";
 import { LeadQualityBadge } from "./lead-quality-badge";
 import { LeadSourceBadge } from "./lead-source-badge";
 import { LeadScoreDisplay } from "./lead-score-display";
-import { LeadBulkToolbar } from "./lead-bulk-toolbar";
-import { toast } from "sonner";
-import { deleteLeadAction } from "@/actions/lead";
-import type { Lead, LeadQueryInput } from "@/types/lead";
-import type { ApiResponse, PaginationInfo } from "@/types/api";
+import type { Lead } from "@/types/lead-types";
+import type { PaginationInfo } from "@/types/api";
 import { formatDateIT } from "@/helpers/date-helper";
+import { EntityPermissions } from "@mini-erp/shared";
+import { useTranslations } from "next-intl";
+import { getRoute } from "@/lib/navigation-routes";
+import { useUpdateURL } from "@/hooks/use-update-url";
+import { useNavigation } from "@/hooks/use-navigation";
 
 // ============================================================================
 // Sort field type — matches leadQuerySchema sortBy enum
@@ -82,9 +82,9 @@ interface LeadTableProps {
   data: Lead[];
   pagination: PaginationInfo | undefined;
   isLoading: boolean;
-  sort: SortState<LeadSortField>;
-  onSortChange: (field: LeadSortField) => void;
-  onRefresh: () => void;
+  sortOrder: "asc" | "desc";
+  sortField: LeadSortField;
+  permissions: EntityPermissions;
 }
 
 // ============================================================================
@@ -99,29 +99,33 @@ export function LeadTable({
   data,
   pagination,
   isLoading,
-  sort,
-  onSortChange,
-  onRefresh,
+  sortOrder,
+  sortField,
+  permissions,
 }: LeadTableProps) {
-  const router = useRouter();
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const t = useTranslations("crm.leads");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // ---- Selection handlers ----
+  const basePath = useMemo(() => getRoute("leads"), [getRoute]);
+  const updateURL = useUpdateURL(basePath);
+  const { navigateToDetail, navigateToEdit } = useNavigation();
 
-  const allSelected = data.length > 0 && selectedIds.length === data.length;
+  const sort: SortState<LeadSortField> = {
+    field: sortField,
+    order: sortOrder || "asc",
+  };
 
-  const toggleAll = () => setSelectedIds(allSelected ? [] : data.map((l) => l.id));
-
-  const toggleOne = (id: number) =>
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-
-  const clearSelection = useCallback(() => setSelectedIds([]), []);
+  const onSortChange = (field: LeadSortField) => {
+    const newOrder = sort.field === field && sort.order === "asc" ? "desc" : "asc";
+    updateURL({ sortBy: field, sortOrder: newOrder });
+  };
 
   // ---- Delete handler ----
 
   const handleDelete = async () => {
+    console.log("delete lead");
+    return; /*
     if (!deleteId) return;
     setIsDeleting(true);
     const result = await deleteLeadAction(deleteId);
@@ -133,7 +137,7 @@ export function LeadTable({
       onRefresh();
     } else {
       toast.error(result.error ?? "Errore durante l'eliminazione");
-    }
+    }*/
   };
 
   // ---- Render ----
@@ -142,46 +146,31 @@ export function LeadTable({
 
   return (
     <div className="flex flex-col gap-2">
-      {/* Bulk toolbar */}
-      <LeadBulkToolbar
-        selectedIds={selectedIds}
-        onClearSelection={clearSelection}
-        onSuccess={onRefresh}
-      />
-
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="rounded-lg border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
               {/* Select all */}
-              <TableHead className="w-10">
-                <Checkbox
-                  checked={allSelected}
-                  onCheckedChange={toggleAll}
-                  aria-label="Seleziona tutti"
-                />
-              </TableHead>
-
               <SortableTableHead field="companyName" sort={sort} onSort={onSortChange}>
-                Lead
+                {t("tableFields.lead")}
               </SortableTableHead>
 
               <SortableTableHead field="score" sort={sort} onSort={onSortChange} className="w-24">
-                Score
+                {t("tableFields.score")}
               </SortableTableHead>
 
               <SortableTableHead field="status" sort={sort} onSort={onSortChange} className="w-36">
-                Status
+                {t("tableFields.status")}
               </SortableTableHead>
 
-              <TableHead>Contatto</TableHead>
+              <TableHead>{t("tableFields.contact")}</TableHead>
 
               <SortableTableHead field="quality" sort={sort} onSort={onSortChange} className="w-24">
-                Qualità
+                {t("tableFields.quality")}
               </SortableTableHead>
 
-              <TableHead className="w-36">Fonte</TableHead>
+              <TableHead className="w-36">{t("tableFields.source")}</TableHead>
 
               <SortableTableHead
                 field="nextFollowUpDate"
@@ -189,7 +178,7 @@ export function LeadTable({
                 onSort={onSortChange}
                 className="w-32"
               >
-                Follow-up
+                {t("tableFields.nextFollowUpDate")}
               </SortableTableHead>
 
               <SortableTableHead
@@ -198,7 +187,7 @@ export function LeadTable({
                 onSort={onSortChange}
                 className="w-28"
               >
-                Creato
+                {t("tableFields.createdAt")}
               </SortableTableHead>
 
               <TableHead className="w-10" />
@@ -209,7 +198,7 @@ export function LeadTable({
             {data.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={10} className="h-32 text-center text-muted-foreground">
-                  Nessun lead trovato
+                  {t("no_results")}
                 </TableCell>
               </TableRow>
             ) : (
@@ -217,18 +206,8 @@ export function LeadTable({
                 <TableRow
                   key={lead.id}
                   className="cursor-pointer hover:bg-muted/40"
-                  onClick={() => router.push(`/leads/${lead.id}`)}
-                  data-state={selectedIds.includes(lead.id) ? "selected" : undefined}
+                  onClick={() => navigateToDetail("leads", lead.id)}
                 >
-                  {/* Checkbox */}
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <Checkbox
-                      checked={selectedIds.includes(lead.id)}
-                      onCheckedChange={() => toggleOne(lead.id)}
-                      aria-label={`Seleziona ${lead.companyName}`}
-                    />
-                  </TableCell>
-
                   {/* Lead info */}
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
@@ -299,11 +278,7 @@ export function LeadTable({
                   {/* Creato */}
                   <TableCell>
                     <span className="text-xs text-muted-foreground">
-                      {new Date(lead.createdAt).toLocaleDateString("it-IT", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
+                      {formatDateIT(lead.createdAt)}
                     </span>
                   </TableCell>
 
@@ -321,11 +296,11 @@ export function LeadTable({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.push(`/leads/${lead.id}`)}>
+                        <DropdownMenuItem onClick={() => navigateToDetail("leads", lead.id)}>
                           <Eye className="mr-2 h-4 w-4" />
                           Visualizza
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => router.push(`/leads/${lead.id}/edit`)}>
+                        <DropdownMenuItem onClick={() => navigateToEdit("leads", lead.id)}>
                           <Pencil className="mr-2 h-4 w-4" />
                           Modifica
                         </DropdownMenuItem>

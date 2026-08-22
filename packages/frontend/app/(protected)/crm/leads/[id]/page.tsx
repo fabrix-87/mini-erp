@@ -24,7 +24,7 @@ import { LeadStatusBadge } from "@/components/lead/lead-status-badge";
 import { LeadQualityBadge } from "@/components/lead/lead-quality-badge";
 import { LeadSourceBadge } from "@/components/lead/lead-source-badge";
 import { LeadScoreDisplay } from "@/components/lead/lead-score-display";
-import { getLeadByIdServer } from "@/services/server/lead";
+import { getLeadByIdServer } from "@/services/server/lead-service";
 import { LeadDetailActions } from "../components/lead-detail-actions";
 import { LeadActivityList } from "@/components/lead/lead-activity-list";
 import { daysSince, formatDateIT } from "@/helpers/date-helper";

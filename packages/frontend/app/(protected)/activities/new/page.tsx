@@ -1,7 +1,7 @@
 // app/activities/new/page.tsx
 import { ActivityForm } from "@/components/activity/activity-form";
 import { requirePermission } from "@/lib/server/auth";
-import { getLeadByIdServer } from "@/services/server/lead";
+import { getLeadByIdServer } from "@/services/server/lead-service";
 
 interface SearchParams {
   customerId?: string;

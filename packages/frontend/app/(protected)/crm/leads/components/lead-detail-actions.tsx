@@ -22,8 +22,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { updateLeadStatusAction, deleteLeadAction } from "@/actions/lead";
-import type { Lead } from "@/types/lead";
+import { updateLeadStatusAction, deleteLeadAction } from "@/actions/lead-actions";
+import type { Lead } from "@/types/lead-types";
 
 // ============================================================================
 // Lazy-loaded dialogs (prevent loading on server)

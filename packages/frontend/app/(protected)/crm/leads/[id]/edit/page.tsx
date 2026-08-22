@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation";
 import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 import { LeadForm } from "@/components/lead/lead-form";
-import { getLeadByIdServer } from "@/services/server/lead";
+import { getLeadByIdServer } from "@/services/server/lead-service";
 
 // ============================================================================
 // Page — Server Component

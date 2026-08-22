@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("errors");
+  const t = await getTranslations("errors.404");
 
   return {
     title: t("title"),
@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const Error = async () => {
-  const t = await getTranslations("errors");
+  const t = await getTranslations("errors.404");
   const tc = await getTranslations("common");
 
   return (

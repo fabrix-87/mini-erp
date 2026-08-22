@@ -15,12 +15,12 @@ import {
   bulkAssignLeadsServer,
   bulkUpdateLeadStatusServer,
   getLeadActivitiesServer,
-} from "@/services/server/lead";
+} from "@/services/server/lead-service";
 import type {
   UpdateLeadStatusInput,
   BulkAssignLeadsInput,
   BulkUpdateLeadStatusInput,
-} from "@/types/lead";
+} from "@/types/lead-types";
 import { Activity, ConvertLeadFormInput, CreateLeadFormInput, QualifyLeadFormInput, UpdateLeadFormInput, UpdateLeadScoreFormInput } from "@mini-erp/shared";
 
 // ============================================================================

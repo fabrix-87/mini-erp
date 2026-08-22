@@ -2,7 +2,7 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { useCallback, useTransition } from "react";
+import { useCallback, useMemo, useTransition } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,179 +15,126 @@ import {
 } from "@/components/ui/select";
 import type { LeadStatus, LeadSource, LeadQuality } from "@mini-erp/shared/constants";
 import { useAppSearchParams } from "@/providers/search-params-provider";
+import { useTranslations } from "next-intl";
+import { getRoute } from "@/lib/navigation-routes";
+import { LeadQueryInput } from "@mini-erp/shared";
+import { FilterFieldConfig } from "@/types/filter-types";
+import { FilterBar, FilterInitialValues } from "../ui/filter-bar";
 
 // ============================================================================
-// Constants
+// Helper
 // ============================================================================
 
-const STATUS_OPTIONS: { value: LeadStatus | "ALL"; label: string }[] = [
-  { value: "ALL",         label: "Tutti gli status" },
-  { value: "NEW",         label: "Nuovo" },
-  { value: "CONTACTED",   label: "Contattato" },
-  { value: "QUALIFIED",   label: "Qualificato" },
-  { value: "UNQUALIFIED", label: "Non qualificato" },
-  { value: "NURTURING",   label: "Nurturing" },
-  { value: "CONVERTED",   label: "Convertito" },
-  { value: "LOST",        label: "Perso" },
-  { value: "DUPLICATE",   label: "Duplicato" },
-  { value: "ARCHIVED",    label: "Archiviato" },
-];
+export type FilterStatus = LeadStatus | "ALL";
+export type FilterSource = LeadSource | "ALL";
+export type FilterQuality = LeadQuality | "ALL";
 
-const SOURCE_OPTIONS: { value: LeadSource | "ALL"; label: string }[] = [
-  { value: "ALL",             label: "Tutte le fonti" },
-  { value: "WEBSITE",         label: "Website" },
-  { value: "REFERRAL",        label: "Referral" },
-  { value: "SOCIAL_MEDIA",    label: "Social Media" },
-  { value: "EMAIL_CAMPAIGN",  label: "Email Campaign" },
-  { value: "PHONE_CALL",      label: "Telefono" },
-  { value: "COLD_CALL",       label: "Cold Call" },
-  { value: "EVENT",           label: "Evento" },
-  { value: "PARTNER",         label: "Partner" },
-  { value: "ADVERTISING",     label: "Pubblicità" },
-  { value: "CONTENT",         label: "Contenuto" },
-  { value: "DIRECT",          label: "Diretto" },
-  { value: "CHAT",            label: "Chat" },
-  { value: "OTHER",           label: "Altro" },
-];
+function getStatusOptions(t: ReturnType<typeof useTranslations<"crm.leads">>) {
+  const keys: FilterStatus[] = [
+    "ALL",
+    "NEW",
+    "CONTACTED",
+    "QUALIFIED",
+    "UNQUALIFIED",
+    "NURTURING",
+    "CONVERTED",
+    "LOST",
+    "DUPLICATE",
+    "ARCHIVED",
+  ];
+  return keys.map((value) => ({ value, label: t(`status.${value}`) }));
+}
 
-const QUALITY_OPTIONS: { value: LeadQuality | "ALL"; label: string }[] = [
-  { value: "ALL",  label: "Tutte le qualità" },
-  { value: "HOT",  label: "🔥 Hot" },
-  { value: "WARM", label: "♨️ Warm" },
-  { value: "COLD", label: "❄️ Cold" },
-];
+function getSourceOptions(t: ReturnType<typeof useTranslations<"crm.leads">>) {
+  const keys: FilterSource[] = [
+    "ALL",
+    "WEBSITE",
+    "REFERRAL",
+    "SOCIAL_MEDIA",
+    "EMAIL_CAMPAIGN",
+    "PHONE_CALL",
+    "COLD_CALL",
+    "EVENT",
+    "PARTNER",
+    "ADVERTISING",
+    "CONTENT",
+    "DIRECT",
+    "CHAT",
+    "OTHER",
+  ];
+  return keys.map((value) => ({ value, label: t(`source.${value}`) }));
+}
+
+function getQualityOptions(t: ReturnType<typeof useTranslations<"crm.leads">>) {
+  const keys: FilterQuality[] = ["ALL", "HOT", "WARM", "COLD"];
+  return keys.map((value) => ({ value, label: t(`quality.${value}`) }));
+}
 
 // ============================================================================
 // Component
 // ============================================================================
 
+interface Props {
+  searchParams: LeadQueryInput;
+  onPendingChange: (isPending: boolean) => void;
+}
+
+const DEFAULT_VALUES = {
+  search: "",
+  status: "ALL",
+  source: "ALL",
+  quality: "ALL",
+};
+
 /**
  * Lead list filters — search, status, source, quality.
- * Syncs filter state via URL search params for SSR compatibility.
  */
-export function LeadFilters() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useAppSearchParams();
-  const [isPending, startTransition] = useTransition();
+export function LeadFilters({ searchParams, onPendingChange }: Props) {
+  const basePath = useMemo(() => getRoute("leads"), [getRoute]);
+  const t = useTranslations("crm.leads");
 
-  const search  = searchParams.get("search") ?? "";
-  const status  = searchParams.get("status") ?? "ALL";
-  const source  = searchParams.get("source") ?? "ALL";
-  const quality = searchParams.get("quality") ?? "ALL";
-
-  const hasActiveFilters = !!(
-    searchParams.get("search") ||
-    searchParams.get("status") ||
-    searchParams.get("source") ||
-    searchParams.get("quality")
+  const LEAD_FILTER_FIELDS = useMemo<FilterFieldConfig[]>(
+    () => [
+      {
+        type: "search",
+        key: "search",
+        placeholder: t("searchFilterPlaceholder"),
+        debounceMs: 500,
+        colSpan: 2,
+      },
+      {
+        type: "select",
+        key: "status",
+        options: getStatusOptions(t),
+      },
+      {
+        type: "select",
+        key: "source",
+        options: getSourceOptions(t),
+      },
+      {
+        type: "select",
+        key: "quality",
+        options: getQualityOptions(t),
+      },
+    ],
+    [t],
   );
 
-  /** Update a single search param, resetting page to 1 */
-  const setParam = useCallback(
-    (key: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (value && value !== "ALL") {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-      params.delete("page");
-      startTransition(() => {
-        router.push(`${pathname}?${params.toString()}`, { scroll: false });
-      });
-    },
-    [pathname, router, searchParams],
-  );
-
-  const clearAllFilters = () => {
-    startTransition(() => {
-      router.push(pathname, { scroll: false });
-    });
+  const initialValues: FilterInitialValues = {
+    search: searchParams.search ?? DEFAULT_VALUES.search,
+    status: searchParams.status ?? DEFAULT_VALUES.status,
+    source: searchParams.source ?? DEFAULT_VALUES.source,
+    quality: searchParams.quality ?? DEFAULT_VALUES.quality,
   };
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
-      {/* Search */}
-      <div className="relative flex-1 min-w-50 max-w-sm">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Cerca per nome, email, P.IVA..."
-          className="pl-8"
-          defaultValue={search}
-          disabled={isPending}
-          onChange={(e) => setParam("search", e.target.value)}
-        />
-      </div>
-
-      {/* Status */}
-      <Select
-        value={status}
-        onValueChange={(v) => setParam("status", v)}
-        disabled={isPending}
-      >
-        <SelectTrigger className="w-43.75">
-          <SelectValue placeholder="Status" />
-        </SelectTrigger>
-        <SelectContent>
-          {STATUS_OPTIONS.map((o) => (
-            <SelectItem key={o.value} value={o.value}>
-              {o.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      {/* Source */}
-      <Select
-        value={source}
-        onValueChange={(v) => setParam("source", v)}
-        disabled={isPending}
-      >
-        <SelectTrigger className="w-43.75">
-          <SelectValue placeholder="Fonte" />
-        </SelectTrigger>
-        <SelectContent>
-          {SOURCE_OPTIONS.map((o) => (
-            <SelectItem key={o.value} value={o.value}>
-              {o.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      {/* Quality */}
-      <Select
-        value={quality}
-        onValueChange={(v) => setParam("quality", v)}
-        disabled={isPending}
-      >
-        <SelectTrigger className="w-37.5">
-          <SelectValue placeholder="Qualità" />
-        </SelectTrigger>
-        <SelectContent>
-          {QUALITY_OPTIONS.map((o) => (
-            <SelectItem key={o.value} value={o.value}>
-              {o.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      {/* Clear filters */}
-      {hasActiveFilters && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={clearAllFilters}
-          disabled={isPending}
-          className="text-muted-foreground"
-        >
-          <X className="mr-1 h-3 w-3" />
-          Resetta
-        </Button>
-      )}
-    </div>
+    <FilterBar
+      basePath={basePath}
+      defaultValues={DEFAULT_VALUES}
+      fields={LEAD_FILTER_FIELDS}
+      initialValues={initialValues}
+      onPendingChange={onPendingChange}
+    />
   );
 }

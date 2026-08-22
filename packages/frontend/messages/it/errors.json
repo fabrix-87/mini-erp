@@ -1,5 +1,13 @@
 {
-  "title": "404 - Pagina non trovata",
-  "description": "La pagina che stai cercando non è stata trovata.",
-  "message": "Siamo spiacenti, ma la pagina a cui stai cercando di accedere non esiste."
+  "404": {
+    "title": "404 - Pagina non trovata",
+    "description": "La pagina che stai cercando non è stata trovata.",
+    "message": "Siamo spiacenti, ma la pagina a cui stai cercando di accedere non esiste."
+  },
+  "flash": {
+    "unauthorized": "Non hai i permessi per accedere a questa risorsa.",
+    "forbidden": "Accesso negato.",
+    "not_found": "Risorsa non trovata.",
+    "session_expired": "Sessione scaduta, effettua nuovamente il login."
+  }
 }

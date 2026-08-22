@@ -26,10 +26,17 @@ import {
   sendSuccess,
 } from "@/utils/response-utils";
 import { startOfWeek, startOfMonth } from "date-fns";
-import { parseOptionalDate, parseOptionalDecimal } from "@/helpers/prisma-helper";
+import {
+  connectById,
+  parseOptionalDate,
+  parseOptionalDecimal,
+  tenantFilter,
+  withTenantId,
+} from "@/helpers/prisma-helper";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
@@ -72,8 +79,10 @@ export const getAllLeads = async (c: Context<AppBindings>) => {
     sortOrder = "desc",
   } = getValidatedQuery<LeadQueryInput>(c);
 
+  const tenantId = getRequiredTenantId(c);
+
   const skip = (page - 1) * limit;
-  const where: Prisma.LeadWhereInput = {};
+  const where: Prisma.LeadWhereInput = tenantFilter(tenantId);
 
   if (search) {
     where.OR = [
@@ -169,9 +178,10 @@ export const getAllLeads = async (c: Context<AppBindings>) => {
  */
 export const getLeadById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<LeadIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const lead = await prisma.lead.findUnique({
-    where: { id },
+  const lead = await prisma.lead.findFirst({
+    where: tenantFilter(tenantId, { id }),
     include: {
       assignedUser: {
         select: {
@@ -243,11 +253,12 @@ export const getLeadById = async (c: Context<AppBindings>) => {
 export const createLead = async (c: Context<AppBindings>) => {
   const body = getValidatedBody<CreateLeadInput>(c);
   const currentUserId = c.get("user")?.userId;
+  const tenantId = getRequiredTenantId(c);
 
   // Verify assignedUser if provided
   if (body.assignedUserId) {
-    const user = await prisma.user.findUnique({
-      where: { id: body.assignedUserId },
+    const user = await prisma.user.findFirst({
+      where: tenantFilter(tenantId, { id: body.assignedUserId }),
     });
     if (!user) {
       return sendNotFound(c, "Utente assegnato non trovato");
@@ -265,8 +276,8 @@ export const createLead = async (c: Context<AppBindings>) => {
 
         // ── Override espliciti ───────────────────────────────────────────────────
         code,
-        createdByUserId: currentUserId,
         assignedUserId: body.assignedUserId ?? currentUserId,
+        tenantId: tenantId,
         customFields: body.customFields ?? Prisma.JsonNull,
 
         // ── Conversioni di tipo ──────────────────────────────────────────────────
@@ -288,15 +299,16 @@ export const createLead = async (c: Context<AppBindings>) => {
 export const updateLead = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<LeadIdParam>(c);
   const body = getValidatedBody<UpdateLeadInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.lead.findUnique({ where: { id } });
+  const existing = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) });
   if (!existing) {
     return sendNotFound(c, "Lead non trovata");
   }
 
   if (body.assignedUserId && body.assignedUserId !== existing.assignedUserId) {
-    const user = await prisma.user.findUnique({
-      where: { id: body.assignedUserId },
+    const user = await prisma.user.findFirst({
+      where: tenantFilter(tenantId, { id: body.assignedUserId }),
     });
     if (!user) {
       return sendNotFound(c, "Utente assegnato non trovato");
@@ -332,8 +344,9 @@ export const updateLead = async (c: Context<AppBindings>) => {
 export const updateLeadStatus = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<LeadIdParam>(c);
   const { status, lostReason, notes } = getValidatedBody<UpdateLeadStatusInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.lead.findUnique({ where: { id } });
+  const existing = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) });
   if (!existing) {
     return sendNotFound(c, "Lead non trovata");
   }
@@ -359,8 +372,9 @@ export const updateLeadStatus = async (c: Context<AppBindings>) => {
 export const updateLeadScore = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<LeadIdParam>(c);
   const { score, notes } = getValidatedBody<UpdateLeadScoreInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.lead.findUnique({ where: { id } });
+  const existing = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) });
   if (!existing) {
     return sendNotFound(c, "Lead non trovata");
   }
@@ -384,8 +398,9 @@ export const updateLeadScore = async (c: Context<AppBindings>) => {
 export const qualifyLead = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<LeadIdParam>(c);
   const payload = getValidatedBody<QualifyLeadInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.lead.findUnique({ where: { id } });
+  const existing = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) });
   if (!existing) {
     return sendNotFound(c, "Lead non trovata");
   }
@@ -423,8 +438,9 @@ export const qualifyLead = async (c: Context<AppBindings>) => {
 export const convertLead = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<LeadIdParam>(c);
   const payload = getValidatedBody<ConvertLeadInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const lead = await prisma.lead.findUnique({ where: { id } });
+  const lead = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) });
   if (!lead) {
     return sendNotFound(c, "Lead non trovata");
   }
@@ -438,7 +454,7 @@ export const convertLead = async (c: Context<AppBindings>) => {
   // Auto-generate company code
 
   const result = await prisma.$transaction(async (tx) => {
-    const companyCode = await generateUniqueCompanyCode("customer", tx);
+    const companyCode = await generateUniqueCompanyCode("customer", tenantId, tx);
 
     // STEP 1: Create Company (base entity that holds fiscal + contact data)
     const companyData = {
@@ -449,6 +465,7 @@ export const convertLead = async (c: Context<AppBindings>) => {
       entityType: payload.entityType ?? "JURIDICAL",
       mainEmail: lead.contactEmail,
       mainPhone: lead.contactPhone ?? undefined,
+      mainWebsite: lead.website ?? "",
       status: CompanyStatus.ACTIVE,
       countryCode: lead.countryCode || "IT",
       sdiCode: undefined,
@@ -475,22 +492,33 @@ export const convertLead = async (c: Context<AppBindings>) => {
     } satisfies CreateCustomerInput;
 
     const customer = await tx.customer.create({
-      data: buildCustomerCreateData(customerData, buildCompanyCreateData(companyData, companyCode)),
+      data: buildCustomerCreateData(
+        customerData,
+        buildCompanyCreateData(companyData, companyCode, tenantId),
+        tenantId,
+      ),
       include: getCustomerInclude(false),
     });
 
     // STEP 3: Create primary Contact — linked to Company (NOT Customer)
     await tx.contact.create({
       data: {
-        companyId: customer.companyId,
         firstName: lead.contactFirstName,
         lastName: lead.contactLastName,
         email: lead.contactEmail,
         phone: lead.contactPhone ?? undefined,
         mobilePhone: lead.contactMobile ?? undefined,
-        position: lead.contactPosition ?? undefined,
-        department: lead.contactDepartment ?? undefined,
-        isPrimaryContact: true,
+        tenant: connectById(tenantId),
+        companies: {
+          create: [
+            {
+              companyId: customer.companyId,
+              position: lead.contactPosition ?? undefined,
+              department: lead.contactDepartment ?? undefined,
+              isPrimaryContact: true,
+            },
+          ],
+        },
       },
     });
 
@@ -532,6 +560,7 @@ export const convertLead = async (c: Context<AppBindings>) => {
 export const assignLead = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<LeadIdParam>(c);
   const { assignedUserId } = getValidatedBody<AssignUserIdInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   if (!assignedUserId) {
     return sendFail(c, {
@@ -541,8 +570,8 @@ export const assignLead = async (c: Context<AppBindings>) => {
   }
 
   const [lead, user] = await Promise.all([
-    prisma.lead.findUnique({ where: { id } }),
-    prisma.user.findUnique({ where: { id: assignedUserId } }),
+    prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) }),
+    prisma.user.findFirst({ where: tenantFilter(tenantId, { id: assignedUserId }) }),
   ]);
 
   if (!lead) {
@@ -570,16 +599,17 @@ export const assignLead = async (c: Context<AppBindings>) => {
  */
 export const bulkAssignLeads = async (c: Context<AppBindings>) => {
   const { leadIds, assignedUserId } = getValidatedBody<BulkAssignLeadsInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const user = await prisma.user.findUnique({
-    where: { id: assignedUserId },
+  const user = await prisma.user.findFirst({
+    where: tenantFilter(tenantId, { id: assignedUserId }),
   });
   if (!user) {
     return sendNotFound(c, "Utente non trovato");
   }
 
   const result = await prisma.lead.updateMany({
-    where: { id: { in: leadIds } },
+    where: tenantFilter(tenantId, { id: { in: leadIds } }),
     data: { assignedUserId },
   });
 
@@ -593,9 +623,10 @@ export const bulkAssignLeads = async (c: Context<AppBindings>) => {
  */
 export const bulkUpdateLeadStatus = async (c: Context<AppBindings>) => {
   const { leadIds, status, lostReason } = getValidatedBody<BulkUpdateLeadStatusInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const result = await prisma.lead.updateMany({
-    where: { id: { in: leadIds } },
+    where: tenantFilter(tenantId, { id: { in: leadIds } }),
     data: {
       status,
       ...(lostReason && { lostReason }),
@@ -614,9 +645,11 @@ export const bulkUpdateLeadStatus = async (c: Context<AppBindings>) => {
  */
 export const deleteLead = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<LeadIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
+  const { userId } = c.get("user")!;
 
-  const lead = await prisma.lead.findUnique({
-    where: { id },
+  const lead = await prisma.lead.findFirst({
+    where: tenantFilter(tenantId, { id }),
     include: { opportunities: { select: { id: true } } },
   });
 
@@ -638,7 +671,13 @@ export const deleteLead = async (c: Context<AppBindings>) => {
     });
   }
 
-  await prisma.lead.delete({ where: { id } });
+  await prisma.lead.update({
+    where: { id, tenantId },
+    data: {
+      deletedAt: new Date(),
+      deletedBy: connectById(userId),
+    },
+  });
   return sendDeleted(c, "Lead eliminata con successo");
 };
 
@@ -650,9 +689,10 @@ export const deleteLead = async (c: Context<AppBindings>) => {
 export const getLeadStats = async (c: Context<AppBindings>) => {
   const { assignedUserId, dateFrom, dateTo, source, campaignName } =
     getValidatedQuery<LeadStatsInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   // ── Where clause ─────────────────────────────────────────────────────────
-  const where: Prisma.LeadWhereInput = {};
+  const where: Prisma.LeadWhereInput = tenantFilter(tenantId, {});
   if (assignedUserId) where.assignedUserId = assignedUserId;
   if (source) where.source = source;
   if (campaignName) where.campaignName = campaignName;

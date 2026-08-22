@@ -16,7 +16,7 @@ import type {
   ConvertLeadInput,
   BulkAssignLeadsInput,
   BulkUpdateLeadStatusInput,
-} from "@/types/lead";
+} from "@/types/lead-types";
 
 /** Recupera la lista lead con filtri e paginazione */
 export async function getLeads(params: LeadQueryInput): Promise<ApiResponse<Lead[]>> {

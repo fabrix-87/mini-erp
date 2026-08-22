@@ -34,7 +34,7 @@ import { DecisionAuthority, LeadQuality, LeadSource, LeadStatus, PurchaseTimefra
  * Lead entity
  */
 export type Lead = Omit<CreateLeadInput, "code"> & {
-  id: number;
+  id: string;
   code: string;
   country: Country;
   assignedUser?: User | null;

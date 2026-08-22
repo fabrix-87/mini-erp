@@ -25,7 +25,8 @@ export const formatPaginatedResponse = <T>(
   message?: string,
   errors?: ValidationError[],
 ): PaginatedResponse<T> => {
-  const totalPages = limit > 0 ? Math.ceil(total / limit) : 0;
+  const calculatedPages = limit > 0 ? Math.ceil(total / limit) : 0;
+  const totalPages = Math.max(1, calculatedPages);
   return {
     status: "success",
     data,

@@ -9,6 +9,7 @@ import {
 import { serverApi } from "./api";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import { flashRedirect } from "./flash";
 
 // ============================================================================
 // Constants
@@ -111,8 +112,8 @@ export async function getCurrentTenantId(): Promise<string> {
 
   if (!tenantId) {
     throw new Error(
-      'getCurrentTenantId: no active tenant found in session. ' +
-      'Ensure the user is authenticated and has a resolved currentTenant.',
+      "getCurrentTenantId: no active tenant found in session. " +
+        "Ensure the user is authenticated and has a resolved currentTenant.",
     );
   }
 
@@ -288,15 +289,15 @@ export async function requireAuth(): Promise<UserSessionPayload> {
 export async function requirePermission(
   permissionCode: PermissionCode,
 ): Promise<UserSessionPayload> {
-  try {
-    const session = await fetchSessionPayload();
-    if (!session.currentTenant.permissions.includes(permissionCode)) {
-      redirect("/dashboard");
-    }
-    return session;
-  } catch {
-    redirect("/login?session_expired=true");
+  const session = await checkAuth();
+
+  if (!session) redirect("/login?session_expired=true");
+
+  if (!session.currentTenant.permissions.includes(permissionCode)) {
+    redirect(flashRedirect("/dashboard", { type: "unauthorized" }));
   }
+
+  return session;
 }
 
 /**
@@ -311,7 +312,7 @@ export async function requireRole(roleCode: string): Promise<UserSessionPayload>
   try {
     const session = await fetchSessionPayload();
     if (!session.currentTenant.roles.some((r: RoleDTO) => r.code === roleCode)) {
-      redirect("/dashboard");
+      redirect(flashRedirect("/dashboard", { type: "unauthorized" }));
     }
     return session;
   } catch {
@@ -329,7 +330,8 @@ export async function requireRole(roleCode: string): Promise<UserSessionPayload>
 export async function requireAdmin(): Promise<UserSessionPayload> {
   try {
     const session = await fetchSessionPayload();
-    if (!hasAdminRole(session.currentTenant.roles)) redirect("/dashboard");
+    if (!hasAdminRole(session.currentTenant.roles))
+      redirect(flashRedirect("/dashboard", { type: "unauthorized" }));
     return session;
   } catch {
     redirect("/login?session_expired=true");

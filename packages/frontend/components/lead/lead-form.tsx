@@ -14,7 +14,7 @@ import {
   UpdateLeadFormInput,
   updateLeadSchema,
 } from "@mini-erp/shared";
-import { createLeadAction, updateLeadAction } from "@/actions/lead";
+import { createLeadAction, updateLeadAction } from "@/actions/lead-actions";
 import {
   Form,
   FormControl,

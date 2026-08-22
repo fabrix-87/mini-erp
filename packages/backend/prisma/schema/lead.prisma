@@ -141,6 +141,9 @@ model Lead {
   createdByUserId String? @map("created_by_user_id")
   createdBy       User?   @relation("LeadCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
 
+  deletedByUserId String? @map("deleted_by_user_id")
+  deletedBy       User?   @relation("LeadDeletedBy", fields: [deletedByUserId], references: [id], onDelete: SetNull)
+
   /// Sales owner assigned to this lead.
   assignedUserId String? @map("assigned_user_id")
   assignedUser   User?   @relation("LeadAssignedUser", fields: [assignedUserId], references: [id], onDelete: SetNull)
@@ -219,13 +222,17 @@ model Lead {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([tenantId, code])
-  @@index([source])
-  @@index([contactEmail])
-  @@index([convertedToId])
-  @@index([createdAt])
-  @@index([lastContactDate])
-  @@index([status, assignedUserId]) // Compound: "my active leads" queries
-  @@index([quality, score]) // Compound: lead prioritization
+  /// Soft-delete timestamp. Non-null = logically deleted; excluded from all active queries.
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([tenantId, code], where: { deletedAt: null })
+  @@index([tenantId, source], where: { deletedAt: null })
+  @@index([tenantId, deletedAt], where: { deletedAt: { not: null } })
+  @@index([tenantId, contactEmail], where: { deletedAt: null })
+  @@index([tenantId, createdAt], where: { deletedAt: null })
+  @@index([tenantId, lastContactDate], where: { deletedAt: null })
+  @@index([tenantId, status, assignedUserId], where: { deletedAt: null })
+  @@index([tenantId, quality, score], where: { deletedAt: null })
+
   @@map("leads")
 }

@@ -29,7 +29,7 @@ export async function getAllCustomers(
 ): Promise<CustomerListApiResponse> {
   return serverApi.get<CustomerListApiResponse>("/customers", {
     params,
-    revalidate: revalidate ?? false,
+    revalidate: revalidate ?? 0,
     tags: [CUSTOMER_TAGS.list],
     unwrapData: false,
   });

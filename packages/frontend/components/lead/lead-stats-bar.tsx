@@ -1,4 +1,3 @@
-// components/leads/lead-stats-bar.tsx
 "use client";
 
 import {
@@ -13,8 +12,8 @@ import {
   Banknote,
   CheckCircle2,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { LeadStats } from "@mini-erp/shared";
 import { formatCurrency } from "@/utils/format-currency";
 
@@ -23,8 +22,7 @@ import { formatCurrency } from "@/utils/format-currency";
 // ============================================================================
 
 interface LeadStatsBarProps {
-  stats: LeadStats | undefined;
-  isLoading: boolean;
+  stats: LeadStats;
 }
 
 // ============================================================================
@@ -32,6 +30,7 @@ interface LeadStatsBarProps {
 // ============================================================================
 
 interface StatTile {
+  key: string;
   label: string;
   value: string | number;
   suffix?: string;
@@ -40,32 +39,37 @@ interface StatTile {
   colorClass?: string;
 }
 
-function buildTiles(s: LeadStats): StatTile[] {
+function buildTiles(s: LeadStats, t: ReturnType<typeof useTranslations>): StatTile[] {
   return [
     {
-      label: "Totale lead",
+      key: "total",
+      label: t("total"),
       value: s.total,
       icon: Users,
     },
     {
-      label: "Nuove questo mese",
+      key: "newThisMonth",
+      label: t("newThisMonth"),
       value: s.newThisMonth,
       icon: TrendingUp,
       colorClass: "text-blue-600 dark:text-blue-400",
     },
     {
-      label: "Nuove questa settimana",
+      key: "newThisWeek",
+      label: t("newThisWeek"),
       value: s.newThisWeek,
       icon: CalendarClock,
     },
     {
-      label: "Convertite",
+      key: "converted",
+      label: t("converted"),
       value: s.converted,
       icon: CheckCircle2,
       colorClass: "text-green-600 dark:text-green-400",
     },
     {
-      label: "Tasso conversione",
+      key: "conversionRate",
+      label: t("conversionRate"),
       value: s.conversionRate,
       suffix: "%",
       icon: TrendingUp,
@@ -77,13 +81,15 @@ function buildTiles(s: LeadStats): StatTile[] {
             : "text-red-600 dark:text-red-400",
     },
     {
-      label: "Perse",
+      key: "lost",
+      label: t("lost"),
       value: s.lost,
       icon: TrendingDown,
       colorClass: s.lost > 0 ? "text-red-600 dark:text-red-400" : undefined,
     },
     {
-      label: "Score medio",
+      key: "averageScore",
+      label: t("averageScore"),
       value: s.averageScore,
       suffix: "/100",
       icon: Star,
@@ -95,29 +101,34 @@ function buildTiles(s: LeadStats): StatTile[] {
             : undefined,
     },
     {
-      label: "Tempo medio conversione",
+      key: "averageConversionTime",
+      label: t("averageConversionTime"),
       value: s.averageConversionTime,
-      suffix: " gg",
+      suffix: ` ${t("daysSuffix")}`,
       icon: Clock,
     },
     {
-      label: "Valore stimato pipeline",
+      key: "totalEstimatedValue",
+      label: t("totalEstimatedValue"),
       value: formatCurrency(s.totalEstimatedValue),
       icon: Banknote,
       colorClass: "text-emerald-600 dark:text-emerald-400",
     },
     {
-      label: "Qualificate (BANT)",
+      key: "qualifiedLeads",
+      label: t("qualifiedLeads"),
       value: s.qualifiedLeads,
       icon: Target,
     },
     {
-      label: "Follow-up pianificati",
+      key: "needFollowUp",
+      label: t("needFollowUp"),
       value: s.needFollowUp,
       icon: CalendarClock,
     },
     {
-      label: "Follow-up scaduti",
+      key: "overdueFollowUp",
+      label: t("overdueFollowUp"),
       value: s.overdueFollowUp,
       icon: AlertTriangle,
       colorClass: s.overdueFollowUp > 0 ? "text-red-600 dark:text-red-400" : undefined,
@@ -133,25 +144,14 @@ function buildTiles(s: LeadStats): StatTile[] {
  * Horizontal stats bar shown above the leads table.
  * Renders a responsive grid of KPI tiles derived from LeadStats.
  */
-export function LeadStatsBar({ stats, isLoading }: LeadStatsBarProps) {
-  if (isLoading) {
-    return (
-      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <Skeleton key={i} className="h-20 rounded-xl" />
-        ))}
-      </div>
-    );
-  }
-
-  if (!stats) return null;
-
-  const tiles = buildTiles(stats);
+export function LeadStatsBar({ stats }: LeadStatsBarProps) {
+  const t = useTranslations("crm.leads.stats");
+  const tiles = buildTiles(stats, t);
 
   return (
     <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-      {tiles.map(({ label, value, suffix, icon: Icon, colorClass }) => (
-        <Card key={label} className="overflow-hidden">
+      {tiles.map(({ key, label, value, suffix, icon: Icon, colorClass }) => (
+        <Card key={key} className="overflow-hidden">
           <CardContent className="pt-4 pb-3 px-4">
             <div className="flex items-center justify-between mb-1.5">
               <p className="text-xs text-muted-foreground leading-tight">{label}</p>

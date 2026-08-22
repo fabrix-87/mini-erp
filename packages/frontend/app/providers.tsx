@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useEffect, useState } from "react";
 import { preloadFingerprint } from "@/lib/client/fingerprint";
 import { AbstractIntlMessages, NextIntlClientProvider } from "next-intl";
+import { FlashErrorHandler } from "@/components/flash-error-handler";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -43,6 +44,7 @@ export function Providers({ children, locale, messages }: ProvidersProps) {
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="theme">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
+            <FlashErrorHandler /> 
             {children}
             <Toaster />
             {process.env.NODE_ENV === "development" && <ReactQueryDevtools initialIsOpen={false} />}

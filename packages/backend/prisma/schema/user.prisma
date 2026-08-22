@@ -113,6 +113,7 @@ model User {
   assignedLeads  Lead[] @relation("LeadAssignedUser")
   convertedLeads Lead[] @relation("LeadConvertedBy")
   createdLeads   Lead[] @relation("LeadCreatedBy")
+  deletedLeads   Lead[] @relation("LeadDeletedBy")
 
   details       UserDetails?
   deletedBy     String?      @map("deleted_by")

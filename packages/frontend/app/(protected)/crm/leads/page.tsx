@@ -1,41 +1,57 @@
-// app/leads/page.tsx
-import { Plus } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
-import { LeadsClient } from "./components/leads-client";
+import { LeadListPage } from "./components/lead-list-page";
+import { LeadQueryInput, leadQuerySchema } from "@mini-erp/shared";
+import { checkEntityPermissions, requirePermission } from "@/lib/server/auth";
+import { getAllLeads, getLeadStatsServer } from "@/services/server/lead-service";
+import { getTranslations } from "next-intl/server";
+import { createCreateAction } from "@/helpers/page-header-actions-helper";
+import { getNewRoute } from "@/lib/navigation-routes";
+import { notFound } from "next/navigation";
+import { PageHeader } from "@/components/page-header";
 
 // ============================================================================
 // Page — Server Component
 // ============================================================================
 
-/**
- * Lead list page — Server Component wrapper.
- * Renders static shell + delegates dynamic data to LeadsClient.
- */
-export default function LeadsPage() {
+interface LeadsPageProps {
+  searchParams: Promise<LeadQueryInput>;
+}
+
+export default async function LeadsPage({ searchParams }: LeadsPageProps) {
+  await requirePermission("lead:read");
+
+  const params: LeadQueryInput = leadQuerySchema.parse(await searchParams);
+
+  const [result, stats, permissions] = await Promise.all([
+    getAllLeads(params, 3600),
+    getLeadStatsServer(),
+    checkEntityPermissions("lead"),
+  ]);
+
+  if (result.status !== "success" || !result.data) {
+    notFound();
+  }
+
+  const t = await getTranslations("crm.leads");
+
+  const actionItems = [
+    createCreateAction(
+      "create",
+      t("createNewButton") ?? "Nuovo",
+      getNewRoute("leads"),
+      permissions.canCreate,
+    ),
+  ];
+
   return (
     <>
-      <BreadcrumbSetter items={[{ label: "Lead" }]} />
-
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Lead Pipeline</h1>
-            <p className="text-muted-foreground">Gestisci e qualifica i tuoi lead commerciali</p>
-          </div>
-          <Button asChild>
-            <Link href="/leads/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Nuovo Lead
-            </Link>
-          </Button>
-        </div>
-
-        {/* Dynamic content */}
-        <LeadsClient />
-      </div>
+      <PageHeader actionItems={actionItems} />
+      <LeadListPage
+        leads={result.data}
+        searchParams={params}
+        pagination={result.pagination}
+        permissions={permissions}
+        stats={stats.data}
+      />
     </>
   );
 }

@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { convertLeadSchema } from "@mini-erp/shared/validators/lead";
-import type { Lead } from "@/types/lead";
-import { convertLeadAction } from "@/actions/lead";
+import type { Lead } from "@/types/lead-types";
+import { convertLeadAction } from "@/actions/lead-actions";
 import {
   Dialog,
   DialogContent,

@@ -6,9 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateLeadStatusSchema } from "@mini-erp/shared/validators/lead";
-import type { UpdateLeadStatusInput } from "@/types/lead";
-import type { Lead } from "@/types/lead";
-import { updateLeadStatusAction } from "@/actions/lead";
+import type { UpdateLeadStatusInput } from "@/types/lead-types";
+import type { Lead } from "@/types/lead-types";
+import { updateLeadStatusAction } from "@/actions/lead-actions";
 import {
   Dialog,
   DialogContent,

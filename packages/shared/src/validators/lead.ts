@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { createIdSchema } from "./primitives/id";
+import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { emailSchema, emptyStringToNull, phoneSchema, urlSchema } from "./primitives/string";
 import { isoDateSchema } from "./primitives/date";
 import { createDecimalSchema } from "./primitives/decimal";
-import { countryCodeBaseSchema, inputJsonValueSchema } from "./base";
+import { countryCodeBaseSchema, inputJsonValueSchema, userIdSchema } from "./base";
 import { sortOrderSchema, pageSchema, limitSchema } from "./query/pagination";
 import { queryBooleanSchema, queryNumberSchema } from "./query/params";
 import {
@@ -76,10 +76,10 @@ export const leadQualitySchema = z.enum(["HOT", "WARM", "COLD"]);
  */
 export const purchaseTimeframeSchema = z.enum([
   "IMMEDIATE",
-  "1_3_MONTHS",
-  "3_6_MONTHS",
-  "6_12_MONTHS",
-  "12_PLUS_MONTHS",
+  "SHORT_TERM",
+  "MEDIUM_TERM",
+  "LONG_TERM",
+  "UNDEFINED",
 ]);
 
 /**
@@ -89,7 +89,8 @@ export const decisionAuthoritySchema = z.enum([
   "DECISION_MAKER",
   "INFLUENCER",
   "GATEKEEPER",
-  "USER",
+  "END_USER",
+  "UNKNOWN"
 ]);
 
 // ============================================================================
@@ -121,10 +122,10 @@ const leadScoreSchema = z
 /**
  * Schema for Lead ID
  */
-export const leadIdSchema = createIdSchema("ID Lead non valido");
+export const leadIdSchema = createCuidSchema("ID Lead non valido");
 
 export const assignedUserIdSchema = z.object({
-  assignedUserId: createIdSchema("User ID non valido"),
+  assignedUserId: userIdSchema,
 });
 
 /**
@@ -193,7 +194,7 @@ export const leadShape = z.object({
   interestedIn: z.string().max(5000).optional().nullable(),
 
   // Assignment
-  assignedUserId: createIdSchema("User ID non valido").optional().nullable(),
+  assignedUserId: userIdSchema.optional().nullable(),
 
   // BANT
   bantQualified: z.boolean().default(false),
@@ -352,7 +353,7 @@ export const convertLeadSchema = convertLeadShape.strict().refine(
 export const bulkAssignLeadsSchema = z
   .object({
     leadIds: z.array(leadIdSchema).min(1, "Seleziona almeno una lead"),
-    assignedUserId: createIdSchema("User ID non valido"),
+    assignedUserId: userIdSchema
   })
   .strict();
 
@@ -381,7 +382,7 @@ export const leadQuerySchema = z.object({
   status: leadStatusSchema.optional(),
   source: leadSourceSchema.optional(),
   quality: leadQualitySchema.optional(),
-  assignedUserId: createIdSchema("User ID non valido").optional(),
+  assignedUserId: userIdSchema.optional(),
   countryCode: countryCodeBaseSchema.optional(),
   minScore: queryNumberSchema("Score non valido")
     .pipe(z.number().int().min(0).max(100).optional())
@@ -416,7 +417,7 @@ export const leadIdParamSchema = z.object({
  * Schema for Lead statistics filters
  */
 export const leadStatsSchema = z.object({
-  assignedUserId: createIdSchema("User ID non valido").optional(),
+  assignedUserId: userIdSchema.optional(),
   dateFrom: isoDateSchema(),
   dateTo: isoDateSchema(),
   source: leadSourceSchema.optional(),

@@ -81,6 +81,70 @@
     "companyNewTitle": "Nuovo fornitore",
     "companyNewDescription": "Aggiungi un nuovo fornitore"
   },
+  "leads": {
+    "createNewButton": "Nuovo lead",
+    "searchFilterPlaceholder": "Cerca per nome, email, P.IVA...",
+    "stats": {
+      "total": "Totale lead",
+      "newThisMonth": "Nuove questo mese",
+      "newThisWeek": "Nuove questa settimana",
+      "converted": "Convertite",
+      "conversionRate": "Tasso conversione",
+      "lost": "Perse",
+      "averageScore": "Score medio",
+      "averageConversionTime": "Tempo medio conversione",
+      "totalEstimatedValue": "Valore stimato pipeline",
+      "qualifiedLeads": "Qualificate (BANT)",
+      "needFollowUp": "Follow-up pianificati",
+      "overdueFollowUp": "Follow-up scaduti",
+      "daysSuffix": "gg"
+    },
+    "status": {
+      "ALL": "Tutti gli status",
+      "NEW": "Nuovo",
+      "CONTACTED": "Contattato",
+      "QUALIFIED": "Qualificato",
+      "UNQUALIFIED": "Non qualificato",
+      "NURTURING": "Nurturing",
+      "CONVERTED": "Convertito",
+      "LOST": "Perso",
+      "DUPLICATE": "Duplicato",
+      "ARCHIVED": "Archiviato"
+    },
+    "source": {
+      "ALL": "Tutte le fonti",
+      "WEBSITE": "Website",
+      "REFERRAL": "Referral",
+      "SOCIAL_MEDIA": "Social Media",
+      "EMAIL_CAMPAIGN": "Email Campaign",
+      "PHONE_CALL": "Telefono",
+      "COLD_CALL": "Cold Call",
+      "EVENT": "Evento",
+      "PARTNER": "Partner",
+      "ADVERTISING": "Pubblicità",
+      "CONTENT": "Contenuto",
+      "DIRECT": "Diretto",
+      "CHAT": "Chat",
+      "OTHER": "Altro"
+    },
+    "quality": {
+      "ALL": "Tutte le qualità",
+      "HOT": "🔥 Hot",
+      "WARM": "♨️ Warm",
+      "COLD": "❄️ Cold"
+    },
+    "tableFields": {
+        "lead": "Lead",
+        "score": "Punteggio",
+        "status": "Stato",
+        "contact": "Contatto",
+        "quality": "Qualità",
+        "source": "Fonte",
+        "nextFollowUpDate": "Follow-up",
+        "createdAt": "Data creazione"
+    },
+    "no_results": "Nessun lead trovato"
+  },
   "editButton": "Modifica",
   "deleteButton": "Elimina",
   "createContactButton": "Aggiungi Contatto",

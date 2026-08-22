@@ -1,7 +1,7 @@
 // hooks/use-lead.ts
 import { useQuery } from "@tanstack/react-query";
 import { getLeads, getLeadById, getLeadStats } from "@/services/client/lead";
-import { leadKeys, type LeadQueryInput, type LeadStatsInput } from "@/types/lead";
+import { leadKeys, type LeadQueryInput, type LeadStatsInput } from "@/types/lead-types";
 
 // ============================================================================
 // Hooks

@@ -1,17 +1,19 @@
 // services/server/lead.ts
-"use server";
 
 import { serverApi } from "@/lib/server/api";
 import type { ApiResponse } from "@/types/api";
-import type {
-  Lead,
-  LeadStats,
-  LeadQueryInput,
-  LeadStatsInput,
-  UpdateLeadStatusInput,
-  BulkAssignLeadsInput,
-  BulkUpdateLeadStatusInput,
-} from "@/types/lead";
+import {
+  type Lead,
+  type LeadStats,
+  type LeadQueryInput,
+  type LeadStatsInput,
+  type UpdateLeadStatusInput,
+  type BulkAssignLeadsInput,
+  type BulkUpdateLeadStatusInput,
+  LEAD_TAGS,
+  LeadListApiResponse,
+  LeadStatsApiResponse,
+} from "@/types/lead-types";
 import {
   Activity,
   ConvertLeadFormInput,
@@ -28,13 +30,16 @@ import {
 /**
  * Ottieni lista lead con filtri e paginazione
  */
-export async function getAllLeads(params: LeadQueryInput): Promise<ApiResponse<Lead[]>> {
-  const query = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => {
-    if (v !== undefined && v !== null) query.append(k, String(v));
+export async function getAllLeads(
+  params: LeadQueryInput,
+  revalidate: number | false,
+): Promise<LeadListApiResponse> {
+  return serverApi.get<LeadListApiResponse>("/leads", {
+    params,
+    revalidate: revalidate ?? 0,
+    tags: [LEAD_TAGS.list],
+    unwrapData: false,
   });
-  const url = `/leads?${query.toString()}`;
-  return serverApi.get<ApiResponse<Lead[]>>(url, { unwrapData: false });
 }
 
 /**
@@ -47,15 +52,12 @@ export async function getLeadByIdServer(id: number): Promise<ApiResponse<Lead>> 
 /**
  * Ottieni statistiche lead
  */
-export async function getLeadStatsServer(params?: LeadStatsInput): Promise<ApiResponse<LeadStats>> {
-  const query = new URLSearchParams();
-  if (params) {
-    Object.entries(params).forEach(([k, v]) => {
-      if (v !== undefined && v !== null) query.append(k, String(v));
-    });
-  }
-  const url = `/leads/stats${query.toString() ? `?${query.toString()}` : ""}`;
-  return serverApi.get<ApiResponse<LeadStats>>(url, { unwrapData: false });
+export async function getLeadStatsServer(params?: LeadStatsInput): Promise<LeadStatsApiResponse> {
+  return serverApi.get<ApiResponse<LeadStats>>("/leads/stats", {
+    params,
+    revalidate: 0,
+    unwrapData: false,
+  });
 }
 
 /**
