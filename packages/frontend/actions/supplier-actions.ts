@@ -43,15 +43,6 @@ export async function searchSupplierAction(
   }, "supplier:read");
 }
 
-/**
- * Get supplier by ID
- */
-export async function getSupplierByIdAction(id: string): Promise<ActionResult<Supplier>> {
-  return withAuth(async () => {
-    return await getSupplierById(id, false);
-  }, "supplier:read");
-}
-
 // ============================================================================
 // MUTATIONS
 // ============================================================================
@@ -105,12 +96,12 @@ export async function updateSupplierCompanyAction(
 /**
  * Delete a supplier and redirect to list
  */
-export async function deleteSupplierAction(id: string): Promise<ActionResult> {
+export async function deleteSupplierAction(id: string): Promise<void> {
   const result = await withAuth(async () => {
     const response = await deleteSupplier(id);
     supplierRevalidation.list();
     return response;
   }, "supplier:delete");
   if (result.success) redirect("/suppliers");
-  return result;
+  return ;
 }

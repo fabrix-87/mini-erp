@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Download, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,16 @@ import {
   PageHeaderActionIntent,
   PageHeaderActionVariant,
 } from "@/types/page-types";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 
 const ICON_MAP: Record<PageHeaderActionIcon, React.ComponentType<{ className?: string }>> = {
   plus: Plus,
@@ -38,8 +48,7 @@ interface PageHeaderActionsProps {
  */
 export function PageHeaderActions({ actions }: PageHeaderActionsProps): React.JSX.Element | null {
   const visibleActions = actions
-    .filter((action) => action.visible !== false)
-    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    .filter((action) => action.visible !== false);
 
   if (visibleActions.length === 0) {
     return null;
@@ -56,19 +65,14 @@ export function PageHeaderActions({ actions }: PageHeaderActionsProps): React.JS
 
 function PageHeaderActionButton({ action }: { action: PageHeaderAction }): React.JSX.Element {
   const [isPending, startTransition] = useTransition();
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const Icon = action.icon ? ICON_MAP[action.icon] : null;
   const variant = action.variant ?? (action.intent ? INTENT_VARIANT_MAP[action.intent] : "default");
 
   // Navigation action: rendered as a Link, never carries a pending state.
   if (action.href) {
     return (
-      <Button
-        asChild
-        size="sm"
-        variant={variant}
-        className="h-8"
-        disabled={action.disabled}
-      >
+      <Button asChild size="sm" variant={variant} className="h-8" disabled={action.disabled}>
         <Link href={action.href}>
           {Icon && <Icon className="mr-1 h-3 w-3" />}
           {action.label}
@@ -77,34 +81,75 @@ function PageHeaderActionButton({ action }: { action: PageHeaderAction }): React
     );
   }
 
-  const handleClick = (): void => {
-    if (!action.onClick || isPending) return;
-
+  const executeHandler = (): void => {
+    const handler = action.action ?? action.onClick;
+    if (!handler || isPending) return;
     startTransition(async () => {
       try {
-        await action.onClick!();
+        await handler();
       } catch (error) {
         console.error(`[PageHeaderActions] action "${action.key}" failed`, error);
       }
     });
   };
 
+  const handleClick = (): void => {
+    if (isPending) return;
+    // Se c'è un dialog di conferma, aprilo invece di eseguire subito
+    if (action.confirm) {
+      setConfirmOpen(true);
+      return;
+    }
+    executeHandler();
+  };
+
   return (
-    <Button
-      type="button"
-      size="sm"
-      variant={variant}
-      className={cn("h-8 text-xs", isPending && "cursor-wait")}
-      disabled={action.disabled || isPending || !action.onClick}
-      aria-busy={isPending}
-      onClick={handleClick}
-    >
-      {isPending ? (
-        <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-      ) : (
-        Icon && <Icon className="mr-1 h-3 w-3" />
+    <>
+      <Button
+        type="button"
+        size="sm"
+        variant={variant}
+        className={cn("h-8 text-xs", isPending && "cursor-wait")}
+        disabled={action.disabled || isPending || (!action.onClick && !action.action)}
+        aria-busy={isPending}
+        onClick={handleClick}
+      >
+        {isPending ? (
+          <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+        ) : (
+          Icon && <Icon className="mr-1 h-3 w-3" />
+        )}
+        {action.label}
+      </Button>
+
+      {/* Dialog di conferma — renderizzato solo se `confirm` è definito */}
+      {action.confirm && (
+        <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{action.confirm.title}</AlertDialogTitle>
+              <AlertDialogDescription>{action.confirm.description}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isPending}>
+                {action.confirm.cancelLabel ?? "Annulla"}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                disabled={isPending}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={(e) => {
+                  e.preventDefault(); // evita la chiusura automatica durante il pending
+                  executeHandler();
+                  setConfirmOpen(false);
+                }}
+              >
+                {isPending ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : null}
+                {action.confirm.confirmLabel ?? "Elimina"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
-      {action.label}
-    </Button>
+    </>
   );
 }

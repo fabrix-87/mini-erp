@@ -4,7 +4,7 @@
 import { useTransition } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import { ArrowLeft, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { toast } from "sonner";
 import {
   companyFormSchema,
@@ -115,38 +115,9 @@ export default function CompanyFormPage({ initialData, companyType }: CompanyFor
     },
   );
 
-  const entityLabel = companyType === "CUSTOMER" ? "Cliente" : "Fornitore";
-
   return (
     <FormProvider {...form}>
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate(entityType)}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold">
-                {isEditMode
-                  ? `Modifica ${entityLabel} — ${form.watch("companyName") || "..."}`
-                  : `Nuovo ${entityLabel}`}
-              </h1>
-              <p className="text-muted-foreground">
-                {isEditMode ? "Aggiorna le informazioni" : "Crea una nuova anagrafica"}
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => navigate(entityType)}>
-              Annulla
-            </Button>
-            <Button onClick={onSubmit} disabled={isPending}>
-              <Save className="mr-2 h-4 w-4" />
-              {isPending ? "Salvataggio..." : isEditMode ? "Aggiorna" : "Crea"}
-            </Button>
-          </div>
-        </div>
-
+      <div className="space-y-6">      
         <CompanyFormTabs companyType={companyType} />
 
         <div className="flex justify-end gap-2">

@@ -1,4 +1,4 @@
-import { PageHeaderAction } from "@/types/page-types";
+import { PageHeaderAction, PageHeaderActionConfirm } from "@/types/page-types";
 
 export function createCreateAction(
   key: string,
@@ -64,6 +64,38 @@ export function createDeleteAction(
     key,
     label,
     onClick,
+    visible,
+    disabled,
+    icon: "trash",
+    intent: "delete",
+    order: 40,
+  };
+}
+/**
+ * Creates a delete action backed by a Server Action.
+ * Use this variant when building the action list inside a Server Component,
+ * where passing a plain `onClick` function would cross the serialization boundary.
+ *
+ * @param key     - Unique action key.
+ * @param label   - Button label.
+ * @param action  - Server Action to invoke on click.
+ * @param confirm - Confirm dialog configuration.
+ * @param visible - Whether the button is rendered.
+ * @param disabled - Whether the button is disabled.
+ */
+export function createDeleteServerAction(
+  key: string,
+  label: string,
+  action: () => Promise<void>,
+  confirm: PageHeaderActionConfirm,
+  visible: boolean = true,
+  disabled: boolean = false,
+): PageHeaderAction {
+  return {
+    key,
+    label,
+    action,
+    confirm,
     visible,
     disabled,
     icon: "trash",

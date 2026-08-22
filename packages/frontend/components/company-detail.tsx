@@ -2,15 +2,6 @@
 // app/suppliers/[id]/page.tsx
 "use client";
 
-import { ArrowLeft, Edit, Trash2, MoreVertical, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,13 +18,9 @@ import { useDeleteSupplier } from "@/hooks/use-company";
 
 import { CompanyDetailHeader } from "@/components/company/company-detail-header";
 import { CompanyDetailTabs } from "@/components/company/company-detail-tabs";
-import { BreadcrumbSetter } from "./ui/breadcrumb-setter";
 import { CompanyType } from "@/types/company-types";
 import { Customer, Supplier } from "@mini-erp/shared";
-import { BreadcrumbItem } from "@/types/breadcrumb-types";
-import { useCrumbMap } from "@/hooks/use-breadcrumb";
 import { useNavigation } from "@/hooks/use-navigation";
-import { useUpdateURL } from "@/hooks/use-update-url";
 
 interface CompanyFormProps {
   data: Customer | Supplier;
@@ -41,29 +28,17 @@ interface CompanyFormProps {
 }
 
 export default function CompanyDetailPage({ data, companyType }: CompanyFormProps) {
-  const { navigateToEdit, navigate, getNewRoute } = useNavigation();
-  const updateURL = useUpdateURL();
+  const { navigate} = useNavigation();
   const navigationEntity = companyType === "CUSTOMER" ? "customers" : "suppliers";
-  const crumbs = useCrumbMap();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const entityId = data.id;
 
-  const breadcrumbItems: BreadcrumbItem[] = [
-    companyType === "CUSTOMER" ? crumbs.customers : crumbs.suppliers,
-    {
-      label: data.company.companyName || "",
-    },
-  ];
 
   // Delete mutations
   const deleteCustomerMutation = useDeleteCustomer();
   const deleteSupplierMutation = useDeleteSupplier();
-
-  const handleEdit = () => {
-    navigateToEdit(navigationEntity, data.id);
-  };
 
   const handleDelete = async () => {
     try {
@@ -78,75 +53,10 @@ export default function CompanyDetailPage({ data, companyType }: CompanyFormProp
     }
   };
 
-  const handleAddContact = () => {
-    updateURL(getNewRoute("contacts"), { companyId: entityId });
-  };
-
   const companyData = data;
 
   return (
     <div className="space-y-6">
-      <BreadcrumbSetter items={breadcrumbItems} />
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              navigate(navigationEntity);
-            }}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">{companyData?.company?.companyName}</h1>
-            <p className="text-muted-foreground">
-              {companyData?.company?.tradeName && `${companyData.company.tradeName} • `}
-              {companyData?.company?.code}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleAddContact}>
-            <Plus className="mr-2 h-4 w-4" />
-            Aggiungi Contatto
-          </Button>
-
-          <Button onClick={handleEdit}>
-            <Edit className="mr-2 h-4 w-4" />
-            Modifica
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleEdit}>
-                <Edit className="mr-2 h-4 w-4" />
-                Modifica
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleAddContact}>
-                <Plus className="mr-2 h-4 w-4" />
-                Aggiungi Contatto
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setShowDeleteDialog(true)}
-                className="text-destructive"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Elimina
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-
       {/* Quick Stats Header */}
       <CompanyDetailHeader data={companyData} companyType={companyType} />
 

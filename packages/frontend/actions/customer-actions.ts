@@ -36,15 +36,6 @@ export async function searchCustomerAction(
   }, "customer:read");
 }
 
-/**
- * Get customer by ID
- */
-export async function getCustomerByIdAction(id: string): Promise<ActionResult<Customer>> {
-  return withAuth(async () => {
-    return await getCustomerById(id, false);
-  }, "customer:read");
-}
-
 // ============================================================================
 // MUTATIONS
 // ============================================================================
@@ -98,12 +89,12 @@ export async function updateCustomerCompanyAction(
 /**
  * Delete a customer and redirect to list
  */
-export async function deleteCustomerAction(id: string): Promise<ActionResult> {
+export async function deleteCustomerAction(id: string): Promise<void> {
   const result = await withAuth(async () => {
     const response = await deleteCustomer(id);
     customerRevalidation.list();
     return response;
   }, "customer:delete");
   if (result.success) redirect("/customers");
-  return result;
+  return;
 }
