@@ -1,23 +1,34 @@
-// app/leads/new/page.tsx
-import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 import { LeadForm } from "@/components/lead/lead-form";
+import { PageHeader } from "@/components/page-header";
+import { requirePermission } from "@/lib/server/auth";
+import { getTranslations } from "next-intl/server";
 
 /**
  * New lead creation page — Server Component wrapper.
  */
-export default function NewLeadPage() {
+export default async function NewLeadPage() {
+  await requirePermission("lead:create");
+
+  const t = await getTranslations("crm.leads");
+
   return (
     <>
-      <BreadcrumbSetter items={[{ label: "Lead", href: "/leads" }, { label: "Nuovo lead" }]} />
-
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Nuovo Lead</h1>
-          <p className="text-muted-foreground">Inserisci i dati del nuovo lead commerciale</p>
-        </div>
-
-        <LeadForm mode="create" />
-      </div>
+      <PageHeader
+        extraBreadcrumbs={[{ label: t("leadNewTitle") }]}
+        title={t("leadNewTitle")}
+        subtitle={t("leadNewDescription")}
+      />
+      <LeadForm mode="create" />
     </>
   );
+}
+
+// Metadata
+export async function generateMetadata() {
+  const t = await getTranslations("crm.leads");
+
+  return {
+    title: `${t("leadNewTitle")} | ${process.env.APP_NAME}`,
+    description: t("leadNewDescription"),
+  };
 }

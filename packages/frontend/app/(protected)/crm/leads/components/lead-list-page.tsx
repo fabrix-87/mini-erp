@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { LeadStatsBar } from "@/components/lead/lead-stats-bar";
-import { LeadFilters } from "@/components/lead/lead-filters";
+import { LeadStatsBar } from "@/app/(protected)/crm/leads/components/lead-stats-bar";
+import { LeadFilters } from "@/app/(protected)/crm/leads/components/lead-filters";
 import { LeadTable } from "@/app/(protected)/crm/leads/components/lead-table";
 import type { Lead, LeadQueryInput, LeadStats } from "@/types/lead-types";
 import { EntityPermissions, PaginationInfo } from "@mini-erp/shared";

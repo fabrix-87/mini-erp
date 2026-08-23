@@ -14,10 +14,11 @@ import { FlashErrorHandler } from "@/components/flash-error-handler";
 interface ProvidersProps {
   children: React.ReactNode;
   locale: string;
+  timeZone: string;
   messages: AbstractIntlMessages;
 }
 
-export function Providers({ children, locale, messages }: ProvidersProps) {
+export function Providers({ children, locale, messages, timeZone }: ProvidersProps) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -42,7 +43,7 @@ export function Providers({ children, locale, messages }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="theme">
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
           <AuthProvider>
             <FlashErrorHandler /> 
             {children}

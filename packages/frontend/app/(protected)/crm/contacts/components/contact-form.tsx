@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useContactMutations, useContactValidation } from "@/hooks/use-contact";
 import type {
   ContactFormProps,
@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import CompanyCard from "../../../../../components/contact/contact-form/company-card";
+import CompanyCard from "@/components/contact/contact-form/company-card";
 import { Controller, FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { contactFormSchema, CreateContactForm } from "@mini-erp/shared";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
@@ -26,15 +26,11 @@ import {
   deleteCompanyContactAction,
 } from "@/actions/company-contact-actions";
 import type { CompanyContactSummary } from "@mini-erp/shared";
-import { BreadcrumbSetter } from "../../../../../components/ui/breadcrumb-setter";
-import { useActionLabels, useCrumbMap } from "@/hooks/use-breadcrumb";
 import { useNavigation } from "@/hooks/use-navigation";
 import { toast } from "sonner";
 
 export default function ContactForm({ isNew, contact, initialCompany }: ContactFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const actionLabels = useActionLabels();
-  const crumbs = useCrumbMap();
   const { navigateToDetail, navigate } = useNavigation();
 
   const { id: contactId } = contact || { id: undefined };

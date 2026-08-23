@@ -24,6 +24,8 @@ import {
   Tag,
   Coins,
   Languages,
+  Briefcase,
+  UserPlus,
   Globe,
 } from "lucide-react";
 
@@ -56,7 +58,8 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
     titleKey: "crm",
     path: "/crm",
     items: [
-      { nameKey: "leads", href: "/crm/leads", icon: PhoneCall, descKey: "desc_leads" },
+      { nameKey: "leads", href: "/crm/leads", icon: UserPlus, descKey: "desc_leads" },
+      { nameKey: "opportunities", href: "/crm/opportinities", icon: Briefcase, descKey: "desc_opportunities" },
       { nameKey: "customers", href: "/crm/customers", icon: UserCheck, descKey: "desc_customers" },
       { nameKey: "suppliers", href: "/crm/suppliers", icon: Building2, descKey: "desc_suppliers" },
       { nameKey: "contacts", href: "/crm/contacts", icon: Users, descKey: "desc_contacts" },

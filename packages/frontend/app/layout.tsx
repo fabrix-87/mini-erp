@@ -3,7 +3,7 @@ import "./globals.css";
 import { DM_Sans } from "next/font/google";
 import { Providers } from "./providers";
 import type { Metadata } from "next";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTimeZone } from "next-intl/server";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -20,6 +20,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // Recupera il locale rilevato dal middleware (da cookie o browser)
   const locale = await getLocale();
   const messages = await getMessages();
+  const timeZone = await getTimeZone();
 
   return (
     <html lang="{lang}" suppressHydrationWarning data-scroll-behavior="smooth">
@@ -28,7 +29,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="theme-color" content="#5d87ff" />
       </head>
       <body className={`${dmSans.className}`}>
-        <Providers locale={locale} messages={messages}>
+        <Providers locale={locale} messages={messages} timeZone={timeZone}>
           {children}
         </Providers>
       </body>

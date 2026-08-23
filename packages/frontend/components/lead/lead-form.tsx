@@ -4,7 +4,6 @@
 import { useMemo } from "react";
 import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, Building2, User, MapPin, TrendingUp, ShieldCheck, Megaphone } from "lucide-react";
 import {
@@ -34,65 +33,16 @@ import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
 import { toDateInput } from "@/helpers/date-helper";
 import { CountryCombobox } from "../ui/country-combobox";
-
-// ============================================================================
-// Constants
-// ============================================================================
-
-const STATUS_OPTIONS = [
-  { value: "NEW", label: "Nuovo" },
-  { value: "CONTACTED", label: "Contattato" },
-  { value: "QUALIFIED", label: "Qualificato" },
-  { value: "UNQUALIFIED", label: "Non qualificato" },
-  { value: "NURTURING", label: "Nurturing" },
-  { value: "LOST", label: "Perso" },
-  { value: "ARCHIVED", label: "Archiviato" },
-] as const;
-
-const SOURCE_OPTIONS = [
-  { value: "WEBSITE", label: "Website" },
-  { value: "REFERRAL", label: "Referral" },
-  { value: "SOCIAL_MEDIA", label: "Social Media" },
-  { value: "EMAIL_CAMPAIGN", label: "Email Campaign" },
-  { value: "PHONE_CALL", label: "Telefono" },
-  { value: "COLD_CALL", label: "Cold Call" },
-  { value: "EVENT", label: "Evento" },
-  { value: "PARTNER", label: "Partner" },
-  { value: "ADVERTISING", label: "Pubblicità" },
-  { value: "CONTENT", label: "Contenuto" },
-  { value: "DIRECT", label: "Diretto" },
-  { value: "CHAT", label: "Chat" },
-  { value: "OTHER", label: "Altro" },
-] as const;
-
-const QUALITY_OPTIONS = [
-  { value: "HOT", label: "🔥 Hot" },
-  { value: "WARM", label: "♨️ Warm" },
-  { value: "COLD", label: "❄️ Cold" },
-] as const;
-
-const SIZE_OPTIONS = [
-  { value: "MICRO", label: "Micro (1-9)" },
-  { value: "SMALL", label: "Piccola (10-49)" },
-  { value: "MEDIUM", label: "Media (50-249)" },
-  { value: "LARGE", label: "Grande (250-999)" },
-  { value: "ENTERPRISE", label: "Enterprise (1000+)" },
-] as const;
-
-const TIMEFRAME_OPTIONS = [
-  { value: "IMMEDIATE", label: "Immediato" },
-  { value: "1_3_MONTHS", label: "1-3 mesi" },
-  { value: "3_6_MONTHS", label: "3-6 mesi" },
-  { value: "6_12_MONTHS", label: "6-12 mesi" },
-  { value: "12_PLUS_MONTHS", label: "Oltre 12 mesi" },
-] as const;
-
-const AUTHORITY_OPTIONS = [
-  { value: "DECISION_MAKER", label: "Decision Maker" },
-  { value: "INFLUENCER", label: "Influencer" },
-  { value: "GATEKEEPER", label: "Gatekeeper" },
-  { value: "USER", label: "User" },
-] as const;
+import { useNavigation } from "@/hooks/use-navigation";
+import { useTranslations } from "next-intl";
+import {
+  getDecisionAuthorityOptions,
+  getPurchaseTimeframeOptions,
+  getQualityOptions,
+  getSourceOptions,
+  getStatusOptions,
+} from "@/helpers/lead-helper";
+import { getSizeOptions } from "@/helpers/customer-helper";
 
 // ============================================================================
 // Form value type — derived from the raw shape (no refinements).
@@ -117,8 +67,8 @@ interface LeadFormProps {
 // ============================================================================
 
 export function LeadForm({ mode, lead }: LeadFormProps) {
-  const router = useRouter();
   const isEdit = mode === "edit";
+  const { navigateToDetail, navigate } = useNavigation();
 
   // Pick the right schema at runtime — both are compatible with LeadFormValues
   // because updateLeadSchema is .partial() of the same shape, and
@@ -187,22 +137,24 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
   const isPending = form.formState.isSubmitting;
   const privacyConsent = form.watch("privacyConsent");
   const marketingConsent = form.watch("marketingConsent");
+  const t = useTranslations("crm.leads");
+  const tc = useTranslations("crm.customers");
 
   const onSubmit = async (data: LeadFormValues) => {
     if (isEdit && lead) {
       const result = await updateLeadAction(lead.id, data as UpdateLeadFormInput);
       if (result.success) {
         toast.success("Lead aggiornata");
-        router.push(`/leads/${lead.id}`);
-        router.refresh();
+        navigateToDetail("leads", lead.id);
       } else {
         toast.error(result.error ?? "Errore durante l'aggiornamento");
       }
     } else {
       const result = await createLeadAction(data as CreateLeadFormInput);
-      if (result.success) {
+      if (result.success && result.data) {
         toast.success("Lead creata");
-        router.push(`/leads/${(result.data as any)?.id}`);
+        toast.success("Lead aggiornata");
+        navigateToDetail("leads", result.data.id);
       } else {
         toast.error(result.error ?? "Errore durante la creazione");
       }
@@ -313,7 +265,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                       <FormItem>
                         <FormLabel>Paese</FormLabel>
                         <FormControl>
-                           <CountryCombobox
+                          <CountryCombobox
                             value={field.value ?? ""}
                             onValueChange={field.onChange}
                             disabled={isPending}
@@ -362,11 +314,14 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {STATUS_OPTIONS.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))}
+                            {getStatusOptions(t).map(
+                              (o) =>
+                                o.value !== "ALL" && (
+                                  <SelectItem key={o.value} value={o.value}>
+                                    {o.label}
+                                  </SelectItem>
+                                ),
+                            )}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -386,11 +341,14 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {SOURCE_OPTIONS.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))}
+                            {getSourceOptions(t).map(
+                              (o) =>
+                                o.value !== "ALL" && (
+                                  <SelectItem key={o.value} value={o.value}>
+                                    {o.label}
+                                  </SelectItem>
+                                ),
+                            )}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -410,11 +368,14 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {QUALITY_OPTIONS.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))}
+                            {getQualityOptions(t).map(
+                              (o) =>
+                                o.value !== "ALL" && (
+                                  <SelectItem key={o.value} value={o.value}>
+                                    {o.label}
+                                  </SelectItem>
+                                ),
+                            )}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -468,7 +429,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.back()}
+                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
                   disabled={isPending}
                 >
                   Annulla
@@ -616,7 +577,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.back()}
+                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
                   disabled={isPending}
                 >
                   Annulla
@@ -699,7 +660,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.back()}
+                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
                   disabled={isPending}
                 >
                   Annulla
@@ -835,11 +796,14 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {SIZE_OPTIONS.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))}
+                            {getSizeOptions(tc).map(
+                              (o) =>
+                                o.value !== "ALL" && (
+                                  <SelectItem key={o.value} value={o.value}>
+                                    {o.label}
+                                  </SelectItem>
+                                ),
+                            )}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -862,7 +826,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {TIMEFRAME_OPTIONS.map((o) => (
+                            {getPurchaseTimeframeOptions(t).map((o) => (
                               <SelectItem key={o.value} value={o.value}>
                                 {o.label}
                               </SelectItem>
@@ -886,7 +850,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {AUTHORITY_OPTIONS.map((o) => (
+                            {getDecisionAuthorityOptions(t).map((o) => (
                               <SelectItem key={o.value} value={o.value}>
                                 {o.label}
                               </SelectItem>
@@ -960,7 +924,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.back()}
+                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
                   disabled={isPending}
                 >
                   Annulla
@@ -1008,7 +972,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             Data consenso privacy <span className="text-destructive">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input type="date" {...field} value={field.value} />
+                            <Input type="date" {...field} value={field.value ?? undefined} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -1046,7 +1010,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             Data consenso marketing <span className="text-destructive">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input type="date" {...field} value={field.value ?? ""} />
+                            <Input type="date" {...field} value={field.value ?? undefined} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -1089,7 +1053,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.back()}
+                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
                   disabled={isPending}
                 >
                   Annulla
@@ -1213,7 +1177,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.back()}
+                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
                   disabled={isPending}
                 >
                   Annulla

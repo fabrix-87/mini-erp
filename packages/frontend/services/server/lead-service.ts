@@ -46,8 +46,15 @@ export async function getAllLeads(
 /**
  * Ottieni singola lead per ID
  */
-export async function getLeadByIdServer(id: string): Promise<LeadSingleApiResponse> {
-  return serverApi.get<ApiResponse<Lead>>(`/leads/${id}`, { unwrapData: false });
+export async function getLeadByIdServer(
+  id: string,
+  revalidate: number | false = 0,
+): Promise<LeadSingleApiResponse> {
+  return serverApi.get<ApiResponse<Lead>>(`/leads/${id}`, {
+    unwrapData: false,
+    revalidate,
+    tags: [LEAD_TAGS.detail(id)],
+  });
 }
 
 /**

@@ -54,9 +54,9 @@ export const dateStringSchema = (options?: DateStringOptions) => {
  * @param options.required - If true, null/undefined are rejected
  * @param options.message  - Custom error message
  */
-export function isoDateSchema(options: { required: true; message?: string }): z.ZodType<string>;
-export function isoDateSchema(options?: { required?: false; message?: string }): z.ZodType<string | null | undefined>;
-export function isoDateSchema(options?: { required?: boolean; message?: string }): z.ZodType<string> | z.ZodType<string | null | undefined> {
+export function isoDateSchema(options: { required: true; message?: string }): z.ZodType<string, string>;
+export function isoDateSchema(options?: { required?: false; message?: string }): z.ZodType<string | null | undefined, string | null | undefined>;
+export function isoDateSchema(options?: { required?: boolean; message?: string }): z.ZodType<string, string> | z.ZodType<string | null | undefined, string | null | undefined> {
   const transform = z.string().transform((val, ctx) => {
     if (!val || val.trim() === "") return undefined;
     const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(val);
@@ -73,8 +73,8 @@ export function isoDateSchema(options?: { required?: boolean; message?: string }
     return z
       .string({ message: options.message ?? "Data obbligatoria" })
       .min(1, options.message ?? "Data obbligatoria")
-      .pipe(transform) as z.ZodType<string>;
+      .pipe(transform) as z.ZodType<string, string>;
   }
 
-  return transform.optional().nullable() as z.ZodType<string | null | undefined>;
+  return transform.optional().nullable() as z.ZodType<string | null | undefined, string | null | undefined>;
 }

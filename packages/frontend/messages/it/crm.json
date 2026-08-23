@@ -54,7 +54,15 @@
     "companyEditTitle": "Modifica cliente",
     "companyEditDescription": "Aggiorna le informazioni del cliente",
     "companyNewTitle": "Nuovo cliente",
-    "companyNewDescription": "Aggiungi un nuovo cliente"
+    "companyNewDescription": "Aggiungi un nuovo cliente",
+    "size": {
+      "ALL": "Qualsiasi",
+      "MICRO": "Micro (1-9)",
+      "SMALL": "Piccola (10-49)",
+      "MEDIUM": "Media (50-249)",
+      "LARGE": "Grande (250-999)",
+      "ENTERPRISE": "Enterprise (1000+)"
+    }
   },
   "suppliers": {
     "createNewButton": "Nuovo fornitore",
@@ -84,6 +92,12 @@
   "leads": {
     "createNewButton": "Nuovo lead",
     "searchFilterPlaceholder": "Cerca per nome, email, P.IVA...",
+    "no_results": "Nessun lead trovato",
+    "leadNewTitle": "Nuovo lead",
+    "leadNewDescription": "Aggiungi un nuovo lead",
+    "leadEditTitle": "Modifica lead",
+    "leadEditDescription": "Aggiorna le informazioni del lead",
+    "leadDetailSubtitle": "{code} · Lead dal {createdAt} · {daysSince} giorni nel pipeline",
     "stats": {
       "total": "Totale lead",
       "newThisMonth": "Nuove questo mese",
@@ -133,6 +147,20 @@
       "WARM": "♨️ Warm",
       "COLD": "❄️ Cold"
     },
+    "purchaseTimeframe": {
+      "IMMEDIATE": "Meno di un mese",
+      "SHORT_TERM": "1-3 mesi",
+      "MEDIUM_TERM": "3-6 mesi",
+      "LONG_TERM": "6-12 mesi",
+      "UNDEFINED": "Non definito"
+    },
+    "decisionAuthority": {
+      "DECISION_MAKER": "Decision Maker",
+      "INFLUENCER": "Influencer",
+      "GATEKEEPER": "Gatekeeper",
+      "END_USER": "Utente",
+      "UNKNOWN": "Non definito"
+    },
     "tableFields": {
         "lead": "Lead",
         "score": "Punteggio",
@@ -142,8 +170,7 @@
         "source": "Fonte",
         "nextFollowUpDate": "Follow-up",
         "createdAt": "Data creazione"
-    },
-    "no_results": "Nessun lead trovato"
+    }
   },
   "editButton": "Modifica",
   "deleteButton": "Elimina",

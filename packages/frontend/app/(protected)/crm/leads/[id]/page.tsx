@@ -28,20 +28,17 @@ import { getLeadByIdServer } from "@/services/server/lead-service";
 import { LeadDetailActions } from "../components/lead-detail-actions";
 import { LeadActivityList } from "@/components/lead/lead-activity-list";
 import { daysSince, formatDateIT } from "@/helpers/date-helper";
+import { PageIdProps } from "@/types/page-types";
 
 // ============================================================================
 // Page — Server Component
 // ============================================================================
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
-
 /**
  * Lead detail page — Server Component.
  * Fetches lead data server-side; delegates interactive actions to LeadDetailActions.
  */
-export default async function LeadDetailPage({ params }: Props) {
+export default async function LeadDetailPage({ params }: PageIdProps) {
   const { id } = await params;
 
   const response = await getLeadByIdServer(id);

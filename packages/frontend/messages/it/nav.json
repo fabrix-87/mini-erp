@@ -9,6 +9,7 @@
 
   "crm": "CRM",
   "leads": "Leads",
+  "opportunities": "Opportunità",
   "customers": "Clienti",
   "suppliers": "Fornitori",
   "contacts": "Contatti",
@@ -57,7 +58,8 @@
   "desc_dashboard": "KPI e metriche aziendali",
   "desc_activities": "Attività e calendario",
   "desc_reports": "Analisi e report",
-  "desc_leads": "Gestione opportunità",
+  "desc_leads": "Gestione leads",
+  "desc_opportunities": "Gestione opportunità",
   "desc_customers": "Anagrafica clienti",
   "desc_suppliers": "Anagrafica fornitori",
   "desc_contacts": "Rubrica contatti",

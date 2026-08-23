@@ -90,7 +90,7 @@ export const decisionAuthoritySchema = z.enum([
   "INFLUENCER",
   "GATEKEEPER",
   "END_USER",
-  "UNKNOWN"
+  "UNKNOWN",
 ]);
 
 // ============================================================================
@@ -227,29 +227,25 @@ export const leadShape = z.object({
 
 /**
  * Schema for creating a Lead — includes GDPR consent date validation.
+ * Uses superRefine to preserve inferred output type across refinements.
  */
-export const createLeadSchema = leadShape
-  .strict()
-  .refine(
-    (data) => {
-      if (data.privacyConsent && !data.privacyConsentDate) return false;
-      return true;
-    },
-    {
+export const createLeadSchema = leadShape.strict().superRefine((data, ctx) => {
+  if (data.privacyConsent && !data.privacyConsentDate) {
+    ctx.addIssue({
+      code: "custom",
       message: "Data consenso privacy obbligatoria se consenso accordato",
       path: ["privacyConsentDate"],
-    },
-  )
-  .refine(
-    (data) => {
-      if (data.marketingConsent && !data.marketingConsentDate) return false;
-      return true;
-    },
-    {
+    });
+  }
+
+  if (data.marketingConsent && !data.marketingConsentDate) {
+    ctx.addIssue({
+      code: "custom",
       message: "Data consenso marketing obbligatoria se consenso accordato",
       path: ["marketingConsentDate"],
-    },
-  );
+    });
+  }
+});
 
 /**
  * Schema for updating a Lead — partial, code is immutable after creation.
@@ -353,7 +349,7 @@ export const convertLeadSchema = convertLeadShape.strict().refine(
 export const bulkAssignLeadsSchema = z
   .object({
     leadIds: z.array(leadIdSchema).min(1, "Seleziona almeno una lead"),
-    assignedUserId: userIdSchema
+    assignedUserId: userIdSchema,
   })
   .strict();
 

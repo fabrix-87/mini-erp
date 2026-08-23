@@ -2,7 +2,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   Pencil,
   MoreVertical,
@@ -12,7 +11,6 @@ import {
   UserCheck,
   Gauge,
 } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -22,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { updateLeadStatusAction, deleteLeadAction } from "@/actions/lead-actions";
+import { deleteLeadAction } from "@/actions/lead-actions";
 import type { Lead } from "@/types/lead-types";
 
 // ============================================================================
@@ -30,6 +28,7 @@ import type { Lead } from "@/types/lead-types";
 // ============================================================================
 
 import dynamic from "next/dynamic";
+import { useNavigation } from "@/hooks/use-navigation";
 
 const LeadStatusDialog = dynamic(() =>
   import("@/components/lead/lead-status-dialog").then((m) => m.LeadStatusDialog),
@@ -60,7 +59,7 @@ interface LeadDetailActionsProps {
  * All dialogs are lazy-loaded to keep SSR bundle lean.
  */
 export function LeadDetailActions({ lead }: LeadDetailActionsProps) {
-  const router = useRouter();
+  const { navigateToEdit, navigate } = useNavigation()
   const [openDialog, setOpenDialog] = useState<
     "status" | "score" | "qualify" | "convert" | "assign" | null
   >(null);
@@ -78,11 +77,9 @@ export function LeadDetailActions({ lead }: LeadDetailActionsProps) {
       )}
 
       {/* Edit */}
-      <Button variant="outline" asChild>
-        <Link href={`/leads/${lead.id}/edit`}>
+      <Button variant="outline" onClick={() => navigateToEdit('leads', lead.id)}>
           <Pencil className="mr-2 h-4 w-4" />
           Modifica
-        </Link>
       </Button>
 
       {/* More actions */}
@@ -116,7 +113,7 @@ export function LeadDetailActions({ lead }: LeadDetailActionsProps) {
               const res = await deleteLeadAction(lead.id);
               if (res.success) {
                 toast.success("Lead eliminata");
-                router.push("/leads");
+                navigate('leads')
               } else {
                 toast.error(res.error ?? "Errore durante l'eliminazione");
               }
