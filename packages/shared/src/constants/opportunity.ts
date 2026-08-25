@@ -6,8 +6,8 @@ import { opportunitySourceSchema, opportunityStatusSchema, salesStageSchema } fr
 // ============================================================================
 
 export type OpportunityStatus = z.infer<typeof opportunityStatusSchema>;
-export const OpportunityStatus = opportunityStatusSchema.enum;
+export const OpportunityStatus = opportunityStatusSchema.options;
 export type SalesStage = z.infer<typeof salesStageSchema>;
-export const SalesStage = salesStageSchema.enum;
+export const SalesStage = salesStageSchema.options;
 export type OpportunitySource = z.infer<typeof opportunitySourceSchema>;
-export const OpportunitySource = opportunitySourceSchema.enum;
+export const OpportunitySource = opportunitySourceSchema.options;

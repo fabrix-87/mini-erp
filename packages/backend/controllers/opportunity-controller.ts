@@ -18,6 +18,7 @@ import {
   CreateClosedReasonInput,
   ClosedReasonIdParam,
   UpdateClosedReasonInput,
+  OpportunityStats,
 } from "@mini-erp/shared/types";
 import {
   sendCreated,
@@ -37,6 +38,7 @@ import {
 } from "@/helpers/validated-context";
 import { calculateWeightedValue, STAGE_PROBABILITY_MAP } from "@/helpers/opportunity-helper";
 import { connectOrDisconnectById, tenantFilter } from "@/helpers/prisma-helper";
+import { OpportunitySource, OpportunityStatus, SalesStage } from "@mini-erp/shared";
 
 // ============================================================================
 // OPPORTUNITY CONTROLLERS
@@ -893,6 +895,156 @@ export const getSalesFunnel = async (c: Context<AppBindings>) => {
   }
 
   return sendSuccess(c, { groupBy, data: grouped });
+};
+
+// ============================================================================
+// OPPORTUNITY STATS
+// ============================================================================
+
+/**
+ * Initialises a zero-filled Record for every value of a string-union enum.
+ * @param keys - Array of all enum member strings.
+ * @returns A Record with every key set to 0.
+ */
+function zeroRecord<T extends string>(keys: readonly T[]): Record<T, number> {
+  return Object.fromEntries(keys.map((k) => [k, 0])) as Record<T, number>;
+}
+
+/**
+ * @desc   Get aggregated statistics for all opportunities in the current tenant
+ * @route  GET /api/opportunities/stats
+ * @access Private (opportunity:read)
+ */
+export const getOpportunityStats = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
+
+  const baseWhere: Prisma.OpportunityWhereInput = { tenantId };
+
+  // ── 1. GROUP-BY aggregations (DB-side, minimal memory) ────────────────────
+
+  const [statusGroups, stageGroups, sourceGroups] = await Promise.all([
+    prisma.opportunity.groupBy({
+      by: ["status"],
+      where: baseWhere,
+      _count: { _all: true },
+    }),
+    prisma.opportunity.groupBy({
+      by: ["stage"],
+      where: baseWhere,
+      _count: { _all: true },
+    }),
+    prisma.opportunity.groupBy({
+      by: ["source"],
+      where: baseWhere,
+      _count: { _all: true },
+    }),
+  ]);
+
+  // ── 2. Scalar aggregations (single round-trip) ────────────────────────────
+
+  const aggregate = await prisma.opportunity.aggregate({
+    where: baseWhere,
+    _count: { _all: true },
+    _sum: {
+      estimatedValue: true,
+      weightedValue: true,
+    },
+  });
+
+  // WON-only aggregation
+  const wonAggregate = await prisma.opportunity.aggregate({
+    where: { ...baseWhere, status: "WON" },
+    _count: { _all: true },
+    _sum: { actualValue: true },
+    _avg: { actualValue: true },
+  });
+
+  // ── 3. Average sales cycle (days) via raw SQL — avoids fetching all rows ──
+
+  type AvgCycleRow = { avg_days: number | null };
+  const [cycleRow] = await prisma.$queryRaw<AvgCycleRow[]>`
+    SELECT AVG(
+      EXTRACT(EPOCH FROM (closed_date - created_at)) / 86400.0
+    )::float AS avg_days
+    FROM opportunities
+    WHERE tenant_id = ${tenantId}
+      AND status = 'WON'
+      AND closed_date IS NOT NULL
+  `;
+
+  // ── 4. Total proposed products (OpportunityProduct rows for this tenant) ──
+
+  const totalProposedProducts = await prisma.opportunityProduct.count({
+    where: { tenantId },
+  });
+
+  // ── 5. Conversion rate: opportunities with ≥1 linked document ─────────────
+
+  const withDocuments = await prisma.opportunity.count({
+    where: {
+      ...baseWhere,
+      documents: { some: {} },
+    },
+  });
+
+  // ── 6. Build typed output ──────────────────────────────────────────────────
+
+  const total      = aggregate._count._all;
+  const wonCount   = wonAggregate._count._all;
+  const lostCount  = statusGroups.find((g) => g.status === "LOST")?._count._all ?? 0;
+  const openCount  = statusGroups.find((g) => g.status === "OPEN")?._count._all ?? 0;
+  const pendingCount = statusGroups.find((g) => g.status === "PENDING")?._count._all ?? 0;
+
+  // Populate enum Records, defaulting every key to 0
+  const byStatus = zeroRecord(OpportunityStatus);
+  for (const g of statusGroups) byStatus[g.status] = g._count._all;
+
+  const byStage = zeroRecord(SalesStage);
+  for (const g of stageGroups) byStage[g.stage] = g._count._all;
+
+  const bySource = zeroRecord(OpportunitySource);
+  for (const g of sourceGroups) bySource[g.source] = g._count._all;
+
+  const totalEstimatedValue = aggregate._sum.estimatedValue ?? new Prisma.Decimal(0);
+  const totalWeightedValue  = aggregate._sum.weightedValue  ?? new Prisma.Decimal(0);
+  const totalWonValue       = wonAggregate._sum.actualValue  ?? new Prisma.Decimal(0);
+  const averageWinValue     = wonAggregate._avg.actualValue  ?? new Prisma.Decimal(0);
+
+  // averageDealSize = totalEstimatedValue / total (or 0 when empty)
+  const averageDealSize =
+    total > 0
+      ? totalEstimatedValue.div(new Prisma.Decimal(total))
+      : new Prisma.Decimal(0);
+
+  // winRate = wonCount / (wonCount + lostCount) * 100 — excludes open/pending
+  const closedCount = wonCount + lostCount;
+  const winRate     = closedCount > 0 ? (wonCount / closedCount) * 100 : 0;
+
+  const averageSalesCycle = cycleRow.avg_days ?? 0;
+
+  const conversionRate = total > 0 ? (withDocuments / total) * 100 : 0;
+
+  const stats = {
+    total,
+    open:    openCount,
+    won:     wonCount,
+    lost:    lostCount,
+    pending: pendingCount,
+    byStatus,
+    byStage,
+    bySource,
+    totalEstimatedValue,
+    totalWeightedValue,
+    totalWonValue,
+    averageWinValue,
+    winRate,
+    averageDealSize,
+    averageSalesCycle,
+    totalProposedProducts,
+    conversionRate,
+  } satisfies OpportunityStats;
+
+  return sendSuccess(c, stats);
 };
 
 // ============================================================================

@@ -9,6 +9,8 @@ import type {
   OpportunityComplete,
   PaginatedResponse,
   ApiResponse,
+  OpportunityPipelineAnalysis,
+  SalesFunnelMetrics,
 } from "@mini-erp/shared";
 
 export type {
@@ -23,6 +25,8 @@ export type {
 
 export type OpportunityListApiResponse = PaginatedResponse<OpportunityListItem>;
 export type OpportunityStatsApiResponse = ApiResponse<OpportunityStats>;
+export type OpportunityPipelineApiResponse = ApiResponse<OpportunityPipelineAnalysis>;
+export type OpportunitySalesFunnelMetricsApiResponse = ApiResponse<SalesFunnelMetrics>;
 export type OpportunityOperationApiResponse = ApiResponse<{ success: boolean }>;
 
 export const OPPORTUNITY_TAGS = {

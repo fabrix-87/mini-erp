@@ -38,6 +38,7 @@ import {
   createClosedReason,
   updateClosedReason,
   deleteClosedReason,
+  getOpportunityStats,
 } from "../controllers/opportunity-controller";
 import { createHonoApp } from "@/lib/hono-app";
 import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
@@ -70,6 +71,17 @@ opportunityRoutes.get(
   authorize(["opportunity:read", "opportunity:manage"]),
   validateSalesFunnelQuery,
   getSalesFunnel,
+);
+
+/**
+ * @route  GET /api/opportunities/stats
+ * @access Private (opportunity:read)
+ */
+opportunityRoutes.get(
+  "/stats",
+  requireTenantScope,
+  authorize(["opportunity:read", "opportunity:manage"]),
+  getOpportunityStats,
 );
 
 // ============================================================================

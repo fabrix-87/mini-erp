@@ -6,11 +6,15 @@ import {
   type OpportunityStatsApiResponse,
   type OpportunityQueryInput,
   OPPORTUNITY_TAGS,
+  OpportunityPipelineApiResponse,
+  OpportunitySalesFunnelMetricsApiResponse,
 } from "@/types/opportunity-types";
 import type {
   OpportunityComplete,
   CreateOpportunityInput,
   UpdateOpportunityInput,
+  OpportunityStatsInput,
+  SalesFunnelAnalysisInput,
 } from "@mini-erp/shared";
 
 /**
@@ -38,6 +42,40 @@ export async function getOpportunityStatsServer(
   revalidate?: number | false,
 ): Promise<OpportunityStatsApiResponse> {
   return serverApi.get<OpportunityStatsApiResponse>("/opportunities/stats", {
+    revalidate: revalidate ?? 300,
+    tags: [OPPORTUNITY_TAGS.stats],
+    unwrapData: false,
+  });
+}
+
+/**
+ * Fetch pipeline analysis stats (used in the list stats bar).
+ * @param params - Optional filters (assignedUserId, customerId, dateFrom, dateTo, source)
+ * @param revalidate - Cache TTL in seconds
+ */
+export async function getOpportunityPipelineStats(
+  params?: Partial<OpportunityStatsInput>,
+  revalidate?: number | false,
+): Promise<OpportunityPipelineApiResponse> {
+  return serverApi.get<OpportunityPipelineApiResponse>("/opportunities/stats/pipeline", {
+    params,
+    revalidate: revalidate ?? 300,
+    tags: [OPPORTUNITY_TAGS.stats],
+    unwrapData: false,
+  });
+}
+
+/**
+ * Fetch sales funnel metrics.
+ * @param params - Funnel filters (assignedUserId, dateFrom, dateTo, groupBy)
+ * @param revalidate - Cache TTL in seconds
+ */
+export async function getOpportunitySalesFunnel(
+  params?: Partial<SalesFunnelAnalysisInput>,
+  revalidate?: number | false,
+): Promise<OpportunitySalesFunnelMetricsApiResponse> {
+  return serverApi.get<OpportunitySalesFunnelMetricsApiResponse>("/opportunities/stats/funnel", {
+    params,
     revalidate: revalidate ?? 300,
     tags: [OPPORTUNITY_TAGS.stats],
     unwrapData: false,
