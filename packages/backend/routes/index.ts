@@ -56,7 +56,7 @@ protectedRoutes.route("/contacts", contactRoutes);
 protectedRoutes.route("/payments", paymentRoutes);
 protectedRoutes.route("/pricelists", pricelistRoutes);
 protectedRoutes.route("/tax", taxRoutes);
-protectedRoutes.route("/opportunity", opportunityRoutes);
+protectedRoutes.route("/opportunities", opportunityRoutes);
 protectedRoutes.route("/products", productRoutes);
 protectedRoutes.route("/documents", documentRoutes);
 protectedRoutes.route("/suppliers", supplierRoutes);

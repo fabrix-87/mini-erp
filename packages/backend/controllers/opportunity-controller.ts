@@ -30,12 +30,13 @@ import {
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
 import { calculateWeightedValue, STAGE_PROBABILITY_MAP } from "@/helpers/opportunity-helper";
-import { connectOrDisconnectById } from "@/helpers/prisma-helper";
+import { connectOrDisconnectById, tenantFilter } from "@/helpers/prisma-helper";
 
 // ============================================================================
 // OPPORTUNITY CONTROLLERS
@@ -297,24 +298,25 @@ export const createOpportunity = async (c: Context<AppBindings>) => {
   } = getValidatedBody<CreateOpportunityInput>(c);
 
   const currentUserId = c.get("user")!.userId;
+  const tenantId = getRequiredTenantId(c);
 
-  const customer = await prisma.customer.findUnique({
-    where: { id: customerId },
+  const customer = await prisma.customer.findFirst({
+    where: tenantFilter(tenantId, { id: customerId }),
   });
   if (!customer) {
     return sendNotFound(c, "Customer non trovato");
   }
 
   if (leadId) {
-    const lead = await prisma.lead.findUnique({ where: { id: leadId } });
+    const lead = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id: leadId }) });
     if (!lead) {
       return sendNotFound(c, "Lead non trovata");
     }
   }
 
   if (assignedUserId) {
-    const user = await prisma.user.findUnique({
-      where: { id: assignedUserId },
+    const user = await prisma.user.findFirst({
+      where: tenantFilter(tenantId, { id: assignedUserId }),
     });
     if (!user) {
       return sendNotFound(c, "Utente assegnato non trovato");
@@ -333,6 +335,7 @@ export const createOpportunity = async (c: Context<AppBindings>) => {
   const opportunity = await prisma.opportunity.create({
     data: {
       title,
+      tenantId,
       description,
       customerId,
       leadId: leadId ?? null,
@@ -345,7 +348,6 @@ export const createOpportunity = async (c: Context<AppBindings>) => {
       expectedCloseDate: expectedCloseDate ? new Date(expectedCloseDate) : null,
       createdByUserId: currentUserId,
       assignedUserId: assignedUserId ?? currentUserId,
-      proposedProducts: proposedProducts as Prisma.InputJsonValue,
       notes,
       customFields: customFields ?? Prisma.JsonNull,
     },
@@ -358,6 +360,8 @@ export const createOpportunity = async (c: Context<AppBindings>) => {
       assignedUser: { select: { id: true, username: true } },
     },
   });
+
+  // TODO - Aggiungere proposed products  
 
   return sendCreated(c, opportunity, "Opportunità creata con successo");
 };
@@ -384,15 +388,16 @@ export const updateOpportunity = async (c: Context<AppBindings>) => {
     notes,
     customFields,
   } = getValidatedBody<UpdateOpportunityInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.opportunity.findUnique({ where: { id } });
+  const existing = await prisma.opportunity.findUnique({ where: { id, tenantId } });
   if (!existing) {
     return sendNotFound(c, "Opportunità non trovata");
   }
 
   if (assignedUserId && assignedUserId !== existing.assignedUserId) {
-    const user = await prisma.user.findUnique({
-      where: { id: assignedUserId },
+    const user = await prisma.user.findFirst({
+      where: tenantFilter(tenantId, { id: assignedUserId }),
     });
     if (!user) {
       return sendNotFound(c, "Utente assegnato non trovato");
@@ -407,8 +412,10 @@ export const updateOpportunity = async (c: Context<AppBindings>) => {
   if (status !== undefined) data.status = status;
   if (notes !== undefined) data.notes = notes;
   if (assignedUserId !== undefined) data.assignedUser = connectOrDisconnectById(assignedUserId);
+  /*
   if (proposedProducts !== undefined)
     data.proposedProducts = proposedProducts as Prisma.InputJsonValue;
+  */
   if (customFields !== undefined) data.customFields = customFields ?? Prisma.JsonNull;
 
   if (stage !== undefined && stage !== existing.stage) {

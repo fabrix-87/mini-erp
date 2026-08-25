@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { countryCodeBaseSchema, inputJsonValueSchema, userIdSchema } from "./base";
+import { companyIdBaseSchema, countryCodeBaseSchema, inputJsonValueSchema, userIdSchema } from "./base";
 import { createCuidSchema, createIdSchema } from "./primitives/id";
 import {
   eoriNumberSchema,
@@ -31,12 +31,6 @@ export const companySortFieldSchema = z.enum([
   "status",
   "createdAt",
 ]);
-
-/**
- * Base CUID schema for a Company ID.
- * @internal Used to build companyIdSchema and companyIdAsCompanyIdSchema.
- */
-const companyIdBaseSchema = createCuidSchema("Company ID non valido");
 
 /**
  * Schema that wraps a company identifier under the key `companyId`.

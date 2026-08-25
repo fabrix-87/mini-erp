@@ -216,3 +216,4 @@ export {
 };
 
 export * from "./entities";
+export * from "./opportunity-revalidate";

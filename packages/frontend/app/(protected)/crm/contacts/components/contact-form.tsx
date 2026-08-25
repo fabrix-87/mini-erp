@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import CompanyCard from "@/components/contact/contact-form/company-card";
+import CompanyCard from "./contact-company-card";
 import { Controller, FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { contactFormSchema, CreateContactForm } from "@mini-erp/shared";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";

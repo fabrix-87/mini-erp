@@ -1,16 +1,16 @@
 import { z } from "zod";
-import { createIdSchema, positiveNumbersSchema } from "./primitives/id";
-import { percentageSchema } from "./business/currency";
+import { createCuidSchema } from "./primitives/id";
 import { isoDateSchema } from "./primitives/date";
-import { inputJsonValueSchema, userIdSchema } from "./base";
-import Decimal from "decimal.js";
-import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import {
-  queryBooleanSchema,
-  queryNumberSchema,
-  queryPercentageSchema,
-  queryPositiveNumberSchema,
-} from "./query/params";
+  customerIdBaseSchema,
+  inputJsonValueSchema,
+  leadIdBaseSchema,
+  opportunityIdBaseSchema,
+  productIdBaseSchema,
+  userIdSchema,
+} from "./base";
+import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
+import { queryBooleanSchema, queryNumberSchema } from "./query/params";
 import { createDecimalSchema } from "./primitives";
 
 // ============================================================================
@@ -20,13 +20,7 @@ import { createDecimalSchema } from "./primitives";
 /**
  * Opportunity Status enum
  */
-export const opportunityStatusSchema = z.enum([
-  "OPEN",
-  "WON",
-  "LOST",
-  "PENDING",
-  "CLOSED",
-]);
+export const opportunityStatusSchema = z.enum(["OPEN", "WON", "LOST", "PENDING", "CLOSED"]);
 
 /**
  * Sales Stage enum
@@ -87,20 +81,58 @@ const probabilitySchema = z
   .default(0);
 
 // ============================================================================
-// OPPORTUNITY SCHEMAS
+// CLOSED REASON SCHEMAS
 // ============================================================================
 
 /**
- * Schema for Opportunity ID
+ * Schema for Closed Reason ID
  */
-export const opportunityIdSchema = createIdSchema("ID Opportunity non valido");
+export const closedReasonIdSchema = createCuidSchema("ID Closed Reason non valido");
+
+/**
+ * Schema for creating a Closed Reason
+ */
+export const createClosedReasonSchema = z
+  .object({
+    code: z
+      .string()
+      .min(1, "Codice obbligatorio")
+      .max(50, "Codice max 50 caratteri")
+      .trim()
+      .toUpperCase(),
+
+    description: z
+      .string()
+      .min(1, "Descrizione obbligatoria")
+      .max(255, "Descrizione max 255 caratteri")
+      .trim(),
+
+    isWon: z.boolean(),
+
+    active: z.boolean().default(true),
+
+    displayOrder: z.number().int().nonnegative().default(0),
+  })
+  .strict();
+
+/**
+ * Schema for updating a Closed Reason
+ */
+export const updateClosedReasonSchema = createClosedReasonSchema
+  .omit({ code: true })
+  .partial()
+  .strict();
+
+// ============================================================================
+// OPPORTUNITY SCHEMAS
+// ============================================================================
 
 /**
  * Schema for proposed product item
  */
 export const proposedProductSchema = z
   .object({
-    productId: createIdSchema("Product ID non valido"),
+    productId: productIdBaseSchema,
     productName: z.string().optional(),
     quantity: createDecimalSchema(2, { positiveOnly: true, min: 0 }),
     price: createDecimalSchema(2, { positiveOnly: true, min: 0 }),
@@ -123,8 +155,8 @@ const opportunityShape = z.object({
   description: z.string().max(5000).optional().nullable(),
 
   // Relations
-  leadId: createIdSchema("Lead ID non valido").optional().nullable(),
-  customerId: createIdSchema("Customer ID non valido"),
+  leadId: leadIdBaseSchema.optional().nullable(),
+  customerId: customerIdBaseSchema,
   source: opportunitySourceSchema.default("OTHER"),
 
   // Status and stage
@@ -143,11 +175,7 @@ const opportunityShape = z.object({
   assignedUserId: userIdSchema.optional().nullable(),
 
   // Products/Services
-  proposedProducts: z
-    .array(proposedProductSchema)
-    .optional()
-    .nullable()
-    .default([]),
+  proposedProducts: z.array(proposedProductSchema).optional().nullable().default([]),
 
   notes: z.string().trim().optional(),
   customFields: inputJsonValueSchema.optional().nullable(),
@@ -185,9 +213,7 @@ export const updateOpportunityStageSchema = z
  */
 const opportunityStatusShape = z.object({
   status: opportunityStatusSchema,
-  closedReasonId: createIdSchema("Closed Reason ID non valido")
-    .optional()
-    .nullable(),
+  closedReasonId: closedReasonIdSchema.optional().nullable(),
   closedNotes: z.string().max(1000).optional().nullable(),
   actualValue: opportunityValueSchema.optional().nullable(),
 });
@@ -200,10 +226,7 @@ export const updateOpportunityStatusSchema = opportunityStatusShape
   .strict()
   .refine(
     (data) => {
-      if (
-        (data.status === "WON" || data.status === "LOST") &&
-        !data.closedReasonId
-      ) {
+      if ((data.status === "WON" || data.status === "LOST") && !data.closedReasonId) {
         return false;
       }
       return true;
@@ -232,7 +255,7 @@ export const updateOpportunityStatusSchema = opportunityStatusShape
 export const winOpportunitySchema = z
   .object({
     actualValue: opportunityValueSchema,
-    closedReasonId: createIdSchema("Closed Reason ID non valido"),
+    closedReasonId: closedReasonIdSchema,
     closedNotes: z.string().max(1000).optional().nullable(),
     closedDate: isoDateSchema().optional(),
   })
@@ -243,7 +266,7 @@ export const winOpportunitySchema = z
  */
 export const loseOpportunitySchema = z
   .object({
-    closedReasonId: createIdSchema("Closed Reason ID non valido"),
+    closedReasonId: closedReasonIdSchema,
     closedNotes: z.string().max(1000).optional().nullable(),
     closedDate: isoDateSchema().optional(),
   })
@@ -253,7 +276,7 @@ export const loseOpportunitySchema = z
  * Schema per Customer ID nei parametri
  */
 export const customerIdParamSchema = z.object({
-  customerId: createIdSchema("Customer ID non valido"),
+  customerId: customerIdBaseSchema,
 });
 
 /**
@@ -261,10 +284,8 @@ export const customerIdParamSchema = z.object({
  */
 export const bulkAssignOpportunitiesSchema = z
   .object({
-    opportunityIds: z
-      .array(opportunityIdSchema)
-      .min(1, "Seleziona almeno un'opportunità"),
-    assignedUserId: createIdSchema("User ID non valido"),
+    opportunityIds: z.array(opportunityIdBaseSchema).min(1, "Seleziona almeno un'opportunità"),
+    assignedUserId: userIdSchema,
   })
   .strict();
 
@@ -273,57 +294,10 @@ export const bulkAssignOpportunitiesSchema = z
  */
 export const bulkUpdateStageSchema = z
   .object({
-    opportunityIds: z
-      .array(opportunityIdSchema)
-      .min(1, "Seleziona almeno un'opportunità"),
+    opportunityIds: z.array(opportunityIdBaseSchema).min(1, "Seleziona almeno un'opportunità"),
     stage: salesStageSchema,
     probability: probabilitySchema.optional(),
   })
-  .strict();
-
-// ============================================================================
-// CLOSED REASON SCHEMAS
-// ============================================================================
-
-/**
- * Schema for Closed Reason ID
- */
-export const closedReasonIdSchema = createIdSchema(
-  "ID Closed Reason non valido",
-);
-
-/**
- * Schema for creating a Closed Reason
- */
-export const createClosedReasonSchema = z
-  .object({
-    code: z
-      .string()
-      .min(1, "Codice obbligatorio")
-      .max(50, "Codice max 50 caratteri")
-      .trim()
-      .toUpperCase(),
-
-    description: z
-      .string()
-      .min(1, "Descrizione obbligatoria")
-      .max(255, "Descrizione max 255 caratteri")
-      .trim(),
-
-    isWon: z.boolean(),
-
-    active: z.boolean().default(true),
-
-    displayOrder: z.number().int().nonnegative().default(0),
-  })
-  .strict();
-
-/**
- * Schema for updating a Closed Reason
- */
-export const updateClosedReasonSchema = createClosedReasonSchema
-  .omit({ code: true })
-  .partial()
   .strict();
 
 // ============================================================================
@@ -340,10 +314,10 @@ export const opportunityQuerySchema = z.object({
   status: opportunityStatusSchema.optional(),
   stage: salesStageSchema.optional(),
   source: opportunitySourceSchema.optional(),
-  customerId: createIdSchema("Customer ID non valido").optional(),
-  leadId: createIdSchema("Lead ID non valido").optional(),
-  assignedUserId: createIdSchema("User ID non valido").optional(),
-  createdByUserId: createIdSchema("User ID non valido").optional(),
+  customerId: customerIdBaseSchema.optional(),
+  leadId: leadIdBaseSchema.optional(),
+  assignedUserId: userIdSchema.optional(),
+  createdByUserId: userIdSchema.optional(),
   minValue: queryNumberSchema("Valore non valido")
     .pipe(z.number().nonnegative().optional())
     .optional(),
@@ -386,9 +360,7 @@ export const opportunityQuerySchema = z.object({
 export const closedReasonQuerySchema = z.object({
   isWon: z.boolean().optional(),
   active: z.boolean().optional(),
-  sortBy: z
-    .enum(["id", "code", "displayOrder", "createdAt"])
-    .default("displayOrder"),
+  sortBy: z.enum(["id", "code", "displayOrder", "createdAt"]).default("displayOrder"),
   sortOrder: sortOrderSchema,
 });
 
@@ -397,7 +369,7 @@ export const closedReasonQuerySchema = z.object({
 // ============================================================================
 
 export const opportunityIdParamSchema = z.object({
-  id: opportunityIdSchema,
+  id: opportunityIdBaseSchema,
 });
 
 export const closedReasonIdParamSchema = z.object({
@@ -408,8 +380,8 @@ export const closedReasonIdParamSchema = z.object({
  * Schema for Opportunity statistics filters
  */
 export const opportunityStatsSchema = z.object({
-  assignedUserId: createIdSchema("User ID non valido").optional(),
-  customerId: createIdSchema("Customer ID non valido").optional(),
+  assignedUserId: userIdSchema.optional(),
+  customerId: customerIdBaseSchema.optional(),
   dateFrom: isoDateSchema(),
   dateTo: isoDateSchema(),
   source: opportunitySourceSchema.optional(),
@@ -419,10 +391,8 @@ export const opportunityStatsSchema = z.object({
  * Schema for sales funnel analysis
  */
 export const salesFunnelAnalysisSchema = z.object({
-  assignedUserId: createIdSchema("User ID non valido").optional(),
+  assignedUserId: userIdSchema.optional(),
   dateFrom: isoDateSchema(),
   dateTo: isoDateSchema(),
-  groupBy: z
-    .enum(["stage", "source", "assignedUser", "month"])
-    .default("stage"),
+  groupBy: z.enum(["stage", "source", "assignedUser", "month"]).default("stage"),
 });

@@ -162,14 +162,97 @@
       "UNKNOWN": "Non definito"
     },
     "tableFields": {
-        "lead": "Lead",
-        "score": "Punteggio",
-        "status": "Stato",
-        "contact": "Contatto",
-        "quality": "Qualità",
-        "source": "Fonte",
-        "nextFollowUpDate": "Follow-up",
-        "createdAt": "Data creazione"
+      "lead": "Lead",
+      "score": "Punteggio",
+      "status": "Stato",
+      "contact": "Contatto",
+      "quality": "Qualità",
+      "source": "Fonte",
+      "nextFollowUpDate": "Follow-up",
+      "createdAt": "Data creazione"
+    }
+  },
+  "opportunities": {
+    "title": "Opportunità",
+    "description": "Gestisci le opportunità commerciali",
+    "createNewButton": "Nuova opportunità",
+    "itemLabel": "opportunità",
+    "no_results": "Nessuna opportunità trovata",
+    "opportunityNewTitle": "Nuova opportunità",
+    "opportunityNewDescription": "Crea una nuova opportunità commerciale",
+    "opportunityEditTitle": "Modifica opportunità",
+    "opportunityEditDescription": "Aggiorna le informazioni dell'opportunità",
+    "opportunityDetailTitle": "Dettaglio opportunità",
+    "opportunityDetailDescription": "Dettagli e gestione dell'opportunità",
+    "deleteSuccess": "Opportunità eliminata con successo",
+    "deleteError": "Errore durante l'eliminazione",
+    "deleteDialog": {
+      "title": "Eliminare questa opportunità?",
+      "description": "L'operazione è irreversibile. Tutti i dati associati (prodotti proposti, attività, documenti) verranno rimossi definitivamente.",
+      "confirm": "Elimina",
+      "cancel": "Annulla",
+      "deleting": "Eliminazione..."
+    },
+    "tableFields": {
+      "opportunity": "Opportunità",
+      "status": "Stato",
+      "stage": "Fase",
+      "source": "Origine",
+      "estimatedValue": "Valore stimato",
+      "probability": "Prob.",
+      "expectedCloseDate": "Chiusura prevista",
+      "createdAt": "Data creazione"
+    },
+    "filters": {
+      "search": "Cerca",
+      "searchPlaceholder": "Cerca per titolo o cliente...",
+      "allStatuses": "Tutti gli stati",
+      "allStages": "Tutte le fasi",
+      "allSources": "Tutte le origini",
+      "reset": "Reset",
+      "helperText": "Premi Invio o il pulsante Cerca per applicare il testo"
+    },
+    "actions": {
+      "label": "Azioni",
+      "view": "Visualizza",
+      "edit": "Modifica",
+      "delete": "Elimina"
+    },
+    "stats": {
+      "total": "Totale",
+      "open": "Aperte",
+      "won": "Vinte",
+      "lost": "Perse",
+      "winRate": "Win rate",
+      "totalEstimatedValue": "Valore pipeline",
+      "totalWeightedValue": "Valore pesato",
+      "averageSalesCycle": "Ciclo di vendita medio",
+      "daysSuffix": "gg"
+    },
+    "status": {
+      "open": "Aperta",
+      "won": "Vinta",
+      "lost": "Persa",
+      "pending": "In attesa",
+      "closed": "Chiusa"
+    },
+    "stage": {
+      "lead_qualification": "Qualificazione",
+      "prospecting": "Prospezione",
+      "needs_analysis": "Analisi esigenze",
+      "proposal_sent": "Proposta inviata",
+      "negotiation": "Negoziazione",
+      "commitment": "Impegno ricevuto"
+    },
+    "source": {
+      "lead": "Da lead",
+      "customer": "Cliente esistente",
+      "inbound": "Inbound",
+      "outbound": "Outbound",
+      "referral": "Referral",
+      "partner": "Partner",
+      "event": "Evento",
+      "other": "Altro"
     }
   },
   "editButton": "Modifica",

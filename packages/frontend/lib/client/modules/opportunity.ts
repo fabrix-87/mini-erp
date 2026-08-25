@@ -1,6 +1,6 @@
 import { ApiResponse } from "@/types/api";
 import api from "../api";
-import { Opportunity } from "@/types/opportunity";
+import { Opportunity } from "@/types/opportunity-types";
 
 /**
  * Ricava le statistiche per la dashboard delle attività

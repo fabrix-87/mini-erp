@@ -2,9 +2,15 @@ import { z } from "zod";
 import { createCuidSchema } from "./primitives/id";
 
 /**
- * Schema per validare ID utente
- */
+ * Entity ID Base Schemas
+*/
 export const userIdSchema = createCuidSchema("ID utente non valido");
+export const companyIdBaseSchema = createCuidSchema("Company ID non valido");
+export const customerIdBaseSchema = createCuidSchema("Customer ID non valido");
+export const leadIdBaseSchema = createCuidSchema("ID Lead non valido");
+export const opportunityIdBaseSchema  = createCuidSchema("ID Opportunity non valido");
+export const productIdBaseSchema = createCuidSchema("ID Product non valido");
+
 
 /**
  * Schema base per Currency Code

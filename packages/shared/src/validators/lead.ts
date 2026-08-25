@@ -3,7 +3,7 @@ import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { emailSchema, emptyStringToNull, phoneSchema, urlSchema } from "./primitives/string";
 import { isoDateSchema } from "./primitives/date";
 import { createDecimalSchema } from "./primitives/decimal";
-import { countryCodeBaseSchema, inputJsonValueSchema, userIdSchema } from "./base";
+import { countryCodeBaseSchema, inputJsonValueSchema, leadIdBaseSchema, userIdSchema } from "./base";
 import { sortOrderSchema, pageSchema, limitSchema } from "./query/pagination";
 import { queryBooleanSchema, queryNumberSchema } from "./query/params";
 import {
@@ -118,11 +118,6 @@ const leadScoreSchema = z
 // ============================================================================
 // LEAD SCHEMAS
 // ============================================================================
-
-/**
- * Schema for Lead ID
- */
-export const leadIdSchema = createCuidSchema("ID Lead non valido");
 
 export const assignedUserIdSchema = z.object({
   assignedUserId: userIdSchema,
@@ -348,7 +343,7 @@ export const convertLeadSchema = convertLeadShape.strict().refine(
  */
 export const bulkAssignLeadsSchema = z
   .object({
-    leadIds: z.array(leadIdSchema).min(1, "Seleziona almeno una lead"),
+    leadIds: z.array(leadIdBaseSchema).min(1, "Seleziona almeno una lead"),
     assignedUserId: userIdSchema,
   })
   .strict();
@@ -358,7 +353,7 @@ export const bulkAssignLeadsSchema = z
  */
 export const bulkUpdateLeadStatusSchema = z
   .object({
-    leadIds: z.array(leadIdSchema).min(1, "Seleziona almeno una lead"),
+    leadIds: z.array(leadIdBaseSchema).min(1, "Seleziona almeno una lead"),
     status: leadStatusSchema,
     lostReason: z.string().max(1000).optional().nullable(),
   })
@@ -406,7 +401,7 @@ export const leadQuerySchema = z.object({
 // ============================================================================
 
 export const leadIdParamSchema = z.object({
-  id: leadIdSchema,
+  id: leadIdBaseSchema,
 });
 
 /**

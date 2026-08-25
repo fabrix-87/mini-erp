@@ -7,14 +7,13 @@ import { z } from "zod";
 import {
   baseCompanySchema,
   companyFiltersSchema,
-  companyIdSchema,
-  companyQueryBaseSchema,
   updateCompanySchema,
 } from "./company";
 import { queryBooleanOrAllSchema, queryBooleanSchema, queryEnumOrAllSchema } from "./query/params";
 import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { creditLimitSchema } from "./business/currency";
 import { paginationSchema, sortOrderSchema } from "./query";
+import { customerIdBaseSchema } from "./base";
 
 // ============================================================================
 // CUSTOMER-SPECIFIC ENUMS
@@ -128,4 +127,6 @@ export const customerQuerySchema = z.object({
 /**
  * Schema per ID Customer (riusa CompanyIdSchema)
  */
-export const customerIdSchema = companyIdSchema;
+export const customerIdSchema = z.object({
+  id: customerIdBaseSchema
+});
