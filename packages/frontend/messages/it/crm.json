@@ -205,10 +205,7 @@
     },
     "filters": {
       "search": "Cerca",
-      "searchPlaceholder": "Cerca per titolo o cliente...",
-      "allStatuses": "Tutti gli stati",
-      "allStages": "Tutte le fasi",
-      "allSources": "Tutte le origini",
+      "searchPlaceholder": "Cerca per titolo o cliente...",          
       "reset": "Reset",
       "helperText": "Premi Invio o il pulsante Cerca per applicare il testo"
     },
@@ -234,7 +231,8 @@
       "won": "Vinta",
       "lost": "Persa",
       "pending": "In attesa",
-      "closed": "Chiusa"
+      "closed": "Chiusa",
+      "all": "Tutti gli stati"
     },
     "stage": {
       "lead_qualification": "Qualificazione",
@@ -242,7 +240,8 @@
       "needs_analysis": "Analisi esigenze",
       "proposal_sent": "Proposta inviata",
       "negotiation": "Negoziazione",
-      "commitment": "Impegno ricevuto"
+      "commitment": "Impegno ricevuto",
+      "all": "Tutte le fasi"
     },
     "source": {
       "lead": "Da lead",
@@ -252,7 +251,8 @@
       "referral": "Referral",
       "partner": "Partner",
       "event": "Evento",
-      "other": "Altro"
+      "other": "Altro",
+      "all": "Tutte le origini"
     }
   },
   "editButton": "Modifica",
