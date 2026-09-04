@@ -1,4 +1,4 @@
-// components/ui/country-combobox.tsx
+// components/ui/customer-combobox.tsx
 "use client";
 
 import * as React from "react";
@@ -14,6 +14,11 @@ interface CustomerComboboxProps {
   className?: string;
 }
 
+/**
+ * Async combobox for customer selection.
+ * Fetches by search term; on mount with an existing value,
+ * fetches by ID to restore the selected label after tab switches.
+ */
 export function CustomerCombobox({
   value,
   onValueChange,
@@ -21,7 +26,7 @@ export function CustomerCombobox({
   disabled = false,
   className,
 }: CustomerComboboxProps) {
-  const [debouncedSearch, setDebouncedSearch] = React.useState(value ?? "");
+  const [debouncedSearch, setDebouncedSearch] = React.useState("");
 
   // Debounce della ricerca
   const debouncedSetSearch = React.useMemo(
@@ -29,28 +34,53 @@ export function CustomerCombobox({
       debounce((value: string) => {
         setDebouncedSearch(value);
       }, 300),
-    []
+    [],
   );
 
   // Query con parametro search
   const { data: customersData, isLoading } = useCustomers({
     page: 1,
     limit: 10,
-    search: debouncedSearch || '',
-    sortOrder: 'asc',
-    sortBy: 'companyName'
+    search: debouncedSearch || "",
+    sortOrder: "asc",
+    sortBy: "companyName",
   });
 
-  // Converti i paesi in opzioni per il Combobox
+  // Query per ID — serve a ripristinare il label dopo remount (cambio tab)
+  const { data: selectedData } = useCustomers(
+    value && !debouncedSearch
+      ? { page: 1, limit: 1, search: value, sortOrder: "asc", sortBy: "companyName" }
+      : undefined, // skip se non c'è value o se l'utente sta cercando
+  );
+
   const options = React.useMemo(() => {
-    return (
-      customersData?.data?.map((customer) => ({
-        value: customer.id,
-        label: `${customer.company.companyName}`,
-        description: `[${customer.company.code}]`,
-      })) || []
-    );
-  }, [customersData]);
+    const base = customersData?.data ?? [];
+    // Se stiamo visualizzando un valore senza ricerca attiva,
+    // assicuriamoci che l'opzione selezionata sia sempre presente
+    if (value && !debouncedSearch && selectedData?.data?.[0]) {
+      const selected = selectedData.data[0];
+      const alreadyInList = base.some((c) => c.id === selected.id);
+      if (!alreadyInList) {
+        return [
+          {
+            value: selected.id,
+            label: selected.company.companyName,
+            description: `[${selected.company.code}]`,
+          },
+          ...base.map((c) => ({
+            value: c.id,
+            label: c.company.companyName,
+            description: `[${c.company.code}]`,
+          })),
+        ];
+      }
+    }
+    return base.map((c) => ({
+      value: c.id,
+      label: c.company.companyName,
+      description: `[${c.company.code}]`,
+    }));
+  }, [customersData, selectedData, value, debouncedSearch]);
 
   return (
     <Combobox

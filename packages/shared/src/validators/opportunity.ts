@@ -143,7 +143,8 @@ export const proposedProductSchema = z
   .strict();
 
 /**
- * Raw object shape for Opportunity — no refinements, no strict.
+ * Raw object shape for Opportunity fields editable by the user.
+ * Does NOT include immutable FK fields (leadId, customerId) or server-computed fields.
  * Used as base for both create and update schemas.
  */
 export const opportunityShape = z.object({
@@ -154,27 +155,18 @@ export const opportunityShape = z.object({
     .trim(),
   description: z.string().max(5000).optional().nullable(),
 
-  // Relations
-  leadId: leadIdBaseSchema.optional().nullable(),
-  customerId: customerIdBaseSchema,
   source: opportunitySourceSchema.default("OTHER"),
-
-  // Status and stage
   status: opportunityStatusSchema.default("OPEN"),
   stage: salesStageSchema.default("LEAD_QUALIFICATION"),
 
-  // Financial metrics
   estimatedValue: opportunityValueSchema.optional().nullable(),
   probability: probabilitySchema,
-  weightedValue: opportunityValueSchema.optional(),
+  // weightedValue rimosso: calcolato server-side, mai dal client
 
-  // Timing
   expectedCloseDate: isoDateSchema(),
 
-  // Assignment
   assignedUserId: userIdSchema.optional().nullable(),
 
-  // Products/Services
   proposedProducts: z.array(proposedProductSchema).optional().nullable().default([]),
 
   notes: z.string().trim().optional(),
@@ -183,19 +175,25 @@ export const opportunityShape = z.object({
 
 /**
  * Schema for creating an Opportunity.
- * The refine here is a no-op placeholder — weightedValue is auto-calculated
- * in the service layer. Kept as documentation intent only.
+ * Extends opportunityShape with immutable FK fields (leadId, customerId).
+ * Application-level rule: at least one of leadId or customerId must be provided.
  */
-export const createOpportunitySchema = opportunityShape.strict();
+export const createOpportunitySchema = opportunityShape
+  .extend({
+    leadId: leadIdBaseSchema.optional().nullable(),
+    customerId: customerIdBaseSchema.optional().nullable(),
+  })
+  .strict()
+  .refine((data) => !!data.leadId || !!data.customerId, {
+    message: "Almeno un cliente o un lead deve essere specificato",
+    path: ["customerId"],
+  });
 
 /**
  * Schema for updating an Opportunity — partial, without immutable FK fields.
  * customerId and leadId are immutable after creation.
  */
-export const updateOpportunitySchema = opportunityShape
-  .omit({ customerId: true, leadId: true })
-  .partial()
-  .strict();
+export const updateOpportunitySchema = opportunityShape.partial().strict();
 
 /**
  * Schema for updating Opportunity stage

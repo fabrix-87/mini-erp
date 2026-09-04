@@ -1,4 +1,4 @@
-// components/ui/country-combobox.tsx
+// components/ui/user-combobox.tsx
 "use client";
 
 import * as React from "react";
@@ -21,7 +21,7 @@ export function UserCombobox({
   disabled = false,
   className,
 }: UserComboboxProps) {
-  const [debouncedSearch, setDebouncedSearch] = React.useState(value ?? "");
+  const [debouncedSearch, setDebouncedSearch] = React.useState("");
 
   // Debounce della ricerca
   const debouncedSetSearch = React.useMemo(
@@ -29,7 +29,7 @@ export function UserCombobox({
       debounce((value: string) => {
         setDebouncedSearch(value);
       }, 300),
-    []
+    [],
   );
 
   // Query con parametro search
@@ -37,21 +37,47 @@ export function UserCombobox({
     page: 1,
     limit: 10,
     search: debouncedSearch ?? "",
-    sortBy: 'username',
-    sortOrder: 'asc',
+    sortBy: "username",
+    sortOrder: "asc",
     active: true,
   });
 
+  // Query per ID — serve a ripristinare il label dopo remount (cambio tab)
+  const { data: selectedData } = useUsers(
+    value && !debouncedSearch
+      ? { page: 1, limit: 1, search: value, sortOrder: "asc", sortBy: "username", active: true }
+      : { page: 1, limit: 1, sortOrder: "asc", sortBy: "username" }, // skip se non c'è value o se l'utente sta cercando
+  );
+
   // Converti i paesi in opzioni per il Combobox
   const options = React.useMemo(() => {
-    return (
-      usersData?.data?.map((user) => ({
-        value: user.id,
-        label: `${user.details.firstName} ${user.details.lastName}`,
-        description: `${user.username}`
-      })) || []
-    );
-  }, [usersData]);
+    const base = usersData?.data ?? [];
+    // Se stiamo visualizzando un valore senza ricerca attiva,
+    // assicuriamoci che l'opzione selezionata sia sempre presente
+    if (value && !debouncedSearch && selectedData?.data?.[0]) {
+      const selected = selectedData.data[0];
+      const alreadyInList = base.some((c) => c.id === selected.id);
+      if (!alreadyInList) {
+        return [
+          {
+            value: selected.id,
+            label: `${selected.details.firstName} ${selected.details.lastName}`,
+            description: `${selected.username}`,
+          },
+          ...base.map((c) => ({
+            value: c.id,
+            label: `${c.details.firstName} ${c.details.lastName}`,
+            description: `${c.username}`,
+          })),
+        ];
+      }
+    }
+    return base.map((c) => ({
+      value: c.id,
+      label: `${c.details.firstName} ${c.details.lastName}`,
+      description: `${c.username}`,
+    }));
+  }, [usersData, selectedData, value, debouncedSearch]);
 
   return (
     <Combobox

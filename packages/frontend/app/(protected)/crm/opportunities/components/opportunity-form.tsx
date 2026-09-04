@@ -39,6 +39,7 @@ import {
 import { createOpportunityAction, updateOpportunityAction } from "@/actions/opportunity-actions";
 import { UserCombobox } from "@/components/ui/user-combobox";
 import { CustomerCombobox } from "@/components/ui/customer-combobox";
+import { useState } from "react";
 
 // ============================================================================
 // Types
@@ -65,6 +66,7 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
   const isEdit = mode === "edit";
   const { navigateToDetail, navigate } = useNavigation();
   const t = useTranslations("crm.opportunities");
+  const [activeTab, setActiveTab] = useState('generale')
 
   const form = useForm<OpportunityFormValues>({
     resolver: zodResolver(opportunityShape) as Resolver<OpportunityFormValues>,
@@ -137,7 +139,7 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Tabs defaultValue="generale">
+        <Tabs defaultValue="generale" onValueChange={setActiveTab}>
           <TabsList className="w-full justify-start overflow-x-auto">
             <TabsTrigger value="generale" className="gap-1.5">
               <Briefcase className="h-3.5 w-3.5" />
@@ -160,7 +162,7 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
           {/* -------------------------------------------------------------- */}
           {/* Tab — Generale                                                   */}
           {/* -------------------------------------------------------------- */}
-          <TabsContent value="generale">
+          <TabsContent value="generale" forceMount hidden={activeTab !== "generale"}>
             <Card>
               <CardContent className="space-y-4 pt-6">
                 <FormField
@@ -305,7 +307,7 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
           {/* -------------------------------------------------------------- */}
           {/* Tab — Commerciale                                                */}
           {/* -------------------------------------------------------------- */}
-          <TabsContent value="commerciale">
+          <TabsContent value="commerciale" forceMount hidden={activeTab !== "commerciale"}>
             <Card>
               <CardContent className="space-y-4 pt-6">
                 <div className="grid gap-4 md:grid-cols-2">
@@ -374,7 +376,7 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
           {/* -------------------------------------------------------------- */}
           {/* Tab — Prodotti                                                   */}
           {/* -------------------------------------------------------------- */}
-          <TabsContent value="prodotti">
+          <TabsContent value="prodotti" forceMount hidden={activeTab !== "prodotti"}>
             <Card>
               <CardContent className="pt-6">
                 <OpportunityProposedProducts />

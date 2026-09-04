@@ -74,9 +74,10 @@ export const getAllOpportunities = async (c: Context<AppBindings>) => {
     sortBy = "createdAt",
     sortOrder = "desc",
   } = getValidatedQuery<OpportunityQueryInput>(c);
-
+  const tenantId = getRequiredTenantId(c);
+  
   const skip = (page - 1) * limit;
-  const where: Prisma.OpportunityWhereInput = {};
+  const where: Prisma.OpportunityWhereInput = { tenantId };
 
   if (search) {
     where.OR = [
@@ -258,11 +259,11 @@ export const getOpportunityById = async (c: Context<AppBindings>) => {
       closedReason: {
         select: {
           id: true,
-          code: true,          
+          code: true,
           isWon: true,
           translations: {
-            where: { languageId }
-          }
+            where: { languageId },
+          },
         },
       },
       documents: {
@@ -302,7 +303,6 @@ export const createOpportunity = async (c: Context<AppBindings>) => {
     stage = "LEAD_QUALIFICATION",
     estimatedValue,
     probability,
-    weightedValue: providedWeightedValue,
     expectedCloseDate,
     assignedUserId,
     proposedProducts = [],
@@ -313,18 +313,25 @@ export const createOpportunity = async (c: Context<AppBindings>) => {
   const currentUserId = c.get("user")!.userId;
   const tenantId = getRequiredTenantId(c);
 
-  const customer = await prisma.customer.findFirst({
-    where: tenantFilter(tenantId, { id: customerId }),
-  });
-  if (!customer) {
-    return sendNotFound(c, "Customer non trovato");
+  if (!customerId && !leadId) {
+    return sendFail(c, {
+      statusCode: 400,
+      message: "Almeno un cliente o un lead deve essere specificato",
+    });
+  }
+
+  if (customerId) {
+    const customer = await prisma.customer.findFirst({
+      where: tenantFilter(tenantId, { id: customerId }),
+    });
+    if (!customer) return sendNotFound(c, "Customer non trovato");
   }
 
   if (leadId) {
-    const lead = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id: leadId }) });
-    if (!lead) {
-      return sendNotFound(c, "Lead non trovata");
-    }
+    const lead = await prisma.lead.findFirst({
+      where: tenantFilter(tenantId, { id: leadId }),
+    });
+    if (!lead) return sendNotFound(c, "Lead non trovata");
   }
 
   if (assignedUserId) {
@@ -340,10 +347,7 @@ export const createOpportunity = async (c: Context<AppBindings>) => {
     probability !== undefined ? probability : (STAGE_PROBABILITY_MAP[stage] ?? 0);
 
   const estValNumber = estimatedValue ? Number(estimatedValue) : null;
-  const finalWeighted =
-    providedWeightedValue !== undefined
-      ? Number(providedWeightedValue)
-      : calculateWeightedValue(estValNumber, finalProbability);
+  const weightedValue = calculateWeightedValue(estValNumber, finalProbability);
 
   const opportunity = await prisma.opportunity.create({
     data: {
@@ -357,7 +361,7 @@ export const createOpportunity = async (c: Context<AppBindings>) => {
       stage,
       estimatedValue: estValNumber ? new Prisma.Decimal(estValNumber) : null,
       probability: finalProbability,
-      weightedValue: new Prisma.Decimal(finalWeighted),
+      weightedValue: new Prisma.Decimal(weightedValue),
       expectedCloseDate: expectedCloseDate ? new Date(expectedCloseDate) : null,
       createdByUserId: currentUserId,
       assignedUserId: assignedUserId ?? currentUserId,
@@ -393,7 +397,6 @@ export const updateOpportunity = async (c: Context<AppBindings>) => {
     stage,
     estimatedValue,
     probability,
-    weightedValue: providedWeightedValue,
     expectedCloseDate,
     assignedUserId,
     proposedProducts,
@@ -459,10 +462,7 @@ export const updateOpportunity = async (c: Context<AppBindings>) => {
         : null;
   const finalProb = probability !== undefined ? probability : existing.probability;
 
-  data.weightedValue =
-    providedWeightedValue !== undefined
-      ? new Prisma.Decimal(Number(providedWeightedValue))
-      : new Prisma.Decimal(calculateWeightedValue(finalEstVal, finalProb));
+  data.weightedValue = new Prisma.Decimal(calculateWeightedValue(finalEstVal, finalProb));
 
   const opportunity = await prisma.opportunity.update({
     where: { id },
@@ -535,8 +535,10 @@ export const updateOpportunityStatus = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<OpportunityIdParam>(c);
   const { status, closedReasonId, closedNotes, actualValue } =
     getValidatedBody<UpdateOpportunityStatusInput>(c);
+  const tenantId = getRequiredTenantId(c);
+  const languageId = getRequiredLanguageId(c);
 
-  const opportunity = await prisma.opportunity.findUnique({ where: { id } });
+  const opportunity = await prisma.opportunity.findUnique({ where: { tenantId, id } });
   if (!opportunity) {
     return sendNotFound(c, "Opportunità non trovata");
   }
@@ -567,7 +569,15 @@ export const updateOpportunityStatus = async (c: Context<AppBindings>) => {
           company: { select: { id: true, companyName: true } },
         },
       },
-      closedReason: { select: { id: true, code: true, description: true } },
+      closedReason: {
+        select: {
+          id: true,
+          code: true,
+          translations: {
+            where: { languageId },
+          },
+        },
+      },
     },
   });
 
@@ -585,8 +595,10 @@ export const closeOpportunityWon = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<OpportunityIdParam>(c);
   const { actualValue, closedReasonId, closedNotes, closedDate } =
     getValidatedBody<WinOpportunityInput>(c);
+  const tenantId = getRequiredTenantId(c);
+  const languageId = getRequiredLanguageId(c);
 
-  const opportunity = await prisma.opportunity.findUnique({ where: { id } });
+  const opportunity = await prisma.opportunity.findUnique({ where: { tenantId, id } });
   if (!opportunity) {
     return sendNotFound(c, "Opportunità non trovata");
   }
@@ -611,7 +623,15 @@ export const closeOpportunityWon = async (c: Context<AppBindings>) => {
           company: { select: { id: true, companyName: true } },
         },
       },
-      closedReason: { select: { id: true, code: true, description: true } },
+      closedReason: {
+        select: {
+          id: true,
+          code: true,
+          translations: {
+            where: { languageId },
+          },
+        },
+      },
     },
   });
 
@@ -628,8 +648,10 @@ export const closeOpportunityWon = async (c: Context<AppBindings>) => {
 export const closeOpportunityLost = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<OpportunityIdParam>(c);
   const { closedReasonId, closedNotes, closedDate } = getValidatedBody<LoseOpportunityInput>(c);
+  const tenantId = getRequiredTenantId(c);
+  const languageId = getRequiredLanguageId(c);
 
-  const opportunity = await prisma.opportunity.findUnique({ where: { id } });
+  const opportunity = await prisma.opportunity.findUnique({ where: { tenantId, id } });
   if (!opportunity) {
     return sendNotFound(c, "Opportunità non trovata");
   }
@@ -650,7 +672,15 @@ export const closeOpportunityLost = async (c: Context<AppBindings>) => {
           company: { select: { id: true, companyName: true } },
         },
       },
-      closedReason: { select: { id: true, code: true, description: true } },
+      closedReason: {
+        select: {
+          id: true,
+          code: true,
+          translations: {
+            where: { languageId },
+          },
+        },
+      },
     },
   });
 
@@ -1138,8 +1168,9 @@ export const updateClosedReason = async (c: Context<AppBindings>) => {
  */
 export const deleteClosedReason = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ClosedReasonIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.closedReason.findUnique({ where: { id } });
+  const existing = await prisma.closedReason.findUnique({ where: { tenantId, id } });
   if (!existing) {
     return sendNotFound(c, "Motivo chiusura non trovato");
   }
@@ -1153,7 +1184,6 @@ export const deleteClosedReason = async (c: Context<AppBindings>) => {
       statusCode: 409,
       message: "Impossibile eliminare: motivo utilizzato da opportunità esistenti",
     });
-    return;
   }
 
   await prisma.closedReason.delete({ where: { id } });
