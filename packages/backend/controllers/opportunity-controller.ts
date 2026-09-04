@@ -31,13 +31,14 @@ import {
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredLanguageId,
   getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
 import { calculateWeightedValue, STAGE_PROBABILITY_MAP } from "@/helpers/opportunity-helper";
-import { connectOrDisconnectById, tenantFilter } from "@/helpers/prisma-helper";
+import { connectOrDisconnectById, tenantFilter, userTenantFilter } from "@/helpers/prisma-helper";
 import { OpportunitySource, OpportunityStatus, SalesStage } from "@mini-erp/shared";
 
 // ============================================================================
@@ -196,9 +197,11 @@ export const getOpportunitiesByCustomer = async (c: Context<AppBindings>) => {
  */
 export const getOpportunityById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<OpportunityIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
+  const languageId = getRequiredLanguageId(c);
 
   const opportunity = await prisma.opportunity.findUnique({
-    where: { id },
+    where: { tenantId, id },
     include: {
       customer: {
         include: {
@@ -210,11 +213,17 @@ export const getOpportunityById = async (c: Context<AppBindings>) => {
               tradeName: true,
               mainEmail: true,
               mainPhone: true,
-            },
-            include: {
               addresses: {
                 where: {
                   addressType: "LEGAL",
+                },
+                select: {
+                  id: true,
+                  addressType: true,
+                  address: true,
+                  city: true,
+                  zipCode: true,
+                  country: true,
                 },
               },
             },
@@ -249,9 +258,11 @@ export const getOpportunityById = async (c: Context<AppBindings>) => {
       closedReason: {
         select: {
           id: true,
-          code: true,
-          description: true,
+          code: true,          
           isWon: true,
+          translations: {
+            where: { languageId }
+          }
         },
       },
       documents: {
@@ -318,7 +329,7 @@ export const createOpportunity = async (c: Context<AppBindings>) => {
 
   if (assignedUserId) {
     const user = await prisma.user.findFirst({
-      where: tenantFilter(tenantId, { id: assignedUserId }),
+      where: userTenantFilter(assignedUserId, tenantId),
     });
     if (!user) {
       return sendNotFound(c, "Utente assegnato non trovato");
@@ -363,8 +374,7 @@ export const createOpportunity = async (c: Context<AppBindings>) => {
     },
   });
 
-  // TODO - Aggiungere proposed products  
-
+  // TODO - Aggiungere proposed products
   return sendCreated(c, opportunity, "Opportunità creata con successo");
 };
 
@@ -989,10 +999,10 @@ export const getOpportunityStats = async (c: Context<AppBindings>): Promise<Resp
 
   // ── 6. Build typed output ──────────────────────────────────────────────────
 
-  const total      = aggregate._count._all;
-  const wonCount   = wonAggregate._count._all;
-  const lostCount  = statusGroups.find((g) => g.status === "LOST")?._count._all ?? 0;
-  const openCount  = statusGroups.find((g) => g.status === "OPEN")?._count._all ?? 0;
+  const total = aggregate._count._all;
+  const wonCount = wonAggregate._count._all;
+  const lostCount = statusGroups.find((g) => g.status === "LOST")?._count._all ?? 0;
+  const openCount = statusGroups.find((g) => g.status === "OPEN")?._count._all ?? 0;
   const pendingCount = statusGroups.find((g) => g.status === "PENDING")?._count._all ?? 0;
 
   // Populate enum Records, defaulting every key to 0
@@ -1006,19 +1016,17 @@ export const getOpportunityStats = async (c: Context<AppBindings>): Promise<Resp
   for (const g of sourceGroups) bySource[g.source] = g._count._all;
 
   const totalEstimatedValue = aggregate._sum.estimatedValue ?? new Prisma.Decimal(0);
-  const totalWeightedValue  = aggregate._sum.weightedValue  ?? new Prisma.Decimal(0);
-  const totalWonValue       = wonAggregate._sum.actualValue  ?? new Prisma.Decimal(0);
-  const averageWinValue     = wonAggregate._avg.actualValue  ?? new Prisma.Decimal(0);
+  const totalWeightedValue = aggregate._sum.weightedValue ?? new Prisma.Decimal(0);
+  const totalWonValue = wonAggregate._sum.actualValue ?? new Prisma.Decimal(0);
+  const averageWinValue = wonAggregate._avg.actualValue ?? new Prisma.Decimal(0);
 
   // averageDealSize = totalEstimatedValue / total (or 0 when empty)
   const averageDealSize =
-    total > 0
-      ? totalEstimatedValue.div(new Prisma.Decimal(total))
-      : new Prisma.Decimal(0);
+    total > 0 ? totalEstimatedValue.div(new Prisma.Decimal(total)) : new Prisma.Decimal(0);
 
   // winRate = wonCount / (wonCount + lostCount) * 100 — excludes open/pending
   const closedCount = wonCount + lostCount;
-  const winRate     = closedCount > 0 ? (wonCount / closedCount) * 100 : 0;
+  const winRate = closedCount > 0 ? (wonCount / closedCount) * 100 : 0;
 
   const averageSalesCycle = cycleRow.avg_days ?? 0;
 
@@ -1026,9 +1034,9 @@ export const getOpportunityStats = async (c: Context<AppBindings>): Promise<Resp
 
   const stats = {
     total,
-    open:    openCount,
-    won:     wonCount,
-    lost:    lostCount,
+    open: openCount,
+    won: wonCount,
+    lost: lostCount,
     pending: pendingCount,
     byStatus,
     byStage,

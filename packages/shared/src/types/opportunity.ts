@@ -28,6 +28,7 @@ import {
   opportunityStatsSchema,
   salesFunnelAnalysisSchema,
   customerIdParamSchema,
+  opportunityShape,
 } from "../validators/opportunity";
 import { OpportunitySource, OpportunityStatus, SalesStage } from "../constants";
 
@@ -86,10 +87,11 @@ export type ClosedReason = {
 // INPUT TYPES (using z.infer)
 // ============================================================================
 
+export type OpportunityFormValues  = z.input<typeof opportunityShape>;
 export type CreateOpportunityInput = z.infer<typeof createOpportunitySchema>;
 export type UpdateOpportunityInput = z.infer<typeof updateOpportunitySchema>;
 export type UpdateOpportunityStageInput = z.infer<
-  typeof updateOpportunityStageSchema
+typeof updateOpportunityStageSchema
 >;
 export type UpdateOpportunityStatusInput = z.infer<
   typeof updateOpportunityStatusSchema

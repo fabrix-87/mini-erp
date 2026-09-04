@@ -8,11 +8,11 @@ import {
   OPPORTUNITY_TAGS,
   OpportunityPipelineApiResponse,
   OpportunitySalesFunnelMetricsApiResponse,
+  OpportunitySingleApiResponse,
 } from "@/types/opportunity-types";
 import type {
   OpportunityComplete,
-  CreateOpportunityInput,
-  UpdateOpportunityInput,
+  OpportunityFormValues,
   OpportunityStatsInput,
   SalesFunnelAnalysisInput,
 } from "@mini-erp/shared";
@@ -100,9 +100,12 @@ export async function getOpportunityById(
  * Create a new opportunity.
  */
 export async function createOpportunity(
-  data: CreateOpportunityInput,
-): Promise<OpportunityComplete> {
-  return serverApi.post<OpportunityComplete>("/opportunities", data);
+  data: OpportunityFormValues,
+): Promise<OpportunitySingleApiResponse> {
+  return serverApi.post<OpportunitySingleApiResponse>("/opportunities", data, {
+    tags: [OPPORTUNITY_TAGS.list],
+    unwrapData: false,
+  });
 }
 
 /**
@@ -110,9 +113,12 @@ export async function createOpportunity(
  */
 export async function updateOpportunity(
   id: string,
-  data: UpdateOpportunityInput,
-): Promise<OpportunityComplete> {
-  return serverApi.put<OpportunityComplete>(`/opportunities/${id}`, data);
+  data: Partial<OpportunityFormValues>,
+): Promise<OpportunitySingleApiResponse> {
+  return serverApi.put<OpportunitySingleApiResponse>(`/opportunities/${id}`, data,{
+    tags: [OPPORTUNITY_TAGS.detail(id)],
+    unwrapData: false,
+  });
 }
 
 /**

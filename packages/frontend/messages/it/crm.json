@@ -205,7 +205,7 @@
     },
     "filters": {
       "search": "Cerca",
-      "searchPlaceholder": "Cerca per titolo o cliente...",          
+      "searchPlaceholder": "Cerca per titolo o cliente...",
       "reset": "Reset",
       "helperText": "Premi Invio o il pulsante Cerca per applicare il testo"
     },
@@ -235,12 +235,12 @@
       "all": "Tutti gli stati"
     },
     "stage": {
-      "lead_qualification": "Qualificazione",
-      "prospecting": "Prospezione",
+      "lead_qualification": "Qualificazione lead",
+      "prospecting": "Identificazione opportunità",
       "needs_analysis": "Analisi esigenze",
       "proposal_sent": "Proposta inviata",
       "negotiation": "Negoziazione",
-      "commitment": "Impegno ricevuto",
+      "commitment": "Aggiudicato",
       "all": "Tutte le fasi"
     },
     "source": {
@@ -253,6 +253,46 @@
       "event": "Evento",
       "other": "Altro",
       "all": "Tutte le origini"
+    },
+    "createSuccess": "Opportunità creata",
+    "updateSuccess": "Opportunità aggiornata",
+    "createError": "Errore durante la creazione",
+    "updateError": "Errore durante l'aggiornamento",
+    "form": {
+      "tabs": {
+        "generale": "Generale",
+        "commerciale": "Commerciale",
+        "prodotti": "Prodotti",
+        "note": "Note"
+      },
+      "title": "Titolo",
+      "titlePlaceholder": "Es. Rinnovo contratto ERP",
+      "customer": "Cliente",
+      "customerPlaceholder": "Seleziona il cliente",
+      "status": "Stato",
+      "stage": "Fase",
+      "source": "Origine",
+      "assignedUser": "Assegnato a",
+      "assignedUserPlaceholder": "ID utente assegnato",
+      "estimatedValue": "Valore stimato",
+      "probability": "Probabilità",
+      "expectedCloseDate": "Data chiusura prevista",
+      "description": "Descrizione",
+      "descriptionPlaceholder": "Descrizione dell'opportunità...",
+      "notes": "Note interne",
+      "notesPlaceholder": "Note aggiuntive riservate...",
+      "proposedProducts": "Prodotti proposti",
+      "addProduct": "Aggiungi prodotto",
+      "noProducts": "Nessun prodotto aggiunto",
+      "removeProduct": "Rimuovi prodotto",
+      "productId": "ID Prodotto",
+      "quantity": "Qtà",
+      "price": "Prezzo",
+      "discount": "Sconto",
+      "productNotes": "Note prodotto...",
+      "cancel": "Annulla",
+      "saveChanges": "Salva modifiche",
+      "create": "Crea opportunità"
     }
   },
   "editButton": "Modifica",

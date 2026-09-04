@@ -25,6 +25,7 @@ export type {
 
 export type OpportunityListApiResponse = PaginatedResponse<OpportunityListItem>;
 export type OpportunityStatsApiResponse = ApiResponse<OpportunityStats>;
+export type OpportunitySingleApiResponse = ApiResponse<OpportunityComplete>;
 export type OpportunityPipelineApiResponse = ApiResponse<OpportunityPipelineAnalysis>;
 export type OpportunitySalesFunnelMetricsApiResponse = ApiResponse<SalesFunnelMetrics>;
 export type OpportunityOperationApiResponse = ApiResponse<{ success: boolean }>;

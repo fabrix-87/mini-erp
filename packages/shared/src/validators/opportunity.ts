@@ -146,7 +146,7 @@ export const proposedProductSchema = z
  * Raw object shape for Opportunity — no refinements, no strict.
  * Used as base for both create and update schemas.
  */
-const opportunityShape = z.object({
+export const opportunityShape = z.object({
   title: z
     .string()
     .min(1, "Titolo è obbligatorio")

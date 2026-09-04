@@ -231,6 +231,33 @@ export const withTenantId = (
 ): Record<string, unknown> => ({ ...where, tenantId });
 
 /**
+ * Builds a type-safe `UserWhereInput` that enforces:
+ * - user identity by id
+ * - soft-delete guard (deletedAt: null)
+ * - active membership for the given tenant
+ *
+ * Use this whenever you need to look up a single user scoped to a tenant,
+ * e.g. in auth flows, permission checks, or user-detail endpoints.
+ *
+ * @param id       - user id 
+ * @param tenantId - tenant id to verify active membership against
+ * @returns Prisma.UserWhereInput ready to be passed to findFirst / findUnique
+ */
+export const userTenantFilter = (
+  id: string,
+  tenantId: string,
+): Prisma.UserWhereInput => ({
+  id,
+  deletedAt: null,
+  memberships: {
+    some: {
+      tenantId,
+      status: "ACTIVE",
+    },
+  },
+});
+
+/**
  * Builds a tenant-scoped, soft-delete-safe Prisma where clause.
  *
  * Combines `withTenantId` and `withSoftDelete` in a single call, covering
