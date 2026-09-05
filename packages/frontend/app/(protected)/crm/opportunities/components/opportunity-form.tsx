@@ -1,10 +1,15 @@
 "use client";
 
-import { Resolver, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Loader2, Briefcase, TrendingUp, Package, FileText } from "lucide-react";
-import { OpportunityFormValues, opportunityShape, type Opportunity } from "@mini-erp/shared";
+import {
+  createOpportunitySchema,
+  updateOpportunitySchema,
+  type Opportunity,
+  CreateOpportunityFormValues,
+  UpdateOpportunityFormValues,
+} from "@mini-erp/shared";
 
 import {
   Form,
@@ -27,6 +32,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { toDateInput } from "@/helpers/date-helper";
 import { useNavigation } from "@/hooks/use-navigation";
 import { useTranslations } from "next-intl";
@@ -40,6 +46,8 @@ import { createOpportunityAction, updateOpportunityAction } from "@/actions/oppo
 import { UserCombobox } from "@/components/ui/user-combobox";
 import { CustomerCombobox } from "@/components/ui/customer-combobox";
 import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LeadCombobox } from "@/components/ui/lead-combobox";
 
 // ============================================================================
 // Types
@@ -58,6 +66,8 @@ interface OpportunityFormProps {
 
 /**
  * Unified create/edit form for Opportunity.
+ * - In create mode uses createOpportunitySchema (includes leadId/customerId + refine).
+ * - In edit mode uses updateOpportunitySchema (immutable FKs shown as read-only badges).
  * Tabs: Generale · Commerciale · Prodotti · Note
  * @param mode - "create" or "edit"
  * @param opportunity - Required in edit mode, populates defaultValues
@@ -66,38 +76,53 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
   const isEdit = mode === "edit";
   const { navigateToDetail, navigate } = useNavigation();
   const t = useTranslations("crm.opportunities");
-  const [activeTab, setActiveTab] = useState('generale')
+  const [activeTab, setActiveTab] = useState("generale");
 
-  const form = useForm<OpportunityFormValues>({
-    resolver: zodResolver(opportunityShape) as Resolver<OpportunityFormValues>,
+  const default_values = {
+    title: opportunity?.title ?? "",
+    description: opportunity?.description ?? "",
+    source: opportunity?.source ?? "OTHER",
+    assignedUserId: opportunity?.assignedUserId ?? null,
+    status: opportunity?.status ?? "OPEN",
+    stage: opportunity?.stage ?? "LEAD_QUALIFICATION",
+    estimatedValue: opportunity?.estimatedValue ? String(opportunity.estimatedValue) : undefined,
+    probability: opportunity?.probability ?? 0,
+    expectedCloseDate: toDateInput(opportunity?.expectedCloseDate),
+    proposedProducts: opportunity?.proposedProducts ?? [],
+    notes: opportunity?.notes ?? "",
+    customFields: opportunity?.customFields ?? null,
+  };
+
+  const createForm = useForm<CreateOpportunityFormValues>({
+    resolver: zodResolver(createOpportunitySchema),
+    mode: "onTouched",
     defaultValues: {
-      // Generale
-      title: opportunity?.title ?? "",
-      description: opportunity?.description ?? "",
-      customerId: opportunity?.customerId ?? "",
-      leadId: opportunity?.leadId ?? null,
-      source: opportunity?.source ?? "OTHER",
-      assignedUserId: opportunity?.assignedUserId ?? null,
-      // Stage & status
-      status: opportunity?.status ?? "OPEN",
-      stage: opportunity?.stage ?? "LEAD_QUALIFICATION",
-      // Commerciale
-      estimatedValue: opportunity?.estimatedValue ? String(opportunity.estimatedValue) : undefined,
-      probability: opportunity?.probability ?? 0,
-      expectedCloseDate: toDateInput(opportunity?.expectedCloseDate),
-      // Prodotti
-      proposedProducts: opportunity?.proposedProducts ?? [],
-      // Note
-      notes: opportunity?.notes ?? "",
-      customFields: opportunity?.customFields ?? null,
+      ...default_values,
+      customerId: "",
+      leadId: null,
     },
   });
 
+  const updateForm = useForm<UpdateOpportunityFormValues>({
+    resolver: zodResolver(updateOpportunitySchema),
+    mode: "onTouched",
+    defaultValues: {
+      ...default_values,
+    },
+  });
+
+  // cast a any solo per il provider — type-safety mantenuta nei singoli hook
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const form = (isEdit ? updateForm : createForm) as any;
+
   const isPending = form.formState.isSubmitting;
 
-  const onSubmit = async (data: OpportunityFormValues) => {
+  const onSubmit = async (data: Record<string, unknown>) => {
     if (isEdit && opportunity) {
-      const result = await updateOpportunityAction(opportunity.id, data);
+      const result = await updateOpportunityAction(
+        opportunity.id,
+        data as UpdateOpportunityFormValues,
+      );
       if (result.success) {
         toast.success(t("updateSuccess"));
         navigateToDetail("opportunities", opportunity.id);
@@ -105,7 +130,7 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
         toast.error(result.error ?? t("updateError"));
       }
     } else {
-      const result = await createOpportunityAction(data);
+      const result = await createOpportunityAction(data as CreateOpportunityFormValues);
       if (result.success && result.data) {
         toast.success(t("createSuccess"));
         navigateToDetail("opportunities", result.data.id);
@@ -136,6 +161,10 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
     </CardFooter>
   );
 
+  // Una sola subscription, usata da entrambi i campi
+  const watchedCustomerId = createForm.watch("customerId");
+  const watchedLeadId = createForm.watch("leadId");
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -159,9 +188,9 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
             </TabsTrigger>
           </TabsList>
 
-          {/* -------------------------------------------------------------- */}
-          {/* Tab — Generale                                                   */}
-          {/* -------------------------------------------------------------- */}
+          {/* ---------------------------------------------------------------- */}
+          {/* Tab — Generale                                                    */}
+          {/* ---------------------------------------------------------------- */}
           <TabsContent value="generale" forceMount hidden={activeTab !== "generale"}>
             <Card>
               <CardContent className="space-y-4 pt-6">
@@ -181,26 +210,87 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                   )}
                 />
 
-                {/* customerId — in attesa di CustomerCombobox; per ora Input */}
-                <FormField
-                  control={form.control}
-                  name="customerId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("form.customer")} <span className="text-destructive">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <CustomerCombobox
-                          placeholder={t('form.customerPlaceholder')}
-                          onValueChange={(value) => field.onChange(value || null)}
-                          value={field.value ?? ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* customerId — editabile solo in create, read-only in edit */}
+                {isEdit ? (
+                  <div className="space-y-1.5">
+                    <p className="text-sm font-medium">{t("form.customer")}</p>
+                    <Badge variant="secondary" className="text-sm font-normal">
+                      {opportunity?.customer?.company?.companyName ??
+                        opportunity?.customerId ??
+                        "—"}
+                    </Badge>
+                  </div>
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name="customerId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("form.customer")} <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <CustomerCombobox
+                            placeholder={t("form.customerPlaceholder")}
+                            value={field.value ?? ""}
+                            disabled={!!watchedLeadId}
+                            onValueChange={(value) => {
+                              field.onBlur();
+                              field.onChange(value || null);
+                              // Se seleziono un customer, disabilito e resetto il lead
+                              if (value) {
+                                createForm.setValue("leadId", null);
+                                createForm.clearErrors("leadId");
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {/* leadId — editabile solo in create, read-only in edit */}
+                {isEdit ? (
+                  opportunity?.leadId && (
+                    <div className="space-y-1.5">
+                      <p className="text-sm font-medium">{t("form.lead")}</p>
+                      <Badge variant="outline" className="text-sm font-normal">
+                        {opportunity?.lead?.companyName ?? opportunity.leadId}
+                      </Badge>
+                    </div>
+                  )
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name="leadId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("form.lead")} <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <LeadCombobox
+                            placeholder={t("form.leadPlaceholder")}
+                            value={field.value ?? ""}
+                            disabled={!!watchedCustomerId}
+                            onValueChange={(value) => {
+                              field.onBlur();
+                              field.onChange(value || null);
+                              // Se seleziono un lead, disabilito e resetto il customer
+                              if (value) {
+                                createForm.setValue("customerId", null);
+                                createForm.clearErrors("customerId");
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <Separator />
 
@@ -211,7 +301,13 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t("form.status")}</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onBlur();
+                            field.onChange(value);
+                          }}
+                          value={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue />
@@ -236,7 +332,13 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t("form.stage")}</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onBlur();
+                            field.onChange(value);
+                          }}
+                          value={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue />
@@ -261,7 +363,13 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t("form.source")}</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onBlur();
+                            field.onChange(value);
+                          }}
+                          value={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue />
@@ -281,7 +389,6 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                   />
                 </div>
 
-                {/* assignedUserId */}
                 <FormField
                   control={form.control}
                   name="assignedUserId"
@@ -290,9 +397,12 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                       <FormLabel>{t("form.assignedUser")}</FormLabel>
                       <FormControl>
                         <UserCombobox
-                          placeholder={t('form.assignedUserPlaceholder')}
-                          onValueChange={(value) => field.onChange(value || null)}
+                          placeholder={t("form.assignedUserPlaceholder")}
                           value={field.value ?? ""}
+                          onValueChange={(value) => {
+                            field.onBlur();
+                            field.onChange(value || null);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -304,9 +414,9 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
             </Card>
           </TabsContent>
 
-          {/* -------------------------------------------------------------- */}
-          {/* Tab — Commerciale                                                */}
-          {/* -------------------------------------------------------------- */}
+          {/* ---------------------------------------------------------------- */}
+          {/* Tab — Commerciale                                                 */}
+          {/* ---------------------------------------------------------------- */}
           <TabsContent value="commerciale" forceMount hidden={activeTab !== "commerciale"}>
             <Card>
               <CardContent className="space-y-4 pt-6">
@@ -358,9 +468,7 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                   name="expectedCloseDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        {t("form.expectedCloseDate")} <span className="text-destructive">*</span>
-                      </FormLabel>
+                      <FormLabel>{t("form.expectedCloseDate")}</FormLabel>
                       <FormControl>
                         <Input type="date" {...field} value={field.value ?? ""} />
                       </FormControl>
@@ -373,9 +481,9 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
             </Card>
           </TabsContent>
 
-          {/* -------------------------------------------------------------- */}
-          {/* Tab — Prodotti                                                   */}
-          {/* -------------------------------------------------------------- */}
+          {/* ---------------------------------------------------------------- */}
+          {/* Tab — Prodotti                                                    */}
+          {/* ---------------------------------------------------------------- */}
           <TabsContent value="prodotti" forceMount hidden={activeTab !== "prodotti"}>
             <Card>
               <CardContent className="pt-6">
@@ -385,9 +493,9 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
             </Card>
           </TabsContent>
 
-          {/* -------------------------------------------------------------- */}
-          {/* Tab — Note                                                       */}
-          {/* -------------------------------------------------------------- */}
+          {/* ---------------------------------------------------------------- */}
+          {/* Tab — Note                                                        */}
+          {/* ---------------------------------------------------------------- */}
           <TabsContent value="note">
             <Card>
               <CardContent className="space-y-4 pt-6">

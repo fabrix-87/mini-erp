@@ -180,8 +180,8 @@ export const opportunityShape = z.object({
  */
 export const createOpportunitySchema = opportunityShape
   .extend({
-    leadId: leadIdBaseSchema.optional().nullable(),
-    customerId: customerIdBaseSchema.optional().nullable(),
+    leadId: leadIdBaseSchema.nullish(),
+    customerId: customerIdBaseSchema.nullish(),
   })
   .strict()
   .refine((data) => !!data.leadId || !!data.customerId, {
@@ -193,7 +193,9 @@ export const createOpportunitySchema = opportunityShape
  * Schema for updating an Opportunity — partial, without immutable FK fields.
  * customerId and leadId are immutable after creation.
  */
-export const updateOpportunitySchema = opportunityShape.partial().strict();
+export const updateOpportunitySchema = opportunityShape
+  .partial()
+  .strict();
 
 /**
  * Schema for updating Opportunity stage

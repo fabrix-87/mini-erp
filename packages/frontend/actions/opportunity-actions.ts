@@ -7,7 +7,7 @@ import {
 } from "@/services/server/opportunity-service";
 import { opportunityRevalidation } from "@/lib/server/revalidate";
 import { ActionResult, withAuth } from "@/lib/server/action";
-import { OpportunityComplete, OpportunityFormValues } from "@mini-erp/shared";
+import { CreateOpportunityFormValues, OpportunityComplete, UpdateOpportunityFormValues } from "@mini-erp/shared";
 
 // ============================================================================
 // Opportunity CRUD Actions
@@ -20,7 +20,7 @@ import { OpportunityComplete, OpportunityFormValues } from "@mini-erp/shared";
  * @returns The created `Opportunity` on success.
  */
 export async function createOpportunityAction(
-  data: OpportunityFormValues,
+  data: CreateOpportunityFormValues,
 ): Promise<ActionResult<OpportunityComplete>> {
   return withAuth(async () => {
     const res = await createOpportunity(data);
@@ -39,7 +39,7 @@ export async function createOpportunityAction(
  */
 export async function updateOpportunityAction(
   opportunityId: string,
-  data: OpportunityFormValues,
+  data: UpdateOpportunityFormValues,
 ): Promise<ActionResult<OpportunityComplete>> {
   return withAuth(async () => {
     const res = await updateOpportunity(opportunityId, data);

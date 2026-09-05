@@ -269,6 +269,8 @@
       "titlePlaceholder": "Es. Rinnovo contratto ERP",
       "customer": "Cliente",
       "customerPlaceholder": "Seleziona il cliente",
+      "lead": "Lead",
+      "leadPlaceholder": "Seleziona il lead",
       "status": "Stato",
       "stage": "Fase",
       "source": "Origine",

@@ -1,13 +1,15 @@
-// components/ui/user-combobox.tsx
+// components/ui/lead-combobox.tsx
 "use client";
 
-import * as React from "react";
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
-import { useUsers } from "@/hooks/use-user";
+import { useCustomers } from "@/hooks/use-company";
 import { useAsyncCombobox } from "@/hooks/use-async-combobox";
-import type { UserQueryInput } from "@mini-erp/shared";
+import type { CustomerQueryInput } from "@/types/customer-types";
+import { useMemo } from "react";
+import { useLeads } from "@/hooks/use-lead";
+import { LeadQueryInput } from "@mini-erp/shared";
 
-interface UserComboboxProps {
+interface LeadComboboxProps {
   value?: string;
   onValueChange?: (value: string) => void;
   placeholder?: string;
@@ -16,62 +18,61 @@ interface UserComboboxProps {
 }
 
 // Stabile fuori dal componente — nessuna istanza spuria per ogni render.
-function toUserOptions(data: Awaited<ReturnType<typeof useUsers>>["data"]): ComboboxOption[] {
+function toLeadOptions(data: Awaited<ReturnType<typeof useLeads>>["data"]): ComboboxOption[] {
   return (
-    data?.data?.map((u) => ({
-      value: u.id,
-      label: `${u.details.firstName} ${u.details.lastName}`,
-      description: u.username,
+    data?.data?.map((c) => ({
+      value: c.id,
+      label: c.companyName,
+      description: `[${c.description}]`,
     })) ?? []
   );
 }
 
 /**
- * Async combobox for user selection with debounced search.
+ * Async combobox for lead selection with debounced search.
  * On mount with an existing `value`, performs a secondary query to restore
  * the selected label after tab switches or remounts.
  *
- * @param value         - Currently selected user ID
- * @param onValueChange - Callback fired with the new user ID on selection
+ * @param value         - Currently selected lead ID
+ * @param onValueChange - Callback fired with the new lead ID on selection
  * @param placeholder   - Trigger button label when no value is selected
  * @param disabled      - Disables the combobox
  * @param className     - Additional CSS classes on the trigger button
  */
-export function UserCombobox({
+export function LeadCombobox({
   value,
   onValueChange,
-  placeholder = "Seleziona utente...",
+  placeholder = "Seleziona lead...",
   disabled = false,
   className,
-}: UserComboboxProps) {
+}: LeadComboboxProps) {
   const BASE_PARAMS = {
     page: 1,
     limit: 10,
-    sortBy: "username",
+    sortBy: "companyName",
     sortOrder: "asc",
-    active: true,
-  } satisfies Partial<UserQueryInput>;
+  } satisfies Partial<LeadQueryInput>;
 
   const { options, isLoading, onSearchChange, debouncedSearch } = useAsyncCombobox({
     useFetch: ({ search }: { search: string }) =>
-      useUsers({ ...BASE_PARAMS, search } satisfies UserQueryInput),
-    toOptions: toUserOptions,
+      useLeads({ ...BASE_PARAMS, search } satisfies LeadQueryInput),
+    toOptions: toLeadOptions,
   });
 
   // Query per ID — ripristina il label dopo remount (cambio tab)
-  const { data: selectedData } = useUsers(
-    value && !debouncedSearch ? { ...BASE_PARAMS, limit: 1, search: value } : { ...BASE_PARAMS },
+  const { data: selectedData } = useLeads(
+    value && !debouncedSearch ? { ...BASE_PARAMS, limit: 1, search: value } : BASE_PARAMS,
   );
 
-  const mergedOptions = React.useMemo((): ComboboxOption[] => {
+  const mergedOptions = useMemo((): ComboboxOption[] => {
     if (!value || debouncedSearch) return options;
     const selected = selectedData?.data?.[0];
     if (!selected || options.some((o) => o.value === selected.id)) return options;
     return [
       {
         value: selected.id,
-        label: `${selected.details.firstName} ${selected.details.lastName}`,
-        description: selected.username,
+        label: selected.companyName,
+        description: `[${selected.description}]`,
       },
       ...options,
     ];
@@ -84,8 +85,8 @@ export function UserCombobox({
       onValueChange={onValueChange}
       onSearchChange={onSearchChange}
       placeholder={placeholder}
-      searchPlaceholder="Cerca utente..."
-      emptyText="Nessun utente trovato"
+      searchPlaceholder="Cerca cliente..."
+      emptyText="Nessun cliente trovato"
       disabled={disabled}
       isLoading={isLoading}
       className={className}

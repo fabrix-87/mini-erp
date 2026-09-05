@@ -11,10 +11,11 @@ import {
   OpportunitySingleApiResponse,
 } from "@/types/opportunity-types";
 import type {
+  CreateOpportunityFormValues,
   OpportunityComplete,
-  OpportunityFormValues,
   OpportunityStatsInput,
   SalesFunnelAnalysisInput,
+  UpdateOpportunityFormValues,
 } from "@mini-erp/shared";
 
 /**
@@ -100,7 +101,7 @@ export async function getOpportunityById(
  * Create a new opportunity.
  */
 export async function createOpportunity(
-  data: OpportunityFormValues,
+  data: CreateOpportunityFormValues,
 ): Promise<OpportunitySingleApiResponse> {
   return serverApi.post<OpportunitySingleApiResponse>("/opportunities", data, {
     tags: [OPPORTUNITY_TAGS.list],
@@ -113,7 +114,7 @@ export async function createOpportunity(
  */
 export async function updateOpportunity(
   id: string,
-  data: Partial<OpportunityFormValues>,
+  data: UpdateOpportunityFormValues,
 ): Promise<OpportunitySingleApiResponse> {
   return serverApi.put<OpportunitySingleApiResponse>(`/opportunities/${id}`, data,{
     tags: [OPPORTUNITY_TAGS.detail(id)],

@@ -277,6 +277,7 @@ export const getOpportunityById = async (c: Context<AppBindings>) => {
         },
         orderBy: { documentDate: "desc" },
       },
+      activities: true,
     },
   });
 
