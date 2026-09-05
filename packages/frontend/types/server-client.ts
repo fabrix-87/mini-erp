@@ -19,6 +19,9 @@ export interface ServerRequestOptions extends RequestInit {
   responseType?: string;
   data?: any;
   unwrapData?: boolean; 
+  
+  /** Se true, un 404 lancia ServerApiError invece di chiamare notFound(). Default: false */
+  allow404?: boolean;
 }
 
 /**

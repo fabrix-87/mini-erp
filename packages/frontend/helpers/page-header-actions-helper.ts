@@ -88,7 +88,7 @@ export function createDeleteAction(
 export function createDeleteServerAction(
   key: string,
   label: string,
-  action: () => Promise<ActionResult<DeleteApiResponse>>,
+  action: () => Promise<ActionResult<DeleteApiResponse|void>>,
   confirm: PageHeaderActionConfirm,
   visible: boolean = true,
   disabled: boolean = false,

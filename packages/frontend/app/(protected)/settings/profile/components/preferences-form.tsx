@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { upsertSettingsAction } from "@/actions/settings/update-setting-actions";
 import type { PathValue } from "react-hook-form";
-import { IconPalette, IconWorld, IconBell, IconLayoutDashboard } from "@tabler/icons-react";
+import { Bell, Earth, LayoutDashboard, Palette } from "lucide-react";
 
 interface PreferencesFormProps {
   settings: UserSettingValueMap;
@@ -69,7 +69,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
       {/* Interfaccia */}
       <div className="rounded-lg border bg-card p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <IconPalette size={16} className="text-muted-foreground" />
+          <Palette size={16} className="text-muted-foreground" />
           <h2 className="text-sm font-semibold">Interfaccia</h2>
         </div>
         <Separator />
@@ -116,7 +116,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
       {/* Localizzazione */}
       <div className="rounded-lg border bg-card p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <IconWorld size={16} className="text-muted-foreground" />
+          <Earth size={16} className="text-muted-foreground" />
           <h2 className="text-sm font-semibold">Localizzazione</h2>
         </div>
         <Separator />
@@ -188,7 +188,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
       {/* Notifiche */}
       <div className="rounded-lg border bg-card p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <IconBell size={16} className="text-muted-foreground" />
+          <Bell size={16} className="text-muted-foreground" />
           <h2 className="text-sm font-semibold">Notifiche</h2>
         </div>
         <Separator />
@@ -247,7 +247,7 @@ export function PreferencesForm({ settings }: PreferencesFormProps) {
       {/* Dashboard */}
       <div className="rounded-lg border bg-card p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <IconLayoutDashboard size={16} className="text-muted-foreground" />
+          <LayoutDashboard size={16} className="text-muted-foreground" />
           <h2 className="text-sm font-semibold">Dashboard</h2>
         </div>
         <Separator />

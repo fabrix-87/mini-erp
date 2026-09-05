@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { updatePasswordAction } from "@/actions/settings/update-password-actions";
-import { IconLock } from "@tabler/icons-react";
+import { Lock } from "lucide-react";
 
 /**
  * Form for changing the current user's password.
@@ -48,7 +48,7 @@ export function ChangePasswordForm() {
   return (
     <div className="rounded-lg border bg-card p-5 space-y-4">
       <div className="flex items-center gap-2">
-        <IconLock size={16} className="text-muted-foreground" />
+        <Lock size={16} className="text-muted-foreground" />
         <h2 className="text-sm font-semibold">Cambia password</h2>
       </div>
       <Separator />

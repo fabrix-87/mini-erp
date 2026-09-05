@@ -150,7 +150,7 @@ users/components/
 | Auth | jose (JWT) |
 | HTTP Client | Axios |
 | Notifications | sonner |
-| Icons | @tabler/icons-react · lucide-react |
+| Icons | lucide-react |
 | Date Utilities | date-fns v4 |
 | Package Manager | Bun |
 

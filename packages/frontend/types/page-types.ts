@@ -1,11 +1,12 @@
+import { AppIconName } from "@/config/icons";
 import { ActionResult } from "@/lib/server/action";
-import { DeleteApiResponse } from "./api";
 
 export interface PageIdProps {
   params: Promise<{ id: string }>;
 }
 
-export type PageHeaderActionIcon = "plus" | "pencil" | "trash" | "download";
+export type PageHeaderActionIcon = AppIconName;
+
 export type PageHeaderActionIntent = "navigate" | "delete" | "export" | "custom";
 export type PageHeaderActionVariant = "default" | "outline" | "secondary" | "ghost" | "destructive";
 
@@ -27,7 +28,7 @@ export interface PageHeaderAction {
    * Server → Client boundary; use this when the parent is a Server Component.
    * Takes precedence over `onClick` when both are set.
    */
-  action?: () => Promise<ActionResult<DeleteApiResponse>>;
+  action?: () => Promise<ActionResult<any>>;
   /**
    * Se presente, il click apre un dialog di conferma prima di eseguire
    * `action` o `onClick`. Ideale per azioni distruttive (delete).
@@ -39,6 +40,7 @@ export interface PageHeaderAction {
   disabled?: boolean;
   variant?: PageHeaderActionVariant;
   order?: number;
+  className?: string;
 }
 
 /**

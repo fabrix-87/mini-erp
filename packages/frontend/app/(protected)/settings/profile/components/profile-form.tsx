@@ -32,7 +32,7 @@ import {
   type ProfileFormValues,
 } from "@mini-erp/shared";
 import { updateProfileAction } from "@/actions/settings/update-profile-actions";
-import { IconUser, IconId, IconMapPin, IconLock } from "@tabler/icons-react";
+import { IdCardIcon, LockIcon, PinIcon, UserIcon } from "lucide-react";
 
 interface ProfileFormProps {
   user: User;
@@ -89,7 +89,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
         {/* Account */}
         <div className="rounded-lg border bg-card p-5 space-y-4">
           <div className="flex items-center gap-2">
-            <IconUser size={16} className="text-muted-foreground" />
+            <UserIcon size={16} className="text-muted-foreground" />
             <h2 className="text-sm font-semibold">Account</h2>
           </div>
           <Separator />
@@ -125,7 +125,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
             <FormItem>
               <FormLabel className="text-xs text-muted-foreground flex items-center gap-1">
                 Email
-                <IconLock size={11} className="text-muted-foreground/60" />
+                <LockIcon size={11} className="text-muted-foreground/60" />
               </FormLabel>
               <Input value={user.email} disabled readOnly />
               <p className="text-xs text-muted-foreground mt-1">
@@ -138,7 +138,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
         {/* Dati personali */}
         <div className="rounded-lg border bg-card p-5 space-y-4">
           <div className="flex items-center gap-2">
-            <IconId size={16} className="text-muted-foreground" />
+            <IdCardIcon size={16} className="text-muted-foreground" />
             <h2 className="text-sm font-semibold">Dati personali</h2>
           </div>
           <Separator />
@@ -247,7 +247,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
         {/* Indirizzo */}
         <div className="rounded-lg border bg-card p-5 space-y-4">
           <div className="flex items-center gap-2">
-            <IconMapPin size={16} className="text-muted-foreground" />
+            <PinIcon size={16} className="text-muted-foreground" />
             <h2 className="text-sm font-semibold">Indirizzo</h2>
           </div>
           <Separator />

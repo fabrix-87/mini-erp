@@ -3,6 +3,7 @@ import { ServerApiError, ServerRequestOptions } from "@/types/server-client";
 import { getCookiesString } from "./cookies";
 import { ApiResponse, ApiError as ApiErrorType } from "@mini-erp/shared";
 import { getFingerprintForSSR } from "./fingerprint";
+import { notFound } from "next/navigation";
 
 // ============================================================================
 // Configuration
@@ -133,6 +134,7 @@ class ServerApiClient {
       revalidate,
       tags,
       unwrapData = true,
+      allow404 = false,
       ...fetchOptions
     } = options;
 
@@ -150,7 +152,7 @@ class ServerApiClient {
       },
     });
 
-    return handleResponse<T>(response, unwrapData);
+    return handleResponse<T>(response, unwrapData, allow404);
   }
 }
 
@@ -254,11 +256,17 @@ export function buildUrl(baseUrl: string, endpoint: string, params?: Record<stri
 export async function handleResponse<T>(
   response: Response,
   unwrapData: boolean = true,
+  allow404: boolean = false,
 ): Promise<T> {
   const contentType = response.headers.get("content-type");
   const isJson = contentType?.includes("application/json");
 
   if (!response.ok) {
+    // 404 → Next.js not-found boundary (renders not-found.tsx)
+    if (response.status === 404 && !allow404) {
+      notFound();
+    }
+
     if (isJson) {
       const errorBody: ApiErrorType = await response.json();
       throw new ServerApiError(

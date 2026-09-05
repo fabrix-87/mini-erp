@@ -1,6 +1,7 @@
 "use server";
 
 import { serverApi } from "@/lib/server/api";
+import { DeleteApiResponse } from "@/types/api";
 import {
   type OpportunityListApiResponse,
   type OpportunityStatsApiResponse,
@@ -125,6 +126,24 @@ export async function updateOpportunity(
 /**
  * Delete an opportunity.
  */
-export async function deleteOpportunity(id: string): Promise<void> {
+export async function deleteOpportunity(id: string): Promise<DeleteApiResponse> {
   return serverApi.delete(`/opportunities/${id}`);
+}
+
+/**
+ * Close opportunity as Won
+ * @param id 
+ * @returns 
+ */
+export async function closeOpportunityWon(id: string): Promise<void> {
+  return serverApi.patch(`/opportunities/${id}/close-won`)
+}
+
+/**
+ * Close opportunity as Lost
+ * @param id 
+ * @returns 
+ */
+export async function closeOpportunityLost(id: string): Promise<void> {
+  return serverApi.patch(`/opportunities/${id}/close-lost`)
 }

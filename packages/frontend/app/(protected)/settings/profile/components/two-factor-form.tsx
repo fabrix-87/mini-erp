@@ -29,11 +29,11 @@ import {
   disableTwoFactorAction,
   enableTwoFactorAction,
 } from "@/actions/settings/toggle-two-factor-actions";
-import { IconShieldCheck, IconShieldOff, IconShieldLock } from "@tabler/icons-react";
 
 interface TwoFactorFormProps {
   twoFactorEnabled: boolean;
 }
+import { ShieldCheck, ShieldOff, ShieldUser } from 'lucide-react';
 
 /**
  * 2FA management section.
@@ -95,7 +95,7 @@ export function TwoFactorForm({ twoFactorEnabled }: TwoFactorFormProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <IconShieldLock size={16} className="text-muted-foreground" />
+          <ShieldUser size={16} className="text-muted-foreground" />
           <h2 className="text-sm font-semibold">Autenticazione a due fattori</h2>
         </div>
         <Badge
@@ -122,7 +122,7 @@ export function TwoFactorForm({ twoFactorEnabled }: TwoFactorFormProps) {
           disabled={isPending}
           className="gap-2"
         >
-          <IconShieldCheck size={15} />
+          <ShieldCheck size={15} />
           Attiva 2FA
         </Button>
       )}
@@ -186,7 +186,7 @@ export function TwoFactorForm({ twoFactorEnabled }: TwoFactorFormProps) {
           onClick={() => setShowDisable(true)}
           className="gap-2 text-destructive hover:text-destructive border-destructive/30 hover:border-destructive/60 hover:bg-destructive/5"
         >
-          <IconShieldOff size={15} />
+          <ShieldOff size={15} />
           Disattiva 2FA
         </Button>
       )}

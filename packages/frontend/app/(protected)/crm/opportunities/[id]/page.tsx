@@ -1,62 +1,98 @@
 // app/(protected)/crm/opportunities/[id]/page.tsx
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
 import { getOpportunityById } from "@/services/server/opportunity-service";
 import { formatDateIT } from "@/helpers/date-helper";
-import type { PageIdProps } from "@/types/page-types";
-import { OpportunityDetailActions } from "../components/opportunity-detail-actions";
+import { type PageHeaderAction, type PageIdProps } from "@/types/page-types";
 import { OpportunityDetailHero } from "../components/opportunity-detail-hero";
 import { OpportunityDetailOverview } from "../components/opportunity-detail-overview";
 import { OpportunityDetailCommercial } from "../components/opportunity-detail-commercial";
 import { OpportunityDetailActivities } from "../components/opportunity-detail-activities";
+import { checkEntityPermissions, requirePermission } from "@/lib/server/auth";
+import { getTranslations } from "next-intl/server";
+import { createDeleteServerAction, createEditAction } from "@/helpers/page-header-actions-helper";
+import { getEditRoute } from "@/lib/navigation-routes";
+import {
+  closeOppotunityLostAction,
+  closeOppotunityWonAction,
+  deleteOpportunityAction,
+} from "@/actions/opportunity-actions";
+import { PageHeader } from "@/components/page-header";
 
 /**
  * Opportunity detail page — Server Component.
  * Fetches opportunity data server-side and delegates interactive actions to client islands.
  */
 export default async function OpportunityDetailPage({ params }: PageIdProps) {
+  await requirePermission("opportunity:read");
   const { id } = await params;
+  const t = await getTranslations("crm");
 
-  const opportunity = await getOpportunityById(id);
-  if (!opportunity) notFound();
+  const [opportunity, permissions] = await Promise.all([
+    getOpportunityById(id),
+    checkEntityPermissions("opportunity"),
+  ]);
+
+  const isCloseable = opportunity.status === "OPEN" || opportunity.status === "PENDING";
+
+  const closeWonAction = closeOppotunityWonAction.bind(null, id);
+  const closeLostAction = closeOppotunityLostAction.bind(null, id);
+  const deleteAction = deleteOpportunityAction.bind(null, id);
+
+  const actionItems: PageHeaderAction[] = [
+    {
+      key: "win",
+      label: t("opportunities.stats.won"),
+      action: closeWonAction,
+      visible: isCloseable,
+      icon: "trophy",
+      className: "text-green-600 border-green-200 hover:bg-green-50",
+      variant: 'outline'
+    },
+    {
+      key: "lost",
+      label: t("opportunities.stats.lost"),
+      action: closeLostAction,
+      visible: isCloseable,
+      icon: "x-circle",
+      className: "text-destructive border-destructive/20 hover:bg-destructive/5",
+      variant: 'outline'
+    },
+    createEditAction(
+      "update",
+      t("editButton") ?? "Modifica",
+      getEditRoute("opportunities", id),
+      permissions.canUpdate,
+    ),
+    createDeleteServerAction(
+      "delete",
+      t("deleteButton") ?? "Elimina",
+      deleteAction,
+      {
+        title: t("deleteDialogTitle", {
+          name: opportunity.title,
+        }),
+        description: t("deleteDialogDescription"),
+        confirmLabel: t("deleteDialogConfirm"),
+        cancelLabel: t("deleteDialogCancel"),
+      },
+      permissions.canDelete,
+    ),
+  ];
 
   return (
     <>
-      <BreadcrumbSetter
-        items={[
-          { label: "Opportunità", href: "/crm/opportunities" },
-          { label: opportunity.title },
-        ]}
+      <PageHeader
+        actionItems={actionItems}
+        extraBreadcrumbs={[{ label: opportunity.title }]}
+        title={opportunity.title}
+        subtitle={t('opportunities.detail.description', {
+          date: formatDateIT(opportunity.createdAt),
+          user: `${opportunity.createdBy.details?.firstName} ${opportunity.createdBy.details?.lastName}`
+        })}
       />
 
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/crm/opportunities">
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">{opportunity.title}</h1>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                Creata il {formatDateIT(opportunity.createdAt)}
-                {opportunity.createdBy && (
-                  <> · da {opportunity.createdBy.details?.firstName} {opportunity.createdBy.details?.lastName}</>
-                )}
-              </p>
-            </div>
-          </div>
-
-          {/* Client island: Edit / Win / Lose / Delete */}
-          <OpportunityDetailActions opportunity={opportunity} />
-        </div>
-
+      <div className="space-y-6">       
         {/* Hero KPI card */}
         <OpportunityDetailHero opportunity={opportunity} />
 

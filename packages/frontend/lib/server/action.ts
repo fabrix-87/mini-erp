@@ -4,6 +4,7 @@
 import { redirect } from "next/navigation";
 import { requireAdmin, requireAuth, requirePermission, requireRole } from "@/lib/server/auth";
 import { ServerApiError } from "@/types/server-client";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 // ============================================================================
 // Types
@@ -57,6 +58,9 @@ export async function withAuth<T>(
     const data = await action();
     return { success: true, data };
   } catch (error) {
+    // Rilascia redirect e notFound — non sono errori applicativi
+    if (isRedirectError(error)) throw error;
+
     console.error("Server action error:", error);
 
     if (error instanceof ServerApiError) {
@@ -88,6 +92,9 @@ export async function withSelf<T>(action: () => Promise<T>): Promise<ActionResul
     const data = await action();
     return { success: true, data };
   } catch (error) {
+    // Rilascia redirect e notFound — non sono errori applicativi
+    if (isRedirectError(error)) throw error;
+    
     console.error("Server action error (self):", error);
     if (error instanceof ServerApiError) {
       if (error.statusCode === 401) redirect("/login");

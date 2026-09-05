@@ -2,15 +2,10 @@
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { TenantWithDetails } from "@mini-erp/shared";
-import {
-  IconBuilding,
-  IconChartBar,
-  IconFileInvoice,
-  IconSettings,
-  IconUsers,
-} from "@tabler/icons-react";
+
 import { getTranslations } from "next-intl/server";
 import { BreadcrumbSetter } from "@/components/ui/breadcrumb-setter";
+import { Building, ChartBar, FileText, Settings, Users } from "lucide-react";
 
 interface TenantDetailsProps {
   tenant: TenantWithDetails;
@@ -32,7 +27,7 @@ export async function TenantDetails({ tenant }: TenantDetailsProps) {
       {/* Azienda */}
       <div className="rounded-lg border bg-card p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <IconBuilding size={16} className="text-muted-foreground" />
+          <Building size={16} className="text-muted-foreground" />
           <h2 className="text-sm font-semibold">{t("sections.company")}</h2>
         </div>
         <Separator />
@@ -80,7 +75,7 @@ export async function TenantDetails({ tenant }: TenantDetailsProps) {
       {/* Configurazione fiscale */}
       <div className="rounded-lg border bg-card p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <IconFileInvoice size={16} className="text-muted-foreground" />
+          <FileText size={16} className="text-muted-foreground" />
           <h2 className="text-sm font-semibold">{t("sections.fiscal")}</h2>
         </div>
         <Separator />
@@ -95,7 +90,7 @@ export async function TenantDetails({ tenant }: TenantDetailsProps) {
       {/* Piano e stato */}
       <div className="rounded-lg border bg-card p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <IconSettings size={16} className="text-muted-foreground" />
+          <Settings size={16} className="text-muted-foreground" />
           <h2 className="text-sm font-semibold">{t("sections.plan")}</h2>
         </div>
         <Separator />
@@ -127,7 +122,7 @@ export async function TenantDetails({ tenant }: TenantDetailsProps) {
       {/* Riepilogo dati */}
       <div className="rounded-lg border bg-card p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <IconChartBar size={16} className="text-muted-foreground" />
+          <ChartBar size={16} className="text-muted-foreground" />
           <h2 className="text-sm font-semibold">{t("sections.stats")}</h2>
         </div>
         <Separator />
@@ -135,7 +130,7 @@ export async function TenantDetails({ tenant }: TenantDetailsProps) {
           <StatCard
             label={t("stats.memberships")}
             value={_count.memberships}
-            icon={<IconUsers size={14} />}
+            icon={<Users size={14} />}
           />
           <StatCard label={t("stats.customers")} value={_count.customers} />
           <StatCard label={t("stats.suppliers")} value={_count.suppliers} />

@@ -4,12 +4,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { IconUser, IconShield, IconAdjustments } from "@tabler/icons-react";
+import { ShieldIcon, UserCog, UserIcon } from "lucide-react";
 
 const NAV_ITEMS = [
-  { label: "Profilo", href: "/settings/profile", icon: IconUser },
-  { label: "Sicurezza", href: "/settings/profile/security", icon: IconShield },
-  { label: "Preferenze", href: "/settings/profile/preferences", icon: IconAdjustments },
+  { label: "Profilo", href: "/settings/profile", icon: UserIcon },
+  { label: "Sicurezza", href: "/settings/profile/security", icon: ShieldIcon },
+  { label: "Preferenze", href: "/settings/profile/preferences", icon: UserCog },
 ] as const;
 
 /**

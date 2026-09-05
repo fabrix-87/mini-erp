@@ -1,6 +1,8 @@
 "use server";
 
 import {
+  closeOpportunityLost,
+  closeOpportunityWon,
   createOpportunity,
   deleteOpportunity,
   updateOpportunity,
@@ -8,6 +10,8 @@ import {
 import { opportunityRevalidation } from "@/lib/server/revalidate";
 import { ActionResult, withAuth } from "@/lib/server/action";
 import { CreateOpportunityFormValues, OpportunityComplete, UpdateOpportunityFormValues } from "@mini-erp/shared";
+import { redirect } from "next/navigation";
+import { getRoute } from "@/lib/navigation-routes";
 
 // ============================================================================
 // Opportunity CRUD Actions
@@ -57,5 +61,20 @@ export async function deleteOpportunityAction(id: string): Promise<ActionResult<
   return withAuth(async () => {
     await deleteOpportunity(id);
     opportunityRevalidation.opportunityWithList(id);
+    redirect(getRoute("opportunities"));
   }, "opportunity:delete");
+}
+
+export async function closeOppotunityWonAction(id: string): Promise<ActionResult<void>> {
+  return withAuth(async () => {
+    await closeOpportunityWon(id);
+    opportunityRevalidation.opportunityWithList(id);
+  }, "opportunity:update")
+}
+
+export async function closeOppotunityLostAction(id: string): Promise<ActionResult<void>> {
+  return withAuth(async () => {
+    await closeOpportunityLost(id);
+    opportunityRevalidation.opportunityWithList(id);
+  }, "opportunity:update")
 }

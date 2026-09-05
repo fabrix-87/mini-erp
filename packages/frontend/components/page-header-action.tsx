@@ -2,12 +2,10 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Download, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   PageHeaderAction,
-  PageHeaderActionIcon,
   PageHeaderActionIntent,
   PageHeaderActionVariant,
 } from "@/types/page-types";
@@ -21,13 +19,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
-
-const ICON_MAP: Record<PageHeaderActionIcon, React.ComponentType<{ className?: string }>> = {
-  plus: Plus,
-  pencil: Pencil,
-  trash: Trash2,
-  download: Download,
-};
+import { Loader2 } from "lucide-react";
+import { AppIcon } from "./ui/app-icon";
 
 /** Sensible default button variant per intent, used only when `variant` is not explicitly set. */
 const INTENT_VARIANT_MAP: Record<PageHeaderActionIntent, PageHeaderActionVariant> = {
@@ -47,8 +40,7 @@ interface PageHeaderActionsProps {
  * (`onClick`), with an automatic pending state for async handlers.
  */
 export function PageHeaderActions({ actions }: PageHeaderActionsProps): React.JSX.Element | null {
-  const visibleActions = actions
-    .filter((action) => action.visible !== false);
+  const visibleActions = actions.filter((action) => action.visible !== false);
 
   if (visibleActions.length === 0) {
     return null;
@@ -66,15 +58,15 @@ export function PageHeaderActions({ actions }: PageHeaderActionsProps): React.JS
 function PageHeaderActionButton({ action }: { action: PageHeaderAction }): React.JSX.Element {
   const [isPending, startTransition] = useTransition();
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const Icon = action.icon ? ICON_MAP[action.icon] : null;
+
   const variant = action.variant ?? (action.intent ? INTENT_VARIANT_MAP[action.intent] : "default");
 
   // Navigation action: rendered as a Link, never carries a pending state.
   if (action.href) {
     return (
-      <Button asChild size="sm" variant={variant} className="h-8" disabled={action.disabled}>
+      <Button asChild size="sm" variant={variant} className={action.className ?? 'h-8'} disabled={action.disabled}>
         <Link href={action.href}>
-          {Icon && <Icon className="mr-1 h-3 w-3" />}
+          {action.icon && <AppIcon name={action.icon} className="mr-1 h-3 w-3" />}
           {action.label}
         </Link>
       </Button>
@@ -109,7 +101,7 @@ function PageHeaderActionButton({ action }: { action: PageHeaderAction }): React
         type="button"
         size="sm"
         variant={variant}
-        className={cn("h-8 text-xs", isPending && "cursor-wait")}
+        className={cn(action.className ?? "h-8 text-xs", isPending && "cursor-wait")}
         disabled={action.disabled || isPending || (!action.onClick && !action.action)}
         aria-busy={isPending}
         onClick={handleClick}
@@ -117,7 +109,7 @@ function PageHeaderActionButton({ action }: { action: PageHeaderAction }): React
         {isPending ? (
           <Loader2 className="mr-1 h-3 w-3 animate-spin" />
         ) : (
-          Icon && <Icon className="mr-1 h-3 w-3" />
+          action.icon && <AppIcon name={action.icon} className="mr-1 h-3 w-3" />
         )}
         {action.label}
       </Button>

@@ -295,6 +295,9 @@
       "cancel": "Annulla",
       "saveChanges": "Salva modifiche",
       "create": "Crea opportunità"
+    },
+    "detail": {
+      "description": "Creata il {date} da {user}"
     }
   },
   "editButton": "Modifica",
