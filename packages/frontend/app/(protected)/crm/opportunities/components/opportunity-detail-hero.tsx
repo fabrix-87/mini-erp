@@ -2,18 +2,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Clock, CalendarCheck } from "lucide-react";
-import type { OpportunityComplete } from "@mini-erp/shared";
+import type { OpportunityComplete, SalesStage } from "@mini-erp/shared";
 import { formatDateIT } from "@/helpers/date-helper";
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
-/** Maps SalesStage to a human-readable Italian label */
-const STAGE_LABELS: Record<string, string> = {
-  LEAD_QUALIFICATION: "Qualificazione",
-  PROSPECTING: "Prospecting",
-  NEEDS_ANALYSIS: "Analisi bisogni",
-  PROPOSAL_SENT: "Offerta inviata",
-  NEGOTIATION: "Negoziazione",
-  COMMITMENT: "Impegno",
-};
+interface OpportunityDetailHeroProps {
+  opportunity: OpportunityComplete;
+}
 
 /** Maps OpportunityStatus to badge variant */
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
@@ -23,10 +19,6 @@ const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "
   PENDING: "secondary",
   CLOSED: "outline",
 };
-
-interface OpportunityDetailHeroProps {
-  opportunity: OpportunityComplete;
-}
 
 /**
  * Hero KPI card for the opportunity detail page.
@@ -47,6 +39,21 @@ export function OpportunityDetailHero({ opportunity }: OpportunityDetailHeroProp
       })
     : "—";
 
+  const t = useTranslations("crm.opportunities");
+
+  /** Maps SalesStage */
+  const STAGE_LABELS = useMemo<Record<SalesStage, string>>(
+    () => ({
+      LEAD_QUALIFICATION: t("stage.lead_qualification"),
+      PROSPECTING: t("stage.prospecting"),
+      NEEDS_ANALYSIS: t("stage.needs_analysis"),
+      PROPOSAL_SENT: t("stage.proposal_sent"),
+      NEGOTIATION: t("stage.negotiation"),
+      COMMITMENT: t("stage.commitment"),
+    }),
+    [t],
+  );
+
   return (
     <Card>
       <CardContent className="pt-6">
@@ -54,44 +61,51 @@ export function OpportunityDetailHero({ opportunity }: OpportunityDetailHeroProp
           {/* Valore stimato */}
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-              Valore stimato
+              {t("form.estimatedValue")}
             </p>
             <p className="text-xl font-bold tabular-nums">{estimatedValue}</p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Ponderato: {weightedValue}
+              {t("detail.weightedValue")}: {weightedValue}
             </p>
           </div>
 
           {/* Probabilità */}
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-              Probabilità
+              {t("form.probability")}
             </p>
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
               <p className="text-xl font-bold tabular-nums">{opportunity.probability}%</p>
             </div>
-            <Badge variant={STATUS_VARIANT[opportunity.status] ?? "outline"} className="mt-1 text-xs">
-              {opportunity.status}
+            <Badge
+              variant={STATUS_VARIANT[opportunity.status] ?? "outline"}
+              className="mt-1 text-xs"
+            >
+              {t(`status.${opportunity.status.toLowerCase()}`)}
             </Badge>
           </div>
 
           {/* Stage */}
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Stage</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">{t('form.stage')}</p>
             <p className="text-sm font-medium">
               {STAGE_LABELS[opportunity.stage] ?? opportunity.stage}
             </p>
             <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />
-              <span>{opportunity.daysInCurrentStage} giorni in questo stage</span>
+              <span>
+                {t("detail.daysInCurrentStage", {
+                  daysInCurrentStage: opportunity.daysInCurrentStage,
+                })}
+              </span>
             </div>
           </div>
 
           {/* Chiusura prevista */}
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-              Chiusura prevista
+              {t('form.expectedCloseDate')}
             </p>
             {opportunity.expectedCloseDate ? (
               <div className="flex items-center gap-2">
@@ -99,11 +113,11 @@ export function OpportunityDetailHero({ opportunity }: OpportunityDetailHeroProp
                 <p className="text-sm font-medium">{formatDateIT(opportunity.expectedCloseDate)}</p>
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">Non definita</p>
+              <p className="text-sm text-muted-foreground">{t('detail.notDefined')}</p>
             )}
             {opportunity.assignedUser && (
               <p className="text-xs text-muted-foreground mt-1">
-                Assegnato a{" "}
+                {t('form.assignedUser')}{" "}
                 <span className="font-medium text-foreground">
                   {opportunity.assignedUser.details?.firstName}{" "}
                   {opportunity.assignedUser.details?.lastName}

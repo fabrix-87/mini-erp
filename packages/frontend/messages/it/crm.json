@@ -297,7 +297,21 @@
       "create": "Crea opportunità"
     },
     "detail": {
-      "description": "Creata il {date} da {user}"
+      "description": "Creata il {date} da {user}",
+      "weightedValue": "Ponderato",
+      "daysInCurrentStage": "{daysInCurrentStage} giorni in questo stage",
+      "notDefined": "Non definita",
+      "leadRelated": "Lead Collegato",
+      "customer": "Cliente",
+      "opportunityData": "Dati opportunità",
+      "createdAt": "Creata il",
+      "updatedAt": "Aggiornata il",
+      "lastStageChange": "Ultimo cambio stage",
+      "notes": "Note",
+      "noProducts": "Nessun prodotto proposto per questa opportunità.",
+      "proposedProducts": "Prodotti proposti",
+      "product": "Prodotto",
+      "total": "Totale"
     }
   },
   "editButton": "Modifica",

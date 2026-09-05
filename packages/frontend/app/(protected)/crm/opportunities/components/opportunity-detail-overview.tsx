@@ -4,15 +4,18 @@ import { Separator } from "@/components/ui/separator";
 import { Building2, User } from "lucide-react";
 import type { OpportunityComplete } from "@mini-erp/shared";
 import { formatDateIT } from "@/helpers/date-helper";
+import { useTranslations } from "next-intl";
 
-interface Props { opportunity: OpportunityComplete; }
+interface Props {
+  opportunity: OpportunityComplete;
+}
 
 /**
  * Overview tab: source entity (lead or customer), base info, notes.
  */
 export function OpportunityDetailOverview({ opportunity }: Props) {
-  const entity = opportunity.lead ?? opportunity.customer;
-  const entityLabel = opportunity.lead ? "Lead collegato" : "Cliente";
+  const t = useTranslations("crm.opportunities");
+  const entityLabel = opportunity.lead ? t("detail.leadRelated") : t("detail.customer");
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -28,12 +31,18 @@ export function OpportunityDetailOverview({ opportunity }: Props) {
           {opportunity.lead ? (
             <>
               <Row label="Ragione sociale" value={opportunity.lead.companyName} />
-              <Row label="Contatto" value={`${opportunity.lead.contactFirstName} ${opportunity.lead.contactLastName}`} />
+              <Row
+                label="Contatto"
+                value={`${opportunity.lead.contactFirstName} ${opportunity.lead.contactLastName}`}
+              />
               {opportunity.lead.contactEmail && (
                 <Row
                   label="Email"
                   value={
-                    <a href={`mailto:${opportunity.lead.contactEmail}`} className="text-primary hover:underline">
+                    <a
+                      href={`mailto:${opportunity.lead.contactEmail}`}
+                      className="text-primary hover:underline"
+                    >
                       {opportunity.lead.contactEmail}
                     </a>
                   }
@@ -42,7 +51,10 @@ export function OpportunityDetailOverview({ opportunity }: Props) {
             </>
           ) : (
             <>
-              <Row label="Cliente" value={opportunity.customer.company.companyName ?? opportunity.customer.id} />
+              <Row
+                label={t("detail.customer")}
+                value={opportunity.customer.company.companyName ?? opportunity.customer.id}
+              />
             </>
           )}
         </CardContent>
@@ -51,16 +63,19 @@ export function OpportunityDetailOverview({ opportunity }: Props) {
       {/* Dati opportunità */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Dati opportunità</CardTitle>
+          <CardTitle className="text-base">{t("detail.opportunityData")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          <Row label="Fonte" value={opportunity.source} />
-          <Row label="Stage" value={opportunity.stage} />
+          <Row label={t("form.source")} value={t(`source.${opportunity.source.toLowerCase()}`)} />
+          <Row label={t("form.stage")} value={t(`stage.${opportunity.stage.toLowerCase()}`)} />
           <Separator />
-          <Row label="Creata il" value={formatDateIT(opportunity.createdAt)} />
-          <Row label="Aggiornata" value={formatDateIT(opportunity.updatedAt)} />
+          <Row label={t("detail.createdAt")} value={formatDateIT(opportunity.createdAt)} />
+          <Row label={t("detail.updatedAt")} value={formatDateIT(opportunity.updatedAt)} />
           {opportunity.lastStageChange && (
-            <Row label="Ultimo cambio stage" value={formatDateIT(opportunity.lastStageChange)} />
+            <Row
+              label={t("detail.lastStageChange")}
+              value={formatDateIT(opportunity.lastStageChange)}
+            />
           )}
         </CardContent>
       </Card>
@@ -69,7 +84,7 @@ export function OpportunityDetailOverview({ opportunity }: Props) {
       {opportunity.notes && (
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base">Note</CardTitle>
+            <CardTitle className="text-base">{t("detail.notes")}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm whitespace-pre-wrap text-muted-foreground">{opportunity.notes}</p>
