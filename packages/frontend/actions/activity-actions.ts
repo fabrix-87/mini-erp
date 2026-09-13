@@ -6,7 +6,11 @@ import { serverApi } from "@/lib/server/api";
 import { Activity, ActivityFormData } from "@/types/activitiy-types";
 import { ApiResponse, DeleteApiResponse } from "@/types/api";
 import { ServerApiError } from "@/types/server-client";
-import { activityRevalidation } from "@/lib/server/revalidate";
+import {
+  activityRevalidation,
+  leadRevalidation,
+  opportunityRevalidation,
+} from "@/lib/server/revalidate";
 import { ActivityOutcome, ActivityStatus, UpdateActivityInput } from "@mini-erp/shared";
 import {
   completeActivity,
@@ -29,6 +33,10 @@ export async function createActivityAction(
     activityRevalidation.list();
     if (activityData.leadId) {
       activityRevalidation.forLead(activityData.leadId);
+      leadRevalidation.lead(activityData.leadId);
+    }
+    if (activityData.opportunityId) {
+      opportunityRevalidation.opportunity(activityData.opportunityId);
     }
 
     return response.data;

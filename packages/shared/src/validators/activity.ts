@@ -1,6 +1,14 @@
 import z from "zod";
 
-import { activityIdBaseSchema, companyIdBaseSchema, contactIdBaseSchema, customerIdBaseSchema, leadIdBaseSchema, opportunityIdBaseSchema, userIdSchema } from "./base";
+import {
+  activityIdBaseSchema,
+  companyIdBaseSchema,
+  contactIdBaseSchema,
+  customerIdBaseSchema,
+  leadIdBaseSchema,
+  opportunityIdBaseSchema,
+  userIdSchema,
+} from "./base";
 import { isoDateSchema } from "./primitives/date";
 import { createCuidSchema, createIdSchema, positiveNumbersSchema } from "./primitives/id";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
@@ -48,83 +56,109 @@ export const activityOutcomeSchema = z.enum([
 ]);
 
 export const participantStatusSchema = z.enum([
-  "invited",
-  "accepted",
-  "declined",
-  "tentative",
-  "attended",
-  "no_show",
+  "INVITED",
+  "ACCEPTED",
+  "DECLINED",
+  "TENTATIVE",
+  "ATTENDED",
+  "NO_SHOW",
 ]);
 
 export const activitySortFieldsSchema = z.enum(["scheduledStart", "priority"]);
 
-export const participantRoleSchema = z.enum(["organizer", "required", "optional"]);
+export const participantRoleSchema = z.enum(["ORGANIZER", "REQUIRED", "OPTIONAL"]);
 
 // ============================================================================
 // ACTIVITY SCHEMAS
 // ============================================================================
 
 /**
+ * Schema base per una Activity
+ */
+const activityBaseSchema = z.object({
+  // Tipo e priorità
+  type: activityTypeSchema,
+  status: activityStatusSchema.default("SCHEDULED"),
+  priority: activityPrioritySchema.default("MEDIUM"),
+  outcome: activityOutcomeSchema.optional().nullable(),
+
+  // Informazioni base
+  subject: z
+    .string()
+    .min(1, "Il subject è obbligatorio")
+    .max(255, "Il subject non può superare 255 caratteri")
+    .trim(),
+  description: z.string().default(""),
+  location: z.string().max(255).optional().nullable(),
+
+  // Date e durata
+  scheduledStart: isoDateSchema({ required: true, message: "Data inizio non valida" }),
+  scheduledEnd: isoDateSchema({ message: "Data fine non valida" }).nullish(),
+  actualStart: isoDateSchema({ message: "Data inizio effettiva non valida" }).nullish(),
+  actualEnd: isoDateSchema({ message: "Data fine effettiva non valida" }).nullish(),
+  duration: positiveNumbersSchema.optional().nullable(),
+
+  // Promemoria
+  reminderMinutes: positiveNumbersSchema.optional().nullable(),
+  reminderSent: z.boolean().default(false),
+
+  // Relazioni
+  companyId: companyIdBaseSchema.optional().nullable(),
+  customerId: customerIdBaseSchema.optional().nullable(),
+  contactId: contactIdBaseSchema.optional().nullable(),
+  opportunityId: opportunityIdBaseSchema.optional().nullable(),
+  leadId: leadIdBaseSchema.nullable(),
+
+  // Follow-up
+  followUpActivityId: activityIdBaseSchema.optional().nullable(),
+
+  // Allegati e note
+  attachments: z.any().optional().nullable(),
+  internalNotes: z.string().optional().nullable(),
+  result: z.string().optional().nullable(),
+  customFields: z.any().optional().nullable(),
+});
+
+/**
  * Schema per la creazione di una Activity
  */
-export const createActivitySchema = z
-  .object({
-    // Tipo e priorità
-    type: activityTypeSchema,
-    status: activityStatusSchema.default("SCHEDULED"),
-    priority: activityPrioritySchema.default("MEDIUM"),
-    outcome: activityOutcomeSchema.optional().nullable(),
-
-    // Informazioni base
-    subject: z
-      .string()
-      .min(1, "Il subject è obbligatorio")
-      .max(255, "Il subject non può superare 255 caratteri")
-      .trim(),
-    description: z.string().optional().nullable(),
-    location: z.string().max(255).optional().nullable(),
-
-    // Date e durata
-    scheduledStart: z.iso.datetime("Data inizio non valida"),
-    scheduledEnd: isoDateSchema({ message: "Data fine non valida" }),
-    actualStart: isoDateSchema({ message: "Data inizio effettiva non valida" }),
-    actualEnd: isoDateSchema({ message: "Data fine effettiva non valida" }),
-    duration: positiveNumbersSchema.optional().nullable(),
-
-    // Promemoria
-    reminderMinutes: positiveNumbersSchema.optional().nullable(),
-    reminderSent: z.boolean().default(false),
-
-    // Relazioni
-    companyId: companyIdBaseSchema.optional().nullable(),
-    customerId: customerIdBaseSchema.optional().nullable(),
-    contactId: contactIdBaseSchema.optional().nullable(),
-    opportunityId: opportunityIdBaseSchema.optional().nullable(),
-    leadId: leadIdBaseSchema.nullable(),
-
+export const createActivitySchema = activityBaseSchema
+  .extend({
     // Utente assegnato (obbligatorio)
     assignedUserId: userIdSchema,
-
-    // Follow-up
-    followUpActivityId: activityIdBaseSchema.optional().nullable(),
-
-    // Allegati e note
-    attachments: z.any().optional().nullable(),
-    internalNotes: z.string().optional().nullable(),
-    result: z.string().optional().nullable(),
-    customFields: z.any().optional().nullable(),
   })
-  .strict();
+  .strict()
+  .superRefine((data, ctx) => {
+    // 1. Validazione: scheduledStart > ora attuale
+    if (data.scheduledStart) {
+      const startDate = new Date(data.scheduledStart);
+      if (!isNaN(startDate.getTime()) && startDate <= new Date()) {
+        ctx.addIssue({
+          code: "custom",
+          message: "La data di inizio deve essere futura rispetto a ora",
+          path: ["scheduledStart"],
+        });
+      }
+    }
+    // 2. Validazione: scheduledEnd > scheduledStart
+    if (data.scheduledStart && data.scheduledEnd) {
+      const startDate = new Date(data.scheduledStart);
+      const endDate = new Date(data.scheduledEnd);
+
+      if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime()) && endDate <= startDate) {
+        ctx.addIssue({
+          code: "custom",
+          message: "La data di fine deve essere successiva alla data di inizio",
+          path: ["scheduledEnd"],
+        });
+      }
+    }
+  });
 
 /**
  * Schema per l'aggiornamento di una Activity
  */
-export const updateActivitySchema = createActivitySchema
-  .omit({
-    assignedUserId: true,
-  })
-  .partial()
-  .strict();
+export const updateActivitySchema = activityBaseSchema.partial().strict();
 
 /**
  * Schema per la validazione dell'ID activity
@@ -225,18 +259,18 @@ export const completeActivitySchema = z
  */
 export const createActivityParticipantSchema = z
   .object({
-    activityId: createIdSchema("Activity ID non valido"),
+    activityId: activityIdBaseSchema,
 
     // Uno dei tre deve essere presente
     userId: userIdSchema.optional().nullable(),
-    contactId: createIdSchema("ID contatto non valido").optional().nullable(),
+    contactId: contactIdBaseSchema.optional().nullable(),
 
     // Per partecipanti esterni
     externalEmail: emailSchema().optional().nullable(),
     externalName: z.string().max(255).optional().nullable(),
 
-    status: participantStatusSchema.default("invited"),
-    role: participantRoleSchema.default("optional"),
+    status: participantStatusSchema.default("INVITED"),
+    role: participantRoleSchema.default("OPTIONAL"),
     notes: z.string().optional().nullable(),
   })
   .strict()
@@ -266,7 +300,7 @@ export const updateActivityParticipantSchema = z
  * Schema per la validazione dell'ID participant
  */
 export const activityParticipantIdSchema = z.object({
-  id: createIdSchema("ID partecipante non valido"),
+  id: createCuidSchema("ID partecipante non valido"),
 });
 
 // ============================================================================
@@ -322,9 +356,9 @@ export const createActivityFromTemplateSchema = z
     description: z.string().optional().nullable(),
 
     // Relazioni obbligatorie
-    companyId: positiveNumbersSchema,
-    customerId: positiveNumbersSchema,
-    opportunityId: positiveNumbersSchema,
+    companyId: companyIdBaseSchema,
+    customerId: customerIdBaseSchema,
+    opportunityId: opportunityIdBaseSchema,
     assignedUserId: userIdSchema,
   })
   .strict()

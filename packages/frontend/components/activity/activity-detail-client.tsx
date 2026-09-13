@@ -38,10 +38,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { Activity } from "@/types/activitiy-types";
-import { deleteActivity } from "@/actions/activity-actions";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
 import { formatDateIT } from "@/helpers/date-helper";
 import Link from "next/link";
+import { deleteActivityAction } from "@/actions/activity-actions";
 
 const activityTypeIcons: Record<string, any> = {
   CALL: Phone,
@@ -91,7 +91,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      await deleteActivity(activity.id);
+      await deleteActivityAction(activity.id);
       toast.success("Attività eliminata con successo");
       router.push("/activities");
     } catch (error: any) {

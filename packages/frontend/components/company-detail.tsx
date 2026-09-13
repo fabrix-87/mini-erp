@@ -35,7 +35,6 @@ export default function CompanyDetailPage({ data, companyType }: CompanyFormProp
 
   const entityId = data.id;
 
-
   // Delete mutations
   const deleteCustomerMutation = useDeleteCustomer();
   const deleteSupplierMutation = useDeleteSupplier();

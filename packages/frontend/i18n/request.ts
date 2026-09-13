@@ -30,7 +30,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   }
 
   // Load all namespaces upfront — avoids missing messages on client-side navigation
-  const namespaces = ["nav", "common", "errors", "system", "crm", "finance", "admin", "overview"];
+  const namespaces = ["nav", "common", "errors", "system", "crm", "finance", "admin", "overview", "activities"];
 
   const loaded = await Promise.all(
     namespaces.map((ns) =>

@@ -1,14 +1,12 @@
-import { Response } from "express";
-import { Prisma } from "../../generated/prisma/client";
-import { prisma } from "../../config/prisma-config";
-import asyncHandler from "../../middleware/async-handler-middleware";
+import { Prisma } from "@/generated/prisma/client";
+import { prisma } from "@/config/prisma-config";
 import {
   sendSuccess,
   sendCreated,
   sendDeleted,
   sendError,
   sendNotFound,
-} from "../../utils/response-utils";
+} from "@/utils/response-utils";
 import {
   CreateActivityTemplateInput,
   UpdateActivityTemplateInput,
@@ -25,6 +23,7 @@ import {
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
@@ -153,6 +152,7 @@ export const createActivityFromTemplate = async (c: Context<AppBindings>) => {
   } = getValidatedBody<CreateActivityFromTemplateInput>(c);
 
   const userId = c.get("user")!.userId;
+  const tenantId = getRequiredTenantId(c)
 
   const template = await prisma.activityTemplate.findUnique({
     where: { id: Number(id) },
@@ -211,6 +211,7 @@ export const createActivityFromTemplate = async (c: Context<AppBindings>) => {
     company: connectOrDisconnectById(companyId),
     customer: connectOrDisconnectById(customerId),
     opportunity: connectOrDisconnectById(opportunityId),
+    tenant: connectOrDisconnectById(tenantId),
 
     customFields: template.checklist ? { checklist: template.checklist } : undefined,
   });

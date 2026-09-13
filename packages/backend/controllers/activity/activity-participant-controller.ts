@@ -12,10 +12,14 @@ import {
   CreateActivityParticipantInput,
   UpdateActivityParticipantInput,
 } from "@mini-erp/shared";
-import { clean } from "@/helpers/prisma-helper";
+import { clean, tenantFilter } from "@/helpers/prisma-helper";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
-import { getValidatedBody, getValidatedParams } from "@/helpers/validated-context";
+import {
+  getRequiredTenantId,
+  getValidatedBody,
+  getValidatedParams,
+} from "@/helpers/validated-context";
 
 // ============================================================================
 // ACTIVITY PARTICIPANT CONTROLLER
@@ -28,16 +32,17 @@ import { getValidatedBody, getValidatedParams } from "@/helpers/validated-contex
  */
 export const getActivityParticipants = async (c: Context<AppBindings>) => {
   const { activityId } = getValidatedParams<ActivityIdAsActivityIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const activity = await prisma.activity.findUnique({
-    where: { id: Number(activityId) },
+    where: { id: activityId, tenantId },
   });
   if (!activity) {
     return sendNotFound(c, "Activity non trovata");
   }
 
   const participants = await prisma.activityParticipant.findMany({
-    where: { activityId: Number(activityId) },
+    where: { activityId: activityId },
     include: {
       user: {
         select: { id: true, username: true, email: true, details: true },
@@ -66,16 +71,19 @@ export const getActivityParticipants = async (c: Context<AppBindings>) => {
  */
 export const addActivityParticipant = async (c: Context<AppBindings>) => {
   const data = getValidatedBody<CreateActivityParticipantInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const activity = await prisma.activity.findUnique({
-    where: { id: data.activityId },
+    where: { id: data.activityId, tenantId },
   });
   if (!activity) {
     return sendNotFound(c, "Activity non trovata");
   }
 
   if (data.userId) {
-    const user = await prisma.user.findUnique({ where: { id: data.userId } });
+    const user = await prisma.user.findFirst({
+      where: tenantFilter(tenantId, { id: data.userId }),
+    });
     if (!user) {
       return sendNotFound(c, "Utente non trovato");
     }
@@ -135,7 +143,7 @@ export const updateActivityParticipant = async (c: Context<AppBindings>) => {
   const data = getValidatedBody<UpdateActivityParticipantInput>(c);
 
   const existing = await prisma.activityParticipant.findUnique({
-    where: { id: Number(id) },
+    where: { id },
   });
   if (!existing) {
     return sendNotFound(c, "Partecipante non trovato");
@@ -148,7 +156,7 @@ export const updateActivityParticipant = async (c: Context<AppBindings>) => {
   });
 
   const participant = await prisma.activityParticipant.update({
-    where: { id: Number(id) },
+    where: { id },
     data: updateData,
     include: {
       user: { select: { id: true, username: true, email: true } },
@@ -172,13 +180,13 @@ export const removeActivityParticipant = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ActivityIdParam>(c);
 
   const participant = await prisma.activityParticipant.findUnique({
-    where: { id: Number(id) },
+    where: { id },
   });
   if (!participant) {
     return sendNotFound(c, "Partecipante non trovato");
   }
 
-  if (participant.role === "organizer") {
+  if (participant.role === "ORGANIZER") {
     return sendError(c, {
       statusCode: 400,
       status: "fail",
@@ -186,7 +194,7 @@ export const removeActivityParticipant = async (c: Context<AppBindings>) => {
     });
   }
 
-  await prisma.activityParticipant.delete({ where: { id: Number(id) } });
+  await prisma.activityParticipant.delete({ where: { id } });
 
   return sendDeleted(c, "Partecipante rimosso con successo");
 };
@@ -216,7 +224,7 @@ export const addBulkParticipants = async (c: Context<AppBindings>) => {
   }
 
   const activity = await prisma.activity.findUnique({
-    where: { id: Number(activityId) },
+    where: { id: activityId },
   });
   if (!activity) {
     return sendNotFound(c, "Activity non trovata");
@@ -226,13 +234,13 @@ export const addBulkParticipants = async (c: Context<AppBindings>) => {
     participants.map((p) =>
       prisma.activityParticipant.create({
         data: clean({
-          activityId: Number(activityId),
+          activityId: activityId,
           userId: p.userId,
           contactId: p.contactId,
           externalEmail: p.externalEmail,
           externalName: p.externalName,
-          role: p.role ?? "participant",
-          status: p.status ?? "invited",
+          role: p.role ?? "OPTIONAL",
+          status: p.status ?? "INVITED",
         }),
         include: {
           user: { select: { id: true, username: true, email: true } },

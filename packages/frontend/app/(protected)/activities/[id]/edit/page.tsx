@@ -13,7 +13,7 @@ export default async function EditActivityPage({
   const { id } = await params;
 
   try {
-    const activity = await fetchActivityByIdServer(parseInt(id));
+    const activity = await fetchActivityByIdServer(id);
 
     return (
       <Suspense fallback={<ActivityFormSkeleton />}>

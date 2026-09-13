@@ -12,7 +12,6 @@ import { getNewRoute } from "@/lib/navigation-routes";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import type { Metadata } from "next";
-import { OpportunityKanban } from "./components/opportunity-kanban";
 import { PageHeaderAction } from "@/types/page-types";
 import { OpportunityViewToggle } from "./components/opportunity-view-toggle";
 
@@ -56,17 +55,14 @@ export default async function OpportunitiesPage({ searchParams }: OpportunitiesP
         <OpportunityViewToggle currentView={view} />
       </div>
 
-      {view === "kanban" ? (
-        <OpportunityKanban opportunities={result.data} />
-      ) : (
-        <OpportunityListPage
-          opportunities={result.data}
-          searchParams={queryParams}
-          pagination={result.pagination}
-          permissions={permissions}
-          stats={stats.data}
-        />
-      )}
+      <OpportunityListPage
+        opportunities={result.data}
+        searchParams={queryParams}
+        pagination={result.pagination}
+        permissions={permissions}
+        stats={stats.data}
+        view={view}
+      />
     </>
   );
 }

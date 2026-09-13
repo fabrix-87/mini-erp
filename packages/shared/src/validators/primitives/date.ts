@@ -54,13 +54,36 @@ export const dateStringSchema = (options?: DateStringOptions) => {
  * @param options.required - If true, null/undefined are rejected
  * @param options.message  - Custom error message
  */
-export function isoDateSchema(options: { required: true; message?: string }): z.ZodType<string, string>;
-export function isoDateSchema(options?: { required?: false; message?: string }): z.ZodType<string | null | undefined, string | null | undefined>;
-export function isoDateSchema(options?: { required?: boolean; message?: string }): z.ZodType<string, string> | z.ZodType<string | null | undefined, string | null | undefined> {
+export function isoDateSchema(options: {
+  required: true;
+  message?: string;
+}): z.ZodType<string, string>;
+export function isoDateSchema(options?: {
+  required?: false;
+  message?: string;
+}): z.ZodType<string | null | undefined, string | null | undefined>;
+export function isoDateSchema(options?: { required?: boolean; message?: string }) {
   const transform = z.string().transform((val, ctx) => {
     if (!val || val.trim() === "") return undefined;
+
     const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(val);
-    const normalized = dateOnly ? `${val}T00:00:00.000Z` : val;
+    const dateTimeLocal = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(val);
+
+    let normalized = val;
+
+    if (dateOnly) {
+      normalized = `${val}T00:00:00.000Z`;
+    } else if (dateTimeLocal) {
+      // "datetime-local" non porta info di timezone: va interpretato
+      // come ora locale del browser e convertito in UTC per la persistenza.
+      const parsed = new Date(val);
+      if (isNaN(parsed.getTime())) {
+        ctx.addIssue({ code: "custom", message: options?.message ?? "Data non valida" });
+        return z.NEVER;
+      }
+      normalized = parsed.toISOString();
+    }
+
     const result = z.iso.datetime().safeParse(normalized);
     if (!result.success) {
       ctx.addIssue({ code: "custom", message: options?.message ?? "Data non valida" });
@@ -76,5 +99,8 @@ export function isoDateSchema(options?: { required?: boolean; message?: string }
       .pipe(transform) as z.ZodType<string, string>;
   }
 
-  return transform.optional().nullable() as z.ZodType<string | null | undefined, string | null | undefined>;
+  return transform.optional().nullable() as z.ZodType<
+    string | null | undefined,
+    string | null | undefined
+  >;
 }

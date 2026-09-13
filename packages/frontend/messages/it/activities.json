@@ -1,0 +1,50 @@
+{
+  "nextActivities": "Prossime attività ({activitiesLength})",
+  "newActivity": "Nuova attività",
+  "noActivities": "Nessuna attività pianificata",
+  "createNext": "Crea la prossima attività",
+  "createNew": "Crea una nuova attività",
+  "form": {
+    "type": "Tipo",
+    "priority": "Priorità",
+    "subject": "Oggetto",
+    "subjectPlaceholder": "Es: Follow-up preventivo",
+    "description": "Descrizione",
+    "descriptionPlaceholder": "Dettagli aggiuntivi...",
+    "scheduledStart": "Inizio",
+    "scheduledEnd": "Fine",
+    "duration": "Durata (minuti)",
+    "cancel": "Annulla",
+    "submit": "Crea Attività",
+    "saving": "Salvataggio..."
+  },
+  "type": {
+    "CALL": "Chiamata",
+    "EMAIL": "Email",
+    "MEETING": "Riunione",
+    "TASK": "Task",
+    "NOTE": "Nota",
+    "WHATSAPP": "WhatsApp",
+    "SMS": "SMS",
+    "VIDEO_CALL": "Videochiamata",
+    "SITE_VISIT": "Visita in loco",
+    "OTHER": "Altro",
+    "ALL": "Tutti i tipi"
+  },
+  "priority": {
+    "ALL": "Tutte le priorità",
+    "HIGH": "Alta",
+    "LOW": "Bassa",
+    "MEDIUM": "Media",
+    "URGENT": "Urgente"
+  },
+  "status": {
+    "SCHEDULED": "Pianificato",
+    "IN_PROGRESS": "In corso",
+    "COMPLETED": "Completato",
+    "CANCELLED": "Cancellato",
+    "RESCHEDULED": "Riprogrammato",
+    "NO_SHOW": "Non presentato"
+  },
+  "createSuccess": "Attività creata!"
+}

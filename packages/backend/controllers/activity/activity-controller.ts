@@ -267,8 +267,6 @@ export const createActivity = async (c: Context<AppBindings>) => {
   const userId = c.get("user")!.userId;
   const tenantId = getRequiredTenantId(c);
 
-  console.log(data)
-
   // Validazioni relazioni
   if (data.companyId) {
     const company = await prisma.company.findUnique({
@@ -279,9 +277,6 @@ export const createActivity = async (c: Context<AppBindings>) => {
     }
   }
 
-  console.log("skip company")
-
-
   if (data.customerId) {
     const customer = await prisma.customer.findFirst({
       where: tenantFilter(tenantId, { id: data.customerId }),
@@ -290,7 +285,6 @@ export const createActivity = async (c: Context<AppBindings>) => {
       return sendNotFound(c, "Customer non trovato");
     }
   }
-  console.log("skip customer")
 
   if (data.opportunityId) {
     const opportunity = await prisma.opportunity.findUnique({
@@ -299,9 +293,7 @@ export const createActivity = async (c: Context<AppBindings>) => {
     if (!opportunity) {
       return sendNotFound(c, "Opportunity non trovata");
     }
-  }
-
-  console.log("skip opportunity")
+  }  
 
   if (data.leadId) {
     const lead = await prisma.lead.findUnique({ where: { id: data.leadId, tenantId } });
@@ -309,8 +301,6 @@ export const createActivity = async (c: Context<AppBindings>) => {
       return sendNotFound(c, "Lead non trovata");
     }
   }
-
-  console.log("skip lead")
 
   if (data.contactId) {
     const contact = await prisma.contact.findFirst({
@@ -320,8 +310,6 @@ export const createActivity = async (c: Context<AppBindings>) => {
       return sendNotFound(c, "Contact non trovato");
     }
   }
-
-  console.log("skip contact")
 
   const activity = await prisma.activity.create({
     data: { ...data, createdByUserId: userId, tenantId },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -42,6 +42,10 @@ export function OpportunityKanban({ opportunities }: OpportunityKanbanProps) {
   const [items, setItems] = useState(opportunities);
   const [activeId, setActiveId] = useState<string | null>(null);
 
+  useEffect(() => {
+    setItems(opportunities);
+  }, [opportunities]);
+
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
   const columns = useMemo(() => {
@@ -53,7 +57,7 @@ export function OpportunityKanban({ opportunities }: OpportunityKanbanProps) {
         .filter((o) => o.stage === stage)
         .reduce((sum, o) => sum + Number(o.estimatedValue ?? 0), 0),
     }));
-  }, [items, t]); 
+  }, [items, t]);
 
   const activeOpportunity = items.find((o) => o.id === activeId);
 

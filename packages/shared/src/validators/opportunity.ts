@@ -10,7 +10,7 @@ import {
   userIdSchema,
 } from "./base";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
-import { queryBooleanSchema, queryNumberSchema } from "./query/params";
+import { queryBooleanSchema, queryEnumOrAllSchema, queryNumberSchema } from "./query/params";
 import { createDecimalSchema } from "./primitives";
 
 // ============================================================================
@@ -311,9 +311,9 @@ export const opportunityQuerySchema = z.object({
   page: pageSchema,
   limit: limitSchema,
   search: z.string().optional(),
-  status: opportunityStatusSchema.optional(),
-  stage: salesStageSchema.optional(),
-  source: opportunitySourceSchema.optional(),
+  status: queryEnumOrAllSchema(opportunityStatusSchema, ["ALL"]),
+  stage: queryEnumOrAllSchema(salesStageSchema, ["ALL"]),
+  source: queryEnumOrAllSchema(opportunitySourceSchema, ["ALL"]),
   customerId: customerIdBaseSchema.optional(),
   leadId: leadIdBaseSchema.optional(),
   assignedUserId: userIdSchema.optional(),

@@ -56,7 +56,7 @@ export async function fetchActivityStatsServer(
 /**
  * Server-side function to fetch a single activity (for SSR)
  */
-export async function fetchActivityByIdServer(id: number): Promise<Activity> {
+export async function fetchActivityByIdServer(id: string): Promise<Activity> {
   try {
     // unwrapData: true (default) per ottenere direttamente i dati
     const activity = await serverApi.get<Activity>(`/activities/${id}`, {

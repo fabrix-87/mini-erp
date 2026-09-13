@@ -6,8 +6,6 @@ import {
   Phone,
   Globe,
   MapPin,
-  Calendar,
-  Activity,
   Briefcase,
   Target,
   ShieldCheck,
@@ -26,9 +24,9 @@ import { LeadSourceBadge } from "@/components/lead/lead-source-badge";
 import { LeadScoreDisplay } from "@/components/lead/lead-score-display";
 import { getLeadByIdServer } from "@/services/server/lead-service";
 import { LeadDetailActions } from "../components/lead-detail-actions";
-import { LeadActivityList } from "@/components/lead/lead-activity-list";
 import { daysSince, formatDateIT } from "@/helpers/date-helper";
 import { PageIdProps } from "@/types/page-types";
+import { ActivityList } from "@/components/activity/activity-list";
 
 // ============================================================================
 // Page — Server Component
@@ -408,7 +406,7 @@ export default async function LeadDetailPage({ params }: PageIdProps) {
 
           {/* Activities */}
           <TabsContent value="activities" className="mt-4">
-            <LeadActivityList leadId={lead.id} activities={lead.activities} />
+            <ActivityList leadId={lead.id} activities={lead.activities} />
           </TabsContent>
         </Tabs>
       </div>

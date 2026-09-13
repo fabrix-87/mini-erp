@@ -32,7 +32,7 @@ export function OpportunityFilters({
   onPendingChange,
 }: OpportunityFiltersProps): React.ReactElement {
   const t = useTranslations("crm.opportunities");
-  const basePath = useMemo(() => getRoute("opportunity"), [getRoute]);
+  const basePath = useMemo(() => getRoute("opportunities"), [getRoute]);
 
   const OPPORTUNITY_FILTER_FIELDS = useMemo<FilterFieldConfig[]>(
     () => [

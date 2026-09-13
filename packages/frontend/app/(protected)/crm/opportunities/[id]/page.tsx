@@ -46,8 +46,7 @@ export default async function OpportunityDetailPage({ params }: PageIdProps) {
       action: closeWonAction,
       visible: isCloseable,
       icon: "trophy",
-      className: "text-green-600 border-green-200 hover:bg-green-50",
-      variant: 'outline'
+      className: "text-lime-200 bg-lime-500 hover:bg-lime-600",
     },
     {
       key: "lost",
@@ -55,8 +54,7 @@ export default async function OpportunityDetailPage({ params }: PageIdProps) {
       action: closeLostAction,
       visible: isCloseable,
       icon: "x-circle",
-      className: "text-destructive border-destructive/20 hover:bg-destructive/5",
-      variant: 'outline'
+      className: "text-destructive bg-destructive/20 hover:bg-destructive/5",
     },
     createEditAction(
       "update",
