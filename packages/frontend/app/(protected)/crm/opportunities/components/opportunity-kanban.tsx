@@ -89,6 +89,7 @@ export function OpportunityKanban({ opportunities }: OpportunityKanbanProps) {
 
   return (
     <DndContext
+      id="opportunity-kanban"
       sensors={sensors}
       collisionDetection={closestCorners}
       onDragStart={handleDragStart}

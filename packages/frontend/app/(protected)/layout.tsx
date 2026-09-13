@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Sidebar } from "@/components/sidebar";
 import { ShellBar } from "@/components/shell-bar";
 import { SearchParamsProvider } from "@/providers/search-params-provider";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
@@ -21,7 +21,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps): Rea
 
   return (
     <SearchParamsProvider>
-      <SidebarProvider>
+      <TooltipProvider>
         <div className="flex min-h-screen w-full bg-muted/30">
           <ShellBar
             collapsed={collapsed}
@@ -46,7 +46,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps): Rea
             </main>
           </div>
         </div>
-      </SidebarProvider>
+      </TooltipProvider>
     </SearchParamsProvider>
   );
 }
