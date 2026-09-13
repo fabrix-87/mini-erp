@@ -37,12 +37,12 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps): Rea
 
           <div
             className={cn(
-              "pt-12 transition-[margin-left] duration-200 flex-1",
+              "min-w-0 flex-1 pt-12 transition-[margin-left] duration-200",
               collapsed ? "lg:ml-16" : "lg:ml-64",
             )}
           >
-            <main className="min-h-[calc(100vh-3rem)] overflow-x-hidden">
-              <div className="w-full px-4 py-4 lg:px-6 lg:py-5">{children}</div>
+            <main className="min-w-0 min-h-[calc(100vh-3rem)] overflow-x-hidden">
+              <div className="min-w-0 w-full px-4 py-4 lg:px-6 lg:py-5">{children}</div>
             </main>
           </div>
         </div>

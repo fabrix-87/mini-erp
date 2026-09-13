@@ -57,9 +57,7 @@ export default async function OpportunitiesPage({ searchParams }: OpportunitiesP
       </div>
 
       {view === "kanban" ? (
-        <div className="min-w-0 w-full"> 
-          <OpportunityKanban opportunities={result.data} />
-        </div>
+        <OpportunityKanban opportunities={result.data} />
       ) : (
         <OpportunityListPage
           opportunities={result.data}

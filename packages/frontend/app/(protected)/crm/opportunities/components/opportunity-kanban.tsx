@@ -53,7 +53,7 @@ export function OpportunityKanban({ opportunities }: OpportunityKanbanProps) {
         .filter((o) => o.stage === stage)
         .reduce((sum, o) => sum + Number(o.estimatedValue ?? 0), 0),
     }));
-  }, [items, t]);
+  }, [items, t]); 
 
   const activeOpportunity = items.find((o) => o.id === activeId);
 
@@ -95,7 +95,7 @@ export function OpportunityKanban({ opportunities }: OpportunityKanbanProps) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-4 overflow-x-auto pb-4">
+      <div className="flex w-full gap-4 overflow-x-auto pb-4">
         {columns.map((col) => (
           <OpportunityKanbanColumn
             key={col.stage}
