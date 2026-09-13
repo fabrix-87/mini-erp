@@ -1,6 +1,6 @@
 import z from "zod";
 
-import { leadIdBaseSchema, userIdSchema } from "./base";
+import { activityIdBaseSchema, companyIdBaseSchema, contactIdBaseSchema, customerIdBaseSchema, leadIdBaseSchema, opportunityIdBaseSchema, userIdSchema } from "./base";
 import { isoDateSchema } from "./primitives/date";
 import { createCuidSchema, createIdSchema, positiveNumbersSchema } from "./primitives/id";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
@@ -96,17 +96,17 @@ export const createActivitySchema = z
     reminderSent: z.boolean().default(false),
 
     // Relazioni
-    companyId: positiveNumbersSchema.optional().nullable(),
-    customerId: positiveNumbersSchema.optional().nullable(),
-    contactId: positiveNumbersSchema.optional().nullable(),
-    opportunityId: positiveNumbersSchema.optional().nullable(),
+    companyId: companyIdBaseSchema.optional().nullable(),
+    customerId: customerIdBaseSchema.optional().nullable(),
+    contactId: contactIdBaseSchema.optional().nullable(),
+    opportunityId: opportunityIdBaseSchema.optional().nullable(),
     leadId: leadIdBaseSchema.nullable(),
 
     // Utente assegnato (obbligatorio)
     assignedUserId: userIdSchema,
 
     // Follow-up
-    followUpActivityId: positiveNumbersSchema.optional().nullable(),
+    followUpActivityId: activityIdBaseSchema.optional().nullable(),
 
     // Allegati e note
     attachments: z.any().optional().nullable(),
@@ -129,8 +129,6 @@ export const updateActivitySchema = createActivitySchema
 /**
  * Schema per la validazione dell'ID activity
  */
-const activityIdBaseSchema = createIdSchema("Activity ID non valido");
-
 export const activityIdSchema = z.object({
   id: activityIdBaseSchema,
 });

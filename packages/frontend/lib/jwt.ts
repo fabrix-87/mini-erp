@@ -40,9 +40,6 @@ export function decodeJWT(token: string): UserSessionPayload | null {
  */
 export function getUserFromUserCookie(): UserSessionPayload | null {
   const userCookie = getCookie('user');
-  console.debug('############################')
-  console.debug(userCookie)
-  console.debug('############################')
   if (!userCookie) return null;
 
   try {

@@ -37,17 +37,13 @@ import { toDateInput } from "@/helpers/date-helper";
 import { useNavigation } from "@/hooks/use-navigation";
 import { useTranslations } from "next-intl";
 import { OpportunityProposedProducts } from "./opportunity-proposed-products";
-import {
-  getOpportunityStatusOptions,
-  getOpportunitySourceOptions,
-  getOpportunityStageOptions,
-} from "@/helpers/opportunity-helper";
 import { createOpportunityAction, updateOpportunityAction } from "@/actions/opportunity-actions";
 import { UserCombobox } from "@/components/ui/user-combobox";
 import { CustomerCombobox } from "@/components/ui/customer-combobox";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LeadCombobox } from "@/components/ui/lead-combobox";
+import { getOpportunitySourceOptions, getOpportunityStageOptions, getOpportunityStatusOptions } from "@/helpers/opportunity-helper";
 
 // ============================================================================
 // Types

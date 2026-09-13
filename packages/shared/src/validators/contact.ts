@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { emailSchema, phoneSchema } from "./primitives/string";
 import { queryBooleanOrAllSchema, queryEnumOrAllSchema } from "./query/params";
 import { limitSchema, pageSchema, querySortOrderSchema } from "./query/pagination";
+import { companyIdBaseSchema, contactIdBaseSchema } from "./base";
 
 // ============================================================================
 // SORT
@@ -55,8 +55,8 @@ export const companyContactFieldsSchema = z.object({
  */
 export const createCompanyContactSchema = companyContactFieldsSchema
   .extend({
-    contactId: createCuidSchema("Contact ID deve essere positivo"),
-    companyId: createCuidSchema("Company ID deve essere positivo"),
+    contactId: contactIdBaseSchema,
+    companyId: companyIdBaseSchema,
   })
   .strict();
 
@@ -71,7 +71,7 @@ export const updateCompanyContactSchema = companyContactFieldsSchema.partial().s
  */
 export const contactCompanyEntrySchema = z
   .object({
-    companyId: createCuidSchema("Company ID deve essere positivo"),
+    companyId: companyIdBaseSchema,
     ...companyContactFieldsSchema.shape,
   })
   .strict();
@@ -114,7 +114,7 @@ export const contactFormSchema = createContactSchema.extend({
   companies: z
     .array(
       z.object({
-        companyId: createCuidSchema("Company ID deve essere positivo"),
+        companyId: companyIdBaseSchema,
         ...companyContactFieldsSchema.shape,
       }),
     )
@@ -141,14 +141,14 @@ export const updateContactSchema = createContactSchema
  * Schema for Contact ID param.
  */
 export const contactIdSchema = z.object({
-  id: createCuidSchema("ID contatto non valido"),
+  id: contactIdBaseSchema,
 });
 
 /**
  * Schema for Contact query parameters.
  */
 export const contactQuerySchema = z.object({
-  companyId: createCuidSchema("Company ID non valido").optional(),
+  companyId: companyIdBaseSchema.optional(),
   active: queryBooleanOrAllSchema(),
   isPrimaryContact: queryBooleanOrAllSchema(),
   search: z.string().trim().optional(),
@@ -175,9 +175,9 @@ export const toggleContactActiveSchema = z
  */
 export const checkEmailSchema = z.object({
   email: emailSchema("Campo email necessario"),
-  contactId: createCuidSchema("Contact ID non valido").optional(),
+  contactId: contactIdBaseSchema.optional(),
 });
 
 export const setPrimaryContactSchema = contactIdSchema.extend({
-  companyId: createCuidSchema("ID contatto non valido"),
+  companyId: companyIdBaseSchema,
 });

@@ -95,6 +95,7 @@ export function LeadActivitySheet({
   onSuccess,
 }: LeadActivitySheetProps) {
   const { user } = useAuth();
+  console.log(user)
   const [isPending, startTransition] = useTransition();
 
   const [formData, setFormData] = useState<SheetFormData>(() => ({
@@ -144,6 +145,7 @@ export function LeadActivitySheet({
         type: formData.type,
         subject: formData.subject,
         description: formData.description || undefined,
+        assignedUserId: user!.userId,
         priority: formData.priority,
         status: formData.status,
         scheduledStart: new Date(formData.scheduledStart).toISOString(),

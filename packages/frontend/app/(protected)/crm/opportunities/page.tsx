@@ -2,13 +2,19 @@
 import { OpportunityListPage } from "./components/opportunity-list-page";
 import { opportunityQuerySchema, type OpportunityQueryInput } from "@mini-erp/shared";
 import { checkEntityPermissions, requirePermission } from "@/lib/server/auth";
-import { getAllOpportunities, getOpportunityStatsServer } from "@/services/server/opportunity-service";
+import {
+  getAllOpportunities,
+  getOpportunityStatsServer,
+} from "@/services/server/opportunity-service";
 import { getTranslations } from "next-intl/server";
 import { createCreateAction } from "@/helpers/page-header-actions-helper";
 import { getNewRoute } from "@/lib/navigation-routes";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import type { Metadata } from "next";
+import { OpportunityKanban } from "./components/opportunity-kanban";
+import { PageHeaderAction } from "@/types/page-types";
+import { OpportunityViewToggle } from "./components/opportunity-view-toggle";
 
 interface OpportunitiesPageProps {
   searchParams: Promise<OpportunityQueryInput>;
@@ -17,10 +23,15 @@ interface OpportunitiesPageProps {
 export default async function OpportunitiesPage({ searchParams }: OpportunitiesPageProps) {
   await requirePermission("opportunity:read");
 
-  const params: OpportunityQueryInput = opportunityQuerySchema.parse(await searchParams);
+  const params = await searchParams;
+  const queryParams: OpportunityQueryInput = opportunityQuerySchema.parse(params);
+  const view = params.view === "kanban" ? "kanban" : "table";
 
   const [result, stats, permissions] = await Promise.all([
-    getAllOpportunities(params, 3600),
+    await getAllOpportunities(
+      view === "kanban" ? { ...params, limit: 200, page: 1 } : params,
+      view === "kanban" ? 60 : 3600,
+    ),
     getOpportunityStatsServer(),
     checkEntityPermissions("opportunity"),
   ]);
@@ -29,7 +40,7 @@ export default async function OpportunitiesPage({ searchParams }: OpportunitiesP
 
   const t = await getTranslations("crm.opportunities");
 
-  const actionItems = [
+  const actionItems: PageHeaderAction[] = [
     createCreateAction(
       "create",
       t("createNewButton") ?? "Nuova",
@@ -41,13 +52,21 @@ export default async function OpportunitiesPage({ searchParams }: OpportunitiesP
   return (
     <>
       <PageHeader actionItems={actionItems} />
-      <OpportunityListPage
-        opportunities={result.data}
-        searchParams={params}
-        pagination={result.pagination}
-        permissions={permissions}
-        stats={stats.data}
-      />
+      <div className="flex justify-end mb-4">
+        <OpportunityViewToggle currentView={view} />
+      </div>
+
+      {view === "kanban" ? (
+        <OpportunityKanban opportunities={result.data} />
+      ) : (
+        <OpportunityListPage
+          opportunities={result.data}
+          searchParams={queryParams}
+          pagination={result.pagination}
+          permissions={permissions}
+          stats={stats.data}
+        />
+      )}
     </>
   );
 }

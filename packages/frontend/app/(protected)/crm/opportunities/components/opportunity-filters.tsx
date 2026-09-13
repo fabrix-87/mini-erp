@@ -7,8 +7,9 @@ import type { OpportunityQueryInput } from "@/types/opportunity-types";
 
 import { getRoute } from "@/lib/navigation-routes";
 import { FilterFieldConfig } from "@/types/filter-types";
-import { getStageOptions, getStatusOptions, getSourceOptions } from "@/helpers/opportunity-helper";
+
 import { FilterBar, FilterInitialValues } from "@/components/ui/filter-bar";
+import { getOpportunitySourceOptions, getOpportunityStageOptions, getOpportunityStatusOptions } from "@/helpers/opportunity-helper";
 
 interface OpportunityFiltersProps {
   searchParams: OpportunityQueryInput;
@@ -45,17 +46,17 @@ export function OpportunityFilters({
       {
         type: "select",
         key: "status",
-        options: getStatusOptions(t),
+        options: getOpportunityStatusOptions(t, true),
       },
       {
         type: "select",
         key: "stage",
-        options: getStageOptions(t),
+        options: getOpportunityStageOptions(t, true),
       },
       {
         type: "select",
         key: "source",
-        options: getSourceOptions(t),
+        options: getOpportunitySourceOptions(t, true),
       },
     ],
     [t],

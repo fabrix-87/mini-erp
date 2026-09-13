@@ -8,7 +8,7 @@ import {
   getRolesFromMembership,
   pickCurrentMembership,
 } from "@/helpers/user-membership-helper";
-import { getValidatedBody, getValidatedParams } from "@/helpers/validated-context";
+import { getRequiredTenantId, getValidatedBody, getValidatedParams } from "@/helpers/validated-context";
 import {
   ForgotPasswordInput,
   LoginInput,
@@ -37,6 +37,7 @@ import { sendSuccess } from "@/utils/response-utils";
 import authConfig from "@/config/auth-config";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import { tenantFilter } from "@/helpers/prisma-helper";
 
 /**
  * @desc    Login utente con Redis session + fingerprinting
@@ -289,6 +290,7 @@ export const refreshToken = async (c: Context<AppBindings>) => {
   // Il token viene letto dal cookie, non dal body
 
   const token = getCookie(c, "refreshToken");
+  const tenantId = getRequiredTenantId(c);
 
   if (!token) {
     throw new UnauthorizedError("Refresh token mancante");
@@ -339,8 +341,8 @@ export const refreshToken = async (c: Context<AppBindings>) => {
   }
 
   // 3. Trova utente
-  const user = await prisma.user.findUnique({
-    where: { id: decoded.userId },
+  const user = await prisma.user.findFirst({
+    where: tenantFilter(tenantId, { id: decoded.userId }),
     select: getUserSelection(),
   });
 

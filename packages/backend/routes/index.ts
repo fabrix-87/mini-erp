@@ -22,6 +22,7 @@ import taxRoutes from "./tax-routes";
 import tenantRoutes from "./tenant-routes";
 import membershipRolesRoutes from "./user-membership-roles-routes";
 import userRoutes from "./user-routes";
+import activityRoutes from "./activity-routes";
 
 export const publicRoutes = createHonoApp();
 export const protectedRoutes = createHonoApp();
@@ -45,6 +46,7 @@ systemRoutes.route("/system/users", systemUserRoutes);   // assegnazione utenti
  * Registers all API route groups.
  */
 protectedRoutes.use("*", authenticateToken);
+protectedRoutes.route("/activities", activityRoutes);
 protectedRoutes.route("/users", userRoutes);
 protectedRoutes.route("/roles", roleRoutes);
 protectedRoutes.route("/leads", leadRoutes);

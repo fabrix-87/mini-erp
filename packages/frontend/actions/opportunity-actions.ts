@@ -6,10 +6,16 @@ import {
   createOpportunity,
   deleteOpportunity,
   updateOpportunity,
+  updateOpportunityStage,
 } from "@/services/server/opportunity-service";
 import { opportunityRevalidation } from "@/lib/server/revalidate";
 import { ActionResult, withAuth } from "@/lib/server/action";
-import { CreateOpportunityFormValues, OpportunityComplete, UpdateOpportunityFormValues } from "@mini-erp/shared";
+import {
+  CreateOpportunityFormValues,
+  OpportunityComplete,
+  UpdateOpportunityFormValues,
+  UpdateOpportunityStageInput,
+} from "@mini-erp/shared";
 import { redirect } from "next/navigation";
 import { getRoute } from "@/lib/navigation-routes";
 
@@ -69,12 +75,30 @@ export async function closeOppotunityWonAction(id: string): Promise<ActionResult
   return withAuth(async () => {
     await closeOpportunityWon(id);
     opportunityRevalidation.opportunityWithList(id);
-  }, "opportunity:update")
+  }, "opportunity:update");
 }
 
 export async function closeOppotunityLostAction(id: string): Promise<ActionResult<void>> {
   return withAuth(async () => {
     await closeOpportunityLost(id);
     opportunityRevalidation.opportunityWithList(id);
-  }, "opportunity:update")
+  }, "opportunity:update");
+}
+
+/**
+ * Updates only the stage (and optionally probability/notes) of an opportunity.
+ * Used by the kanban drag-and-drop interaction.
+ * @param opportunityId - Opportunity ID
+ * @param data - Stage update payload
+ */
+export async function updateOpportunityStageAction(
+  opportunityId: string,
+  data: UpdateOpportunityStageInput,
+): Promise<ActionResult<OpportunityComplete>> {
+  return withAuth(async () => {
+    const res = await updateOpportunityStage(opportunityId, data);
+    if (res.status === "success") opportunityRevalidation.opportunityWithList(opportunityId);
+    else console.error(res.errors);
+    return res.data;
+  }, "opportunity:update");
 }

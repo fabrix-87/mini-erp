@@ -352,6 +352,7 @@ export const opportunityQuerySchema = z.object({
     ])
     .default("createdAt"),
   sortOrder: sortOrderSchema,
+  view: z.enum(["kanban", "table"]).nullish()
 });
 
 /**

@@ -10,6 +10,8 @@ export const customerIdBaseSchema = createCuidSchema("Customer ID non valido");
 export const leadIdBaseSchema = createCuidSchema("ID Lead non valido");
 export const opportunityIdBaseSchema = createCuidSchema("ID Opportunity non valido");
 export const productIdBaseSchema = createCuidSchema("ID Product non valido");
+export const activityIdBaseSchema = createCuidSchema("Activity ID non valido");
+export const contactIdBaseSchema = createCuidSchema("ID contatto non valido");
 
 /**
  * Schema base per Currency Code

@@ -17,6 +17,7 @@ import type {
   OpportunityStatsInput,
   SalesFunnelAnalysisInput,
   UpdateOpportunityFormValues,
+  UpdateOpportunityStageInput,
 } from "@mini-erp/shared";
 
 /**
@@ -117,7 +118,7 @@ export async function updateOpportunity(
   id: string,
   data: UpdateOpportunityFormValues,
 ): Promise<OpportunitySingleApiResponse> {
-  return serverApi.put<OpportunitySingleApiResponse>(`/opportunities/${id}`, data,{
+  return serverApi.put<OpportunitySingleApiResponse>(`/opportunities/${id}`, data, {
     tags: [OPPORTUNITY_TAGS.detail(id)],
     unwrapData: false,
   });
@@ -132,18 +133,31 @@ export async function deleteOpportunity(id: string): Promise<DeleteApiResponse> 
 
 /**
  * Close opportunity as Won
- * @param id 
- * @returns 
+ * @param id
+ * @returns
  */
 export async function closeOpportunityWon(id: string): Promise<void> {
-  return serverApi.patch(`/opportunities/${id}/close-won`)
+  return serverApi.patch(`/opportunities/${id}/close-won`);
 }
 
 /**
  * Close opportunity as Lost
- * @param id 
- * @returns 
+ * @param id
+ * @returns
  */
 export async function closeOpportunityLost(id: string): Promise<void> {
-  return serverApi.patch(`/opportunities/${id}/close-lost`)
+  return serverApi.patch(`/opportunities/${id}/close-lost`);
+}
+
+/**
+ * Updates only the stage (and optionally probability/notes) of an opportunity.
+ * @param id - Opportunity ID
+ * @param data - Stage update payload
+ * @return OpportunitySingleApiResponse
+ */
+export async function updateOpportunityStage(
+  id: string,
+  data: UpdateOpportunityStageInput,
+): Promise<OpportunitySingleApiResponse> {
+  return serverApi.patch(`/opportunities/${id}/stage`, data, { unwrapData: false });
 }

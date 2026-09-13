@@ -20,10 +20,10 @@ export default async function EditOpportunityPage({ params }: PageIdProps) {
     <>
       <PageHeader
         extraBreadcrumbs={[
-          { label: result.title, href: getDetailRoute("opportunity", id) },
+          { label: result.title, href: getDetailRoute("opportunities", id) },
           { label: t("opportunityEditTitle") },
         ]}
-        title={`${t("opportunityEditTitle")}: ${result.title}`}
+        title={`${result.title}`}
         subtitle={t("opportunityEditDescription")}
       />
       <OpportunityForm mode="edit" opportunity={result} />

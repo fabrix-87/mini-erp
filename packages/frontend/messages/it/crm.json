@@ -312,6 +312,14 @@
       "proposedProducts": "Prodotti proposti",
       "product": "Prodotto",
       "total": "Totale"
+    },
+    "kanban": {
+      "stageUpdateSuccess": "Fase aggiornata con successo",
+      "stageUpdateError": "Errore durante l'aggiornamento della fase"
+    },
+    "view": {
+      "table": "Tabella",
+      "kanban": "Kanban"
     }
   },
   "editButton": "Modifica",

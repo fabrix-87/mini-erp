@@ -16,11 +16,12 @@ import {
   sendPaginatedResponse,
   sendSuccess,
 } from "@/utils/response-utils";
-import { clean, parseOptionalDate } from "@/helpers/prisma-helper";
+import { clean, parseOptionalDate, tenantFilter, withTenantId } from "@/helpers/prisma-helper";
 import { completeActivity as completeActivityService } from "../../services/activity/activity-service";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
@@ -57,8 +58,10 @@ export const getAllActivities = async (c: Context<AppBindings>) => {
     sortOrder = "asc",
   } = getValidatedQuery<ActivityQueryInput>(c);
 
+  const tenantId = getRequiredTenantId(c);
+
   const skip = (page - 1) * limit;
-  const where: Prisma.ActivityWhereInput = {};
+  const where: Prisma.ActivityWhereInput = withTenantId({}, tenantId);
 
   // Filtro ricerca
   if (search) {
@@ -210,9 +213,10 @@ export const getAllActivities = async (c: Context<AppBindings>) => {
  */
 export const getActivityById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ActivityIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const activity = await prisma.activity.findUnique({
-    where: { id: Number(id) },
+    where: { id, tenantId },
     include: {
       company: { include: { country: true } },
       customer: { include: { company: { include: { country: true } } } },
@@ -261,11 +265,12 @@ export const getActivityById = async (c: Context<AppBindings>) => {
 export const createActivity = async (c: Context<AppBindings>) => {
   const data = getValidatedBody<CreateActivityInput>(c);
   const userId = c.get("user")!.userId;
+  const tenantId = getRequiredTenantId(c);
 
   // Validazioni relazioni
   if (data.companyId) {
     const company = await prisma.company.findUnique({
-      where: { id: data.companyId },
+      where: { id: data.companyId, tenantId },
     });
     if (!company) {
       return sendNotFound(c, "Company non trovata");
@@ -273,8 +278,8 @@ export const createActivity = async (c: Context<AppBindings>) => {
   }
 
   if (data.customerId) {
-    const customer = await prisma.customer.findUnique({
-      where: { id: data.customerId },
+    const customer = await prisma.customer.findFirst({
+      where: tenantFilter(tenantId, { id: data.customerId }),
     });
     if (!customer) {
       return sendNotFound(c, "Customer non trovato");
@@ -283,7 +288,7 @@ export const createActivity = async (c: Context<AppBindings>) => {
 
   if (data.opportunityId) {
     const opportunity = await prisma.opportunity.findUnique({
-      where: { id: data.opportunityId },
+      where: { id: data.opportunityId, tenantId },
     });
     if (!opportunity) {
       return sendNotFound(c, "Opportunity non trovata");
@@ -291,15 +296,15 @@ export const createActivity = async (c: Context<AppBindings>) => {
   }
 
   if (data.leadId) {
-    const lead = await prisma.lead.findUnique({ where: { id: data.leadId } });
+    const lead = await prisma.lead.findUnique({ where: { id: data.leadId, tenantId } });
     if (!lead) {
       return sendNotFound(c, "Lead non trovata");
     }
   }
 
   if (data.contactId) {
-    const contact = await prisma.contact.findUnique({
-      where: { id: data.contactId },
+    const contact = await prisma.contact.findFirst({
+      where: tenantFilter(tenantId, { id: data.contactId }),
     });
     if (!contact) {
       return sendNotFound(c, "Contact non trovato");
@@ -307,7 +312,7 @@ export const createActivity = async (c: Context<AppBindings>) => {
   }
 
   const activity = await prisma.activity.create({
-    data: { ...data, createdByUserId: userId },
+    data: { ...data, createdByUserId: userId, tenantId },
     include: {
       company: true,
       customer: true,
