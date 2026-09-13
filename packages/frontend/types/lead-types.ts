@@ -27,7 +27,7 @@ export const leadKeys = {
   lists: () => [...leadKeys.all, "list"] as const,
   list: (params: LeadQueryInput) => [...leadKeys.lists(), params] as const,
   details: () => [...leadKeys.all, "detail"] as const,
-  detail: (id: number) => [...leadKeys.details(), id] as const,
+  detail: (id: string) => [...leadKeys.details(), id] as const,
   stats: (params?: LeadStatsInput) => [...leadKeys.all, "stats", params] as const,
 };
 

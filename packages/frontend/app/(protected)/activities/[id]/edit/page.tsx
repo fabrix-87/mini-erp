@@ -1,7 +1,7 @@
 // app/activities/[id]/edit/page.tsx
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { fetchActivityByIdServer } from "@/services/server/activity";
+import { fetchActivityByIdServer } from "@/services/server/activity-service";
 import { ActivityForm } from "@/components/activity/activity-form";
 import { Skeleton } from "@/components/ui/skeleton";
 

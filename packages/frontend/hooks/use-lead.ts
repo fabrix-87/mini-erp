@@ -20,7 +20,7 @@ export function useLeads(params: LeadQueryInput) {
 /**
  * Hook per una singola lead
  */
-export function useLead(id: number | undefined, enabled = true) {
+export function useLead(id: string | undefined, enabled = true) {
   return useQuery({
     queryKey: leadKeys.detail(id!),
     queryFn: () => getLeadById(id!),

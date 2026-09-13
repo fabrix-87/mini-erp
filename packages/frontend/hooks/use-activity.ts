@@ -5,7 +5,7 @@ import {
   getActivities,
   getActivityById,  
 } from "@/services/client/activity";
-import { ActivityStatsInput, ActivityQueryInput } from "@/types/activitiy";
+import { ActivityStatsInput, ActivityQueryInput } from "@/types/activitiy-types";
 
 /**
  * Hook per le statistiche delle attività

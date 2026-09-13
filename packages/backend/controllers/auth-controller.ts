@@ -8,7 +8,11 @@ import {
   getRolesFromMembership,
   pickCurrentMembership,
 } from "@/helpers/user-membership-helper";
-import { getRequiredTenantId, getValidatedBody, getValidatedParams } from "@/helpers/validated-context";
+import {
+  getRequiredTenantId,
+  getValidatedBody,
+  getValidatedParams,
+} from "@/helpers/validated-context";
 import {
   ForgotPasswordInput,
   LoginInput,
@@ -37,7 +41,7 @@ import { sendSuccess } from "@/utils/response-utils";
 import authConfig from "@/config/auth-config";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { tenantFilter } from "@/helpers/prisma-helper";
+import { tenantFilter, withSoftDelete } from "@/helpers/prisma-helper";
 
 /**
  * @desc    Login utente con Redis session + fingerprinting
@@ -290,7 +294,6 @@ export const refreshToken = async (c: Context<AppBindings>) => {
   // Il token viene letto dal cookie, non dal body
 
   const token = getCookie(c, "refreshToken");
-  const tenantId = getRequiredTenantId(c);
 
   if (!token) {
     throw new UnauthorizedError("Refresh token mancante");
@@ -342,7 +345,7 @@ export const refreshToken = async (c: Context<AppBindings>) => {
 
   // 3. Trova utente
   const user = await prisma.user.findFirst({
-    where: tenantFilter(tenantId, { id: decoded.userId }),
+    where: withSoftDelete({ id: decoded.userId }),
     select: getUserSelection(),
   });
 
@@ -427,24 +430,10 @@ export const refreshToken = async (c: Context<AppBindings>) => {
   return sendSuccess(
     c,
     {
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        details: user.details,
-        currentTenant: {
-          tenantId: currentMembership.tenantId,
-          membershipId: currentMembership.id,
-          status: currentMembership.status,
-          roles: getRolesFromMembership(currentMembership),
-          permissions: getPermissionsFromMembership(currentMembership),
-        },
-      },
+      user: userPayload,
       expiresIn: authConfig.jwt.expiresInMs,
     },
-    {
-      message: "Token aggiornato con successo",
-    },
+    { message: "Token aggiornato con successo" },
   );
 };
 

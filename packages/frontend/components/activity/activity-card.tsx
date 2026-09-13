@@ -14,7 +14,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Activity } from "@/types/activitiy";
+import { Activity } from "@/types/activitiy-types";
 import { cn } from "@/lib/utils";
 import { formatDateIT } from "@/helpers/date-helper";
 

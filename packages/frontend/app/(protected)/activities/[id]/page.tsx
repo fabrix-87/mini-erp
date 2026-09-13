@@ -1,6 +1,6 @@
 // app/activities/[id]/page.tsx
 import { notFound } from "next/navigation";
-import { fetchActivityByIdServer } from "@/services/server/activity";
+import { fetchActivityByIdServer } from "@/services/server/activity-service";
 import { ActivityDetailClient } from "@/components/activity/activity-detail-client";
 import { requirePermission } from "@/lib/server/auth";
 

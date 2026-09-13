@@ -54,7 +54,7 @@ export const clientContactService = {
   /**
    * Ottieni contatti per company
    */
-  async getByCompany(companyId: number, active?: boolean): Promise<ContactListApiResponse> {
+  async getByCompany(companyId: string, active?: boolean): Promise<ContactListApiResponse> {
     const url = `/contacts/company/${companyId}${active !== undefined ? `?active=${active}` : ''}`;
     const { data } = await api.get<ContactListApiResponse>(url);
     return data;
@@ -63,7 +63,7 @@ export const clientContactService = {
   /**
    * Ottieni contatto primario per company
    */
-  async getPrimaryByCompany(companyId: number): Promise<ContactSingleApiResponse> {
+  async getPrimaryByCompany(companyId: string): Promise<ContactSingleApiResponse> {
     const { data } = await api.get<ContactSingleApiResponse>(
       `/contacts/company/${companyId}/primary`
     );
@@ -73,7 +73,7 @@ export const clientContactService = {
   /**
    * Ottieni singolo contatto per ID
    */
-  async getById(id: number): Promise<ContactSingleApiResponse> {
+  async getById(id: string): Promise<ContactSingleApiResponse> {
     const { data } = await api.get<ContactSingleApiResponse>(`/contacts/${id}`);
     return data;
   },
@@ -89,7 +89,7 @@ export const clientContactService = {
   /**
    * Aggiorna contatto esistente
    */
-  async update(id: number, contactData: UpdateContactInput): Promise<ContactSingleApiResponse> {
+  async update(id: string, contactData: UpdateContactInput): Promise<ContactSingleApiResponse> {
     const { data } = await api.put<ContactSingleApiResponse>(
       `/contacts/${id}`,
       contactData
@@ -100,7 +100,7 @@ export const clientContactService = {
   /**
    * Attiva/Disattiva contatto
    */
-  async toggleActive(id: number, active: boolean): Promise<ContactOperationApiResponse> {
+  async toggleActive(id: string, active: boolean): Promise<ContactOperationApiResponse> {
     const { data } = await api.patch<ContactOperationApiResponse>(
       `/contacts/${id}/toggle-active`,
       { active }
@@ -111,7 +111,7 @@ export const clientContactService = {
   /**
    * Imposta contatto come primario
    */
-  async setPrimary(id: number): Promise<ContactOperationApiResponse> {
+  async setPrimary(id: string): Promise<ContactOperationApiResponse> {
     const { data } = await api.patch<ContactOperationApiResponse>(
       `/contacts/${id}/set-primary`
     );
@@ -121,7 +121,7 @@ export const clientContactService = {
   /**
    * Elimina contatto
    */
-  async delete(id: number): Promise<ContactDeleteApiResponse> {
+  async delete(id: string): Promise<ContactDeleteApiResponse> {
     const { data } = await api.delete<ContactDeleteApiResponse>(`/contacts/${id}`);
     return data;
   },

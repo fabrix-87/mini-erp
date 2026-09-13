@@ -1,3 +1,5 @@
+import { Activity, ApiResponse } from "@mini-erp/shared";
+
 // types/activity.ts
 export type {
   ActivityStatsInput,
@@ -38,3 +40,12 @@ export const activityKeys = {
   detail: (id: number) => [...activityKeys.all, "detail", id] as const,
   stats: () => [...activityKeys.all, "stats"] as const,
 };
+
+export const ACTIVITY_TAGS = {
+  list: "activities-list",
+  detail: (id: string): string => `activity-${id}`,
+  stats: "activities-stats",
+} as const;
+
+
+export type ActivitySingleApiResponse = ApiResponse<Activity>;

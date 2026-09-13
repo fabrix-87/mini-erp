@@ -121,7 +121,7 @@ export function useContacts(initialParams?: ContactQueryInput): UseContactsRetur
 // HOOK: useContact (Singolo contatto)
 // ============================================================================
 
-export function useContact(id: number): UseContactReturn {
+export function useContact(id: string): UseContactReturn {
   const {
     data: response,
     isLoading,
@@ -148,7 +148,7 @@ export function useContact(id: number): UseContactReturn {
 // HOOK: useContactsByCompany
 // ============================================================================
 
-export function useContactsByCompany(companyId: number, active?: boolean) {
+export function useContactsByCompany(companyId: string, active?: boolean) {
   const {
     data: response,
     isLoading,
@@ -157,7 +157,7 @@ export function useContactsByCompany(companyId: number, active?: boolean) {
   } = useQuery({
     queryKey: contactKeys.byCompany(companyId),
     queryFn: () => contactService.getByCompany(companyId, active),
-    enabled: !!companyId && companyId > 0, // Disabilita se companyId è 0 o undefined
+    enabled: !!companyId,// Disabilita se companyId è 0 o undefined
   });
 
   return {
@@ -172,7 +172,7 @@ export function useContactsByCompany(companyId: number, active?: boolean) {
 // HOOK: usePrimaryContact
 // ============================================================================
 
-export function usePrimaryContact(companyId: number) {
+export function usePrimaryContact(companyId: string) {
   const {
     data: response,
     isLoading,

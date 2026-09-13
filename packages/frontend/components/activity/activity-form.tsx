@@ -7,8 +7,8 @@ import { ArrowLeft, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Activity } from "@/types/activitiy";
-import { createActivity, updateActivity } from "@/actions/activity";
+import { Activity, ActivityFormData } from "@/types/activitiy-types";
+
 import { ActivityFormBasicInfo } from "./form/activity-form-basic-info";
 import { ActivityFormScheduling } from "./form/activity-form-scheduling";
 import { ActivityFormOutcome } from "./form/activity-form-outcome";
@@ -17,6 +17,7 @@ import { ActivityFormHeader } from "./form/activity-form-header";
 import { ActivityStatusBadge } from "./activity-status-badge";
 import { useActivityForm } from "@/hooks/use-activity-form";
 import { useAuth } from "@/hooks/use-auth";
+import { createActivityAction, updateActivityAction } from "@/actions/activity-actions";
 
 interface ActivityFormProps {
   activity?: Activity;
@@ -64,9 +65,9 @@ export function ActivityForm({
     startTransition(async () => {
       try {
         const payload = {
-          customerId: formData.customerId ? Number(formData.customerId) : undefined,
-          contactId: formData.contactId ? Number(formData.contactId) : undefined,
-          leadId: formData.leadId ? Number(formData.leadId) : undefined,
+          customerId: formData.customerId,
+          contactId: formData.contactId,
+          leadId: formData.leadId,
           type: formData.type,
           subject: formData.subject,
           description: formData.description || undefined,
@@ -76,23 +77,21 @@ export function ActivityForm({
           scheduledEnd: formData.scheduledEnd
             ? new Date(formData.scheduledEnd).toISOString()
             : undefined,
-          duration: formData.duration ? parseInt(formData.duration) : undefined,
-          reminderMinutes: formData.reminderMinutes
-            ? parseInt(formData.reminderMinutes)
-            : undefined,
+          duration: formData.duration,
+          reminderMinutes: formData.reminderMinutes,
           location: formData.location || undefined,
           outcome: formData.outcome || undefined,
           result: formData.result || undefined,
           internalNotes: formData.internalNotes || undefined,
-          assignedUserId: user?.id || 0,
-        } as Partial<Activity>;
+          assignedUserId: user?.userId || 0,
+        } as ActivityFormData;
 
         let result;
         if (isEditMode && activity) {
           const { assignedUserId, ...cleanPayload } = payload;
-          result = await updateActivity(activity.id, cleanPayload);
+          result = await updateActivityAction(activity.id, cleanPayload);
         } else {
-          result = await createActivity(payload);
+          result = await createActivityAction(payload);
         }
 
         if (result.success) {
@@ -117,8 +116,9 @@ export function ActivityForm({
         onCancel={() => router.back()}
       />
 
-      <ActivityStatusBadge status={formData.status} priority={formData.priority} />
-
+      {formData.status && formData.priority && (
+        <ActivityStatusBadge status={formData.status} priority={formData.priority} />
+      )}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="basic">Info Base</TabsTrigger>

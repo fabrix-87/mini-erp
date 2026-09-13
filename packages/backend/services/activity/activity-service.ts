@@ -17,14 +17,15 @@ import { clean } from "@/helpers/prisma-helper";
  * @returns The completed activity with its follow-up (if created)
  */
 export async function completeActivity(
-  activityId: number,
+  activityId: string,
   input: CompleteActivityInput,
-  completedByUserId: number,
+  completedByUserId: string,
+  tenantId: string,
 ) {
   const { outcome, result, internalNotes, followUp } = input;
 
   const existing = await prisma.activity.findUnique({
-    where: { id: activityId },
+    where: { id: activityId, tenantId },
   });
 
   if (!existing) return null;
@@ -45,6 +46,7 @@ export async function completeActivity(
       const followUpActivity = await tx.activity.create({
         data: {
           type: followUp.type,
+          tenantId,
           subject: followUp.subject,
           scheduledStart: new Date(followUp.scheduledStart),
           priority: followUp.priority ?? "MEDIUM",

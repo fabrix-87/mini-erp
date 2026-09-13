@@ -25,7 +25,7 @@ export async function getLeads(params: LeadQueryInput): Promise<ApiResponse<Lead
 }
 
 /** Recupera singola lead per ID */
-export async function getLeadById(id: number): Promise<ApiResponse<Lead>> {
+export async function getLeadById(id: string): Promise<ApiResponse<Lead>> {
   const response = await api.get<ApiResponse<Lead>>(`/leads/${id}`);
   return response.data;
 }
@@ -43,14 +43,14 @@ export async function createLead(data: CreateLeadInput): Promise<ApiResponse<Lea
 }
 
 /** Aggiorna lead */
-export async function updateLead(id: number, data: UpdateLeadInput): Promise<ApiResponse<Lead>> {
+export async function updateLead(id: string, data: UpdateLeadInput): Promise<ApiResponse<Lead>> {
   const response = await api.put<ApiResponse<Lead>>(`/leads/${id}`, data);
   return response.data;
 }
 
 /** Aggiorna status lead */
 export async function updateLeadStatus(
-  id: number,
+  id: string,
   data: UpdateLeadStatusInput,
 ): Promise<ApiResponse<Lead>> {
   const response = await api.patch<ApiResponse<Lead>>(`/leads/${id}/status`, data);
@@ -59,7 +59,7 @@ export async function updateLeadStatus(
 
 /** Aggiorna score lead */
 export async function updateLeadScore(
-  id: number,
+  id: string,
   data: UpdateLeadScoreInput,
 ): Promise<ApiResponse<Lead>> {
   const response = await api.patch<ApiResponse<Lead>>(`/leads/${id}/score`, data);
@@ -67,19 +67,19 @@ export async function updateLeadScore(
 }
 
 /** Qualifica lead (BANT) */
-export async function qualifyLead(id: number, data: QualifyLeadInput): Promise<ApiResponse<Lead>> {
+export async function qualifyLead(id: string, data: QualifyLeadInput): Promise<ApiResponse<Lead>> {
   const response = await api.patch<ApiResponse<Lead>>(`/leads/${id}/qualify`, data);
   return response.data;
 }
 
 /** Converte lead in Customer */
-export async function convertLead(id: number, data: ConvertLeadInput): Promise<ApiResponse<Lead>> {
+export async function convertLead(id: string, data: ConvertLeadInput): Promise<ApiResponse<Lead>> {
   const response = await api.post<ApiResponse<Lead>>(`/leads/${id}/convert`, data);
   return response.data;
 }
 
 /** Assegna lead a un utente */
-export async function assignLead(id: number, assignedUserId: number): Promise<ApiResponse<Lead>> {
+export async function assignLead(id: string, assignedUserId: string): Promise<ApiResponse<Lead>> {
   const response = await api.patch<ApiResponse<Lead>>(`/leads/${id}/assign`, {
     assignedUserId,
   });
@@ -101,7 +101,7 @@ export async function bulkUpdateLeadStatus(
 }
 
 /** Elimina lead */
-export async function deleteLead(id: number): Promise<ApiResponse<null>> {
+export async function deleteLead(id: string): Promise<ApiResponse<null>> {
   const response = await api.delete<ApiResponse<null>>(`/leads/${id}`);
   return response.data;
 }

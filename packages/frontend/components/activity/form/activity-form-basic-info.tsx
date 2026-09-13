@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Combobox, ComboboxOption } from "@/components/ui/combobox";
-import { ActivityFormData } from "@/types/activitiy";
+import { ActivityFormData } from "@/types/activitiy-types";
 import { Customer } from "@/types/customer-types";
 import { Contact } from "@/types/contact-types";
 import { useMemo } from "react";

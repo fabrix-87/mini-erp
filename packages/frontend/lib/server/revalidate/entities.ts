@@ -1,6 +1,7 @@
 // lib/server/revalidate/entities.ts
 import { CONTACT_TAGS } from "@/types/contact-types";
 import { revalidateEntity, revalidateEntityWithList, revalidatePath, revalidateTag } from ".";
+import { ACTIVITY_TAGS } from "@/types/activitiy-types";
 
 // ============================================================================
 // Common Entity Revalidators
@@ -114,16 +115,25 @@ export const contactRevalidation = {
  */
 export const activityRevalidation = {
   /** Revalidate specific activity detail and activities list. */
-  activity: (id: number) => revalidateEntityWithList("activity", id, { routeKey: "activities" }),
+  activity: (id: string) =>
+    revalidateEntityWithList("activity", id, {
+      routeKey: "activities",
+      detailTag: ACTIVITY_TAGS.detail(id),
+      listTag: ACTIVITY_TAGS.list,
+    }),
 
   /** Revalidate activities list. */
-  list: () => revalidateEntity("activity", undefined, { routeKey: "activities" }),
+  list: () =>
+    revalidateEntity("activity", undefined, {
+      routeKey: "activities",
+      listTag: ACTIVITY_TAGS.list,
+    }),
 
   /**
    * Revalidate activities belonging to a specific lead.
    * Invalidates the lead detail page and the activities-lead tag.
    */
-  forLead: (leadId: number) => {
+  forLead: (leadId: string) => {
     revalidateTag(`activities-lead-${leadId}`);
     revalidatePath(`/crm/leads/${leadId}`, "page");
   },

@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { it } from "date-fns/locale";
-import { ActivityQueryInput } from "@/types/activitiy";
+import { ActivityQueryInput } from "@/types/activitiy-types";
 
 export function ActivityListClient() {
   const router = useRouter();

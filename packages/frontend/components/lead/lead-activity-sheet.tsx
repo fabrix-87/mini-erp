@@ -24,9 +24,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { createActivity } from "@/actions/activity";
+import { createActivityAction } from "@/actions/activity-actions";
 import { useAuth } from "@/hooks/use-auth";
-import { ActivityFormData } from "@/types/activitiy";
+import { ActivityFormData } from "@/types/activitiy-types";
 import type { Activity } from "@mini-erp/shared";
 
 // ─── types ───────────────────────────────────────────────────────────────────
@@ -95,7 +95,6 @@ export function LeadActivitySheet({
   onSuccess,
 }: LeadActivitySheetProps) {
   const { user } = useAuth();
-  console.log(user)
   const [isPending, startTransition] = useTransition();
 
   const [formData, setFormData] = useState<SheetFormData>(() => ({
@@ -106,7 +105,7 @@ export function LeadActivitySheet({
     status: "SCHEDULED",
     scheduledStart: toDatetimeLocal(new Date()),
     scheduledEnd: "",
-    duration: "30",
+    duration: 30,
   }));
 
   /** Generic field change handler */
@@ -127,7 +126,7 @@ export function LeadActivitySheet({
       status: "SCHEDULED",
       scheduledStart: toDatetimeLocal(new Date()),
       scheduledEnd: "",
-      duration: "30",
+      duration: 30,
     });
   }
 
@@ -140,11 +139,11 @@ export function LeadActivitySheet({
     e.preventDefault();
 
     startTransition(async () => {
-      const payload: Partial<Activity> = {
+      const payload: ActivityFormData = {
         leadId,
         type: formData.type,
         subject: formData.subject,
-        description: formData.description || undefined,
+        description: formData.description,
         assignedUserId: user!.userId,
         priority: formData.priority,
         status: formData.status,
@@ -152,10 +151,12 @@ export function LeadActivitySheet({
         scheduledEnd: formData.scheduledEnd
           ? new Date(formData.scheduledEnd).toISOString()
           : undefined,
-        duration: formData.duration ? parseInt(formData.duration) : undefined,
+        duration: formData.duration,
+        actualStart: undefined,
+        actualEnd: undefined
       };
 
-      const result = await createActivity(payload);
+      const result = await createActivityAction(payload);
 
       if (result.success && result.data) {
         toast.success("Attività creata con successo");
@@ -235,7 +236,7 @@ export function LeadActivitySheet({
             <Label htmlFor="sheet-description">Descrizione</Label>
             <Textarea
               id="sheet-description"
-              value={formData.description}
+              value={formData.description || ""}
               onChange={(e) => handleChange("description", e.target.value)}
               placeholder="Dettagli aggiuntivi..."
               rows={3}
@@ -260,7 +261,7 @@ export function LeadActivitySheet({
               <Input
                 id="sheet-end"
                 type="datetime-local"
-                value={formData.scheduledEnd}
+                value={formData.scheduledEnd || undefined}
                 onChange={(e) => handleChange("scheduledEnd", e.target.value)}
               />
             </div>
@@ -270,8 +271,8 @@ export function LeadActivitySheet({
           <div className="space-y-2">
             <Label htmlFor="sheet-duration">Durata</Label>
             <Select
-              value={formData.duration}
-              onValueChange={(v) => handleChange("duration", v)}
+              value={formData.duration?.toString() || "30"}
+              onValueChange={(v) => handleChange("duration", parseInt(v))}
             >
               <SelectTrigger id="sheet-duration">
                 <SelectValue />

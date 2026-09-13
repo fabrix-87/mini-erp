@@ -5,7 +5,7 @@ import { Plus, CalendarIcon } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
-import { Activity } from "@/types/activitiy";
+import { Activity } from "@/types/activitiy-types";
 import { ActivityCard } from "./activity-card";
 
 interface ActivityCalendarViewProps {

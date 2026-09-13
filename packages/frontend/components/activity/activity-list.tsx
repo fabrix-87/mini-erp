@@ -1,7 +1,7 @@
 // app/components/activities/activity-list.tsx
 "use client";
 
-import { Activity } from "@/types/activitiy";
+import { Activity } from "@/types/activitiy-types";
 import { ActivityCard } from "./activity-card";
 import { CalendarIcon } from "lucide-react";
 

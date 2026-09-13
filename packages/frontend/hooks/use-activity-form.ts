@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Activity, ActivityFormData } from "@/types/activitiy";
+import { Activity, ActivityFormData } from "@/types/activitiy-types";
 import { useCustomer } from "@/hooks/use-company";
 import { useContactsByCompany } from "@/hooks/use-contact";
 import { Customer, CustomerQueryInput } from "@/types/customer-types";
@@ -10,6 +10,7 @@ import { getCustomers } from "@/services/client/company";
 import { Lead, LeadQueryInput } from "@mini-erp/shared";
 import { getLeads } from "@/services/client/lead";
 import { useLead } from "./use-lead";
+import { useAuth } from "./use-auth";
 
 interface UseActivityFormProps {
   activity?: Activity;
@@ -28,19 +29,20 @@ export function useActivityForm({
 }: UseActivityFormProps) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | undefined>(
-    activity?.customerId || (preselectedCustomerId ? parseInt(preselectedCustomerId) : undefined),
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | undefined>(
+    activity?.customerId || (preselectedCustomerId ?? undefined),
   );
-  const [selectedLeadId, setSelectedLeadId] = useState<number | undefined>(
-    activity?.leadId || (preselectedLeadId ? parseInt(preselectedLeadId) : undefined),
+  const [selectedLeadId, setSelectedLeadId] = useState<string | undefined>(
+    activity?.leadId || (preselectedLeadId ?? undefined),
   );
+  const { user } = useAuth();
 
   // Carica il customer selezionato
   const { data: customerData } = useCustomer(selectedCustomerId, !!selectedCustomerId);
   const { data: leadData } = useLead(selectedLeadId, !!selectedLeadId);
 
   // Carica i contatti della company del customer selezionato
-  const companyId = customerData?.data?.companyId ?? 0;
+  const companyId = customerData?.data?.companyId ?? "";
 
   const { contacts: companyContacts } = useContactsByCompany(companyId);
 
@@ -60,13 +62,16 @@ export function useActivityForm({
         priority: activity.priority,
         scheduledStart: scheduledStart.toISOString().slice(0, 16),
         scheduledEnd: scheduledEnd?.toISOString().slice(0, 16) || "",
-        duration: activity.duration?.toString() || "30",
-        reminderMinutes: activity.reminderMinutes?.toString() || "",
+        duration: activity.duration || 30,
+        reminderMinutes: activity.reminderMinutes || undefined,
         location: activity.location || "",
-        outcome: activity.outcome || "",
+        outcome: activity.outcome || undefined,
         result: activity.result || "",
         internalNotes: activity.internalNotes || "",
         customFields: activity.customFields || {},
+        assignedUserId: activity.assignedUserId || user!.userId,
+        actualStart: activity.actualStart || null,
+        actualEnd: activity.actualEnd || null,
       };
     }
 
@@ -83,13 +88,16 @@ export function useActivityForm({
       priority: "MEDIUM",
       scheduledStart: newDate.toISOString().slice(0, 16),
       scheduledEnd: "",
-      duration: "30",
-      reminderMinutes: "",
+      duration: 30,
+      reminderMinutes: undefined,
       location: "",
-      outcome: "",
+      outcome: undefined,
       result: "",
       internalNotes: "",
       customFields: {},
+      assignedUserId: user!.userId,
+      actualStart: null,
+      actualEnd: null,
     };
   });
 
@@ -142,7 +150,7 @@ export function useActivityForm({
       contactId: "", // Reset contact quando cambia customer
       leadId: "", // Reset lead quando cambia customer
     }));
-    setSelectedCustomerId(customerId ? parseInt(customerId) : undefined);
+    setSelectedCustomerId(customerId);
   };
 
   const handleLeadChange = (leadId: string) => {
@@ -152,7 +160,7 @@ export function useActivityForm({
       contactId: "", // Reset contact quando cambia lead
       customerId: "", // Reset customer quando cambia lead
     }));
-    setSelectedLeadId(leadId ? Number(leadId) : undefined);
+    setSelectedLeadId(leadId);
   };
 
   const handleChange = (field: keyof ActivityFormData, value: any) => {

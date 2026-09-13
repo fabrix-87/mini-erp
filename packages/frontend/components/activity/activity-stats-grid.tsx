@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { ActivityStats } from "@/types/activitiy";
+import { ActivityStats } from "@/types/activitiy-types";
 
 interface ActivityStatsGridProps {
   stats?: ActivityStats;

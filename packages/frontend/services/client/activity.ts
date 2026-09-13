@@ -8,7 +8,7 @@ import {
   ActivityStats, 
   ActivityStatsInput, 
   ActivityQueryInput 
-} from "@/types/activitiy";
+} from "@/types/activitiy-types";
 import { ApiResponse } from "@/types/api";
 
 /**

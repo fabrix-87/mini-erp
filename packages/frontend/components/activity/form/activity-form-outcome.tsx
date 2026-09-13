@@ -20,7 +20,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ActivityFormData } from "@/types/activitiy";
+import { ActivityFormData } from "@/types/activitiy-types";
 
 interface ActivityFormOutcomeProps {
   formData: ActivityFormData;

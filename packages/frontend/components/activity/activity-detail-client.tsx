@@ -37,8 +37,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Activity } from "@/types/activitiy";
-import { deleteActivity } from "@/actions/activity";
+import { Activity } from "@/types/activitiy-types";
+import { deleteActivity } from "@/actions/activity-actions";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
 import { formatDateIT } from "@/helpers/date-helper";
 import Link from "next/link";

@@ -267,6 +267,8 @@ export const createActivity = async (c: Context<AppBindings>) => {
   const userId = c.get("user")!.userId;
   const tenantId = getRequiredTenantId(c);
 
+  console.log(data)
+
   // Validazioni relazioni
   if (data.companyId) {
     const company = await prisma.company.findUnique({
@@ -277,6 +279,9 @@ export const createActivity = async (c: Context<AppBindings>) => {
     }
   }
 
+  console.log("skip company")
+
+
   if (data.customerId) {
     const customer = await prisma.customer.findFirst({
       where: tenantFilter(tenantId, { id: data.customerId }),
@@ -285,6 +290,7 @@ export const createActivity = async (c: Context<AppBindings>) => {
       return sendNotFound(c, "Customer non trovato");
     }
   }
+  console.log("skip customer")
 
   if (data.opportunityId) {
     const opportunity = await prisma.opportunity.findUnique({
@@ -295,12 +301,16 @@ export const createActivity = async (c: Context<AppBindings>) => {
     }
   }
 
+  console.log("skip opportunity")
+
   if (data.leadId) {
     const lead = await prisma.lead.findUnique({ where: { id: data.leadId, tenantId } });
     if (!lead) {
       return sendNotFound(c, "Lead non trovata");
     }
   }
+
+  console.log("skip lead")
 
   if (data.contactId) {
     const contact = await prisma.contact.findFirst({
@@ -310,6 +320,8 @@ export const createActivity = async (c: Context<AppBindings>) => {
       return sendNotFound(c, "Contact non trovato");
     }
   }
+
+  console.log("skip contact")
 
   const activity = await prisma.activity.create({
     data: { ...data, createdByUserId: userId, tenantId },
@@ -334,16 +346,17 @@ export const createActivity = async (c: Context<AppBindings>) => {
 export const updateActivity = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ActivityIdParam>(c);
   const data = getValidatedBody<UpdateActivityInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const existing = await prisma.activity.findUnique({
-    where: { id: Number(id) },
+    where: { id, tenantId },
   });
   if (!existing) {
     return sendNotFound(c, "Activity non trovata");
   }
 
   const activity = await prisma.activity.update({
-    where: { id: Number(id) },
+    where: { id },
     data,
     include: {
       company: true,
@@ -367,9 +380,10 @@ export const updateActivityStatus = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ActivityIdParam>(c);
   const { status, outcome, result, actualStart, actualEnd } =
     getValidatedBody<UpdateActivityStatusInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const activity = await prisma.activity.findUnique({
-    where: { id: Number(id) },
+    where: { id, tenantId },
   });
   if (!activity) {
     return sendNotFound(c, "Activity non trovata");
@@ -395,7 +409,7 @@ export const updateActivityStatus = async (c: Context<AppBindings>) => {
   }) satisfies Prisma.ActivityUpdateInput;
 
   const updated = await prisma.activity.update({
-    where: { id: Number(id) },
+    where: { id },
     data: updateData,
     include: {
       company: true,
@@ -415,8 +429,9 @@ export const completeActivity = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ActivityIdParam>(c);
   const input = getValidatedBody<CompleteActivityInput>(c);
   const userId = c.get("user")!.userId;
+  const tenantId = getRequiredTenantId(c);
 
-  const updated = await completeActivityService(Number(id), input, userId);
+  const updated = await completeActivityService(id, input, userId, tenantId);
 
   if (!updated) {
     return sendNotFound(c, "Activity non trovata");
@@ -432,15 +447,16 @@ export const completeActivity = async (c: Context<AppBindings>) => {
  */
 export const deleteActivity = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ActivityIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const activity = await prisma.activity.findUnique({
-    where: { id: Number(id) },
+    where: { id, tenantId },
   });
   if (!activity) {
     return sendNotFound(c, "Activity non trovata");
   }
 
-  await prisma.activity.delete({ where: { id: Number(id) } });
+  await prisma.activity.delete({ where: { id } });
 
   return sendDeleted(c, "Activity eliminata con successo");
 };
@@ -453,9 +469,11 @@ export const deleteActivity = async (c: Context<AppBindings>) => {
 export const getActivityStats = async (c: Context<AppBindings>) => {
   const { startDate, endDate, userId } = getValidatedQuery<ActivityStatsInput>(c);
   const currentUserId = c.get("user")!.userId;
+  const tenantId = getRequiredTenantId(c);
 
   const where: Prisma.ActivityWhereInput = {
-    assignedUserId: userId ? Number(userId) : currentUserId,
+    assignedUserId: userId ?? currentUserId,
+    tenantId,
   };
 
   if (startDate || endDate) {
@@ -477,6 +495,7 @@ export const getActivityStats = async (c: Context<AppBindings>) => {
       prisma.activity.count({
         where: {
           assignedUserId: where.assignedUserId,
+          tenantId,
           scheduledStart: { lt: new Date() },
           status: { in: ["SCHEDULED", "IN_PROGRESS"] },
         },
@@ -484,6 +503,7 @@ export const getActivityStats = async (c: Context<AppBindings>) => {
       prisma.activity.count({
         where: {
           assignedUserId: where.assignedUserId,
+          tenantId,
           scheduledStart: {
             gte: new Date(new Date().setHours(0, 0, 0, 0)),
             lt: new Date(new Date().setHours(24, 0, 0, 0)),
@@ -493,6 +513,7 @@ export const getActivityStats = async (c: Context<AppBindings>) => {
       prisma.activity.count({
         where: {
           assignedUserId: where.assignedUserId,
+          tenantId,
           followUpActivityId: { not: null },
         },
       }),

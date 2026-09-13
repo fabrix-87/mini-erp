@@ -3,7 +3,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ActivityStatus, ActivityPriority } from "@/types/activitiy";
+import { ActivityPriority, ActivityStatus } from "@mini-erp/shared";
 
 interface ActivityStatusBadgeProps {
   status: ActivityStatus;
