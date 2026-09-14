@@ -13,7 +13,7 @@ interface ActivityCalendarViewProps {
   selectedDate: Date;
   onDateSelect: (date: Date) => void;
   isLoading: boolean;
-  onActivityClick: (id: number) => void;
+  onActivityClick: (id: string) => void;
   onCreateNew: () => void;
 }
 

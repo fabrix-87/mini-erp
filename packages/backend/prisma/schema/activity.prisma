@@ -105,11 +105,11 @@ model Activity {
   //   Cascade  → activity has no standalone meaning without the parent
   //   SetNull  → activity keeps its history even if the related record is removed
 
-  companyId String?
-  company   Company? @relation("CompanyActivities", fields: [companyId], references: [id], onDelete: SetNull)
-
   customerId String?   @map("customer_id")
   customer   Customer? @relation("CustomerActivities", fields: [customerId], references: [id], onDelete: SetNull)
+
+  supplierId String?
+  supplier   Supplier? @relation("SupplierActivities", fields: [supplierId], references: [id], onDelete: SetNull)
 
   contactId String?  @map("contact_id")
   contact   Contact? @relation("ContactActivities", fields: [contactId], references: [id], onDelete: SetNull)
@@ -158,17 +158,19 @@ model Activity {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([tenantId, status]) // Compound: "all open activities for tenant"
-  @@index([tenantId, assignedUserId]) // Compound: "my activities" — most common dashboard query
-  @@index([tenantId, scheduledStart]) // Compound: calendar/timeline queries per tenant
-  @@index([type])
-  @@index([priority])
-  @@index([companyId])
-  @@index([customerId])
-  @@index([opportunityId])
-  @@index([leadId])
-  @@index([scheduledStart, scheduledEnd]) // Compound: range queries (e.g. activities this week)
-  @@index([followUpActivityId]) // Self-relation lookup: "follow-ups of activity X"
+  @@index([tenantId, status])
+@@index([tenantId, assignedUserId])
+@@index([tenantId, scheduledStart])
+
+// Entity-specific, tenant-scoped
+@@index([tenantId, customerId])
+@@index([tenantId, supplierId])
+@@index([tenantId, opportunityId])
+@@index([tenantId, leadId])
+
+// Range e lookup
+@@index([scheduledStart, scheduledEnd])
+@@index([followUpActivityId])
   @@index([attachments], where: { attachments: { not: null } }, map: "activities_has_attachments ")
   @@map("activities")
 }
@@ -245,7 +247,7 @@ model ActivityTemplate {
   // Template names must be unique per tenant.
   // Global templates (tenantId IS NULL) are deduplicated by name at the application layer.
   @@unique([tenantId, name])
-  @@unique([name], where: { tenantId: null}, map: "activity_templates_global_name")
+  @@unique([name], where: { tenantId: null }, map: "activity_templates_global_name")
   @@index([tenantId])
   @@index([type])
   @@index([active])

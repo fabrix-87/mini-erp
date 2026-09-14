@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { User } from "./user";
 import { Contact } from "./contact";
-import { Company } from "./company";
 import { Customer } from "./customer";
 import { Opportunity } from "./opportunity";
 import {
@@ -27,7 +26,7 @@ import {
   updateActivityTemplateSchema,
 } from "../validators";
 import { Lead } from "./lead";
-import { ActivityStatus, ActivityType } from "../constants/activity";
+import { Supplier } from "./supplier";
 
 // ============================================================================
 // TYPE EXPORTS
@@ -38,7 +37,7 @@ import { ActivityStatus, ActivityType } from "../constants/activity";
  */
 export type Activity = z.infer<typeof createActivitySchema> & {
   id: string;
-  company?: Company;
+  supplier?: Supplier;
   lead?: Lead;
   customer?: Customer;
   contact?: Contact;

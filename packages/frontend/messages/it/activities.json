@@ -46,5 +46,6 @@
     "RESCHEDULED": "Riprogrammato",
     "NO_SHOW": "Non presentato"
   },
-  "createSuccess": "Attività creata!"
+  "createSuccess": "Attività creata!",
+  "isOverdue": "In ritardo"
 }

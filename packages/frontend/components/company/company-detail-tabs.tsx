@@ -67,7 +67,9 @@ export function CompanyDetailTabs({ data, companyType }: CompanyDetailTabsProps)
       </TabsContent>
 
       <TabsContent value="activities" className="mt-6">
-        <CompanyActivitiesTab companyId={data.companyId} />
+        <CompanyActivitiesTab
+          {...(companyType === "CUSTOMER" ? { customerId: data.id } : { supplierId: data.id })}
+        />
       </TabsContent>
     </Tabs>
   );

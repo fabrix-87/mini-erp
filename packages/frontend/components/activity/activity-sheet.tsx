@@ -21,6 +21,8 @@ import { Save } from "lucide-react";
 interface ActivitySheetProps {
   leadId?: string;
   opportunityId?: string;
+  supplierId?: string;
+  customerId?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: CreateActivityFormValues) => Promise<void>;
@@ -49,6 +51,8 @@ const DEFAULT_VALUES: Partial<CreateActivityInput> = {
 export function ActivitySheet({
   leadId,
   opportunityId,
+  supplierId,
+  customerId,
   open,
   onOpenChange,
   onSubmit,
@@ -64,6 +68,8 @@ export function ActivitySheet({
       leadId: leadId ?? null,
       opportunityId: opportunityId ?? null,
       assignedUserId: user?.userId ?? "",
+      customerId: customerId ?? null,
+      supplierId: supplierId ?? null,
     },
   });
 
@@ -76,6 +82,8 @@ export function ActivitySheet({
         leadId: leadId ?? null,
         opportunityId: opportunityId ?? null,
         assignedUserId: user?.userId ?? "",
+        customerId: customerId ?? null,
+        supplierId: supplierId ?? null,
       });
     }
   }, [open, leadId, opportunityId, user?.userId, form]);
@@ -210,7 +218,7 @@ export function ActivitySheet({
                       {t("form.scheduledStart")} <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input type="datetime-local" {...field} step={300}/>
+                      <Input type="datetime-local" {...field} step={300} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

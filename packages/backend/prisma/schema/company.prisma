@@ -118,7 +118,6 @@ model Company {
     tenants      Tenant?          @relation("TenantOwnedCompany")
     notes        CompanyNote[]
     bankAccounts BankAccount[]    @relation("CompanyBankAccounts")
-    activities   Activity[]       @relation("CompanyActivities")
 
     customFields Json? @map("custom_fields")
 
@@ -375,6 +374,8 @@ model Supplier {
     withholdingSettlementLines WithholdingTaxSettlementLine[] @relation("SupplierWithholdingLines")
     products                   Product[]
     stockBatchs                StockBatch[]
+    activities                 Activity[]                     @relation("SupplierActivities")
+    
 
     createdAt DateTime  @default(now()) @map("created_at")
     updatedAt DateTime  @updatedAt @map("updated_at")

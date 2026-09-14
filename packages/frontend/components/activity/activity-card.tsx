@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Activity } from "@/types/activitiy-types";
 import { cn } from "@/lib/utils";
 import { formatDateIT } from "@/helpers/date-helper";
+import { useTranslations } from "next-intl";
 
 const activityTypeIcons: Record<string, any> = {
   CALL: Phone,
@@ -53,15 +54,6 @@ const statusColors: Record<string, string> = {
   NO_SHOW: "bg-gray-500/10 text-gray-700",
 };
 
-const statusLabels: Record<string, string> = {
-  SCHEDULED: "Programmata",
-  IN_PROGRESS: "In corso",
-  COMPLETED: "Completata",
-  CANCELLED: "Annullata",
-  RESCHEDULED: "Riprogrammata",
-  NO_SHOW: "Non presentato",
-};
-
 const priorityColors: Record<string, string> = {
   LOW: "border-gray-300",
   MEDIUM: "border-blue-500",
@@ -72,14 +64,16 @@ const priorityColors: Record<string, string> = {
 interface ActivityCardProps {
   activity: Activity;
   onClick: () => void;
+  className?: string;
 }
 
-export function ActivityCard({ activity, onClick }: ActivityCardProps) {
+export function ActivityCard({ activity, onClick, className }: ActivityCardProps) {
   const Icon = activityTypeIcons[activity.type] || FileText;
-  
+
+  const t = useTranslations("activities");
+
   const isOverdue =
-    activity.status === "SCHEDULED" &&
-    new Date(activity.scheduledStart) < new Date();
+    activity.status === "SCHEDULED" && new Date(activity.scheduledStart) < new Date();
 
   const datetime = formatDateIT(activity.scheduledStart);
 
@@ -87,8 +81,9 @@ export function ActivityCard({ activity, onClick }: ActivityCardProps) {
     <div
       className={cn(
         "flex items-start gap-4 p-4 border-l-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors",
+        className,
         priorityColors[activity.priority],
-        isOverdue && "bg-red-500/5"
+        isOverdue && "bg-red-500/5",
       )}
       onClick={onClick}
     >
@@ -97,13 +92,12 @@ export function ActivityCard({ activity, onClick }: ActivityCardProps) {
         <div
           className={cn(
             "h-10 w-10 rounded-lg flex items-center justify-center",
-            activityTypeColors[activity.type]
+            activityTypeColors[activity.type],
           )}
         >
           <Icon className="h-5 w-5" />
         </div>
         <div className="text-xs font-medium text-center">{datetime}</div>
-        <div className="text-xs text-muted-foreground">{datetime}</div>
       </div>
 
       {/* Content */}
@@ -112,43 +106,37 @@ export function ActivityCard({ activity, onClick }: ActivityCardProps) {
           <div className="font-medium truncate">{activity.subject}</div>
           <div className="flex gap-2 shrink-0">
             <Badge variant="secondary" className={statusColors[activity.status]}>
-              {statusLabels[activity.status] || activity.status}
+              {t(`status.${activity.status}`)}
             </Badge>
             {activity.priority === "HIGH" && (
               <Badge variant="outline" className="border-orange-500 text-orange-700">
-                Alta
+                {t("priority.HIGH")}
               </Badge>
             )}
             {activity.priority === "URGENT" && (
               <Badge variant="outline" className="border-red-500 text-red-700">
-                Urgente
+                {t("priority.URGENT")}
               </Badge>
             )}
           </div>
         </div>
 
         {activity.description && (
-          <p className="text-sm text-muted-foreground line-clamp-1 mb-2">
-            {activity.description}
-          </p>
+          <p className="text-sm text-muted-foreground line-clamp-1 mb-2">{activity.description}</p>
         )}
 
         <div className="flex items-center gap-4 text-sm">
           {activity.customer && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <Users className="h-3.5 w-3.5" />
-              <span className="truncate max-w-50">
-                {activity.customer.company.companyName}
-              </span>
+              <span className="truncate max-w-50">{activity.customer.company.companyName}</span>
             </div>
           )}
 
           {activity.lead && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <Users className="h-3.5 w-3.5" />
-              <span className="truncate max-w-50">
-                {activity.lead.companyName}
-              </span>
+              <span className="truncate max-w-50">{activity.lead.companyName}</span>
             </div>
           )}
 
@@ -171,14 +159,14 @@ export function ActivityCard({ activity, onClick }: ActivityCardProps) {
           {activity.duration && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <Clock className="h-3.5 w-3.5" />
-              {activity.duration}min
+              {t('form.duration')}: {activity.duration}
             </div>
           )}
 
           {isOverdue && (
             <div className="flex items-center gap-1.5 text-red-600 font-medium">
               <AlertCircle className="h-3.5 w-3.5" />
-              In ritardo
+              {t('isOverdue')}
             </div>
           )}
         </div>

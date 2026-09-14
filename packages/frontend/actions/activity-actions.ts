@@ -136,6 +136,7 @@ export async function bulkUpdateActivities(
     // Revalidate the activities page
     revalidatePath("/activities");
     revalidatePath("/dashboard/activities");
+    activityRevalidation.list();
 
     return {
       success: true,

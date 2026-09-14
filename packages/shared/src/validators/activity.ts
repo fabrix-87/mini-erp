@@ -1,12 +1,12 @@
-import z from "zod";
+import { z } from "zod";
 
 import {
   activityIdBaseSchema,
-  companyIdBaseSchema,
   contactIdBaseSchema,
   customerIdBaseSchema,
   leadIdBaseSchema,
   opportunityIdBaseSchema,
+  supplierIdBaseSchema,
   userIdSchema,
 } from "./base";
 import { isoDateSchema } from "./primitives/date";
@@ -103,7 +103,7 @@ const activityBaseSchema = z.object({
   reminderSent: z.boolean().default(false),
 
   // Relazioni
-  companyId: companyIdBaseSchema.optional().nullable(),
+  supplierId: supplierIdBaseSchema.optional().nullable(),
   customerId: customerIdBaseSchema.optional().nullable(),
   contactId: contactIdBaseSchema.optional().nullable(),
   opportunityId: opportunityIdBaseSchema.optional().nullable(),
@@ -186,11 +186,11 @@ export const activityQuerySchema = z
     priority: activityPrioritySchema.optional().nullable(),
     outcome: activityOutcomeSchema.optional().nullable(),
 
-    companyId: createCuidSchema("CompanyId non valido").optional().nullable(),
-    customerId: createCuidSchema("CustomerId non valido").optional().nullable(),
-    opportunityId: createCuidSchema("OpportunityId non valido").optional().nullable(),
-    assignedUserId: createCuidSchema("Assigned User ID non valido").optional().nullable(),
-    leadId: createCuidSchema("Lead ID non valido").optional().nullable(),
+    supplierId: supplierIdBaseSchema.optional().nullable(),
+    customerId: customerIdBaseSchema.optional().nullable(),
+    opportunityId: opportunityIdBaseSchema.optional().nullable(),
+    assignedUserId: userIdSchema.optional().nullable(),
+    leadId: leadIdBaseSchema.optional().nullable(),
 
     // Filtri data
     startDate: isoDateSchema({ message: "Data inizio non valida" }),
@@ -207,7 +207,7 @@ export const activityQuerySchema = z
   .partial({
     startDate: true,
     endDate: true,
-    companyId: true,
+    supplierId: true,
     customerId: true,
     opportunityId: true,
     assignedUserId: true,
@@ -356,7 +356,7 @@ export const createActivityFromTemplateSchema = z
     description: z.string().optional().nullable(),
 
     // Relazioni obbligatorie
-    companyId: companyIdBaseSchema,
+    supplierId: supplierIdBaseSchema,
     customerId: customerIdBaseSchema,
     opportunityId: opportunityIdBaseSchema,
     assignedUserId: userIdSchema,
@@ -364,11 +364,11 @@ export const createActivityFromTemplateSchema = z
   .strict()
   .refine(
     (data) => {
-      return data.companyId || data.customerId || data.opportunityId;
+      return data.supplierId || data.customerId || data.opportunityId;
     },
     {
       message: "Almeno una relazione è obbligatoria",
-      path: ["companyId"],
+      path: ["customerId"],
     },
   );
 

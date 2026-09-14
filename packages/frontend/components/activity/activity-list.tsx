@@ -13,16 +13,21 @@ import { ActivitySheet } from "./activity-sheet";
 import { CreateActivityFormValues } from "@mini-erp/shared";
 import { toast } from "sonner";
 import { createActivityAction } from "@/actions/activity-actions";
+import { ActivityCard } from "./activity-card";
+import { useNavigation } from "@/hooks/use-navigation";
 
 interface ActivityListProps {
   activities: Activity[];
   leadId?: string;
   opportunityId?: string;
+  supplierId?: string;
+  customerId?: string;
 }
 
-export function ActivityList({ activities, leadId, opportunityId }: ActivityListProps) {
+export function ActivityList({ activities, leadId, opportunityId, supplierId, customerId }: ActivityListProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const t = useTranslations("activities");
+  const { navigateToDetail } = useNavigation();
 
   const onSubmit = async (data: CreateActivityFormValues) => {
     const result = await createActivityAction(data);
@@ -55,29 +60,22 @@ export function ActivityList({ activities, leadId, opportunityId }: ActivityList
             </Button>
           </div>
         ) : (
-          <ul className="divide-y divide-border">
+          <div className="divide-y divide-border">
             {activities.map((activity) => (
-              <li key={activity.id} className="flex items-center justify-between py-3">
-                <div className="flex flex-col gap-1">
-                  <span className="text-sm font-medium">{activity.subject}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {formatDateIT(new Date(activity.scheduledStart))}
-                    {activity.assignedUser &&
-                      ` · ${activity.assignedUser.details?.firstName} ${activity.assignedUser.details?.lastName}`}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline">{t(`type.${activity.type}`)}</Badge>
-                  <Badge>{t(`status.${activity.status}`)}</Badge>
-                </div>
-              </li>
+              <ActivityCard
+                key={activity.id}
+                activity={activity}
+                onClick={() => navigateToDetail("activities", activity.id)}
+              />
             ))}
-          </ul>
+          </div>
         )}
 
         <ActivitySheet
           leadId={leadId}
           opportunityId={opportunityId}
+          customerId={customerId}
+          supplierId={supplierId}
           open={sheetOpen}
           onOpenChange={setSheetOpen}
           onSubmit={onSubmit}

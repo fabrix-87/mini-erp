@@ -3,7 +3,6 @@ import {
   baseCompanySchema,
   companyFiltersSchema,
   companyIdSchema,
-  companyQueryBaseSchema,
   updateCompanySchema,
 } from "./company";
 import { creditLimitSchema } from "./business/currency";
@@ -15,6 +14,7 @@ import {
 } from "./query/params";
 import { createCuidSchema, createIdSchema } from "./primitives";
 import { paginationSchema, sortOrderSchema } from "./query";
+import { supplierIdBaseSchema } from "./base";
 
 // ============================================================================
 // SUPPLIER SCHEMAS (Extended from Base)
@@ -27,7 +27,7 @@ import { paginationSchema, sortOrderSchema } from "./query";
 export const createSupplierSchema = z
   .object({
     // parent supplier (Hierarchy)
-    parentSupplierId: createCuidSchema("Parent Supplier ID non valido").optional().nullable(),
+    parentSupplierId: supplierIdBaseSchema.optional().nullable(),
 
     // Nested Company (usa il base schema)
     company: baseCompanySchema,

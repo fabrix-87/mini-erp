@@ -42,6 +42,7 @@ import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
 import { formatDateIT } from "@/helpers/date-helper";
 import Link from "next/link";
 import { deleteActivityAction } from "@/actions/activity-actions";
+import { getDetailRoute } from "@/lib/navigation-routes";
 
 const activityTypeIcons: Record<string, any> = {
   CALL: Phone,
@@ -195,12 +196,31 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
             <div>
               <p className="text-sm font-medium text-muted-foreground">Azienda</p>
               {activity.customer && (
-                <p className="text-base">{activity.customer?.company?.companyName}</p>
+                <p className="text-base">
+                  <Link
+                    href={getDetailRoute("customers", activity.customerId!)}
+                    className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
+                  >
+                    {activity.customer?.company?.companyName}
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </Link>
+                </p>
+              )}
+              {activity.supplier && (
+                <p className="text-base">
+                  <Link
+                    href={getDetailRoute("suppliers", activity.supplierId!)}
+                    className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
+                  >
+                    {activity.supplier?.company?.companyName}{" "}
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </Link>
+                </p>
               )}
               {activity.lead && (
                 <p className="text-base">
                   <Link
-                    href={`/leads/${activity.leadId}`}
+                    href={getDetailRoute("leads", activity.leadId!)}
                     className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
                   >
                     {activity.lead.companyName} <ExternalLink className="h-3.5 w-3.5" />

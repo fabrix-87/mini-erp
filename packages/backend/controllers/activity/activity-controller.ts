@@ -12,6 +12,7 @@ import {
 import {
   sendCreated,
   sendDeleted,
+  sendFail,
   sendNotFound,
   sendPaginatedResponse,
   sendSuccess,
@@ -45,7 +46,7 @@ export const getAllActivities = async (c: Context<AppBindings>) => {
     status,
     priority,
     outcome,
-    companyId,
+    supplierId,
     customerId,
     opportunityId,
     assignedUserId,
@@ -78,7 +79,7 @@ export const getAllActivities = async (c: Context<AppBindings>) => {
   if (outcome) where.outcome = outcome;
 
   // Filtri relazioni
-  if (companyId) where.companyId = companyId;
+  if (supplierId) where.supplierId = supplierId;
   if (customerId) where.customerId = customerId;
   if (opportunityId) where.opportunityId = opportunityId;
 
@@ -116,14 +117,17 @@ export const getAllActivities = async (c: Context<AppBindings>) => {
       take: Number(limit),
       orderBy: { [sortBy]: sortOrder },
       include: {
-        company: {
+        customer: {
           select: {
             id: true,
-            code: true,
-            companyName: true,
+            company: {
+              select: {
+                companyName: true,
+              },
+            },
           },
         },
-        customer: {
+        supplier: {
           select: {
             id: true,
             company: {
@@ -218,8 +222,8 @@ export const getActivityById = async (c: Context<AppBindings>) => {
   const activity = await prisma.activity.findUnique({
     where: { id, tenantId },
     include: {
-      company: { include: { country: true } },
       customer: { include: { company: { include: { country: true } } } },
+      supplier: { include: { company: { include: { country: true } } } },
       lead: true,
       contact: true,
       opportunity: true,
@@ -268,12 +272,12 @@ export const createActivity = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   // Validazioni relazioni
-  if (data.companyId) {
-    const company = await prisma.company.findUnique({
-      where: { id: data.companyId, tenantId },
+  if (data.supplierId) {
+    const supplier = await prisma.supplier.findUnique({
+      where: { id: data.supplierId, tenantId },
     });
-    if (!company) {
-      return sendNotFound(c, "Company non trovata");
+    if (!supplier) {
+      return sendNotFound(c, "Supplier non trovata");
     }
   }
 
@@ -314,8 +318,8 @@ export const createActivity = async (c: Context<AppBindings>) => {
   const activity = await prisma.activity.create({
     data: { ...data, createdByUserId: userId, tenantId },
     include: {
-      company: true,
-      customer: true,
+      customer: { include: { company: { include: { country: true } } } },
+      supplier: { include: { company: { include: { country: true } } } },
       contact: true,
       opportunity: true,
       lead: true,
@@ -347,8 +351,8 @@ export const updateActivity = async (c: Context<AppBindings>) => {
     where: { id },
     data,
     include: {
-      company: true,
-      customer: true,
+      customer: { include: { company: { include: { country: true } } } },
+      supplier: { include: { company: { include: { country: true } } } },
       contact: true,
       opportunity: true,
       assignedUser: { select: { id: true, username: true, email: true } },
@@ -400,7 +404,8 @@ export const updateActivityStatus = async (c: Context<AppBindings>) => {
     where: { id },
     data: updateData,
     include: {
-      company: true,
+      customer: { include: { company: { include: { country: true } } } },
+      supplier: { include: { company: { include: { country: true } } } },
       assignedUser: { select: { id: true, username: true, email: true } },
     },
   });

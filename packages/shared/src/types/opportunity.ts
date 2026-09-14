@@ -137,7 +137,9 @@ export type OpportunityCustomerIdParam = z.infer<typeof customerIdParamSchema>;
 export type OpportunityListItem = {
   id: string;
   title: string;
-  customerName: string;
+  customer: Customer | null;
+  lead: Lead | null;
+  leadId: string | null;
   status: OpportunityStatus;
   stage: SalesStage;
   source: OpportunitySource;

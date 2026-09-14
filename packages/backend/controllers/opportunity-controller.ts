@@ -155,6 +155,14 @@ export const getAllOpportunities = async (c: Context<AppBindings>) => {
             totalAmount: true,
           },
         },
+        lead: {
+          select: {
+            id: true,            
+            companyName: true,
+            contactFirstName: true,
+            contactLastName: true,
+          }
+        }            
       },
     }),
     prisma.opportunity.count({ where }),

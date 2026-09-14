@@ -1,7 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { MoreHorizontal, Pencil, Trash2, Eye, TrendingUp } from "lucide-react";
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Eye,
+  TrendingUp,
+  Building2,
+  UserRoundPlus,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -42,11 +50,12 @@ import type {
 import { formatDateIT } from "@/helpers/date-helper";
 import { formatCurrency } from "@/utils/format-currency";
 import { useTranslations } from "next-intl";
-import { getRoute } from "@/lib/navigation-routes";
+import { getDetailRoute, getRoute } from "@/lib/navigation-routes";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { useNavigation } from "@/hooks/use-navigation";
 import { toast } from "sonner";
 import { deleteOpportunityAction } from "@/actions/opportunity-actions";
+import Link from "next/link";
 
 // ============================================================================
 // Types
@@ -229,31 +238,59 @@ export function OpportunityTable({
                 >
                   {/* Title + customer */}
                   <TableCell>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-medium leading-tight">{opp.title}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {opp.customerName}
-                        {opp.assignedUserName && (
-                          <>
-                            {" "}
-                            · <TrendingUp className="inline h-3 w-3 mr-0.5" />
-                            {opp.assignedUserName}
-                          </>
-                        )}
-                      </span>
-                    </div>
-                  </TableCell>
+                    {(() => {
+                      const isLeadOpportunity = Boolean(opp.leadId);
 
+                      const relatedCompanyName = isLeadOpportunity
+                        ? opp.lead?.companyName
+                        : opp.customer?.company.companyName;
+
+                      return (
+                        <div className="flex min-w-0 flex-col gap-1">
+                          <span className="truncate font-medium leading-tight">{opp.title}</span>
+
+                          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                            <Badge
+                              variant="secondary"
+                              className={
+                                isLeadOpportunity
+                                  ? "inline-flex shrink-0 items-center gap-1 border border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                                  : "inline-flex shrink-0 items-center gap-1 border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                              }
+                              aria-label={isLeadOpportunity ? t('form.lead') : t('form.customer')}
+                            >
+                              {isLeadOpportunity ? (
+                                <UserRoundPlus className="size-3" aria-hidden="true" />
+                              ) : (
+                                <Building2 className="size-3" aria-hidden="true" />
+                              )}
+                              {isLeadOpportunity ? t('form.lead') : t('form.customer')}
+                            </Badge>
+
+                            <span className="truncate text-muted-foreground">
+                              {relatedCompanyName ?? "—"}
+                            </span>
+
+                            {opp.assignedUserName && (
+                              <span className="inline-flex shrink-0 items-center gap-1 text-muted-foreground">
+                                <span aria-hidden="true">·</span>
+                                <TrendingUp className="size-3" aria-hidden="true" />
+                                <span className="truncate">{opp.assignedUserName}</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </TableCell>
                   {/* Status */}
                   <TableCell>
                     <OpportunityStatusBadge status={opp.status} />
                   </TableCell>
-
                   {/* Stage */}
                   <TableCell>
                     <OpportunityStageBadge stage={opp.stage} />
                   </TableCell>
-
                   {/* Estimated value */}
                   <TableCell className="text-right tabular-nums">
                     {opp.estimatedValue != null ? (
@@ -262,7 +299,6 @@ export function OpportunityTable({
                       <span className="text-muted-foreground/50">—</span>
                     )}
                   </TableCell>
-
                   {/* Probability */}
                   <TableCell className="text-right tabular-nums">
                     <span
@@ -277,7 +313,6 @@ export function OpportunityTable({
                       {opp.probability}%
                     </span>
                   </TableCell>
-
                   {/* Expected close */}
                   <TableCell>
                     {opp.expectedCloseDate ? (
@@ -288,14 +323,12 @@ export function OpportunityTable({
                       <span className="text-xs text-muted-foreground/50">—</span>
                     )}
                   </TableCell>
-
                   {/* Created at */}
                   <TableCell>
                     <span className="text-xs text-muted-foreground">
                       {formatDateIT(opp.createdAt)}
                     </span>
                   </TableCell>
-
                   {/* Row actions */}
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>

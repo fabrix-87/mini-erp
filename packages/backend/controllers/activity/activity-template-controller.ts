@@ -145,14 +145,14 @@ export const createActivityFromTemplate = async (c: Context<AppBindings>) => {
     scheduledEnd,
     subject,
     description,
-    companyId,
+    supplierId,
     customerId,
     opportunityId,
     assignedUserId,
   } = getValidatedBody<CreateActivityFromTemplateInput>(c);
 
   const userId = c.get("user")!.userId;
-  const tenantId = getRequiredTenantId(c)
+  const tenantId = getRequiredTenantId(c);
 
   const template = await prisma.activityTemplate.findUnique({
     where: { id: Number(id) },
@@ -169,7 +169,7 @@ export const createActivityFromTemplate = async (c: Context<AppBindings>) => {
     });
   }
 
-  if (!companyId && !customerId && !opportunityId) {
+  if (!supplierId && !customerId && !opportunityId) {
     return sendError(c, {
       statusCode: 400,
       status: "fail",
@@ -208,7 +208,7 @@ export const createActivityFromTemplate = async (c: Context<AppBindings>) => {
     assignedUser: { connect: { id: assignedUserId } },
 
     // Relazioni opzionali
-    company: connectOrDisconnectById(companyId),
+    supplier: connectOrDisconnectById(supplierId),
     customer: connectOrDisconnectById(customerId),
     opportunity: connectOrDisconnectById(opportunityId),
     tenant: connectOrDisconnectById(tenantId),

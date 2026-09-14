@@ -6,14 +6,14 @@ import { useActivities } from "@/hooks/use-activity";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { formatDistanceToNow } from "date-fns";
-import { it } from "date-fns/locale";
+import { Card, CardContent } from "@/components/ui/card";
 import { ActivityQueryInput } from "@/types/activitiy-types";
+import { ActivityCard } from "@/components/activity/activity-card";
+import { useNavigation } from "@/hooks/use-navigation";
 
 export function ActivityListClient() {
   const router = useRouter();
+  const { navigateToDetail } = useNavigation();
   const [filters, setFilters] = useState<ActivityQueryInput>({
     page: 1,
     limit: 20,
@@ -26,13 +26,6 @@ export function ActivityListClient() {
   const { data: activitiesData, isLoading } = useActivities(filters);
 
   const activities = activitiesData?.data || [];
-
-  const statusColors: Record<string, string> = {
-    SCHEDULED: "bg-yellow-500/10 text-yellow-700",
-    IN_PROGRESS: "bg-blue-500/10 text-blue-700",
-    COMPLETED: "bg-green-500/10 text-green-700",
-    CANCELLED: "bg-red-500/10 text-red-700",
-  };
 
   return (
     <div className="space-y-4">
@@ -57,54 +50,12 @@ export function ActivityListClient() {
       ) : (
         <div className="space-y-3">
           {activities.map((activity) => (
-            <Card
+            <ActivityCard
               key={activity.id}
-              className="cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => router.push(`/activities/${activity.id}`)}
-            >
-              <CardContent className="pt-6">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">{activity.subject}</h3>
-                      <Badge className={statusColors[activity.status]}>
-                        {activity.status}
-                      </Badge>
-                      <Badge variant="outline">{activity.type}</Badge>
-                    </div>
-                    
-                    {activity.customer && (
-                      <p className="text-sm text-muted-foreground">
-                        {activity.customer.company.companyName}
-                      </p>
-                    )}
-
-                    {activity.lead && (
-                      <p className="text-sm text-muted-foreground">
-                        {activity.lead.companyName} - {activity.lead.contactFirstName} {activity.lead.contactLastName} 
-                      </p>
-                    )}
-                    
-                    <p className="text-sm text-muted-foreground">
-                      {formatDistanceToNow(new Date(activity.scheduledStart), {
-                        addSuffix: true,
-                        locale: it,
-                      })}
-                    </p>
-                  </div>
-                  
-                  <Badge
-                    variant={
-                      activity.priority === "URGENT" || activity.priority === "HIGH"
-                        ? "destructive"
-                        : "secondary"
-                    }
-                  >
-                    {activity.priority}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
+              className="bg-card"
+              activity={activity}
+              onClick={() => navigateToDetail("activities", activity.id)}
+            />
           ))}
         </div>
       )}
