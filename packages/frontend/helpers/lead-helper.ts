@@ -77,3 +77,4 @@ export function getDecisionAuthorityOptions(t: ReturnType<typeof useTranslations
   ];
   return keys.map((value) => ({ value, label: t(`decisionAuthority.${value}`) }));
 }
+

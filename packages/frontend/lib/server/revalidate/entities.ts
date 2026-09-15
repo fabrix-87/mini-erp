@@ -2,52 +2,14 @@
 import { CONTACT_TAGS } from "@/types/contact-types";
 import { revalidateEntity, revalidateEntityWithList, revalidatePath, revalidateTag } from ".";
 import { ACTIVITY_TAGS } from "@/types/activitiy-types";
+import { USER_TAGS } from "@/types/user-types";
 
 // ============================================================================
 // Common Entity Revalidators
 // ============================================================================
 
-/**
- * Revalidate user-related cache.
- * Route: /admin/users
- */
-export const userRevalidation = {
-  /** Revalidate specific user detail and path. */
-  user: (id: string) => revalidateEntity("user", id, { routeKey: "users" }),
 
-  /** Revalidate users list. */
-  list: () => revalidateEntity("user", undefined, { routeKey: "users" }),
 
-  /** Revalidate specific user and users list. */
-  userWithList: (id: string) => revalidateEntityWithList("user", id, { routeKey: "users" }),
-
-  /** Revalidate user profile tag only (no path needed). */
-  profile: () => revalidateTag("user-profile"),
-};
-
-/**
- * Revalidate role-related cache.
- * Route: /admin/roles
- */
-export const roleRevalidation = {
-  /** Revalidate specific role detail and roles list. */
-  role: (id: number) => revalidateEntityWithList("role", id, { routeKey: "roles" }),
-
-  /** Revalidate roles list only. */
-  list: () => revalidateEntity("role", undefined, { routeKey: "roles" }),
-};
-
-/**
- * Revalidate lead-related cache.
- * Route: /crm/leads
- */
-export const leadRevalidation = {
-  /** Revalidate specific lead detail and leads list. */
-  lead: (id: string) => revalidateEntityWithList("lead", id, { routeKey: "leads" }),
-
-  /** Revalidate leads list. */
-  list: () => revalidateEntity("lead", undefined, { routeKey: "leads" }),
-};
 
 /**
  * Revalidate customer-related cache.
@@ -55,14 +17,14 @@ export const leadRevalidation = {
  */
 export const customerRevalidation = {
   /** Revalidate specific customer detail and path. */
-  customer: (id: string) => revalidateEntity("customer", id, { routeKey: "customers" }),
+  customer: (id: string) => revalidateEntity("customers", id),
 
   /** Revalidate customers list. */
-  list: () => revalidateEntity("customer", undefined, { routeKey: "customers" }),
+  list: () => revalidateEntity("customers", undefined),
 
   /** Revalidate specific customer and customers list. */
   customerWithList: (id: string) =>
-    revalidateEntityWithList("customer", id, { routeKey: "customers" }),
+    revalidateEntityWithList("customers", id),
 };
 
 /**
@@ -71,43 +33,17 @@ export const customerRevalidation = {
  */
 export const supplierRevalidation = {
   /** Revalidate specific supplier detail and path. */
-  supplier: (id: string) => revalidateEntity("supplier", id, { routeKey: "suppliers" }),
+  supplier: (id: string) => revalidateEntity("suppliers", id),
 
   /** Revalidate suppliers list. */
-  list: () => revalidateEntity("supplier", undefined, { routeKey: "suppliers" }),
+  list: () => revalidateEntity("suppliers"),
 
   /** Revalidate specific supplier and suppliers list. */
   supplierWithList: (id: string) =>
-    revalidateEntityWithList("supplier", id, { routeKey: "suppliers" }),
+    revalidateEntityWithList("suppliers", id ),
 };
 
-/**
- * Revalidate contact-related cache.
- * Route: /crm/contacts
- */
-export const contactRevalidation = {
-  /** Revalidate specific contact detail and path. */
-  contact: (id: string) =>
-    revalidateEntity("contact", id, {
-      routeKey: "contacts",
-      detailTag: CONTACT_TAGS.detail(id),
-    }),
 
-  /** Revalidate contacts list. */
-  list: () =>
-    revalidateEntity("contact", undefined, {
-      routeKey: "contacts",
-      listTag: CONTACT_TAGS.list,
-    }),
-
-  /** Revalidate specific contact and contacts list. */
-  contactWithList: (id: string) =>
-    revalidateEntityWithList("contact", id, {
-      routeKey: "contacts",
-      detailTag: CONTACT_TAGS.detail(id),
-      listTag: CONTACT_TAGS.list,
-    }),
-};
 
 /**
  * Revalidate product-related cache.
@@ -115,14 +51,14 @@ export const contactRevalidation = {
  */
 export const productRevalidation = {
   /** Revalidate specific product detail and path. */
-  product: (id: number) => revalidateEntity("product", id, { routeKey: "products" }),
+  product: (id: number) => revalidateEntity("products", id),
 
   /** Revalidate products list. */
-  list: () => revalidateEntity("product", undefined, { routeKey: "products" }),
+  list: () => revalidateEntity("products"),
 
   /** Revalidate specific product and products list. */
   productWithList: (id: number) =>
-    revalidateEntityWithList("product", id, { routeKey: "products" }),
+    revalidateEntityWithList("products", id),
 };
 
 /**
@@ -132,30 +68,12 @@ export const productRevalidation = {
  */
 export const documentRevalidation = {
   /** Revalidate specific document detail and path. */
-  document: (id: number) => revalidateEntity("document", id, { pathRoot: "documents" }),
+  document: (id: number) => revalidateEntity("documents", id),
 
   /** Revalidate documents list. */
-  list: () => revalidateEntity("document", undefined, { pathRoot: "documents" }),
+  list: () => revalidateEntity("documents"),
 
   /** Revalidate specific document and documents list. */
   documentWithList: (id: number) =>
-    revalidateEntityWithList("document", id, { pathRoot: "documents" }),
-};
-
-/**
- * Revalidate settings-related cache for the current user.
- * Route: /settings/profile
- */
-export const settingsRevalidation = {
-  /** Revalidate user profile tag (shared with userRevalidation). */
-  profile: () => revalidateTag("user-profile"),
-
-  /** Revalidate user settings tag. */
-  settings: () => revalidateTag("user-settings"),
-
-  /** Revalidate both profile and settings. */
-  all: () => {
-    revalidateTag("user-profile");
-    revalidateTag("user-settings");
-  },
+    revalidateEntityWithList("documents", id),
 };

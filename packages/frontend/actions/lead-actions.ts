@@ -1,7 +1,7 @@
 // actions/lead.ts
 "use server";
 
-import { ActionResult } from "@/lib/server/action";
+import { ActionResult, withAuth } from "@/lib/server/action";
 import { leadRevalidation } from "@/lib/server/revalidate";
 import {
   createLeadServer,
@@ -15,17 +15,36 @@ import {
   bulkAssignLeadsServer,
   bulkUpdateLeadStatusServer,
   getLeadActivitiesServer,
+  getLeadByIdServer,
 } from "@/services/server/lead-service";
 import type {
   UpdateLeadStatusInput,
   BulkAssignLeadsInput,
   BulkUpdateLeadStatusInput,
+  Lead,
 } from "@/types/lead-types";
-import { Activity, ConvertLeadFormInput, CreateLeadFormInput, QualifyLeadFormInput, UpdateLeadFormInput, UpdateLeadScoreFormInput } from "@mini-erp/shared";
+import {
+  Activity,
+  ConvertLeadFormInput,
+  CreateLeadFormInput,
+  QualifyLeadFormInput,
+  UpdateLeadFormInput,
+  UpdateLeadScoreFormInput,
+} from "@mini-erp/shared";
 
 // ============================================================================
 // Server Actions
 // ============================================================================
+
+export async function getLeadByIdAction(
+  id: string,
+  revalidate: number | false = 0,
+): Promise<ActionResult<Lead>> {
+  return withAuth(async () => {
+    const response = await getLeadByIdServer(id, 3600);
+    return response.data
+  }, "lead:read")
+}
 
 /** Server Action — Crea lead */
 export async function createLeadAction(data: CreateLeadFormInput) {
@@ -136,4 +155,3 @@ export async function bulkUpdateLeadStatusAction(data: BulkUpdateLeadStatusInput
     return { success: false, error: error.message };
   }
 }
-

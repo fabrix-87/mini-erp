@@ -5,6 +5,7 @@ import { Building2, User } from "lucide-react";
 import type { OpportunityComplete } from "@mini-erp/shared";
 import { formatDateIT } from "@/helpers/date-helper";
 import { useTranslations } from "next-intl";
+import { DataRow } from "@/components/ui/data-row";
 
 interface Props {
   opportunity: OpportunityComplete;
@@ -30,13 +31,13 @@ export function OpportunityDetailOverview({ opportunity }: Props) {
         <CardContent className="space-y-3 text-sm">
           {opportunity.lead ? (
             <>
-              <Row label="Ragione sociale" value={opportunity.lead.companyName} />
-              <Row
+              <DataRow label="Ragione sociale" value={opportunity.lead.companyName} />
+              <DataRow
                 label="Contatto"
                 value={`${opportunity.lead.contactFirstName} ${opportunity.lead.contactLastName}`}
               />
               {opportunity.lead.contactEmail && (
-                <Row
+                <DataRow
                   label="Email"
                   value={
                     <a
@@ -51,7 +52,7 @@ export function OpportunityDetailOverview({ opportunity }: Props) {
             </>
           ) : (
             <>
-              <Row
+              <DataRow
                 label={t("detail.customer")}
                 value={opportunity.customer.company.companyName ?? opportunity.customer.id}
               />
@@ -66,13 +67,16 @@ export function OpportunityDetailOverview({ opportunity }: Props) {
           <CardTitle className="text-base">{t("detail.opportunityData")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          <Row label={t("form.source")} value={t(`source.${opportunity.source.toLowerCase()}`)} />
-          <Row label={t("form.stage")} value={t(`stage.${opportunity.stage.toLowerCase()}`)} />
+          <DataRow
+            label={t("form.source")}
+            value={t(`source.${opportunity.source.toLowerCase()}`)}
+          />
+          <DataRow label={t("form.stage")} value={t(`stage.${opportunity.stage.toLowerCase()}`)} />
           <Separator />
-          <Row label={t("detail.createdAt")} value={formatDateIT(opportunity.createdAt)} />
-          <Row label={t("detail.updatedAt")} value={formatDateIT(opportunity.updatedAt)} />
+          <DataRow label={t("detail.createdAt")} value={formatDateIT(opportunity.createdAt)} />
+          <DataRow label={t("detail.updatedAt")} value={formatDateIT(opportunity.updatedAt)} />
           {opportunity.lastStageChange && (
-            <Row
+            <DataRow
               label={t("detail.lastStageChange")}
               value={formatDateIT(opportunity.lastStageChange)}
             />
@@ -91,16 +95,6 @@ export function OpportunityDetailOverview({ opportunity }: Props) {
           </CardContent>
         </Card>
       )}
-    </div>
-  );
-}
-
-function Row({ label, value }: { label: string; value: React.ReactNode }) {
-  if (!value && value !== 0) return null;
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium">{value}</span>
     </div>
   );
 }

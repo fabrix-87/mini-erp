@@ -71,6 +71,11 @@ export const permissionKeys = {
   detail: (id: number) => [...permissionKeys.details(), id] as const,
 };
 
+export const ROLE_TAGS = {
+  list: "roles-list",
+  detail: (id: number) => `role-${id}`,
+}
+
 // ============================================================================
 // HOOK RETURN TYPES
 // ============================================================================

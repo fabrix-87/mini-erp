@@ -1,5 +1,4 @@
 // app/(protected)/crm/opportunities/[id]/page.tsx
-import { notFound } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getOpportunityById } from "@/services/server/opportunity-service";
 import { formatDateIT } from "@/helpers/date-helper";
@@ -97,9 +96,9 @@ export default async function OpportunityDetailPage({ params }: PageIdProps) {
         {/* Tabs */}
         <Tabs defaultValue="overview">
           <TabsList>
-            <TabsTrigger value="overview">Panoramica</TabsTrigger>
+            <TabsTrigger value="overview">{t("tabs.overview")}</TabsTrigger>
             <TabsTrigger value="commercial">
-              Commerciale
+              {t("tabs.commercial")}
               {(opportunity.proposedProducts?.length ?? 0) > 0 && (
                 <span className="ml-1.5 text-xs bg-muted rounded-full px-1.5 py-0.5">
                   {opportunity.proposedProducts!.length}
@@ -107,7 +106,7 @@ export default async function OpportunityDetailPage({ params }: PageIdProps) {
               )}
             </TabsTrigger>
             <TabsTrigger value="activities">
-              Attività ({opportunity.activities?.length ?? 0})
+              {t("tabs.activities")} ({opportunity.activities?.length ?? 0})
             </TabsTrigger>
           </TabsList>
 
@@ -129,4 +128,22 @@ export default async function OpportunityDetailPage({ params }: PageIdProps) {
       </div>
     </>
   );
+}
+
+// Metadata
+export async function generateMetadata({ params }: PageIdProps) {
+  const t = await getTranslations("crm.opportunities");
+  try {
+    const { id } = await params;
+
+    const opportunity = await getOpportunityById(id, 3600);
+
+    return {
+      title: `${opportunity.title} - ${t("opportunityDetailTitle")} | ${process.env.APP_NAME}`,
+    };
+  } catch {
+    return {
+      title: `${t("opportunityDetailTitle")} | ${process.env.APP_NAME}`,
+    };
+  }
 }

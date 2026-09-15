@@ -1,5 +1,6 @@
 // services/server/lead.ts
 
+import { ActionResult, withAuth } from "@/lib/server/action";
 import { serverApi } from "@/lib/server/api";
 import type { ApiResponse } from "@/types/api";
 import {
@@ -50,7 +51,7 @@ export async function getLeadByIdServer(
   id: string,
   revalidate: number | false = 0,
 ): Promise<LeadSingleApiResponse> {
-  return serverApi.get<ApiResponse<Lead>>(`/leads/${id}`, {
+  return serverApi.get<LeadSingleApiResponse>(`/leads/${id}`, {
     unwrapData: false,
     revalidate,
     tags: [LEAD_TAGS.detail(id)],
@@ -61,7 +62,7 @@ export async function getLeadByIdServer(
  * Ottieni statistiche lead
  */
 export async function getLeadStatsServer(params?: LeadStatsInput): Promise<LeadStatsApiResponse> {
-  return serverApi.get<ApiResponse<LeadStats>>("/leads/stats", {
+  return serverApi.get<LeadStatsApiResponse>("/leads/stats", {
     params,
     revalidate: 0,
     unwrapData: false,

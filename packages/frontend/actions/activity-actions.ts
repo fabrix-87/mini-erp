@@ -1,7 +1,6 @@
 // actions/activity.ts - Server Actions for mutations
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { serverApi } from "@/lib/server/api";
 import { Activity, ActivityFormData } from "@/types/activitiy-types";
 import { ApiResponse, DeleteApiResponse } from "@/types/api";
@@ -76,10 +75,7 @@ export async function updateActivityAction(
     const response = await updateActivity(id, activityData);
 
     // Revalidate relevant paths
-    revalidatePath("/activities");
-    revalidatePath("/dashboard/activities");
-    revalidatePath(`/activities/${id}`);
-    revalidatePath(`/dashboard/activities/${id}`);
+    activityRevalidation.activityWithList(id);
 
     return response.data;
   }, "activity:update");
@@ -93,8 +89,7 @@ export async function deleteActivityAction(id: string): Promise<ActionResult<Del
     const response = await deleteActivity(id);
 
     // Revalidate the activities page
-    revalidatePath("/activities");
-    revalidatePath("/dashboard/activities");
+    activityRevalidation.list();
 
     return response;
   }, "activity:delete");
@@ -111,10 +106,7 @@ export async function updateActivityStatusAction(
     const result = await updateActivityStatus(id, status);
 
     // Revalidate relevant paths
-    revalidatePath("/activities");
-    revalidatePath("/dashboard/activities");
-    revalidatePath(`/activities/${id}`);
-    revalidatePath(`/dashboard/activities/${id}`);
+    activityRevalidation.activityWithList(id);
 
     return result.data;
   }, "activity:update");
@@ -134,8 +126,6 @@ export async function bulkUpdateActivities(
     });
 
     // Revalidate the activities page
-    revalidatePath("/activities");
-    revalidatePath("/dashboard/activities");
     activityRevalidation.list();
 
     return {
@@ -173,10 +163,7 @@ export async function completeActivityAction(
     });
 
     // Revalidate relevant paths
-    revalidatePath("/activities");
-    revalidatePath("/dashboard/activities");
-    revalidatePath(`/activities/${id}`);
-    revalidatePath(`/dashboard/activities/${id}`);
+    activityRevalidation.activityWithList(id);
 
     return response.data;
   }, "activity:update");

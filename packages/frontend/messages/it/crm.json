@@ -1,4 +1,17 @@
-{  
+{
+  "tabs": {
+    "overview": "Panoramica",
+    "contacts": "Contatti",
+    "activities": "Attività",
+    "commercial": "Commerciale",
+    "bant": "BANT",
+    "gdpr": "GDPR",
+    "tracking": "Tracciamento"
+  },
+  "gdpr": {
+    "granted": "✓ Accordato",
+    "denied": "Non accordato"
+  },
   "contacts": {
     "title": "Gestione Contatti",
     "description": "Gestisci i contatti delle aziende",
@@ -97,7 +110,12 @@
     "leadNewDescription": "Aggiungi un nuovo lead",
     "leadEditTitle": "Modifica lead",
     "leadEditDescription": "Aggiorna le informazioni del lead",
+    "leadDetailTitle": "Dettaglio lead",
     "leadDetailSubtitle": "{code} · Lead dal {createdAt} · {daysSince} giorni nel pipeline",
+    "lastContact": "Ultimo contatto",
+    "nextFollowUp": "Prossimo follow-up",
+    "leadScore": "Lead Score",
+    "outOf100": "su 100",
     "stats": {
       "total": "Totale lead",
       "newThisMonth": "Nuove questo mese",
@@ -322,6 +340,7 @@
       "kanban": "Kanban"
     }
   },
+  "assignedUser": "Assegnato a",
   "editButton": "Modifica",
   "deleteButton": "Elimina",
   "createContactButton": "Aggiungi Contatto",

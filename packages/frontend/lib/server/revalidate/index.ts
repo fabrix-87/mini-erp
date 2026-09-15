@@ -10,8 +10,8 @@ import { getRoute, type RouteKey } from "@/lib/navigation-routes";
 // Types
 // ============================================================================
 
-type RevalidateTagProfile = string | { expire?: number };
-type RevalidatePathType = "page" | "layout";
+type RevalidateTagProfile = Parameters<typeof nextRevalidateTag>[1];
+type RevalidatePathType = Parameters<typeof nextRevalidatePath>[1];
 
 const DEFAULT_TAG_PROFILE: RevalidateTagProfile = "max";
 const DEFAULT_PATH_TYPE: RevalidatePathType = "page";
@@ -64,7 +64,7 @@ export function revalidateTags(
   tags: string[],
   profile: RevalidateTagProfile = DEFAULT_TAG_PROFILE,
 ): void {
-  tags.forEach((tag) => nextRevalidateTag(tag, profile));
+  tags.forEach((tag) => revalidateTag(tag, profile));
 }
 
 /**
@@ -80,7 +80,7 @@ export function revalidatePaths(
   paths: string[],
   type: RevalidatePathType = DEFAULT_PATH_TYPE,
 ): void {
-  paths.forEach((path) => nextRevalidatePath(path, type));
+  paths.forEach((path) => revalidatePath(path, type));
 }
 
 // ============================================================================
@@ -90,47 +90,8 @@ export function revalidatePaths(
 interface RevalidateOptions {
   tagProfile?: RevalidateTagProfile;
   pathType?: RevalidatePathType;
-  tagPrefix?: string;
-  /**
-   * RouteKey dalla navigation tree (e.g. "roles", "customers").
-   * Se fornito, il path viene risolto tramite `getRoute(routeKey)`.
-   * Ha precedenza su `pathRoot`.
-   */
-  routeKey?: RouteKey;
-  /**
-   * Override manuale del path root, usato solo se `routeKey` non è fornito.
-   * @deprecated Preferire `routeKey` quando disponibile.
-   */
-  pathRoot?: string;
   listTag?: string;
   detailTag?: string;
-  listTagOverride?: string;
-}
-
-// ============================================================================
-// Internal helper: resolve the base path
-// ============================================================================
-
-/**
- * Resolves the base path from options, prioritizing `routeKey` over `pathRoot`.
- *
- * @param entity - Entity name used as fallback (e.g. "user" → "/users")
- * @param options - Revalidation options
- * @param withId - Whether we're resolving a detail path
- */
-function resolveBasePath(
-  entity: string,
-  options: RevalidateOptions | undefined,
-  withId: boolean,
-): string {
-  if (options?.routeKey) {
-    return getRoute(options.routeKey);
-  }
-  if (options?.pathRoot) {
-    return `/${options.pathRoot}`;
-  }
-  // Fallback legacy: entity → pluralizza solo se stiamo cercando il path lista
-  return withId ? `/${entity}s` : `/${entity}s`;
 }
 
 // ============================================================================
@@ -140,34 +101,34 @@ function resolveBasePath(
 /**
  * Revalidate a single entity (tag + path) or its list.
  *
- * @param entity - Entity name in singular (e.g. "role", "user")
+ * @param routeKey - RouteKey from the navigation tree (e.g. "roles", "contacts")
  * @param id - Entity ID (omit to revalidate the list)
- * @param options - Revalidation options; use `routeKey` for type-safe path resolution
+ * @param options - Revalidation options
  *
  * @example
- * revalidateEntity("contact", id, {
- *   routeKey: "contacts",
+ * revalidateEntity("contacts", id, {
  *   detailTag: CONTACT_TAGS.detail(id),
  * });
- * revalidateEntity("contact", undefined, {
- *   routeKey: "contacts",
+ *
+ * revalidateEntity("contacts", undefined, {
  *   listTag: CONTACT_TAGS.list,
  * });
  */
 export function revalidateEntity(
-  entity: string,
+  routeKey: RouteKey,
   id?: number | string,
   options?: RevalidateOptions,
 ): void {
-  const tag = options?.tagPrefix ?? entity;
-  const basePath = resolveBasePath(entity, options, id !== undefined);
+  const basePath = getRoute(routeKey);
 
   if (id !== undefined) {
-    const detailTag = options?.detailTag ?? `${tag}-${id}`;
+    const detailTag = options?.detailTag ?? `${routeKey}-${id}`;
+
     revalidateTag(detailTag, options?.tagProfile);
     revalidatePath(`${basePath}/${id}`, options?.pathType);
   } else {
-    const listTag = options?.listTag ?? `${tag}s-list`;
+    const listTag = options?.listTag ?? `${routeKey}-list`;
+
     revalidateTag(listTag, options?.tagProfile);
     revalidatePath(basePath, options?.pathType);
   }
@@ -176,30 +137,30 @@ export function revalidateEntity(
 /**
  * Revalidate a single entity AND its list (tag + path for both).
  *
- * @param entity - Entity name in singular (e.g. "role", "user")
+ * @param routeKey - RouteKey from the navigation tree (e.g. "roles", "contacts")
  * @param id - Entity ID
- * @param options - Revalidation options; use `routeKey` for type-safe path resolution
+ * @param options - Revalidation options
  *
  * @example
- * revalidateEntityWithList("contact", id, {
- *   routeKey: "contacts",
+ * revalidateEntityWithList("contacts", id, {
  *   detailTag: CONTACT_TAGS.detail(id),
  *   listTag: CONTACT_TAGS.list,
  * });
  */
 export function revalidateEntityWithList(
-  entity: string,
+  routeKey: RouteKey,
   id: number | string,
   options?: RevalidateOptions,
 ): void {
-  const tag = options?.tagPrefix ?? entity;
-  const basePath = resolveBasePath(entity, options, true);
+  const basePath = getRoute(routeKey);
 
-  const detailTag = options?.detailTag ?? `${tag}-${id}`;
-  const listTag = options?.listTag ?? `${tag}s-list`;
+  const detailTag = options?.detailTag ?? `${routeKey}-${id}`;
+
+  const listTag = options?.listTag ?? `${routeKey}-list`;
 
   revalidateTag(detailTag, options?.tagProfile);
   revalidatePath(`${basePath}/${id}`, options?.pathType);
+
   revalidateTag(listTag, options?.tagProfile);
   revalidatePath(basePath, options?.pathType);
 }
@@ -218,3 +179,7 @@ export {
 export * from "./entities";
 export * from "./opportunity-revalidate";
 export * from "./activity-revalidate";
+export * from "./lead-revalidate";
+export * from "./user-revalidate";
+export * from "./role-revalidate";
+export * from "./contact-revalidate";
