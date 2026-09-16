@@ -8,28 +8,28 @@ interface Props {
   lead: Lead;
 }
 
-export function LeadDetailBant({ lead }: Props) {
-  const t = getTranslations("crm");
+export async function LeadDetailBant({ lead }: Props) {
+  const t = await getTranslations("crm.leads");
   return (
     <>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-4 w-4" />
-            Qualificazione BANT
+            {t("bant")}
           </CardTitle>
-          <CardDescription>Budget · Authority · Need · Timeframe</CardDescription>
+          <CardDescription>{t("bantDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Qualificato</span>
+            <span className="text-muted-foreground">{t("form.bantQualified")}</span>
             <Badge variant={lead.bantQualified ? "default" : "outline"}>
-              {lead.bantQualified ? "✓ Sì" : "No"}
+              {lead.bantQualified ? `✓ ${t("yes")}` : t("no")}
             </Badge>
           </div>
           {lead.bantNotes && (
             <div className="space-y-1">
-              <p className="text-muted-foreground">Note BANT</p>
+              <p className="text-muted-foreground">{t("form.bantNotes")}</p>
               <p className="whitespace-pre-wrap">{lead.bantNotes}</p>
             </div>
           )}

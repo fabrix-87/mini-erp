@@ -10,31 +10,67 @@ interface Props {
   lead: Lead;
 }
 
-export function LeadDetailTraking({ lead }: Props) {
-  const t = getTranslations("crm");
+export async function LeadDetailTraking({ lead }: Props) {
+  const t = await getTranslations("crm.leads");
   return (
     <>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Megaphone className="h-4 w-4" />
-            Campaign Tracking
+            {t("tracking")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          {lead.campaignName && <DataRow label="Campagna" value={lead.campaignName} />}
-          {lead.utmSource && <DataRow label="UTM Source" value={lead.utmSource} />}
-          {lead.utmMedium && <DataRow label="UTM Medium" value={lead.utmMedium} />}
-          {lead.utmCampaign && <DataRow label="UTM Campaign" value={lead.utmCampaign} />}
-          {lead.landingPage && <DataRow label="Landing page" value={lead.landingPage} />}
-          {lead.referrer && <DataRow label="Referrer" value={lead.referrer} />}
+          {lead.campaignName && (
+            <DataRow
+              label={t("form.campaignName")}
+              value={lead.campaignName}
+              tooltip={t("form.campaignNameDescription")}
+            />
+          )}
+          {lead.utmSource && (
+            <DataRow
+              label={t("form.utmSource")}
+              value={lead.utmSource}
+              tooltip={t("form.utmSourceDescription")}
+            />
+          )}
+          {lead.utmMedium && (
+            <DataRow
+              label={t("form.utmMedium")}
+              value={lead.utmMedium}
+              tooltip={t("form.utmMediumDescription")}
+            />
+          )}
+          {lead.utmCampaign && (
+            <DataRow
+              label={t("form.utmCampaign")}
+              value={lead.utmCampaign}
+              tooltip={t("form.utmCampaignDescription")}
+            />
+          )}
+          {lead.landingPage && (
+            <DataRow
+              label={t("form.landingPage")}
+              value={lead.landingPage}
+              tooltip={t("form.landingPageDescription")}
+            />
+          )}
+          {lead.referrer && (
+            <DataRow
+              label={t("form.referrer")}
+              value={lead.referrer}
+              tooltip={t("form.referrerDescription")}
+            />
+          )}
           <Separator />
-          <DataRow label="Tentativi contatto" value={String(lead.contactAttempts)} />
+          <DataRow label={t("contactAttempts")} value={String(lead.contactAttempts)} />
           {lead.firstContactDate && (
-            <DataRow label="Primo contatto" value={formatDateIT(lead.firstContactDate)} />
+            <DataRow label={t("firstContactDate")} value={formatDateIT(lead.firstContactDate)} />
           )}
           {lead.lastContactDate && (
-            <DataRow label="Ultimo contatto" value={formatDateIT(lead.lastContactDate)} />
+            <DataRow label={t("lastContactDate")} value={formatDateIT(lead.lastContactDate)} />
           )}
         </CardContent>
       </Card>

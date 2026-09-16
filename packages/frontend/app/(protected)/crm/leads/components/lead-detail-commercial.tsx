@@ -9,62 +9,67 @@ interface Props {
   lead: Lead;
 }
 
-export function LeadDetailCommercial({ lead }: Props) {
-  const t = getTranslations("crm");
+export async function LeadDetailCommercial({ lead }: Props) {
+  const t = await getTranslations("crm.leads");
   return (
     <>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Briefcase className="h-4 w-4" />
-            Dati Commerciali
+            {t("commercial")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           {lead.estimatedValue && (
             <DataRow
-              label="Valore stimato"
+              label={t("form.estimatedValue")}
               value={`€ ${Number(lead.estimatedValue).toLocaleString("it-IT")}`}
             />
           )}
           {lead.budget && (
-            <DataRow label="Budget" value={`€ ${Number(lead.budget).toLocaleString("it-IT")}`} />
+            <DataRow
+              label={t("form.budget")}
+              value={`€ ${Number(lead.budget).toLocaleString("it-IT")}`}
+            />
           )}
           {lead.annualRevenue && (
             <DataRow
-              label="Fatturato annuo"
+              label={t("form.annualRevenue")}
               value={`€ ${Number(lead.annualRevenue).toLocaleString("it-IT")}`}
             />
           )}
-          {lead.estimatedSize && <DataRow label="Dimensione stimata" value={lead.estimatedSize} />}
-          {lead.industry && <DataRow label="Settore" value={lead.industry} />}
+          {lead.estimatedSize && (
+            <DataRow label={t("form.estimatedSize")} value={lead.estimatedSize} />
+          )}
+          {lead.industry && <DataRow label={t("form.industry")} value={lead.industry} />}
           {lead.employeesCount && (
-            <DataRow label="Dipendenti" value={String(lead.employeesCount)} />
+            <DataRow label={t("form.employeesCount")} value={String(lead.employeesCount)} />
           )}
           {lead.purchaseTimeframe && (
-            <DataRow label="Timeframe acquisto" value={lead.purchaseTimeframe} />
+            <DataRow label={t("form.purchaseTimeframe")} value={lead.purchaseTimeframe} />
           )}
           {lead.decisionAuthority && (
-            <DataRow label="Autorità decisione" value={lead.decisionAuthority} />
+            <DataRow label={t("form.decisionAuthority")} value={lead.decisionAuthority} />
           )}
           {lead.primaryNeed && (
             <>
               <Separator />
               <div className="space-y-1">
-                <p className="text-muted-foreground">Necessità principale</p>
+                <p className="text-muted-foreground">{t("form.primaryNeed")}</p>
                 <p className="whitespace-pre-wrap">{lead.primaryNeed}</p>
               </div>
             </>
           )}
           {lead.interestedIn && (
             <div className="space-y-1">
-              <p className="text-muted-foreground">Interessato a</p>
+              <p className="text-muted-foreground">{t("form.interestedIn")}</p>
               <p className="whitespace-pre-wrap">{lead.interestedIn}</p>
             </div>
           )}
           {lead.competitors && (
             <div className="space-y-1">
-              <p className="text-muted-foreground">Concorrenti</p>
+              <p className="text-muted-foreground">{t("form.competitors")}</p>
               <p className="whitespace-pre-wrap">{lead.competitors}</p>
             </div>
           )}

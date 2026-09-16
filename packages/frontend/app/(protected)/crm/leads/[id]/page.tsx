@@ -73,8 +73,8 @@ export default async function LeadDetailPage({ params }: PageIdProps) {
         extraBreadcrumbs={[{ label: lead.companyName }]}
         title={lead.companyName}
         badges={[
-          <LeadStatusBadge key="status-badge" status={lead.status} size="md" />,
-          <LeadQualityBadge key="quality-badge" quality={lead.quality} />,
+          <LeadStatusBadge key="status-badge" status={lead.status} label={t(`leads.status.${lead.status}`)} size="md" />,
+          <LeadQualityBadge key="quality-badge" quality={lead.quality} label={t(`leads.quality.${lead.quality}`)}/>,
         ]}
         subtitle={t("leads.leadDetailSubtitle", {
           code: lead.code,

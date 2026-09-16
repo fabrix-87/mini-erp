@@ -141,6 +141,11 @@ export const getAllLeads = async (c: Context<AppBindings>) => {
       orderBy: { [sortBy]: sortOrder },
       include: {
         assignedUser: { select: { id: true, username: true, email: true } },
+        country: {
+          select: {
+            name: true,
+          },
+        },
         opportunities: {
           select: {
             id: true,
@@ -234,6 +239,11 @@ export const getLeadById = async (c: Context<AppBindings>) => {
         },
         orderBy: { scheduledStart: "asc" },
         take: 5, // le prossime 5 attività pianificate
+      },
+      country: {
+        select: {
+          name: true,
+        },
       },
     },
   });

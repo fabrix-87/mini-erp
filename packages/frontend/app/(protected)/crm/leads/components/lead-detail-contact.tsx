@@ -3,27 +3,29 @@ import { DataRow } from "@/components/ui/data-row";
 import { Separator } from "@/components/ui/separator";
 import { Lead } from "@mini-erp/shared";
 import { Mail, Phone } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 interface Props {
   lead: Lead;
 }
 
-export function LeadDetailContact({ lead }: Props) {
+export async function LeadDetailContact({ lead }: Props) {
+  const t = await getTranslations('crm.leads')
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Contatto principale</CardTitle>
+          <CardTitle>{t('contact')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          <DataRow label="Nome" value={`${lead.contactFirstName} ${lead.contactLastName}`} />
-          {lead.contactPosition && <DataRow label="Posizione" value={lead.contactPosition} />}
+          <DataRow label={t('form.contactName')} value={`${lead.contactFirstName} ${lead.contactLastName}`} />
+          {lead.contactPosition && <DataRow label={t('form.contactPosition')} value={lead.contactPosition} />}
           {lead.contactDepartment && (
-            <DataRow label="Dipartimento" value={lead.contactDepartment} />
+            <DataRow label={t('form.contactDepartment')} value={lead.contactDepartment} />
           )}
           <Separator />
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Email</span>
+            <span className="text-muted-foreground">{t('form.contactEmail')}</span>
             <a
               href={`mailto:${lead.contactEmail}`}
               className="flex items-center gap-1 text-primary hover:underline"
@@ -34,7 +36,7 @@ export function LeadDetailContact({ lead }: Props) {
           </div>
           {lead.contactPhone && (
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Telefono</span>
+              <span className="text-muted-foreground">{t('form.contactPhone')}</span>
               <a
                 href={`tel:${lead.contactPhone}`}
                 className="flex items-center gap-1 hover:underline"
@@ -46,7 +48,7 @@ export function LeadDetailContact({ lead }: Props) {
           )}
           {lead.contactMobile && (
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Mobile</span>
+              <span className="text-muted-foreground">{t('form.contactMobile')}</span>
               <a
                 href={`tel:${lead.contactMobile}`}
                 className="flex items-center gap-1 hover:underline"

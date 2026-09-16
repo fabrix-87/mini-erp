@@ -6,27 +6,29 @@ import { Separator } from "@/components/ui/separator";
 import { formatDateIT } from "@/helpers/date-helper";
 import { Lead } from "@mini-erp/shared";
 import { Globe, MapPin } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 interface Props {
   lead: Lead;
 }
 
-export function LeadDetailOverview({ lead }: Props) {
+export async function LeadDetailOverview({ lead }: Props) {
+  const t = await getTranslations('crm.leads')
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Azienda</CardTitle>
+            <CardTitle>{t('company')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
-            <DataRow label="Ragione sociale" value={lead.companyName} />
-            {lead.tradeName && <DataRow label="Nome commerciale" value={lead.tradeName} />}
-            {lead.vatNumber && <DataRow label="P.IVA" value={lead.vatNumber} />}
-            {lead.taxCode && <DataRow label="Codice fiscale" value={lead.taxCode} />}
+            <DataRow label={t('form.companyName')} value={lead.companyName} />
+            {lead.tradeName && <DataRow label={t('form.tradeName')} value={lead.tradeName} />}
+            {lead.vatNumber && <DataRow label={t('form.vatNumber')} value={lead.vatNumber} />}
+            {lead.taxCode && <DataRow label={t('form.taxCode')} value={lead.taxCode} />}
             {lead.website && (
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Website</span>
+                <span className="text-muted-foreground">{t('form.website')}</span>
                 <a
                   href={lead.website}
                   target="_blank"
@@ -39,14 +41,14 @@ export function LeadDetailOverview({ lead }: Props) {
               </div>
             )}
             <Separator />
-            <DataRow label="Fonte" value={<LeadSourceBadge source={lead.source} />} />
-            <DataRow label="Status" value={<LeadStatusBadge status={lead.status} />} />
+            <DataRow label={t('form.source')} value={<LeadSourceBadge source={lead.source} label={t(`source.${lead.source}`)}/>} />
+            <DataRow label={t('form.status')} value={<LeadStatusBadge status={lead.status} label={t(`status.${lead.status}`)}/>} />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Indirizzo</CardTitle>
+            <CardTitle>{t('form.address')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             {lead.address && (
@@ -60,10 +62,10 @@ export function LeadDetailOverview({ lead }: Props) {
                 </span>
               </div>
             )}
-            <DataRow label="Paese" value={lead.countryCode} />
+            <DataRow label={t('form.country')} value={`${lead.country.name} [ ${lead.countryCode} ]`} />
             <Separator />
-            <DataRow label="Creato il" value={formatDateIT(lead.createdAt)} />
-            <DataRow label="Aggiornato" value={formatDateIT(lead.updatedAt)} />
+            <DataRow label={t('form.createdAt')} value={formatDateIT(lead.createdAt)} />
+            <DataRow label={t('form.updatedAt')} value={formatDateIT(lead.updatedAt)} />
           </CardContent>
         </Card>
       </div>
@@ -71,7 +73,7 @@ export function LeadDetailOverview({ lead }: Props) {
       {lead.notes && (
         <Card>
           <CardHeader>
-            <CardTitle>Note</CardTitle>
+            <CardTitle>{t('form.note')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm whitespace-pre-wrap">{lead.notes}</p>

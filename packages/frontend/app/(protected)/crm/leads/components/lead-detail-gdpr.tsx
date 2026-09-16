@@ -12,39 +12,39 @@ interface Props {
   lead: Lead;
 }
 
-export function LeadDetailGDPR({ lead }: Props) {
-  const t = getTranslations("crm");
+export async function LeadDetailGDPR({ lead }: Props) {
+  const t = await getTranslations("crm.leads");
   return (
     <>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ShieldCheck className="h-4 w-4" />
-            Consensi GDPR
+            {t("gdpr")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <GdprConsentRow
-            label="Privacy"
+            label={t("form.privacy")}
             value={lead.privacyConsent}
             date={lead.privacyConsentDate}
           />
           <GdprConsentRow
-            label="Marketing"
+            label={t("form.marketing")}
             value={lead.marketingConsent}
             date={lead.marketingConsentDate}
           />
           <Separator />
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Non chiamare</span>
+            <span className="text-muted-foreground">{t("form.doNotCall")}</span>
             <Badge variant={lead.doNotCall ? "destructive" : "outline"}>
-              {lead.doNotCall ? "Sì" : "No"}
+              {lead.doNotCall ? t("yes") : t("no")}
             </Badge>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Non inviare email</span>
+            <span className="text-muted-foreground">{t("form.doNotEmail")}</span>
             <Badge variant={lead.doNotEmail ? "destructive" : "outline"}>
-              {lead.doNotEmail ? "Sì" : "No"}
+              {lead.doNotEmail ? t("yes") : t("no")}
             </Badge>
           </div>
         </CardContent>
