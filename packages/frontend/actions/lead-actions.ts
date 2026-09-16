@@ -42,41 +42,37 @@ export async function getLeadByIdAction(
 ): Promise<ActionResult<Lead>> {
   return withAuth(async () => {
     const response = await getLeadByIdServer(id, 3600);
-    return response.data
-  }, "lead:read")
+    return response.data;
+  }, "lead:read");
 }
 
 /** Server Action — Crea lead */
-export async function createLeadAction(data: CreateLeadFormInput) {
-  try {
+export async function createLeadAction(data: CreateLeadFormInput): Promise<ActionResult<Lead>> {
+  return withAuth(async () => {
     const response = await createLeadServer(data);
     leadRevalidation.list();
-    return { success: true, data: response.data };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
+    return response.data;
+  }, "lead:create");
 }
 
 /** Server Action — Aggiorna lead */
-export async function updateLeadAction(id: string, data: UpdateLeadFormInput) {
-  try {
+export async function updateLeadAction(
+  id: string,
+  data: UpdateLeadFormInput,
+): Promise<ActionResult<Lead>> {
+  return withAuth(async () => {
     const response = await updateLeadServer(id, data);
     leadRevalidation.lead(id);
-    return { success: true, data: response.data };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
+    return response.data;
+  }, "lead:update");
 }
 
 /** Server Action — Elimina lead */
-export async function deleteLeadAction(id: string) {
-  try {
+export async function deleteLeadAction(id: string): Promise<ActionResult<void>> {
+  return withAuth(async () => {
     await deleteLeadServer(id);
     leadRevalidation.lead(id);
-    return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
+  }, "lead:delete");
 }
 
 /** Server Action — Aggiorna status lead */
