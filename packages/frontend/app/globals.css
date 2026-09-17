@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -21,29 +22,26 @@
   --white: #ffffff;
   --dark: #111827;
 
-  --radius: 10px;
+  --radius: 0.45rem;
 
-  --background: #f6f8fc;
-  --foreground: #182236;
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.148 0.004 228.8);
 
-  --card: #ffffff;
-  --card-foreground: #182236;
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.148 0.004 228.8);
 
-  --popover: #ffffff;
-  --popover-foreground: #182236;
+  --primary: oklch(0.508 0.118 165.612);
+  --primary-foreground: oklch(0.979 0.021 166.113);
 
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
 
-  --secondary: #0ea5e9;
-  --secondary-foreground: #ffffff;
+  --muted: oklch(0.963 0.002 197.1);
+  --muted-foreground: oklch(0.56 0.021 213.5);
 
-  --muted: #eef2f8;
-  --muted-foreground: #6b7a90;
-
-  --border: #d7e0ee;
-  --input: #e3eaf5;
-  --ring: color-mix(in oklab, var(--primary) 22%, transparent);
+  --border: oklch(0.925 0.005 214.3);
+  --input: oklch(0.925 0.005 214.3);
+  --ring: oklch(0.723 0.014 214.4);
 
   --info: #3b82f6;
   --success: #22c55e;
@@ -68,44 +66,46 @@
   --surface-hover: color-mix(in oklab, var(--primary) 8%, var(--background));
   --surface-hover-strong: color-mix(in oklab, var(--primary) 14%, var(--background));
 
-  --accent: color-mix(in oklab, var(--primary) 12%, white);
-  --accent-foreground: var(--primary);
+  --accent: oklch(0.963 0.002 197.1);
+  --accent-foreground: oklch(0.218 0.008 223.9);
 
-  --destructive: var(--error);
+  --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: var(--white);
 
-  --chart-1: #2563eb;
-  --chart-2: #0ea5e9;
-  --chart-3: #22c55e;
-  --chart-4: #f59e0b;
-  --chart-5: #ef4444;
+  --chart-1: oklch(0.897 0.196 126.665);
+  --chart-2: oklch(0.768 0.233 130.85);
+  --chart-3: oklch(0.648 0.2 131.684);
+  --chart-4: oklch(0.532 0.157 131.589);
+  --chart-5: oklch(0.453 0.124 130.933);
 
-  --sidebar: #ffffff;
-  --sidebar-foreground: #5f6f86;
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: color-mix(in oklab, var(--primary) 10%, white);
-  --sidebar-accent-foreground: var(--primary);
-  --sidebar-border: #e2e8f2;
-  --sidebar-ring: color-mix(in oklab, var(--primary) 24%, white);
+  --sidebar: oklch(0.987 0.002 197.1);
+  --sidebar-foreground: oklch(0.148 0.004 228.8);
+  --sidebar-primary: oklch(0.596 0.145 163.225);
+  --sidebar-primary-foreground: oklch(0.979 0.021 166.113);
+  --sidebar-accent: oklch(0.963 0.002 197.1);
+  --sidebar-accent-foreground: oklch(0.218 0.008 223.9);
+  --sidebar-border: oklch(0.925 0.005 214.3);
+  --sidebar-ring: oklch(0.723 0.014 214.4);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.148 0.004 228.8);
 }
 
 .dark {
-  --background: #0f172a;
-  --foreground: #e5eefc;
+  --background: oklch(0.148 0.004 228.8);
+  --foreground: oklch(0.987 0.002 197.1);
 
-  --card: #111c31;
-  --card-foreground: #e5eefc;
+  --card: oklch(0.218 0.008 223.9);
+  --card-foreground: oklch(0.987 0.002 197.1);
 
-  --popover: #16233a;
-  --popover-foreground: #e5eefc;
+  --popover: oklch(0.218 0.008 223.9);
+  --popover-foreground: oklch(0.987 0.002 197.1);
 
-  --muted: #1b2942;
-  --muted-foreground: #93a4bf;
+  --muted: oklch(0.275 0.011 216.9);
+  --muted-foreground: oklch(0.723 0.014 214.4);
 
-  --border: #24324a;
-  --input: #24324a;
-  --ring: color-mix(in oklab, var(--primary) 28%, transparent);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.56 0.021 213.5);
 
   --lightprimary: color-mix(in oklab, var(--primary) 20%, transparent);
   --lightsecondary: color-mix(in oklab, var(--secondary) 20%, transparent);
@@ -117,17 +117,27 @@
   --surface-hover: color-mix(in oklab, var(--primary) 14%, var(--background));
   --surface-hover-strong: color-mix(in oklab, var(--primary) 22%, var(--background));
 
-  --accent: color-mix(in oklab, var(--primary) 20%, transparent);
-  --accent-foreground: #9ec1ff;
+  --accent: oklch(0.275 0.011 216.9);
+  --accent-foreground: oklch(0.987 0.002 197.1);
 
-  --sidebar: #111827;
-  --sidebar-foreground: #9aacc7;
-  --sidebar-accent: color-mix(in oklab, var(--primary) 16%, transparent);
-  --sidebar-accent-foreground: #b6d1ff;
-  --sidebar-border: #233047;
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: oklch(0.218 0.008 223.9);
+  --sidebar-foreground: oklch(0.987 0.002 197.1);
+  --sidebar-accent: oklch(0.275 0.011 216.9);
+  --sidebar-accent-foreground: oklch(0.987 0.002 197.1);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-primary: oklch(0.696 0.17 162.48);
+  --sidebar-primary-foreground: oklch(0.262 0.051 172.552);
+  --sidebar-ring: oklch(0.56 0.021 213.5);
+  --primary: oklch(0.432 0.095 166.913);
+  --primary-foreground: oklch(0.979 0.021 166.113);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --chart-1: oklch(0.897 0.196 126.665);
+  --chart-2: oklch(0.768 0.233 130.85);
+  --chart-3: oklch(0.648 0.2 131.684);
+  --chart-4: oklch(0.532 0.157 131.589);
+  --chart-5: oklch(0.453 0.124 130.933);
 }
 
 @theme inline {
@@ -202,6 +212,11 @@
 
   --color-surface-hover: var(--surface-hover);
   --color-surface-hover-strong: var(--surface-hover-strong);
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 html,
@@ -221,16 +236,18 @@ main {
 
   * {
     box-sizing: border-box;
+    @apply border-border outline-ring/50;
   }
 
   html {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    @apply font-sans;
   }
 
   body {
-    @apply bg-background text-foreground text-sm overflow-x-hidden;
+    @apply text-sm overflow-x-hidden bg-background text-foreground;
   }
 
   h1,

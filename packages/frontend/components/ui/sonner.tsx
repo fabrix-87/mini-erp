@@ -1,42 +1,49 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { useTheme } from "next-themes";
-import { Toaster as Sonner, ToasterProps } from "sonner";
+import { useTheme } from "next-themes"
+import { Toaster as Sonner, type ToasterProps } from "sonner"
+import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme();
+  const { theme = "system" } = useTheme()
 
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
-      position="top-center"
-      richColors
-      expand
-      closeButton
-      visibleToasts={4}
-      duration={5000}
       className="toaster group"
-      toastOptions={{
-        classNames: {
-          toast:
-            "group toast group-[.toaster]:min-w-[360px] group-[.toaster]:rounded-xl group-[.toaster]:border group-[.toaster]:shadow-lg",
-          title: "text-sm font-semibold",
-          description: "text-sm opacity-90",
-          actionButton: "bg-primary text-primary-foreground hover:bg-primary/90",
-          cancelButton: "bg-muted text-muted-foreground hover:bg-muted/80",
-        },
+      icons={{
+        success: (
+          <CircleCheckIcon className="size-4" />
+        ),
+        info: (
+          <InfoIcon className="size-4" />
+        ),
+        warning: (
+          <TriangleAlertIcon className="size-4" />
+        ),
+        error: (
+          <OctagonXIcon className="size-4" />
+        ),
+        loading: (
+          <Loader2Icon className="size-4 animate-spin" />
+        ),
       }}
       style={
         {
-          "--normal-bg": "var(--card)",
-          "--normal-text": "var(--card-foreground)",
-          "--normal-border": "color-mix(in oklab, var(--border) 70%, black 30%)",
+          "--normal-bg": "var(--popover)",
+          "--normal-text": "var(--popover-foreground)",
+          "--normal-border": "var(--border)",
+          "--border-radius": "var(--radius)",
         } as React.CSSProperties
       }
+      toastOptions={{
+        classNames: {
+          toast: "cn-toast",
+        },
+      }}
       {...props}
     />
-  );
-};
+  )
+}
 
-export { Toaster };
+export { Toaster }
