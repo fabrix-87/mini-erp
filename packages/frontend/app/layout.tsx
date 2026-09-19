@@ -15,7 +15,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "MyERP - Gestionale Aziendale",
+  title: process.env.APP_NAME || "MiniERP - Gestionale Aziendale",
   description: "Sistema di gestione aziendale completo",
 };
 
@@ -39,3 +39,4 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     </html>
   );
 }
+

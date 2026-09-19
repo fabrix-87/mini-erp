@@ -45,7 +45,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps): Rea
               <div
                 className={cn(
                   "min-w-0 w-full px-4 py-4 lg:px-6 lg:py-5",
-                  "rounded-2xl bg-secondary p-(--gap) dark:bg-background *:[div]:gap-(--gap)",
+                  "rounded-2xl bg-muted/40 p-(--gap) dark:bg-background *:[div]:gap-(--gap)",
                 )}
               >
                 {children}

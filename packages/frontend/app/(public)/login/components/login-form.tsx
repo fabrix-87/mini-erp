@@ -1,3 +1,4 @@
+// packages/frontend/app/(public)/login/components/login-form.tsx
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
@@ -14,25 +15,30 @@ import { loginAction } from "@/actions/auth-actions";
 import { toast } from "sonner";
 import { useFingerprint } from "@/hooks/use-fingerprint";
 import { LoginInput, loginSchema } from "@mini-erp/shared";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
-// ============================================================================
-// Submit Button Component
-// ============================================================================
-function SubmitButton({ isValid, isPending }: { isValid: boolean; isPending: boolean }) {
+interface SubmitButtonProps {
+  isValid: boolean;
+  isPending: boolean;
+}
+
+/**
+ * Renders the login form submission button.
+ *
+ * @param props - Form validity and pending-state flags.
+ * @returns Authentication form submit control.
+ */
+function SubmitButton({ isValid, isPending }: SubmitButtonProps): React.JSX.Element {
+  const t = useTranslations('common.auth')
   return (
-    <Button
-      type="submit"
-      className="w-full h-11 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg shadow-blue-500/30 transition-all"
-      disabled={isPending || !isValid}
-    >
+    <Button type="submit" className="h-10 w-full font-medium" disabled={isPending || !isValid}>
       {isPending ? (
         <>
-          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-          Accesso in corso...
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+          {t('logging')}
         </>
       ) : (
-        "Accedi"
+        t('login')
       )}
     </Button>
   );
@@ -47,12 +53,13 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ callbackUrl }: LoginFormProps) {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const [state, formAction] = useActionState(loginAction, null);
   const { fingerprint } = useFingerprint();
+
+  const t = useTranslations('common.auth')
 
   const {
     register,
@@ -69,7 +76,7 @@ export function LoginForm({ callbackUrl }: LoginFormProps) {
   // ========================================
   useEffect(() => {
     if (state?.error) {
-      toast.error("Login fallito", { description: state.error });
+      toast.error(t('loginError'), { description: state.error });
       setError("root", { type: "manual", message: state.error });
     }
   }, [state, setError]);
@@ -80,12 +87,12 @@ export function LoginForm({ callbackUrl }: LoginFormProps) {
   useEffect(() => {
     if (state?.success) {
       //router.refresh();
-      toast.success("Accesso eseguito");
+      toast.success(t('loginSuccess'));
       // Sanity check: accetta solo path interni (no redirect aperti)
       const destination = callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/dashboard";
       window.location.href = destination;
     }
-  }, [state, router]);
+  }, [state]);
 
   // ========================================
   // Submit: valida con zod poi invia come FormData
@@ -102,60 +109,60 @@ export function LoginForm({ callbackUrl }: LoginFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {(state?.error || errors.root) && (
-        <Alert variant="destructive" className="border-red-200 bg-red-50">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="text-red-800">
-            {state?.error || errors.root?.message}
-          </AlertDescription>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" aria-hidden="true" />
+          <AlertDescription>{state?.error || errors.root?.message}</AlertDescription>
         </Alert>
       )}
 
       {/* Email Field */}
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-slate-700 font-medium">
-          Email
-        </Label>
+        <Label htmlFor="email">{t('email')}</Label>
         <Input
           id="email"
           type="email"
-          placeholder="nome@esempio.com"
+          placeholder="user@example.com"
           autoComplete="email"
           className={cn(
-            "h-11 bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500",
-            errors.email && "border-red-500 focus:border-red-500 focus:ring-red-500",
+            "h-10",
+            errors.email &&
+              "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20",
           )}
           {...register("email")}
           aria-invalid={errors.email ? "true" : "false"}
         />
-        {errors.email && <p className="text-sm font-medium text-red-600">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-sm font-medium text-destructive" role="alert">
+            {errors.email.message}
+          </p>
+        )}
       </div>
 
       {/* Password Field */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="password" className="text-slate-700 font-medium">
-            Password
-          </Label>
+          <Label htmlFor="password">{t('password')}</Label>
           <a
             href="#"
-            className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+            className="text-sm font-medium text-primary transition-colors hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             onClick={(e) => {
               e.preventDefault();
               toast.info("Funzionalità in arrivo");
             }}
           >
-            Password dimenticata?
+            {t('forgotPassword')}
           </a>
         </div>
         <div className="relative">
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Inserisci la tua password"
+            placeholder={t('passwordPlaceholder')}
             autoComplete="current-password"
             className={cn(
-              "h-11 pr-11 bg-white border-slate-300 focus:border-blue-500 focus:ring-blue-500",
-              errors.password && "border-red-500 focus:border-red-500 focus:ring-red-500",
+              "h-10 pr-11",
+              errors.password &&
+                "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20",
             )}
             {...register("password")}
             aria-invalid={errors.password ? "true" : "false"}
@@ -163,9 +170,8 @@ export function LoginForm({ callbackUrl }: LoginFormProps) {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label={showPassword ? "Nascondi password" : "Mostra password"}
-            tabIndex={-1}
           >
             {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>

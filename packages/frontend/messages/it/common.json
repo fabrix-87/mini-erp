@@ -119,13 +119,24 @@
     "logout": "Esci",
     "email": "Email",
     "password": "Password",
-    "forgot_password": "Password dimenticata?",
-    "welcome_back": "Bentornato"
+    "passwordPlaceholder": "Inserisci la tua password",
+    "forgotPassword": "Password dimenticata?",
+    "welcomeBack": "Bentornato",
+    "logging": "Accesso in corso...",
+    "loginError": "Login fallito",
+    "loginSuccess": "Accesso eseguito",
+    "loginSubtitle": "Accedi al tuo account per continuare."
   },
   "page_header": {
     "new": "Nuovo",
     "edit": "Modifica",
     "details": "Dettagli",
     "generic_page": "Pagina"
-  }
+  },
+  "public": {    
+    "heroEyebrow": "Piattaforma gestionale",
+    "heroTitle": "Il tuo lavoro,<br></br>in un unico spazio.",
+    "heroDescription": "Gestisci relazioni, processi, documenti e operatività quotidiana con un’unica piattaforma."
+  },
+  "appDescription": "Gestione aziendale"
 }
