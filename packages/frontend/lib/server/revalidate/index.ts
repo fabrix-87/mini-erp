@@ -183,3 +183,4 @@ export * from "./lead-revalidate";
 export * from "./user-revalidate";
 export * from "./role-revalidate";
 export * from "./contact-revalidate";
+export * from "./company-revalidate";

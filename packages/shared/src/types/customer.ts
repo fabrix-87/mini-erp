@@ -109,6 +109,7 @@ export type Customer = {
 export type CreateCustomerInput = z.infer<typeof createCustomerSchema>;
 export type CreateCustomerForm = z.input<typeof createCustomerSchema>;
 export type UpdateCustomerInput = z.infer<typeof updateCustomerSchema>;
+export type UpdateCustomerForm = z.input<typeof updateCustomerSchema>;
 export type UpdateCustomerCompanyInput = z.infer<typeof updateCustomerCompanySchema>;
 
 // ============================================================================

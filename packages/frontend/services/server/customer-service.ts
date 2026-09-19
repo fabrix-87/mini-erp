@@ -13,6 +13,7 @@ import {
   CustomerQueryInput,
   CustomerStats,
   UpdateCustomerCompanyInput,
+  UpdateCustomerForm,
   UpdateCustomerInput,
 } from "@mini-erp/shared";
 
@@ -98,7 +99,7 @@ export async function createCustomer(data: CreateCustomerInput): Promise<Custome
  * Update customer CRM-specific fields (priority, segment, taxRule, etc.)
  * @route PUT /api/customers/:id
  */
-export async function updateCustomer(id: string, data: UpdateCustomerInput): Promise<Customer> {
+export async function updateCustomer(id: string, data: UpdateCustomerForm): Promise<Customer> {
   return serverApi.put<Customer>(`/customers/${id}`, data);
 }
 

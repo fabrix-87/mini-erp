@@ -31,22 +31,19 @@ export const createAddressSchema = z
     addressType: addressTypeSchema.default("LEGAL"),
     address: z
       .string()
-      .min(1, "Indirizzo è obbligatorio")
       .max(255, "Indirizzo non può superare 255 caratteri")
       .trim(),
     city: z
       .string()
-      .min(1, "Città è obbligatoria")
       .max(100, "Città non può superare 100 caratteri")
       .trim(),
     provinceCode: z
       .string()
-      .length(2, "Codice provincia deve essere 2 caratteri (es. MI, RM)")
+      .max(2, "Codice provincia deve essere 2 caratteri (es. MI, RM)")
       .optional()
       .nullable(),
     zipCode: z
       .string()
-      .min(1, "CAP è obbligatorio")
       .max(20, "CAP non può superare 20 caratteri")
       .trim(),
     countryCode: countryCodeBaseSchema,

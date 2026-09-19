@@ -220,6 +220,8 @@ export const updateCustomer = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
   const languageId = getRequiredLanguageId(c);
 
+  console.debug(data)
+
   const existing = await prisma.customer.findFirst({
     where: tenantFilter(tenantId, { id }),
   });

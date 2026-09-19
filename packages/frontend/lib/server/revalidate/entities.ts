@@ -8,43 +8,6 @@ import { USER_TAGS } from "@/types/user-types";
 // Common Entity Revalidators
 // ============================================================================
 
-
-
-
-/**
- * Revalidate customer-related cache.
- * Route: /crm/customers
- */
-export const customerRevalidation = {
-  /** Revalidate specific customer detail and path. */
-  customer: (id: string) => revalidateEntity("customers", id),
-
-  /** Revalidate customers list. */
-  list: () => revalidateEntity("customers", undefined),
-
-  /** Revalidate specific customer and customers list. */
-  customerWithList: (id: string) =>
-    revalidateEntityWithList("customers", id),
-};
-
-/**
- * Revalidate supplier-related cache.
- * Route: /crm/suppliers
- */
-export const supplierRevalidation = {
-  /** Revalidate specific supplier detail and path. */
-  supplier: (id: string) => revalidateEntity("suppliers", id),
-
-  /** Revalidate suppliers list. */
-  list: () => revalidateEntity("suppliers"),
-
-  /** Revalidate specific supplier and suppliers list. */
-  supplierWithList: (id: string) =>
-    revalidateEntityWithList("suppliers", id ),
-};
-
-
-
 /**
  * Revalidate product-related cache.
  * Route: /catalog/products

@@ -159,7 +159,7 @@ export function extractCompanyData(data: CompanyFormValues): CreateCompanyInput 
 /**
  * Extracts customer-specific fields from form data.
  */
-export function extractCustomerData(data: CompanyFormValues): Omit<CreateCustomerInput, "company"> {
+export function extractCustomerData(data: CompanyFormValues): Omit<CreateCustomerForm, "company"> {
   return {
     parentCustomerId: data.parentCustomerId,
     priority: data.priority,
@@ -170,7 +170,7 @@ export function extractCustomerData(data: CompanyFormValues): Omit<CreateCustome
     defaultPriceListId: data.defaultPriceListId,
     customerTaxRuleId: data.customerTaxRuleId,
     paymentMethodId: data.paymentMethodId,
-    creditLimit: data.creditLimit != null ? new Decimal(data.creditLimit) : null,
+    creditLimit: data.creditLimit,
   };
 }
 

@@ -3,9 +3,9 @@
 
 import { ActionResult, withAuth } from "@/lib/server/action";
 import { customerRevalidation } from "@/lib/server/revalidate";
+
 import {
   searchCustomers,
-  getCustomerById,
   deleteCustomer,
   updateCustomerCompany,
   updateCustomer,
@@ -16,7 +16,7 @@ import {
   CreateCustomerInput,
   Customer,
   UpdateCustomerCompanyInput,
-  UpdateCustomerInput,
+  UpdateCustomerForm,
 } from "@mini-erp/shared";
 import { redirect } from "next/navigation";
 
@@ -60,7 +60,7 @@ export async function createCustomerAction(
  */
 export async function updateCustomerAction(
   id: string,
-  data: UpdateCustomerInput,
+  data: UpdateCustomerForm,
 ): Promise<ActionResult<Customer>> {
   const result = await withAuth(async () => {
     const response = await updateCustomer(id, data);
