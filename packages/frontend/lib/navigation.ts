@@ -110,3 +110,15 @@ export function hasActiveSubItem(currentPath: string, items?: NavigationItem[]):
 
 /** Bundled iconography for the global navigation toolbar. */
 export const headerIcons = { Menu, Search, Sun, Moon, Bell, Settings, LogOut, SunMoon };
+
+/**
+ * Determines whether a navigation item owns the current pathname.
+ *
+ * @param pathname - Current browser pathname.
+ * @param href - Navigation item route.
+ * @param exact - Whether only an exact route match is valid.
+ * @returns Whether the navigation item is active.
+ */
+export function isActiveRoute(pathname: string, href: string, exact = false): boolean {
+  return exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+}

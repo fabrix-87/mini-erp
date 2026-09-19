@@ -52,7 +52,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
         icon: Calendar,
         descKey: "desc_activities",
         items: [
-          { nameKey: "activities_list", href: "/activities" },
+          { nameKey: "activities_list", href: "/activities", exact: true  },
           { nameKey: "activities_calendar", href: "/activities/calendar" },
           { nameKey: "activities_new", href: "/activities/new" },
         ],

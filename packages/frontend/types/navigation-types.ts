@@ -7,6 +7,7 @@ import { LucideIcon } from "lucide-react";
 export interface NavigationItem {
   name: string;
   href: string;
+  exact?: boolean;
   icon?: LucideIcon;
   roles?: readonly string[];
   badge?: string | number;
@@ -45,4 +46,5 @@ export interface NavigationLeafConfig {
   nameKey: string;
   href: string;
   hidden?: boolean;
+  exact?: boolean;
 }

@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { NavigationItem } from "@/types/navigation-types";
+import { isActiveRoute } from "@/lib/navigation";
 
 interface SidebarNavItemProps {
   item: NavigationItem;
@@ -35,9 +36,10 @@ export function SidebarNavItem({
 }: SidebarNavItemProps): React.JSX.Element {
   const hasChildren = Boolean(item.items && item.items.length > 0);
   const isExpanded = expandedItems.has(item.name);
-  const isCurrent = !hasChildren && item.href && pathname.startsWith(item.href);
+  const isCurrent = !hasChildren && isActiveRoute(pathname, item.href, item.exact);
+
   const hasActiveChildren = hasChildren
-    ? item.items!.some((subItem) => subItem.href && pathname.startsWith(subItem.href))
+    ? item.items!.some((subItem) => isActiveRoute(pathname, subItem.href))
     : false;
   const Icon = item.icon;
 

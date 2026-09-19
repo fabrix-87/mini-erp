@@ -3,7 +3,12 @@
 
 import * as React from "react";
 import { debounce } from "@/lib/utils";
-import type { ComboboxOption } from "@/components/ui/combobox";
+
+export interface ComboboxOption {
+  value: string;
+  label: string;
+  description?: string;
+}
 
 export interface UseAsyncComboboxOptions<TData> {
   /**
