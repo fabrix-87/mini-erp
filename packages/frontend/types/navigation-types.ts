@@ -2,10 +2,12 @@
 // Types
 // ============================================================================
 
+import { LucideIcon } from "lucide-react";
+
 export interface NavigationItem {
   name: string;
   href: string;
-  icon?: any;
+  icon?: LucideIcon;
   roles?: readonly string[];
   badge?: string | number;
   description?: string;
@@ -16,6 +18,7 @@ export interface NavigationItem {
 export interface NavigationSection {
   title: string;
   path: string;
+  icon: LucideIcon;
   items: NavigationItem[];
   hidden?: boolean;
 }
@@ -23,6 +26,7 @@ export interface NavigationSection {
 export interface NavigationSectionConfig {
   titleKey: string;
   path: string;
+  icon: LucideIcon;
   hidden?: boolean;
   items: readonly (NavigationItemConfig | NavigationLeafConfig)[];
 }
@@ -30,7 +34,7 @@ export interface NavigationSectionConfig {
 export interface NavigationItemConfig {
   nameKey: string;
   href: string;
-  icon?: any;
+  icon?: LucideIcon;
   descKey?: string;
   roles?: readonly string[];
   hidden?: boolean;

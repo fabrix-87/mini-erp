@@ -22,7 +22,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps): Rea
   return (
     <SearchParamsProvider>
       <TooltipProvider>
-        <div className="flex min-h-screen w-full bg-muted/30">
+        <div className="flex min-h-screen w-full">
           <ShellBar
             collapsed={collapsed}
             onToggleCollapsed={() => setCollapsed((prev) => !prev)}
@@ -37,12 +37,19 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps): Rea
 
           <div
             className={cn(
-              "min-w-0 flex-1 pt-12 transition-[margin-left] duration-200",
+              "min-w-0 flex-1 pt-12 pr-4 transition-[margin-left] duration-200",
               collapsed ? "lg:ml-16" : "lg:ml-64",
             )}
           >
             <main className="min-w-0 min-h-[calc(100vh-3rem)] overflow-x-hidden">
-              <div className="min-w-0 w-full px-4 py-4 lg:px-6 lg:py-5">{children}</div>
+              <div
+                className={cn(
+                  "min-w-0 w-full px-4 py-4 lg:px-6 lg:py-5",
+                  "rounded-2xl bg-secondary p-(--gap) dark:bg-background *:[div]:gap-(--gap)",
+                )}
+              >
+                {children}
+              </div>
             </main>
           </div>
         </div>

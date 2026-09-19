@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useFilteredNavigation } from "@/lib/navigation";
-import { SidebarNavItem } from "./sidebar-nav-item";
+import { SidebarNavSection } from "./sidebar-nav-section";
 
 interface SidebarProps {
   mobileOpen: boolean;
@@ -13,12 +13,15 @@ interface SidebarProps {
 }
 
 /**
- * Primary application sidebar focused only on navigation.
+ * Primary application sidebar with grouped, role-aware navigation.
  */
 export function Sidebar({ mobileOpen, collapsed, onMobileClose }: SidebarProps): React.JSX.Element {
   const pathname = usePathname();
   const filteredNavigation = useFilteredNavigation();
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    () => new Set(["/dashboard"]),
+  );
 
   useEffect(() => {
     if (collapsed) {
@@ -26,28 +29,82 @@ export function Sidebar({ mobileOpen, collapsed, onMobileClose }: SidebarProps):
       return;
     }
 
-    const nextExpanded = new Set<string>();
+    setExpandedItems((previousItems) => {
+      const nextItems = new Set(previousItems);
 
-    filteredNavigation.forEach((section) => {
-      section.items.forEach((item) => {
-        if (item.items?.some((subItem) => pathname.startsWith(subItem.href))) {
-          nextExpanded.add(item.name);
-        }
+      filteredNavigation.forEach((section) => {
+        section.items.forEach((item) => {
+          const hasActiveChild = item.items?.some((subItem) => pathname.startsWith(subItem.href));
+
+          if (hasActiveChild) {
+            nextItems.add(item.name);
+          }
+        });
       });
-    });
 
-    setExpandedItems(nextExpanded);
+      return nextItems;
+    });
   }, [collapsed, filteredNavigation, pathname]);
 
-  const toggleExpanded = (itemName: string): void => {
-    setExpandedItems((prev) => {
-      const next = new Set(prev);
-      if (next.has(itemName)) {
-        next.delete(itemName);
-      } else {
-        next.add(itemName);
+  useEffect(() => {
+    const activeSection = filteredNavigation.find(
+      (section) =>
+        pathname === section.path ||
+        (section.path !== "/dashboard" && pathname.startsWith(`${section.path}/`)),
+    );
+
+    setExpandedSections((previousSections) => {
+      const nextSections = new Set(previousSections);
+
+      nextSections.add("/dashboard");
+
+      if (activeSection) {
+        nextSections.add(activeSection.path);
       }
-      return next;
+
+      return nextSections;
+    });
+  }, [filteredNavigation, pathname]);
+
+  /**
+   * Toggles a nested navigation item in expanded sidebar mode.
+   *
+   * @param itemName - Localized navigation item label.
+   */
+  const toggleExpandedItem = (itemName: string): void => {
+    setExpandedItems((previousItems) => {
+      const nextItems = new Set(previousItems);
+
+      if (nextItems.has(itemName)) {
+        nextItems.delete(itemName);
+      } else {
+        nextItems.add(itemName);
+      }
+
+      return nextItems;
+    });
+  };
+
+  /**
+   * Toggles a top-level navigation section in expanded sidebar mode.
+   *
+   * @param sectionPath - Stable navigation section path.
+   */
+  const toggleExpandedSection = (sectionPath: string): void => {
+    if (sectionPath === "/dashboard") {
+      return;
+    }
+
+    setExpandedSections((previousSections) => {
+      const nextSections = new Set(previousSections);
+
+      if (nextSections.has(sectionPath)) {
+        nextSections.delete(sectionPath);
+      } else {
+        nextSections.add(sectionPath);
+      }
+
+      return nextSections;
     });
   };
 
@@ -63,34 +120,26 @@ export function Sidebar({ mobileOpen, collapsed, onMobileClose }: SidebarProps):
 
       <aside
         className={cn(
-          "fixed left-0 top-12 bottom-0 z-40 flex flex-col overflow-hidden border-r border-border bg-background transition-all duration-200",
+          "fixed bottom-0 left-0 top-12 z-40 flex flex-col overflow-hidden bg-background transition-[width,transform] duration-200",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0",
           collapsed ? "w-16" : "w-64",
         )}
       >
-        <nav className="flex-1 overflow-y-auto py-3">
-          <div className="space-y-4">
+        <nav aria-label="Main navigation" className="flex-1 overflow-y-auto py-3 scrollbar-none">
+          <div className={cn("space-y-3", collapsed ? "px-2" : "px-2")}>
             {filteredNavigation.map((section) => (
-              <div key={section.title} className="space-y-1 px-2">
-                {!collapsed && (
-                  <p className="px-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    {section.title}
-                  </p>
-                )}
-
-                {section.items.map((item) => (
-                  <SidebarNavItem
-                    key={item.name}
-                    item={item}
-                    pathname={pathname}
-                    collapsed={collapsed}
-                    expandedItems={expandedItems}
-                    onToggleExpanded={toggleExpanded}
-                    onNavigate={onMobileClose}
-                  />
-                ))}
-              </div>
+              <SidebarNavSection
+                key={section.path}
+                section={section}
+                pathname={pathname}
+                collapsed={collapsed}
+                expanded={expandedSections.has(section.path)}
+                expandedItems={expandedItems}
+                onToggleSection={toggleExpandedSection}
+                onToggleItem={toggleExpandedItem}
+                onNavigate={onMobileClose}
+              />
             ))}
           </div>
         </nav>

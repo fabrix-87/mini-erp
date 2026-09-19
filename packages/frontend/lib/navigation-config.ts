@@ -27,6 +27,11 @@ import {
   Briefcase,
   UserPlus,
   Globe,
+  LayoutDashboard,
+  UsersRound,
+  Truck,
+  Settings2,
+  Settings,
 } from "lucide-react";
 
 /**
@@ -38,6 +43,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
   {
     titleKey: "overview",
     path: "/dashboard",
+    icon: LayoutDashboard,
     items: [
       { nameKey: "dashboard", href: "/dashboard", icon: Home, descKey: "desc_dashboard" },
       {
@@ -57,6 +63,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
   {
     titleKey: "crm",
     path: "/crm",
+    icon: UsersRound,
     items: [
       { nameKey: "leads", href: "/crm/leads", icon: UserPlus, descKey: "desc_leads" },
       { nameKey: "opportunities", href: "/crm/opportunities", icon: Briefcase, descKey: "desc_opportunities" },
@@ -68,6 +75,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
   {
     titleKey: "sales",
     path: "/sales",
+    icon: ShoppingCart,
     items: [
       { nameKey: "quotes", href: "/sales/quotes", icon: FileText, descKey: "desc_quotes" },
       { nameKey: "orders", href: "/sales/orders", icon: ShoppingCart, descKey: "desc_orders" },
@@ -76,6 +84,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
   {
     titleKey: "catalog",
     path: "/catalog",
+    icon: Package,
     items: [
       { nameKey: "products", href: "/catalog/products", icon: Package, descKey: "desc_products" },
       {
@@ -91,6 +100,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
     titleKey: "purchasing",
     path: "/purchasing",
     hidden: false,
+    icon: Truck,
     items: [
       {
         nameKey: "purchase_orders",
@@ -103,6 +113,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
   {
     titleKey: "warehouse",
     path: "/warehouse",
+    icon: Warehouse,
     hidden: false,
     items: [
       {
@@ -135,6 +146,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
     titleKey: "finance",
     path: "/finance",
     hidden: false,
+    icon: Receipt,
     items: [
       { nameKey: "invoices", href: "/finance/invoices", icon: Receipt, descKey: "desc_invoices" },
       {
@@ -156,6 +168,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
     titleKey: "compliance",
     path: "/compliance",
     hidden: false,
+    icon: ShieldCheck,
     items: [
       {
         nameKey: "intrastat",
@@ -169,6 +182,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
     titleKey: "administration",
     path: "/admin",
     hidden: false,
+    icon: UserCog,
     items: [
       {
         nameKey: "users",
@@ -190,6 +204,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
     titleKey: "system",
     path: "/system",
     hidden: false,
+    icon: Settings,
     items: [
       { nameKey: "company", href: "/system/company", icon: Building2, descKey: "desc_company" },
       {
@@ -217,6 +232,7 @@ export const NAVIGATION_TREE: readonly NavigationSectionConfig[] = [
     titleKey: "settings",
     path: "/settings",
     hidden: true,
+    icon: Settings2,
     items: [
       { nameKey: "profile", href: "/settings/profile", hidden: true },
     ],

@@ -34,7 +34,7 @@ interface ShellBarProps {
 
 /**
  * Global application shell bar.
- * Blue-centered header aligned with the application theme.
+ * Light/dark header with white background in light mode, aligned with shadcn theme.
  */
 export function ShellBar({
   collapsed,
@@ -52,28 +52,26 @@ export function ShellBar({
   const iconButtonBase =
     "h-8 w-8 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors";
 
+  // Icon buttons tone: neutral on light, slightly warmer on dark
   const iconButtonTone = isDark
-    ? "text-muted-foreground hover:bg-primary/12 hover:text-foreground"
-    : "text-primary-foreground/80 hover:bg-white/15 hover:text-primary-foreground";
+    ? "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground";
 
+  // Brand badge: subtle on light, stronger on dark
   const brandBadgeTone = isDark
-    ? "bg-primary/90 text-primary-foreground shadow-[0_0_0_1px_rgba(15,23,42,0.55)]"
-    : "bg-white/20 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.25)]";
+    ? "shadow-[0_0_0_1px_rgba(15,23,42,0.55)]"
+    : "shadow-[0_0_0_1px_rgba(0,0,0,0.06)]";
 
-  const brandMetaTone = isDark ? "text-sky-300/90" : "text-white/70";
+  const brandMetaTone = isDark ? "text-muted-foreground" : "text-muted-foreground";
 
   const userMenuTriggerTone = isDark
-    ? "text-slate-200 hover:bg-slate-800/80 hover:text-slate-100"
-    : "text-white/90 hover:bg-white/15 hover:text-white";
+    ? "text-foreground hover:bg-accent hover:text-accent-foreground"
+    : "text-foreground hover:bg-accent hover:text-accent-foreground";
 
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 flex h-12 items-center border-b",
-        isDark
-          ? "border-slate-800 bg-slate-950/90 backdrop-blur"
-          : "border-primary/20 bg-primary backdrop-blur",
-        "shadow-[0_1px_0_rgba(15,23,42,0.04)]",
+        "fixed inset-x-0 top-0 z-50 flex h-12 items-center bg-background",
       )}
     >
       <div className="flex h-full w-full items-center gap-2 px-3 lg:px-4">
@@ -109,12 +107,13 @@ export function ShellBar({
           href="/dashboard"
           className={cn(
             "flex min-w-0 items-center gap-2 rounded-full px-2 py-1 text-sm font-medium transition-colors",
-            isDark ? "hover:bg-slate-800/80" : "hover:bg-white/15 rounded-full",
+            isDark ? "hover:bg-accent" : "hover:bg-accent",
           )}
         >
           <div
             className={cn(
               "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold",
+              "bg-primary text-primary-foreground",
               brandBadgeTone,
             )}
           >
@@ -125,7 +124,7 @@ export function ShellBar({
             <span
               className={cn(
                 "truncate text-xs font-semibold",
-                isDark ? "text-slate-100" : "text-white",
+                isDark ? "text-foreground" : "text-foreground",
               )}
             >
               {tenantName}
