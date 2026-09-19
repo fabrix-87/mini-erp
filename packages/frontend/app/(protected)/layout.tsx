@@ -37,7 +37,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps): Rea
 
           <div
             className={cn(
-              "min-w-0 flex-1 pt-12 pr-4 transition-[margin-left] duration-200",
+              "min-w-0 flex-1 pt-12 lg:pr-4 transition-[margin-left] duration-200",
               collapsed ? "lg:ml-16" : "lg:ml-64",
             )}
           >
@@ -45,7 +45,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps): Rea
               <div
                 className={cn(
                   "min-w-0 w-full px-4 py-4 lg:px-6 lg:py-5",
-                  "rounded-2xl bg-muted/40 p-(--gap) dark:bg-background *:[div]:gap-(--gap)",
+                  "lg:rounded-2xl bg-muted/40 dark:bg-background *:[div]:gap-(--gap)",
                 )}
               >
                 {children}

@@ -14,78 +14,88 @@ import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import type { OpportunityStats } from "@/types/opportunity-types";
 import { formatCurrency } from "@/utils/format-currency";
+import { StatMetric, StatsGridColumns } from "@/types/stats-grid-types";
+import { StatsGrid } from "@/components/stats-grid";
 
 interface OpportunityStatsBarProps {
   stats: OpportunityStats;
 }
 
-interface StatTile {
-  key: string;
-  label: string;
-  value: string | number;
-  suffix?: string;
-  icon: React.ElementType;
-  colorClass?: string;
-}
-
-function buildTiles(s: OpportunityStats, t: ReturnType<typeof useTranslations>): StatTile[] {
+/**
+ * Builds localized KPI metrics for the CRM opportunity workspace.
+ *
+ * @param stats - Aggregated opportunity statistics from the API.
+ * @param t - Translation function scoped to opportunity statistics.
+ * @returns Ordered presentation metrics for the shared statistics grid.
+ */
+function buildOpportunityMetrics(s: OpportunityStats, t: ReturnType<typeof useTranslations>): StatMetric[] {
   return [
     {
-      key: "total",
+      id: "total",
+      kind: "value",
       label: t("total"),
       value: s.total,
       icon: BarChart3,
+      priority: "primary",
     },
     {
-      key: "open",
+      id: "open",
+      kind: "value",
       label: t("open"),
       value: s.open,
       icon: TrendingUp,
-      colorClass: "text-blue-600 dark:text-blue-400",
+      tone: "primary",
+      priority: "primary",
     },
     {
-      key: "won",
+      id: "won",
+      kind: "value",
       label: t("won"),
       value: s.won,
       icon: Trophy,
-      colorClass: "text-green-600 dark:text-green-400",
+      priority: "primary",
+      tone: "success",
     },
     {
-      key: "lost",
+      id: "lost",
+      kind: "value",
       label: t("lost"),
       value: s.lost,
       icon: TrendingDown,
-      colorClass: s.lost > 0 ? "text-red-600 dark:text-red-400" : undefined,
+      tone: "danger",
+      priority: "primary"
     },
     {
-      key: "winRate",
+      id: "winRate",
+      kind: "value",
       label: t("winRate"),
       value: s.winRate.toFixed(1),
       suffix: "%",
       icon: Percent,
-      colorClass:
-        s.winRate >= 40
-          ? "text-green-600 dark:text-green-400"
+      tone: s.winRate >= 40 
+          ? "success"
           : s.winRate >= 20
-            ? "text-yellow-600 dark:text-yellow-400"
-            : "text-red-600 dark:text-red-400",
+            ? "danger"
+            : "danger",
     },
     {
-      key: "totalEstimatedValue",
+      id: "totalEstimatedValue",
+      kind: "value",
       label: t("totalEstimatedValue"),
       value: formatCurrency(s.totalEstimatedValue),
       icon: Banknote,
-      colorClass: "text-emerald-600 dark:text-emerald-400",
+      tone: "primary",
     },
     {
-      key: "totalWeightedValue",
+      id: "totalWeightedValue",
+      kind: "value",
       label: t("totalWeightedValue"),
       value: formatCurrency(s.totalWeightedValue),
       icon: Target,
-      colorClass: "text-violet-600 dark:text-violet-400",
     },
     {
-      key: "averageSalesCycle",
+      id: "averageSalesCycle",
+      kind: "value",
       label: t("averageSalesCycle"),
       value: s.averageSalesCycle,
       suffix: ` ${t("daysSuffix")}`,
@@ -100,26 +110,6 @@ function buildTiles(s: OpportunityStats, t: ReturnType<typeof useTranslations>):
  */
 export function OpportunityStatsBar({ stats }: OpportunityStatsBarProps) {
   const t = useTranslations("crm.opportunities.stats");
-  const tiles = buildTiles(stats, t);
-
-  return (
-    <div className="grid gap-3 grid-cols-2 sm:grid-cols-4 lg:grid-cols-8">
-      {tiles.map(({ key, label, value, suffix, icon: Icon, colorClass }) => (
-        <Card key={key} className="overflow-hidden">
-          <CardContent className="pt-4 pb-3 px-4">
-            <div className="flex items-center justify-between mb-1.5">
-              <p className="text-xs text-muted-foreground leading-tight">{label}</p>
-              <Icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-            </div>
-            <p className={`text-xl font-bold tabular-nums ${colorClass ?? ""}`}>
-              {value}
-              {suffix && (
-                <span className="text-xs font-normal text-muted-foreground ml-0.5">{suffix}</span>
-              )}
-            </p>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
+  
+  return <StatsGrid metrics={buildOpportunityMetrics(stats, t)} ariaLabel={t("summary")} columns={StatsGridColumns.Four} />;
 }

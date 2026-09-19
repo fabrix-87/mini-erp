@@ -7,6 +7,7 @@ import { createCreateAction } from "@/helpers/page-header-actions-helper";
 import { getNewRoute } from "@/lib/navigation-routes";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
+import { Metadata } from "next";
 
 // ============================================================================
 // Page — Server Component
@@ -54,4 +55,13 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
       />
     </>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("crm.leads");
+
+  return {
+    title: `${t("title")} | ${process.env.APP_NAME}`,
+    description: t("description"),
+  };
 }

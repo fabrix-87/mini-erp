@@ -47,7 +47,7 @@ export function Providers({ children, locale, messages, timeZone }: ProvidersPro
           <AuthProvider>
             <FlashErrorHandler /> 
             {children}
-            <Toaster />
+            <Toaster position="top-center" richColors />
             {process.env.NODE_ENV === "development" && <ReactQueryDevtools initialIsOpen={false} />}
           </AuthProvider>
         </NextIntlClientProvider>

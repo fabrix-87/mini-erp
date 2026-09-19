@@ -38,10 +38,10 @@ import {
 
 export async function getLeadByIdAction(
   id: string,
-  revalidate: number | false = 0,
+  revalidate: number | false = 3600,
 ): Promise<ActionResult<Lead>> {
   return withAuth(async () => {
-    const response = await getLeadByIdServer(id, 3600);
+    const response = await getLeadByIdServer(id, revalidate);
     return response.data;
   }, "lead:read");
 }

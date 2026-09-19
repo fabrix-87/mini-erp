@@ -75,6 +75,14 @@
       "MEDIUM": "Media (50-249)",
       "LARGE": "Grande (250-999)",
       "ENTERPRISE": "Enterprise (1000+)"
+    },
+    "stats": {
+      "totalCustomers": "Totale clienti",
+      "totalRevenue": "Totale fatturato",
+      "averageOrderValue": "Valore medio ordini",
+      "bySegment": "Per segmento",
+      "noSegments": "Nessun segmento",
+      "summary":"Riepilogo clienti"
     }
   },
   "suppliers": {
@@ -100,12 +108,22 @@
     "companyEditTitle": "Modifica fornitore",
     "companyEditDescription": "Aggiorna le informazioni del fornitore",
     "companyNewTitle": "Nuovo fornitore",
-    "companyNewDescription": "Aggiungi un nuovo fornitore"
+    "companyNewDescription": "Aggiungi un nuovo fornitore",
+    "stats": {
+      "totalSuppliers": "Totale Fornitori",
+      "totalSpent": "Spesa Totale",
+      "averageRating": "Rating Medio",
+      "byRating": "Per rating",
+      "noRating": "Nessun rating",
+      "summary":"Riepilogo fornitori"
+    }
   },
   "leads": {
     "createNewButton": "Nuovo lead",
     "searchFilterPlaceholder": "Cerca per nome, email, P.IVA...",
     "no_results": "Nessun lead trovato",
+    "title": "Gestione Leads",
+    "description": "Gestisci i leads",
     "leadNewTitle": "Nuovo lead",
     "leadNewDescription": "Aggiungi un nuovo lead",
     "leadEditTitle": "Modifica lead",
@@ -193,7 +211,8 @@
       "qualifiedLeads": "Qualificate (BANT)",
       "needFollowUp": "Follow-up pianificati",
       "overdueFollowUp": "Follow-up scaduti",
-      "daysSuffix": "gg"
+      "daysSuffix": "gg",
+      "summary": "Riepilogo lead"
     },
     "status": {
       "ALL": "Tutti gli status",
@@ -306,7 +325,8 @@
       "totalEstimatedValue": "Valore pipeline",
       "totalWeightedValue": "Valore pesato",
       "averageSalesCycle": "Ciclo di vendita medio",
-      "daysSuffix": "gg"
+      "daysSuffix": "gg",
+      "summary": "Riepilogo opportunità"
     },
     "status": {
       "open": "Aperta",
