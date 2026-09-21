@@ -13,19 +13,18 @@ enum AttributeDisplayType {
 
 /// Logical grouping for attributes (e.g., "Color", "Size").
 model AttributeGroup {
-  id Int @id @default(autoincrement())
+  id       String @id @default(cuid())
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantAttributeGroups", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-  /// Internal system slug (e.g., "color", "size").
-  code String @unique @db.VarChar(50)
+  /// Internal slug, unique within the tenant.
+  code         String  @db.VarChar(50)
+  /// External system mapping for ETL/Sync, unique within the tenant.
+  externalCode String? @map("external_code") @db.VarChar(100)
 
-  /// External system mapping for ETL/Sync processes.
-  externalCode String? @unique @map("external_code") @db.VarChar(100)
-
-  /// Determines UI rendering strategy.
   displayType AttributeDisplayType @default(SELECT) @map("display_type")
-
-  position Int     @default(0)
-  isPublic Boolean @default(true) @map("is_public")
+  position    Int                  @default(0)
+  isPublic    Boolean              @default(true) @map("is_public")
 
   translations AttributeGroupTranslation[]
   attributes   Attribute[]
@@ -33,19 +32,20 @@ model AttributeGroup {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([position])
+  @@unique([tenantId, id])
+  @@unique([tenantId, code])
+  @@unique([tenantId, externalCode])
+  @@index([tenantId, position])
   @@map("attribute_groups")
 }
 
-/// Localization for AttributeGroup names.
+/// Localized name of an attribute group. Tenant scope is inherited from the parent group.
 model AttributeGroupTranslation {
-  id Int @id @default(autoincrement())
-
-  attributeGroupId Int            @map("attribute_group_id")
-  attributeGroup   AttributeGroup @relation(fields: [attributeGroupId], references: [id], onDelete: Cascade)
+  attributeGroupId String         @map("attribute_group_id")
+  attributeGroup   AttributeGroup @relation(fields: [attributeGroupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   languageId Int      @map("language_id")
-  language   Language @relation(fields: [languageId], references: [id])
+  language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   name        String  @db.VarChar(128)
   displayName String? @map("display_name") @db.VarChar(128)
@@ -53,25 +53,24 @@ model AttributeGroupTranslation {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([attributeGroupId, languageId])
+  @@id([attributeGroupId, languageId])
   @@index([languageId])
   @@map("attribute_group_translations")
 }
 
 /// Specific attribute values (e.g., "Red", "XL").
+/// Tenant-owned attribute value (e.g. "Red", "XL").
 model Attribute {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
 
-  attributeGroupId Int            @map("attribute_group_id")
-  attributeGroup   AttributeGroup @relation(fields: [attributeGroupId], references: [id], onDelete: Cascade)
+  /// Denormalized from AttributeGroup.tenantId; the composite FK below keeps them aligned.
+  tenantId         String         @map("tenant_id")
+  attributeGroupId String         @map("attribute_group_id")
+  attributeGroup   AttributeGroup @relation(fields: [tenantId, attributeGroupId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
-  /// Value identifier within the group context.
-  code String @db.VarChar(50)
-
-  /// Schema-less storage for specialized values (e.g., color hex codes, icon URLs).
+  code     String @db.VarChar(50)
   metadata Json?
-
-  position Int @default(0)
+  position Int    @default(0)
 
   translations AttributeTranslation[]
   variants     ProductVariantAttribute[]
@@ -79,41 +78,43 @@ model Attribute {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([attributeGroupId, code])
-  @@index([attributeGroupId])
-  @@index([position])
+  @@unique([tenantId, attributeGroupId, code])
+  /// Target of the ProductVariantAttribute composite FK.
+  @@unique([tenantId, attributeGroupId, id])
+  @@index([tenantId, attributeGroupId, position])
   @@map("attributes")
 }
 
-/// Localization for Attribute values.
+/// Localized label of an attribute value. Tenant scope is inherited from the parent attribute.
 model AttributeTranslation {
-  id Int @id @default(autoincrement())
-
-  attributeId Int       @map("attribute_id")
-  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  attributeId String    @map("attribute_id")
+  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   languageId Int      @map("language_id")
-  language   Language @relation(fields: [languageId], references: [id])
+  language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   name String @db.VarChar(128)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([attributeId, languageId])
+  @@id([attributeId, languageId])
   @@index([languageId])
   @@map("attribute_translations")
 }
 
-/// Junction table linking product variants to their specific attribute definitions.
+/// Links a variant to one attribute value. A variant holds at most one value per group.
 model ProductVariantAttribute {
-  productVariantId String         @map("product_variant_id")
-  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  tenantId         String @map("tenant_id")
+  productVariantId String @map("product_variant_id")
+  attributeGroupId String @map("attribute_group_id")
+  attributeId      String @map("attribute_id")
 
-  attributeId Int       @map("attribute_id")
-  attribute   Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  productVariant ProductVariant @relation(fields: [tenantId, productVariantId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+  attribute      Attribute      @relation(fields: [tenantId, attributeGroupId, attributeId], references: [tenantId, attributeGroupId, id], onDelete: Restrict, onUpdate: Cascade)
 
   @@id([productVariantId, attributeId])
-  @@index([attributeId])
-  @@map("product_variant_attribute")
+  @@unique([productVariantId, attributeGroupId])
+  @@index([tenantId, attributeId])
+  @@map("product_variant_attributes")
 }

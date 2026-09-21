@@ -30,7 +30,18 @@ export default getRequestConfig(async ({ requestLocale }) => {
   }
 
   // Load all namespaces upfront — avoids missing messages on client-side navigation
-  const namespaces = ["nav", "common", "errors", "system", "crm", "finance", "admin", "overview", "activities"];
+  const namespaces = [
+    "nav",
+    "common",
+    "errors",
+    "system",
+    "crm",
+    "finance",
+    "admin",
+    "overview",
+    "activities",
+    "warehouse"
+  ];
 
   const loaded = await Promise.all(
     namespaces.map((ns) =>
@@ -39,14 +50,13 @@ export default getRequestConfig(async ({ requestLocale }) => {
         .catch(() => {
           console.warn(`[i18n] Missing: ${locale}/${ns}.json`);
           return [ns, {}] as const;
-        })
-    )
+        }),
+    ),
   );
 
   return {
     locale,
-    timeZone: 'Europe/Rome',
+    timeZone: "Europe/Rome",
     messages: Object.fromEntries(loaded),
   };
 });
-

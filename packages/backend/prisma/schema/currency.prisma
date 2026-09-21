@@ -56,8 +56,8 @@ model Currency {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([isBaseCurrency], where: { isBaseCurrency: true }, map: "unique_base_currency")
   @@index([active])
-  @@index([isBaseCurrency])
   @@index([priority])
   @@map("currencies")
 }
@@ -134,8 +134,6 @@ model ExchangeRateHistory {
 
 /// Localized currency labels by language.
 model CurrencyTranslation {
-  id Int @id @default(autoincrement())
-
   currencyId Int      @map("currency_id")
   currency   Currency @relation(fields: [currencyId], references: [id], onDelete: Cascade)
 
@@ -151,7 +149,7 @@ model CurrencyTranslation {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([currencyId, languageId])
+  @@id([currencyId, languageId])
   @@index([languageId])
   @@map("currency_translations")
 }

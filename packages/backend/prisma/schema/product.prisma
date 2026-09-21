@@ -83,15 +83,15 @@ model Product {
     showCondition Boolean           @default(false) @map("show_condition")
 
     manufacturerId Int?          @map("manufacturer_id")
-    manufacturer   Manufacturer? @relation(fields: [manufacturerId], references: [id])
+    manufacturer   Manufacturer? @relation(fields: [tenantId, manufacturerId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     supplierId String?   @map("supplier_id")
-    supplier   Supplier? @relation(fields: [supplierId], references: [id])
+    supplier   Supplier? @relation(fields: [tenantId, supplierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     additionalShippingCost Decimal @default(0) @map("additional_shipping_cost") @db.Decimal(20, 6)
 
     /// Combined Nomenclature (NC8) customs tariff number for Intrastat reporting.
-    commodityCode String?                 @map("commodity_code")
+    commodityCode String?                 @map("commodity_code") @db.Char(8)
     commodity     IntrastatCommodityCode? @relation(fields: [commodityCode], references: [code])
 
     /// JSON array of carrier IDs to restrict shipping options for this product (e.g. [1, 3, 7]).
@@ -126,6 +126,7 @@ model Product {
     productFeatures     ProductFeature[]
     opportunityProducts OpportunityProduct[]
 
+    @@unique([tenantId, id])
     @@unique([tenantId, reference]) // unique per tenant, not globally
     @@index([tenantId, status]) // compound: lookup frequente per tenant attivo
     @@index([tenantId, active])
@@ -139,12 +140,14 @@ model Product {
 
 /// Translatable descriptive metadata for Product entities.
 model ProductTranslation {
-    id        Int     @id @default(autoincrement())
-    productId String  @map("product_id") @db.VarChar(50)
-    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    /// Denormalized from Product.tenantId; enables per-tenant slug uniqueness and tenant-scoped router lookups.
+    tenantId String @map("tenant_id")
+
+    productId String  @map("product_id")
+    product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
     languageId Int      @map("language_id")
-    language   Language @relation(fields: [languageId], references: [id])
+    language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     name             String  @db.VarChar(255)
     description      String? @db.Text
@@ -155,8 +158,8 @@ model ProductTranslation {
     metaDescription String? @map("meta_description") @db.Text
     metaKeywords    String? @map("meta_keywords") @db.VarChar(500)
 
-    /// Unique SEO path string. Highly critical index target for router lookups.
-    linkRewrite String? @unique @map("link_rewrite") @db.VarChar(255)
+    /// SEO path string, unique per tenant and language. Router lookups must always include tenantId.
+    linkRewrite String? @map("link_rewrite") @db.VarChar(255)
 
     availableNowLabel   String @default("In stock") @map("available_now_label") @db.VarChar(100)
     availableLaterLabel String @default("Available soon") @map("available_later_label") @db.VarChar(100)
@@ -167,10 +170,9 @@ model ProductTranslation {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([productId, languageId])
-    @@index([productId])
+    @@id([productId, languageId])
+    @@unique([tenantId, languageId, linkRewrite])
     @@index([languageId])
-    @@index([linkRewrite])
     @@map("product_translations")
 }
 
@@ -178,7 +180,7 @@ model ProductTranslation {
 model ProductVariant {
     id        String  @id @default(cuid())
     productId String  @map("product_id")
-    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
     /// System generated immutable hash or variant identifier string.
     variantCode String @unique @map("variant_code") @db.VarChar(64)
@@ -225,10 +227,10 @@ model ProductVariant {
     metadata Json?
 
     attributes          ProductVariantAttribute[]
-    stockMovement       StockMovement[]
+    stockMovements      StockMovement[]
     stockReservations   StockReservation[]
     stockBatches        StockBatch[]
-    virtualStock        VirtualStock[]
+    virtualStocks       VirtualStock[]
     documentLines       DocumentLine[]
     priceListItems      PriceListItem[]
     images              ProductImage[]
@@ -242,7 +244,8 @@ model ProductVariant {
     updatedAt DateTime @updatedAt @map("updated_at")
 
     @@unique([tenantId, sku])
-    @@unique([ean13])
+    @@unique([tenantId, id])
+    @@unique([tenantId, ean13])
     @@index([productId])
     @@index([productId, active])
     @@index([variantCode])
@@ -285,7 +288,6 @@ model ProductImage {
 
 /// Localization for Image alternative text tags (SEO Alt tags optimization).
 model ProductImageTranslation {
-    id             Int          @id @default(autoincrement())
     productImageId Int          @map("product_image_id")
     productImage   ProductImage @relation(fields: [productImageId], references: [id], onDelete: Cascade)
 
@@ -294,8 +296,7 @@ model ProductImageTranslation {
 
     description String? @db.Text
 
-    @@unique([productImageId, languageId])
-    @@index([productImageId])
+    @@id([productImageId, languageId])
     @@index([languageId])
     @@map("product_image_translations")
 }
@@ -303,17 +304,20 @@ model ProductImageTranslation {
 /// Explicit many-to-many junction table resolving category-to-product mapping trees.
 model ProductCategory {
     productId String  @map("product_id")
-    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade)
+
+    /// Denormalized from Product.tenantId; the composite FKs keep product and category in the same tenant.
+    tenantId String @map("tenant_id")
 
     categoryId String   @map("category_id")
-    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    category   Category @relation(fields: [tenantId, categoryId], references: [tenantId, id], onDelete: Cascade)
 
     position Int @default(0)
 
     @@id([productId, categoryId])
     /// Composite index optimized for nested order rendering inside category lists.
     @@index([productId, position])
-    @@index([categoryId])
+    @@index([tenantId, categoryId])
     @@map("product_categories")
 }
 
@@ -335,5 +339,6 @@ model Manufacturer {
 
     products Product[]
 
+    @@unique([tenantId, id])
     @@map("manufacturers")
 }

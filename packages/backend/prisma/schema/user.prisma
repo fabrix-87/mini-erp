@@ -86,7 +86,7 @@ model User {
   companyNotes            CompanyNote[]
   companyVersionsCreated  CompanyVersion[]           @relation("CompanyVersionCreatedBy")
   companyVersionsUpdated  CompanyVersion[]           @relation("CompanyVersionUpdatedBy")
-  stockMovement           StockMovement[]
+  stockMovements          StockMovement[]
   auditLogs               AuditLog[]
   securityEvents          SecurityEvent[]
   resolvedSecurityEvents  SecurityEvent[]            @relation("ResolvedSecurityEvents")
@@ -202,6 +202,7 @@ model UserTenantMembership {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([userId, tenantId])
+  @@unique([tenantId, id])
   @@unique([userId], where: { isDefault: true }, map: "unique_default_user_tenant")
   @@index([userId])
   @@index([tenantId])
@@ -215,11 +216,14 @@ model UserTenantMembershipRole {
   membershipId String @map("membership_id")
   roleId       Int    @map("role_id")
 
-  membership UserTenantMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  /// Denormalized from the membership. Enables the tenant-scope check on the role.
+  tenantId String @map("tenant_id")
+
+  membership UserTenantMembership @relation(fields: [tenantId, membershipId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
   role       Role                 @relation("UserTenantRoles", fields: [roleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   @@id([membershipId, roleId])
-  @@index([roleId])
+  @@index([tenantId, roleId])
   @@map("user_tenant_membership_roles")
 }
 

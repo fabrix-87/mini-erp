@@ -123,6 +123,7 @@ model FiscalYear {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
+    @@unique([tenantId, id])
     @@unique([tenantId, name])
     @@unique([tenantId, startDate])
     @@index([tenantId, status])
@@ -139,7 +140,7 @@ model FiscalYear {
 model AccountingPeriod {
     id           String     @id @default(cuid())
     fiscalYearId String     @map("fiscal_year_id")
-    fiscalYear   FiscalYear @relation(fields: [fiscalYearId], references: [id], onDelete: Cascade)
+    fiscalYear   FiscalYear @relation(fields: [tenantId, fiscalYearId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
     tenantId String @map("tenant_id")
     tenant   Tenant @relation("TenantAccountingPeriods", fields: [tenantId], references: [id], onDelete: Restrict)
@@ -163,7 +164,8 @@ model AccountingPeriod {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([fiscalYearId, periodNumber])
+    /// Target of JournalEntry.period: guarantees the period belongs to the entry's fiscal year and tenant.
+    @@unique([tenantId, fiscalYearId, id])
     @@unique([tenantId, name])
     @@index([tenantId, status])
     @@index([tenantId, startDate, endDate])
@@ -231,7 +233,6 @@ model ChartOfAccount {
 
 /// Localized name and description for a chart of account entry.
 model ChartOfAccountTranslation {
-    id               Int            @id @default(autoincrement())
     chartOfAccountId String         @map("chart_of_account_id")
     chartOfAccount   ChartOfAccount @relation(fields: [chartOfAccountId], references: [id], onDelete: Cascade)
 
@@ -241,7 +242,7 @@ model ChartOfAccountTranslation {
     name        String  @db.VarChar(150)
     description String? @db.Text
 
-    @@unique([chartOfAccountId, languageId])
+    @@id([chartOfAccountId, languageId])
     @@index([languageId])
     @@map("chart_of_account_translations")
 }
@@ -261,9 +262,10 @@ model CostCenter {
     code   String  @db.VarChar(20)
     active Boolean @default(true)
 
-    parentCostCenterId String?      @map("parent_cost_center_id")
-    parentCostCenter   CostCenter?  @relation("CostCenterHierarchy", fields: [parentCostCenterId], references: [id])
-    childCostCenters   CostCenter[] @relation("CostCenterHierarchy")
+    parentCostCenterId String?     @map("parent_cost_center_id")
+    parentCostCenter   CostCenter? @relation("CostCenterHierarchy", fields: [tenantId, parentCostCenterId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    childCostCenters CostCenter[] @relation("CostCenterHierarchy")
 
     translations CostCenterTranslation[]
     lines        JournalEntryLine[]
@@ -271,6 +273,7 @@ model CostCenter {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
+    @@unique([tenantId, id])
     @@unique([tenantId, code])
     @@index([tenantId, active])
     @@index([parentCostCenterId])
@@ -278,7 +281,6 @@ model CostCenter {
 }
 
 model CostCenterTranslation {
-    id           Int        @id @default(autoincrement())
     costCenterId String     @map("cost_center_id")
     costCenter   CostCenter @relation(fields: [costCenterId], references: [id], onDelete: Cascade)
 
@@ -288,7 +290,7 @@ model CostCenterTranslation {
     name        String  @db.VarChar(100)
     description String? @db.Text
 
-    @@unique([costCenterId, languageId])
+    @@id([costCenterId, languageId])
     @@index([languageId])
     @@map("cost_center_translations")
 }
@@ -386,10 +388,10 @@ model JournalEntry {
     tenant   Tenant @relation("TenantJournalEntries", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     fiscalYearId String     @map("fiscal_year_id")
-    fiscalYear   FiscalYear @relation(fields: [fiscalYearId], references: [id], onDelete: Restrict)
+    fiscalYear   FiscalYear @relation(fields: [tenantId, fiscalYearId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     periodId String           @map("period_id")
-    period   AccountingPeriod @relation(fields: [periodId], references: [id], onDelete: Restrict)
+    period   AccountingPeriod @relation(fields: [tenantId, fiscalYearId, periodId], references: [tenantId, fiscalYearId, id], onDelete: Restrict, onUpdate: Cascade)
 
     /// Sequential entry number within (tenantId, fiscalYearId). Gap-free.
     /// Assigned at POST time, never at DRAFT creation.
@@ -406,20 +408,20 @@ model JournalEntry {
 
     /// Source document that triggered this entry. NULL for MANUAL, OPENING_BALANCE, CLOSING.
     documentId String?   @map("document_id")
-    document   Document? @relation("DocumentJournalEntries", fields: [documentId], references: [id], onDelete: SetNull)
+    document   Document? @relation("DocumentJournalEntries", fields: [tenantId, documentId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     /// Source installment for DOCUMENT_PAYMENT entries.
     installmentId String?                     @map("installment_id")
-    installment   DocumentPaymentInstallment? @relation("InstallmentJournalEntries", fields: [installmentId], references: [id], onDelete: SetNull)
+    installment   DocumentPaymentInstallment? @relation("InstallmentJournalEntries", fields: [tenantId, installmentId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     withholdingSettlementId String?                   @map("withholding_settlement_id")
-    withholdingSettlement   WithholdingTaxSettlement? @relation("SettlementJournalEntries", fields: [withholdingSettlementId], references: [id], onDelete: SetNull)
+    withholdingSettlement   WithholdingTaxSettlement? @relation("SettlementJournalEntries", fields: [tenantId, withholdingSettlementId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     // === REVERSAL LINK ===
 
     /// If this entry was reversed, points to the counter-entry.
-    reversedByEntryId String?       @unique @map("reversed_by_entry_id")
-    reversedByEntry   JournalEntry? @relation("EntryReversal", fields: [reversedByEntryId], references: [id])
+    reversedByEntryId String?       @map("reversed_by_entry_id")
+    reversedByEntry   JournalEntry? @relation("EntryReversal", fields: [tenantId, reversedByEntryId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
     reversesEntry     JournalEntry? @relation("EntryReversal")
 
     // === OWNERSHIP ===
@@ -438,13 +440,16 @@ model JournalEntry {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
+    @@unique([tenantId, id])
+    @@unique([tenantId, reversedByEntryId])
     @@unique([tenantId, fiscalYearId, entryNumber], where: { entryNumber: { not: null } })
     @@index([tenantId, status])
     @@index([tenantId, origin])
     @@index([tenantId, entryDate])
-    @@index([periodId])
-    @@index([documentId])
-    @@index([installmentId])
+    @@index([tenantId, periodId])
+    @@index([tenantId, documentId], where: { documentId: { not: null } })
+    @@index([tenantId, installmentId], where: { installmentId: { not: null } })
+    @@index([tenantId, withholdingSettlementId], where: { withholdingSettlementId: { not: null } })
     @@map("journal_entries")
 }
 
@@ -459,7 +464,7 @@ model JournalEntryLine {
     /// Always accessed via JournalEntry (parent FK).
     id      Int          @id @default(autoincrement())
     entryId String       @map("entry_id")
-    entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+    entry   JournalEntry @relation(fields: [tenantId, entryId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
     tenantId String @map("tenant_id")
     tenant   Tenant @relation("TenantJournalEntryLines", fields: [tenantId], references: [id], onDelete: Restrict)
@@ -477,7 +482,7 @@ model JournalEntryLine {
 
     /// Optional cost center for analytical accounting (Co.An. stub).
     costCenterId String?     @map("cost_center_id")
-    costCenter   CostCenter? @relation(fields: [costCenterId], references: [id], onDelete: SetNull)
+    costCenter   CostCenter? @relation(fields: [tenantId, costCenterId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     /// VAT code snapshot for VAT register lines (natura IVA, aliquota).
     vatCode    String?  @map("vat_code") @db.VarChar(10)
@@ -487,9 +492,9 @@ model JournalEntryLine {
 
     createdAt DateTime @default(now()) @map("created_at")
 
-    @@index([entryId])
+    @@index([tenantId, entryId])
     @@index([tenantId, chartOfAccountId])
     @@index([tenantId, chartOfAccountId, direction]) // Account balance queries
-    @@index([costCenterId])
+    @@index([tenantId, costCenterId], where: { costCenterId: { not: null } })
     @@map("journal_entry_lines")
 }

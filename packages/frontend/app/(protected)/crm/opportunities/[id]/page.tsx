@@ -95,7 +95,7 @@ export default async function OpportunityDetailPage({ params }: PageIdProps) {
 
         {/* Tabs */}
         <Tabs defaultValue="overview">
-          <TabsList>
+          <TabsList variant="line">
             <TabsTrigger value="overview">{t("tabs.overview")}</TabsTrigger>
             <TabsTrigger value="commercial">
               {t("tabs.commercial")}

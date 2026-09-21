@@ -34,9 +34,14 @@ model AuditLog {
   id String @id @default(uuid())
 
   // === ENTITY INFORMATION ===
-  entityType String  @map("entity_type") @db.VarChar(50) // "Product", "Document", "Customer"
-  entityId   Int     @map("entity_id") // ID dell'entità modificata
+    entityType String @map("entity_type") @db.VarChar(50)  // "Product", "Document", "Customer"
+  entityId   String @map("entity_id") @db.VarChar(64) // ID dell'entità modificata
   entityName String? @map("entity_name") @db.VarChar(255) // Nome/descrizione dell'entità per facilità di lettura
+
+  /// Tenant the event belongs to. NULL only for system-level events (e.g. login before tenant selection).
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantAuditLogs", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
 
   // === ACTION ===
   action   AuditAction
@@ -76,7 +81,7 @@ model AuditLog {
   // === CONTEXT ===
   // Per azioni che coinvolgono più entità correlate
   relatedEntityType String? @map("related_entity_type") @db.VarChar(50)
-  relatedEntityId   Int?    @map("related_entity_id")
+  relatedEntityId   String? @map("related_entity_id") @db.VarChar(64)
 
   // Business context
   businessContext String? @map("business_context") @db.VarChar(100) // Es. "Invoice #2024-001", "Order #12345"
@@ -85,16 +90,10 @@ model AuditLog {
   createdAt DateTime @default(now()) @map("created_at")
 
   // === INDICES ===
-  @@index([entityType, entityId])
-  @@index([userId])
-  @@index([username])
-  @@index([action])
-  @@index([severity])
-  @@index([createdAt])
-  @@index([ipAddress])
-  @@index([retentionExpires])
-  @@index([entityType, entityId, action]) // Composite per query specifiche
-  @@index([userId, createdAt]) // Per user activity timeline
+  @@index([tenantId, createdAt])
+  @@index([tenantId, entityType, entityId, createdAt])
+  @@index([tenantId, userId, createdAt])
+  @@index([retentionExpires], where: { retentionExpires: { not: null } })
   @@map("audit_logs")
 }
 

@@ -5,8 +5,8 @@ async function seedTenants() {
   console.log("🏢 Seeding tenants...");
 
   const tenantsData = [
+    // ── Tenant 1 ─────────────────────────────────────────────────────────
     {
-      // ── Tenant 1 ─────────────────────────────────────────────────────────
       tenant: {
         code: "acme-srl",
         status: "ACTIVE" as const,
@@ -46,8 +46,9 @@ async function seedTenants() {
         isDefault: true,
       },
     },
+
+    // ── Tenant 2 ─────────────────────────────────────────────────────────
     {
-      // ── Tenant 2 ─────────────────────────────────────────────────────────
       tenant: {
         code: "beta-spa",
         status: "TRIAL" as const,
@@ -89,32 +90,69 @@ async function seedTenants() {
     },
   ];
 
+  // Fail fast: FK prerequisites for Company.countryCode / Tenant.defaultCurrencyCode /
+  // BankAccount.currencyCode. Run country.seed.ts and currrencies.seed.ts first.
+  const requiredCountryCodes = [...new Set(tenantsData.map((d) => d.company.countryCode))];
+  const requiredCurrencyCodes = [
+    ...new Set([
+      ...tenantsData.map((d) => d.tenant.defaultCurrencyCode),
+      ...tenantsData.map((d) => d.bankAccount.currencyCode),
+    ]),
+  ];
+
+  const [foundCountries, foundCurrencies] = await Promise.all([
+    prisma.country.findMany({
+      where: { code: { in: requiredCountryCodes } },
+      select: { code: true },
+    }),
+    prisma.currency.findMany({
+      where: { code: { in: requiredCurrencyCodes } },
+      select: { code: true },
+    }),
+  ]);
+
+  const missingCountries = requiredCountryCodes.filter(
+    (c) => !foundCountries.some((f) => f.code === c),
+  );
+  const missingCurrencies = requiredCurrencyCodes.filter(
+    (c) => !foundCurrencies.some((f) => f.code === c),
+  );
+
+  if (missingCountries.length > 0 || missingCurrencies.length > 0) {
+    throw new Error(
+      `Prerequisiti mancanti — eseguire prima i seed di riferimento. ` +
+        `Country mancanti: [${missingCountries.join(", ") || "-"}], ` +
+        `Currency mancanti: [${missingCurrencies.join(", ") || "-"}].`,
+    );
+  }
+
+  let createdCount = 0;
+  let skippedCount = 0;
+
   for (const data of tenantsData) {
-    // Controlla se esiste già
+    // Skip if already seeded (idempotent re-run).
     const existing = await prisma.tenant.findUnique({
       where: { code: data.tenant.code },
     });
     if (existing) {
-      console.log(`  ⏭️  Tenant "${data.tenant.code}" già presente, skip.`);
+      console.log(`   ⏭️  Tenant "${data.tenant.code}" già presente, skip.`);
+      skippedCount++;
       continue;
     }
 
-    // ── Step 1: crea un Tenant placeholder senza companyId
-    //    Usiamo una transaction per garantire atomicità.
-    //    Il ciclo Tenant ↔ Company si spezza creando prima la Company
-    //    con un tenantId "provvisorio" ottenuto dal Tenant placeholder,
-    //    poi aggiornando Tenant.companyId.
-    const result = await prisma.$transaction(async (tx) => {
-      // 1. Crea Company senza tenantId (ora nullable)
+    // Step 1-3 break the Tenant ↔ Company circular FK:
+    // Tenant.companyId is mandatory, but Company.tenantId is back-filled only
+    // after the Tenant row exists (documented bootstrap window in company.prisma).
+    const { tenant, company } = await prisma.$transaction(async (tx) => {
+      // 1. Create Company without tenantId (nullable during bootstrap).
       const company = await tx.company.create({
         data: {
           ...data.company,
-          // tenantId: omesso — nullable
           addresses: { create: data.address },
         },
       });
 
-      // 2. Crea Tenant con companyId reale
+      // 2. Create Tenant pointing to the just-created Company.
       const tenant = await tx.tenant.create({
         data: {
           ...data.tenant,
@@ -122,20 +160,32 @@ async function seedTenants() {
         },
       });
 
-      // 3. Collega Company → Tenant
+      // 3. Back-fill Company.tenantId now that the Tenant exists.
       await tx.company.update({
         where: { id: company.id },
         data: { tenantId: tenant.id },
       });
 
-      // 4. BankAccount
-      await tx.tenantBankAccount.create({
+      // 4. Tenant's own default bank account.
+      // NOTE: the model is `BankAccount` (relation name "TenantBankAccounts" on Tenant),
+      // NOT `TenantBankAccount` — that Prisma Client property does not exist.
+      await tx.bankAccount.create({
         data: { tenantId: tenant.id, ...data.bankAccount },
       });
 
       return { tenant, company };
     });
+
+    console.log(
+      `   ✅ Tenant "${tenant.code}" creato (company: ${company.companyName}, id: ${tenant.id})`,
+    );
+    createdCount++;
   }
+
+  console.log("\n📊 Seed Summary:");
+  console.log(`   - ${createdCount} tenant creati`);
+  console.log(`   - ${skippedCount} tenant già presenti (skip)`);
+  console.log("\n✅ Tenant seed completed successfully!\n");
 }
 
 seedTenants()
@@ -147,3 +197,4 @@ seedTenants()
     await prisma.$disconnect();
   });
 
+export default seedTenants;

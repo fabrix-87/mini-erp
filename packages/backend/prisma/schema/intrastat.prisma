@@ -14,10 +14,10 @@ model IntrastatTransaction {
   id String @id @default(cuid())
 
   documentId String   @map("document_id")
-  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  document   Document @relation(fields: [tenantId, documentId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
   documentLineId String       @map("document_line_id")
-  documentLine   DocumentLine @relation(fields: [documentLineId], references: [id], onDelete: Cascade)
+  documentLine   DocumentLine @relation(fields: [tenantId, documentId, documentLineId], references: [tenantId, documentId, id], onDelete: Cascade, onUpdate: Cascade)
 
   tenantId String @map("tenant_id")
   tenant   Tenant @relation("TenantIntrastatTransactions", fields: [tenantId], references: [id], onDelete: Restrict)
@@ -66,11 +66,8 @@ model IntrastatTransaction {
   /// correctionSequence 0 = original; increment on each amendment cycle.
   @@unique([documentLineId, correctionSequence])
   @@index([tenantId, partnerCountryCode])
-  @@index([tenantId])
   @@index([tenantId, flow]) // ARRIVAL vs DISPATCH split
   @@index([tenantId, transactionDate]) // range temporale per periodo dichiarativo
-  @@index([transactionDate])
-  @@index([partnerCountryCode])
   @@map("intrastat_transactions")
 }
 
@@ -102,8 +99,6 @@ model IntrastatTransactionCode {
 
 /// Localization ledger for Intrastat Transaction Codes.
 model IntrastatTransactionCodeTranslation {
-  id Int @id @default(autoincrement())
-
   transactionCode String                   @map("transaction_code") @db.Char(2)
   transactionRel  IntrastatTransactionCode @relation(fields: [transactionCode], references: [code], onDelete: Cascade)
 
@@ -116,7 +111,7 @@ model IntrastatTransactionCodeTranslation {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([transactionCode, languageId])
+  @@id([transactionCode, languageId])
   @@index([languageId])
   @@map("intrastat_transaction_code_translations")
 }
@@ -145,8 +140,6 @@ model IntrastatCommodityCode {
 
 /// Localization ledger for Combined Nomenclature (NC8) descriptions.
 model IntrastatCommodityCodeTranslation {
-  id Int @id @default(autoincrement())
-
   commodityCode String                 @map("commodity_code") @db.Char(8)
   commodityRel  IntrastatCommodityCode @relation(fields: [commodityCode], references: [code], onDelete: Cascade)
 
@@ -159,7 +152,7 @@ model IntrastatCommodityCodeTranslation {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([commodityCode, languageId])
+  @@id([commodityCode, languageId])
   @@index([languageId])
   @@map("intrastat_commodity_code_translations")
 }
@@ -184,8 +177,6 @@ model IntrastatTransportMode {
 
 /// Localized descriptions for Intrastat transport mode codes.
 model IntrastatTransportModeTranslation {
-  id Int @id @default(autoincrement())
-
   transportModeCode String                 @map("transport_mode_code") @db.Char(2)
   transportMode     IntrastatTransportMode @relation(fields: [transportModeCode], references: [code], onDelete: Cascade)
 
@@ -198,7 +189,7 @@ model IntrastatTransportModeTranslation {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([transportModeCode, languageId])
+  @@id([transportModeCode, languageId])
   @@index([languageId])
   @@map("intrastat_transport_mode_translations")
 }

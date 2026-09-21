@@ -152,7 +152,8 @@ model Lead {
   convertedAt   DateTime? @map("converted_at")
   /// Reference to the Customer record created upon conversion.
   convertedToId String?   @unique @map("converted_to_id")
-  convertedTo   Customer? @relation("ConvertedCustomer", fields: [convertedToId], references: [id])
+  convertedTo Customer? @relation("ConvertedCustomer", fields: [tenantId, convertedToId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
 
   convertedByUserId String? @map("converted_by_user_id")
   convertedBy       User?   @relation("LeadConvertedBy", fields: [convertedByUserId], references: [id])
@@ -225,6 +226,8 @@ model Lead {
   /// Soft-delete timestamp. Non-null = logically deleted; excluded from all active queries.
   deletedAt DateTime? @map("deleted_at")
 
+  @@unique([tenantId, id])
+  @@unique([tenantId, convertedToId])
   @@unique([tenantId, code], where: { deletedAt: null })
   @@index([tenantId, source], where: { deletedAt: null })
   @@index([tenantId, deletedAt], where: { deletedAt: { not: null } })

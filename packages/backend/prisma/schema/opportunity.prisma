@@ -45,10 +45,10 @@ model Opportunity {
   // An opportunity can be linked to a Lead (before conversion),
   // a Customer (upsell/cross-sell), or both (post-conversion traceability).
   leadId String? @map("lead_id")
-  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  lead   Lead?   @relation(fields: [tenantId, leadId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   customerId String?   @map("customer_id")
-  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer   Customer? @relation(fields: [tenantId, customerId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   /// Tenant that owns this opportunity. All opportunity data is tenant-isolated.
   tenantId String @map("tenant_id")
@@ -120,6 +120,7 @@ model Opportunity {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([tenantId, id])
   @@index([tenantId, leadId])
   @@index([tenantId, customerId])
   @@index([tenantId, status])
@@ -138,17 +139,17 @@ model Opportunity {
 model OpportunityProduct {
   id            String      @id @default(cuid())
   opportunityId String      @map("opportunity_id")
-  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  opportunity   Opportunity @relation(fields: [tenantId, opportunityId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
   // === PRODUCT LINK ===
 
   /// Specific variant selected. Restrict: cannot delete a variant in an active opportunity.
   productVariantId String         @map("product_variant_id")
-  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict)
+  productVariant   ProductVariant @relation(fields: [tenantId, productVariantId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   /// Denormalized from productVariant for statistical grouping (mirrors DocumentLine pattern).
   productId String  @map("product_id")
-  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   /// Tenant denormalized for direct filtering without joining Opportunity.
   tenantId String @map("tenant_id")
@@ -177,11 +178,11 @@ model OpportunityProduct {
 
   /// PriceListItem used to resolve listPrice. NULL if no active price list matched
   /// (fallback to ProductVariant.price or Product.price).
-  priceListItemId String?       @map("price_list_item_id")
+  priceListItemId String?        @map("price_list_item_id")
   priceListItem   PriceListItem? @relation(fields: [priceListItemId], references: [id], onDelete: SetNull)
 
   discountPercent Decimal @default(0) @map("discount_percent") @db.Decimal(5, 2)
-  discountAmount  Decimal @default(0) @map("discount_amount")  @db.Decimal(15, 2)
+  discountAmount  Decimal @default(0) @map("discount_amount") @db.Decimal(15, 2)
 
   /// Line subtotal: (unitPrice × quantity) − discount. Excludes VAT (no fiscal context here).
   lineTotal Decimal @default(0) @map("line_total") @db.Decimal(15, 2)
@@ -199,7 +200,7 @@ model OpportunityProduct {
   convertedAt DateTime? @map("converted_at")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt     @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([opportunityId, lineNumber])
   @@index([tenantId, productVariantId])
@@ -245,7 +246,6 @@ model ClosedReason {
 
 /// Localized name and description for a ClosedReason.
 model ClosedReasonTranslation {
-  id             String       @id @default(cuid())
   closedReasonId String       @map("closed_reason_id")
   closedReason   ClosedReason @relation(fields: [closedReasonId], references: [id], onDelete: Cascade)
 
@@ -259,7 +259,7 @@ model ClosedReasonTranslation {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([closedReasonId, languageId])
+  @@id([closedReasonId, languageId])
   @@index([languageId])
   @@map("closed_reason_translations")
 }

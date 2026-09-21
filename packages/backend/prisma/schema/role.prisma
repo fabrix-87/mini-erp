@@ -16,12 +16,12 @@ model Role {
 
   // NULL = global system role shared across tenants; NOT NULL = tenant-private custom role
   tenantId String? @map("tenant_id")
-  tenant   Tenant? @relation("TenantRoles", fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant   Tenant? @relation("TenantRoles", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   // === HIERARCHY ===
 
   parentRoleId Int?   @map("parent_role_id")
-  parentRole   Role?  @relation("RoleHierarchy", fields: [parentRoleId], references: [id], onDelete: SetNull)
+  parentRole   Role?  @relation("RoleHierarchy", fields: [parentRoleId], references: [id], onDelete: Restrict)
   childRoles   Role[] @relation("RoleHierarchy")
 
   // === RELATIONS ===
@@ -33,6 +33,7 @@ model Role {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([tenantId, code])
+  @@unique([isDefault], where: { tenantId: null, isDefault: true }, map: "unique_global_default_role")
   @@unique([code], where: { tenantId: null }, map: "unique_global_role_code")
   // At most one default role per tenant (or one global). PostgreSQL partial unique — requires Prisma preview feature or raw migration.
   @@unique([tenantId, isDefault], where: { isDefault: true }, map: "unique_default_role_per_tenant")

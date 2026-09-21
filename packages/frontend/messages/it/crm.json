@@ -68,6 +68,13 @@
     "companyEditDescription": "Aggiorna le informazioni del cliente",
     "companyNewTitle": "Nuovo cliente",
     "companyNewDescription": "Aggiungi un nuovo cliente",
+    "tabs": {
+      "info": "Informazioni",
+      "contacts": "Contatti",
+      "addresses": "Indirizzi",
+      "documents": "Documenti",
+      "activities": "Attività"
+    },
     "size": {
       "ALL": "Qualsiasi",
       "MICRO": "Micro (1-9)",

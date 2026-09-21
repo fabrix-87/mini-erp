@@ -35,9 +35,9 @@ model PriceList {
     currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
     currency     Currency @relation("PriceListCurrency", fields: [currencyCode], references: [code])
 
-    // NULL = global system price list; NOT NULL = tenant-private price list
-    tenantId String? @map("tenant_id")
-    tenant   Tenant? @relation("TenantPriceLists", fields: [tenantId], references: [id], onDelete: Cascade)
+    /// Tenant that owns this price list. Items reference tenant-private variants, so global lists are not supported.
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantPriceLists", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     type PriceListType @default(SALE)
 
@@ -49,7 +49,7 @@ model PriceList {
     // LOGICA EREDITARIETA' (Listini dinamici)
     // Se parentListId è presente, questo listino calcola i prezzi basandosi sul padre
     parentListId  String?     @map("parent_list_id")
-    parentList    PriceList?  @relation("PriceListHierarchy", fields: [parentListId], references: [id], onDelete: SetNull)
+    parentList    PriceList?  @relation("PriceListHierarchy", fields: [tenantId, parentListId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
     childrenLists PriceList[] @relation("PriceListHierarchy")
 
     strategy       PriceListStrategy   @default(EXPLICIT)
@@ -63,10 +63,11 @@ model PriceList {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
+    @@unique([tenantId, id])
     @@unique([tenantId, code])
-    @@unique([code], where: { tenantId: null }, map: "unique_global_price_list_code")
-    @@index([active])
-    @@index([validFrom, validTo])
+    @@index([tenantId, active])
+    @@index([tenantId, validFrom, validTo])
+    @@index([tenantId, parentListId], where: { parentListId: { not: null } })
     @@map("price_lists")
 }
 
@@ -75,11 +76,15 @@ model PriceListItem {
     id String @id @default(cuid())
 
     priceListId String    @map("price_list_id")
-    priceList   PriceList @relation(fields: [priceListId], references: [id], onDelete: Cascade)
+    priceList   PriceList @relation(fields: [tenantId, priceListId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+    /// Denormalized from PriceList.tenantId for direct tenant-scoped queries.
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantPriceListItems", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     // Collegamento Variante Prodotto
     variantId String         @map("variant_id")
-    variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+    variant   ProductVariant @relation(fields: [tenantId, variantId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
     // Scaglioni di quantità (Quantity Breaks)
     // Default 1. Se inserisci una riga con minQuantity 10, si applica da 10 pezzi in su.
@@ -106,6 +111,6 @@ model PriceListItem {
 
     // Unique constraint: no duplicate prices for the same variant/quantity in the same list
     @@unique([priceListId, variantId, minQuantity])
-    @@index([variantId])
+    @@index([tenantId, variantId])
     @@map("price_list_items")
 }

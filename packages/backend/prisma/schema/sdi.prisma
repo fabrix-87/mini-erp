@@ -32,8 +32,8 @@ enum SdiTransmissionStatus {
 /// Detailed notification history is in SdiNotification (1:N).
 model SdiTransmission {
   id         String   @id @default(cuid())
-  documentId String   @unique @map("document_id")
-  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  documentId String   @map("document_id")
+  document   Document @relation(fields: [tenantId, documentId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   tenantId String @map("tenant_id")
   tenant   Tenant @relation("TenantSdiTransmissions", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
@@ -68,8 +68,10 @@ model SdiTransmission {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([tenantId, documentId])
+  @@unique([tenantId, fileName])
+  @@unique([sdiIdentifier])
   @@index([tenantId, status])
-  @@index([sdiIdentifier])
   @@index([tenantId, transmittedAt])
   @@map("sdi_transmissions")
 }

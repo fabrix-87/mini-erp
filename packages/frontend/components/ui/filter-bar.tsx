@@ -1,3 +1,4 @@
+// components/ui/filter-bar.tsx
 "use client";
 
 import { useTransition, useState, useEffect, useRef, useMemo, useCallback } from "react";
@@ -186,14 +187,13 @@ export function FilterBar({
         return (
           <div
             key={field.key}
-            className={
-              (field.colSpan ?? 1) > 1
-                ? "flex min-w-50 flex-[2_1_20rem] flex-col gap-1.5"
-                : "flex min-w-35 flex-1 flex-col gap-1.5"
-            }
+            className="flex flex-col gap-1.5"
+            style={{
+              minWidth: (field.colSpan ?? 1) > 1 ? "12.5rem" : "8.75rem",
+              flex: (field.colSpan ?? 1) > 1 ? "2 1 20rem" : "1 1 auto",
+            }}
           >
             {label}
-
             <InputGroup className="w-full">
               <InputGroupInput
                 id={fieldId}
@@ -206,6 +206,7 @@ export function FilterBar({
                 disabled={isPending}
                 title={field.placeholder}
                 aria-label={field.label ?? field.placeholder}
+                className="h-9"
               />
               <InputGroupAddon align="inline-start">
                 <Search className="size-4 text-muted-foreground" />
@@ -216,22 +217,21 @@ export function FilterBar({
 
       case "select":
         return (
-          <div key={field.key} className="flex min-w-36 flex-col gap-1.5">
+          <div key={field.key} className="flex flex-col gap-1.5">
             {label}
-
             <Select
               value={values[field.key] ?? ""}
               onValueChange={(value) => handleChange(field.key, value === "all" ? "" : value)}
               disabled={isPending}
-              defaultValue={field.options.find((option) => option.default)?.value}
             >
               <SelectTrigger
-                className="w-full min-w-36"
+                className="h-9 w-full min-w-36"
                 aria-label={field.label ?? field.placeholder}
                 aria-labelledby={field.label ? labelId : undefined}
               >
                 <SelectValue placeholder={field.placeholder} />
               </SelectTrigger>
+
               <SelectContent>
                 {field.options.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
@@ -245,9 +245,8 @@ export function FilterBar({
 
       case "number":
         return (
-          <div key={field.key} className="flex min-w-32 flex-col gap-1.5">
+          <div key={field.key} className="flex flex-col gap-1.5">
             {label}
-
             <Input
               id={fieldId}
               type="number"
@@ -260,7 +259,7 @@ export function FilterBar({
               placeholder={field.placeholder}
               disabled={isPending}
               title={field.placeholder}
-              className="w-full"
+              className="h-9 w-full"
               aria-label={field.label ?? field.placeholder}
             />
           </div>
@@ -268,9 +267,8 @@ export function FilterBar({
 
       case "sort":
         return (
-          <div key={`sort-${index}`} className="flex min-w-60 flex-col gap-1.5">
+          <div key={`sort-${index}`} className="flex flex-col gap-1.5">
             {label}
-
             <div className="flex gap-2">
               <Select
                 value={values[field.sortByKey] ?? field.defaultSortBy}
@@ -278,7 +276,7 @@ export function FilterBar({
                 disabled={isPending}
               >
                 <SelectTrigger
-                  className="min-w-0 flex-1"
+                  className="h-9 min-w-0 flex-1"
                   aria-label={field.label ?? "Ordinamento"}
                   aria-labelledby={field.label ? labelId : undefined}
                 >
@@ -298,7 +296,7 @@ export function FilterBar({
                 onValueChange={(value) => handleSortChange(field.sortOrderKey, value)}
                 disabled={isPending}
               >
-                <SelectTrigger className="w-25" aria-label="Direzione ordinamento">
+                <SelectTrigger className="h-9 w-25" aria-label="Direzione ordinamento">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -321,14 +319,14 @@ export function FilterBar({
 
   return (
     <div className="rounded-lg border bg-card">
-      <div className="p-4 space-y-4">
+      <div className="space-y-3 px-4 py-3">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-muted-foreground" />
-            <h3 className="text-sm font-medium">Filtri</h3>
+            <h3 className="text-xs font-medium">Filtri</h3>
             {hasActiveFilters && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="ml-1 text-[10px]">
                 Attivi
               </Badge>
             )}
@@ -357,12 +355,12 @@ export function FilterBar({
 
         {/* Fields */}
         <div className="flex flex-wrap items-end gap-3">
-          {/* Left: search, select and number fields */}
           <div className="flex min-w-0 flex-1 flex-wrap items-end gap-3">
-            {fields.filter((field) => field.type !== "sort").map(renderField)}
+            {fields
+              .filter((field) => field.type !== "sort")
+              .map((field, index) => renderField(field, index))}
           </div>
 
-          {/* Right: sort fields */}
           <div className="flex shrink-0 flex-wrap items-end gap-3">
             {fields
               .filter((field) => field.type === "sort")

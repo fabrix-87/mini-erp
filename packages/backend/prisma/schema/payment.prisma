@@ -28,7 +28,7 @@ model PaymentMethod {
 
     // NULL = global system payment method; NOT NULL = tenant-private payment method
     tenantId String? @map("tenant_id")
-    tenant   Tenant? @relation("TenantPaymentMethods", fields: [tenantId], references: [id], onDelete: Cascade)
+    tenant   Tenant? @relation("TenantPaymentMethods", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     // === RELATIONS ===
     translations                PaymentMethodTranslation[]   @relation("PaymentMethodTranslations")
@@ -40,7 +40,7 @@ model PaymentMethod {
     /// Default bank account to use when this payment method is selected on a document.
     /// Only relevant for wire transfer methods. NULL = no default account.
     defaultBankAccountId String?      @map("default_bank_account_id")
-    defaultBankAccount   BankAccount? @relation(fields: [defaultBankAccountId], references: [id], onDelete: SetNull)
+    defaultBankAccount   BankAccount? @relation(fields: [tenantId, defaultBankAccountId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     /// Individual installment rules for this payment method.
     details PaymentTermDetail[]
@@ -83,13 +83,12 @@ model PaymentTermDetail {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@index([paymentMethodId])
+    @@unique([paymentMethodId, position])
     @@map("payment_term_details")
 }
 
 /// Localized name and description for a PaymentMethod.
 model PaymentMethodTranslation {
-    id              String        @id @default(cuid())
     paymentMethodId String        @map("payment_method_id")
     paymentMethod   PaymentMethod @relation("PaymentMethodTranslations", fields: [paymentMethodId], references: [id], onDelete: Cascade)
 
@@ -104,8 +103,9 @@ model PaymentMethodTranslation {
     updatedAt DateTime @updatedAt @map("updated_at")
 
     // Unique translation per payment method and language.
-    @@unique([paymentMethodId, languageId])
+    @@id([paymentMethodId, languageId])
     @@index([languageId])
+    @@map("payment_method_translations")
 }
 
 model PaymentBatch {
@@ -118,7 +118,7 @@ model PaymentBatch {
 
     /// Tenant bank account used for this payment run.
     tenantBankAccountId String?      @map("tenant_bank_account_id")
-    tenantBankAccount   BankAccount? @relation(fields: [tenantBankAccountId], references: [id], onDelete: SetNull)
+    tenantBankAccount   BankAccount? @relation(fields: [tenantId, tenantBankAccountId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     /// Denormalized sum of all installment amounts in this batch.
     totalAmount Decimal @default(0) @map("total_amount") @db.Decimal(15, 2)
@@ -142,9 +142,9 @@ model PaymentBatch {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@index([tenantId])
+    @@unique([tenantId, id])
     @@index([tenantId, status])
-    @@index([executionDate])
+    @@index([tenantId, executionDate])
     @@map("payment_batches")
 }
 

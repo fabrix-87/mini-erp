@@ -106,19 +106,19 @@ model Activity {
   //   SetNull  → activity keeps its history even if the related record is removed
 
   customerId String?   @map("customer_id")
-  customer   Customer? @relation("CustomerActivities", fields: [customerId], references: [id], onDelete: SetNull)
+  customer   Customer? @relation("CustomerActivities", fields: [tenantId, customerId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
-  supplierId String?
-  supplier   Supplier? @relation("SupplierActivities", fields: [supplierId], references: [id], onDelete: SetNull)
+  supplierId String?   @map("supplier_id")
+  supplier   Supplier? @relation("SupplierActivities", fields: [tenantId, supplierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   contactId String?  @map("contact_id")
-  contact   Contact? @relation("ContactActivities", fields: [contactId], references: [id], onDelete: SetNull)
+  contact   Contact? @relation("ContactActivities", fields: [tenantId, contactId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   opportunityId String?      @map("opportunity_id")
-  opportunity   Opportunity? @relation("OpportunityActivities", fields: [opportunityId], references: [id], onDelete: SetNull)
+  opportunity   Opportunity? @relation("OpportunityActivities", fields: [tenantId, opportunityId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   leadId String? @map("lead_id")
-  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  lead   Lead?   @relation(fields: [tenantId, leadId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   // --- Users ---
 
@@ -148,7 +148,7 @@ model Activity {
   // followUpActivityId references the *original* activity this one follows up on.
 
   followUpActivityId String?    @map("follow_up_activity_id")
-  followUpActivity   Activity?  @relation("ActivityFollowUp", fields: [followUpActivityId], references: [id], onDelete: SetNull)
+  followUpActivity   Activity?  @relation("ActivityFollowUp", fields: [tenantId, followUpActivityId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
   followedUpBy       Activity[] @relation("ActivityFollowUp")
 
   // --- Custom fields ---
@@ -158,19 +158,18 @@ model Activity {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([tenantId, id])
   @@index([tenantId, status])
-@@index([tenantId, assignedUserId])
-@@index([tenantId, scheduledStart])
-
-// Entity-specific, tenant-scoped
-@@index([tenantId, customerId])
-@@index([tenantId, supplierId])
-@@index([tenantId, opportunityId])
-@@index([tenantId, leadId])
-
-// Range e lookup
-@@index([scheduledStart, scheduledEnd])
-@@index([followUpActivityId])
+  @@index([tenantId, assignedUserId])
+  @@index([tenantId, scheduledStart], where: { attachments: { not: null } }, map: "activities_has_attachments")
+  // Entity-specific, tenant-scoped
+  @@index([tenantId, customerId])
+  @@index([tenantId, supplierId])
+  @@index([tenantId, opportunityId])
+  @@index([tenantId, leadId])
+  // Range e lookup
+  @@index([tenantId, scheduledStart, scheduledEnd])
+  @@index([tenantId, followUpActivityId], where: { followUpActivityId: { not: null } })
   @@index([attachments], where: { attachments: { not: null } }, map: "activities_has_attachments ")
   @@map("activities")
 }
@@ -181,7 +180,7 @@ model ActivityParticipant {
   id String @id @default(cuid())
 
   activityId String   @map("activity_id")
-  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activity   Activity @relation(fields: [tenantId, activityId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
   // Exactly one of userId / contactId / externalEmail must be populated.
   // Enforce this constraint at the application layer (Zod / service).
@@ -190,7 +189,10 @@ model ActivityParticipant {
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   contactId String?  @map("contact_id")
-  contact   Contact? @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contact   Contact? @relation(fields: [tenantId, contactId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+  /// Denormalized from Activity.tenantId. No Tenant relation: the composite FK to Activity already guarantees it.
+  tenantId String @map("tenant_id")
 
   /// Email for external attendees not in the system.
   externalEmail String? @map("external_email") @db.VarChar(255)
@@ -206,12 +208,10 @@ model ActivityParticipant {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Prevent duplicate participant rows for the same user/contact on the same activity.
-  @@unique([activityId, userId])
-  @@unique([activityId, contactId])
-  @@unique([activityId, externalEmail], where: { externalEmail: { not: null } }, map: "activity_participants_unique_external_email")
-  @@index([activityId])
-  @@index([userId])
-  @@index([contactId])
+  @@unique([tenantId, activityId, userId])
+  @@unique([tenantId, activityId, contactId])
+  @@unique([tenantId, activityId, externalEmail], where: { externalEmail: { not: null } }, map: "activity_participants_unique_external_email")
+  @@index([tenantId, activityId])
   @@map("activity_participants")
 }
 

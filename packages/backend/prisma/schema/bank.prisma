@@ -6,11 +6,12 @@ model BankAccount {
 
     // === OWNER (exclusive arc) ===
 
-    tenantId String? @map("tenant_id")
-    tenant   Tenant? @relation("TenantBankAccounts", fields: [tenantId], references: [id], onDelete: Cascade)
+    /// Tenant scope. Always set: every account belongs to exactly one tenant's data set.
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantBankAccounts", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     companyId String?  @map("company_id")
-    company   Company? @relation("CompanyBankAccounts", fields: [companyId], references: [id], onDelete: Cascade)
+    company   Company? @relation("CompanyBankAccounts", fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
     /// Internal label (e.g. "Conto principale EUR", "IBAN fornitore sede Milano").
     name     String  @db.VarChar(100)
@@ -38,11 +39,15 @@ model BankAccount {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([tenantId, iban])
+    @@unique([tenantId, id])
+    @@unique([tenantId, iban], where: { companyId: null })
     @@unique([companyId, iban])
-    // Un solo conto "default" per owner+valuta (partial unique, stesso pattern di CompanyAddress)
-    @@unique([tenantId, currencyCode], map: "unique_tenant_default_bank_account", where: { isDefault: true })
+    @@unique([tenantId, currencyCode], map: "unique_tenant_default_bank_account", where: { isDefault: true, companyId: null })
     @@unique([companyId, currencyCode], map: "unique_company_default_bank_account", where: { isDefault: true })
+    // BankAccount
+    // Non-unique: the same IBAN may legitimately appear on several group companies.
+    // Supports the "same IBAN on other companies" lookup at registration time.
+    @@index([tenantId, iban])
     @@index([tenantId, active])
     @@index([companyId, active])
     @@map("bank_accounts")

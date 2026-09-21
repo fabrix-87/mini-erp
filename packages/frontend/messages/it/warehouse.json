@@ -1,3 +1,6 @@
 {
-    
+    "warehouses": {
+        "title": "Magazzini",
+        "description": "Gestisci magazzino fisici e virtuali" 
+    }
 }

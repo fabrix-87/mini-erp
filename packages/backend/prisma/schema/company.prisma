@@ -125,6 +125,7 @@ model Company {
     updatedAt DateTime @updatedAt @map("updated_at")
 
     @@unique([tenantId, code])
+    @@unique([tenantId, id])
     @@index([tenantId, vatNumber])
     @@index([tenantId, taxCode])
     @@map("companies")
@@ -187,13 +188,14 @@ model CompanyVersion {
 
     // === RELATIONS ===
 
-    company   Company    @relation("CompanyVersions", fields: [companyId], references: [id], onDelete: Cascade)
-    tenant    Tenant     @relation("TenantCompanyVersions", fields: [tenantId], references: [id], onDelete: Cascade)
+    company   Company    @relation("CompanyVersions", fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade)
+    tenant    Tenant     @relation("TenantCompanyVersions", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     documents Document[] @relation("CompanyVersionDocuments")
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
+    @@unique([tenantId, id])
     @@unique([companyId, validFrom])
     @@unique([companyId], where: { isCurrent: true })
     @@index([tenantId, companyId, validFrom])
@@ -208,7 +210,7 @@ model Customer {
     id String @id @default(cuid())
 
     companyId String  @unique @map("company_id")
-    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    company   Company @relation(fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade)
 
     /// Denormalized from Company for direct tenant-scoped queries without join.
     /// Must match Company.tenantId — enforced at application level on creation.
@@ -291,6 +293,7 @@ model Customer {
     deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
     @@unique([tenantId, companyId])
+    @@unique([tenantId, id])
     @@index([tenantId, type])
     @@index([tenantId, segment])
     @@index([tenantId, creditStatus])
@@ -305,7 +308,7 @@ model Supplier {
     id String @id @default(cuid())
 
     companyId String  @unique @map("company_id")
-    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    company   Company @relation(fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade)
 
     /// Denormalized from Company for direct tenant-scoped queries without join.
     /// Must match Company.tenantId — enforced at application level on creation.
@@ -373,9 +376,9 @@ model Supplier {
     documentsIn                Document[]                     @relation("SupplierDocuments")
     withholdingSettlementLines WithholdingTaxSettlementLine[] @relation("SupplierWithholdingLines")
     products                   Product[]
-    stockBatchs                StockBatch[]
+    stockBatches               StockBatch[]
     activities                 Activity[]                     @relation("SupplierActivities")
-    
+    warehouses                 Warehouse[]                    @relation("SupplierWarehouse")
 
     createdAt DateTime  @default(now()) @map("created_at")
     updatedAt DateTime  @updatedAt @map("updated_at")
@@ -385,6 +388,7 @@ model Supplier {
     deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
     @@unique([tenantId, companyId])
+    @@unique([tenantId, id])
     @@index([tenantId, deletedAt])
     @@index([parentSupplierId])
     @@index([deletedAt])
@@ -460,6 +464,7 @@ model Contact {
     deletedBy     String? @map("deleted_by")
     deletedByUser User?   @relation("ContactDeletedBy", fields: [deletedBy], references: [id], onDelete: SetNull)
 
+    @@unique([tenantId, id])
     /// Email unique per tenant. Partial: allows multiple NULL emails within the same tenant.
     @@unique([tenantId, email], where: { email: { not: null }, deletedAt: null }, map: "unique_tenant_contact_email")
     @@index([tenantId])

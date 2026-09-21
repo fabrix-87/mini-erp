@@ -6,7 +6,12 @@
 
 /// Inventory location used for physical or virtual stock.
 model Warehouse {
-    id Int @id @default(autoincrement())
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantWarehouses", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Business identifier used on DDT, imports and integrations (e.g. "MAIN").
+    code String @db.VarChar(20)
 
     /// Human-readable warehouse name.
     name String
@@ -17,12 +22,22 @@ model Warehouse {
     /// Warehouse operating mode.
     type WarehouseType @default(PHYSICAL)
 
+    /// Supplier feeding this warehouse. Only meaningful for VIRTUAL warehouses.
+    supplierId String?   @map("supplier_id")
+    supplier   Supplier? @relation("SupplierWarehouse", fields: [tenantId, supplierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Inactive warehouses reject new movements/reservations; history is preserved.
+    active    Boolean @default(true)
+    /// Pre-filled on new documents. At most one per tenant.
+    isDefault Boolean @default(false) @map("is_default")
+
     createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
     stockMovements    StockMovement[]
     virtualStocks     VirtualStock[]
     stockReservations StockReservation[]
-    stockBatchs       StockBatch[]
+    stockBatches      StockBatch[]
 
     /// Documents associated with this warehouse.
     documents Document[]
@@ -30,7 +45,11 @@ model Warehouse {
     /// Document lines associated with this warehouse.
     documentLines DocumentLine[]
 
-    @@index([type])
+    @@unique([tenantId, id])
+    @@unique([tenantId, code])
+    @@unique([tenantId], where: { isDefault: true }, map: "unique_default_warehouse_per_tenant")
+    @@index([tenantId, type])
+    @@index([tenantId, supplierId], where: { supplierId: { not: null } })
     @@map("warehouses")
 }
 
@@ -81,10 +100,13 @@ enum StockReservationStatus {
 
 /// Immutable stock ledger movement for a product variant in a physical warehouse.
 model StockMovement {
-    id Int @id @default(autoincrement())
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+
+    tenant Tenant @relation("TenantStockMovements", fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     /// Absolute movement quantity. Direction is determined by movement type.
-    quantity Int
+    quantity Decimal
 
     movementType MovementType @map("movement_type")
 
@@ -102,12 +124,6 @@ model StockMovement {
     /// Total cost for the movement.
     totalCost Decimal? @map("total_cost") @db.Decimal(20, 6)
 
-    documentId String?   @map("document_id")
-    document   Document? @relation(fields: [documentId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-
-    documentLineId String?       @map("document_line_id")
-    documentLine   DocumentLine? @relation(fields: [documentLineId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-
     /// Optional batch identifier for lot-tracked inventory.
     batchNumber String? @map("batch_number") @db.VarChar(50)
 
@@ -121,67 +137,66 @@ model StockMovement {
 
     status MovementStatus @default(PENDING)
 
-    productVariantId String         @map("product_variant_id")
-    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-
-    warehouseId Int       @map("warehouse_id")
-    warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    warehouseId String    @map("warehouse_id")
+    warehouse   Warehouse @relation(fields: [tenantId, warehouseId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     createdAt DateTime @default(now()) @map("created_at")
 
-    @@index([productVariantId])
-    @@index([warehouseId])
-    @@index([movementDate])
-    @@index([documentId])
-    @@index([documentLineId])
-    @@index([batchNumber])
-    @@index([serialNumber])
-    @@index([status])
-    @@index([warehouseId, productVariantId, movementDate])
+    documentId String?   @map("document_id")
+    document   Document? @relation(fields: [tenantId, documentId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    documentLineId String?       @map("document_line_id")
+    documentLine   DocumentLine? @relation(fields: [tenantId, documentLineId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    productVariantId String         @map("product_variant_id")
+    productVariant   ProductVariant @relation(fields: [tenantId, productVariantId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    @@index([tenantId, warehouseId, productVariantId, movementDate])
+    @@index([tenantId, productVariantId, movementDate])
+    @@index([tenantId, movementDate])
+    @@index([tenantId, documentId], where: { documentId: { not: null } })
+    @@index([tenantId, documentLineId], where: { documentLineId: { not: null } })
+    @@index([tenantId, batchNumber], where: { batchNumber: { not: null } })
+    @@index([tenantId, serialNumber], where: { serialNumber: { not: null } })
     @@map("stock_movements")
 }
 
 /// Supplier-provided stock snapshot for a product variant in a virtual warehouse.
 model VirtualStock {
-    id Int @id @default(autoincrement())
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
 
-    /// Target virtual warehouse.
-    warehouseId Int @map("warehouse_id")
+    tenant Tenant @relation("TenantVirtualStocks", fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    /// Current supplier-provided available quantity.
-    quantity Int
+    warehouseId String @map("warehouse_id")
 
+    warehouse Warehouse @relation(fields: [tenantId, warehouseId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    productVariantId String @map("product_variant_id")
+
+    productVariant ProductVariant @relation(fields: [tenantId, productVariantId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+    quantity Decimal
+
+    createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    /// Source channel, such as API, CSV, or manual import.
     source String? @db.VarChar(100)
-
-    productVariantId String         @map("product_variant_id")
-    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    warehouse        Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     lastSyncAt DateTime?         @map("last_sync_at")
     syncStatus VirtualSyncStatus @default(PENDING) @map("sync_status")
     syncError  String?           @map("sync_error") @db.Text
 
-    /// Expected date when stock should become available again.
     expectedAvailableDate DateTime? @map("expected_available_date")
+    leadTimeDays          Int       @default(0) @map("lead_time_days")
 
-    /// Supplier lead time in days.
-    leadTimeDays Int @default(0) @map("lead_time_days")
-
-    /// Supplier purchase price in the supplier currency.
     supplierPrice Decimal? @map("supplier_price") @db.Decimal(20, 6)
 
     supplierCurrencyCode String?   @map("supplier_currency_code") @db.Char(3)
     supplierCurrency     Currency? @relation("VirtualStockCurrency", fields: [supplierCurrencyCode], references: [code], onDelete: SetNull, onUpdate: Cascade)
 
-    @@unique([productVariantId, warehouseId])
-    @@index([productVariantId])
-    @@index([warehouseId])
-    @@index([supplierCurrencyCode])
-    @@index([syncStatus, lastSyncAt])
-    @@index([warehouseId, syncStatus])
+    @@unique([tenantId, productVariantId, warehouseId])
+    @@index([tenantId, syncStatus, lastSyncAt])
     @@map("virtual_stocks")
 }
 
@@ -191,13 +206,16 @@ model VirtualStock {
 
 /// Batch tracked for a product variant within a warehouse.
 model StockBatch {
-    id Int @id @default(autoincrement())
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+
+    tenant Tenant @relation("TenantStockBatches", fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     productVariantId String         @map("product_variant_id")
-    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    productVariant   ProductVariant @relation(fields: [tenantId, productVariantId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
-    warehouseId Int       @map("warehouse_id")
-    warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    warehouseId String    @map("warehouse_id")
+    warehouse   Warehouse @relation(fields: [tenantId, warehouseId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     /// Batch identifier unique within the same product variant and warehouse.
     batchNumber String @map("batch_number") @db.VarChar(50)
@@ -205,41 +223,48 @@ model StockBatch {
     manufacturedDate DateTime? @map("manufactured_date")
     expiryDate       DateTime? @map("expiry_date")
 
-    supplierId String?   @map("supplier_id")
-    supplier   Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-
     /// Current on-hand quantity for the batch.
-    quantity Int @default(0)
+    quantity Decimal @default(0)
 
     /// Reserved quantity not currently available for allocation.
-    reserved Int @default(0)
+    reserved Decimal @default(0)
 
     status StockBatchStatus @default(ACTIVE)
 
-    @@unique([productVariantId, warehouseId, batchNumber])
-    @@index([expiryDate])
-    @@index([warehouseId, productVariantId])
+    supplierId String?   @map("supplier_id")
+    supplier   Supplier? @relation(fields: [tenantId, supplierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([tenantId, productVariantId, warehouseId, batchNumber])
+    @@index([tenantId, supplierId], where: { supplierId: { not: null } })
+    @@index([tenantId, expiryDate])
+    @@index([tenantId, warehouseId, productVariantId])
     @@map("stock_batches")
 }
 
 /// Reserved quantity for a product variant in a warehouse.
 model StockReservation {
-    id Int @id @default(autoincrement())
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+
+    tenant Tenant @relation("TenantStockReservations", fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     productVariantId String         @map("product_variant_id")
-    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    productVariant   ProductVariant @relation(fields: [tenantId, productVariantId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
-    warehouseId Int       @map("warehouse_id")
-    warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    warehouseId String    @map("warehouse_id")
+    warehouse   Warehouse @relation(fields: [tenantId, warehouseId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     /// Reserved quantity blocked from general availability.
-    quantity Int
+    quantity Decimal
 
     documentId String   @map("document_id")
-    document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    document   Document @relation(fields: [tenantId, documentId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
     documentLineId String?       @map("document_line_id")
-    documentLine   DocumentLine? @relation(fields: [documentLineId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    documentLine   DocumentLine? @relation(fields: [tenantId, documentLineId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
     status StockReservationStatus @default(ACTIVE)
 
@@ -254,10 +279,10 @@ model StockReservation {
     /// Optional batch-specific reservation.
     batchNumber String? @map("batch_number") @db.VarChar(50)
 
-    @@index([productVariantId, warehouseId, status])
-    @@index([documentId])
-    @@index([documentLineId])
-    @@index([expiresAt])
-    @@index([warehouseId, status, expiresAt])
+    @@index([tenantId, productVariantId, warehouseId, status])
+    @@index([tenantId, documentId])
+    @@index([tenantId, documentLineId])
+    @@index([tenantId, expiresAt], where: { expiresAt: { not: null }, status: "ACTIVE" })
+    @@index([tenantId, warehouseId, status, expiresAt])
     @@map("stock_reservations")
 }
