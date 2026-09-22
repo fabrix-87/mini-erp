@@ -82,7 +82,7 @@ export async function getLeadActivitiesServer(leadId: number): Promise<ApiRespon
 // ============================================================================
 
 export async function createLeadServer(data: CreateLeadFormInput): Promise<ApiResponse<Lead>> {
-  return serverApi.post<ApiResponse<Lead>>("/leads", data);
+  return serverApi.post<ApiResponse<Lead>>("/leads", data, { unwrapData: false });
 }
 
 export async function updateLeadServer(

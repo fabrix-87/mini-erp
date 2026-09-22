@@ -41,7 +41,7 @@ export default async function LeadDetailPage({ params }: PageIdProps) {
   if (!success || !lead) notFound();
 
   const t = await getTranslations("crm");
-  const deleteAction = deleteLeadAction.bind(null, id); // bind per iniettare l'id
+  const deleteAction = deleteLeadAction.bind(null, id, true); // bind per iniettare l'id
 
   const actionItems: PageHeaderAction[] = [
     createEditAction(
@@ -90,7 +90,7 @@ export default async function LeadDetailPage({ params }: PageIdProps) {
         {/* Tabs                                                                */}
         {/* ------------------------------------------------------------------ */}
         <Tabs defaultValue="overview">
-          <TabsList>
+          <TabsList variant="line" className="crm-tabs-list">
             <TabsTrigger value="overview">{t("tabs.overview")}</TabsTrigger>
             <TabsTrigger value="contact">{t("tabs.contacts")}</TabsTrigger>
             <TabsTrigger value="commercial">{t("tabs.commercial")}</TabsTrigger>

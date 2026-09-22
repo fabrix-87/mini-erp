@@ -107,7 +107,7 @@ export function PageHeader({
   const hasSubtitle = !hasMetaContent && subtitle != null;
 
   return (
-    <header className={cn("mb-5 border-b border-border pb-4", className)}>
+    <header className={cn("mb-5 border-border pb-4", className)}>
       <Breadcrumbs currentLabel={breadcrumbLabel ?? titleOverride} extraItems={extraBreadcrumbs} />
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

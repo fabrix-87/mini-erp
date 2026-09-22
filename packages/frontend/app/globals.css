@@ -514,3 +514,23 @@ main {
     transition-duration: 0.01ms !important;
   }
 }
+
+.crm-tabs-list {
+  @apply mb-2 w-full justify-start border-b border-border bg-transparent p-0.5;
+}
+
+.crm-tabs-list > [data-slot="tabs-trigger"] {
+  @apply relative -mb-px gap-1.5 border-b-2 border-transparent px-3 py-2 transition-colors;
+}
+
+.crm-tabs-list > [data-slot="tabs-trigger"]:hover {
+  @apply text-foreground;
+}
+
+.crm-tabs-list > [data-slot="tabs-trigger"][data-state="active"] {
+  @apply font-medium text-primary;
+}
+
+.crm-tabs-list > [data-slot="tabs-trigger"][data-state="active"]::after {
+  @apply bg-primary;
+}

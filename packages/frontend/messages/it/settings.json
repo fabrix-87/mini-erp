@@ -1,0 +1,11 @@
+{
+    "profile": {
+        "pageTitle": "Impostazioni profilo",
+        "pageDescription": "Gestisci le informazioni del tuo account e le preferenze personali."
+    },
+    "navItems": {
+        "profile": "Profilo",
+        "security": "Sicurezza",
+        "preferences": "Preferenze"
+    }
+}

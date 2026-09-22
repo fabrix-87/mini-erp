@@ -44,6 +44,8 @@ import { useTranslations } from "next-intl";
 import { getRoute } from "@/lib/navigation-routes";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { useNavigation } from "@/hooks/use-navigation";
+import { deleteLeadAction } from "@/actions/lead-actions";
+import { toast } from "sonner";
 
 // ============================================================================
 // Sort field type — matches leadQuerySchema sortBy enum
@@ -124,8 +126,6 @@ export function LeadTable({
   // ---- Delete handler ----
 
   const handleDelete = async () => {
-    console.log("delete lead");
-    return; /*
     if (!deleteId) return;
     setIsDeleting(true);
     const result = await deleteLeadAction(deleteId);
@@ -133,11 +133,9 @@ export function LeadTable({
     setDeleteId(null);
     if (result.success) {
       toast.success("Lead eliminata");
-      clearSelection();
-      onRefresh();
     } else {
       toast.error(result.error ?? "Errore durante l'eliminazione");
-    }*/
+    }
   };
 
   // ---- Render ----

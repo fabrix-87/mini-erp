@@ -17,22 +17,27 @@ import { createLeadAction, updateLeadAction } from "@/actions/lead-actions";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Card, CardContent, CardFooter } from "../ui/card";
-import { Input } from "../ui/input";
-import { Separator } from "../ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
-import { Switch } from "../ui/switch";
+} from "@/components/ui/form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { toDateInput } from "@/helpers/date-helper";
-import { CountryCombobox } from "../ui/country-combobox";
+import { CountryCombobox } from "@/components/ui/country-combobox";
 import { useNavigation } from "@/hooks/use-navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -55,7 +60,6 @@ import { getSizeOptions } from "@/helpers/customer-helper";
 // ============================================================================
 
 type LeadFormMode = "create" | "edit";
-type LeadFormValues = CreateLeadFormInput & Partial<UpdateLeadFormInput>;
 
 interface LeadFormProps {
   mode: LeadFormMode;
@@ -68,71 +72,83 @@ interface LeadFormProps {
 
 export function LeadForm({ mode, lead }: LeadFormProps) {
   const isEdit = mode === "edit";
-  const { navigateToDetail, navigate } = useNavigation();
+  const { navigateToDetail, navigate } = useNavigation();  
 
-  // Pick the right schema at runtime — both are compatible with LeadFormValues
-  // because updateLeadSchema is .partial() of the same shape, and
-  // createLeadSchema adds only .refine() on top.
-  const schema = useMemo(() => (isEdit ? updateLeadSchema : createLeadSchema), [isEdit]);
+  const defaultValues = {
+    // Azienda
+    companyName: lead?.companyName ?? "",
+    tradeName: lead?.tradeName ?? "",
+    website: lead?.website ?? "",
+    vatNumber: lead?.vatNumber ?? "",
+    taxCode: lead?.taxCode ?? "",
+    countryCode: lead?.countryCode ?? "IT",
+    // Contatto
+    contactFirstName: lead?.contactFirstName ?? "",
+    contactLastName: lead?.contactLastName ?? "",
+    contactEmail: lead?.contactEmail ?? "",
+    contactPhone: lead?.contactPhone ?? "",
+    contactMobile: lead?.contactMobile ?? "",
+    contactPosition: lead?.contactPosition ?? "",
+    contactDepartment: lead?.contactDepartment ?? "",
+    // Indirizzo
+    address: lead?.address ?? "",
+    city: lead?.city ?? "",
+    provinceCode: lead?.provinceCode ?? "",
+    zipCode: lead?.zipCode ?? "",
+    // Gestione lead
+    status: lead?.status ?? "NEW",
+    source: lead?.source ?? "OTHER",
+    quality: lead?.quality ?? "COLD",
+    score: lead?.score ?? 0,
+    // Commerciale
+    estimatedValue: lead?.estimatedValue ? String(lead.estimatedValue) : undefined,
+    estimatedSize: lead?.estimatedSize ?? undefined,
+    industry: lead?.industry ?? "",
+    employeesCount: lead?.employeesCount ?? undefined,
+    annualRevenue: lead?.annualRevenue ? String(lead.annualRevenue) : undefined,
+    budget: lead?.budget ? String(lead.budget) : undefined,
+    purchaseTimeframe: lead?.purchaseTimeframe ?? undefined,
+    decisionAuthority: lead?.decisionAuthority ?? undefined,
+    primaryNeed: lead?.primaryNeed ?? "",
+    interestedIn: lead?.interestedIn ?? "",
+    competitors: lead?.competitors ?? "",
+    notes: lead?.notes ?? "",
+    description: lead?.description ?? "",
+    // GDPR
+    privacyConsent: lead?.privacyConsent ?? false,
+    privacyConsentDate: toDateInput(lead?.privacyConsentDate),
+    marketingConsent: lead?.marketingConsent ?? false,
+    marketingConsentDate: toDateInput(lead?.marketingConsentDate),
+    doNotCall: lead?.doNotCall ?? false,
+    doNotEmail: lead?.doNotEmail ?? false,
+    // Tracking
+    campaignName: lead?.campaignName ?? "",
+    utmSource: lead?.utmSource ?? "",
+    utmMedium: lead?.utmMedium ?? "",
+    utmCampaign: lead?.utmCampaign ?? "",
+    landingPage: lead?.landingPage ?? "",
+    referrer: lead?.referrer ?? "",
+  };
 
-  const form = useForm<LeadFormValues>({
-    resolver: zodResolver(schema) as Resolver<LeadFormValues>,
+  const createForm = useForm<CreateLeadFormInput>({
+    resolver: zodResolver(createLeadSchema),
+    mode: "onTouched",
     defaultValues: {
-      // Azienda
-      companyName: lead?.companyName ?? "",
-      tradeName: lead?.tradeName ?? "",
-      website: lead?.website ?? "",
-      vatNumber: lead?.vatNumber ?? "",
-      taxCode: lead?.taxCode ?? "",
-      countryCode: lead?.countryCode ?? "IT",
-      // Contatto
-      contactFirstName: lead?.contactFirstName ?? "",
-      contactLastName: lead?.contactLastName ?? "",
-      contactEmail: lead?.contactEmail ?? "",
-      contactPhone: lead?.contactPhone ?? "",
-      contactMobile: lead?.contactMobile ?? "",
-      contactPosition: lead?.contactPosition ?? "",
-      contactDepartment: lead?.contactDepartment ?? "",
-      // Indirizzo
-      address: lead?.address ?? "",
-      city: lead?.city ?? "",
-      provinceCode: lead?.provinceCode ?? "",
-      zipCode: lead?.zipCode ?? "",
-      // Gestione lead
-      status: lead?.status ?? "NEW",
-      source: lead?.source ?? "OTHER",
-      quality: lead?.quality ?? "COLD",
-      score: lead?.score ?? 0,
-      // Commerciale
-      estimatedValue: lead?.estimatedValue ? String(lead.estimatedValue) : undefined,
-      estimatedSize: lead?.estimatedSize ?? undefined,
-      industry: lead?.industry ?? "",
-      employeesCount: lead?.employeesCount ?? undefined,
-      annualRevenue: lead?.annualRevenue ? String(lead.annualRevenue) : undefined,
-      budget: lead?.budget ? String(lead.budget) : undefined,
-      purchaseTimeframe: lead?.purchaseTimeframe ?? undefined,
-      decisionAuthority: lead?.decisionAuthority ?? undefined,
-      primaryNeed: lead?.primaryNeed ?? "",
-      interestedIn: lead?.interestedIn ?? "",
-      competitors: lead?.competitors ?? "",
-      notes: lead?.notes ?? "",
-      description: lead?.description ?? "",
-      // GDPR
-      privacyConsent: lead?.privacyConsent ?? false,
-      privacyConsentDate: toDateInput(lead?.privacyConsentDate),
-      marketingConsent: lead?.marketingConsent ?? false,
-      marketingConsentDate: toDateInput(lead?.marketingConsentDate),
-      doNotCall: lead?.doNotCall ?? false,
-      doNotEmail: lead?.doNotEmail ?? false,
-      // Tracking
-      campaignName: lead?.campaignName ?? "",
-      utmSource: lead?.utmSource ?? "",
-      utmMedium: lead?.utmMedium ?? "",
-      utmCampaign: lead?.utmCampaign ?? "",
-      landingPage: lead?.landingPage ?? "",
-      referrer: lead?.referrer ?? "",
+      ...defaultValues,
     },
   });
+
+  const updateForm = useForm<UpdateLeadFormInput>({
+    resolver: zodResolver(updateLeadSchema),
+    mode: "onTouched",
+    defaultValues: {
+      ...defaultValues,
+    },
+  });
+
+  // cast a any solo per il provider — type-safety mantenuta nei singoli hook
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const form = useMemo(() => (isEdit ? updateForm : createForm) as any, [isEdit]);
 
   const isPending = form.formState.isSubmitting;
   const privacyConsent = form.watch("privacyConsent");
@@ -140,7 +156,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
   const t = useTranslations("crm.leads");
   const tc = useTranslations("crm.customers");
 
-  const onSubmit = async (data: LeadFormValues) => {
+  const onSubmit = async (data: CreateLeadFormInput | UpdateLeadFormInput) => {
     if (isEdit && lead) {
       const result = await updateLeadAction(lead.id, data as UpdateLeadFormInput);
       if (result.success) {
@@ -151,9 +167,9 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
       }
     } else {
       const result = await createLeadAction(data as CreateLeadFormInput);
+      console.log(result)
       if (result.success && result.data) {
         toast.success("Lead creata");
-        toast.success("Lead aggiornata");
         navigateToDetail("leads", result.data.id);
       } else {
         toast.error(result.error ?? "Errore durante la creazione");
@@ -164,38 +180,38 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Tabs defaultValue="azienda">
-          <TabsList className="w-full justify-start overflow-x-auto">
-            <TabsTrigger value="azienda" className="gap-1.5">
+        <Tabs defaultValue="company">
+          <TabsList variant="line" className="crm-tabs-list">
+            <TabsTrigger value="company">
               <Building2 className="h-3.5 w-3.5" />
-              Azienda
+              {t("tabs.company")}
             </TabsTrigger>
-            <TabsTrigger value="contatto" className="gap-1.5">
+            <TabsTrigger value="contact">
               <User className="h-3.5 w-3.5" />
-              Contatto
+              {t("tabs.contact")}
             </TabsTrigger>
-            <TabsTrigger value="indirizzo" className="gap-1.5">
+            <TabsTrigger value="address">
               <MapPin className="h-3.5 w-3.5" />
-              Indirizzo
+              {t("tabs.address")}
             </TabsTrigger>
-            <TabsTrigger value="commerciale" className="gap-1.5">
+            <TabsTrigger value="commercial">
               <TrendingUp className="h-3.5 w-3.5" />
-              Commerciale
+              {t("tabs.commercial")}
             </TabsTrigger>
-            <TabsTrigger value="gdpr" className="gap-1.5">
+            <TabsTrigger value="gdpr">
               <ShieldCheck className="h-3.5 w-3.5" />
-              GDPR
+              {t("tabs.gdpr")}
             </TabsTrigger>
-            <TabsTrigger value="tracking" className="gap-1.5">
+            <TabsTrigger value="tracking">
               <Megaphone className="h-3.5 w-3.5" />
-              Tracking
+              {t("tabs.tracking")}
             </TabsTrigger>
           </TabsList>
 
           {/* ---------------------------------------------------------------- */}
-          {/* Tab — Azienda                                                    */}
+          {/* Tab — company                                                    */}
           {/* ---------------------------------------------------------------- */}
-          <TabsContent value="azienda">
+          <TabsContent value="company">
             <Card>
               <CardContent className="space-y-4 pt-6">
                 {/* Row 1 */}
@@ -445,7 +461,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
           {/* ---------------------------------------------------------------- */}
           {/* Tab — Contatto                                                   */}
           {/* ---------------------------------------------------------------- */}
-          <TabsContent value="contatto">
+          <TabsContent value="contact">
             <Card>
               <CardContent className="space-y-4 pt-6">
                 <div className="grid gap-4 md:grid-cols-2">
@@ -591,9 +607,9 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
           </TabsContent>
 
           {/* ---------------------------------------------------------------- */}
-          {/* Tab — Indirizzo                                                  */}
+          {/* Tab — Address                                                    */}
           {/* ---------------------------------------------------------------- */}
-          <TabsContent value="indirizzo">
+          <TabsContent value="address">
             <Card>
               <CardContent className="space-y-4 pt-6">
                 <FormField
@@ -601,9 +617,13 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   name="address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Indirizzo</FormLabel>
+                      <FormLabel>{t("form.address")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Via Roma 1" {...field} value={field.value ?? ""} />
+                        <Input
+                          placeholder={t("form.addressPlaceholder")}
+                          {...field}
+                          value={field.value ?? ""}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -615,7 +635,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Città</FormLabel>
+                        <FormLabel>{t("form.city")}</FormLabel>
                         <FormControl>
                           <Input placeholder="Milano" {...field} value={field.value ?? ""} />
                         </FormControl>
@@ -628,7 +648,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="provinceCode"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Provincia</FormLabel>
+                        <FormLabel>{t("form.provinceCode")}</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="MI"
@@ -646,7 +666,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="zipCode"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>CAP</FormLabel>
+                        <FormLabel>{t("form.zipCode")}</FormLabel>
                         <FormControl>
                           <Input placeholder="20100" {...field} value={field.value ?? ""} />
                         </FormControl>
@@ -674,9 +694,9 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
           </TabsContent>
 
           {/* ---------------------------------------------------------------- */}
-          {/* Tab — Commerciale                                                */}
+          {/* Tab — Commercial                                                 */}
           {/* ---------------------------------------------------------------- */}
-          <TabsContent value="commerciale">
+          <TabsContent value="commercial">
             <Card>
               <CardContent className="space-y-4 pt-6">
                 <div className="grid gap-4 md:grid-cols-2">

@@ -82,7 +82,7 @@ export function CompanyFormTabs({ companyType }: CompanyFormTabsProps) {
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
-      <TabsList className="grid w-full grid-cols-4">
+      <TabsList className="crm-tabs-list" variant="line">
         <TabTriggerWithBadge
           value="basic"
           label="Dati Base"

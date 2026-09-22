@@ -1,7 +1,7 @@
 // packages/frontend/app/(protected)/settings/profile/page.tsx
-import { requireAuth } from '@/lib/server/auth';
-import { ProfileForm } from './components/profile-form';
-import { getUser } from '@/services/server/user-settings-service';
+import { requireAuth } from "@/lib/server/auth";
+import { ProfileForm } from "./components/profile-form";
+import { getUser } from "@/services/server/user-settings-service";
 
 /**
  * Profile tab — renders the user profile edit form.

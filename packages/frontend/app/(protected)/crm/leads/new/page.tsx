@@ -1,4 +1,4 @@
-import { LeadForm } from "@/components/lead/lead-form";
+import { LeadForm } from "@/app/(protected)/crm/leads/components/lead-form";
 import { PageHeader } from "@/components/page-header";
 import { requirePermission } from "@/lib/server/auth";
 import { getTranslations } from "next-intl/server";

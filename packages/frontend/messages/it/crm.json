@@ -153,6 +153,14 @@
     "contactAttempts": "Tentativi di contatto",
     "firstContactDate": "Primo contatto",
     "lastContactDate": "Ultimo contatto",
+    "tabs": {
+      "company": "Azienda",
+      "contact": "Contatto",
+      "address": "Indirizzo",
+      "commercial": "Commerciale",
+      "gdpr":"Consensi GDPR",
+      "tracking":"Tracciamento"
+    },
     "form": {
       "companyName": "Ragione Sociale",
       "tradeName": "Nome commerciale",
@@ -162,6 +170,7 @@
       "source": "Fonte",
       "status": "Status",
       "address": "Indirizzo",
+      "addressPlaceholder": "Via Roma, 1",
       "city": "Città",
       "provinceCode": "Provincia",
       "zipCode": "CAP",

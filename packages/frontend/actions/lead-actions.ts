@@ -1,6 +1,7 @@
 // actions/lead.ts
 "use server";
 
+import { getRoute } from "@/lib/navigation-routes";
 import { ActionResult, withAuth } from "@/lib/server/action";
 import { leadRevalidation } from "@/lib/server/revalidate";
 import {
@@ -31,6 +32,7 @@ import {
   UpdateLeadFormInput,
   UpdateLeadScoreFormInput,
 } from "@mini-erp/shared";
+import { redirect } from "next/navigation";
 
 // ============================================================================
 // Server Actions
@@ -68,10 +70,14 @@ export async function updateLeadAction(
 }
 
 /** Server Action — Elimina lead */
-export async function deleteLeadAction(id: string): Promise<ActionResult<void>> {
+export async function deleteLeadAction(
+  id: string,
+  redirectToList: boolean = false,
+): Promise<ActionResult<void>> {
   return withAuth(async () => {
     await deleteLeadServer(id);
     leadRevalidation.lead(id);
+    if (redirectToList) redirect(getRoute("leads"));
   }, "lead:delete");
 }
 

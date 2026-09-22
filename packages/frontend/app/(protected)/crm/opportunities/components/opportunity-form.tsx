@@ -43,7 +43,11 @@ import { CustomerCombobox } from "@/components/ui/customer-combobox";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LeadCombobox } from "@/components/ui/lead-combobox";
-import { getOpportunitySourceOptions, getOpportunityStageOptions, getOpportunityStatusOptions } from "@/helpers/opportunity-helper";
+import {
+  getOpportunitySourceOptions,
+  getOpportunityStageOptions,
+  getOpportunityStatusOptions,
+} from "@/helpers/opportunity-helper";
 
 // ============================================================================
 // Types
@@ -165,20 +169,20 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Tabs defaultValue="generale" onValueChange={setActiveTab}>
-          <TabsList className="w-full justify-start overflow-x-auto">
-            <TabsTrigger value="generale" className="gap-1.5">
+          <TabsList variant="line" className="crm-tabs-list">
+            <TabsTrigger value="generale">
               <Briefcase className="h-3.5 w-3.5" />
               {t("form.tabs.generale")}
             </TabsTrigger>
-            <TabsTrigger value="commerciale" className="gap-1.5">
+            <TabsTrigger value="commerciale">
               <TrendingUp className="h-3.5 w-3.5" />
               {t("form.tabs.commerciale")}
             </TabsTrigger>
-            <TabsTrigger value="prodotti" className="gap-1.5">
+            <TabsTrigger value="prodotti">
               <Package className="h-3.5 w-3.5" />
               {t("form.tabs.prodotti")}
             </TabsTrigger>
-            <TabsTrigger value="note" className="gap-1.5">
+            <TabsTrigger value="note">
               <FileText className="h-3.5 w-3.5" />
               {t("form.tabs.note")}
             </TabsTrigger>

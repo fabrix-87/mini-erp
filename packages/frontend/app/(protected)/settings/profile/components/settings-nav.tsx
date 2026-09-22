@@ -5,12 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ShieldIcon, UserCog, UserIcon } from "lucide-react";
-
-const NAV_ITEMS = [
-  { label: "Profilo", href: "/settings/profile", icon: UserIcon },
-  { label: "Sicurezza", href: "/settings/profile/security", icon: ShieldIcon },
-  { label: "Preferenze", href: "/settings/profile/preferences", icon: UserCog },
-] as const;
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
+import { getRoute } from "@/lib/navigation-routes";
 
 /**
  * Tab-style navigation for the settings/profile section.
@@ -18,12 +15,22 @@ const NAV_ITEMS = [
  */
 export function SettingsNav() {
   const pathname = usePathname();
+  const baseRoute = getRoute("profile");
+  const t = useTranslations("settings.navItems");
+
+  const NAV_ITEMS = useMemo(
+    () => [
+      { label: t("profile"), href: "/settings/profile", icon: UserIcon },
+      { label: t("security"), href: "/settings/profile/security", icon: ShieldIcon },
+      { label: t("preferences"), href: "/settings/profile/preferences", icon: UserCog },
+    ],
+    [t],
+  );
 
   return (
     <nav className="flex gap-0.5 border-b">
       {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-        const isActive =
-          href === "/settings/profile" ? pathname === href : pathname.startsWith(href);
+        const isActive = href === baseRoute ? pathname === href : pathname.startsWith(href);
 
         return (
           <Link

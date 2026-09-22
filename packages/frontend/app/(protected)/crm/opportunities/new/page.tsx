@@ -13,6 +13,7 @@ export default async function newOpportunity() {
         extraBreadcrumbs={[{ label: t("opportunityNewTitle") }]}
         title={t("opportunityNewTitle")}
         subtitle={t("opportunityNewDescription")}
+        className="border-0"
       />
       <OpportunityForm mode="create"/>
     </>
