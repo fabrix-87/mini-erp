@@ -451,6 +451,7 @@ export const createUser = async (c: Context<AppBindings>) => {
       await tx.userTenantMembershipRole.createMany({
         data: roleIds.map((roleId) => ({
           membershipId: membership.id,
+          tenantId,
           roleId,
         })),
       });
@@ -584,6 +585,7 @@ export const updateUser = async (c: Context<AppBindings>) => {
         await tx.userTenantMembershipRole.createMany({
           data: roleIds.map((roleId) => ({
             membershipId: membership.id,
+            tenantId,
             roleId,
           })),
         });

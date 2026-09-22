@@ -3,8 +3,11 @@ import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { TenantDetails } from "./components/tenant-details";
 import { PageHeader } from "@/components/page-header";
+import { requirePermission } from "@/lib/server/auth";
 
 export default async function TenantCompany() {
+  await requirePermission("tenant:read");
+
   const tenant = await getCurrentTenant(false);
   const t = await getTranslations("system.tenant");
 

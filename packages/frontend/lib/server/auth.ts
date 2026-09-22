@@ -133,7 +133,7 @@ export async function getCurrentTenantId(): Promise<string> {
 export async function checkUserPermission(permissionCode: PermissionCode): Promise<boolean> {
   try {
     const session = await fetchSessionPayload();
-    return session.currentTenant.permissions.includes(permissionCode);
+    return session.currentTenant.permissions?.includes(permissionCode) || false;
   } catch {
     return false;
   }
@@ -291,9 +291,13 @@ export async function requirePermission(
 ): Promise<UserSessionPayload> {
   const session = await checkAuth();
 
-  if (!session) redirect("/login?session_expired=true");
+  if (!session) {
+    redirect("/login?session_expired=true");
+  }
 
-  if (!session.currentTenant.permissions.includes(permissionCode)) {
+  const permissions = session.currentTenant.permissions ?? [];
+
+  if (!permissions.includes(permissionCode)) {
     redirect(flashRedirect("/dashboard", { type: "unauthorized" }));
   }
 

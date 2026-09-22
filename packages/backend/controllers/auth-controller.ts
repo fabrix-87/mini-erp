@@ -195,7 +195,7 @@ export const login = async (c: Context<AppBindings>) => {
       membershipId: currentMembership.id,
       status: currentMembership.status,
       roles: getRolesFromMembership(currentMembership),
-      permissions: getPermissionsFromMembership(currentMembership),
+      // permissions: getPermissionsFromMembership(currentMembership),
     },
 
     availableTenants: user.memberships.map((membership) => ({
@@ -379,7 +379,7 @@ export const refreshToken = async (c: Context<AppBindings>) => {
       membershipId: currentMembership.id,
       status: currentMembership.status,
       roles: getRolesFromMembership(currentMembership),
-      permissions: getPermissionsFromMembership(currentMembership),
+      // permissions: getPermissionsFromMembership(currentMembership),
     },
     availableTenants: user.memberships.map((membership) => ({
       tenantId: membership.tenantId,

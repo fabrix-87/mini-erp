@@ -66,6 +66,7 @@ export async function loginAction(prevState: unknown, formData: FormData): Promi
     }
 
     const json = await response.json();
+
     const data: AuthResponse = json.data;
 
     // Forward HttpOnly token cookies from backend Set-Cookie headers

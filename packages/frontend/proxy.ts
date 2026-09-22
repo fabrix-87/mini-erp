@@ -15,7 +15,10 @@ import { COOKIE_NAMES } from "./types/cookie-types";
 
 const DEFAULT_AUTH_ROUTE = "/dashboard";
 const DEFAULT_PUBLIC_ROUTE = "/login";
-const API_BASE_URL = process.env.API_URL ?? "http://localhost:5000";
+const API_BASE_URL = process.env.API_URL?.trim();
+if (!API_BASE_URL) {
+  throw new Error("Missing required environment variable: API_URL");
+}
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
 // ============================================================================
@@ -163,7 +166,7 @@ export async function proxy(request: NextRequest) {
         request.headers.get("x-device-fingerprint") ??
         "";
 
-      const refreshRes = await fetch(`${API_BASE_URL}/api/auth/refresh-token`, {
+      const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

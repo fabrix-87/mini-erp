@@ -25,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getRoute } from "@/lib/navigation-routes";
+import { useEffect, useState } from "react";
 
 interface ShellBarProps {
   collapsed: boolean;
@@ -44,10 +45,19 @@ export function ShellBar({
   const { user, logout } = useAuth();
   const { resolvedTheme, setTheme } = useTheme();
 
-  const isDark = resolvedTheme === "dark";
+  const [mounted, setMounted] = useState(false);
 
-  const tenantInitial = user?.currentTenant?.name?.[0] ?? "M";
-  const tenantName = user?.currentTenant?.name ?? "Mini ERP";
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && resolvedTheme === "dark";
+
+  const tenantInitial = mounted ? (user?.currentTenant?.name?.[0] ?? "M") : "";
+  const tenantName = mounted ? (user?.currentTenant?.name ?? "Mini ERP") : "Mini ERP";
+
+  const firstName = mounted ? (user?.details.firstName ?? "") : "";
+  const lastName = mounted ? (user?.details.lastName ?? "") : "";
 
   const iconButtonBase =
     "h-8 w-8 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors";
@@ -69,11 +79,7 @@ export function ShellBar({
     : "text-foreground hover:bg-accent hover:text-accent-foreground";
 
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 flex h-12 items-center bg-background",
-      )}
-    >
+    <header className={cn("fixed inset-x-0 top-0 z-50 flex h-12 items-center bg-background")}>
       <div className="flex h-full w-full items-center gap-2 px-3 lg:px-4">
         <div className="flex items-center gap-1">
           <Button
@@ -173,8 +179,17 @@ export function ShellBar({
             className={cn(iconButtonBase, iconButtonTone, "hidden md:inline-flex")}
             onClick={() => setTheme(isDark ? "light" : "dark")}
             aria-label="Toggle theme"
+            disabled={!mounted}
           >
-            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {mounted ? (
+              isDark ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )
+            ) : (
+              <span className="h-4 w-4" aria-hidden="true" />
+            )}
           </Button>
 
           <DropdownMenu>
@@ -189,20 +204,17 @@ export function ShellBar({
                 )}
                 aria-label="Open user menu"
               >
-                <span className="flex items-center gap-2">
-                  <span
-                    className={cn(
-                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold",
-                      brandBadgeTone,
-                    )}
-                  >
-                    {user?.details.firstName?.[0]}
-                    {user?.details.lastName?.[0]}
-                  </span>
+                <span
+                  className={cn(
+                    "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold",
+                    brandBadgeTone,
+                  )}
+                >
+                  {mounted ? `${firstName[0] ?? ""}${lastName[0] ?? ""}` : ""}
+                </span>
 
-                  <span className="max-w-32 truncate">
-                    {user?.details.firstName} {user?.details.lastName}
-                  </span>
+                <span className="max-w-32 truncate">
+                  {mounted ? `${firstName} ${lastName}` : ""}
                 </span>
               </Button>
             </DropdownMenuTrigger>

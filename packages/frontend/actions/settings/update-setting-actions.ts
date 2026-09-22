@@ -1,7 +1,7 @@
 "use server";
 
 import { withSelf } from "@/lib/server/action";
-import { settingsRevalidation } from "@/lib/server/revalidate/entities";
+import { settingsRevalidation } from "@/lib/server/revalidate";
 import { updateSetting, upsertSettings } from "@/services/server/user-settings-service";
 import type {
   UserSettingKey,

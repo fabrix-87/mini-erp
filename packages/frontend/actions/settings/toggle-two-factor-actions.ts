@@ -1,7 +1,7 @@
 "use server";
 
 import { withSelf } from "@/lib/server/action";
-import { settingsRevalidation } from "@/lib/server/revalidate/entities";
+import { settingsRevalidation } from "@/lib/server/revalidate";
 import {
   confirmTwoFactor,
   disableTwoFactor,

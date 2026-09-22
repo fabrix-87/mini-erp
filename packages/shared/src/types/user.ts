@@ -229,7 +229,7 @@ export type CurrentTenantPayload = {
   name: string;
   code: string;
   roles: RoleDTO[]; // role codes
-  permissions: string[]; // permission codes
+  permissions?: string[]; // permission codes
 };
 
 export type RoleDTO = {
