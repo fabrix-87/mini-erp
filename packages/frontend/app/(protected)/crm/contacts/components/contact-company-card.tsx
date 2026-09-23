@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFormContext, useController } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Combobox, ComboboxOption } from "@/components/ui/combobox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { X, Star, StarOff } from "lucide-react";
 import { useCompanies } from "@/hooks/use-company";
 import type { CreateContactForm } from "@mini-erp/shared";
+import { CompanyCombobox } from "@/components/ui/company-combobox";
 
 // ============================================================================
 // TYPES
@@ -89,14 +89,6 @@ export default function CompanyCard({
 
   // ── Build combobox options (exclude already selected) ─────────────────────
   const selectedIds = selectedCompanies.map((c) => c.companyId.toString());
-
-  const options: ComboboxOption[] = companies
-    .filter((c) => !selectedIds.includes(c.id.toString()))
-    .map((c) => ({
-      value: c.id.toString(),
-      label: c.companyName,
-      description: c.code,
-    }));
 
   const handleSelect = (companyId: string) => {
     if (!companyId || selectedIds.includes(companyId)) return;
@@ -196,16 +188,7 @@ export default function CompanyCard({
         )}
 
         {/* ── Combobox add company ─────────────────────────────────────────── */}
-        <Combobox
-          options={options}
-          value=""
-          onValueChange={handleSelect}
-          onSearchChange={setSearchInput}
-          placeholder="Aggiungi azienda..."
-          searchPlaceholder="Cerca azienda..."
-          emptyText="Nessuna azienda trovata"
-          isLoading={isLoading}
-        />
+        <CompanyCombobox onValueChange={handleSelect} />
 
         {error && <p className="text-sm text-red-500">{error}</p>}
       </CardContent>

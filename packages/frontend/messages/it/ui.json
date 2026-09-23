@@ -1,0 +1,23 @@
+{
+  "leadCombobox": {
+    "placeholder": "Seleziona il lead...",
+    "noResults": "Nessun lead trovato"
+  },
+  "customerCombobox": {
+    "placeholder": "Seleziona il cliente...",
+    "noResults": "Nessun cliente trovato"
+  },
+  "companyCombobox": {
+    "placeholder": "Seleziona l'azienda...",
+    "noResults": "Nessun azienda trovata"
+  },
+  "userCombobox": {
+    "placeholder": "Seleziona l'utente...",
+    "noResults": "Nessun utente trovato"
+  },
+  "countryCombobox": {
+    "placeholder": "Seleziona un paese...",
+    "noResults": "Nessun paese trovato"
+  },
+  "loading": "Caricamento..."
+}

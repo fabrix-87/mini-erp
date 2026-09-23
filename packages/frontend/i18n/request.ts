@@ -41,7 +41,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
     "overview",
     "activities",
     "warehouse",
-    "settings"
+    "settings",
+    "ui"
   ];
 
   const loaded = await Promise.all(

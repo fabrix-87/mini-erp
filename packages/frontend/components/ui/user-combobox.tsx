@@ -1,16 +1,24 @@
 // components/ui/user-combobox.tsx
 "use client";
 
-import * as React from "react";
-import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 import { useUsers } from "@/hooks/use-user";
 import { useAsyncCombobox } from "@/hooks/use-async-combobox";
 import type { UserQueryInput } from "@mini-erp/shared";
+import { ComboboxOption } from "@/types/ui-types";
+import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
 interface UserComboboxProps {
   value?: string;
-  onValueChange?: (value: string) => void;
-  placeholder?: string;
+  onValueChange: (value: string) => void;
   disabled?: boolean;
   className?: string;
 }
@@ -40,7 +48,6 @@ function toUserOptions(data: Awaited<ReturnType<typeof useUsers>>["data"]): Comb
 export function UserCombobox({
   value,
   onValueChange,
-  placeholder = "Seleziona utente...",
   disabled = false,
   className,
 }: UserComboboxProps) {
@@ -52,6 +59,7 @@ export function UserCombobox({
     active: true,
   } satisfies Partial<UserQueryInput>;
 
+  const t = useTranslations("ui");
   const { options, isLoading, onSearchChange, debouncedSearch } = useAsyncCombobox({
     useFetch: ({ search }: { search: string }) =>
       useUsers({ ...BASE_PARAMS, search } satisfies UserQueryInput),
@@ -63,7 +71,7 @@ export function UserCombobox({
     value && !debouncedSearch ? { ...BASE_PARAMS, limit: 1, search: value } : { ...BASE_PARAMS },
   );
 
-  const mergedOptions = React.useMemo((): ComboboxOption[] => {
+  const mergedOptions = useMemo((): ComboboxOption[] => {
     if (!value || debouncedSearch) return options;
     const selected = selectedData?.data?.[0];
     if (!selected || options.some((o) => o.value === selected.id)) return options;
@@ -79,16 +87,45 @@ export function UserCombobox({
 
   return (
     <Combobox
-      options={mergedOptions}
-      value={value}
-      onValueChange={onValueChange}
-      onSearchChange={onSearchChange}
-      placeholder={placeholder}
-      searchPlaceholder="Cerca utente..."
-      emptyText="Nessun utente trovato"
-      disabled={disabled}
-      isLoading={isLoading}
-      className={className}
-    />
+      items={mergedOptions}
+      itemToStringValue={(mergedOption: ComboboxOption) => mergedOption.label}
+      value={mergedOptions.find((item) => item.value === value) || null}
+      onValueChange={(newValue) => {
+        console.log(newValue)
+        onValueChange(newValue?.value || "");
+      }}
+      filter={null}
+    >
+      <ComboboxInput
+        placeholder={t("userCombobox.placeholder")}
+        className={className}
+        showClear
+        disabled={disabled}
+        onInput={(e) => {
+          const searchString = e.currentTarget.value;
+          const selectedOption = mergedOptions.find((item) => item.value === value) || null;
+
+          // Se la stringa digitata/impostata corrisponde al label già selezionato, non cercare
+          if (selectedOption && searchString === selectedOption.label) {
+            return;
+          }
+
+          onSearchChange(searchString);
+        }}
+      />
+      <ComboboxContent>
+        <ComboboxEmpty>{isLoading ? t("loading") : t("userCombobox.noResults")}</ComboboxEmpty>
+        <ComboboxList>
+          {(opt) => (
+            <ComboboxItem key={opt.value} value={opt}>
+              <span>{opt.label}</span>
+              {opt.description && (
+                <span className="text-xs text-muted-foreground">{opt.description}</span>
+              )}
+            </ComboboxItem>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 }

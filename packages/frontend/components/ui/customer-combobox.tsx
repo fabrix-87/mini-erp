@@ -1,7 +1,6 @@
 // packages/frontend/components/ui/customer-combobox.tsx
 "use client";
 
-import * as React from "react";
 import {
   Combobox,
   ComboboxInput,
@@ -14,6 +13,8 @@ import type { ComboboxOption } from "@/types/ui-types";
 import { useCustomers } from "@/hooks/use-company";
 import { useAsyncCombobox } from "@/hooks/use-async-combobox";
 import type { CustomerQueryInput } from "@/types/customer-types";
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 
 function toCustomerOptions(
   data: Awaited<ReturnType<typeof useCustomers>>["data"],
@@ -30,7 +31,6 @@ function toCustomerOptions(
 interface CustomerComboboxProps {
   value?: string;
   onValueChange?: (value: string) => void;
-  placeholder?: string;
   disabled?: boolean;
   className?: string;
 }
@@ -41,7 +41,6 @@ interface CustomerComboboxProps {
 export function CustomerCombobox({
   value,
   onValueChange,
-  placeholder = "Seleziona cliente...",
   disabled = false,
   className,
 }: CustomerComboboxProps) {
@@ -58,11 +57,13 @@ export function CustomerCombobox({
     toOptions: toCustomerOptions,
   });
 
+  const t = useTranslations("ui");
+
   const { data: selectedData } = useCustomers(
     value && !debouncedSearch ? { ...BASE_PARAMS, limit: 1, search: value } : undefined,
   );
 
-  const mergedOptions = React.useMemo((): ComboboxOption[] => {
+  const mergedOptions = useMemo((): ComboboxOption[] => {
     if (!value || debouncedSearch) return options;
     const selected = selectedData?.data?.[0];
     if (!selected || options.some((o) => o.value === selected.id)) return options;
@@ -78,35 +79,43 @@ export function CustomerCombobox({
 
   return (
     <Combobox
-      value={value ?? null}
+      items={mergedOptions}
+      itemToStringValue={(mergedOption: ComboboxOption) => mergedOption.label}
+      value={mergedOptions.find((item) => item.value === value) || null}
       onValueChange={(newValue) => {
-        if (newValue !== null) {
-          onValueChange?.(newValue);
-        }
+        onValueChange?.(newValue?.value || "");
       }}
-      disabled={disabled}
+      filter={null}
     >
       <ComboboxInput
-        placeholder={placeholder}
+        placeholder={t("customerCombobox.placeholder")}
         className={className}
-        onChange={(e) => onSearchChange(e.target.value)}
-        showTrigger
-        showClear={!!value}
-      />
+        showClear
+        disabled={disabled}
+        onInput={(e) => {
+          const searchString = e.currentTarget.value;
+          const selectedOption = mergedOptions.find((item) => item.value === value) || null;
 
+          // Se la stringa digitata/impostata corrisponde al label già selezionato, non cercare
+          if (selectedOption && searchString === selectedOption.label) {
+            return;
+          }
+
+          onSearchChange(searchString);
+        }}
+      />
       <ComboboxContent>
+        <ComboboxEmpty>{isLoading ? t("loading") : t("customerCombobox.noResults")}</ComboboxEmpty>
         <ComboboxList>
-          {mergedOptions.map((opt) => (
-            <ComboboxItem key={opt.value} value={opt.value}>
+          {(opt) => (
+            <ComboboxItem key={opt.value} value={opt}>
               <span>{opt.label}</span>
               {opt.description && (
                 <span className="text-xs text-muted-foreground">{opt.description}</span>
               )}
             </ComboboxItem>
-          ))}
+          )}
         </ComboboxList>
-
-        {!isLoading && mergedOptions.length === 0 && <ComboboxEmpty />}
       </ComboboxContent>
     </Combobox>
   );

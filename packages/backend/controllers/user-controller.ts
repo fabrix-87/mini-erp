@@ -311,8 +311,24 @@ export const getAllUsers = async (c: Context<AppBindings>) => {
 
   if (search) {
     where.OR = [
-      { username: { contains: String(search), mode: "insensitive" } },
-      { email: { contains: String(search), mode: "insensitive" } },
+      { username: { contains: search, mode: "insensitive" } },
+      { email: { contains: search, mode: "insensitive" } },
+      {
+        details: {
+          firstName: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        details: {
+          lastName: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      },
     ];
   }
 

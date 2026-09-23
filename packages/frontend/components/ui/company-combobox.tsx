@@ -1,74 +1,66 @@
-// components/ui/lead-combobox.tsx
+// packages/frontend/components/ui/company-combobox.tsx
 "use client";
 
 import {
   Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
   ComboboxInput,
-  ComboboxItem,
+  ComboboxContent,
   ComboboxList,
+  ComboboxItem,
+  ComboboxEmpty,
 } from "@/components/ui/combobox";
+import type { ComboboxOption } from "@/types/ui-types";
+import { useCompanies } from "@/hooks/use-company";
 import { useAsyncCombobox } from "@/hooks/use-async-combobox";
 import { useMemo } from "react";
-import { useLeads } from "@/hooks/use-lead";
-import { LeadQueryInput } from "@mini-erp/shared";
-import { ComboboxOption } from "@/types/ui-types";
 import { useTranslations } from "next-intl";
+import type { CompanyQueryInput } from "@mini-erp/shared";
 
-interface LeadComboboxProps {
+function toCompanyOptions(
+  data: Awaited<ReturnType<typeof useCompanies>>["data"],
+): ComboboxOption[] {
+  return (
+    data?.data?.map((c) => ({
+      value: c.id,
+      label: c.companyName,
+      description: `[${c.code}]`,
+    })) ?? []
+  );
+}
+
+interface CompanyComboboxProps {
   value?: string;
   onValueChange?: (value: string) => void;
   disabled?: boolean;
   className?: string;
 }
 
-// Stabile fuori dal componente — nessuna istanza spuria per ogni render.
-function toLeadOptions(data: Awaited<ReturnType<typeof useLeads>>["data"]): ComboboxOption[] {
-  return (
-    data?.data?.map((c) => ({
-      value: c.id,
-      label: c.companyName,
-      description: `[${c.code}] ${c.description ? `- ${c.description}` : ""}`,
-    })) ?? []
-  );
-}
-
 /**
- * Async combobox for lead selection with debounced search.
- * On mount with an existing `value`, performs a secondary query to restore
- * the selected label after tab switches or remounts.
- *
- * @param value         - Currently selected lead ID
- * @param onValueChange - Callback fired with the new lead ID on selection
- * @param placeholder   - Trigger button label when no value is selected
- * @param disabled      - Disables the combobox
- * @param className     - Additional CSS classes on the trigger button
+ * Async combobox for company selection with debounced search.
  */
-export function LeadCombobox({
+export function CompanyCombobox({
   value,
   onValueChange,
   disabled = false,
   className,
-}: LeadComboboxProps) {
+}: CompanyComboboxProps) {
   const BASE_PARAMS = {
     page: 1,
     limit: 10,
-    sortBy: "companyName",
     sortOrder: "asc",
-  } satisfies Partial<LeadQueryInput>;
+    sortBy: "code",
+  } satisfies Partial<CompanyQueryInput>;
 
   const { options, isLoading, onSearchChange, debouncedSearch } = useAsyncCombobox({
     useFetch: ({ search }: { search: string }) =>
-      useLeads({ ...BASE_PARAMS, search } satisfies LeadQueryInput),
-    toOptions: toLeadOptions,
+      useCompanies({ ...BASE_PARAMS, search } satisfies CompanyQueryInput),
+    toOptions: toCompanyOptions,
   });
 
-  const t = useTranslations('ui')
+  const t = useTranslations("ui");
 
-  // Query per ID — ripristina il label dopo remount (cambio tab)
-  const { data: selectedData } = useLeads(
-    value && !debouncedSearch ? { ...BASE_PARAMS, limit: 1, search: value } : BASE_PARAMS,
+  const { data: selectedData } = useCompanies(
+    value && !debouncedSearch ? { ...BASE_PARAMS, limit: 1, search: value } : undefined,
   );
 
   const mergedOptions = useMemo((): ComboboxOption[] => {
@@ -79,7 +71,7 @@ export function LeadCombobox({
       {
         value: selected.id,
         label: selected.companyName,
-        description: `[${selected.code}] ${selected.description ? `- ${selected.description}` : ""}`,
+        description: `[${selected.code}]`,
       },
       ...options,
     ];
@@ -96,7 +88,7 @@ export function LeadCombobox({
       filter={null}
     >
       <ComboboxInput
-        placeholder={t('leadCombobox.placeholder')}
+        placeholder={t("companyCombobox.placeholder")}
         className={className}
         showClear
         disabled={disabled}
@@ -113,7 +105,7 @@ export function LeadCombobox({
         }}
       />
       <ComboboxContent>
-        <ComboboxEmpty>{isLoading ? t('loading') : t('leadCombobox.noResults')}</ComboboxEmpty>
+        <ComboboxEmpty>{isLoading ? t("loading") : t("companyCombobox.noResults")}</ComboboxEmpty>
         <ComboboxList>
           {(opt) => (
             <ComboboxItem key={opt.value} value={opt}>

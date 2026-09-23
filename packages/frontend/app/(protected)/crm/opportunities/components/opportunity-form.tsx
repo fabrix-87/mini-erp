@@ -231,7 +231,6 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                         </FormLabel>
                         <FormControl>
                           <CustomerCombobox
-                            placeholder={t("form.customerPlaceholder")}
                             value={field.value ?? ""}
                             disabled={!!watchedLeadId}
                             onValueChange={(value) => {
@@ -272,10 +271,10 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                         </FormLabel>
                         <FormControl>
                           <LeadCombobox
-                            placeholder={t("form.leadPlaceholder")}
                             value={field.value ?? ""}
                             disabled={!!watchedCustomerId}
                             onValueChange={(value) => {
+                              console.log(value)
                               field.onBlur();
                               field.onChange(value || null);
                               // Se seleziono un lead, disabilito e resetto il customer
@@ -397,11 +396,9 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                       <FormLabel>{t("form.assignedUser")}</FormLabel>
                       <FormControl>
                         <UserCombobox
-                          placeholder={t("form.assignedUserPlaceholder")}
                           value={field.value ?? ""}
                           onValueChange={(value) => {
-                            field.onBlur();
-                            field.onChange(value || null);
+                            field.onChange(value);
                           }}
                         />
                       </FormControl>

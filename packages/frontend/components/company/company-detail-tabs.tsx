@@ -21,50 +21,36 @@ interface CompanyDetailTabsProps {
 
 export function CompanyDetailTabs({ data, companyType }: CompanyDetailTabsProps) {
   const [activeTab, setActiveTab] = useState("info");
-  const t = useTranslations('crm.customers.tabs')
+  const t = useTranslations("crm.customers.tabs");
 
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <div className="-mx-1 overflow-x-auto p-1 pb-1 bg-card rounded-2xl shadow-md ">
-        <TabsList variant="line" className="flex h-auto w-max min-w-full items-center gap-1 p-0 md:grid md:w-full md:grid-cols-5">
-          <TabsTrigger value="info" className="min-w-11 shrink-0 gap-0 px-3 sm:min-w-0 sm:gap-2">
-            <FileText className="size-4 shrink-0" />
-            <span className="hidden sm:inline">{t('info')}</span>
-          </TabsTrigger>
+    <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <TabsList className="crm-tabs-list" variant="line">
+        <TabsTrigger value="info">
+          <FileText className="size-4 shrink-0" />
+          <span className="hidden sm:inline">{t("info")}</span>
+        </TabsTrigger>
 
-          <TabsTrigger
-            value="contacts"
-            className="min-w-11 shrink-0 gap-0 px-3 sm:min-w-0 sm:gap-2"
-          >
-            <Users className="size-4 shrink-0" />
-            <span className="hidden sm:inline">{t('contacts')}</span>
-          </TabsTrigger>
+        <TabsTrigger value="contacts">
+          <Users className="size-4 shrink-0" />
+          <span className="hidden sm:inline">{t("contacts")}</span>
+        </TabsTrigger>
 
-          <TabsTrigger
-            value="addresses"
-            className="min-w-11 shrink-0 gap-0 px-3 sm:min-w-0 sm:gap-2"
-          >
-            <MapPin className="size-4 shrink-0" />
-            <span className="hidden sm:inline">{t('addresses')}</span>
-          </TabsTrigger>
+        <TabsTrigger value="addresses">
+          <MapPin className="size-4 shrink-0" />
+          <span className="hidden sm:inline">{t("addresses")}</span>
+        </TabsTrigger>
 
-          <TabsTrigger
-            value="documents"
-            className="min-w-11 shrink-0 gap-0 px-3 sm:min-w-0 sm:gap-2"
-          >
-            <FileCheck className="size-4 shrink-0" />
-            <span className="hidden sm:inline">{t('documents')}</span>
-          </TabsTrigger>
+        <TabsTrigger value="documents">
+          <FileCheck className="size-4 shrink-0" />
+          <span className="hidden sm:inline">{t("documents")}</span>
+        </TabsTrigger>
 
-          <TabsTrigger
-            value="activities"
-            className="min-w-11 shrink-0 gap-0 px-3 sm:min-w-0 sm:gap-2"
-          >
-            <Activity className="size-4 shrink-0" />
-            <span className="hidden sm:inline">{t('activities')}</span>
-          </TabsTrigger>
-        </TabsList>
-      </div>
+        <TabsTrigger value="activities">
+          <Activity className="size-4 shrink-0" />
+          <span className="hidden sm:inline">{t("activities")}</span>
+        </TabsTrigger>
+      </TabsList>
 
       <TabsContent value="info" className="outline-none">
         {companyType === "CUSTOMER" ? (
