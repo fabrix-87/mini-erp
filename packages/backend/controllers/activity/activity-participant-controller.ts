@@ -12,7 +12,7 @@ import {
   CreateActivityParticipantInput,
   UpdateActivityParticipantInput,
 } from "@mini-erp/shared";
-import { clean, tenantFilter } from "@/helpers/prisma-helper";
+import { clean, withTenantScope } from "@/helpers/prisma-helper";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
@@ -82,7 +82,7 @@ export const addActivityParticipant = async (c: Context<AppBindings>) => {
 
   if (data.userId) {
     const user = await prisma.user.findFirst({
-      where: tenantFilter(tenantId, { id: data.userId }),
+      where: withTenantScope(tenantId, { id: data.userId }),
     });
     if (!user) {
       return sendNotFound(c, "Utente non trovato");

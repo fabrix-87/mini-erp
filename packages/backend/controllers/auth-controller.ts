@@ -41,7 +41,7 @@ import { sendSuccess } from "@/utils/response-utils";
 import authConfig from "@/config/auth-config";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { tenantFilter, withSoftDelete } from "@/helpers/prisma-helper";
+import { withTenantScope, withSoftDelete } from "@/helpers/prisma-helper";
 
 /**
  * @desc    Login utente con Redis session + fingerprinting

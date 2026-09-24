@@ -47,6 +47,9 @@ import {
   stockLevelQuerySchema,
   stockValuationQuerySchema,
   stockMovementReportSchema,
+  warehouseStatsQuerySchema,
+  warehouseVirtualStatsQuerySchema,
+  warehouseBatchStatsQuerySchema,
 } from "../validators/warehouse";
 
 // ============================================================================
@@ -186,6 +189,9 @@ export type StockReservationQueryInput = z.infer<typeof stockReservationQuerySch
 export type StockLevelQueryInput = z.infer<typeof stockLevelQuerySchema>;
 export type StockValuationQueryInput = z.infer<typeof stockValuationQuerySchema>;
 export type StockMovementReportInput = z.infer<typeof stockMovementReportSchema>;
+export type WarehouseStatsInput = z.infer<typeof warehouseStatsQuerySchema>;
+export type WarehouseVirtualStatsInput = z.infer<typeof warehouseVirtualStatsQuerySchema>;
+export type WarehouseBatchStatsInput = z.infer<typeof warehouseBatchStatsQuerySchema>;
 
 // ============================================================================
 // PARAM TYPES (using z.infer)

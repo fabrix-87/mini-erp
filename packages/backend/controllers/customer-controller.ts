@@ -42,7 +42,7 @@ import {
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
-import { tenantFilter } from "@/helpers/prisma-helper";
+import { withTenantScope } from "@/helpers/prisma-helper";
 import {
   createInitialCompanyVersion,
 } from "@/helpers/company-version-helper";
@@ -95,7 +95,7 @@ export const getCustomerById = async (c: Context<AppBindings>) => {
   const languageId = getRequiredLanguageId(c);
 
   const customer = await prisma.customer.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     include: getCustomerInclude(true, languageId),
   });
 
@@ -223,7 +223,7 @@ export const updateCustomer = async (c: Context<AppBindings>) => {
   console.debug(data)
 
   const existing = await prisma.customer.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
   });
 
   if (!existing) {
@@ -268,7 +268,7 @@ export const updateCustomerCompany = async (c: Context<AppBindings>) => {
   const { userId } = c.get("user")!;
 
   const customer = await prisma.customer.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     select: { companyId: true },
   });
 
@@ -311,7 +311,7 @@ export const validateCustomerFiscal = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const customer = await prisma.customer.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     include: { company: true },
   });
 
@@ -345,7 +345,7 @@ export const getCustomerStats = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const customer = await prisma.customer.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     include: {
       _count: {
         select: {
@@ -363,7 +363,7 @@ export const getCustomerStats = async (c: Context<AppBindings>) => {
   const [recentOrders, topProducts] = await Promise.all([
     // Ultimi ordini
     prisma.document.findMany({
-      where: tenantFilter(tenantId, {
+      where: withTenantScope(tenantId, {
         customerId: customer.id,
         documentType: { in: ["ORDER", "INVOICE"] },
       }),
@@ -382,7 +382,7 @@ export const getCustomerStats = async (c: Context<AppBindings>) => {
     // Prodotti più acquistati
     prisma.documentLine.groupBy({
       by: ["productId", "productVariantId"],
-      where: tenantFilter(tenantId, {
+      where: withTenantScope(tenantId, {
         document: {
           customerId: customer.id,
           documentType: { in: ["ORDER", "INVOICE"] },
@@ -409,7 +409,7 @@ export const getCustomerStats = async (c: Context<AppBindings>) => {
     .filter((id): id is string => id !== null);
 
   const products = await prisma.product.findMany({
-    where: tenantFilter(tenantId, { id: { in: productIds } }),
+    where: withTenantScope(tenantId, { id: { in: productIds } }),
     select: {
       id: true,
       reference: true,
@@ -458,7 +458,7 @@ export const deleteCustomer = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const customer = await prisma.customer.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     include: {
       _count: {
         select: {

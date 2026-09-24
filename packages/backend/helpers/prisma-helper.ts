@@ -110,8 +110,12 @@ export const toRequiredDate = (value: string | undefined): Date | undefined =>
 export function connectOrDisconnectById(id: string): { connect: { id: string } };
 export function connectOrDisconnectById(id: number): { connect: { id: number } };
 export function connectOrDisconnectById(id: null | undefined): undefined;
-export function connectOrDisconnectById(id: string | null | undefined): { connect: { id: string } } | undefined;
-export function connectOrDisconnectById(id: number | null | undefined): { connect: { id: number } } | undefined;
+export function connectOrDisconnectById(
+  id: string | null | undefined,
+): { connect: { id: string } } | undefined;
+export function connectOrDisconnectById(
+  id: number | null | undefined,
+): { connect: { id: number } } | undefined;
 export function connectOrDisconnectById(id: string | number | null | undefined) {
   return id === undefined ? undefined : id ? { connect: { id } } : { disconnect: true as const };
 }
@@ -239,14 +243,11 @@ export const withTenantId = (
  * Use this whenever you need to look up a single user scoped to a tenant,
  * e.g. in auth flows, permission checks, or user-detail endpoints.
  *
- * @param id       - user id 
+ * @param id       - user id
  * @param tenantId - tenant id to verify active membership against
  * @returns Prisma.UserWhereInput ready to be passed to findFirst / findUnique
  */
-export const userTenantFilter = (
-  id: string,
-  tenantId: string,
-): Prisma.UserWhereInput => ({
+export const userwithTenantScope = (id: string, tenantId: string): Prisma.UserWhereInput => ({
   id,
   deletedAt: null,
   memberships: {
@@ -264,16 +265,16 @@ export const userTenantFilter = (
  * the most common filter pattern in tenant-scoped controllers.
  *
  * Variants:
- * - `tenantFilter(tenantId)`           → { tenantId, deletedAt: null }
- * - `tenantFilter(tenantId, { id })`   → { tenantId, id, deletedAt: null }
- * - `tenantFilter(tenantId, {}, true)` → { tenantId }  (soft-deleted included)
+ * - `withTenantScope(tenantId)`           → { tenantId, deletedAt: null }
+ * - `withTenantScope(tenantId, { id })`   → { tenantId, id, deletedAt: null }
+ * - `withTenantScope(tenantId, {}, true)` → { tenantId }  (soft-deleted included)
  *
  * @param tenantId       - Tenant ID from the authenticated request context
  * @param where          - Additional Prisma where fields to merge (default: {})
  * @param includeDeleted - When true, soft-deleted records are included (default: false)
  * @returns Merged where clause with tenantId and optional deletedAt guard
  */
-export const tenantFilter = (
+export const withTenantScope = (
   tenantId: string,
   where: Record<string, unknown> = {},
   includeDeleted = false,

@@ -18,17 +18,19 @@ import {
   MAX_SERIAL_NUMBER_LENGTH,
   MAX_LEAD_TIME_DAYS,
   DEFAULT_RESERVATION_EXPIRY_MINUTES,
+  WAREHOUSE_SORT_OPTIONS,
+  STOCK_MOVEMENT_SORT_OPTIONS,
+  STOCK_BATCH_SORT_OPTIONS,
+  VIRTUAL_STOCK_MOVEMENT_SORT_OPTIONS,
+  STOCK_RESERVATION_SORT_OPTIONS,
 } from "../constants/warehouse";
-import { currencyCodeBaseSchema } from "./base";
+import { currencyCodeBaseSchema, productVariantIdBaseSchema, warehouseIdBaseSchema } from "./base";
 
 // ============================================================================
 // ENUMS
 // ============================================================================
 
-export const warehouseTypeSchema = z.enum([
-  WAREHOUSE_TYPES.PHYSICAL,
-  WAREHOUSE_TYPES.VIRTUAL,
-]);
+export const warehouseTypeSchema = z.enum([WAREHOUSE_TYPES.PHYSICAL, WAREHOUSE_TYPES.VIRTUAL]);
 
 export const movementTypeSchema = z.enum([
   MOVEMENT_TYPES.PURCHASE,
@@ -90,15 +92,9 @@ const supplierPriceSchema = createDecimalSchema(6, {
 // WAREHOUSE SCHEMAS
 // ============================================================================
 
-export const warehouseIdSchema = createIdSchema("ID Warehouse non valido");
-
 export const createWarehouseSchema = z
   .object({
-    name: z
-      .string()
-      .min(1, "Nome obbligatorio")
-      .max(255, "Nome max 255 caratteri")
-      .trim(),
+    name: z.string().min(1, "Nome obbligatorio").max(255, "Nome max 255 caratteri").trim(),
 
     location: z.string().max(500).optional().nullable(),
 
@@ -112,16 +108,14 @@ export const updateWarehouseSchema = createWarehouseSchema.partial().strict();
 // STOCK MOVEMENT SCHEMAS
 // ============================================================================
 
-export const stockMovementIdSchema = createIdSchema(
-  "ID Stock Movement non valido",
-);
+export const stockMovementIdSchema = createIdSchema("ID Stock Movement non valido");
 
 /**
  * Raw object shape for StockMovement — no refinements.
  */
 const stockMovementShape = z.object({
   productVariantId: createIdSchema("Product Variant ID non valido"),
-  warehouseId: warehouseIdSchema,
+  warehouseId: warehouseIdBaseSchema,
 
   quantity: z
     .number()
@@ -137,9 +131,7 @@ const stockMovementShape = z.object({
   unitCost: unitCostSchema.optional().nullable(),
   totalCost: totalCostSchema.optional().nullable(),
   documentId: createIdSchema("Document ID non valido").optional().nullable(),
-  documentLineId: createIdSchema("Document Line ID non valido")
-    .optional()
-    .nullable(),
+  documentLineId: createIdSchema("Document Line ID non valido").optional().nullable(),
   batchNumber: z.string().max(MAX_BATCH_NUMBER_LENGTH).optional().nullable(),
   serialNumber: z.string().max(MAX_SERIAL_NUMBER_LENGTH).optional().nullable(),
   expiryDate: isoDateSchema(),
@@ -184,9 +176,7 @@ export const cancelStockMovementSchema = z
 
 export const bulkConfirmMovementsSchema = z
   .object({
-    movementIds: z
-      .array(stockMovementIdSchema)
-      .min(1, "Seleziona almeno un movimento"),
+    movementIds: z.array(stockMovementIdSchema).min(1, "Seleziona almeno un movimento"),
     movementDate: isoDateSchema().optional(),
   })
   .strict();
@@ -195,16 +185,14 @@ export const bulkConfirmMovementsSchema = z
 // VIRTUAL STOCK SCHEMAS
 // ============================================================================
 
-export const virtualStockIdSchema = createIdSchema(
-  "ID Virtual Stock non valido",
-);
+export const virtualStockIdSchema = createIdSchema("ID Virtual Stock non valido");
 
 /**
  * Raw object shape for VirtualStock — no refinements.
  */
 const virtualStockShape = z.object({
   productVariantId: createIdSchema("Product Variant ID non valido"),
-  warehouseId: warehouseIdSchema,
+  warehouseId: warehouseIdBaseSchema,
 
   quantity: z
     .number()
@@ -252,12 +240,7 @@ export const syncVirtualStockSchema = z
     quantity: z.number().int().nonnegative(),
     supplierPrice: supplierPriceSchema.optional().nullable(),
     expectedAvailableDate: isoDateSchema(),
-    leadTimeDays: z
-      .number()
-      .int()
-      .nonnegative()
-      .max(MAX_LEAD_TIME_DAYS)
-      .optional(),
+    leadTimeDays: z.number().int().nonnegative().max(MAX_LEAD_TIME_DAYS).optional(),
   })
   .strict();
 
@@ -279,11 +262,7 @@ export const stockBatchIdSchema = createIdSchema("ID Stock Batch non valido");
 const stockBatchShape = z.object({
   productVariantId: createIdSchema("Product Variant ID non valido"),
 
-  batchNumber: z
-    .string()
-    .min(1, "Batch number obbligatorio")
-    .max(MAX_BATCH_NUMBER_LENGTH)
-    .trim(),
+  batchNumber: z.string().min(1, "Batch number obbligatorio").max(MAX_BATCH_NUMBER_LENGTH).trim(),
 
   manufacturedDate: isoDateSchema(),
   expiryDate: isoDateSchema(),
@@ -291,11 +270,7 @@ const stockBatchShape = z.object({
 
   quantity: z.number().int().nonnegative("Quantità non può essere negativa"),
 
-  reserved: z
-    .number()
-    .int()
-    .nonnegative("Reserved non può essere negativo")
-    .default(0),
+  reserved: z.number().int().nonnegative("Reserved non può essere negativo").default(0),
 
   status: stockBatchStatusSchema.default(STOCK_BATCH_STATUS.ACTIVE),
 });
@@ -336,15 +311,13 @@ export const adjustBatchQuantitySchema = z
 // STOCK RESERVATION SCHEMAS
 // ============================================================================
 
-export const stockReservationIdSchema = createIdSchema(
-  "ID Stock Reservation non valido",
-);
+export const stockReservationIdSchema = createIdSchema("ID Stock Reservation non valido");
 
 export const createStockReservationSchema = z
   .object({
     productVariantId: createIdSchema("Product Variant ID non valido"),
 
-    warehouseId: warehouseIdSchema,
+    warehouseId: warehouseIdBaseSchema,
 
     quantity: z
       .number()
@@ -353,19 +326,13 @@ export const createStockReservationSchema = z
 
     documentId: createIdSchema("Document ID non valido"),
 
-    documentLineId: createIdSchema("Document Line ID non valido")
-      .optional()
-      .nullable(),
+    documentLineId: createIdSchema("Document Line ID non valido").optional().nullable(),
 
     expiresAt: isoDateSchema().optional(),
 
     batchNumber: z.string().max(MAX_BATCH_NUMBER_LENGTH).optional().nullable(),
 
-    expiryMinutes: z
-      .number()
-      .int()
-      .positive()
-      .default(DEFAULT_RESERVATION_EXPIRY_MINUTES),
+    expiryMinutes: z.number().int().positive().default(DEFAULT_RESERVATION_EXPIRY_MINUTES),
   })
   .strict()
   .transform((data) => {
@@ -413,7 +380,7 @@ export const warehouseQuerySchema = z.object({
   limit: limitSchema,
   search: z.string().optional(),
   type: warehouseTypeSchema.optional(),
-  sortBy: z.enum(["name", "location", "type", "createdAt"]).default("name"),
+  sortBy: z.enum(WAREHOUSE_SORT_OPTIONS).default("name"),
   sortOrder: sortOrderSchema,
 });
 
@@ -421,7 +388,7 @@ export const stockMovementQuerySchema = z.object({
   page: pageSchema,
   limit: limitSchema,
   productVariantId: createIdSchema("Product Variant ID non valido").optional(),
-  warehouseId: warehouseIdSchema.optional(),
+  warehouseId: warehouseIdBaseSchema.optional(),
   movementType: movementTypeSchema.optional(),
   status: movementStatusSchema.optional(),
   documentId: createIdSchema("Document ID non valido").optional(),
@@ -431,7 +398,7 @@ export const stockMovementQuerySchema = z.object({
   dateTo: isoDateSchema(),
   hasCost: queryBooleanSchema,
   sortBy: z
-    .enum(["movementDate", "quantity", "movementType", "status", "createdAt"])
+    .enum(STOCK_MOVEMENT_SORT_OPTIONS)
     .default("movementDate"),
   sortOrder: sortOrderSchema,
 });
@@ -440,7 +407,7 @@ export const virtualStockQuerySchema = z.object({
   page: pageSchema,
   limit: limitSchema,
   productVariantId: createIdSchema("Product Variant ID non valido").optional(),
-  warehouseId: warehouseIdSchema.optional(),
+  warehouseId: warehouseIdBaseSchema.optional(),
   syncStatus: virtualSyncStatusSchema.optional(),
   minQuantity: queryNumberSchema("Quantità minima non valida")
     .pipe(z.number().int().nonnegative().optional())
@@ -450,7 +417,7 @@ export const virtualStockQuerySchema = z.object({
     .optional(),
   hasPrice: queryBooleanSchema,
   sortBy: z
-    .enum(["quantity", "lastSyncAt", "expectedAvailableDate", "updatedAt"])
+    .enum(VIRTUAL_STOCK_MOVEMENT_SORT_OPTIONS)
     .default("updatedAt"),
   sortOrder: sortOrderSchema,
 });
@@ -465,13 +432,7 @@ export const stockBatchQuerySchema = z.object({
   expiryTo: isoDateSchema(),
   expiringSoon: z.boolean().optional(), // Expiring in next 30 days
   sortBy: z
-    .enum([
-      "batchNumber",
-      "expiryDate",
-      "quantity",
-      "status",
-      "manufacturedDate",
-    ])
+    .enum(STOCK_BATCH_SORT_OPTIONS)
     .default("expiryDate"),
   sortOrder: sortOrderSchema,
 });
@@ -480,15 +441,13 @@ export const stockReservationQuerySchema = z.object({
   page: pageSchema,
   limit: limitSchema,
   productVariantId: createIdSchema("Product Variant ID non valido").optional(),
-  warehouseId: warehouseIdSchema.optional(),
+  warehouseId: warehouseIdBaseSchema.optional(),
   documentId: createIdSchema("Document ID non valido").optional(),
   status: stockReservationStatusSchema.optional(),
   expired: queryBooleanSchema,
   expiringFrom: isoDateSchema(),
   expiringTo: isoDateSchema(),
-  sortBy: z
-    .enum(["reservedAt", "expiresAt", "quantity", "status"])
-    .default("reservedAt"),
+  sortBy: z.enum(STOCK_RESERVATION_SORT_OPTIONS).default("reservedAt"),
   sortOrder: sortOrderSchema,
 });
 
@@ -497,7 +456,7 @@ export const stockReservationQuerySchema = z.object({
 // ============================================================================
 
 export const warehouseIdParamSchema = z.object({
-  id: warehouseIdSchema,
+  id: warehouseIdBaseSchema,
 });
 
 export const stockMovementIdParamSchema = z.object({
@@ -521,14 +480,14 @@ export const stockReservationIdParamSchema = z.object({
 // ============================================================================
 
 export const stockLevelQuerySchema = z.object({
-  warehouseId: warehouseIdSchema.optional(),
-  productVariantId: createIdSchema("Product Variant ID non valido").optional(),
+  warehouseId: warehouseIdBaseSchema.optional(),
+  productVariantId: productVariantIdBaseSchema.optional(),
   lowStock: queryBooleanSchema,
   outOfStock: queryBooleanSchema,
 });
 
 export const stockValuationQuerySchema = z.object({
-  warehouseId: warehouseIdSchema.optional(),
+  warehouseId: warehouseIdBaseSchema.optional(),
   dateAt: isoDateSchema().optional(),
   groupBy: z.enum(["warehouse", "product", "category"]).default("warehouse"),
 });
@@ -536,7 +495,31 @@ export const stockValuationQuerySchema = z.object({
 export const stockMovementReportSchema = z.object({
   dateFrom: isoDateSchema(),
   dateTo: isoDateSchema(),
-  warehouseId: warehouseIdSchema.optional(),
+  warehouseId: warehouseIdBaseSchema.optional(),
   movementTypes: z.array(movementTypeSchema).optional(),
   groupBy: z.enum(["day", "week", "month", "movementType"]).default("day"),
+});
+
+/**
+ * Stats schemas
+ */
+export const warehouseStatsQuerySchema = z.object({
+  warehouseId: warehouseIdBaseSchema,
+  productVariantId: productVariantIdBaseSchema.optional(),
+  startDate: isoDateSchema(),
+  endDate: isoDateSchema(),
+  status: stockReservationStatusSchema.optional(),
+});
+
+export const warehouseBatchStatsQuerySchema = z.object({
+  warehouseId: warehouseIdBaseSchema,
+  productVariantId: productVariantIdBaseSchema.optional(),
+  status: stockBatchStatusSchema.optional(),
+  includeExpired: z.coerce.boolean().default(false).optional(),
+});
+
+export const warehouseVirtualStatsQuerySchema = z.object({
+  warehouseId: warehouseIdBaseSchema,
+  productVariantId: productVariantIdBaseSchema.optional(),
+  syncStatus: virtualSyncStatusSchema.optional(),
 });

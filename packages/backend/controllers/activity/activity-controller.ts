@@ -17,7 +17,7 @@ import {
   sendPaginatedResponse,
   sendSuccess,
 } from "@/utils/response-utils";
-import { clean, parseOptionalDate, tenantFilter, withTenantId } from "@/helpers/prisma-helper";
+import { clean, parseOptionalDate, withTenantScope, withTenantId } from "@/helpers/prisma-helper";
 import { completeActivity as completeActivityService } from "../../services/activity/activity-service";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
@@ -283,7 +283,7 @@ export const createActivity = async (c: Context<AppBindings>) => {
 
   if (data.customerId) {
     const customer = await prisma.customer.findFirst({
-      where: tenantFilter(tenantId, { id: data.customerId }),
+      where: withTenantScope(tenantId, { id: data.customerId }),
     });
     if (!customer) {
       return sendNotFound(c, "Customer non trovato");
@@ -308,7 +308,7 @@ export const createActivity = async (c: Context<AppBindings>) => {
 
   if (data.contactId) {
     const contact = await prisma.contact.findFirst({
-      where: tenantFilter(tenantId, { id: data.contactId }),
+      where: withTenantScope(tenantId, { id: data.contactId }),
     });
     if (!contact) {
       return sendNotFound(c, "Contact non trovato");

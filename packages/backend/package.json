@@ -4,15 +4,14 @@
   "type": "module",
   "scripts": {
     "test": "bun test",
-    "prisma:migrate": "prisma migrate dev --schema=prisma && prisma generate",
-    "prisma:generate": "prisma generate --schema=prisma",
+    "prisma7:migrate": "prisma7 migrate dev --schema=prisma && prisma7 generate",
+    "prisma7:generate": "prisma7 generate --schema=prisma",
     "prisma:docs": "prisma format && prisma-fmt-js",
     "build": "bun build",
     "start": "bun dist/server.js",
     "dev": "bun --watch --no-clear-screen run-server.ts",
     "dev:debug": "bun --inspect-wait --watch --no-clear-screen run-server.ts",
-    "dev:break": "bun --inspect-brk --watch --no-clear-screen run-server.ts",
-    "postinstall": "bunx prisma generate"
+    "dev:break": "bun --inspect-brk --watch --no-clear-screen run-server.ts"
   },
   "keywords": [],
   "author": "",
@@ -43,6 +42,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@prisma/prisma7": "7.10.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
@@ -51,7 +51,6 @@
     "@types/multer": "^2.2.0",
     "@types/pg": "^8.23.1",
     "@types/uuid": "^11.0.0",
-    "prisma": "^7.10.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.23.12",
     "typescript": "^5.9.3"

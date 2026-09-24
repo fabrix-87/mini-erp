@@ -158,19 +158,20 @@ model Activity {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  // Unique necessario per relazioni composite FK
   @@unique([tenantId, id])
+  // Tenant-scoped lookups
   @@index([tenantId, status])
   @@index([tenantId, assignedUserId])
-  @@index([tenantId, scheduledStart], where: { attachments: { not: null } }, map: "activities_has_attachments")
+  @@index([tenantId, scheduledStart])
   // Entity-specific, tenant-scoped
   @@index([tenantId, customerId])
   @@index([tenantId, supplierId])
+  @@index([tenantId, contactId])
   @@index([tenantId, opportunityId])
   @@index([tenantId, leadId])
-  // Range e lookup
-  @@index([tenantId, scheduledStart, scheduledEnd])
+  // Follow-up lookup (solo quando popolato)
   @@index([tenantId, followUpActivityId], where: { followUpActivityId: { not: null } })
-  @@index([attachments], where: { attachments: { not: null } }, map: "activities_has_attachments ")
   @@map("activities")
 }
 
@@ -245,8 +246,8 @@ model ActivityTemplate {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Template names must be unique per tenant.
-  // Global templates (tenantId IS NULL) are deduplicated by name at the application layer.
-  @@unique([tenantId, name])
+  // Global templates (tenantId IS NULL) are deduplicated by partial unique index.
+  @@unique([tenantId, name], where: { tenantId: { not: null } }, map: "activity_templates_tenant_name")
   @@unique([name], where: { tenantId: null }, map: "activity_templates_global_name")
   @@index([tenantId])
   @@index([type])

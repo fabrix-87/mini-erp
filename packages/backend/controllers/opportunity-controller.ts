@@ -38,7 +38,7 @@ import {
   getValidatedQuery,
 } from "@/helpers/validated-context";
 import { calculateWeightedValue, STAGE_PROBABILITY_MAP } from "@/helpers/opportunity-helper";
-import { connectOrDisconnectById, tenantFilter, userTenantFilter } from "@/helpers/prisma-helper";
+import { connectOrDisconnectById, withTenantScope, userwithTenantScope } from "@/helpers/prisma-helper";
 import { OpportunitySource, OpportunityStatus, SalesStage } from "@mini-erp/shared";
 
 // ============================================================================
@@ -331,21 +331,21 @@ export const createOpportunity = async (c: Context<AppBindings>) => {
 
   if (customerId) {
     const customer = await prisma.customer.findFirst({
-      where: tenantFilter(tenantId, { id: customerId }),
+      where: withTenantScope(tenantId, { id: customerId }),
     });
     if (!customer) return sendNotFound(c, "Customer non trovato");
   }
 
   if (leadId) {
     const lead = await prisma.lead.findFirst({
-      where: tenantFilter(tenantId, { id: leadId }),
+      where: withTenantScope(tenantId, { id: leadId }),
     });
     if (!lead) return sendNotFound(c, "Lead non trovata");
   }
 
   if (assignedUserId) {
     const user = await prisma.user.findFirst({
-      where: userTenantFilter(assignedUserId, tenantId),
+      where: userwithTenantScope(assignedUserId, tenantId),
     });
     if (!user) {
       return sendNotFound(c, "Utente assegnato non trovato");
@@ -421,7 +421,7 @@ export const updateOpportunity = async (c: Context<AppBindings>) => {
 
   if (assignedUserId && assignedUserId !== existing.assignedUserId) {
     const user = await prisma.user.findFirst({
-      where: tenantFilter(tenantId, { id: assignedUserId }),
+      where: withTenantScope(tenantId, { id: assignedUserId }),
     });
     if (!user) {
       return sendNotFound(c, "Utente assegnato non trovato");

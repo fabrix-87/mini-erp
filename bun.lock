@@ -39,6 +39,7 @@
         "zod": "^4.4.3",
       },
       "devDependencies": {
+        "@prisma/prisma7": "7.10.0",
         "@types/bcryptjs": "^2.4.6",
         "@types/cookie-parser": "^1.4.10",
         "@types/cors": "^2.8.19",
@@ -47,7 +48,6 @@
         "@types/multer": "^2.2.0",
         "@types/pg": "^8.23.1",
         "@types/uuid": "^11.0.0",
-        "prisma": "^7.10.0",
         "ts-node": "^10.9.2",
         "tsx": "^4.23.12",
         "typescript": "^5.9.3",
@@ -510,6 +510,8 @@
     "@prisma/fetch-engine": ["@prisma/fetch-engine@7.10.0", "", { "dependencies": { "@prisma/debug": "7.10.0", "@prisma/engines-version": "7.10.0-4.0edf323efd1d98336f3f0a68684b56f689b900d3", "@prisma/get-platform": "7.10.0" } }, "sha512-Zqyu8DY14t6W/xwmAxUYWCXtHrvQnSvT644EAZSsdM8NSmCS74vJJbBKdVsK3ucFpnUWkEpbO1a0CxJXrg130g=="],
 
     "@prisma/get-platform": ["@prisma/get-platform@7.2.0", "", { "dependencies": { "@prisma/debug": "7.2.0" } }, "sha512-k1V0l0Td1732EHpAfi2eySTezyllok9dXb6UQanajkJQzPUGi3vO2z7jdkz67SypFTdmbnyGYxvEvYZdZsMAVA=="],
+
+    "@prisma/prisma7": ["@prisma/prisma7@7.10.0", "", { "dependencies": { "prisma": "7.10.0" }, "bin": { "prisma7": "build/prisma7.js" } }, "sha512-6AhsRk0JRXYkp+C/i31np7FUTBNs2QCrebAPQ29cbWbk2XrX1YFXRBlIudg7Vxp1Vv2zK+wF7SNSergLKtnr8w=="],
 
     "@prisma/query-plan-executor": ["@prisma/query-plan-executor@7.2.0", "", {}, "sha512-EOZmNzcV8uJ0mae3DhTsiHgoNCuu1J9mULQpGCh62zN3PxPTd+qI9tJvk5jOst8WHKQNwJWR3b39t0XvfBB0WQ=="],
 

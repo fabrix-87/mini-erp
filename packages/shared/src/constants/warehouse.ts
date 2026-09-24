@@ -66,34 +66,16 @@ export const STOCK_RESERVATION_STATUS = {
 // MOVEMENT TYPE LABELS (i18n keys or display labels)
 // ============================================================================
 
-export const MOVEMENT_TYPE_LABELS: Record<
-  keyof typeof MOVEMENT_TYPES,
-  string
-> = {
-  PURCHASE: "Acquisto da fornitore",
-  SALE: "Vendita a cliente",
-  RETURN_IN: "Reso da cliente",
-  RETURN_OUT: "Reso a fornitore",
-  ADJUSTMENT_IN: "Rettifica inventario (carico)",
-  ADJUSTMENT_OUT: "Rettifica inventario (scarico)",
-  TRANSFER_IN: "Trasferimento in entrata",
-  TRANSFER_OUT: "Trasferimento in uscita",
-  INVENTORY_START: "Inventario iniziale",
-};
-
 /**
  * Movement type directions (for stock calculation)
  */
-export const MOVEMENT_TYPE_DIRECTION: Record<
-  keyof typeof MOVEMENT_TYPES,
-  "IN" | "OUT"
-> = {
+export const MOVEMENT_TYPE_DIRECTION: Record<keyof typeof MOVEMENT_TYPES, "IN" | "OUT"> = {
   PURCHASE: "IN",
   SALE: "OUT",
   RETURN_IN: "IN",
   RETURN_OUT: "OUT",
-  ADJUSTMENT_IN: "IN", 
-  ADJUSTMENT_OUT: "OUT", 
+  ADJUSTMENT_IN: "IN",
+  ADJUSTMENT_OUT: "OUT",
   TRANSFER_IN: "IN",
   TRANSFER_OUT: "OUT",
   INVENTORY_START: "IN",
@@ -185,6 +167,7 @@ export const OPERATIONS_INCREASING_STOCK = [
   MOVEMENT_TYPES.RETURN_IN,
   MOVEMENT_TYPES.TRANSFER_IN,
   MOVEMENT_TYPES.INVENTORY_START,
+  MOVEMENT_TYPES.ADJUSTMENT_IN,
 ];
 
 /**
@@ -194,18 +177,14 @@ export const OPERATIONS_DECREASING_STOCK = [
   MOVEMENT_TYPES.SALE,
   MOVEMENT_TYPES.RETURN_OUT,
   MOVEMENT_TYPES.TRANSFER_OUT,
+  MOVEMENT_TYPES.ADJUSTMENT_OUT,
 ];
 
 // ============================================================================
 // SORTING OPTIONS
 // ============================================================================
 
-export const WAREHOUSE_SORT_OPTIONS = [
-  "name",
-  "location",
-  "type",
-  "createdAt",
-] as const;
+export const WAREHOUSE_SORT_OPTIONS = ["name", "location", "type", "createdAt"] as const;
 
 export const STOCK_MOVEMENT_SORT_OPTIONS = [
   "movementDate",
@@ -215,10 +194,24 @@ export const STOCK_MOVEMENT_SORT_OPTIONS = [
   "createdAt",
 ] as const;
 
+export const VIRTUAL_STOCK_MOVEMENT_SORT_OPTIONS = [
+  "lastSyncAt",
+  "quantity",
+  "expectedAvailableDate",
+  "updatedAt",
+] as const;
+
 export const STOCK_BATCH_SORT_OPTIONS = [
   "batchNumber",
   "expiryDate",
   "quantity",
   "status",
   "manufacturedDate",
+] as const;
+
+export const STOCK_RESERVATION_SORT_OPTIONS = [
+  "reservedAt",
+  "expiresAt",
+  "quantity",
+  "status",
 ] as const;

@@ -45,7 +45,7 @@ import {
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
-import { tenantFilter, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
+import { withTenantScope, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 import { createInitialCompanyVersion } from "@/helpers/company-version-helper";
 import { upsertLegalAddress } from "@/helpers/address-helper";
 import { ConflictError } from "@/utils/app-error-utils";
@@ -91,7 +91,7 @@ export const getSupplierById = async (c: Context<AppBindings>) => {
   const languageId = getRequiredLanguageId(c);
   
   const supplier = await prisma.supplier.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     include: getSupplierInclude(true, languageId),
   });
 
@@ -179,7 +179,7 @@ export const updateSupplier = async (c: Context<AppBindings>) => {
 
   const [existing, taxRule, parent] = await Promise.all([
     prisma.supplier.findFirst({
-      where: tenantFilter(tenantId, { id }),
+      where: withTenantScope(tenantId, { id }),
     }),
     data.supplierTaxRuleId
       ? prisma.taxRule.findUnique({
@@ -189,7 +189,7 @@ export const updateSupplier = async (c: Context<AppBindings>) => {
       : Promise.resolve(true),
     data.parentSupplierId
       ? prisma.supplier.findFirst({
-          where: tenantFilter(tenantId, { id: data.parentSupplierId }),
+          where: withTenantScope(tenantId, { id: data.parentSupplierId }),
           select: { id: true },
         })
       : Promise.resolve(true),
@@ -226,7 +226,7 @@ export const validateSupplierFiscal = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const supplier = await prisma.supplier.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     include: { company: true },
   });
 
@@ -265,7 +265,7 @@ export const updateSupplierCompany = async (c: Context<AppBindings>) => {
   const { userId } = c.get("user")!;
 
   const supplier = await prisma.supplier.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     select: { companyId: true },
   });
 
@@ -308,7 +308,7 @@ export const updateSupplierRating = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const supplier = await prisma.supplier.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
   });
 
   if (!supplier) {
@@ -347,7 +347,7 @@ export const getSupplierStats = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const supplier = await prisma.supplier.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     include: {
       _count: {
         select: {
@@ -365,7 +365,7 @@ export const getSupplierStats = async (c: Context<AppBindings>) => {
   const [recentOrders, topProducts] = await Promise.all([
     // Ultimi ordini
     prisma.document.findMany({
-      where: tenantFilter(tenantId, {
+      where: withTenantScope(tenantId, {
         supplierId: supplier.id,
         documentType: { in: ["SUPPLIER_ORDER", "INVOICE"] },
       }),
@@ -383,7 +383,7 @@ export const getSupplierStats = async (c: Context<AppBindings>) => {
 
     // Prodotti forniti più ordinati
     prisma.product.findMany({
-      where: tenantFilter(tenantId, {
+      where: withTenantScope(tenantId, {
         supplierId: supplier.id,
       }),
       select: {
@@ -438,7 +438,7 @@ export const deleteSupplier = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const supplier = await prisma.supplier.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     include: {
       _count: {
         select: {

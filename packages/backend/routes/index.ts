@@ -23,6 +23,7 @@ import tenantRoutes from "./tenant-routes";
 import membershipRolesRoutes from "./user-membership-roles-routes";
 import userRoutes from "./user-routes";
 import activityRoutes from "./activity-routes";
+import warehouseRoutes from "./warehouse";
 
 export const publicRoutes = createHonoApp();
 export const protectedRoutes = createHonoApp();
@@ -64,3 +65,4 @@ protectedRoutes.route("/documents", documentRoutes);
 protectedRoutes.route("/suppliers", supplierRoutes);
 protectedRoutes.route("/company-contacts", companyContactRoutes);
 protectedRoutes.route("/memberships", membershipRolesRoutes);
+protectedRoutes.route("/warehouses", warehouseRoutes);

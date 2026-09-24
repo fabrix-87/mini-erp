@@ -3,7 +3,7 @@ import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { isoDateSchema } from "./primitives/date";
 import { priceSchema } from "./business/currency";
 import Decimal from "decimal.js";
-import { inputJsonValueSchema } from "./base";
+import { inputJsonValueSchema, productIdBaseSchema, productVariantIdBaseSchema } from "./base";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import { queryBooleanSchema } from "./query/params";
 import { urlSchema } from "./primitives";
@@ -25,8 +25,6 @@ export const outOfStockType = z.enum(["DENY_ORDERS", "ALLOW_ORDERS", "USE_DEFAUL
 // ============================================================================
 // PRODUCT VARIANT SCHEMAS
 // ============================================================================
-
-const productIdBaseSchema = createCuidSchema("ID prodotto obbligatorio");
 
 /**
  * Schema per la creazione di una ProductVariant
@@ -101,7 +99,7 @@ export const updateProductVariantSchema = createProductVariantSchema
  * Schema per la validazione dell'ID variante
  */
 export const productVariantIdSchema = z.object({
-  id: productIdBaseSchema,
+  id: productVariantIdBaseSchema,
 });
 
 // ============================================================================

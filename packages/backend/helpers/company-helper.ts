@@ -20,7 +20,7 @@ import {
   CustomerFilters,
   SupplierFilters,
 } from "@mini-erp/shared";
-import { tenantFilter } from "./prisma-helper";
+import { withTenantScope } from "./prisma-helper";
 import { AddressUpsertInput, upsertLegalAddress } from "./address-helper";
 import { storicizeCompany, syncCurrentVersion } from "./company-version-helper";
 

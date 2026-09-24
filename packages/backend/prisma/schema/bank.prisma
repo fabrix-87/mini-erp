@@ -41,9 +41,9 @@ model BankAccount {
 
     @@unique([tenantId, id])
     @@unique([tenantId, iban], where: { companyId: null })
-    @@unique([companyId, iban])
+    @@unique([tenantId, companyId, iban])
     @@unique([tenantId, currencyCode], map: "unique_tenant_default_bank_account", where: { isDefault: true, companyId: null })
-    @@unique([companyId, currencyCode], map: "unique_company_default_bank_account", where: { isDefault: true })
+    @@unique([tenantId, companyId, currencyCode], map: "unique_company_default_bank_account", where: { isDefault: true })
     // BankAccount
     // Non-unique: the same IBAN may legitimately appear on several group companies.
     // Supports the "same IBAN on other companies" lookup at registration time.

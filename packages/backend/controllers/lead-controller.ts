@@ -30,7 +30,7 @@ import {
   connectById,
   parseOptionalDate,
   parseOptionalDecimal,
-  tenantFilter,
+  withTenantScope,
   withTenantId,
 } from "@/helpers/prisma-helper";
 import { Context } from "hono";
@@ -82,7 +82,7 @@ export const getAllLeads = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const skip = (page - 1) * limit;
-  const where: Prisma.LeadWhereInput = tenantFilter(tenantId);
+  const where: Prisma.LeadWhereInput = withTenantScope(tenantId);
 
   if (search) {
     where.OR = [
@@ -186,7 +186,7 @@ export const getLeadById = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const lead = await prisma.lead.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     include: {
       assignedUser: {
         select: {
@@ -268,7 +268,7 @@ export const createLead = async (c: Context<AppBindings>) => {
   // Verify assignedUser if provided
   if (body.assignedUserId) {
     const user = await prisma.user.findFirst({
-      where: tenantFilter(tenantId, { id: body.assignedUserId }),
+      where: withTenantScope(tenantId, { id: body.assignedUserId }),
     });
     if (!user) {
       return sendNotFound(c, "Utente assegnato non trovato");
@@ -311,14 +311,14 @@ export const updateLead = async (c: Context<AppBindings>) => {
   const body = getValidatedBody<UpdateLeadInput>(c);
   const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) });
+  const existing = await prisma.lead.findFirst({ where: withTenantScope(tenantId, { id }) });
   if (!existing) {
     return sendNotFound(c, "Lead non trovata");
   }
 
   if (body.assignedUserId && body.assignedUserId !== existing.assignedUserId) {
     const user = await prisma.user.findFirst({
-      where: tenantFilter(tenantId, { id: body.assignedUserId }),
+      where: withTenantScope(tenantId, { id: body.assignedUserId }),
     });
     if (!user) {
       return sendNotFound(c, "Utente assegnato non trovato");
@@ -356,7 +356,7 @@ export const updateLeadStatus = async (c: Context<AppBindings>) => {
   const { status, lostReason, notes } = getValidatedBody<UpdateLeadStatusInput>(c);
   const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) });
+  const existing = await prisma.lead.findFirst({ where: withTenantScope(tenantId, { id }) });
   if (!existing) {
     return sendNotFound(c, "Lead non trovata");
   }
@@ -384,7 +384,7 @@ export const updateLeadScore = async (c: Context<AppBindings>) => {
   const { score, notes } = getValidatedBody<UpdateLeadScoreInput>(c);
   const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) });
+  const existing = await prisma.lead.findFirst({ where: withTenantScope(tenantId, { id }) });
   if (!existing) {
     return sendNotFound(c, "Lead non trovata");
   }
@@ -410,7 +410,7 @@ export const qualifyLead = async (c: Context<AppBindings>) => {
   const payload = getValidatedBody<QualifyLeadInput>(c);
   const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) });
+  const existing = await prisma.lead.findFirst({ where: withTenantScope(tenantId, { id }) });
   if (!existing) {
     return sendNotFound(c, "Lead non trovata");
   }
@@ -450,7 +450,7 @@ export const convertLead = async (c: Context<AppBindings>) => {
   const payload = getValidatedBody<ConvertLeadInput>(c);
   const tenantId = getRequiredTenantId(c);
 
-  const lead = await prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) });
+  const lead = await prisma.lead.findFirst({ where: withTenantScope(tenantId, { id }) });
   if (!lead) {
     return sendNotFound(c, "Lead non trovata");
   }
@@ -580,8 +580,8 @@ export const assignLead = async (c: Context<AppBindings>) => {
   }
 
   const [lead, user] = await Promise.all([
-    prisma.lead.findFirst({ where: tenantFilter(tenantId, { id }) }),
-    prisma.user.findFirst({ where: tenantFilter(tenantId, { id: assignedUserId }) }),
+    prisma.lead.findFirst({ where: withTenantScope(tenantId, { id }) }),
+    prisma.user.findFirst({ where: withTenantScope(tenantId, { id: assignedUserId }) }),
   ]);
 
   if (!lead) {
@@ -612,14 +612,14 @@ export const bulkAssignLeads = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const user = await prisma.user.findFirst({
-    where: tenantFilter(tenantId, { id: assignedUserId }),
+    where: withTenantScope(tenantId, { id: assignedUserId }),
   });
   if (!user) {
     return sendNotFound(c, "Utente non trovato");
   }
 
   const result = await prisma.lead.updateMany({
-    where: tenantFilter(tenantId, { id: { in: leadIds } }),
+    where: withTenantScope(tenantId, { id: { in: leadIds } }),
     data: { assignedUserId },
   });
 
@@ -636,7 +636,7 @@ export const bulkUpdateLeadStatus = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const result = await prisma.lead.updateMany({
-    where: tenantFilter(tenantId, { id: { in: leadIds } }),
+    where: withTenantScope(tenantId, { id: { in: leadIds } }),
     data: {
       status,
       ...(lostReason && { lostReason }),
@@ -659,7 +659,7 @@ export const deleteLead = async (c: Context<AppBindings>) => {
   const { userId } = c.get("user")!;
 
   const lead = await prisma.lead.findFirst({
-    where: tenantFilter(tenantId, { id }),
+    where: withTenantScope(tenantId, { id }),
     include: { opportunities: { select: { id: true } } },
   });
 
@@ -702,7 +702,7 @@ export const getLeadStats = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   // ── Where clause ─────────────────────────────────────────────────────────
-  const where: Prisma.LeadWhereInput = tenantFilter(tenantId, {});
+  const where: Prisma.LeadWhereInput = withTenantScope(tenantId, {});
   if (assignedUserId) where.assignedUserId = assignedUserId;
   if (source) where.source = source;
   if (campaignName) where.campaignName = campaignName;

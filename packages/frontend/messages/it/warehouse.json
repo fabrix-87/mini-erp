@@ -1,6 +1,16 @@
 {
-    "warehouses": {
-        "title": "Magazzini",
-        "description": "Gestisci magazzino fisici e virtuali" 
-    }
+  "title": "Magazzini",
+  "description": "Gestisci magazzino fisici e virtuali",
+  "createNewButton": "Crea nuovo Magazzino",
+  "movement_types": {
+    "PURCHASE": "Acquisto da fornitore",
+    "SALE": "Vendita a cliente",
+    "RETURN_IN": "Reso da cliente",
+    "RETURN_OUT": "Reso a fornitore",
+    "ADJUSTMENT_IN": "Rettifica inventario (carico)",
+    "ADJUSTMENT_OUT": "Rettifica inventario (scarico)",
+    "TRANSFER_IN": "Trasferimento in entrata",
+    "TRANSFER_OUT": "Trasferimento in uscita",
+    "INVENTORY_START": "Inventario iniziale"
+  }
 }
