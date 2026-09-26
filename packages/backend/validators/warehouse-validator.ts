@@ -1,10 +1,12 @@
-import { validateQuery, validateParams } from "../middleware/validation-middleware";
+import { validateQuery, validateParams, validateBody } from "../middleware/validation-middleware";
 import {
   warehouseIdParamSchema,
   warehouseStatsQuerySchema,
   warehouseBatchStatsQuerySchema,
   warehouseVirtualStatsQuerySchema,
   warehouseQuerySchema,
+  createWarehouseSchema,
+  updateWarehouseSchema,
 } from "@mini-erp/shared/validators/warehouse";
 
 /** Validates the :warehouseId route parameter (CUID string). */
@@ -32,3 +34,7 @@ export const validateWarehouseQuery = validateQuery(
   warehouseQuerySchema,
   "Warehouse query parameters",
 );
+
+export const validateCreateWarehouseBody = validateBody(createWarehouseSchema, "Create Warehouse");
+
+export const validateUpdateWarehouseBody = validateBody(updateWarehouseSchema, "Update Warehouse");

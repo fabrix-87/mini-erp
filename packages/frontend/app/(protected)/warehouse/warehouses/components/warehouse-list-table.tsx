@@ -23,12 +23,18 @@ import { getRoute } from "@/lib/navigation-routes";
 import {
   EntityPermissions,
   PaginationInfo,
+  UpdateWarehouseFormValues,
   Warehouse,
   WarehouseSortFields,
 } from "@mini-erp/shared";
-import { Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Eye, MoreHorizontal, Pencil, ShieldMinus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ReactElement, useMemo, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import DeleteDialog from "@/components/dialog/delete-dialog";
+import { deleteWarehouseAction, updateWarehouseAction } from "@/actions/warehouse-actions";
+import { toast } from "sonner";
+import { WarehouseFormSheet } from "./warehouse-form-sheet";
 
 interface WarehouseListPageProps {
   warehouses: Warehouse[];
@@ -48,8 +54,10 @@ export function WarehouseListTable({
   permissions,
 }: WarehouseListPageProps): ReactElement {
   const t = useTranslations("warehouse");
+  const tc = useTranslations("common");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null);
 
   const basePath = useMemo(() => getRoute("warehouses"), []);
   const updateURL = useUpdateURL(basePath);
@@ -65,12 +73,37 @@ export function WarehouseListTable({
     updateURL({ sortBy: field, sortOrder: newOrder });
   };
 
+  const handleDelete = async (): Promise<void> => {
+    if (!deleteId) return;
+    setIsDeleting(true);
+    const result = await deleteWarehouseAction(deleteId);
+    setIsDeleting(false);
+    setDeleteId(null);
+    if (result.success) {
+      toast.success(t("deleteSuccess"));
+    } else {
+      toast.error(result.error ?? t("deleteError"));
+    }
+  };
+
+  const updateSubmit = async (data: UpdateWarehouseFormValues, warehouseId: string) => {
+    const result = await updateWarehouseAction(data, warehouseId);
+    if (result.success && result.data) {
+      toast.success(t("updateSuccess"));
+    } else {
+      toast.error(result.error ?? t("updateError"));
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <div className="rounded-lg border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
+              <SortableTableHead field="code" sort={sort} onSort={onSortChange}>
+                {t("tableFields.code")}
+              </SortableTableHead>
               <SortableTableHead field="name" sort={sort} onSort={onSortChange}>
                 {t("tableFields.name")}
               </SortableTableHead>
@@ -100,8 +133,21 @@ export function WarehouseListTable({
                   className="cursor-pointer hover:bg-muted/40"
                   onClick={() => navigateToDetail("warehouses", w.id)}
                 >
-                  <TableCell>{w.name}</TableCell>
-                  <TableCell>{w.type}</TableCell>
+                  <TableCell>{w.code}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-foreground">{w.name}</span>
+                      {w.isDefault && (
+                        <Badge className="text-xs font-normal">{t("tableFields.default")}</Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-foreground">{t(`types.${w.type}`)}</span>
+                      {w.supplier && <Badge variant="secondary">{w.supplier.company.companyName}</Badge>}
+                    </div>
+                  </TableCell>
                   <TableCell>{w.location}</TableCell>
                   <TableCell>{formatDateIT(w.createdAt)}</TableCell>
                   {/* Row actions */}
@@ -112,7 +158,7 @@ export function WarehouseListTable({
                           variant="ghost"
                           size="sm"
                           className="h-7 w-7 p-0"
-                          aria-label={t("actions.label")}
+                          aria-label={tc("actions.label")}
                         >
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -121,23 +167,33 @@ export function WarehouseListTable({
                         <DropdownMenuItem
                           onClick={() => navigateToDetail("warehouses", String(w.id))}
                         >
-                          <Eye className="mr-2 h-4 w-4" /> {t("actions.view")}
+                          <Eye className="mr-2 h-4 w-4" /> {tc("actions.view")}
                         </DropdownMenuItem>
                         {permissions.canUpdate && (
-                          <DropdownMenuItem
-                            onClick={() => navigateToEdit("warehouses", String(w.id))}
-                          >
-                            <Pencil className="mr-2 h-4 w-4" /> {t("actions.edit")}
+                          <DropdownMenuItem onClick={() => setSelectedWarehouse(w)}>
+                            <Pencil className="mr-2 h-4 w-4" /> {tc("actions.edit")}
                           </DropdownMenuItem>
                         )}
-                        {permissions.canDelete && (
+                        {permissions.canUpdate && w.active && !w.isDefault && (
                           <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                              className="text-destructive focus:text-destructive"
-                              onClick={() => setDeleteId(String(w.id))}
+                              onClick={() => navigateToEdit("warehouses", String(w.id))}
                             >
-                              <Trash2 className="mr-2 h-4 w-4" /> {t("actions.delete")}
+                              <ShieldMinus className="mr-2 h-4 w-4" /> {tc("actions.disable")}
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                        {permissions.canDelete && !w.hasDependencies && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={() => setDeleteId(String(w.id))}
+                              disabled={w.isDefault}
+                              title={w.isDefault ? t("cantDeleteDefault") : t("canDelete")}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" /> {tc("actions.delete")}
                             </DropdownMenuItem>
                           </>
                         )}
@@ -161,6 +217,23 @@ export function WarehouseListTable({
           itemLabel={t("itemLabel")}
         />
       )}
+
+      <WarehouseFormSheet
+        open={!!selectedWarehouse}
+        onOpenChange={(open) => !open && setSelectedWarehouse(null)}
+        warehouse={selectedWarehouse ?? undefined}
+        updateSubmit={updateSubmit}
+      />
+
+      <DeleteDialog
+        isOpen={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title={t("deleteDialog.title")}
+        handleDelete={handleDelete}
+        isDeleting={isDeleting}
+      >
+        {t("deleteDialog.description")}
+      </DeleteDialog>
     </div>
   );
 }

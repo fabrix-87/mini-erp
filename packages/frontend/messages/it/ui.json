@@ -7,6 +7,10 @@
     "placeholder": "Seleziona il cliente...",
     "noResults": "Nessun cliente trovato"
   },
+  "supplierCombobox": {
+    "placeholder": "Seleziona il fornitore...",
+    "noResults": "Nessun fornitore trovato"
+  },
   "companyCombobox": {
     "placeholder": "Seleziona l'azienda...",
     "noResults": "Nessun azienda trovata"

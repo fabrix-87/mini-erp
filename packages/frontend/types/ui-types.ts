@@ -1,3 +1,5 @@
+// packages/frontend/types/ui-types.ts
+
 /**
  * Represents an option displayed by a combobox.
  */
@@ -6,3 +8,5 @@ export interface ComboboxOption {
   label: string;
   description?: string;
 }
+
+export * from './ui/toolbar-types'

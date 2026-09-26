@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
+import { useTranslations } from "next-intl";
 
 interface DeleteDialogProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export default function DeleteDialog({
   isDeleting,
   children,
 }: DeleteDialogProps) {
+  const t = useTranslations("common");
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -34,12 +36,12 @@ export default function DeleteDialog({
           <AlertDialogDescription>{children}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Annulla</AlertDialogCancel>
+          <AlertDialogCancel>{t("actions.cancel")}</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            variant="destructive"
           >
-            {isDeleting ? "Eliminazione..." : "Elimina"}
+            {isDeleting ? t("feedback.isDeleting") : t("actions.delete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

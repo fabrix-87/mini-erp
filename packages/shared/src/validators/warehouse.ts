@@ -24,7 +24,7 @@ import {
   VIRTUAL_STOCK_MOVEMENT_SORT_OPTIONS,
   STOCK_RESERVATION_SORT_OPTIONS,
 } from "../constants/warehouse";
-import { currencyCodeBaseSchema, productVariantIdBaseSchema, warehouseIdBaseSchema } from "./base";
+import { currencyCodeBaseSchema, productVariantIdBaseSchema, supplierIdBaseSchema, warehouseIdBaseSchema } from "./base";
 
 // ============================================================================
 // ENUMS
@@ -94,9 +94,11 @@ const supplierPriceSchema = createDecimalSchema(6, {
 
 export const createWarehouseSchema = z
   .object({
-    name: z.string().min(1, "Nome obbligatorio").max(255, "Nome max 255 caratteri").trim(),
+    code: z.string().min(1, "Code required").max(20, "Code max 20 characters").trim(),
+    name: z.string().min(1, "Name required").max(255, "Name max 255 characters").trim(),
     location: z.string().max(500).optional().nullable(),
     type: warehouseTypeSchema.default(WAREHOUSE_TYPES.PHYSICAL),
+    supplierId: supplierIdBaseSchema.nullish(),
     isDefault: z.boolean().default(false)
   })
   .strict();

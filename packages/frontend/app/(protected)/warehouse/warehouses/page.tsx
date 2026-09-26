@@ -26,18 +26,9 @@ export default async function CustomersPage({ searchParams }: WarehousesPageProp
 
   const t = await getTranslations("warehouse");
 
-  const actionItems: PageHeaderAction[] = [
-    createCreateAction(
-      "create",
-      t("createNewButton") ?? "Nuova",
-      getNewRoute("warehouses"),
-      permissions.canCreate,
-    ),
-  ];
-
   return (
     <>
-      <PageHeader actionItems={actionItems} />
+      <PageHeader/>
       <WarehouseListPage
         pagination={result.pagination}
         permissions={permissions}

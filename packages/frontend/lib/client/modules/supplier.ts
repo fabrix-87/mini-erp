@@ -9,7 +9,7 @@ import { Supplier, SupplierQueryInput, SupplierStats } from "@/types/supplier-ty
  */
 export const getSuppliers = async (
   params: SupplierQueryInput
-): Promise<PaginatedResponse<Supplier[]>> => {
+): Promise<PaginatedResponse<Supplier>> => {
   const response = await api.get('/suppliers', { params });
   return response.data;
 };

@@ -1,10 +1,16 @@
 import { serverApi } from "@/lib/server/api";
+import { DeleteApiResponse } from "@/types/api";
 import {
   WAREHOUSE_TAGS,
   WarehouseListApiResponse,
+  WarehouseSingleApiResponse,
   WarehouseStatsApiResponse,
 } from "@/types/warehouse-types";
-import { WarehouseQueryInput } from "@mini-erp/shared";
+import {
+  CreateWarehouseFormValues,
+  UpdateWarehouseFormValues,
+  WarehouseQueryInput,
+} from "@mini-erp/shared";
 
 /**
  * Fetch paginated warehouse list.
@@ -35,4 +41,30 @@ export async function getWarehouseStats(
     tags: [WAREHOUSE_TAGS.stats],
     unwrapData: false,
   });
+}
+
+// ============================================================================
+// CRUD
+// ============================================================================
+export async function createWarehouse(
+  data: CreateWarehouseFormValues,
+): Promise<WarehouseSingleApiResponse> {
+  return serverApi.post<WarehouseSingleApiResponse>("/warehouses", data, {
+    tags: [WAREHOUSE_TAGS.list],
+    unwrapData: false,
+  });
+}
+
+export async function updateWarehouse(
+  data: UpdateWarehouseFormValues,
+  id: string,
+): Promise<WarehouseSingleApiResponse> {
+  return serverApi.patch<WarehouseSingleApiResponse>(`/warehouses/${id}`, data, {
+    tags: [WAREHOUSE_TAGS.detail(id)],
+    unwrapData: false,
+  });
+}
+
+export async function deleteWarehouse(id: string): Promise<DeleteApiResponse> {
+  return serverApi.delete(`/warehouses/${id}`, { tags: [WAREHOUSE_TAGS.list] });
 }

@@ -29,7 +29,11 @@
     "approve": "Approva",
     "reject": "Rifiuta",
     "logout": "Esci",
-    "back_to_home": "Ritorna alla home"
+    "back_to_home": "Ritorna alla home",
+    "genericError": "Errore generico",
+    "label": "Azioni",
+    "disable": "Disabilita",
+    "enable": "Abilita"
   },
 
   "status": {
@@ -87,7 +91,8 @@
     "error_not_found": "Risorsa non trovata",
     "confirm_delete": "Sei sicuro di voler eliminare questo elemento?",
     "confirm_delete_description": "Questa azione è irreversibile.",
-    "loading": "Caricamento in corso..."
+    "loading": "Caricamento in corso...",
+    "isDeleting": "Eliminazione in corso"
   },
 
   "pagination": {
@@ -133,7 +138,7 @@
     "details": "Dettagli",
     "generic_page": "Pagina"
   },
-  "public": {    
+  "public": {
     "heroEyebrow": "Piattaforma gestionale",
     "heroTitle": "Il tuo lavoro,<br></br>in un unico spazio.",
     "heroDescription": "Gestisci relazioni, processi, documenti e operatività quotidiana con un’unica piattaforma."

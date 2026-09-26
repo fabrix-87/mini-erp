@@ -8,6 +8,14 @@
   "editWarehouseDescription": "Modifica un magazzino esistente",
   "itemLabel": "Magazzini",
   "noResults": "Nessun magazzino trovato",
+  "createSuccess": "Magazzino creato con successo!",
+  "createError": "Errore nella creazione del magazzino",
+  "updateSuccess": "Magazzino aggiornato con successo!",
+  "updateError": "Errore nell'aggiornamento del magazzino",
+  "deleteSuccess": "Magazzino eliminato",
+  "deleteError": "Errore nella rimozione del magazzino",
+  "cantDeleteDefault": "Impossibile eliminare il magazzino di default",
+  "canDelete": "Elimina il magazzino",
   "movement_types": {
     "PURCHASE": "Acquisto da fornitore",
     "SALE": "Vendita a cliente",
@@ -20,20 +28,32 @@
     "INVENTORY_START": "Inventario iniziale"
   },
   "types": {
-    "PHISICAL": "Fisico",
+    "PHYSICAL": "Fisico",
     "VIRTUAL": "Virtuale"
   },
   "tableFields": {
+    "code": "Codice",
     "name": "Nome",
     "location": "Posizione",
     "type": "Tipo",
-    "isDefault": "Magazzino predefinito?",
-    "createdAt": "Data creazione"
+    "isDefault": "Magazzino principale?",
+    "supplier": "Fornitore",
+    "createdAt": "Data creazione",
+    "default": "Principale"
+  },
+  "toolbar": {
+    "ariaLabel": "Warehouse toolbar"
   },
   "form": {
+    "codePlaceholder": "Identificativo per DDT, import e integrazioni (es. 'MAIN')",
     "namePlaceholder": "Nome del magazzino",
+    "locationPlaceholder": "Ubicazione fisica o commerciale",
     "saving": "Salvataggio in corso",
     "submit": "Salva",
     "cancel": "Chiudi"
+  },
+  "deleteDialog": {
+    "title": "Vuoi eliminare questo Magazzino?",
+    "description": "L'operazione è irreversibile. Tutti i dati associati verranno eliminati."
   }
 }

@@ -184,7 +184,7 @@ export const OPERATIONS_DECREASING_STOCK = [
 // SORTING OPTIONS
 // ============================================================================
 
-export const WAREHOUSE_SORT_OPTIONS = ["name", "location", "type", "createdAt"] as const;
+export const WAREHOUSE_SORT_OPTIONS = ["code", "name", "location", "type", "createdAt"] as const;
 
 export const STOCK_MOVEMENT_SORT_OPTIONS = [
   "movementDate",

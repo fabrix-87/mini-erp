@@ -27,16 +27,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { SortableTableHead, type SortState } from "@/components/ui/sortable-table-head";
 import { DataPagination } from "@/components/data-pagination";
 import { Badge } from "@/components/ui/badge";
@@ -50,12 +40,12 @@ import type {
 import { formatDateIT } from "@/helpers/date-helper";
 import { formatCurrency } from "@/utils/format-currency";
 import { useTranslations } from "next-intl";
-import { getDetailRoute, getRoute } from "@/lib/navigation-routes";
+import { getRoute } from "@/lib/navigation-routes";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { useNavigation } from "@/hooks/use-navigation";
 import { toast } from "sonner";
 import { deleteOpportunityAction } from "@/actions/opportunity-actions";
-import Link from "next/link";
+import DeleteDialog from "@/components/dialog/delete-dialog";
 
 // ============================================================================
 // Types
@@ -257,14 +247,14 @@ export function OpportunityTable({
                                   ? "inline-flex shrink-0 items-center gap-1 border border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-400"
                                   : "inline-flex shrink-0 items-center gap-1 border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
                               }
-                              aria-label={isLeadOpportunity ? t('form.lead') : t('form.customer')}
+                              aria-label={isLeadOpportunity ? t("form.lead") : t("form.customer")}
                             >
                               {isLeadOpportunity ? (
                                 <UserRoundPlus className="size-3" aria-hidden="true" />
                               ) : (
                                 <Building2 className="size-3" aria-hidden="true" />
                               )}
-                              {isLeadOpportunity ? t('form.lead') : t('form.customer')}
+                              {isLeadOpportunity ? t("form.lead") : t("form.customer")}
                             </Badge>
 
                             <span className="truncate text-muted-foreground">
@@ -388,24 +378,15 @@ export function OpportunityTable({
         />
       )}
 
-      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("deleteDialog.title")}</AlertDialogTitle>
-            <AlertDialogDescription>{t("deleteDialog.description")}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>{t("deleteDialog.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {isDeleting ? t("deleteDialog.deleting") : t("deleteDialog.confirm")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteDialog
+        isOpen={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title={t("deleteDialog.title")}
+        handleDelete={handleDelete}
+        isDeleting={isDeleting}
+      >
+        {t("deleteDialog.description")}
+      </DeleteDialog>
     </div>
   );
 }

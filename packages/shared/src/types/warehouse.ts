@@ -75,10 +75,15 @@ export type WarehouseSortFields = (typeof WAREHOUSE_SORT_OPTIONS)[number];
  */
 export type Warehouse = {
   id: string;
+  code: string;
   name: string;
   location: string | null;
   type: WarehouseType;
   isDefault: boolean,
+  active: boolean;
+  supplierId: string,
+  supplier: Supplier;
+  hasDependencies?: boolean;
   stockMovements: StockMovement[];
   virtualStocks: VirtualStock[];
   documentLines: DocumentLine[];
@@ -107,7 +112,7 @@ export type StockMovement = Omit<CreateStockMovementInput, "movementDate"> & {
 export type VirtualStock = Omit<CreateVirtualStockInput, "warehouseId"> & {
   id: number;
   productVariant: ProductVariant;
-  warehouse: Warehouse;
+  warehouse: Warehouse;  
   supplierCurrency?: Currency | null;
   lastSyncAt: Date | null;
   syncStatus: VirtualSyncStatus;
