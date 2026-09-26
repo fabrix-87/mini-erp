@@ -2,6 +2,10 @@
   "title": "Magazzini",
   "description": "Gestisci magazzino fisici e virtuali",
   "createNewButton": "Crea nuovo Magazzino",
+  "newWarehouse": "Nuovo magazzino",
+  "newWarehouseDescription": "Crea un nuovo magazzino",
+  "editWarehouse": "Modifica magazzino",
+  "editWarehouseDescription": "Modifica un magazzino esistente",
   "itemLabel": "Magazzini",
   "noResults": "Nessun magazzino trovato",
   "movement_types": {
@@ -15,10 +19,21 @@
     "TRANSFER_OUT": "Trasferimento in uscita",
     "INVENTORY_START": "Inventario iniziale"
   },
+  "types": {
+    "PHISICAL": "Fisico",
+    "VIRTUAL": "Virtuale"
+  },
   "tableFields": {
     "name": "Nome",
     "location": "Posizione",
     "type": "Tipo",
+    "isDefault": "Magazzino predefinito?",
     "createdAt": "Data creazione"
+  },
+  "form": {
+    "namePlaceholder": "Nome del magazzino",
+    "saving": "Salvataggio in corso",
+    "submit": "Salva",
+    "cancel": "Chiudi"
   }
 }

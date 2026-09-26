@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DataRow } from "@/components/ui/data-row";
+import { DataRow } from "@/components/data-row";
 import { Separator } from "@/components/ui/separator";
 import { Lead } from "@mini-erp/shared";
 import { Briefcase } from "lucide-react";

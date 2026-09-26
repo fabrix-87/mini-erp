@@ -95,10 +95,9 @@ const supplierPriceSchema = createDecimalSchema(6, {
 export const createWarehouseSchema = z
   .object({
     name: z.string().min(1, "Nome obbligatorio").max(255, "Nome max 255 caratteri").trim(),
-
     location: z.string().max(500).optional().nullable(),
-
     type: warehouseTypeSchema.default(WAREHOUSE_TYPES.PHYSICAL),
+    isDefault: z.boolean().default(false)
   })
   .strict();
 

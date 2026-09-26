@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getRoute } from "@/lib/navigation-routes";
 import { useEffect, useState } from "react";
+import PurgeCacheButton from "./clear-cache-button";
 
 interface ShellBarProps {
   collapsed: boolean;
@@ -142,6 +143,7 @@ export function ShellBar({
         <div className="flex-1" />
 
         <div className="flex items-center gap-1">
+          {process.env.NODE_ENV === "development" && <PurgeCacheButton />}
           <Button
             type="button"
             variant="ghost"

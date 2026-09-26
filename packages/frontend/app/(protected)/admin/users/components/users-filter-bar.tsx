@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { FilterBar, type FilterInitialValues } from "@/components/ui/filter-bar";
+import { FilterBar, type FilterInitialValues } from "@/components/filter-bar";
 import { useNavigation } from "@/hooks/use-navigation";
 import { FilterFieldConfig } from "@/types/filter-types";
 import { useTranslations } from "next-intl";

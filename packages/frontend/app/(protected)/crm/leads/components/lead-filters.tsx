@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { getRoute } from "@/lib/navigation-routes";
 import { LeadQueryInput } from "@mini-erp/shared";
 import { FilterFieldConfig } from "@/types/filter-types";
-import { FilterBar, FilterInitialValues } from "../../../../../components/ui/filter-bar";
+import { FilterBar, FilterInitialValues } from "../../../../../components/filter-bar";
 import { getQualityOptions, getSourceOptions, getStatusOptions } from "@/helpers/lead-helper";
 
 // ============================================================================

@@ -3,8 +3,8 @@
 
 import { UsersFilterBar } from "@/app/(protected)/admin/users/components/users-filter-bar";
 import { UsersTable } from "@/app/(protected)/admin/users/components/users-table";
-import { DataPagination } from "@/components/ui/data-pagination";
-import { StatisticCard } from "@/components/ui/statistic-card";
+import { DataPagination } from "@/components/data-pagination";
+import { StatisticCard } from "@/components/statistic-card";
 import { Users, UserCheck, UserX, Shield, Plus } from "lucide-react";
 import { UserListApiResponse, UserStatsResponse } from "@/types/user-types";
 import { UserQueryInput } from "@mini-erp/shared";

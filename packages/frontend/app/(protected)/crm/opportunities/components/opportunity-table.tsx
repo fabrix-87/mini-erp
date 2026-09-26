@@ -38,7 +38,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { SortableTableHead, type SortState } from "@/components/ui/sortable-table-head";
-import { DataPagination } from "@/components/ui/data-pagination";
+import { DataPagination } from "@/components/data-pagination";
 import { Badge } from "@/components/ui/badge";
 import type { OpportunityListItem, OpportunityQueryInput } from "@/types/opportunity-types";
 import type {

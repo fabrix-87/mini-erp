@@ -3,7 +3,7 @@
 import { CurrencyListApiResponse } from "@/types/currency-types";
 import { CurrencyQueryInput, EntityPermissions } from "@mini-erp/shared";
 import { CurrenciesTable } from "./currencies-table";
-import { DataPagination } from "@/components/ui/data-pagination";
+import { DataPagination } from "@/components/data-pagination";
 import { CurrenciesFilterBar } from "./currencies-filter-bar";
 import { useState } from "react";
 import { CurrencyDetailDialog } from "./currency-detail-dialog";

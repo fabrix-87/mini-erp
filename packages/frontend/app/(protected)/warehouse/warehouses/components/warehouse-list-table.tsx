@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { DataPagination } from "@/components/ui/data-pagination";
+import { DataPagination } from "@/components/data-pagination";
 import {
   DropdownMenu,
   DropdownMenuContent,

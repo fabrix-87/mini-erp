@@ -37,7 +37,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { toDateInput } from "@/helpers/date-helper";
-import { CountryCombobox } from "@/components/ui/country-combobox";
+import { CountryCombobox } from "@/components/combobox/country-combobox";
 import { useNavigation } from "@/hooks/use-navigation";
 import { useTranslations } from "next-intl";
 import {

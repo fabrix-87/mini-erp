@@ -8,7 +8,7 @@ import type { OpportunityQueryInput } from "@/types/opportunity-types";
 import { getRoute } from "@/lib/navigation-routes";
 import { FilterFieldConfig } from "@/types/filter-types";
 
-import { FilterBar, FilterInitialValues } from "@/components/ui/filter-bar";
+import { FilterBar, FilterInitialValues } from "@/components/filter-bar";
 import { getOpportunitySourceOptions, getOpportunityStageOptions, getOpportunityStatusOptions } from "@/helpers/opportunity-helper";
 
 interface OpportunityFiltersProps {

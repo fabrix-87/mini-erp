@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CountryCombobox } from "@/components/ui/country-combobox";
+import { CountryCombobox } from "@/components/combobox/country-combobox";
 import { FormFieldError } from "@/components/ui/form-field-error";
 
 export function BasicInfoTab() {

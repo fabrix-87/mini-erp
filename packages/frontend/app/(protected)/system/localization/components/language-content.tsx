@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { LanguageFilterBar } from "./language-filter-bar";
 import { LanguageTable } from "./language-table";
-import { DataPagination } from "@/components/ui/data-pagination";
+import { DataPagination } from "@/components/data-pagination";
 
 interface LanguageContentProps {
   languagesList: LanguageListApiResponse;

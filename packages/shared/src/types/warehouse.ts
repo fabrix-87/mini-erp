@@ -64,7 +64,7 @@ export type VirtualSyncStatus = z.infer<typeof virtualSyncStatusSchema>;
 export type StockBatchStatus = z.infer<typeof stockBatchStatusSchema>;
 export type StockReservationStatus = z.infer<typeof stockReservationStatusSchema>;
 
-export type WarehouseSortFields = typeof WAREHOUSE_SORT_OPTIONS[number];
+export type WarehouseSortFields = (typeof WAREHOUSE_SORT_OPTIONS)[number];
 
 // ============================================================================
 // ENTITY TYPES
@@ -74,10 +74,11 @@ export type WarehouseSortFields = typeof WAREHOUSE_SORT_OPTIONS[number];
  * Warehouse entity
  */
 export type Warehouse = {
-  id: number;
+  id: string;
   name: string;
   location: string | null;
   type: WarehouseType;
+  isDefault: boolean,
   stockMovements: StockMovement[];
   virtualStocks: VirtualStock[];
   documentLines: DocumentLine[];
@@ -158,7 +159,9 @@ export type StockReservation = {
 // ============================================================================
 
 export type CreateWarehouseInput = z.infer<typeof createWarehouseSchema>;
+export type CreateWarehouseFormValues = z.input<typeof createWarehouseSchema>;
 export type UpdateWarehouseInput = z.infer<typeof updateWarehouseSchema>;
+export type UpdateWarehouseFormValues = z.input<typeof updateWarehouseSchema>;
 
 export type CreateStockMovementInput = z.infer<typeof createStockMovementSchema>;
 export type UpdateStockMovementInput = z.infer<typeof updateStockMovementSchema>;

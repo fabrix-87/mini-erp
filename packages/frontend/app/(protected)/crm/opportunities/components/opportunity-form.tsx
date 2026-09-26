@@ -38,11 +38,11 @@ import { useNavigation } from "@/hooks/use-navigation";
 import { useTranslations } from "next-intl";
 import { OpportunityProposedProducts } from "./opportunity-proposed-products";
 import { createOpportunityAction, updateOpportunityAction } from "@/actions/opportunity-actions";
-import { UserCombobox } from "@/components/ui/user-combobox";
-import { CustomerCombobox } from "@/components/ui/customer-combobox";
+import { UserCombobox } from "@/components/combobox/user-combobox";
+import { CustomerCombobox } from "@/components/combobox/customer-combobox";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LeadCombobox } from "@/components/ui/lead-combobox";
+import { LeadCombobox } from "@/components/combobox/lead-combobox";
 import {
   getOpportunitySourceOptions,
   getOpportunityStageOptions,

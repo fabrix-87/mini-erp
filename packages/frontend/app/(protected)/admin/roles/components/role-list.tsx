@@ -2,7 +2,7 @@
 
 import { RoleQueryInput, RoleSortField, SortOrder } from "@mini-erp/shared";
 import { useMemo, useState, useTransition } from "react";
-import { DataPagination } from "@/components/ui/data-pagination";
+import { DataPagination } from "@/components/data-pagination";
 import RoleTable from "./role-list/role-table";
 import RoleToolbar from "./role-list/role-toolbar";
 import DeleteDialog from "@/components/dialog/delete-dialog";

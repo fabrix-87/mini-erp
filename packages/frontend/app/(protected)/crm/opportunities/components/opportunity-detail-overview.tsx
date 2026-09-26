@@ -5,7 +5,7 @@ import { Building2, User } from "lucide-react";
 import type { OpportunityComplete } from "@mini-erp/shared";
 import { formatDateIT } from "@/helpers/date-helper";
 import { useTranslations } from "next-intl";
-import { DataRow } from "@/components/ui/data-row";
+import { DataRow } from "@/components/data-row";
 
 interface Props {
   opportunity: OpportunityComplete;

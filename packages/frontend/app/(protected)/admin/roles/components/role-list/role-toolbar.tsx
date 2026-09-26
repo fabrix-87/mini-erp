@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { FilterFieldConfig } from "@/types/filter-types";
-import { FilterBar, FilterInitialValues } from "@/components/ui/filter-bar";
+import { FilterBar, FilterInitialValues } from "@/components/filter-bar";
 import { getRoute } from "@/lib/navigation-routes";
 
 interface RoleToolbarProps {

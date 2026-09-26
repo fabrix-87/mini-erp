@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { getRoute } from "@/lib/navigation-routes";
 import { FilterFieldConfig } from "@/types/filter-types";
-import { FilterBar, FilterInitialValues } from "@/components/ui/filter-bar";
+import { FilterBar, FilterInitialValues } from "@/components/filter-bar";
 
 interface Props {
   searchParams: CustomerQueryInput;

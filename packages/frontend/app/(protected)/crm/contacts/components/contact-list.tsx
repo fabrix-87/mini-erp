@@ -13,7 +13,7 @@ import type {
   ContactListApiResponse,
 } from "@/types/contact-types";
 import ContactTable from "./contact-table";
-import { DataPagination } from "@/components/ui/data-pagination";
+import { DataPagination } from "@/components/data-pagination";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { useNavigation } from "@/hooks/use-navigation";
 import { useTranslations } from "next-intl";

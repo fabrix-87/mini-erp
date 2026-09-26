@@ -35,7 +35,7 @@ import { useNavigation } from "@/hooks/use-navigation";
 import { formatCurrency } from "@/utils/format-currency";
 import { useTranslations } from "next-intl";
 import { PaginationInfo } from "@mini-erp/shared";
-import { DataPagination } from "../ui/data-pagination";
+import { DataPagination } from "../data-pagination";
 
 interface CompanyListTableProps {
   data: (Customer | Supplier)[];

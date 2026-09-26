@@ -15,7 +15,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { FilterFieldConfig } from "@/types/filter-types";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 
 // ============================================================================
 // Types

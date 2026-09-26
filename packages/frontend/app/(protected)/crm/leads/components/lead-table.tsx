@@ -31,7 +31,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { SortableTableHead, type SortState } from "@/components/ui/sortable-table-head";
-import { DataPagination } from "@/components/ui/data-pagination";
+import { DataPagination } from "@/components/data-pagination";
 import { LeadStatusBadge } from "@/components/lead/lead-status-badge";
 import { LeadQualityBadge } from "@/components/lead/lead-quality-badge";
 import { LeadSourceBadge } from "@/components/lead/lead-source-badge";

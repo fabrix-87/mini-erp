@@ -5,7 +5,7 @@ import { ContactQueryInput } from "@mini-erp/shared";
 import { useNavigation } from "@/hooks/use-navigation";
 import { useTranslations } from "next-intl";
 import { FilterFieldConfig } from "@/types/filter-types";
-import { FilterBar, FilterInitialValues } from "@/components/ui/filter-bar";
+import { FilterBar, FilterInitialValues } from "@/components/filter-bar";
 
 interface ContactToolbarProps {
   filters: ContactQueryInput;

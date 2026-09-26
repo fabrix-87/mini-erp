@@ -28,7 +28,10 @@ interface OpportunityStatsBarProps {
  * @param t - Translation function scoped to opportunity statistics.
  * @returns Ordered presentation metrics for the shared statistics grid.
  */
-function buildOpportunityMetrics(s: OpportunityStats, t: ReturnType<typeof useTranslations>): StatMetric[] {
+function buildOpportunityMetrics(
+  s: OpportunityStats,
+  t: ReturnType<typeof useTranslations>,
+): StatMetric[] {
   return [
     {
       id: "total",
@@ -63,7 +66,7 @@ function buildOpportunityMetrics(s: OpportunityStats, t: ReturnType<typeof useTr
       value: s.lost,
       icon: TrendingDown,
       tone: "danger",
-      priority: "primary"
+      priority: "primary",
     },
     {
       id: "winRate",
@@ -72,11 +75,7 @@ function buildOpportunityMetrics(s: OpportunityStats, t: ReturnType<typeof useTr
       value: s.winRate.toFixed(1),
       suffix: "%",
       icon: Percent,
-      tone: s.winRate >= 40 
-          ? "success"
-          : s.winRate >= 20
-            ? "danger"
-            : "danger",
+      tone: s.winRate >= 40 ? "success" : s.winRate >= 20 ? "danger" : "danger",
     },
     {
       id: "totalEstimatedValue",
@@ -110,6 +109,12 @@ function buildOpportunityMetrics(s: OpportunityStats, t: ReturnType<typeof useTr
  */
 export function OpportunityStatsBar({ stats }: OpportunityStatsBarProps) {
   const t = useTranslations("crm.opportunities.stats");
-  
-  return <StatsGrid metrics={buildOpportunityMetrics(stats, t)} ariaLabel={t("summary")} columns={StatsGridColumns.Four} />;
+
+  return (
+    <StatsGrid
+      metrics={buildOpportunityMetrics(stats, t)}
+      ariaLabel={t("summary")}
+      columns={StatsGridColumns.Four}
+    />
+  );
 }

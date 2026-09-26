@@ -1,7 +1,7 @@
 import { LeadSourceBadge } from "@/components/lead/lead-source-badge";
 import { LeadStatusBadge } from "@/components/lead/lead-status-badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DataRow } from "@/components/ui/data-row";
+import { DataRow } from "@/components/data-row";
 import { Separator } from "@/components/ui/separator";
 import { formatDateIT } from "@/helpers/date-helper";
 import { Lead } from "@mini-erp/shared";

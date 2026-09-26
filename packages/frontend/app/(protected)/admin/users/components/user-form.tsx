@@ -37,7 +37,7 @@ import { Loader2, Save, Shield, X } from "lucide-react";
 import { Badge } from "../../../../../components/ui/badge";
 import { Checkbox } from "../../../../../components/ui/checkbox";
 import { BreadcrumbSetter } from "../../../../../components/ui/breadcrumb-setter";
-import { CountryCombobox } from "../../../../../components/ui/country-combobox";
+import { CountryCombobox } from "../../../../../components/combobox/country-combobox";
 import { useNavigation } from "@/hooks/use-navigation";
 import { CreateUserInput, Language, Role } from "@mini-erp/shared";
 

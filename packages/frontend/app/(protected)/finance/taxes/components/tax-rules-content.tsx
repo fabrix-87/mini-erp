@@ -4,7 +4,7 @@ import { TaxListApiResponse } from "@/types/tax-types";
 import { EntityPermissions, TaxRuleQueryInput } from "@mini-erp/shared";
 import { useState } from "react";
 import { TaxesFilterBar } from "./tax-rules-filter-bar";
-import { DataPagination } from "@/components/ui/data-pagination";
+import { DataPagination } from "@/components/data-pagination";
 import { TaxRuleTable } from "./tax-rules-table";
 
 /**

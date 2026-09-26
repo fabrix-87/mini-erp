@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { X, Star, StarOff } from "lucide-react";
 import { useCompanies } from "@/hooks/use-company";
 import type { CreateContactForm } from "@mini-erp/shared";
-import { CompanyCombobox } from "@/components/ui/company-combobox";
+import { CompanyCombobox } from "@/components/combobox/company-combobox";
 
 // ============================================================================
 // TYPES
