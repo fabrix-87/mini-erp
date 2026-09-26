@@ -7,6 +7,7 @@ import { PageHeaderAction } from "@/types/page-types";
 import { WarehouseQueryInput, warehouseQuerySchema } from "@mini-erp/shared";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { WarehouseListPage } from "./components/warehouse-list-page";
 
 interface WarehousesPageProps {
   searchParams: Promise<WarehouseQueryInput>;
@@ -16,27 +17,33 @@ export default async function CustomersPage({ searchParams }: WarehousesPageProp
   await requirePermission("warehouse:read");
 
   const params = await searchParams;
-  const queryParams: WarehouseQueryInput = warehouseQuerySchema.parse(searchParams);
+  const queryParams: WarehouseQueryInput = warehouseQuerySchema.parse(params);
 
   const [result, permissions] = await Promise.all([
-    getAllWarehouses(params, 3600),
+    getAllWarehouses(queryParams, 3600),
     checkEntityPermissions("warehouse"),
   ]);
 
-  const t = await getTranslations('warehouse')
+  const t = await getTranslations("warehouse");
 
   const actionItems: PageHeaderAction[] = [
-      createCreateAction(
-        "create",
-        t("createNewButton") ?? "Nuova",
-        getNewRoute("warehouses"),
-        permissions.canCreate,
-      ),
-    ];
-  
+    createCreateAction(
+      "create",
+      t("createNewButton") ?? "Nuova",
+      getNewRoute("warehouses"),
+      permissions.canCreate,
+    ),
+  ];
+
   return (
     <>
-      <PageHeader actionItems={actionItems}/>
+      <PageHeader actionItems={actionItems} />
+      <WarehouseListPage
+        pagination={result.pagination}
+        permissions={permissions}
+        searchParams={queryParams}
+        warehouses={result.data}
+      />
     </>
   );
 }

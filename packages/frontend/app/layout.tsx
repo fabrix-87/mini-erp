@@ -6,7 +6,12 @@ import type { Metadata } from "next";
 import { getLocale, getMessages, getTimeZone } from "next-intl/server";
 import { cn } from "@/lib/utils";
 
-const robotoHeading = Roboto({subsets:['latin'],variable:'--font-heading'});
+const robotoHeading = Roboto({
+  weight: ["400", "500", "700"], 
+  subsets: ["latin"],
+  variable: "--font-heading",
+  preload: false, 
+});
 
 const dmSans = DM_Sans({
   subsets: ["latin"],

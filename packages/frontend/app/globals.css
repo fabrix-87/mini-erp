@@ -267,6 +267,7 @@ main {
   h5,
   h6 {
     @apply text-foreground font-semibold;
+    font-family: var(--font-heading);
   }
 
   button {
@@ -515,6 +516,24 @@ main {
   }
 }
 
+@layer utilities {
+  /* Animazioni per Accordion / Collapsible nei preset Shadcn */
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height); }
+  }
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height); }
+    to { height: 0; }
+  }
+
+  .animate-accordion-down {
+    animation: accordion-down 0.2s ease-out;
+  }
+  .animate-accordion-up {
+    animation: accordion-up 0.2s ease-out;
+  }
+}
 .crm-tabs-list {
   @apply mb-2 w-full justify-start border-b border-border bg-transparent p-0.5;
 }

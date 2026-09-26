@@ -2,6 +2,8 @@
   "title": "Magazzini",
   "description": "Gestisci magazzino fisici e virtuali",
   "createNewButton": "Crea nuovo Magazzino",
+  "itemLabel": "Magazzini",
+  "noResults": "Nessun magazzino trovato",
   "movement_types": {
     "PURCHASE": "Acquisto da fornitore",
     "SALE": "Vendita a cliente",
@@ -12,5 +14,11 @@
     "TRANSFER_IN": "Trasferimento in entrata",
     "TRANSFER_OUT": "Trasferimento in uscita",
     "INVENTORY_START": "Inventario iniziale"
+  },
+  "tableFields": {
+    "name": "Nome",
+    "location": "Posizione",
+    "type": "Tipo",
+    "createdAt": "Data creazione"
   }
 }

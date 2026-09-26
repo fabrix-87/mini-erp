@@ -51,6 +51,7 @@ import {
   warehouseVirtualStatsQuerySchema,
   warehouseBatchStatsQuerySchema,
 } from "../validators/warehouse";
+import { WAREHOUSE_SORT_OPTIONS } from "../constants";
 
 // ============================================================================
 // ENUM TYPES
@@ -62,6 +63,8 @@ export type MovementStatus = z.infer<typeof movementStatusSchema>;
 export type VirtualSyncStatus = z.infer<typeof virtualSyncStatusSchema>;
 export type StockBatchStatus = z.infer<typeof stockBatchStatusSchema>;
 export type StockReservationStatus = z.infer<typeof stockReservationStatusSchema>;
+
+export type WarehouseSortFields = typeof WAREHOUSE_SORT_OPTIONS[number];
 
 // ============================================================================
 // ENTITY TYPES
