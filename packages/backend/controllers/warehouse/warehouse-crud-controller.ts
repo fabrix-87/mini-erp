@@ -47,7 +47,7 @@ export const getAllWarehouses = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const skip = (page - 1) * limit;
-  const where: Prisma.WarehouseWhereInput = withTenantId({ active: true }, tenantId);
+  const where: Prisma.WarehouseWhereInput = withTenantId({}, tenantId);
 
   if (search) {
     where.OR = [
@@ -217,6 +217,36 @@ export const updateWarehouse = async (c: Context<AppBindings>) => {
   });
 
   return sendSuccess(c, warehouse, { message: "warehouse updated" });
+};
+
+/**
+ * @desc   Toggle active status of a warehouse
+ * @route  PATCH /api/warehouses/[:id]/toggle-active
+ * @access Private (warehouse:update)
+ */
+export const toggleActiveWarehouse = async (c: Context<AppBindings>) => {
+  const { id } = getValidatedParams<WarehouseIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
+
+  const warehouse = await prisma.warehouse.findUnique({
+    where: { tenantId, id },
+    select: { active: true, isDefault: true },
+  });
+
+  if (!warehouse) {
+    return sendNotFound(c, "warehouse not found");
+  }
+
+  if (warehouse.isDefault) {
+    throw new ConflictError("Impossibile disattivare il magazzino di default.");
+  }
+
+  const result = await prisma.warehouse.update({
+    where: { id },
+    data: { active: !warehouse.active },
+  });
+
+  return sendSuccess(c, result, { message: "Status modificato" });
 };
 
 /**

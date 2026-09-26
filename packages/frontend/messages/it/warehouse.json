@@ -16,6 +16,8 @@
   "deleteError": "Errore nella rimozione del magazzino",
   "cantDeleteDefault": "Impossibile eliminare il magazzino di default",
   "canDelete": "Elimina il magazzino",
+  "enabled": "Attivo",
+  "disabled": "Disattivato",
   "movement_types": {
     "PURCHASE": "Acquisto da fornitore",
     "SALE": "Vendita a cliente",
@@ -36,6 +38,7 @@
     "name": "Nome",
     "location": "Posizione",
     "type": "Tipo",
+    "active": "Stato",
     "isDefault": "Magazzino principale?",
     "supplier": "Fornitore",
     "createdAt": "Data creazione",

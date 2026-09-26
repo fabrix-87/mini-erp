@@ -2,6 +2,7 @@ import {
   createWarehouse,
   deleteWarehouse,
   getAllWarehouses,
+  toggleActiveWarehouse,
   updateWarehouse,
 } from "@/controllers/warehouse-controller";
 import { createHonoApp } from "@/lib/hono-app";
@@ -45,7 +46,21 @@ warehouseCrudRoutes.post(
 );
 
 /**
- * @route   PATCH /api/warehouses/
+ * @route   PATCH /api/warehouses/:id/toggle-active
+ * @desc    Toggle status of a warehouse
+ * @access  Private (warehouse:update)
+
+ */
+warehouseCrudRoutes.patch(
+  "/:id/toggle-active",
+  requireTenantScope,
+  authorize(["warehouse:update", "warehouse:manage"]),
+  validateWarehouseId,
+  toggleActiveWarehouse,
+);
+
+/**
+ * @route   PATCH /api/warehouses/:id
  * @desc    Update a warehouse
  * @access  Private (warehouse:update)
  * @body    UpdateWarehouseInput

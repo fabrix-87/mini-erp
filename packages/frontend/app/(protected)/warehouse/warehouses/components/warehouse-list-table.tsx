@@ -27,12 +27,24 @@ import {
   Warehouse,
   WarehouseSortFields,
 } from "@mini-erp/shared";
-import { Eye, MoreHorizontal, Pencil, ShieldMinus, Trash2 } from "lucide-react";
+import {
+  Eye,
+  MoreHorizontal,
+  Pencil,
+  ShieldCheck,
+  ShieldMinus,
+  ShieldX,
+  Trash2,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ReactElement, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import DeleteDialog from "@/components/dialog/delete-dialog";
-import { deleteWarehouseAction, updateWarehouseAction } from "@/actions/warehouse-actions";
+import {
+  deleteWarehouseAction,
+  toggleActiveWarehouseAction,
+  updateWarehouseAction,
+} from "@/actions/warehouse-actions";
 import { toast } from "sonner";
 import { WarehouseFormSheet } from "./warehouse-form-sheet";
 
@@ -61,7 +73,7 @@ export function WarehouseListTable({
 
   const basePath = useMemo(() => getRoute("warehouses"), []);
   const updateURL = useUpdateURL(basePath);
-  const { navigateToDetail, navigateToEdit } = useNavigation();
+  const { navigateToDetail } = useNavigation();
 
   const sort: SortState<WarehouseSortFields> = {
     field: sortField,
@@ -95,6 +107,15 @@ export function WarehouseListTable({
     }
   };
 
+  const toggleActive = async (warehouseId: string) => {
+    const result = await toggleActiveWarehouseAction(warehouseId);
+    if (result.success && result.data) {
+      toast.success(t("updateSuccess"));
+    } else {
+      toast.error(result.error ?? t("updateError"));
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <div className="rounded-lg border bg-card">
@@ -107,6 +128,7 @@ export function WarehouseListTable({
               <SortableTableHead field="name" sort={sort} onSort={onSortChange}>
                 {t("tableFields.name")}
               </SortableTableHead>
+              <TableHead>{t("tableFields.active")}</TableHead>
               <SortableTableHead field="type" sort={sort} onSort={onSortChange}>
                 {t("tableFields.type")}
               </SortableTableHead>
@@ -144,8 +166,17 @@ export function WarehouseListTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
+                      {w.active ? (
+                        <Badge variant="outline">{t("enabled")}</Badge>
+                      ): (<Badge variant="destructive">{t("disabled")}</Badge>)}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
                       <span className="font-medium text-foreground">{t(`types.${w.type}`)}</span>
-                      {w.supplier && <Badge variant="secondary">{w.supplier.company.companyName}</Badge>}
+                      {w.supplier && (
+                        <Badge variant="secondary">{w.supplier.company.companyName}</Badge>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>{w.location}</TableCell>
@@ -174,13 +205,16 @@ export function WarehouseListTable({
                             <Pencil className="mr-2 h-4 w-4" /> {tc("actions.edit")}
                           </DropdownMenuItem>
                         )}
-                        {permissions.canUpdate && w.active && !w.isDefault && (
+                        {permissions.canUpdate && !w.isDefault && !w.hasDependencies && (
                           <>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() => navigateToEdit("warehouses", String(w.id))}
-                            >
-                              <ShieldMinus className="mr-2 h-4 w-4" /> {tc("actions.disable")}
+                            <DropdownMenuItem onClick={() => toggleActive(w.id)}>
+                              {w.active ? (
+                                <ShieldX className="mr-2 h-4 w-4" />
+                              ) : (
+                                <ShieldCheck className="mr-2 h-4 w-4" />
+                              )}
+                              {w.active ? tc("actions.disable") : tc("actions.enable")}
                             </DropdownMenuItem>
                           </>
                         )}

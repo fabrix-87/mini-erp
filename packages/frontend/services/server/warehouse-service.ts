@@ -9,6 +9,7 @@ import {
 import {
   CreateWarehouseFormValues,
   UpdateWarehouseFormValues,
+  Warehouse,
   WarehouseQueryInput,
 } from "@mini-erp/shared";
 
@@ -58,10 +59,15 @@ export async function createWarehouse(
 export async function updateWarehouse(
   data: UpdateWarehouseFormValues,
   id: string,
-): Promise<WarehouseSingleApiResponse> {
-  return serverApi.patch<WarehouseSingleApiResponse>(`/warehouses/${id}`, data, {
+): Promise<Warehouse> {
+  return serverApi.patch<Warehouse>(`/warehouses/${id}`, data, {
     tags: [WAREHOUSE_TAGS.detail(id)],
-    unwrapData: false,
+  });
+}
+
+export async function toggleActiveWarehouse(id: string): Promise<Warehouse> {
+  return serverApi.patch<Warehouse>(`/warehouses/${id}/toggle-active`, {
+    tags: [WAREHOUSE_TAGS.detail(id)],
   });
 }
 

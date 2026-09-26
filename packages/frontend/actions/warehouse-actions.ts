@@ -5,6 +5,7 @@ import { warehouseRevalidation } from "@/lib/server/revalidate";
 import {
   createWarehouse,
   deleteWarehouse,
+  toggleActiveWarehouse,
   updateWarehouse,
 } from "@/services/server/warehouse-service";
 import { CreateWarehouseFormValues, UpdateWarehouseFormValues, Warehouse } from "@mini-erp/shared";
@@ -31,7 +32,15 @@ export async function updateWarehouseAction(
   return withAuth(async () => {
     const response = await updateWarehouse(data, id);
     warehouseRevalidation.warehouse(id);
-    return response.data;
+    return response;
+  }, "warehouse:update");
+}
+
+export async function toggleActiveWarehouseAction(id: string): Promise<ActionResult<Warehouse>> {
+  return withAuth(async () => {
+    const response = await toggleActiveWarehouse(id);
+    warehouseRevalidation.warehouse(id);
+    return response;
   }, "warehouse:update");
 }
 
@@ -41,7 +50,7 @@ export async function deleteWarehouseAction(id: string): Promise<ActionResult<vo
     if (response.status !== "success") {
       throw new ApiError(409, response.message ?? "Error");
     }
-    warehouseRevalidation.list()
+    warehouseRevalidation.list();
     return;
   }, "warehouse:delete");
 }
