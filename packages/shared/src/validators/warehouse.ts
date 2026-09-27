@@ -4,7 +4,7 @@ import { createDecimalSchema } from "./primitives/decimal";
 import { isoDateSchema } from "./primitives/date";
 
 import { sortOrderSchema, pageSchema, limitSchema } from "./query/pagination";
-import { queryBooleanSchema, queryNumberSchema } from "./query/params";
+import { queryBooleanOrAllSchema, queryBooleanSchema, queryEnumOrAllSchema, queryNumberSchema } from "./query/params";
 import {
   WAREHOUSE_TYPES,
   MOVEMENT_TYPES,
@@ -380,7 +380,8 @@ export const warehouseQuerySchema = z.object({
   page: pageSchema,
   limit: limitSchema,
   search: z.string().optional(),
-  type: warehouseTypeSchema.optional(),
+  type: queryEnumOrAllSchema(warehouseTypeSchema),
+  active: queryBooleanOrAllSchema(),
   sortBy: z.enum(WAREHOUSE_SORT_OPTIONS).default("name"),
   sortOrder: sortOrderSchema,
 });
@@ -397,7 +398,7 @@ export const stockMovementQuerySchema = z.object({
   serialNumber: z.string().optional(),
   dateFrom: isoDateSchema(),
   dateTo: isoDateSchema(),
-  hasCost: queryBooleanSchema,
+  hasCost: queryBooleanOrAllSchema(),
   sortBy: z
     .enum(STOCK_MOVEMENT_SORT_OPTIONS)
     .default("movementDate"),

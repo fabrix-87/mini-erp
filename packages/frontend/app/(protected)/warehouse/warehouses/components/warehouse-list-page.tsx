@@ -4,7 +4,6 @@ import {
   CreateWarehouseFormValues,
   EntityPermissions,
   PaginationInfo,
-  UpdateWarehouseFormValues,
   Warehouse,
   WarehouseQueryInput,
 } from "@mini-erp/shared";
@@ -15,6 +14,7 @@ import { WarehouseFormSheet } from "./warehouse-form-sheet";
 import { toast } from "sonner";
 import { createWarehouseAction } from "@/actions/warehouse-actions";
 import { useTranslations } from "next-intl";
+import { WarehouseFilters } from "./warehouse-filters";
 
 interface WarehouseListPageProps {
   warehouses: Warehouse[];
@@ -43,6 +43,7 @@ export function WarehouseListPage({
 
   return (
     <>
+      <WarehouseFilters searchParams={searchParams} onPendingChange={setLoading} />
       <ActionToolbar
         ariaLabelKey="warehouse.toolbar.ariaLabel"
         buttons={[

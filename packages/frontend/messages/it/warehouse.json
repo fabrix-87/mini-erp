@@ -30,8 +30,14 @@
     "INVENTORY_START": "Inventario iniziale"
   },
   "types": {
+    "ALL": "Qualsiasi tipo",
     "PHYSICAL": "Fisico",
     "VIRTUAL": "Virtuale"
+  },
+  "active": {
+    "ALL": "Tutti",
+    "enable": "Attivo",
+    "disabled": "Disattivato"
   },
   "tableFields": {
     "code": "Codice",
@@ -58,5 +64,8 @@
   "deleteDialog": {
     "title": "Vuoi eliminare questo Magazzino?",
     "description": "L'operazione è irreversibile. Tutti i dati associati verranno eliminati."
+  },
+  "filters": {
+    "searchPlaceholder": "Ricerca per Codice o Nome..."
   }
 }

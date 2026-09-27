@@ -40,6 +40,7 @@ export const getAllWarehouses = async (c: Context<AppBindings>) => {
     limit = 10,
     search,
     type,
+    active,
     sortBy = "name",
     sortOrder = "asc",
   } = getValidatedQuery<WarehouseQueryInput>(c);
@@ -57,6 +58,7 @@ export const getAllWarehouses = async (c: Context<AppBindings>) => {
   }
 
   if (type) where.type = type;
+  if (active !== undefined) where.active = active;
 
   const [rawWarehouses, total] = await Promise.all([
     prisma.warehouse.findMany({

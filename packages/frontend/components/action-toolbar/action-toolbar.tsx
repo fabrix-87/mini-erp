@@ -63,7 +63,7 @@ export function ActionToolbar({
       <div
         role="toolbar"
         aria-label={t(ariaLabelKey)}
-        className={cn("flex flex-wrap items-center gap-2 pb-3", ALIGN_CLASS[align], className)}
+        className={cn("flex flex-wrap items-center gap-2 py-3", ALIGN_CLASS[align], className)}
       >
         {buttons.map((button) => (
           <ActionToolbarButton key={button.key} config={button} onOpenOverlay={setActiveKey} />
