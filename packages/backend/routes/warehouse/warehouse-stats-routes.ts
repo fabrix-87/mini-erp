@@ -7,6 +7,7 @@ import {
   getVirtualStockStats,
   getBatchStats,
   getWarehouseSummaryStats,
+  getWarehouseListStats,
 } from "@/controllers/warehouse/warehouse-stats-controller";
 import {
   validateWarehouseStatsQuery,
@@ -114,6 +115,18 @@ warehouseStatsRoutes.get(
   authorize(["warehouse:read", "warehouse:manage"]),
   validateWarehouseStatsQuery,
   getWarehouseSummaryStats,
+);
+
+/**
+ * @route   GET /api/warehouses/stats
+ * @desc    Return aggregate metrics for the warehouse list.
+ * @access  Private (warehouse:read or warehouse:manage)
+ */
+warehouseStatsRoutes.get(
+  "/",
+  authorize(["warehouse:read", "warehouse:manage"]),
+  requireTenantScope,
+  getWarehouseListStats,
 );
 
 export default warehouseStatsRoutes;

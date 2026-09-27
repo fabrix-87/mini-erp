@@ -11,7 +11,6 @@ import {
   Percent,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Card, CardContent } from "@/components/ui/card";
 import type { OpportunityStats } from "@/types/opportunity-types";
 import { formatCurrency } from "@/utils/format-currency";
 import { StatMetric, StatsGridColumns } from "@/types/stats-grid-types";

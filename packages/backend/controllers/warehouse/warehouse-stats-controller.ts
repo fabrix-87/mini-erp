@@ -571,3 +571,142 @@ export const getWarehouseSummaryStats = async (c: Context<AppBindings>) => {
     },
   });
 };
+
+/**
+ * Returns aggregate data for the warehouse list page.
+ *
+ * Physical quantities come from confirmed movements and active reservations.
+ * Virtual variants are reported separately from physical stock.
+ *
+ * @route GET /api/warehouses/stats
+ * @access Private (warehouse:read or warehouse:manage)
+ * @param c - Hono context
+ */
+export const getWarehouseListStats = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
+  const now = new Date();
+
+  const [warehouseGroups, movementGroups, reservationGroups, virtualGroups] = await Promise.all([
+    prisma.warehouse.groupBy({
+      by: ["type", "active"],
+      where: withTenantId({} satisfies Prisma.WarehouseWhereInput, tenantId),
+      _count: { _all: true },
+    }),
+
+    prisma.stockMovement.groupBy({
+      by: ["warehouseId", "productVariantId", "movementType"],
+      where: withTenantId(
+        {
+          status: "CONFIRMED",
+          warehouse: { type: "PHYSICAL", active: true },
+        } satisfies Prisma.StockMovementWhereInput,
+        tenantId,
+      ),
+      _sum: { quantity: true },
+    }),
+
+    prisma.stockReservation.groupBy({
+      by: ["warehouseId", "productVariantId"],
+      where: withTenantId(
+        {
+          status: "ACTIVE",
+          warehouse: { type: "PHYSICAL", active: true },
+          OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+        } satisfies Prisma.StockReservationWhereInput,
+        tenantId,
+      ),
+      _sum: { quantity: true },
+    }),
+
+    prisma.virtualStock.groupBy({
+      by: ["productVariantId"],
+      where: withTenantId(
+        {
+          quantity: { gt: 0 },
+          syncStatus: "SUCCESS",
+          warehouse: { type: "VIRTUAL", active: true },
+        } satisfies Prisma.VirtualStockWhereInput,
+        tenantId,
+      ),
+    }),
+  ]);
+
+  const warehouses = {
+    total: 0,
+    active: 0,
+    inactive: 0,
+    physical: 0,
+    virtual: 0,
+  };
+
+  for (const group of warehouseGroups) {
+    const count = group._count._all;
+
+    warehouses.total += count;
+
+    if (group.active) warehouses.active += count;
+    else warehouses.inactive += count;
+
+    if (group.type === "PHYSICAL") warehouses.physical += count;
+    else warehouses.virtual += count;
+  }
+
+  const increasingOperations = new Set<string>(OPERATIONS_INCREASING_STOCK);
+
+  // Keep the warehouse in the key: stock in different warehouses must not
+  // cancel out before availability is calculated.
+  const balances = new Map<string, Decimal>();
+  const variantsOnHand = new Set<string>();
+
+  for (const group of movementGroups) {
+    const key = `${group.warehouseId}:${group.productVariantId}`;
+    const quantity = group._sum.quantity ?? new Decimal(0);
+    const signedQuantity = increasingOperations.has(group.movementType) ? quantity : quantity.neg();
+
+    balances.set(key, (balances.get(key) ?? new Decimal(0)).add(signedQuantity));
+  }
+
+  const reservations = new Map<string, Decimal>();
+
+  for (const group of reservationGroups) {
+    const key = `${group.warehouseId}:${group.productVariantId}`;
+
+    reservations.set(key, group._sum.quantity ?? new Decimal(0));
+  }
+
+  let onHand = new Decimal(0);
+  let reserved = new Decimal(0);
+  let available = new Decimal(0);
+
+  for (const [key, quantity] of balances) {
+    onHand = onHand.add(quantity);
+
+    if (quantity.gt(0)) {
+      variantsOnHand.add(key.split(":")[1]!);
+    }
+  }
+
+  for (const quantity of reservations.values()) {
+    reserved = reserved.add(quantity);
+  }
+
+  for (const key of new Set([...balances.keys(), ...reservations.keys()])) {
+    const quantity = balances.get(key) ?? new Decimal(0);
+    const reservedQuantity = reservations.get(key) ?? new Decimal(0);
+
+    available = available.add(quantity.minus(reservedQuantity));
+  }
+
+  return sendSuccess(c, {
+    warehouses,
+    physicalStock: {
+      productVariants: variantsOnHand.size,
+      onHand: onHand.toString(),
+      reserved: reserved.toString(),
+      available: available.toString(),
+    },
+    virtualStock: {
+      productVariants: virtualGroups.length,
+    },
+  });
+};

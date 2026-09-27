@@ -42,7 +42,7 @@ export function StatCard({ metric }: StatCardProps): React.JSX.Element {
       )}
     >
       <div className="flex items-start justify-between gap-3">
-        <p className="min-w-0 text-sm leading-5 text-muted-foreground">{metric.label}</p>
+        <p className="min-w-0 font-bold leading-5 text-muted-foreground">{metric.label}</p>
 
         <span
           className={cn(

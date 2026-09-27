@@ -10,6 +10,7 @@ export type StatPriority = "primary" | "secondary";
  * Values express the intended number of KPI cards, not literal grid columns.
  */
 export enum StatsGridColumns {
+  Three = "three",
   Four = "four",
   Six = "six",
   Eight = "eight",

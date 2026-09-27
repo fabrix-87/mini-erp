@@ -3,6 +3,7 @@ import { DeleteApiResponse } from "@/types/api";
 import {
   WAREHOUSE_TAGS,
   WarehouseListApiResponse,
+  WarehouseListStatsApiResponse,
   WarehouseSingleApiResponse,
   WarehouseStatsApiResponse,
 } from "@/types/warehouse-types";
@@ -34,10 +35,10 @@ export async function getAllWarehouses(
  * Fetch warehouse stats for the stats bar.
  * @param revalidate - Cache TTL in seconds
  */
-export async function getWarehouseStats(
+export async function getWarehouseListStats(
   revalidate?: number | false,
-): Promise<WarehouseStatsApiResponse> {
-  return serverApi.get<WarehouseStatsApiResponse>("/warehouses/stats", {
+): Promise<WarehouseListStatsApiResponse> {
+  return serverApi.get<WarehouseListStatsApiResponse>("/warehouses/stats", {
     revalidate: revalidate ?? 300,
     tags: [WAREHOUSE_TAGS.stats],
     unwrapData: false,

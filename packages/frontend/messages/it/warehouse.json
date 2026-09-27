@@ -18,6 +18,21 @@
   "canDelete": "Elimina il magazzino",
   "enabled": "Attivo",
   "disabled": "Disattivato",
+  "stats": {
+    "summary": "Statistiche magazzini",
+    "warehouses": "Magazzini",
+    "total": "Totali",
+    "active": "Attivi",
+    "inactive": "Inattivi",
+    "physical": "Fisici",
+    "virtual": "Virtuali",
+    "physicalStock": "Stock fisico",
+    "productVariants": "Prodotti",
+    "onHand": "Giacenza",
+    "reserved": "Riservati",
+    "available": "Disponibili",
+    "virtualStock": "Stock virtuale"
+  },
   "movement_types": {
     "PURCHASE": "Acquisto da fornitore",
     "SALE": "Vendita a cliente",

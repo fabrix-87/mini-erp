@@ -3,6 +3,7 @@ import { StatCard } from "./stat-card";
 import { StatsGridColumns, type StatsGridProps } from "@/types/stats-grid-types";
 
 const GRID_COLUMNS_CLASS: Record<StatsGridColumns, string> = {
+  [StatsGridColumns.Three]: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
   [StatsGridColumns.Four]: "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4",
   [StatsGridColumns.Six]: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6",
   [StatsGridColumns.Eight]: "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4",

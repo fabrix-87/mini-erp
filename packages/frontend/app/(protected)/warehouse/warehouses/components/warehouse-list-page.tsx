@@ -5,6 +5,7 @@ import {
   EntityPermissions,
   PaginationInfo,
   Warehouse,
+  WarehouseListStats,
   WarehouseQueryInput,
 } from "@mini-erp/shared";
 import { ReactElement, useState } from "react";
@@ -15,9 +16,11 @@ import { toast } from "sonner";
 import { createWarehouseAction } from "@/actions/warehouse-actions";
 import { useTranslations } from "next-intl";
 import { WarehouseFilters } from "./warehouse-filters";
+import { WarehouseListStatsBar } from "./warehouse-list-stats-bar";
 
 interface WarehouseListPageProps {
   warehouses: Warehouse[];
+  stats: WarehouseListStats;
   pagination: PaginationInfo;
   searchParams: WarehouseQueryInput;
   permissions: EntityPermissions;
@@ -25,6 +28,7 @@ interface WarehouseListPageProps {
 
 export function WarehouseListPage({
   warehouses,
+  stats,
   pagination,
   searchParams,
   permissions,
@@ -43,6 +47,7 @@ export function WarehouseListPage({
 
   return (
     <>
+      <WarehouseListStatsBar stats={stats} />
       <WarehouseFilters searchParams={searchParams} onPendingChange={setLoading} />
       <ActionToolbar
         ariaLabelKey="warehouse.toolbar.ariaLabel"

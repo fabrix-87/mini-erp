@@ -288,6 +288,26 @@ export interface StockMovementSummary {
   }[];
 }
 
+/** Aggregate data returned for the warehouse list page. */
+export interface WarehouseListStats {
+  warehouses: {
+    total: number;
+    active: number;
+    inactive: number;
+    physical: number;
+    virtual: number;
+  };
+  physicalStock: {
+    productVariants: number;
+    onHand: string;
+    reserved: string;
+    available: string;
+  };
+  virtualStock: {
+    productVariants: number;
+  };
+}
+
 /**
  * Warehouse statistics
  */

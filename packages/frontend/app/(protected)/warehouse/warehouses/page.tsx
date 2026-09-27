@@ -1,9 +1,6 @@
 import { PageHeader } from "@/components/page-header";
-import { createCreateAction } from "@/helpers/page-header-actions-helper";
-import { getNewRoute } from "@/lib/navigation-routes";
 import { checkEntityPermissions, requirePermission } from "@/lib/server/auth";
-import { getAllWarehouses, getWarehouseStats } from "@/services/server/warehouse-service";
-import { PageHeaderAction } from "@/types/page-types";
+import { getAllWarehouses, getWarehouseListStats } from "@/services/server/warehouse-service";
 import { WarehouseQueryInput, warehouseQuerySchema } from "@mini-erp/shared";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -19,8 +16,9 @@ export default async function CustomersPage({ searchParams }: WarehousesPageProp
   const params = await searchParams;
   const queryParams: WarehouseQueryInput = warehouseQuerySchema.parse(params);
 
-  const [result, permissions] = await Promise.all([
+  const [result, stats, permissions] = await Promise.all([
     getAllWarehouses(queryParams, 3600),
+    getWarehouseListStats(),
     checkEntityPermissions("warehouse"),
   ]);
 
@@ -31,6 +29,7 @@ export default async function CustomersPage({ searchParams }: WarehousesPageProp
       <PageHeader title={t("title")} subtitle={t("description")} />
       <WarehouseListPage
         pagination={result.pagination}
+        stats={stats.data}
         permissions={permissions}
         searchParams={queryParams}
         warehouses={result.data}
