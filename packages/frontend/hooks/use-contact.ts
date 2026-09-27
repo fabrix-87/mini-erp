@@ -10,6 +10,7 @@ import type {
   CreateContactInput,
   UpdateContactInput,
   UseContactReturn,
+  UseContactsReturn,
 } from "@/types/contact-types";
 import {
   createContactAction,
@@ -21,11 +22,11 @@ import {
 // Re-export per comodità
 export { contactKeys };
 
-/*
 // ============================================================================
 // HOOK: useContacts (Lista con filtri e paginazione)
 // ============================================================================
 
+/*
 export function useContactsList(params: ContactQueryInput) {
   const { data: response, isLoading, error, refetch } = useQuery({
     queryKey: contactKeys.list(params),
@@ -43,79 +44,22 @@ export function useContactsList(params: ContactQueryInput) {
     },
   };
 }
+  */
 
-export function useContacts(initialParams?: ContactQueryInput): UseContactsReturn {
-  const [params, setParams] = useState<ContactQueryInput>(
-    initialParams || {
-      page: 1,
-      limit: 20,
-      sortBy: 'firstName',
-      sortOrder: 'asc',
-    }
-  );
+export function useContacts(initialParams?: ContactQueryInput) {
+  const params = initialParams || {
+    page: 1,
+    limit: 20,
+    sortBy: "firstName",
+    sortOrder: "asc",
+  };
 
-  const { data: response, isLoading, error, refetch } = useQuery({
+  return useQuery({
     queryKey: contactKeys.list(params),
     queryFn: () => contactService.getAll(params),
     staleTime: 5 * 60 * 1000,
   });
-
-  const contacts = response?.data || [];
-  const pagination = response?.pagination || null;
-
-  const setFilters = useCallback((filters: ContactFilters) => {
-    setParams((prev) => ({
-      ...prev,
-      ...filters,
-      page: 1,
-    }));
-  }, []);
-
-  const resetFilters = useCallback(() => {
-    setParams({
-      page: 1,
-      limit: params.limit,
-      sortBy: 'firstName',
-      sortOrder: 'asc',
-    });
-  }, [params.limit]);
-
-  const setSort = useCallback((field: ContactSortField, order: SortOrder) => {
-    setParams((prev) => ({
-      ...prev,
-      sortBy: field,
-      sortOrder: order,
-    }));
-  }, []);
-
-  const filters: ContactFilters = {
-    search: params.search,
-    companyId: params.companyId,
-    active: params.active,
-    isPrimaryContact: params.isPrimaryContact,
-    department: params.department,
-    position: params.position,
-  };
-
-  return {
-    contacts,
-    loading: isLoading,
-    error: error?.message || null,
-    pagination,
-    filters,
-    setFilters,
-    resetFilters,
-    refetch: async () => {
-      await refetch();
-    },
-    sort: {
-      field: params.sortBy || 'firstName',
-      order: params.sortOrder || 'asc',
-    },
-    setSort,
-  };
 }
-*/
 
 // ============================================================================
 // HOOK: useContact (Singolo contatto)
@@ -157,7 +101,7 @@ export function useContactsByCompany(companyId: string, active?: boolean) {
   } = useQuery({
     queryKey: contactKeys.byCompany(companyId),
     queryFn: () => contactService.getByCompany(companyId, active),
-    enabled: !!companyId,// Disabilita se companyId è 0 o undefined
+    enabled: !!companyId, // Disabilita se companyId è 0 o undefined
   });
 
   return {
@@ -345,10 +289,7 @@ export function useContactBulkOperations() {
 export function useContactValidation() {
   const [isValidating, setIsValidating] = useState(false);
 
-  const validateEmailUnique = async (
-    email: string,
-    contactId?: string,
-  ): Promise<boolean> => {
+  const validateEmailUnique = async (email: string, contactId?: string): Promise<boolean> => {
     setIsValidating(true);
     try {
       return await contactService.checkEmailUnique(email, contactId);

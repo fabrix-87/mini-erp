@@ -1,6 +1,6 @@
 {
-  "title": "Magazzini",
-  "description": "Gestisci magazzino fisici e virtuali",
+  "title": "Gestione Magazzini",
+  "description": "Gestisci magazzini fisici e virtuali",
   "createNewButton": "Crea nuovo Magazzino",
   "newWarehouse": "Nuovo magazzino",
   "newWarehouseDescription": "Crea un nuovo magazzino",

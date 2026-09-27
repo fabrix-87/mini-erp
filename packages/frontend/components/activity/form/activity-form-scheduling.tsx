@@ -56,7 +56,7 @@ export function ActivityFormScheduling({
               <Input
                 id="scheduledEnd"
                 type="datetime-local"
-                value={formData.scheduledEnd}
+                value={formData.scheduledEnd ?? undefined}
                 onChange={(e) => onChange("scheduledEnd", e.target.value)}
               />
             </div>
@@ -65,7 +65,7 @@ export function ActivityFormScheduling({
           <div className="space-y-2">
             <Label htmlFor="duration">Durata (minuti)</Label>
             <Select
-              value={formData.duration}
+              value={formData.duration?.toString() ?? "30"}
               onValueChange={(value) => onChange("duration", value)}
             >
               <SelectTrigger>
@@ -117,7 +117,7 @@ export function ActivityFormScheduling({
               Promemoria (minuti prima)
             </Label>
             <Select
-              value={formData.reminderMinutes}
+              value={formData.reminderMinutes?.toString() ?? "0"}
               onValueChange={(value) => onChange("reminderMinutes", value)}
             >
               <SelectTrigger>

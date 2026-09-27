@@ -1,4 +1,4 @@
-import { prisma } from "../config/prisma-config";
+ import { prisma } from "../config/prisma-config";
 import {
   sendCreated,
   sendDeleted,
@@ -374,7 +374,7 @@ export const getContactsByCompany = async (c: Context<AppBindings>) => {
   const tenantId = getRequiredTenantId(c);
 
   const company = await prisma.company.findFirst({
-    where: withTenantScope(tenantId, { id: companyId }),
+    where: withTenantId({ id: companyId }, tenantId),
   });
   if (!company) {
     return sendNotFound(c, "Company non trovata");

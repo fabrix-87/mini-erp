@@ -28,7 +28,7 @@ export default async function CustomersPage({ searchParams }: WarehousesPageProp
 
   return (
     <>
-      <PageHeader/>
+      <PageHeader title={t("title")} subtitle={t("description")} />
       <WarehouseListPage
         pagination={result.pagination}
         permissions={permissions}

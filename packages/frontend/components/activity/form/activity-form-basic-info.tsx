@@ -12,20 +12,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Combobox, ComboboxOption } from "@/components/ui/combobox";
+import { Combobox } from "@/components/ui/combobox";
 import { ActivityFormData } from "@/types/activitiy-types";
 import { Customer } from "@/types/customer-types";
 import { Contact } from "@/types/contact-types";
 import { useMemo } from "react";
 import { Lead } from "@mini-erp/shared";
+import { ComboboxOption } from "@/types/ui-types";
+import { CustomerCombobox } from "@/components/combobox/customer-combobox";
+import { LeadCombobox } from "@/components/combobox/lead-combobox";
+import { ContactCombobox } from "@/components/combobox/contact-combobox";
 
 const activityTypeLabels: Record<string, string> = {
   CALL: "Chiamata",
@@ -73,46 +71,11 @@ export function ActivityFormBasicInfo({
   onLeadChange,
   onSearchLeads,
 }: ActivityFormBasicInfoProps) {
-  const showLocationField = ["MEETING", "SITE_VISIT", "VIDEO_CALL"].includes(
-    formData.type
-  );
+  const showLocationField = ["MEETING", "SITE_VISIT", "VIDEO_CALL"].includes(formData.type);
 
-  const selectedCustomer = customers.find(
-    (c) => c.id.toString() === formData.customerId
-  );
+  const selectedCustomer = customers.find((c) => c.id.toString() === formData.customerId);
 
-  const selectedLead = leads.find(
-    (l) => l.id.toString() == formData.leadId
-  );
-
-  // Converti customers in formato ComboboxOption
-  const customerOptions: ComboboxOption[] = useMemo(
-    () =>
-      Array.isArray(customers)
-        ? customers.map((customer) => ({
-            value: customer.id.toString(),
-            label: customer.company.companyName,
-            description: `(${customer.company.code}) • ${customer.segment}${
-              customer.company.vatNumber
-                ? ` • P.IVA: ${customer.company.vatNumber}`
-                : ""
-            }`,
-          }))
-        : [],
-    [customers]
-  );
-
-  // Converti leads in formato ComboboxOption
-  const leadOptions: ComboboxOption[] = useMemo(
-    () =>
-      Array.isArray(leads)
-        ? leads.map((lead) => ({
-            value: lead.id.toString(),
-            label: lead.companyName,
-          }))
-        : [],
-    [leads]
-  );
+  const selectedLead = leads.find((l) => l.id.toString() == formData.leadId);
 
   // Converti contacts in formato ComboboxOption
   const contactOptions: ComboboxOption[] = useMemo(() => {
@@ -122,7 +85,7 @@ export function ActivityFormBasicInfo({
       ...validContacts.map((contact) => ({
         value: contact.id.toString(),
         label: `${contact.firstName} ${contact.lastName}`,
-        description: contact.position || contact.email,
+        description: contact.email ?? undefined,
       })),
     ];
   }, [contacts]);
@@ -137,10 +100,7 @@ export function ActivityFormBasicInfo({
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="type">Tipo Attività *</Label>
-            <Select
-              value={formData.type}
-              onValueChange={(value) => onChange("type", value)}
-            >
+            <Select value={formData.type} onValueChange={(value) => onChange("type", value)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -199,14 +159,9 @@ export function ActivityFormBasicInfo({
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="customerId">Cliente *</Label>
-            <Combobox
-              options={customerOptions}
-              value={formData.customerId}
+            <CustomerCombobox
+              value={formData.customerId ?? undefined}
               onValueChange={onCustomerChange}
-              onSearchChange={onSearchCustomers}
-              placeholder="Seleziona cliente..."
-              searchPlaceholder="Cerca per nome, P.IVA..."
-              emptyText="Nessun cliente trovato"
             />
 
             {/* Info Cliente Selezionato */}
@@ -242,15 +197,7 @@ export function ActivityFormBasicInfo({
           </div>
           <div className="space-y-2">
             <Label htmlFor="leadId">Lead *</Label>
-            <Combobox
-              options={leadOptions}
-              value={formData.leadId}
-              onValueChange={onLeadChange}
-              onSearchChange={onSearchLeads}
-              placeholder="Seleziona Lead..."
-              searchPlaceholder="Cerca per nome"
-              emptyText="Nessun lead trovato"
-            />
+            <LeadCombobox value={formData.leadId ?? undefined} onValueChange={onLeadChange} />
 
             {/* Info Lead Selezionato */}
             {selectedLead && (
@@ -264,7 +211,10 @@ export function ActivityFormBasicInfo({
                   </Badge>
                 </div>
                 <div className="text-xs text-muted-foreground space-y-0.5">
-                  <div>{selectedLead.contactFirstName} {selectedLead.contactLastName} • {selectedLead.contactEmail}</div>
+                  <div>
+                    {selectedLead.contactFirstName} {selectedLead.contactLastName} •{" "}
+                    {selectedLead.contactEmail}
+                  </div>
                 </div>
               </div>
             )}
@@ -274,13 +224,9 @@ export function ActivityFormBasicInfo({
         {/* Contact Selection con Combobox */}
         <div className="space-y-2">
           <Label htmlFor="contactId">Contatto</Label>
-          <Combobox
-            options={contactOptions}
-            value={formData.contactId}
+          <ContactCombobox
+            value={formData.contactId ?? undefined}
             onValueChange={(value) => onChange("contactId", value)}
-            placeholder="Seleziona contatto..."
-            searchPlaceholder="Cerca contatto..."
-            emptyText="Nessun contatto disponibile"
             disabled={!formData.customerId}
           />
         </div>
@@ -293,7 +239,7 @@ export function ActivityFormBasicInfo({
             </Label>
             <Input
               id="location"
-              value={formData.location}
+              value={formData.location ?? ""}
               onChange={(e) => onChange("location", e.target.value)}
               placeholder="Es: Sede cliente, Ufficio Milano, Online (Zoom)"
             />

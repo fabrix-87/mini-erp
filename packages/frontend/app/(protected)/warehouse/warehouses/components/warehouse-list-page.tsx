@@ -13,7 +13,7 @@ import { WarehouseListTable } from "./warehouse-list-table";
 import { ActionToolbar } from "@/components/action-toolbar";
 import { WarehouseFormSheet } from "./warehouse-form-sheet";
 import { toast } from "sonner";
-import { createWarehouseAction, updateWarehouseAction } from "@/actions/warehouse-actions";
+import { createWarehouseAction } from "@/actions/warehouse-actions";
 import { useTranslations } from "next-intl";
 
 interface WarehouseListPageProps {

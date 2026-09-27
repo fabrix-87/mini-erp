@@ -127,6 +127,16 @@ export interface UseContactReturn {
   refetch: () => Promise<void>;
 }
 
+/**
+ * Return type useContacts hook
+ */
+export interface UseContactsReturn {
+  contacts: Contact[] | [];
+  loading: boolean;
+  error: string | null;
+  refetch: () => Promise<void>;
+}
+
 // ============================================================================
 // UTILITY TYPES
 // ============================================================================

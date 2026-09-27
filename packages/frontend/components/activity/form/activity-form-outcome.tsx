@@ -78,7 +78,7 @@ export function ActivityFormOutcome({
                 <Label htmlFor="result">Note sul Risultato</Label>
                 <Textarea
                   id="result"
-                  value={formData.result}
+                  value={formData.result ?? ""}
                   onChange={(e) => onChange("result", e.target.value)}
                   placeholder="Descrivi cosa è successo, le decisioni prese, i prossimi passi..."
                   rows={6}
