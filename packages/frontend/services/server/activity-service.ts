@@ -3,14 +3,19 @@ import { serverApi } from "@/lib/server/api";
 import {
   Activity,
   ACTIVITY_TAGS,
-  ActivityDashboardStats,
   ActivityFormData,
   ActivityQueryInput,
   ActivitySingleApiResponse,
 } from "@/types/activitiy-types";
 import { ApiResponse, DeleteApiResponse } from "@/types/api";
 import { getUserFromCookiesSSR } from "@/lib/server/cookies";
-import { ActivityOutcome, ActivityStatus, CompleteActivityInput, UpdateActivityInput } from "@mini-erp/shared";
+import {
+  ActivityStats,
+  ActivityStatus,
+  CompleteActivityInput,
+  PaginatedResponse,
+  UpdateActivityInput,
+} from "@mini-erp/shared";
 
 /**
  * Server-side function to fetch activities (for SSR)
@@ -18,10 +23,10 @@ import { ActivityOutcome, ActivityStatus, CompleteActivityInput, UpdateActivityI
  */
 export async function fetchActivitiesServer(
   params: ActivityQueryInput,
-): Promise<ApiResponse<Activity[]>> {
+): Promise<PaginatedResponse<Activity>> {
   try {
     // unwrapData: false per ottenere l'intera risposta con pagination
-    const response = await serverApi.get<ApiResponse<Activity[]>>("/activities", {
+    const response = await serverApi.get<PaginatedResponse<Activity>>("/activities", {
       params,
       unwrapData: false, // Otteniamo { status, data, pagination }
       revalidate: 0, // No cache per dati sempre freschi
@@ -38,10 +43,10 @@ export async function fetchActivitiesServer(
  * Server-side function to fetch activity statistics (for SSR)
  */
 export async function fetchActivityStatsServer(
-  userId: string,
-): Promise<ApiResponse<ActivityDashboardStats>> {
+  userId?: string,
+): Promise<ApiResponse<ActivityStats>> {
   try {
-    const response = await serverApi.get<ApiResponse<ActivityDashboardStats>>("/activities/stats", {
+    const response = await serverApi.get<ApiResponse<ActivityStats>>("/activities/stats", {
       params: { userId },
       unwrapData: false,
       revalidate: 300, // Cache per 5 minuti

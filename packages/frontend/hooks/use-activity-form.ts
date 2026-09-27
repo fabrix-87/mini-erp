@@ -52,9 +52,9 @@ export function useActivityForm({
       const scheduledEnd = activity.scheduledEnd ? new Date(activity.scheduledEnd) : null;
 
       return {
-        customerId: activity.customerId?.toString() || "",
-        contactId: activity.contactId?.toString() || "",
-        leadId: activity.leadId?.toString() || "",
+        customerId: activity.customerId?.toString() || null,
+        contactId: activity.contactId?.toString() || null,
+        leadId: activity.leadId?.toString() || null,
         type: activity.type,
         subject: activity.subject,
         description: activity.description || "",
@@ -147,8 +147,8 @@ export function useActivityForm({
     setFormData((prev) => ({
       ...prev,
       customerId,
-      contactId: "", // Reset contact quando cambia customer
-      leadId: "", // Reset lead quando cambia customer
+      contactId: null, // Reset contact quando cambia customer
+      leadId: null, // Reset lead quando cambia customer
     }));
     setSelectedCustomerId(customerId);
   };
@@ -157,8 +157,8 @@ export function useActivityForm({
     setFormData((prev) => ({
       ...prev,
       leadId,
-      contactId: "", // Reset contact quando cambia lead
-      customerId: "", // Reset customer quando cambia lead
+      contactId: null, // Reset contact quando cambia lead
+      customerId: null, // Reset customer quando cambia lead
     }));
     setSelectedLeadId(leadId);
   };

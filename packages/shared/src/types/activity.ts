@@ -79,6 +79,19 @@ export type ActivityTemplate = z.infer<typeof createActivityTemplateSchema> & {
 };
 
 /**
+ * Type stats
+ */
+export interface ActivityStats {
+  byType: Array<{ type: string; _count: number }>;
+  byStatus: Array<{ status: string; _count: number }>;
+  byPriority: Array<{ priority: string; _count: number }>;
+  byOutcome: Array<{ outcome: string; _count: number }>;
+  overdue: number;
+  today: number;
+  followUp: number;
+}
+
+/**
  * Type Form values per Activity
  */
 export type ActivityFormData = z.input<typeof createActivitySchema>;

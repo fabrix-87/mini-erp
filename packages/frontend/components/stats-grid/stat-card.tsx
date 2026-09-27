@@ -42,12 +42,12 @@ export function StatCard({ metric }: StatCardProps): React.JSX.Element {
       )}
     >
       <div className="flex items-start justify-between gap-3">
-        <p className="min-w-0 font-bold leading-5 text-muted-foreground">{metric.label}</p>
+        <p className="min-w-0 leading-5 text-muted-foreground">{metric.label}</p>
 
         <span
           className={cn(
             "flex h-6 w-6 shrink-0 items-center justify-center rounded-md",
-            TONE_ICON_CLASS[tone],
+            metric.bgColor ?? TONE_ICON_CLASS[tone],
           )}
         >
           <Icon className="h-3.5 w-3.5" aria-hidden="true" />
@@ -55,20 +55,25 @@ export function StatCard({ metric }: StatCardProps): React.JSX.Element {
       </div>
 
       {metric.kind === "value" ? (
-        <p
-          className={cn(
-            "mt-3 text-3xl font-semibold tracking-tight tabular-nums",
-            TONE_VALUE_CLASS[tone],
-          )}
-        >
-          {metric.value}
+        <>
+          <p
+            className={cn(
+              "mt-3 text-3xl font-semibold tracking-tight tabular-nums",
+              metric.color ?? TONE_VALUE_CLASS[tone],
+            )}
+          >
+            {metric.value}
 
-          {metric.suffix && (
-            <span className="ml-0.5 text-sm font-normal text-muted-foreground">
-              {metric.suffix}
-            </span>
+            {metric.suffix && (
+              <span className="ml-0.5 text-sm font-normal text-muted-foreground">
+                {metric.suffix}
+              </span>
+            )}
+          </p>
+          {metric.description && (
+            <p className="text-xs text-muted-foreground mt-1">{metric.description}</p>
           )}
-        </p>
+        </>
       ) : (
         <div className="mt-3 space-y-1.5">
           {metric.rows.length > 0 ? (

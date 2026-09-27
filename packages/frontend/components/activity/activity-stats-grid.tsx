@@ -1,144 +1,95 @@
 // components/activity/activity-stats-grid.tsx
-"use client";
+import { Calendar, AlertCircle, CheckCircle2, RotateCcw, Clock, TrendingUp } from "lucide-react";
+import { StatMetric, StatsGrid } from "../stats-grid";
+import { ActivityStats } from "@mini-erp/shared";
+import { getTranslations } from "next-intl/server";
+import { createTranslator } from "next-intl";
+import { StatsGridColumns } from "@/types/stats-grid-types";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Calendar,
-  AlertCircle,
-  CheckCircle2,
-  RotateCcw,
-  Clock,
-  TrendingUp,
-} from "lucide-react";
-
-import { Skeleton } from "@/components/ui/skeleton";
-import { ActivityStats } from "@/types/activitiy-types";
-
-interface ActivityStatsGridProps {
-  stats?: ActivityStats;
-  isLoading?: boolean;
-}
-
-export function ActivityStatsGrid({
-  stats,
-  isLoading,
-}: ActivityStatsGridProps) {
-  if (isLoading) {
-    return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-        {[...Array(6)].map((_, i) => (
-          <Card key={i}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-8 w-8 rounded" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-8 w-12" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
-
-  if (!stats) {
-    return null;
-  }
-
-  // Calcola totali dai dati groupBy
-  const totalActivities = stats.byStatus.reduce(
-    (sum, item) => sum + item._count,
-    0
-  );
-  const completedCount =
-    stats.byStatus.find((s) => s.status === "COMPLETED")?._count || 0;
-  const inProgressCount =
-    stats.byStatus.find((s) => s.status === "IN_PROGRESS")?._count || 0;
-  const scheduledCount =
-    stats.byStatus.find((s) => s.status === "SCHEDULED")?._count || 0;
-
-  const cards = [
+function buildActivityMetrics(
+  stats: ActivityStats,
+  t: ReturnType<typeof createTranslator>,
+): StatMetric[] {
+  const totalActivities = stats.byStatus.reduce((sum, item) => sum + item._count, 0);
+  const completedCount = stats.byStatus.find((s) => s.status === "COMPLETED")?._count || 0;
+  const inProgressCount = stats.byStatus.find((s) => s.status === "IN_PROGRESS")?._count || 0;
+  //const scheduledCount = stats.byStatus.find((s) => s.status === "SCHEDULED")?._count || 0;
+  return [
     {
-      title: "Totale",
+      id: "totalActivities",
+      kind: "value",
       value: totalActivities,
       icon: TrendingUp,
+      label: t("totalActivities"),
       color: "text-blue-600",
       bgColor: "bg-blue-500/10",
-      description: "Attività totali",
+      description: t("totalDescription"),
     },
     {
-      title: "Oggi",
+      id: "today",
       value: stats.today,
+      kind: "value",
       icon: Calendar,
       color: "text-green-600",
       bgColor: "bg-green-500/10",
-      description: "Attività di oggi",
+      description: t("todayDescription"),
+      label: t("today"),
     },
     {
-      title: "In Ritardo",
+      id: "overdue",
+      kind: "value",
       value: stats.overdue,
       icon: AlertCircle,
-      color: "text-red-600",
-      bgColor: "bg-red-500/10",
-      description: "Attività scadute",
+      tone: "danger",
+      description: t("overdueDescription"),
+      label: t("overdue"),
     },
     {
-      title: "Completate",
+      id: "completed",
+      kind: "value",
       value: completedCount,
       icon: CheckCircle2,
       color: "text-green-600",
       bgColor: "bg-green-500/10",
-      description: `${totalActivities > 0 ? Math.round((completedCount / totalActivities) * 100) : 0}% del totale`,
+      label: t("completed"),
+      description: t("completedDescription", {
+        percent: totalActivities > 0 ? Math.round((completedCount / totalActivities) * 100) : 0,
+      }),
     },
     {
-      title: "In Corso",
+      id: "inProgress",
+      kind: "value",
+      label: t("inProgress"),
       value: inProgressCount,
       icon: Clock,
       color: "text-blue-600",
       bgColor: "bg-blue-500/10",
-      description: "In lavorazione",
+      description: t("inProgressDescription"),
     },
     {
-      title: "Follow-up",
+      id: "follow-up",
+      kind: "value",
+      label: t("followUp"),
       value: stats.followUp,
       icon: RotateCcw,
       color: "text-orange-600",
       bgColor: "bg-orange-500/10",
-      description: "Richiedono follow-up",
+      description: t("followUpDescription"),
     },
   ];
+}
 
+interface ActivityStatsGridProps {
+  stats: ActivityStats;
+}
+
+export async function ActivityStatsGrid({ stats }: ActivityStatsGridProps) {
+  const t = await getTranslations("activities.stats");
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-      {cards.map((card) => {
-        const Icon = card.icon;
-        return (
-          <Card key={card.title} className="relative overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {card.title}
-              </CardTitle>
-              <div className={`p-2 rounded-lg ${card.bgColor}`}>
-                <Icon className={`h-4 w-4 ${card.color}`} />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{card.value}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {card.description}
-              </p>
-            </CardContent>
-            
-            {/* Indicatore visivo per urgenze */}
-            {card.title === "In Ritardo" && card.value > 0 && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-red-500" />
-            )}
-            {card.title === "Follow-up" && card.value > 0 && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-orange-500" />
-            )}
-          </Card>
-        );
-      })}
-    </div>
+    <StatsGrid
+      metrics={buildActivityMetrics(stats, t)}
+      ariaLabel={t("summary")}
+      columns={StatsGridColumns.Six}
+    />
   );
 }

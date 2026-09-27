@@ -5,6 +5,10 @@ export interface PageIdProps {
   params: Promise<{ id: string }>;
 }
 
+export interface SearchParamsProps<T> {
+  searchParams: Promise<T>;
+}
+
 export type PageHeaderActionIcon = AppIconName;
 
 export type PageHeaderActionIntent = "navigate" | "delete" | "export" | "custom";

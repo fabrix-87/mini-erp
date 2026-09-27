@@ -12,7 +12,7 @@ import {
 import { isoDateSchema } from "./primitives/date";
 import { createCuidSchema, createIdSchema, positiveNumbersSchema } from "./primitives/id";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
-import { queryBooleanSchema } from "./query/params";
+import { queryBooleanSchema, queryEnumOrAllSchema } from "./query/params";
 import { emailSchema } from "./primitives/string";
 
 // ============================================================================
@@ -181,7 +181,7 @@ export const activityQuerySchema = z
     search: z.string().optional().nullable(),
 
     // Filtri
-    type: activityTypeSchema.optional().nullable(),
+    type: queryEnumOrAllSchema(activityTypeSchema),
     status: activityStatusSchema.optional().nullable(),
     priority: activityPrioritySchema.optional().nullable(),
     outcome: activityOutcomeSchema.optional().nullable(),

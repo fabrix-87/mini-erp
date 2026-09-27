@@ -89,7 +89,7 @@
       "averageOrderValue": "Valore medio ordini",
       "bySegment": "Per segmento",
       "noSegments": "Nessun segmento",
-      "summary":"Riepilogo clienti"
+      "summary": "Riepilogo clienti"
     }
   },
   "suppliers": {
@@ -122,7 +122,7 @@
       "averageRating": "Rating Medio",
       "byRating": "Per rating",
       "noRating": "Nessun rating",
-      "summary":"Riepilogo fornitori"
+      "summary": "Riepilogo fornitori"
     }
   },
   "leads": {
@@ -158,8 +158,8 @@
       "contact": "Contatto",
       "address": "Indirizzo",
       "commercial": "Commerciale",
-      "gdpr":"Consensi GDPR",
-      "tracking":"Tracciamento"
+      "gdpr": "Consensi GDPR",
+      "tracking": "Tracciamento"
     },
     "form": {
       "companyName": "Ragione Sociale",

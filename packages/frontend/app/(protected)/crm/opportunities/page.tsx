@@ -12,14 +12,12 @@ import { getNewRoute } from "@/lib/navigation-routes";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import type { Metadata } from "next";
-import { PageHeaderAction } from "@/types/page-types";
+import { PageHeaderAction, SearchParamsProps } from "@/types/page-types";
 import { OpportunityViewToggle } from "./components/opportunity-view-toggle";
 
-interface OpportunitiesPageProps {
-  searchParams: Promise<OpportunityQueryInput>;
-}
-
-export default async function OpportunitiesPage({ searchParams }: OpportunitiesPageProps) {
+export default async function OpportunitiesPage({
+  searchParams,
+}: SearchParamsProps<OpportunityQueryInput>) {
   await requirePermission("opportunity:read");
 
   const params = await searchParams;

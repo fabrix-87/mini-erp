@@ -27,7 +27,10 @@ export async function createActivityAction(
   activityData: ActivityFormData,
 ): Promise<ActionResult<Activity>> {
   return withAuth(async () => {
-    const response = await createActivity(activityData);
+    const response = await createActivity({
+      ...activityData,
+      reminderMinutes: activityData.reminderMinutes ? Number(activityData.reminderMinutes) : undefined
+    });
 
     activityRevalidation.list();
     if (activityData.leadId) {

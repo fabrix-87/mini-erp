@@ -19,16 +19,6 @@ export interface ActivityDashboardStats {
   completionRate: number;
 }
 
-export interface ActivityStats {
-  byType: Array<{ type: string; _count: number }>;
-  byStatus: Array<{ status: string; _count: number }>;
-  byPriority: Array<{ priority: string; _count: number }>;
-  byOutcome: Array<{ outcome: string; _count: number }>;
-  overdue: number;
-  today: number;
-  followUp: number;
-}
-
 // ============================================================================
 // QUERY KEYS
 // ============================================================================

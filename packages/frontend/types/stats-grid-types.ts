@@ -23,6 +23,9 @@ interface BaseStatMetric {
   icon: LucideIcon;
   tone?: StatTone;
   priority?: StatPriority;
+  bgColor?: string;
+  color?: string;
+  description?: string;
 }
 
 export interface ValueStatMetric extends BaseStatMetric {

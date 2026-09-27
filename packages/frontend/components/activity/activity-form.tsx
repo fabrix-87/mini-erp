@@ -13,7 +13,6 @@ import { ActivityFormBasicInfo } from "./form/activity-form-basic-info";
 import { ActivityFormScheduling } from "./form/activity-form-scheduling";
 import { ActivityFormOutcome } from "./form/activity-form-outcome";
 import { ActivityFormSettings } from "./form/activity-form-settings";
-import { ActivityFormHeader } from "./form/activity-form-header";
 import { ActivityStatusBadge } from "./activity-status-badge";
 import { useActivityForm } from "@/hooks/use-activity-form";
 import { useAuth } from "@/hooks/use-auth";
@@ -110,17 +109,11 @@ export function ActivityForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <ActivityFormHeader
-        isEditMode={isEditMode}
-        isPending={isPending}
-        onCancel={() => router.back()}
-      />
-
       {formData.status && formData.priority && (
         <ActivityStatusBadge status={formData.status} priority={formData.priority} />
       )}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList variant="line" className="crm-tabs-list">
           <TabsTrigger value="basic">Info Base</TabsTrigger>
           <TabsTrigger value="schedule">Pianificazione</TabsTrigger>
           <TabsTrigger value="outcome">Esito</TabsTrigger>
@@ -131,13 +124,10 @@ export function ActivityForm({
           <ActivityFormBasicInfo
             formData={formData}
             customers={customers}
-            contacts={contacts}
             leads={leads}
             onChange={handleChange}
             onCustomerChange={handleCustomerChange}
-            onSearchCustomers={searchCustomers}
             onLeadChange={handleLeadChange}
-            onSearchLeads={searchLeads}
           />
         </TabsContent>
 

@@ -14,29 +14,15 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Combobox } from "@/components/ui/combobox";
 import { ActivityFormData } from "@/types/activitiy-types";
 import { Customer } from "@/types/customer-types";
-import { Contact } from "@/types/contact-types";
-import { useMemo } from "react";
 import { Lead } from "@mini-erp/shared";
-import { ComboboxOption } from "@/types/ui-types";
 import { CustomerCombobox } from "@/components/combobox/customer-combobox";
 import { LeadCombobox } from "@/components/combobox/lead-combobox";
 import { ContactCombobox } from "@/components/combobox/contact-combobox";
-
-const activityTypeLabels: Record<string, string> = {
-  CALL: "Chiamata",
-  EMAIL: "Email",
-  MEETING: "Riunione",
-  TASK: "Task",
-  NOTE: "Nota",
-  WHATSAPP: "WhatsApp",
-  SMS: "SMS",
-  VIDEO_CALL: "Videochiamata",
-  SITE_VISIT: "Visita in loco",
-  OTHER: "Altro",
-};
+import { getActivityTypeOptions } from "@/helpers/activity-helpers";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 const leadStatusColors: Record<string, string> = {
   NEW: "bg-blue-500/10 text-blue-700",
@@ -51,44 +37,26 @@ const leadStatusColors: Record<string, string> = {
 interface ActivityFormBasicInfoProps {
   formData: ActivityFormData;
   customers: Customer[];
-  contacts: Contact[];
   leads: Lead[];
   onChange: (field: keyof ActivityFormData, value: any) => void;
   onCustomerChange: (customerId: string) => void;
-  onSearchCustomers: (query: string) => void;
-  onSearchLeads: (query: string) => void;
   onLeadChange: (leadId: string) => void;
 }
 
 export function ActivityFormBasicInfo({
   formData,
   customers,
-  contacts,
   leads,
   onChange,
   onCustomerChange,
-  onSearchCustomers,
   onLeadChange,
-  onSearchLeads,
 }: ActivityFormBasicInfoProps) {
+  const t = useTranslations("activities");
   const showLocationField = ["MEETING", "SITE_VISIT", "VIDEO_CALL"].includes(formData.type);
-
   const selectedCustomer = customers.find((c) => c.id.toString() === formData.customerId);
-
   const selectedLead = leads.find((l) => l.id.toString() == formData.leadId);
-
-  // Converti contacts in formato ComboboxOption
-  const contactOptions: ComboboxOption[] = useMemo(() => {
-    const validContacts = Array.isArray(contacts) ? contacts : [];
-    return [
-      { value: "", label: "Nessuno (generale)", description: undefined },
-      ...validContacts.map((contact) => ({
-        value: contact.id.toString(),
-        label: `${contact.firstName} ${contact.lastName}`,
-        description: contact.email ?? undefined,
-      })),
-    ];
-  }, [contacts]);
+  const [leadDisabled, setLeadDisabled] = useState(false);
+  const [customerDisabled, setCustomerDisabled] = useState(false);
 
   return (
     <Card>
@@ -105,9 +73,9 @@ export function ActivityFormBasicInfo({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(activityTypeLabels).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
+                {getActivityTypeOptions(t).map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -161,7 +129,15 @@ export function ActivityFormBasicInfo({
             <Label htmlFor="customerId">Cliente *</Label>
             <CustomerCombobox
               value={formData.customerId ?? undefined}
-              onValueChange={onCustomerChange}
+              disabled={customerDisabled}
+              onValueChange={(value) => {
+                onCustomerChange(value);
+                if (value) {
+                  setLeadDisabled(true);
+                } else {
+                  setLeadDisabled(false);
+                }
+              }}
             />
 
             {/* Info Cliente Selezionato */}
@@ -197,7 +173,18 @@ export function ActivityFormBasicInfo({
           </div>
           <div className="space-y-2">
             <Label htmlFor="leadId">Lead *</Label>
-            <LeadCombobox value={formData.leadId ?? undefined} onValueChange={onLeadChange} />
+            <LeadCombobox
+              value={formData.leadId ?? undefined}
+              disabled={leadDisabled}
+              onValueChange={(value) => {
+                onLeadChange(value);
+                if(value){
+                  setCustomerDisabled(true);
+                }else{
+                  setCustomerDisabled(false);
+                }
+              }}
+            />
 
             {/* Info Lead Selezionato */}
             {selectedLead && (

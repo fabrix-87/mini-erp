@@ -12,6 +12,8 @@ import {
   AlertCircle,
   MessageSquare,
   Smartphone,
+  Building2,
+  Building,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Activity } from "@/types/activitiy-types";
@@ -128,14 +130,14 @@ export function ActivityCard({ activity, onClick, className }: ActivityCardProps
         <div className="flex items-center gap-4 text-sm">
           {activity.customer && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
-              <Users className="h-3.5 w-3.5" />
+              <Building2 className="h-3.5 w-3.5" />
               <span className="truncate max-w-50">{activity.customer.company.companyName}</span>
             </div>
           )}
 
           {activity.lead && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
-              <Users className="h-3.5 w-3.5" />
+              <Building className="h-3.5 w-3.5" />
               <span className="truncate max-w-50">{activity.lead.companyName}</span>
             </div>
           )}
@@ -143,6 +145,7 @@ export function ActivityCard({ activity, onClick, className }: ActivityCardProps
           {activity.contact && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
               •
+              <Users className="h-3.5 w-3.5" />
               <span className="truncate">
                 {activity.contact.firstName} {activity.contact.lastName}
               </span>
@@ -159,14 +162,14 @@ export function ActivityCard({ activity, onClick, className }: ActivityCardProps
           {activity.duration && (
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <Clock className="h-3.5 w-3.5" />
-              {t('form.duration')}: {activity.duration}
+              {t("form.duration")}: {activity.duration}
             </div>
           )}
 
           {isOverdue && (
             <div className="flex items-center gap-1.5 text-red-600 font-medium">
               <AlertCircle className="h-3.5 w-3.5" />
-              {t('isOverdue')}
+              {t("isOverdue")}
             </div>
           )}
         </div>
