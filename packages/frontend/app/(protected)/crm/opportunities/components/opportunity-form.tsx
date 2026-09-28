@@ -48,6 +48,7 @@ import {
   getOpportunityStageOptions,
   getOpportunityStatusOptions,
 } from "@/helpers/opportunity-helper";
+import { FormFooter } from "@/components/form/form-footer";
 
 // ============================================================================
 // Types
@@ -139,27 +140,6 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
       }
     }
   };
-
-  const footer = (
-    <CardFooter className="justify-end gap-2 border-t pt-4">
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() =>
-          opportunity
-            ? navigateToDetail("opportunities", opportunity.id)
-            : navigate("opportunities")
-        }
-        disabled={isPending}
-      >
-        {t("form.cancel")}
-      </Button>
-      <Button type="submit" disabled={isPending}>
-        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {isEdit ? t("form.saveChanges") : t("form.create")}
-      </Button>
-    </CardFooter>
-  );
 
   // Una sola subscription, usata da entrambi i campi
   const watchedCustomerId = createForm.watch("customerId");
@@ -274,7 +254,6 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                             value={field.value ?? ""}
                             disabled={!!watchedCustomerId}
                             onValueChange={(value) => {
-                              console.log(value)
                               field.onBlur();
                               field.onChange(value || null);
                               // Se seleziono un lead, disabilito e resetto il customer
@@ -407,7 +386,12 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                   )}
                 />
               </CardContent>
-              {footer}
+              <FormFooter
+                entityKey="opportunities"
+                isEditMode={isEdit}
+                isPending={isPending}
+                entityId={opportunity?.id}
+              />
             </Card>
           </TabsContent>
 
@@ -474,7 +458,12 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                   )}
                 />
               </CardContent>
-              {footer}
+              <FormFooter
+                entityKey="opportunities"
+                isEditMode={isEdit}
+                isPending={isPending}
+                entityId={opportunity?.id}
+              />
             </Card>
           </TabsContent>
 
@@ -486,7 +475,12 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
               <CardContent className="pt-6">
                 <OpportunityProposedProducts />
               </CardContent>
-              {footer}
+              <FormFooter
+                entityKey="opportunities"
+                isEditMode={isEdit}
+                isPending={isPending}
+                entityId={opportunity?.id}
+              />
             </Card>
           </TabsContent>
 
@@ -534,7 +528,12 @@ export function OpportunityForm({ mode, opportunity }: OpportunityFormProps) {
                   )}
                 />
               </CardContent>
-              {footer}
+              <FormFooter
+                entityKey="opportunities"
+                isEditMode={isEdit}
+                isPending={isPending}
+                entityId={opportunity?.id}
+              />
             </Card>
           </TabsContent>
         </Tabs>

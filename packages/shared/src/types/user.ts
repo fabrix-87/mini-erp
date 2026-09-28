@@ -1,6 +1,6 @@
 // packages/shared/src/types/user.ts
 import { z } from "zod";
-import type { Permission } from "./role";
+import type { Permission, Role } from "./role";
 import type { Language } from "./language";
 import { Gender, UserMembershipStatus } from "../constants/user";
 import {
@@ -62,65 +62,53 @@ export type UserDetails = {
   bio: string | null;
 };
 
-/**
- * Slim role shape used inside membership responses.
- * Avoids importing the full Role entity with its relations.
- */
-export type MembershipRole = {
-  id: number;
-  code: string;
-  name: string;
-  permissions: Pick<Permission, "code">[];
-};
+/// Details projection returned by list endpoints (getUserSelection).
+export type UserDetailsSummary = Pick<UserDetails, "firstName" | "lastName" | "gender">;
 
-/**
- * A single tenant membership as returned by the API.
- * Corresponds to `UserTenantMembership` + its roles in user.prisma.
- */
+/// Details projection returned by the detail endpoint (getUserDetailedSelection).
+/// Same as UserDetails minus the internal keys, which are not selected.
+export type UserDetailsView = Omit<UserDetails, "id" | "userId">;
+
+/// A tenant membership as returned by mapUserResponse() in `availableTenants`.
 export type UserMembership = {
   tenantId: string;
-  status: UserMembershipStatus;
-  isDefault: boolean;
+  membershipId: string;
   name: string;
   code: string;
-  roles: MembershipRole[];
+  isDefault: boolean;
+  status: UserMembershipStatus;
+  roles: RoleDTO[];
 };
 
-/**
- * Safe User entity — never includes password or security-internal tokens.
- * This is the shape produced by `mapUserResponse()` in user-helper.ts
- * and returned by every authenticated endpoint.
- */
-export type User = {
+/// The membership resolved as active context; additionally carries permission codes.
+export type UserCurrentMembership = UserMembership & {
+  permissions: string[];
+};
+
+/// Slim user entry for list/table views (GET /api/users).
+export type UserListItem = {
   id: string;
   username: string;
   email: string;
   active: boolean;
-  // Email verification (status only — no tokens)
-  emailVerified: boolean;
-  emailVerifiedAt: Date | null;
-  // 2FA (status only — no secrets)
   twoFactorEnabled: boolean;
-  // Security counters (read-only, useful for admin views)
-  failedLoginAttempts: number;
-  lockedUntil: Date | null;
-  lastPasswordChangeAt: Date | null;
-  // GDPR
-  consentGivenAt: Date | null;
-  dataRetentionExpiresAt: Date | null;
-  // Preferences
   preferredLanguageId: number | null;
-  preferredLanguage?: Language;
-  // Relations
-  details?: UserDetails | null;
-  currentTenant: UserMembership;
+  details: UserDetailsSummary | null;
+  currentTenant: UserCurrentMembership | null;
   availableTenants: UserMembership[];
-  // Soft-delete
-  deletedAt: Date | null;
-  // Timestamps
   lastLogin: Date | null;
   createdAt: Date;
   updatedAt: Date;
+};
+
+/// Full user entry for the detail view (GET /api/users/:id).
+export type User = Omit<UserListItem, "details"> & {
+  details: UserDetailsView | null;
+};
+
+/// User with details guaranteed non-null (admin detail pages, profile views).
+export type UserComplete = Omit<User, "details"> & {
+  details: UserDetailsView;
 };
 
 // ============================================================================
@@ -166,40 +154,6 @@ export type UserIdParam = z.infer<typeof userIdParamSchema>;
 // ============================================================================
 
 export type UserQueryInput = z.infer<typeof userQuerySchema>;
-
-// ============================================================================
-// UTILITY TYPES — response shapes and derived views
-// ============================================================================
-
-/**
- * Slim user entry for list/table views.
- * No sensitive data; no heavy relations.
- */
-export type UserListItem = {
-  id: string;
-  username: string;
-  email: string;
-  active: boolean;
-  details: {
-    firstName: string | null;
-    lastName: string | null;
-    gender: Gender;
-  };
-  profilePicture: string | null;
-  currentTenant: Pick<UserMembership, "tenantId" | "status" | "roles">;
-  availableTenants: Pick<UserMembership, "tenantId" | "status" | "roles">[];
-  lastLogin: Date | null;
-  createdAt: Date;
-};
-
-/**
- * Full user with details guaranteed non-null.
- * Used in admin detail pages and profile views.
- */
-export type UserComplete = Omit<User, "details"> & {
-  details: UserDetails;
-  preferredLanguage: Language;
-};
 
 /**
  * Public-safe profile (anonymous/shareable view).

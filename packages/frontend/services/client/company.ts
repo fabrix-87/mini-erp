@@ -22,6 +22,16 @@ export const getCompanies = async (
 };
 
 /**
+ * Recupera un singola company per ID
+ */
+export const getCompanyById = async (
+  id: string
+): Promise<ApiResponse<Company>> => {
+  const response = await api.get(`/companies/${id}`)
+  return response.data
+}
+
+/**
  * Recupera la lista dei clienti con filtri e paginazione
  */
 export const getCustomers = async (

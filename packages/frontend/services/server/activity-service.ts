@@ -75,42 +75,6 @@ export async function fetchActivityByIdServer(id: string): Promise<Activity> {
 }
 
 /**
- * Server-side function to fetch initial data for the activities page
- * Combines multiple data fetches for initial page load
- * Gets userId from cookies automatically
- */
-export async function fetchActivitiesPageData(params: ActivityQueryInput) {
-  try {
-    // Get user from cookies server-side
-    const user = await getUserFromCookiesSSR();
-
-    if (!user) {
-      throw new Error("User not authenticated");
-    }
-
-    const [activitiesResponse, statsResponse] = await Promise.all([
-      fetchActivitiesServer(params),
-      fetchActivityStatsServer(user.id),
-    ]);
-
-    return {
-      activities: activitiesResponse.data,
-      pagination: activitiesResponse.pagination,
-      stats: statsResponse.data,
-      error: null,
-    };
-  } catch (error: any) {
-    console.error("Error fetching activities page data:", error);
-    return {
-      activities: [] as Activity[],
-      pagination: undefined,
-      stats: null,
-      error: error.message || "Unknown error",
-    };
-  }
-}
-
-/**
  * Create a new activity.
  */
 export async function createActivity(data: ActivityFormData): Promise<ActivitySingleApiResponse> {

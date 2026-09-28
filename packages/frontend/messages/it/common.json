@@ -77,7 +77,10 @@
     "max_value": "Valore massimo: {max}",
     "select_option": "Seleziona un'opzione",
     "select_date": "Seleziona data",
-    "optional": "Opzionale"
+    "optional": "Opzionale",
+    "cancel": "Annulla",
+    "saveChanges": "Salva modifiche",
+    "create": "Salva"
   },
 
   "feedback": {

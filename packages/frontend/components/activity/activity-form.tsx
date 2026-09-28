@@ -3,7 +3,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
@@ -17,9 +17,22 @@ import { ActivityStatusBadge } from "./activity-status-badge";
 import { useActivityForm } from "@/hooks/use-activity-form";
 import { useAuth } from "@/hooks/use-auth";
 import { createActivityAction, updateActivityAction } from "@/actions/activity-actions";
+import { useTranslations } from "next-intl";
+import { useNavigation } from "@/hooks/use-navigation";
+import { useForm } from "react-hook-form";
+import {
+  ActivityPriority,
+  ActivityStatus,
+  CreateActivityFormValues,
+  createActivitySchema,
+} from "@mini-erp/shared";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FormFooter } from "../form/form-footer";
+import { Form } from "../ui/form";
 
 interface ActivityFormProps {
   activity?: Activity;
+  userId: string;
   preselectedCustomerId?: string;
   preselectedContactId?: string;
   preselectedLeadId?: string;
@@ -29,130 +42,101 @@ interface ActivityFormProps {
 
 export function ActivityForm({
   activity,
+  userId,
   preselectedCustomerId,
   preselectedContactId,
   preselectedLeadId,
   preselectedDate,
   isEditMode = false,
 }: ActivityFormProps) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("basic");
-  const { user } = useAuth();
+  const t = useTranslations("activities");
+  const { navigateToDetail, navigate } = useNavigation();
 
-  const {
-    formData,
-    customers,
-    contacts,
-    leads,
-    handleChange,
-    handleCustomerChange,
-    searchCustomers,
-    searchLeads,
-    handleLeadChange,
-  } = useActivityForm({
-    activity,
-    preselectedCustomerId,
-    preselectedContactId,
-    preselectedLeadId,
-    preselectedDate,
+  const scheduledStart = activity
+    ? new Date(activity.scheduledStart)
+    : preselectedDate
+      ? new Date(preselectedDate)
+      : new Date();
+  const scheduledEnd = activity?.scheduledEnd ? new Date(activity.scheduledEnd) : null;
+
+  const defaultValues = {
+    customerId: activity?.customerId?.toString() || preselectedCustomerId,
+    contactId: activity?.contactId?.toString() || preselectedContactId,
+    leadId: activity?.leadId?.toString() || preselectedLeadId,
+    type: activity?.type ?? "CALL",
+    subject: activity?.subject,
+    description: activity?.description || "",
+    status: activity?.status ?? "SCHEDULED",
+    priority: activity?.priority ?? "LOW",
+    scheduledStart: scheduledStart.toISOString().slice(0, 16),
+    scheduledEnd: scheduledEnd?.toISOString().slice(0, 16) || "",
+    duration: activity?.duration || 30,
+    reminderMinutes: activity?.reminderMinutes || undefined,
+    location: activity?.location || "",
+    outcome: activity?.outcome || undefined,
+    result: activity?.result || "",
+    internalNotes: activity?.internalNotes || "",
+    customFields: activity?.customFields || {},
+    assignedUserId: activity?.assignedUserId || userId,
+    actualStart: activity?.actualStart || null,
+    actualEnd: activity?.actualEnd || null,
+  };
+
+  const form = useForm<CreateActivityFormValues>({
+    resolver: zodResolver(createActivitySchema),
+    defaultValues,
   });
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
-    e.preventDefault();
+  const isPending = form.formState.isSubmitting;
 
-    startTransition(async () => {
-      try {
-        const payload = {
-          customerId: formData.customerId,
-          contactId: formData.contactId,
-          leadId: formData.leadId,
-          type: formData.type,
-          subject: formData.subject,
-          description: formData.description || undefined,
-          status: formData.status,
-          priority: formData.priority,
-          scheduledStart: new Date(formData.scheduledStart).toISOString(),
-          scheduledEnd: formData.scheduledEnd
-            ? new Date(formData.scheduledEnd).toISOString()
-            : undefined,
-          duration: formData.duration,
-          reminderMinutes: formData.reminderMinutes,
-          location: formData.location || undefined,
-          outcome: formData.outcome || undefined,
-          result: formData.result || undefined,
-          internalNotes: formData.internalNotes || undefined,
-          assignedUserId: user?.userId || 0,
-        } as ActivityFormData;
-
-        let result;
-        if (isEditMode && activity) {
-          const { assignedUserId, ...cleanPayload } = payload;
-          result = await updateActivityAction(activity.id, cleanPayload);
-        } else {
-          result = await createActivityAction(payload);
-        }
-
-        if (result.success) {
-          toast.success(
-            isEditMode ? "Attività aggiornata con successo" : "Attività creata con successo",
-          );
-          router.push(isEditMode ? `/activities/${activity!.id}` : "/activities");
-        } else {
-          toast.error(result.error || "Errore durante il salvataggio");
-        }
-      } catch (error: any) {
-        toast.error("Errore durante il salvataggio");
+  const onSubmit = async (data: CreateActivityFormValues) => {
+    if (isEditMode && activity) {
+      const { assignedUserId, ...cleanPayload } = data;
+      const result = await updateActivityAction(activity.id, cleanPayload);
+      if (result.success) {
+        toast.success(t("updateSuccess"));
+        navigateToDetail("activities", activity.id);
+      } else {
+        toast.error(result.error ?? t("updateError"));
       }
-    });
+    } else {
+      const result = await createActivityAction(data);
+      if (result.success && result.data) {
+        toast.success(t("createSuccess"));
+        navigateToDetail("activities", result.data.id);
+      } else {
+        toast.error(result.error ?? t("createError"));
+      }
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {formData.status && formData.priority && (
-        <ActivityStatusBadge status={formData.status} priority={formData.priority} />
-      )}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList variant="line" className="crm-tabs-list">
-          <TabsTrigger value="basic">Info Base</TabsTrigger>
-          <TabsTrigger value="schedule">Pianificazione</TabsTrigger>
-          <TabsTrigger value="outcome">Esito</TabsTrigger>
-          <TabsTrigger value="settings">Impostazioni</TabsTrigger>
-        </TabsList>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <ActivityStatusBadge />
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList variant="line" className="crm-tabs-list">
+            <TabsTrigger value="basic">{t("tabs.basic")}</TabsTrigger>
+            <TabsTrigger value="schedule">{t("tabs.schedule")}</TabsTrigger>
+            <TabsTrigger value="outcome">{t("tabs.outcome")}</TabsTrigger>
+            <TabsTrigger value="settings">{t("tabs.settings")}</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="basic">
-          <ActivityFormBasicInfo
-            formData={formData}
-            customers={customers}
-            leads={leads}
-            onChange={handleChange}
-            onCustomerChange={handleCustomerChange}
-            onLeadChange={handleLeadChange}
-          />
-        </TabsContent>
+          <TabsContent value="basic">
+            <ActivityFormBasicInfo />
+          </TabsContent>
 
-        <TabsContent value="schedule">
-          <ActivityFormScheduling formData={formData} onChange={handleChange} />
-        </TabsContent>
 
-        <TabsContent value="outcome">
-          <ActivityFormOutcome formData={formData} onChange={handleChange} />
-        </TabsContent>
+        </Tabs>
 
-        <TabsContent value="settings">
-          <ActivityFormSettings formData={formData} onChange={handleChange} />
-        </TabsContent>
-      </Tabs>
-
-      <div className="flex justify-end gap-2 pt-4 border-t">
-        <Button type="button" variant="outline" onClick={() => router.back()}>
-          Annulla
-        </Button>
-        <Button type="submit" disabled={isPending || (!formData.customerId && !formData.leadId)}>
-          <Save className="mr-2 h-4 w-4" />
-          {isPending ? "Salvataggio..." : isEditMode ? "Aggiorna" : "Crea Attività"}
-        </Button>
-      </div>
-    </form>
+        <FormFooter
+          entityKey="activities"
+          isEditMode={isEditMode}
+          isPending={isPending}
+          entityId={activity?.id}
+        />
+      </form>
+    </Form>
   );
 }

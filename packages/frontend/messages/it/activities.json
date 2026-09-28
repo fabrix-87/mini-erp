@@ -11,6 +11,7 @@
   "activityList": "Elenco attività",
   "noResults": "Nessuna attività trovata. Inizia creando la prima!",
   "itemLabel": "Attività",
+  "activityStatus": "Stato Attività",
   "stats": {
     "summary": "Statistiche attività",
     "totalActivities": "Totale",
@@ -26,19 +27,32 @@
     "followUp": "Follow-up",
     "followUpDescription": "Richiedono follow-up"
   },
+  "tabs": {
+    "basic": "Info Base",
+    "basicTitle": "Dettagli Attività",
+    "basicDescription": "Informazioni principali sull'attività",
+    "schedule": "Pianificazione",
+    "outcome": "Esito",
+    "settings": "Impostazioni"
+  },
   "form": {
     "type": "Tipo",
     "priority": "Priorità",
     "subject": "Oggetto",
     "subjectPlaceholder": "Es: Follow-up preventivo",
     "description": "Descrizione",
-    "descriptionPlaceholder": "Dettagli aggiuntivi...",
+    "descriptionPlaceholder": "Descrivi l'attività in dettaglio...",
     "scheduledStart": "Inizio",
     "scheduledEnd": "Fine",
     "duration": "Durata (minuti)",
     "cancel": "Annulla",
     "submit": "Crea Attività",
-    "saving": "Salvataggio..."
+    "saving": "Salvataggio...",
+    "customer": "Cliente",
+    "lead": "Lead",
+    "contact": "Contatto",
+    "location": "Luogo",
+    "locationPlaceholder": "Es: Sede cliente, Ufficio Milano, Online (Zoom)"
   },
   "type": {
     "CALL": "Chiamata",
@@ -67,6 +81,12 @@
     "CANCELLED": "Cancellato",
     "RESCHEDULED": "Riprogrammato",
     "NO_SHOW": "Non presentato"
+  },
+  "customer": {
+    "code": "Codice",
+    "vat": "P.IVA",
+    "email": "Email",
+    "phone": "Tel"
   },
   "createSuccess": "Attività creata!",
   "isOverdue": "In ritardo"

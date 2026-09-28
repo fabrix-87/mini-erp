@@ -8,6 +8,7 @@ import {
   deleteCustomer,
   getDashboardStats as getCustomerStats,
   getCompanies,
+  getCompanyById,
 } from "@/services/client/company";
 import {
   getSuppliers,
@@ -37,6 +38,17 @@ export function useCompanies(
   return useQuery({
     queryKey: ["companies", params],
     queryFn: () => getCompanies(params),
+  });
+}
+
+/**
+ * Fetches a single company by ID.
+ */
+export function useCompany(id: string | undefined, enabled = true) {
+  return useQuery({
+    queryKey: ["company", id],
+    queryFn: () => getCompanyById(id!),
+    enabled: enabled && !!id,
   });
 }
 
@@ -83,7 +95,6 @@ export function useCustomerStats() {
     queryFn: getCustomerStats,
   });
 }
-
 
 /**
  * Soft-deletes a customer by ID.

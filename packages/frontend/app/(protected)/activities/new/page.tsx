@@ -1,7 +1,7 @@
 // app/activities/new/page.tsx
 import { ActivityForm } from "@/components/activity/activity-form";
 import { PageHeader } from "@/components/page-header";
-import { requirePermission } from "@/lib/server/auth";
+import { getCurrentUser, requirePermission } from "@/lib/server/auth";
 import { getLeadByIdServer } from "@/services/server/lead-service";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -22,11 +22,13 @@ export default async function NewActivityPage({
 
   const params = await searchParams;
   const t = await getTranslations("activities");
+  const { id: userId } = await getCurrentUser();
 
   return (
     <>
       <PageHeader title={t("createTitle")} subtitle={t("createDescription")} />
       <ActivityForm
+        userId={userId}
         preselectedCustomerId={params.customerId}
         preselectedContactId={params.contactId}
         preselectedLeadId={params.leadId}

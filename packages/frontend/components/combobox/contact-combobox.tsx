@@ -1,122 +1,69 @@
-// packages/frontend/components/ui/customer-combobox.tsx
+// packages/frontend/components/combobox/contact-combobox.tsx
 "use client";
 
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxContent,
-  ComboboxList,
-  ComboboxItem,
-  ComboboxEmpty,
-} from "@/components/ui/combobox";
+import { useContact, useContacts } from "@/hooks/use-contact";
 import type { ComboboxOption } from "@/types/ui-types";
-import { useAsyncCombobox } from "@/hooks/use-async-combobox";
-import { useMemo } from "react";
-import { useTranslations } from "next-intl";
-import { useContacts } from "@/hooks/use-contact";
-import { ContactQueryInput } from "@mini-erp/shared";
+import type { ContactQueryInput } from "@mini-erp/shared";
+import {
+  AsyncEntityCombobox,
+  type EntityComboboxConfig,
+  type EntityComboboxProps,
+} from "./entity-combobox";
 
-function toContactOptions(
-  data: Awaited<ReturnType<typeof useContacts>>["data"],
-): ComboboxOption[] {
-  return (
-    data?.data?.map((c) => ({
-      value: c.id,
-      label: `${c.firstName} ${c.lastName}`,
-      description: `[${c.email}]`,
-    })) ?? []
-  );
+const BASE_PARAMS = {
+  page: 1,
+  limit: 10,
+  sortBy: "firstName",
+  sortOrder: "asc",
+} satisfies Partial<ContactQueryInput>;
+
+/// Contact item as returned by the paginated contacts endpoint.
+export type Contact = NonNullable<ReturnType<typeof useContacts>["data"]>["data"][number];
+
+/// Maps a contact to a combobox option. Defined at module level to keep it referentially stable.
+function toContactOption(contact: Contact): ComboboxOption {
+  return {
+    value: contact.id,
+    label: `${contact.firstName} ${contact.lastName}`,
+    description: `[${contact.email}]`,
+  };
 }
 
-interface ContactComboboxProps {
-  value?: string;
-  onValueChange?: (value: string) => void;
-  disabled?: boolean;
-  className?: string;
+/// Optional filters that restrict the searchable contacts.
+interface ContactComboboxFilters {
+  /// Only contacts belonging to this company.
+  companyId?: string;
+  /// Only contacts belonging to this customer.
+  customerId?: string;
 }
 
-/**
- * Async combobox for customer selection with debounced search.
- */
+/// Searchable contact selector, optionally scoped to a company or a customer.
 export function ContactCombobox({
-  value,
-  onValueChange,
-  disabled = false,
-  className,
-}: ContactComboboxProps) {
-  const BASE_PARAMS = {
-    page: 1,
-    limit: 10,
-    sortBy: "firstName",
-    sortOrder: "asc",
-  } satisfies Partial<ContactQueryInput>;
+  companyId,
+  customerId,
+  ...props
+}: EntityComboboxProps<Contact> & ContactComboboxFilters) {
+  // Only defined filters are sent to the API
+  const filters = {
+    ...(companyId && { companyId }),
+    ...(customerId && { customerId }),
+  };
 
-  const { options, isLoading, onSearchChange, debouncedSearch } = useAsyncCombobox({
-    useFetch: ({ search }: { search: string }) =>
-      useContacts({ ...BASE_PARAMS, search } satisfies ContactQueryInput),
-    toOptions: toContactOptions,
-  });
+  const config: EntityComboboxConfig<Contact> = {
+    useList: ({ search }) => {
+      const { data, isLoading } = useContacts({
+        ...BASE_PARAMS,
+        ...filters,
+        search,
+      } satisfies ContactQueryInput);
+      return { data: data?.data, isLoading };
+    },
+    // `useContact` already unwraps the response
+    useSelected: (id) => useContact(id ?? "").contact ?? undefined,
+    toOption: toContactOption,
+    placeholderKey: "contactCombobox.placeholder",
+    noResultsKey: "contactCombobox.noResults",
+  };
 
-  const t = useTranslations("ui");
-
-  const { data: selectedData } = useContacts(
-    value && !debouncedSearch ? { ...BASE_PARAMS, limit: 1, search: value } : undefined,
-  );
-
-  const mergedOptions = useMemo((): ComboboxOption[] => {
-    if (!value || debouncedSearch) return options;
-    const selected = selectedData?.data?.[0];
-    if (!selected || options.some((o) => o.value === selected.id)) return options;
-    return [
-      {
-        value: selected.id,
-        label: `${selected.firstName} ${selected.lastName}`,
-        description: `[${selected.email}]`,
-      },
-      ...options,
-    ];
-  }, [options, selectedData, value, debouncedSearch]);
-
-  return (
-    <Combobox
-      items={mergedOptions}
-      itemToStringValue={(mergedOption: ComboboxOption) => mergedOption.label}
-      value={mergedOptions.find((item) => item.value === value) || null}
-      onValueChange={(newValue) => {
-        onValueChange?.(newValue?.value || "");
-      }}
-      filter={null}
-    >
-      <ComboboxInput
-        placeholder={t("customerCombobox.placeholder")}
-        className={className}
-        showClear
-        disabled={disabled}
-        onInput={(e) => {
-          const searchString = e.currentTarget.value;
-          const selectedOption = mergedOptions.find((item) => item.value === value) || null;
-
-          // Se la stringa digitata/impostata corrisponde al label già selezionato, non cercare
-          if (selectedOption && searchString === selectedOption.label) {
-            return;
-          }
-
-          onSearchChange(searchString);
-        }}
-      />
-      <ComboboxContent>
-        <ComboboxEmpty>{isLoading ? t("loading") : t("customerCombobox.noResults")}</ComboboxEmpty>
-        <ComboboxList>
-          {(opt) => (
-            <ComboboxItem key={opt.value} value={opt}>
-              <span>{opt.label}</span>
-              {opt.description && (
-                <span className="text-xs text-muted-foreground">{opt.description}</span>
-              )}
-            </ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
-  );
+  return <AsyncEntityCombobox {...config} {...props} />;
 }

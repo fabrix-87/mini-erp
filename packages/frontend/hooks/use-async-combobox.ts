@@ -25,7 +25,7 @@ export interface UseAsyncComboboxOptions<TData> {
   debounceMs?: number;
 }
 
-export interface UseAsyncComboboxResult {
+export interface UseAsyncComboboxResult<TData = unknown> {
   /** Derived options ready to be passed to `<Combobox options={...} />`. */
   options: ComboboxOption[];
   /** Loading state forwarded from the domain hook. */
@@ -37,6 +37,8 @@ export interface UseAsyncComboboxResult {
   onSearchChange: (search: string) => void;
   /** Debounced search term corrente — utile per la "selected query" di ripristino label. */
   debouncedSearch: string;
+  /// Raw data returned by the domain hook, before `toOptions`.
+  data: TData | undefined;
 }
 
 /**
@@ -57,7 +59,7 @@ export function useAsyncCombobox<TData>({
   useFetch,
   toOptions,
   debounceMs = 300,
-}: UseAsyncComboboxOptions<TData>): UseAsyncComboboxResult {
+}: UseAsyncComboboxOptions<TData>): UseAsyncComboboxResult<TData> {
   const [debouncedSearch, setDebouncedSearch] = React.useState("");
 
   const onSearchChange = React.useMemo(
@@ -75,5 +77,5 @@ export function useAsyncCombobox<TData>({
     [data],
   );
 
-  return { options, isLoading, onSearchChange, debouncedSearch };
+  return { options, isLoading, onSearchChange, debouncedSearch, data };
 }

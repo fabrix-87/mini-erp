@@ -4,20 +4,18 @@ import { notFound } from "next/navigation";
 import { fetchActivityByIdServer } from "@/services/server/activity-service";
 import { ActivityForm } from "@/components/activity/activity-form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getCurrentUser } from "@/lib/server/auth";
 
-export default async function EditActivityPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function EditActivityPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   try {
     const activity = await fetchActivityByIdServer(id);
+    const { id: userId } = await getCurrentUser();
 
     return (
       <Suspense fallback={<ActivityFormSkeleton />}>
-        <ActivityForm activity={activity} isEditMode={true} />
+        <ActivityForm userId={userId} activity={activity} isEditMode={true} />
       </Suspense>
     );
   } catch (error) {

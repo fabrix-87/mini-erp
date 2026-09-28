@@ -23,5 +23,9 @@
     "placeholder": "Seleziona un paese...",
     "noResults": "Nessun paese trovato"
   },
+  "contactCombobox": {
+    "placeholder": "Seleziona un contatto...",
+    "noResults": "Nessun contatto trovato"
+  },
   "loading": "Caricamento..."
 }

@@ -16,128 +16,172 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ActivityFormData } from "@/types/activitiy-types";
 import { Customer } from "@/types/customer-types";
-import { Lead } from "@mini-erp/shared";
+import { CreateActivityFormValues, Lead } from "@mini-erp/shared";
 import { CustomerCombobox } from "@/components/combobox/customer-combobox";
 import { LeadCombobox } from "@/components/combobox/lead-combobox";
 import { ContactCombobox } from "@/components/combobox/contact-combobox";
-import { getActivityTypeOptions } from "@/helpers/activity-helpers";
+import { getActivityPriorityOptions, getActivityTypeOptions } from "@/helpers/activity-helpers";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { LEAD_STATUS_CLASS_NAMES } from "@/helpers/lead-helper";
+import { useFormContext } from "react-hook-form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-const leadStatusColors: Record<string, string> = {
-  NEW: "bg-blue-500/10 text-blue-700",
-  CONTACTED: "bg-purple-500/10 text-purple-700",
-  QUALIFIED: "bg-green-500/10 text-green-700",
-  PROPOSAL: "bg-yellow-500/10 text-yellow-700",
-  NEGOTIATION: "bg-orange-500/10 text-orange-700",
-  CLOSED_WON: "bg-green-600/10 text-green-800",
-  CLOSED_LOST: "bg-red-500/10 text-red-700",
-};
-
-interface ActivityFormBasicInfoProps {
-  formData: ActivityFormData;
-  customers: Customer[];
-  leads: Lead[];
-  onChange: (field: keyof ActivityFormData, value: any) => void;
-  onCustomerChange: (customerId: string) => void;
-  onLeadChange: (leadId: string) => void;
-}
-
-export function ActivityFormBasicInfo({
-  formData,
-  customers,
-  leads,
-  onChange,
-  onCustomerChange,
-  onLeadChange,
-}: ActivityFormBasicInfoProps) {
+export function ActivityFormBasicInfo() {
   const t = useTranslations("activities");
-  const showLocationField = ["MEETING", "SITE_VISIT", "VIDEO_CALL"].includes(formData.type);
-  const selectedCustomer = customers.find((c) => c.id.toString() === formData.customerId);
-  const selectedLead = leads.find((l) => l.id.toString() == formData.leadId);
-  const [leadDisabled, setLeadDisabled] = useState(false);
-  const [customerDisabled, setCustomerDisabled] = useState(false);
+  const tc = useTranslations("crm.customers");
+  const { control, getValues, setValue, clearErrors, watch } =
+    useFormContext<CreateActivityFormValues>();
+  const showLocationField = ["MEETING", "SITE_VISIT", "VIDEO_CALL"].includes(getValues("type"));
+  const [selectedCustomer, setCustomer] = useState<Customer | undefined>();
+  const [selectedLead, setLead] = useState<Lead | undefined>();
+
+  const watchedLeadId = watch("leadId");
+  const watchedCustomerId = watch("customerId");
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Dettagli Attività</CardTitle>
-        <CardDescription>Informazioni principali sull'attività</CardDescription>
+        <CardTitle>{t("tabs.basicTitle")}</CardTitle>
+        <CardDescription>{t("tabs.basicDescription")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="type">Tipo Attività *</Label>
-            <Select value={formData.type} onValueChange={(value) => onChange("type", value)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {getActivityTypeOptions(t).map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <FormField
+              control={control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t("form.type")}
+                    <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onBlur();
+                      field.onChange(value);
+                    }}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {getActivityTypeOptions(t).map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="priority">Priorità</Label>
-            <Select
-              value={formData.priority}
-              onValueChange={(value) => onChange("priority", value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="LOW">Bassa</SelectItem>
-                <SelectItem value="MEDIUM">Media</SelectItem>
-                <SelectItem value="HIGH">Alta</SelectItem>
-                <SelectItem value="URGENT">Urgente</SelectItem>
-              </SelectContent>
-            </Select>
+            <FormField
+              control={control}
+              name="priority"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("form.priority")}</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onBlur();
+                      field.onChange(value);
+                    }}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {getActivityPriorityOptions(t).map((p) => (
+                        <SelectItem key={p.value} value={p.value}>
+                          {p.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="subject">Oggetto *</Label>
-          <Input
-            id="subject"
-            value={formData.subject}
-            onChange={(e) => onChange("subject", e.target.value)}
-            required
-            placeholder="Es: Chiamata follow-up preventivo"
+          <FormField
+            control={control}
+            name="subject"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  {t("form.subject")} <span className="text-destructive">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder={t("form.subjectPlaceholder")} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
         </div>
-
         <div className="space-y-2">
-          <Label htmlFor="description">Descrizione</Label>
-          <Textarea
-            id="description"
-            value={formData.description}
-            onChange={(e) => onChange("description", e.target.value)}
-            placeholder="Descrivi l'attività in dettaglio..."
-            rows={5}
+          <FormField
+            control={control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("form.description")}</FormLabel>
+                <FormControl>
+                  <Textarea {...field} placeholder={t("form.descriptionPlaceholder")} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
         </div>
 
         {/* Customer o Lead Selection con Combobox */}
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="customerId">Cliente *</Label>
-            <CustomerCombobox
-              value={formData.customerId ?? undefined}
-              disabled={customerDisabled}
-              onValueChange={(value) => {
-                onCustomerChange(value);
-                if (value) {
-                  setLeadDisabled(true);
-                } else {
-                  setLeadDisabled(false);
-                }
-              }}
+            <FormField
+              control={control}
+              name="customerId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t("form.customer")} <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <CustomerCombobox
+                      value={field.value ?? ""}
+                      disabled={!!watchedLeadId}
+                      onValueChange={(value) => {
+                        field.onBlur();
+                        field.onChange(value || null);
+                        // Se seleziono un customer, disabilito e resetto il lead
+                        if (value) {
+                          setValue("leadId", null);
+                          clearErrors("leadId");
+                        }else{
+                          setValue("contactId", null);
+                        }
+                      }}
+                      onItemChange={(customer) => setCustomer(customer)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
 
             {/* Info Cliente Selezionato */}
@@ -149,17 +193,17 @@ export function ActivityFormBasicInfo({
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground space-y-0.5">
-                  <div>Codice: {selectedCustomer.company.code}</div>
+                  <div>{tc('code')}: {selectedCustomer.company.code}</div>
                   {selectedCustomer.company.vatNumber && (
-                    <div>P.IVA: {selectedCustomer.company.vatNumber}</div>
+                    <div>{tc('form.vatNumber')}: {selectedCustomer.company.vatNumber}</div>
                   )}
                   {selectedCustomer.company.mainEmail && (
-                    <div>Email: {selectedCustomer.company.mainEmail}</div>
+                    <div>{tc('form.contactEmail')}: {selectedCustomer.company.mainEmail}</div>
                   )}
                   {selectedCustomer.company.mainPhone && (
-                    <div>Tel: {selectedCustomer.company.mainPhone}</div>
+                    <div>{tc('form.contactPhone')}: {selectedCustomer.company.mainPhone}</div>
                   )}
-                  <div className="flex gap-2 mt-1">
+                  <div className="flex gap-2 mt-1">                    
                     <Badge variant="secondary" className="text-xs">
                       {selectedCustomer.segment}
                     </Badge>
@@ -172,18 +216,33 @@ export function ActivityFormBasicInfo({
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="leadId">Lead *</Label>
-            <LeadCombobox
-              value={formData.leadId ?? undefined}
-              disabled={leadDisabled}
-              onValueChange={(value) => {
-                onLeadChange(value);
-                if(value){
-                  setCustomerDisabled(true);
-                }else{
-                  setCustomerDisabled(false);
-                }
-              }}
+            <FormField
+              control={control}
+              name="leadId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t("form.lead")} <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <LeadCombobox
+                      value={field.value ?? ""}
+                      disabled={!!watchedCustomerId}
+                      onValueChange={(value) => {
+                        field.onBlur();
+                        field.onChange(value || null);
+                        // Se seleziono un lead, disabilito e resetto il customer
+                        if (value) {
+                          setValue("customerId", null);
+                          clearErrors("customerId");
+                        }
+                      }}
+                      onItemChange={(lead) => setLead(lead)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
 
             {/* Info Lead Selezionato */}
@@ -193,7 +252,7 @@ export function ActivityFormBasicInfo({
                   <span className="text-sm font-medium">
                     ({selectedLead.code}) • {selectedLead.companyName}
                   </span>
-                  <Badge className={leadStatusColors[selectedLead.status]}>
+                  <Badge className={LEAD_STATUS_CLASS_NAMES[selectedLead.status]}>
                     {selectedLead.status}
                   </Badge>
                 </div>
@@ -210,25 +269,49 @@ export function ActivityFormBasicInfo({
 
         {/* Contact Selection con Combobox */}
         <div className="space-y-2">
-          <Label htmlFor="contactId">Contatto</Label>
-          <ContactCombobox
-            value={formData.contactId ?? undefined}
-            onValueChange={(value) => onChange("contactId", value)}
-            disabled={!formData.customerId}
+          <FormField
+            control={control}
+            name="contactId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  {t("form.contact")} <span className="text-destructive">*</span>
+                </FormLabel>
+                <FormControl>
+                  <ContactCombobox
+                    disabled={!watchedCustomerId}
+                    value={field.value ?? ""}
+                    customerId={watchedCustomerId ?? undefined}
+                    onValueChange={(value) => {
+                      field.onBlur();
+                      field.onChange(value || null);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
         </div>
 
         {showLocationField && (
           <div className="space-y-2">
-            <Label htmlFor="location">
-              <MapPin className="inline h-4 w-4 mr-1" />
-              Luogo
-            </Label>
-            <Input
-              id="location"
-              value={formData.location ?? ""}
-              onChange={(e) => onChange("location", e.target.value)}
-              placeholder="Es: Sede cliente, Ufficio Milano, Online (Zoom)"
+            <FormField
+              control={control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("form.location")}</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      value={field.value ?? ""}
+                      placeholder={t("form.locationPlaceholder")}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
           </div>
         )}
