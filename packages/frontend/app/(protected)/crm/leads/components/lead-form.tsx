@@ -42,12 +42,14 @@ import { useNavigation } from "@/hooks/use-navigation";
 import { useTranslations } from "next-intl";
 import {
   getDecisionAuthorityOptions,
-  getPurchaseTimeframeOptions,
-  getQualityOptions,
-  getSourceOptions,
-  getStatusOptions,
+  getLeadQualityOptions,
+  getLeadSourceOptions,
+  getLeadStatusOptions,
+  getLeadPurchaseTimeframeOptions,
 } from "@/helpers/lead-helper";
-import { getSizeOptions } from "@/helpers/customer-helper";
+import { getCustomerSizeOptions } from "@/helpers/customer-helper";
+import { FormFooter } from "@/components/form/form-footer";
+import { formatDecimalForInput } from "@/utils/format-decimal";
 
 // ============================================================================
 // Form value type — derived from the raw shape (no refinements).
@@ -72,7 +74,7 @@ interface LeadFormProps {
 
 export function LeadForm({ mode, lead }: LeadFormProps) {
   const isEdit = mode === "edit";
-  const { navigateToDetail, navigate } = useNavigation();  
+  const { navigateToDetail, navigate } = useNavigation();
 
   const defaultValues = {
     // Azienda
@@ -81,7 +83,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
     website: lead?.website ?? "",
     vatNumber: lead?.vatNumber ?? "",
     taxCode: lead?.taxCode ?? "",
-    countryCode: lead?.countryCode ?? "IT",
+    countryCode: lead?.countryCode ?? "",
     // Contatto
     contactFirstName: lead?.contactFirstName ?? "",
     contactLastName: lead?.contactLastName ?? "",
@@ -101,12 +103,12 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
     quality: lead?.quality ?? "COLD",
     score: lead?.score ?? 0,
     // Commerciale
-    estimatedValue: lead?.estimatedValue ? String(lead.estimatedValue) : undefined,
+    estimatedValue: formatDecimalForInput(lead?.estimatedValue),
     estimatedSize: lead?.estimatedSize ?? undefined,
     industry: lead?.industry ?? "",
     employeesCount: lead?.employeesCount ?? undefined,
-    annualRevenue: lead?.annualRevenue ? String(lead.annualRevenue) : undefined,
-    budget: lead?.budget ? String(lead.budget) : undefined,
+    annualRevenue: formatDecimalForInput(lead?.annualRevenue),
+    budget: formatDecimalForInput(lead?.budget),
     purchaseTimeframe: lead?.purchaseTimeframe ?? undefined,
     decisionAuthority: lead?.decisionAuthority ?? undefined,
     primaryNeed: lead?.primaryNeed ?? "",
@@ -167,7 +169,6 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
       }
     } else {
       const result = await createLeadAction(data as CreateLeadFormInput);
-      console.log(result)
       if (result.success && result.data) {
         toast.success("Lead creata");
         navigateToDetail("leads", result.data.id);
@@ -222,7 +223,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Ragione sociale <span className="text-destructive">*</span>
+                          {t("form.companyName")} <span className="text-destructive">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="Acme S.r.l." {...field} />
@@ -236,7 +237,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="tradeName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Nome commerciale</FormLabel>
+                        <FormLabel>{t("form.tradeName")}</FormLabel>
                         <FormControl>
                           <Input placeholder="Acme" {...field} value={field.value ?? ""} />
                         </FormControl>
@@ -253,7 +254,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="vatNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>P.IVA</FormLabel>
+                        <FormLabel>{t("form.vatNumber")}</FormLabel>
                         <FormControl>
                           <Input placeholder="IT12345678901" {...field} value={field.value ?? ""} />
                         </FormControl>
@@ -266,7 +267,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="taxCode"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Codice fiscale</FormLabel>
+                        <FormLabel>{t("form.taxCode")}</FormLabel>
                         <FormControl>
                           <Input {...field} value={field.value ?? ""} />
                         </FormControl>
@@ -279,7 +280,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="countryCode"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Paese</FormLabel>
+                        <FormLabel>{t("form.country")}</FormLabel>
                         <FormControl>
                           <CountryCombobox
                             value={field.value ?? ""}
@@ -299,7 +300,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   name="website"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Website</FormLabel>
+                      <FormLabel>{t("form.website")}</FormLabel>
                       <FormControl>
                         <Input
                           type="url"
@@ -322,7 +323,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Status</FormLabel>
+                        <FormLabel>{t("form.status")}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
@@ -330,14 +331,11 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {getStatusOptions(t).map(
-                              (o) =>
-                                o.value !== "ALL" && (
-                                  <SelectItem key={o.value} value={o.value}>
-                                    {o.label}
-                                  </SelectItem>
-                                ),
-                            )}
+                            {getLeadStatusOptions(t).map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -349,7 +347,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="source"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Fonte</FormLabel>
+                        <FormLabel>{t("form.source")}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
@@ -357,14 +355,11 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {getSourceOptions(t).map(
-                              (o) =>
-                                o.value !== "ALL" && (
-                                  <SelectItem key={o.value} value={o.value}>
-                                    {o.label}
-                                  </SelectItem>
-                                ),
-                            )}
+                            {getLeadSourceOptions(t).map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -376,7 +371,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="quality"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Qualità</FormLabel>
+                        <FormLabel>{t("form.quality")}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
@@ -384,14 +379,11 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {getQualityOptions(t).map(
-                              (o) =>
-                                o.value !== "ALL" && (
-                                  <SelectItem key={o.value} value={o.value}>
-                                    {o.label}
-                                  </SelectItem>
-                                ),
-                            )}
+                            {getLeadQualityOptions(t).map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -404,7 +396,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="score"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Score (0-100)</FormLabel>
+                        <FormLabel>{t("form.score")}</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -426,11 +418,11 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   name="notes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Note</FormLabel>
+                      <FormLabel>{t("form.note")}</FormLabel>
                       <FormControl>
                         <Textarea
                           rows={3}
-                          placeholder="Note generali..."
+                          placeholder={t("form.notePlaceholder")}
                           {...field}
                           value={field.value ?? ""}
                         />
@@ -440,21 +432,6 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   )}
                 />
               </CardContent>
-
-              <CardFooter className="justify-end gap-2 border-t pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
-                  disabled={isPending}
-                >
-                  Annulla
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isEdit ? "Salva modifiche" : "Crea lead"}
-                </Button>
-              </CardFooter>
             </Card>
           </TabsContent>
 
@@ -471,10 +448,10 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Nome <span className="text-destructive">*</span>
+                          {t("form.contactName")} <span className="text-destructive">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Mario" {...field} />
+                          <Input placeholder={t("form.contactNamePlaceholder")} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -486,10 +463,10 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Cognome <span className="text-destructive">*</span>
+                          {t("form.contactLastName")} <span className="text-destructive">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Rossi" {...field} />
+                          <Input placeholder={t("form.contactLastNamePlaceholder")} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -503,10 +480,14 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Email <span className="text-destructive">*</span>
+                        {t("form.contactEmail")} <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="mario.rossi@acme.com" {...field} />
+                        <Input
+                          type="email"
+                          placeholder={t("form.contactEmailPlaceholder")}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -519,7 +500,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="contactPhone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Telefono</FormLabel>
+                        <FormLabel>{t("form.contactPhone")}</FormLabel>
                         <FormControl>
                           <Input
                             type="tel"
@@ -537,7 +518,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="contactMobile"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Mobile</FormLabel>
+                        <FormLabel>{t("form.contactMobile")}</FormLabel>
                         <FormControl>
                           <Input
                             type="tel"
@@ -558,7 +539,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="contactPosition"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Posizione</FormLabel>
+                        <FormLabel>{t("form.contactPosition")}</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="CEO, CFO, IT Manager..."
@@ -575,10 +556,10 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="contactDepartment"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Dipartimento</FormLabel>
+                        <FormLabel>{t("form.contactDepartment")}</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Acquisti, IT, Direzione..."
+                            placeholder={t("form.contactDepartmentPlaceholder")}
                             {...field}
                             value={field.value ?? ""}
                           />
@@ -589,20 +570,6 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   />
                 </div>
               </CardContent>
-              <CardFooter className="justify-end gap-2 border-t pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
-                  disabled={isPending}
-                >
-                  Annulla
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isEdit ? "Salva modifiche" : "Crea lead"}
-                </Button>
-              </CardFooter>
             </Card>
           </TabsContent>
 
@@ -676,20 +643,6 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   />
                 </div>
               </CardContent>
-              <CardFooter className="justify-end gap-2 border-t pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
-                  disabled={isPending}
-                >
-                  Annulla
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isEdit ? "Salva modifiche" : "Crea lead"}
-                </Button>
-              </CardFooter>
             </Card>
           </TabsContent>
 
@@ -705,7 +658,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="estimatedValue"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Valore stimato (€)</FormLabel>
+                        <FormLabel>{t("form.estimatedValue")} (€)</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -725,7 +678,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="budget"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Budget (€)</FormLabel>
+                        <FormLabel>{t("form.budget")} (€)</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -748,11 +701,12 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="annualRevenue"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Fatturato annuo (€)</FormLabel>
+                        <FormLabel>{t("form.annualRevenue")} (€)</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
                             min={0}
+                            placeholder="0"
                             step="0.01"
                             {...field}
                             value={String(field.value) ?? ""}
@@ -767,11 +721,12 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="employeesCount"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>N° dipendenti</FormLabel>
+                        <FormLabel>{t("form.employeesCount")}</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
                             min={1}
+                            placeholder="1"
                             {...field}
                             value={field.value ?? ""}
                             onChange={(e) =>
@@ -791,10 +746,10 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="industry"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Settore</FormLabel>
+                        <FormLabel>{t("form.industry")}</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Es. Manifatturiero, IT, Retail..."
+                            placeholder={t("form.industryPlaceholder")}
                             {...field}
                             value={field.value ?? ""}
                           />
@@ -808,22 +763,19 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="estimatedSize"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Dimensione azienda</FormLabel>
+                        <FormLabel>{t("form.estimatedSize")}</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value ?? ""}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Seleziona..." />
+                              <SelectValue placeholder={t("form.selectPlaceholder")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {getSizeOptions(tc).map(
-                              (o) =>
-                                o.value !== "ALL" && (
-                                  <SelectItem key={o.value} value={o.value}>
-                                    {o.label}
-                                  </SelectItem>
-                                ),
-                            )}
+                            {getCustomerSizeOptions(tc).map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -838,15 +790,15 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="purchaseTimeframe"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Timeframe acquisto</FormLabel>
+                        <FormLabel>{t("form.purchaseTimeframe")}</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value ?? ""}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Seleziona..." />
+                              <SelectValue placeholder={t("form.selectPlaceholder")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {getPurchaseTimeframeOptions(t).map((o) => (
+                            {getLeadPurchaseTimeframeOptions(t).map((o) => (
                               <SelectItem key={o.value} value={o.value}>
                                 {o.label}
                               </SelectItem>
@@ -862,11 +814,11 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="decisionAuthority"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Autorità decisionale</FormLabel>
+                        <FormLabel>{t("form.decisionAuthority")}</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value ?? ""}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Seleziona..." />
+                              <SelectValue placeholder={t("form.selectPlaceholder")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -890,11 +842,11 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   name="primaryNeed"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Necessità principale</FormLabel>
+                      <FormLabel>{t("form.primaryNeed")}:</FormLabel>
                       <FormControl>
                         <Textarea
                           rows={3}
-                          placeholder="Descrivi il problema o la necessità principale..."
+                          placeholder={t("form.primaryNeedPlaceholder")}
                           {...field}
                           value={field.value ?? ""}
                         />
@@ -908,11 +860,11 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   name="interestedIn"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Interessato a</FormLabel>
+                      <FormLabel>{t("form.interestedIn")}:</FormLabel>
                       <FormControl>
                         <Textarea
                           rows={2}
-                          placeholder="Prodotti o servizi di interesse..."
+                          placeholder={t("form.interestedInPlaceholder")}
                           {...field}
                           value={field.value ?? ""}
                         />
@@ -926,11 +878,11 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   name="competitors"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Concorrenti</FormLabel>
+                      <FormLabel>{t("form.competitors")}:</FormLabel>
                       <FormControl>
                         <Textarea
                           rows={2}
-                          placeholder="Soluzioni concorrenti in uso o in valutazione..."
+                          placeholder={t("form.competitorsPlaceholder")}
                           {...field}
                           value={field.value ?? ""}
                         />
@@ -940,20 +892,6 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   )}
                 />
               </CardContent>
-              <CardFooter className="justify-end gap-2 border-t pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
-                  disabled={isPending}
-                >
-                  Annulla
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isEdit ? "Salva modifiche" : "Crea lead"}
-                </Button>
-              </CardFooter>
             </Card>
           </TabsContent>
 
@@ -971,9 +909,9 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     render={({ field }) => (
                       <FormItem className="flex items-center justify-between rounded-lg border p-3">
                         <div>
-                          <FormLabel>Consenso privacy</FormLabel>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            Il lead ha accettato l&apos;informativa privacy
+                          <FormLabel>{t("form.privacyConsent")}</FormLabel>
+                          <p className="text-xs text-muted-foreground pt-1">
+                            {t("form.privacyConsentDescription")}
                           </p>
                         </div>
                         <FormControl>
@@ -989,7 +927,8 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            Data consenso privacy <span className="text-destructive">*</span>
+                            {t("form.privacyConsentDate")}{" "}
+                            <span className="text-destructive">*</span>
                           </FormLabel>
                           <FormControl>
                             <Input type="date" {...field} value={field.value ?? undefined} />
@@ -1009,9 +948,9 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     render={({ field }) => (
                       <FormItem className="flex items-center justify-between rounded-lg border p-3">
                         <div>
-                          <FormLabel>Consenso marketing</FormLabel>
+                          <FormLabel>{t("form.marketingConsent")}</FormLabel>
                           <p className="text-xs text-muted-foreground mt-0.5">
-                            Il lead acconsente a comunicazioni marketing
+                            {t("form.marketingConsentDescription")}
                           </p>
                         </div>
                         <FormControl>
@@ -1027,7 +966,8 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            Data consenso marketing <span className="text-destructive">*</span>
+                            {t("form.marketingConsentDate")}{" "}
+                            <span className="text-destructive">*</span>
                           </FormLabel>
                           <FormControl>
                             <Input type="date" {...field} value={field.value ?? undefined} />
@@ -1048,7 +988,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="doNotCall"
                     render={({ field }) => (
                       <FormItem className="flex items-center justify-between rounded-lg border p-3">
-                        <FormLabel>Non chiamare</FormLabel>
+                        <FormLabel>{t("form.doNotCall")}</FormLabel>
                         <FormControl>
                           <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
@@ -1060,7 +1000,7 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="doNotEmail"
                     render={({ field }) => (
                       <FormItem className="flex items-center justify-between rounded-lg border p-3">
-                        <FormLabel>Non inviare email</FormLabel>
+                        <FormLabel>{t("form.doNotEmail")}</FormLabel>
                         <FormControl>
                           <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
@@ -1069,20 +1009,6 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   />
                 </div>
               </CardContent>
-              <CardFooter className="justify-end gap-2 border-t pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
-                  disabled={isPending}
-                >
-                  Annulla
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isEdit ? "Salva modifiche" : "Crea lead"}
-                </Button>
-              </CardFooter>
             </Card>
           </TabsContent>
 
@@ -1097,10 +1023,13 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   name="campaignName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nome campagna</FormLabel>
+                      <FormLabel>{t("form.campaign.label")}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Es. Newsletter Q1 2026"
+                          title={t("form.campaign.description")}
+                          placeholder={t("form.campaign.placeholder", {
+                            year: new Date().getFullYear(),
+                          })}
                           {...field}
                           value={field.value ?? ""}
                         />
@@ -1116,10 +1045,11 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="utmSource"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>UTM Source</FormLabel>
+                        <FormLabel>{t("form.utmSource.label")}</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="google, newsletter..."
+                            title={t("form.utmSource.description")}
+                            placeholder={t("form.utmSource.placeholder")}
                             {...field}
                             value={field.value ?? ""}
                           />
@@ -1133,9 +1063,14 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="utmMedium"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>UTM Medium</FormLabel>
+                        <FormLabel>{t("form.utmMedium.label")}</FormLabel>
                         <FormControl>
-                          <Input placeholder="cpc, email..." {...field} value={field.value ?? ""} />
+                          <Input
+                            title={t("form.utmMedium.description")}
+                            placeholder={t("form.utmMedium.placeholder")}
+                            {...field}
+                            value={field.value ?? ""}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -1146,10 +1081,13 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="utmCampaign"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>UTM Campaign</FormLabel>
+                        <FormLabel>{t("form.utmCampaign.label")}</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="spring_sale..."
+                            title={t("form.utmCampaign.description")}
+                            placeholder={t("form.utmCampaign.placeholder", {
+                              year: new Date().getFullYear(),
+                            })}
                             {...field}
                             value={field.value ?? ""}
                           />
@@ -1166,9 +1104,14 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="landingPage"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Landing page</FormLabel>
+                        <FormLabel>{t("form.landingPage.label")}</FormLabel>
                         <FormControl>
-                          <Input placeholder="/prodotti/erp" {...field} value={field.value ?? ""} />
+                          <Input
+                            title={t("form.landingPage.description")}
+                            placeholder={t("form.landingPage.placeholder")}
+                            {...field}
+                            value={field.value ?? ""}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -1179,10 +1122,11 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                     name="referrer"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Referrer</FormLabel>
+                        <FormLabel>{t("form.referrer.label")}</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="https://google.com"
+                            title={t("form.referrer.description")}
+                            placeholder={t("form.referrer.placeholder")}
                             {...field}
                             value={field.value ?? ""}
                           />
@@ -1193,22 +1137,14 @@ export function LeadForm({ mode, lead }: LeadFormProps) {
                   />
                 </div>
               </CardContent>
-              <CardFooter className="justify-end gap-2 border-t pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => (lead ? navigateToDetail("leads", lead.id) : navigate("leads"))}
-                  disabled={isPending}
-                >
-                  Annulla
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isEdit ? "Salva modifiche" : "Crea lead"}
-                </Button>
-              </CardFooter>
             </Card>
           </TabsContent>
+          <FormFooter
+            entityKey="leads"
+            entityId={lead?.id}
+            isEditMode={isEdit}
+            isPending={isPending}
+          />
         </Tabs>
       </form>
     </Form>

@@ -6,8 +6,12 @@ import { useTranslations } from "next-intl";
 import { getRoute } from "@/lib/navigation-routes";
 import { LeadQueryInput } from "@mini-erp/shared";
 import { FilterFieldConfig } from "@/types/filter-types";
-import { FilterBar, FilterInitialValues } from "../../../../../components/filter-bar";
-import { getQualityOptions, getSourceOptions, getStatusOptions } from "@/helpers/lead-helper";
+import { FilterBar, FilterInitialValues } from "@/components/filter-bar";
+import {
+  getLeadQualityOptions,
+  getLeadSourceOptions,
+  getLeadStatusOptions,
+} from "@/helpers/lead-helper";
 
 // ============================================================================
 // Component
@@ -44,17 +48,17 @@ export function LeadFilters({ searchParams, onPendingChange }: Props) {
       {
         type: "select",
         key: "status",
-        options: getStatusOptions(t),
+        options: getLeadStatusOptions(t, true),
       },
       {
         type: "select",
         key: "source",
-        options: getSourceOptions(t),
+        options: getLeadSourceOptions(t, true),
       },
       {
         type: "select",
         key: "quality",
-        options: getQualityOptions(t),
+        options: getLeadQualityOptions(t, true),
       },
     ],
     [t],

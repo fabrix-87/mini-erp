@@ -1,5 +1,5 @@
 import { Decimal } from "@mini-erp/shared";
-import { formatDecimal } from "./format-decimal";
+import { formatDecimalForInput } from "./format-decimal";
 
 /**
  * Formats a tax rate value for display.
@@ -17,5 +17,5 @@ export function formatTaxRate(rate: Decimal | string | number | null | undefined
     return "—";
   }
 
-  return `${formatDecimal(rate, 2)}%`;
+  return `${formatDecimalForInput(rate, 2)}%`;
 }

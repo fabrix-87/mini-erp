@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import { getRoute } from "@/lib/navigation-routes";
 import { FilterFieldConfig } from "@/types/filter-types";
 import { FilterBar, FilterInitialValues } from "@/components/filter-bar";
+import { getCustomerSegmentOptions, getCustomerTypeOptions } from "@/helpers/customer-helper";
 
 interface Props {
   searchParams: CustomerQueryInput;
@@ -16,15 +17,11 @@ interface Props {
 
 const DEFAULT_VALUES = {
   search: "",
-  type: "all",
-  segment: "all",
+  type: "ALL",
+  segment: "ALL",
 };
 
-export default function CustomerHeaderListPage({
-  searchParams,
-  stats,
-  onPendingChange,
-}: Props) {
+export default function CustomerHeaderListPage({ searchParams, stats, onPendingChange }: Props) {
   const t = useTranslations("crm.customers");
   const basePath = useMemo(() => getRoute("customers"), [getRoute]);
 
@@ -42,26 +39,13 @@ export default function CustomerHeaderListPage({
         type: "select",
         key: "type",
         placeholder: t("type"),
-        options: [
-          { label: t("typeFilterAll"), value: "all" },
-          { label: t("typeFilterProspect"), value: "PROSPECT" },
-          { label: t("typeFilterCustomer"), value: "CUSTOMER" },
-          { label: t("typeFilterPartner"), value: "PARTNER" },
-          { label: t("typeFilterOther"), value: "OTHER" },
-        ],
+        options: getCustomerTypeOptions(t, true),
       },
       {
         type: "select",
         key: "segment",
         placeholder: t("segment"),
-        options: [
-          { label: t("segmentAll"), value: "all" },
-          { label: t("segmentVip"), value: "VIP" },
-          { label: t("segmentGold"), value: "GOLD" },
-          { label: t("segmentSilver"), value: "SILVER" },
-          { label: t("segmentBronze"), value: "BRONZE" },
-          { label: t("segmentStandard"), value: "STANDARD" },
-        ],
+        options: getCustomerSegmentOptions(t, true),
       },
     ],
     [t],

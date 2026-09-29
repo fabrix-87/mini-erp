@@ -24,7 +24,7 @@ export function DataRow({ label, value, className, horizontal = true, tooltip }:
         className,
       )}
     >
-      <span className="text-muted-foreground shrink-0 inline-flex items-center gap-1">
+      <span className="min-w-0 shrink-0 inline-flex items-center gap-1 text-muted-foreground">
         {label}
 
         {tooltip && (
@@ -44,7 +44,7 @@ export function DataRow({ label, value, className, horizontal = true, tooltip }:
         )}
       </span>
 
-      <span className="font-medium text-right text-foreground truncate">{value}</span>
+      <span className="min-w-0 truncate text-right font-medium text-foreground">{value}</span>
     </div>
   );
 }

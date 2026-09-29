@@ -11,13 +11,14 @@ import {
 } from "@mini-erp/shared";
 import { useTranslations } from "next-intl";
 
+type T = ReturnType<typeof useTranslations<"crm.leads">>;
 export type FilterStatus = LeadStatus | "ALL";
 export type FilterSource = LeadSource | "ALL";
 export type FilterQuality = LeadQuality | "ALL";
 
-export function getStatusOptions(t: ReturnType<typeof useTranslations<"crm.leads">>) {
+export function getLeadStatusOptions(t: T, includeAll = false) {
   const keys: FilterStatus[] = [
-    "ALL",
+    ...(includeAll ? ["ALL" as const] : []),
     "NEW",
     "CONTACTED",
     "QUALIFIED",
@@ -31,9 +32,9 @@ export function getStatusOptions(t: ReturnType<typeof useTranslations<"crm.leads
   return keys.map((value) => ({ value, label: t(`status.${value}`) }));
 }
 
-export function getSourceOptions(t: ReturnType<typeof useTranslations<"crm.leads">>) {
+export function getLeadSourceOptions(t: T, includeAll = false) {
   const keys: FilterSource[] = [
-    "ALL",
+    ...(includeAll ? ["ALL" as const] : []),
     "WEBSITE",
     "REFERRAL",
     "SOCIAL_MEDIA",
@@ -51,12 +52,12 @@ export function getSourceOptions(t: ReturnType<typeof useTranslations<"crm.leads
   return keys.map((value) => ({ value, label: t(`source.${value}`) }));
 }
 
-export function getQualityOptions(t: ReturnType<typeof useTranslations<"crm.leads">>) {
-  const keys: FilterQuality[] = ["ALL", "HOT", "WARM", "COLD"];
+export function getLeadQualityOptions(t: T, includeAll = false) {
+  const keys: FilterQuality[] = [...(includeAll ? ["ALL" as const] : []), "HOT", "WARM", "COLD"];
   return keys.map((value) => ({ value, label: t(`quality.${value}`) }));
 }
 
-export function getPurchaseTimeframeOptions(t: ReturnType<typeof useTranslations<"crm.leads">>) {
+export function getLeadPurchaseTimeframeOptions(t: T) {
   const keys: PurchaseTimeframe[] = [
     "IMMEDIATE",
     "SHORT_TERM",

@@ -23,7 +23,7 @@ export const FormFooter = ({
   const { navigate, navigateToDetail } = useNavigation();
   const t = useTranslations("common.form");
   return (
-    <CardFooter className="justify-end gap-2 border-t pt-4">
+    <CardFooter className="justify-end gap-2 pt-4">
       <Button
         type="button"
         variant="outline"

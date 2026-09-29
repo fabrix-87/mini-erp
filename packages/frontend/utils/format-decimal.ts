@@ -6,25 +6,53 @@ import { Decimal } from "@mini-erp/shared";
 export type DecimalLike = Decimal | string | number | null | undefined;
 
 /**
- * Formats a decimal-like value into a UI-safe string.
- * Useful for Prisma Decimal fields passed to Next.js components.
+ * Converts a Decimal, number, or string value into a clean string suitable
+ * for controlled form inputs (text/number).
  *
- * @param value - Decimal-like value to format.
- * @param scale - Number of decimal digits to keep.
- * @returns Formatted decimal string, or empty string when value is nullish.
+ * @param value The input value to convert (Decimal, number, string, null, or undefined)
+ * @param scale Optional number of decimal places to format the output to
+ * @param defaultValue Fallback string if the value is null or undefined (defaults to "")
+ * @returns Formatted string ready for input value binding
  */
-export function formatDecimal(value: DecimalLike, scale = 2): string {
+export function formatDecimalForInput(
+  value: DecimalLike,
+  scale?: number,
+  defaultValue: string = "",
+): string {
   if (value === null || value === undefined) {
-    return "";
+    return defaultValue;
   }
 
-  if (typeof value === "string") {
-    return value;
+  let numValue: Decimal | number | null = null;
+
+  // Extract numeric or Decimal instance
+  if (Decimal.isDecimal(value)) {
+    numValue = value;
+  } else if (typeof value === "number") {
+    if (Number.isNaN(value)) return defaultValue;
+    numValue = value;
+  } else if (typeof value === "string") {
+    const normalized = value.trim().replace(",", ".");
+    if (normalized === "" || Number.isNaN(Number(normalized))) {
+      return defaultValue;
+    }
+    // Convert valid numeric string into Decimal to preserve precision
+    numValue = new Decimal(normalized);
+  } else if (typeof value === "object" && "toString" in value) {
+    numValue = new Decimal((value as { toString(): string }).toString());
   }
 
-  if (typeof value === "number") {
-    return value.toFixed(scale);
+  if (numValue === null) {
+    return defaultValue;
   }
 
-  return value.toFixed(scale);
+  // Format with specified scale if provided
+  if (scale !== undefined) {
+    if (Decimal.isDecimal(numValue)) {
+      return numValue.toFixed(scale);
+    }
+    return (numValue as number).toFixed(scale);
+  }
+
+  return numValue.toString();
 }

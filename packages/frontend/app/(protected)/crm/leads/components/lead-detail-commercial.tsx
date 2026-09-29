@@ -11,6 +11,7 @@ interface Props {
 
 export async function LeadDetailCommercial({ lead }: Props) {
   const t = await getTranslations("crm.leads");
+  const tc = await getTranslations("crm.customers");
   return (
     <>
       <Card>
@@ -40,17 +41,17 @@ export async function LeadDetailCommercial({ lead }: Props) {
             />
           )}
           {lead.estimatedSize && (
-            <DataRow label={t("form.estimatedSize")} value={lead.estimatedSize} />
+            <DataRow label={t("form.estimatedSize")} value={tc(`size.${lead.estimatedSize}`)} />
           )}
           {lead.industry && <DataRow label={t("form.industry")} value={lead.industry} />}
           {lead.employeesCount && (
             <DataRow label={t("form.employeesCount")} value={String(lead.employeesCount)} />
           )}
           {lead.purchaseTimeframe && (
-            <DataRow label={t("form.purchaseTimeframe")} value={lead.purchaseTimeframe} />
+            <DataRow label={t("form.purchaseTimeframe")} value={t(`purchaseTimeframe.${lead.purchaseTimeframe}`)} />
           )}
           {lead.decisionAuthority && (
-            <DataRow label={t("form.decisionAuthority")} value={lead.decisionAuthority} />
+            <DataRow label={t("form.decisionAuthority")} value={t(`decisionAuthority.${lead.decisionAuthority}`)} />
           )}
           {lead.primaryNeed && (
             <>
