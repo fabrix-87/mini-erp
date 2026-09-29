@@ -1,31 +1,20 @@
 // components/activity/activity-form.tsx
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Activity, ActivityFormData } from "@/types/activitiy-types";
-
+import { Activity } from "@/types/activitiy-types";
 import { ActivityFormBasicInfo } from "./form/activity-form-basic-info";
 import { ActivityFormScheduling } from "./form/activity-form-scheduling";
 import { ActivityFormOutcome } from "./form/activity-form-outcome";
 import { ActivityFormSettings } from "./form/activity-form-settings";
 import { ActivityStatusBadge } from "./activity-status-badge";
-import { useActivityForm } from "@/hooks/use-activity-form";
-import { useAuth } from "@/hooks/use-auth";
 import { createActivityAction, updateActivityAction } from "@/actions/activity-actions";
 import { useTranslations } from "next-intl";
 import { useNavigation } from "@/hooks/use-navigation";
 import { useForm } from "react-hook-form";
-import {
-  ActivityPriority,
-  ActivityStatus,
-  CreateActivityFormValues,
-  createActivitySchema,
-} from "@mini-erp/shared";
+import { CreateActivityFormValues, createActivitySchema } from "@mini-erp/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormFooter } from "../form/form-footer";
 import { Form } from "../ui/form";
@@ -61,26 +50,26 @@ export function ActivityForm({
   const scheduledEnd = activity?.scheduledEnd ? new Date(activity.scheduledEnd) : null;
 
   const defaultValues = {
-    customerId: activity?.customerId?.toString() || preselectedCustomerId,
-    contactId: activity?.contactId?.toString() || preselectedContactId,
-    leadId: activity?.leadId?.toString() || preselectedLeadId,
+    customerId: activity?.customerId?.toString() ?? preselectedCustomerId ?? null,
+    contactId: activity?.contactId?.toString() ?? preselectedContactId ?? null,
+    leadId: activity?.leadId?.toString() ?? preselectedLeadId ?? null,
     type: activity?.type ?? "CALL",
-    subject: activity?.subject,
-    description: activity?.description || "",
+    subject: activity?.subject ?? "",
+    description: activity?.description ?? "",
     status: activity?.status ?? "SCHEDULED",
     priority: activity?.priority ?? "LOW",
     scheduledStart: scheduledStart.toISOString().slice(0, 16),
-    scheduledEnd: scheduledEnd?.toISOString().slice(0, 16) || "",
-    duration: activity?.duration || 30,
-    reminderMinutes: activity?.reminderMinutes || undefined,
-    location: activity?.location || "",
-    outcome: activity?.outcome || undefined,
-    result: activity?.result || "",
-    internalNotes: activity?.internalNotes || "",
-    customFields: activity?.customFields || {},
-    assignedUserId: activity?.assignedUserId || userId,
-    actualStart: activity?.actualStart || null,
-    actualEnd: activity?.actualEnd || null,
+    scheduledEnd: scheduledEnd?.toISOString().slice(0, 16) ?? "",
+    duration: activity?.duration ?? 30,
+    reminderMinutes: activity?.reminderMinutes ?? null,
+    location: activity?.location ?? "",
+    outcome: activity?.outcome ?? null,
+    result: activity?.result ?? "",
+    internalNotes: activity?.internalNotes ?? "",
+    customFields: activity?.customFields ?? {},
+    assignedUserId: activity?.assignedUserId ?? userId,
+    actualStart: activity?.actualStart ?? null,
+    actualEnd: activity?.actualEnd ?? null,
   };
 
   const form = useForm<CreateActivityFormValues>({
@@ -117,17 +106,24 @@ export function ActivityForm({
         <ActivityStatusBadge />
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList variant="line" className="crm-tabs-list">
-            <TabsTrigger value="basic">{t("tabs.basic")}</TabsTrigger>
-            <TabsTrigger value="schedule">{t("tabs.schedule")}</TabsTrigger>
-            <TabsTrigger value="outcome">{t("tabs.outcome")}</TabsTrigger>
-            <TabsTrigger value="settings">{t("tabs.settings")}</TabsTrigger>
+            <TabsTrigger value="basic">{t("tabs.basic.label")}</TabsTrigger>
+            <TabsTrigger value="schedule">{t("tabs.schedule.label")}</TabsTrigger>
+            <TabsTrigger value="outcome">{t("tabs.outcome.label")}</TabsTrigger>
+            <TabsTrigger value="settings">{t("tabs.settings.label")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="basic">
             <ActivityFormBasicInfo />
           </TabsContent>
-
-
+          <TabsContent value="schedule">
+            <ActivityFormScheduling />
+          </TabsContent>
+          <TabsContent value="outcome">
+            <ActivityFormOutcome />
+          </TabsContent>
+          <TabsContent value="settings">
+            <ActivityFormSettings />
+          </TabsContent>
         </Tabs>
 
         <FormFooter

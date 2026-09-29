@@ -2,10 +2,7 @@
 "use client";
 
 import { FileText } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -13,82 +10,92 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ActivityFormData } from "@/types/activitiy-types";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslations } from "next-intl";
+import { useFormContext, useWatch } from "react-hook-form";
+import { CreateActivityFormValues } from "@mini-erp/shared";
+import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { getActivityOutcomeOptions } from "@/helpers/activity-helpers";
 
-interface ActivityFormOutcomeProps {
-  formData: ActivityFormData;
-  onChange: (field: keyof ActivityFormData, value: any) => void;
-}
+export function ActivityFormOutcome() {
+  const t = useTranslations("activities");
+  const { control } = useFormContext<CreateActivityFormValues>();
+  const status = useWatch({
+    control,
+    name: "status",
+  });
 
-export function ActivityFormOutcome({
-  formData,
-  onChange,
-}: ActivityFormOutcomeProps) {
-  const showOutcomeFields = formData.status === "COMPLETED";
+  const showOutcomeFields = status === "COMPLETED";
 
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>Risultato Attività</CardTitle>
+          <CardTitle>{t("tabs.outcome.title")}</CardTitle>
           <CardDescription>
             {showOutcomeFields
-              ? "Registra l'esito dell'attività completata"
-              : "Disponibile solo per attività completate"}
+              ? t("tabs.outcome.showOutcomeFields.true")
+              : t("tabs.outcome.showOutcomeFields.false")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {showOutcomeFields ? (
             <>
               <div className="space-y-2">
-                <Label htmlFor="outcome">Esito</Label>
-                <Select
-                  value={formData.outcome || ""}
-                  onValueChange={(value) => onChange("outcome", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleziona esito..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="SUCCESSFUL">Positivo</SelectItem>
-                    <SelectItem value="NO_ANSWER">Nessuna risposta</SelectItem>
-                    <SelectItem value="LEFT_MESSAGE">
-                      Lasciato messaggio
-                    </SelectItem>
-                    <SelectItem value="FOLLOW_UP_NEEDED">
-                      Richiede Follow-up
-                    </SelectItem>
-                    <SelectItem value="NOT_INTERESTED">
-                      Non interessato
-                    </SelectItem>
-                    <SelectItem value="POSTPONED">Posticipato</SelectItem>
-                    <SelectItem value="OTHER">Altro</SelectItem>
-                  </SelectContent>
-                </Select>
+                <FormField
+                  control={control}
+                  name="outcome"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("form.outcome")}</FormLabel>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onBlur();
+                          field.onChange(value);
+                        }}
+                        value={field.value ?? undefined}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder={t("form.outcomePlaceholder")} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {getActivityOutcomeOptions(t).map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="result">Note sul Risultato</Label>
-                <Textarea
-                  id="result"
-                  value={formData.result ?? ""}
-                  onChange={(e) => onChange("result", e.target.value)}
-                  placeholder="Descrivi cosa è successo, le decisioni prese, i prossimi passi..."
-                  rows={6}
+                <FormField
+                  control={control}
+                  name="result"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("form.result")}</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          value={field.value ?? undefined}
+                          placeholder={t("form.resultPlaceholder")}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
                 />
               </div>
             </>
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Imposta lo stato su "Completata" per registrare l'esito</p>
+              <p>{t("tabs.outcome.statusOutcomeHint")}</p>
             </div>
           )}
         </CardContent>

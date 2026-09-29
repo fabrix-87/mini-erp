@@ -2,7 +2,6 @@
 "use client";
 
 import { Bell } from "lucide-react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -11,94 +10,117 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ActivityFormData } from "@/types/activitiy-types";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface ActivityFormSchedulingProps {
-  formData: ActivityFormData;
-  onChange: (field: keyof ActivityFormData, value: any) => void;
-}
+import { useTranslations } from "next-intl";
+import { useFormContext } from "react-hook-form";
+import { CreateActivityFormValues } from "@mini-erp/shared";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { getActivityStatusOptions } from "@/helpers/activity-helpers";
 
-export function ActivityFormScheduling({
-  formData,
-  onChange,
-}: ActivityFormSchedulingProps) {
+export function ActivityFormScheduling() {
+  const t = useTranslations("activities");
+  const { control } = useFormContext<CreateActivityFormValues>();
+
   return (
-    <div className="space-y-4">
+    <div className="grid gap-4 md:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle>Data e Ora</CardTitle>
-          <CardDescription>
-            Pianifica quando eseguire l'attività
-          </CardDescription>
+          <CardTitle>{t("tabs.schedule.title")}</CardTitle>
+          <CardDescription>{t("tabs.schedule.description")}</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="scheduledStart">Inizio Programmato *</Label>
-              <Input
-                id="scheduledStart"
-                type="datetime-local"
-                value={formData.scheduledStart}
-                onChange={(e) => onChange("scheduledStart", e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="scheduledEnd">Fine Programmata</Label>
-              <Input
-                id="scheduledEnd"
-                type="datetime-local"
-                value={formData.scheduledEnd ?? undefined}
-                onChange={(e) => onChange("scheduledEnd", e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="duration">Durata (minuti)</Label>
-            <Select
-              value={formData.duration?.toString() ?? "30"}
-              onValueChange={(value) => onChange("duration", value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="15">15 minuti</SelectItem>
-                <SelectItem value="30">30 minuti</SelectItem>
-                <SelectItem value="45">45 minuti</SelectItem>
-                <SelectItem value="60">1 ora</SelectItem>
-                <SelectItem value="90">1.5 ore</SelectItem>
-                <SelectItem value="120">2 ore</SelectItem>
-                <SelectItem value="180">3 ore</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="status">Stato</Label>
-            <Select
-              value={formData.status}
-              onValueChange={(value) => onChange("status", value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="SCHEDULED">Programmata</SelectItem>
-                <SelectItem value="IN_PROGRESS">In Corso</SelectItem>
-                <SelectItem value="COMPLETED">Completata</SelectItem>
-                <SelectItem value="CANCELLED">Annullata</SelectItem>
-              </SelectContent>
-            </Select>
+        <CardContent>
+          <div className="space-y-4">
+            <FormField
+              control={control}
+              name="scheduledStart"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t("form.scheduledStart")} <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input {...field} type="datetime-local" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="scheduledEnd"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("form.scheduledEnd")}</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value ?? undefined} type="datetime-local" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="duration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("form.duration")}</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onBlur();
+                      field.onChange(Number(value));
+                    }}
+                    value={field.value?.toString() ?? "30"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="15">{t("duration.15")}</SelectItem>
+                      <SelectItem value="30">{t("duration.30")}</SelectItem>
+                      <SelectItem value="45">{t("duration.45")}</SelectItem>
+                      <SelectItem value="60">{t("duration.60")}</SelectItem>
+                      <SelectItem value="90">{t("duration.90")}</SelectItem>
+                      <SelectItem value="120">{t("duration.120")}</SelectItem>
+                      <SelectItem value="180">{t("duration.180")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("form.status")}</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onBlur();
+                      field.onChange(value);
+                    }}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {getActivityStatusOptions(t).map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </CardContent>
       </Card>
@@ -107,31 +129,43 @@ export function ActivityFormScheduling({
         <CardHeader>
           <CardTitle>
             <Bell className="inline h-4 w-4 mr-2" />
-            Promemoria
+            {t("reminder.title")}
           </CardTitle>
-          <CardDescription>Minuti prima per il promemoria</CardDescription>
+          <CardDescription>{t("reminder.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
-            <Label htmlFor="reminderMinutes">
-              Promemoria (minuti prima)
-            </Label>
-            <Select
-              value={formData.reminderMinutes?.toString() ?? "0"}
-              onValueChange={(value) => onChange("reminderMinutes", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Nessun promemoria" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0">Nessuno</SelectItem>
-                <SelectItem value="15">15 minuti prima</SelectItem>
-                <SelectItem value="30">30 minuti prima</SelectItem>
-                <SelectItem value="60">1 ora prima</SelectItem>
-                <SelectItem value="120">2 ore prima</SelectItem>
-                <SelectItem value="1440">1 giorno prima</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="space-y-4">
+            <FormField
+              control={control}
+              name="reminderMinutes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("reminder.label")}</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onBlur();
+                      field.onChange(value === "0" ? undefined : Number(value));
+                    }}
+                    value={field.value?.toString() ?? undefined}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("reminder.placeholder")} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="0">{t("reminder.options.0")}</SelectItem>
+                      <SelectItem value="15">{t("reminder.options.15")}</SelectItem>
+                      <SelectItem value="30">{t("reminder.options.30")}</SelectItem>
+                      <SelectItem value="60">{t("reminder.options.60")}</SelectItem>
+                      <SelectItem value="120">{t("reminder.options.120")}</SelectItem>
+                      <SelectItem value="1440">{t("reminder.options.1440")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </CardContent>
       </Card>

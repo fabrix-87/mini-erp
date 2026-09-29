@@ -1,8 +1,6 @@
 // components/activity/form/activity-form-basic-info.tsx
 "use client";
 
-import { MapPin } from "lucide-react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -14,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ActivityFormData } from "@/types/activitiy-types";
 import { Customer } from "@/types/customer-types";
 import { CreateActivityFormValues, Lead } from "@mini-erp/shared";
 import { CustomerCombobox } from "@/components/combobox/customer-combobox";
@@ -42,8 +39,8 @@ export function ActivityFormBasicInfo() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("tabs.basicTitle")}</CardTitle>
-        <CardDescription>{t("tabs.basicDescription")}</CardDescription>
+        <CardTitle>{t("tabs.basic.title")}</CardTitle>
+        <CardDescription>{t("tabs.basic.description")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2">

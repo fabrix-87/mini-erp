@@ -28,12 +28,30 @@
     "followUpDescription": "Richiedono follow-up"
   },
   "tabs": {
-    "basic": "Info Base",
-    "basicTitle": "Dettagli Attività",
-    "basicDescription": "Informazioni principali sull'attività",
-    "schedule": "Pianificazione",
-    "outcome": "Esito",
-    "settings": "Impostazioni"
+    "basic": {
+      "label": "Info Base",
+      "title": "Dettagli Attività",
+      "description": "Informazioni principali sull'attività"
+    },
+    "schedule": {
+      "label": "Pianificazione",
+      "title": "Data e Ora",
+      "description": "Pianifica quando eseguire l'attività"
+    },
+    "outcome": {
+      "label": "Esito",
+      "title": "Risultato Attività",
+      "showOutcomeFields": {
+        "true": "Registra l'esito dell'attività completata",
+        "false": "Disponibile solo per attività completate"
+      },
+      "statusOutcomeHint": "Imposta lo stato su \"Completata\" per registrare l'esito"
+    },
+    "settings": {
+      "label": "Impostazioni",
+      "title": "Note interne",
+      "description": "Note private visibili solo internamente"
+    }
   },
   "form": {
     "type": "Tipo",
@@ -52,7 +70,22 @@
     "lead": "Lead",
     "contact": "Contatto",
     "location": "Luogo",
-    "locationPlaceholder": "Es: Sede cliente, Ufficio Milano, Online (Zoom)"
+    "locationPlaceholder": "Es: Sede cliente, Ufficio Milano, Online (Zoom)",
+    "status": "Stato",
+    "outcome": "Esito",
+    "outcomePlaceholder": "Seleziona esito...",
+    "result": "Note sul risultato",
+    "resultPlaceholder": "Descrivi cosa è successo, le decisioni prese, i prossimi passi...",
+    "internalNotesPlaceholder": "Note interne riservate..."
+  },
+  "duration": {
+    "15": "15 minuti",
+    "30": "30 minuti",
+    "45": "45 minuti",
+    "60": "1 ora",
+    "90": "1,5 ore",
+    "120": "2 ore",
+    "180": "3 ore"
   },
   "type": {
     "CALL": "Chiamata",
@@ -74,6 +107,18 @@
     "MEDIUM": "Media",
     "URGENT": "Urgente"
   },
+  "outcome": {
+    "ALL": "Tutti i risultati",
+    "CALLBACK_LATER": "Richiamare più tardi",
+    "FOLLOW_UP_NEEDED": "Richiede Follow-up",
+    "LEFT_MESSAGE": "Lasciato messaggio",
+    "NOT_INTERESTED": "Non interessato",
+    "NO_ANSWER": "Nessuna risposta",
+    "OTHER": "Altro",
+    "POSTPONED": "Posticipato",
+    "SUCCESSFUL": "Positivo",
+    "WRONG_CONTACT": "Contatto errato"
+  },
   "status": {
     "SCHEDULED": "Pianificato",
     "IN_PROGRESS": "In corso",
@@ -82,6 +127,20 @@
     "RESCHEDULED": "Riprogrammato",
     "NO_SHOW": "Non presentato"
   },
+  "reminder": {
+    "title": "Promemoria",
+    "description": "Minuti prima per il promemoria",
+    "label": "Promemoria (minuti prima)",
+    "placeholder": "Nessun promemoria",
+    "options": {
+      "0": "Nessuno",
+      "15": "15 minuti prima",
+      "30": "30 minuti prima",
+      "60": "1 ora prima",
+      "120": "2 ore prima",
+      "1440": "1 giorno prima"
+    }
+  },
   "customer": {
     "code": "Codice",
     "vat": "P.IVA",
@@ -89,5 +148,6 @@
     "phone": "Tel"
   },
   "createSuccess": "Attività creata!",
+  "updateSuccess": "Attività aggiornata!",
   "isOverdue": "In ritardo"
 }

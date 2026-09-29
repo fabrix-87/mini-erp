@@ -1,41 +1,38 @@
 // components/activity/form/activity-form-settings.tsx
 "use client";
 
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ActivityFormData } from "@/types/activitiy-types";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslations } from "next-intl";
+import { useFormContext } from "react-hook-form";
+import { CreateActivityFormValues } from "@mini-erp/shared";
+import { FormControl, FormField, FormItem } from "@/components/ui/form";
 
-interface ActivityFormSettingsProps {
-  formData: ActivityFormData;
-  onChange: (field: keyof ActivityFormData, value: any) => void;
-}
-
-export function ActivityFormSettings({
-  formData,
-  onChange,
-}: ActivityFormSettingsProps) {
+export function ActivityFormSettings() {
+  const t = useTranslations("activities");
+  const { control } = useFormContext<CreateActivityFormValues>();
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Note Interne</CardTitle>
-        <CardDescription>
-          Note private visibili solo internamente
-        </CardDescription>
+        <CardTitle>{t("tabs.settings.title")}</CardTitle>
+        <CardDescription>{t("tabs.settings.description")}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Textarea
-          id="internalNotes"
-          value={formData.internalNotes}
-          onChange={(e) => onChange("internalNotes", e.target.value)}
-          placeholder="Note interne riservate..."
-          rows={5}
+        <FormField
+          control={control}
+          name="internalNotes"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  value={field.value ?? undefined}
+                  placeholder={t("form.internalNotesPlaceholder")}
+                  rows={10}
+                />
+              </FormControl>
+            </FormItem>
+          )}
         />
       </CardContent>
     </Card>

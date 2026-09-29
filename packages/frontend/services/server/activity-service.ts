@@ -3,16 +3,15 @@ import { serverApi } from "@/lib/server/api";
 import {
   Activity,
   ACTIVITY_TAGS,
-  ActivityFormData,
   ActivityQueryInput,
   ActivitySingleApiResponse,
 } from "@/types/activitiy-types";
 import { ApiResponse, DeleteApiResponse } from "@/types/api";
-import { getUserFromCookiesSSR } from "@/lib/server/cookies";
 import {
   ActivityStats,
   ActivityStatus,
   CompleteActivityInput,
+  CreateActivityFormValues,
   PaginatedResponse,
   UpdateActivityInput,
 } from "@mini-erp/shared";
@@ -77,7 +76,9 @@ export async function fetchActivityByIdServer(id: string): Promise<Activity> {
 /**
  * Create a new activity.
  */
-export async function createActivity(data: ActivityFormData): Promise<ActivitySingleApiResponse> {
+export async function createActivity(
+  data: CreateActivityFormValues,
+): Promise<ActivitySingleApiResponse> {
   return serverApi.post<ActivitySingleApiResponse>("/activities", data, {
     tags: [ACTIVITY_TAGS.list],
     unwrapData: false,

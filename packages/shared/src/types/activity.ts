@@ -94,8 +94,6 @@ export interface ActivityStats {
 /**
  * Type Form values per Activity
  */
-export type ActivityFormData = z.input<typeof createActivitySchema>;
-
 export type ActivityPriority = z.infer<typeof activityPrioritySchema>;
 export type ActivityOutcome = z.infer<typeof activityOutcomeSchema>;
 export type ParticipantStatus = z.infer<typeof participantStatusSchema>;
