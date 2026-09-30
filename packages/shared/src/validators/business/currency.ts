@@ -51,9 +51,11 @@ export const currencySchema = priceSchema();
 export const creditLimitSchema = priceSchema();
 
 /**
- * Schema per percentuale (0-100)
+ * Percentage schema (0-100), emitted as a fixed-precision string (e.g. "12.50").
  */
 export const percentageSchema = createDecimalSchema(2, {
+  required: true,
   min: 0,
   max: 100,
-}).pipe(z.instanceof(Decimal, { message: "Percentuale obbligatoria" }));
+  messages: { required: "Percentuale obbligatoria" },
+});

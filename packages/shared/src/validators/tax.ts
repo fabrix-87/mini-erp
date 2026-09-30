@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createDecimalSchema, createIdSchema, isoDateSchema } from "./primitives";
+import { createDecimalSchema, createIdSchema, isoDateSchema, toDecimal } from "./primitives";
 import { countryCodeBaseSchema } from "./base";
 import { paginationSchema, queryBooleanSchema, sortOrderSchema } from "./query";
 
@@ -215,7 +215,7 @@ export const createTaxRuleSchema = taxRuleShape
   .refine(
     (data) => {
       // vatNatureId required when rate is 0
-      if (data.rate?.equals(0)) return !!data.vatNatureId;
+      if (toDecimal(data.rate)?.equals(0)) return !!data.vatNatureId;
       return true;
     },
     {
@@ -226,7 +226,7 @@ export const createTaxRuleSchema = taxRuleShape
   .refine(
     (data) => {
       // vatNatureId must NOT be set when rate > 0
-      if (data.rate?.greaterThan(0) && data.vatNatureId) return false;
+      if (toDecimal(data.rate)?.greaterThan(0) && data.vatNatureId) return false;
       return true;
     },
     {

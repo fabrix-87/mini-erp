@@ -167,7 +167,7 @@ const documentLineShape = z.object({
   discountAmount: moneySchema,
   lineTotal: moneySchema,
   taxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
-  taxPercent: taxPercentSchema.default(new Decimal(22)),
+  taxPercent: taxPercentSchema,
   taxAmount: moneySchema,
   vatNatureCode: z.string().max(10).optional().nullable(),
   vatNormReference: z.string().max(255).optional().nullable(),
@@ -304,7 +304,7 @@ const documentShape = z.object({
   totalAmount: moneySchema,
   paidAmount: moneySchema,
   currencyCode: currencyCodeBaseSchema.default("EUR"),
-  exchangeRate: exchangeRateSchema.default(new Decimal(1.0)),
+  exchangeRate: exchangeRateSchema.default("1.0"),
   exchangeRateDate: isoDateSchema().default(() => new Date().toISOString()),
   baseCurrencyCode: currencyCodeBaseSchema.default("EUR"),
 

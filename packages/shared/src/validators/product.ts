@@ -61,7 +61,7 @@ export const createProductVariantSchema = z
     // Prezzi specifici
     price: priceSchema({ precision: 6 }).optional().nullable(),
     wholesalePrice: priceSchema({ precision: 6 }).optional().nullable(),
-    unitPriceRatio: priceSchema({ precision: 6 }).default(new Decimal(0)),
+    unitPriceRatio: priceSchema({ precision: 6 }).default("0"),
 
     // Dimensioni fisiche
     weight: z.number().nonnegative().default(0).optional().nullable(),

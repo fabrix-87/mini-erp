@@ -1,5 +1,6 @@
 import Decimal from "decimal.js";
 import { TaxCalculationInput, TaxCalculationResult } from "../../types";
+import { toDecimal } from "../../validators";
 
 /**
  * Calculates tax amounts based on net amount and tax rule
@@ -130,7 +131,7 @@ export function validateTaxCalculation(
   }
   
   // Validate that VAT nature is set if rate is 0
-  if (taxRule.rate?.equals(0) && !taxRule.vatNature) {
+  if (toDecimal(taxRule.rate)?.equals(0) && !taxRule.vatNature) {
     errors.push("Natura IVA obbligatoria per aliquota 0%");
   }
   
