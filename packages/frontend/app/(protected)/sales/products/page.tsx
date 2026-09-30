@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ProductPreview } from "@/types/product";
+import { formatCurrency } from "@/utils/format-currency";
 
 type SortField = "name" | "reference" | "price" | "quantity" | "supplierId";
 type SortOrder = "ASC" | "DESC";
@@ -362,7 +363,7 @@ export default function Products() {
                           </Badge>
                         </TableCell>
                         <TableCell className="font-semibold">
-                          €{p.price.toFixed(2)}
+                          {formatCurrency(p.price)}
                         </TableCell>
                         <TableCell>
                           <Badge

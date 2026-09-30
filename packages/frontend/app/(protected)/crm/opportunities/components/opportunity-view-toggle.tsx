@@ -34,7 +34,7 @@ export function OpportunityViewToggle({ currentView }: OpportunityViewToggleProp
   }
 
   return (
-    <div className="inline-flex items-center rounded-md border p-0.5 bg-muted/50">
+    <div className="inline-flex items-center p-0.5">
       <Button
         type="button"
         variant="ghost"

@@ -31,6 +31,7 @@ import { Contact } from "@mini-erp/shared";
 import { formatDateIT } from "@/helpers/date-helper";
 import { useCrumbMap } from "@/hooks/use-breadcrumb";
 import { useNavigation } from "@/hooks/use-navigation";
+import { formatCurrency } from "@/utils/format-currency";
 
 // ============================================================================
 // TYPES
@@ -310,7 +311,7 @@ export default function ContactDetails({ contact, contactId }: Props) {
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium tabular-nums">
-                          €{doc.totalAmount.toFixed(2)}
+                          {formatCurrency(doc.totalAmount)}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(doc.documentDate).toLocaleDateString("it-IT")}

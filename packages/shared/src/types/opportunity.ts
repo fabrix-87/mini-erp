@@ -143,8 +143,8 @@ export type OpportunityListItem = {
   status: OpportunityStatus;
   stage: SalesStage;
   source: OpportunitySource;
-  estimatedValue: Decimal | null;
-  weightedValue: Decimal;
+  estimatedValue: string | null;
+  weightedValue: string;
   probability: number;
   expectedCloseDate: Date | null;
   assignedUserId: string | null;

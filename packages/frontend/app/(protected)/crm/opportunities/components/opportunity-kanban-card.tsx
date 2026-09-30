@@ -86,7 +86,7 @@ export function OpportunityKanbanCard({ opportunity, isDragging }: OpportunityKa
         {/* Valore stimato + probabilità */}
         <div className="flex items-center justify-between text-xs">
           <span className="font-semibold text-foreground">
-            {formatCurrency(Number(opportunity.estimatedValue ?? 0))}
+            {formatCurrency(opportunity.estimatedValue ?? 0)}
           </span>
 
           <Badge variant="outline" className="text-xs">

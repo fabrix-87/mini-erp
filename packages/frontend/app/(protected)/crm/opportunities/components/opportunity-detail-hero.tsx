@@ -6,6 +6,7 @@ import type { OpportunityComplete, SalesStage } from "@mini-erp/shared";
 import { formatDateIT } from "@/helpers/date-helper";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
+import { formatCurrency } from "@/utils/format-currency";
 
 interface OpportunityDetailHeroProps {
   opportunity: OpportunityComplete;
@@ -26,18 +27,10 @@ const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "
  */
 export function OpportunityDetailHero({ opportunity }: OpportunityDetailHeroProps) {
   const estimatedValue = opportunity.estimatedValue
-    ? Number(opportunity.estimatedValue).toLocaleString("it-IT", {
-        style: "currency",
-        currency: "EUR",
-      })
+    ? formatCurrency(opportunity.estimatedValue)
     : "—";
 
-  const weightedValue = opportunity.weightedValue
-    ? Number(opportunity.weightedValue).toLocaleString("it-IT", {
-        style: "currency",
-        currency: "EUR",
-      })
-    : "—";
+  const weightedValue = opportunity.weightedValue ? formatCurrency(opportunity.weightedValue) : "—";
 
   const t = useTranslations("crm.opportunities");
 
@@ -88,7 +81,9 @@ export function OpportunityDetailHero({ opportunity }: OpportunityDetailHeroProp
 
           {/* Stage */}
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">{t('form.stage')}</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+              {t("form.stage")}
+            </p>
             <p className="text-sm font-medium">
               {STAGE_LABELS[opportunity.stage] ?? opportunity.stage}
             </p>
@@ -105,7 +100,7 @@ export function OpportunityDetailHero({ opportunity }: OpportunityDetailHeroProp
           {/* Chiusura prevista */}
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-              {t('form.expectedCloseDate')}
+              {t("form.expectedCloseDate")}
             </p>
             {opportunity.expectedCloseDate ? (
               <div className="flex items-center gap-2">
@@ -113,11 +108,11 @@ export function OpportunityDetailHero({ opportunity }: OpportunityDetailHeroProp
                 <p className="text-sm font-medium">{formatDateIT(opportunity.expectedCloseDate)}</p>
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">{t('detail.notDefined')}</p>
+              <p className="text-sm text-muted-foreground">{t("detail.notDefined")}</p>
             )}
             {opportunity.assignedUser && (
               <p className="text-xs text-muted-foreground mt-1">
-                {t('form.assignedUser')}{" "}
+                {t("form.assignedUser")}{" "}
                 <span className="font-medium text-foreground">
                   {opportunity.assignedUser.details?.firstName}{" "}
                   {opportunity.assignedUser.details?.lastName}

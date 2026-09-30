@@ -6,15 +6,13 @@ import { OpportunityFilters } from "./opportunity-filters";
 import { OpportunityTable } from "./opportunity-table";
 import type {
   OpportunityListItem,
-  OpportunityQueryInput,
-  OpportunityStats,
+  OpportunityQueryInput,  
 } from "@/types/opportunity-types";
 import type { EntityPermissions, PaginationInfo } from "@mini-erp/shared";
 import { OpportunityKanban } from "./opportunity-kanban";
 
 interface OpportunityListPageProps {
   opportunities: OpportunityListItem[];
-  stats: OpportunityStats;
   pagination: PaginationInfo;
   searchParams: OpportunityQueryInput;
   permissions: EntityPermissions;
@@ -27,7 +25,6 @@ interface OpportunityListPageProps {
  */
 export function OpportunityListPage({
   opportunities,
-  stats,
   pagination,
   searchParams,
   permissions,
@@ -36,8 +33,7 @@ export function OpportunityListPage({
   const [isLoading, setLoading] = useState(false);
 
   return (
-    <div className="space-y-6">
-      <OpportunityStatsBar stats={stats} />
+    <div className="space-y-6">      
       <OpportunityFilters searchParams={searchParams} onPendingChange={setLoading} />
       {view === "kanban" ? (
         <OpportunityKanban opportunities={opportunities} />

@@ -14,6 +14,7 @@ import { PageHeader } from "@/components/page-header";
 import type { Metadata } from "next";
 import { PageHeaderAction, SearchParamsProps } from "@/types/page-types";
 import { OpportunityViewToggle } from "./components/opportunity-view-toggle";
+import { OpportunityStatsBar } from "./components/opportunity-stats-bar";
 
 export default async function OpportunitiesPage({
   searchParams,
@@ -49,16 +50,15 @@ export default async function OpportunitiesPage({
   return (
     <>
       <PageHeader actionItems={actionItems} />
-      <div className="flex justify-end mb-4">
+      <OpportunityStatsBar stats={stats.data} />
+      <div className="flex justify-end mb-4 pt-4">
         <OpportunityViewToggle currentView={view} />
       </div>
-
       <OpportunityListPage
         opportunities={result.data}
         searchParams={queryParams}
         pagination={result.pagination}
         permissions={permissions}
-        stats={stats.data}
         view={view}
       />
     </>

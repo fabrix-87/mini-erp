@@ -4,6 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { Lead } from "@mini-erp/shared";
 import { Briefcase } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { formatCurrency } from "@/utils/format-currency";
 
 interface Props {
   lead: Lead;
@@ -25,19 +26,19 @@ export async function LeadDetailCommercial({ lead }: Props) {
           {lead.estimatedValue && (
             <DataRow
               label={t("form.estimatedValue")}
-              value={`€ ${Number(lead.estimatedValue).toLocaleString("it-IT")}`}
+              value={formatCurrency(lead.estimatedValue)}
             />
           )}
           {lead.budget && (
             <DataRow
               label={t("form.budget")}
-              value={`€ ${Number(lead.budget).toLocaleString("it-IT")}`}
+              value={formatCurrency(lead.budget)}
             />
           )}
           {lead.annualRevenue && (
             <DataRow
               label={t("form.annualRevenue")}
-              value={`€ ${Number(lead.annualRevenue).toLocaleString("it-IT")}`}
+              value={formatCurrency(lead.annualRevenue)}
             />
           )}
           {lead.estimatedSize && (

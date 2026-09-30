@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { ProductVariantDetails } from "./components/ProductVariantDetails";
 import { ProductInfoTabs } from "./components/ProductInfoTabs";
 import { Product, ProductVariant } from "@mini-erp/shared";
+import { formatCurrency } from "@/utils/format-currency";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -222,7 +223,7 @@ export default function ProductDetailPage() {
                   <Euro className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
                   <p className="text-xs text-muted-foreground">Prezzo Base</p>
                   <p className="text-sm font-medium">
-                    €{parseFloat(product.priceTaxExcluded).toFixed(2)}
+                    {formatCurrency(product.price)}
                   </p>
                 </div>
               </div>
