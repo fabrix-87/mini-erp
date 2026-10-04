@@ -3,152 +3,51 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  Edit,
-  Trash2,
-  Phone,
-  Mail,
-  Users,
-  Video,
-  MapPin,
-  FileText,
-  Clock,
-  Calendar,
-  AlertCircle,
-  CheckCircle2,
-  MessageSquare,
-  Smartphone,
-  ExternalLink,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MapPin, FileText, Clock, Calendar, AlertCircle, ExternalLink } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
 import { Activity } from "@/types/activitiy-types";
 import { BreadcrumbSetter } from "../ui/breadcrumb-setter";
 import { formatDateIT } from "@/helpers/date-helper";
 import Link from "next/link";
-import { deleteActivityAction } from "@/actions/activity-actions";
 import { getDetailRoute } from "@/lib/navigation-routes";
-
-const activityTypeIcons: Record<string, any> = {
-  CALL: Phone,
-  EMAIL: Mail,
-  MEETING: Users,
-  TASK: FileText,
-  NOTE: FileText,
-  WHATSAPP: MessageSquare,
-  SMS: Smartphone,
-  VIDEO_CALL: Video,
-  SITE_VISIT: MapPin,
-  OTHER: FileText,
-};
-
-const statusColors: Record<string, string> = {
-  SCHEDULED: "bg-yellow-500/10 text-yellow-700",
-  IN_PROGRESS: "bg-blue-500/10 text-blue-700",
-  COMPLETED: "bg-green-500/10 text-green-700",
-  CANCELLED: "bg-red-500/10 text-red-700",
-  RESCHEDULED: "bg-orange-500/10 text-orange-700",
-  NO_SHOW: "bg-gray-500/10 text-gray-700",
-};
-
-const statusLabels: Record<string, string> = {
-  SCHEDULED: "Programmata",
-  IN_PROGRESS: "In corso",
-  COMPLETED: "Completata",
-  CANCELLED: "Annullata",
-  RESCHEDULED: "Riprogrammata",
-  NO_SHOW: "Non presentato",
-};
+import {
+  ActivityPriorityColors,
+  ActivityStatusColors,
+  ActivityTypeIcons,
+} from "@/constants/activity-priority-colors";
+import { useTranslations } from "next-intl";
+import { cn } from "cn";
+import { ActionToolbar } from "../action-toolbar";
+import { CompleteActivitySheet } from "@/app/(protected)/activities/components/complete-activity-sheet";
+import { CompleteActivityFormValues } from "@mini-erp/shared";
+import { completeActivityAction } from "@/actions/activity-actions";
+import { toast } from "sonner";
 
 interface ActivityDetailClientProps {
   activity: Activity;
 }
 
 export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
-  <BreadcrumbSetter
-    items={[{ label: "Attività", href: "/activities" }, { label: activity.subject }]}
-  />;
+  const t = useTranslations("activities");
+  const tc = useTranslations("common");
+  const Icon = ActivityTypeIcons[activity.type] || FileText;
+  const priorityColor = ActivityPriorityColors[activity.priority];
+  const statusColor = ActivityStatusColors[activity.status];
+  const isCompleted = activity.status === "COMPLETED";
 
-  const router = useRouter();
-  const [deleting, setDeleting] = useState(false);
-
-  const Icon = activityTypeIcons[activity.type] || FileText;
-
-  const handleDelete = async () => {
-    setDeleting(true);
-    try {
-      await deleteActivityAction(activity.id);
-      toast.success("Attività eliminata con successo");
-      router.push("/activities");
-    } catch (error: any) {
-      toast.error("Errore durante l'eliminazione");
-      setDeleting(false);
+  const completeActivitySubmit = async (data: CompleteActivityFormValues) => {
+    const result = await completeActivityAction(activity.id, data);
+    if (result.success && result.data) {
+      toast.success(t("completeActivity.success"));
+    } else {
+      toast.error(result.error ?? t("completeActivity.error"));
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.push("/activities")}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">{activity.subject}</h1>
-            <p className="text-muted-foreground">Dettagli dell'attività #{activity.id}</p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.push(`/activities/${activity.id}/edit`)}>
-            <Edit className="mr-2 h-4 w-4" />
-            Modifica
-          </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="outline" className="text-red-600">
-                <Trash2 className="mr-2 h-4 w-4" />
-                Elimina
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Conferma eliminazione</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Sei sicuro di voler eliminare questa attività? L'operazione non può essere
-                  annullata.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Annulla</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDelete}
-                  disabled={deleting}
-                  className="bg-red-600"
-                >
-                  {deleting ? "Eliminazione..." : "Elimina"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      </div>
-
       {/* Status Card */}
       <Card>
         <CardContent className="pt-6">
@@ -158,35 +57,61 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
                 <Icon className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Tipo</p>
-                <p className="text-lg font-semibold">{activity.type}</p>
+                <p className="text-sm text-muted-foreground">{t("form.type")}</p>
+                <p className="text-lg font-semibold">{t(`type.${activity.type}`)}</p>
               </div>
             </div>
             <div className="flex gap-2">
-              <Badge className={statusColors[activity.status]}>
-                {statusLabels[activity.status]}
+              <Badge variant="outline" className={cn(statusColor.text, statusColor.bg)}>
+                {t(`status.${activity.status}`)}
               </Badge>
-              <Badge variant="outline">Priorità: {activity.priority}</Badge>
+              <Badge
+                variant="outline"
+                className={cn(priorityColor.border, priorityColor.text, priorityColor.bg)}
+              >
+                {`${t("form.priority")}: ${t(`priority.${activity.priority}`)}`}
+              </Badge>
             </div>
           </div>
         </CardContent>
       </Card>
 
+      {!isCompleted && (
+        <ActionToolbar
+          ariaLabelKey="activities.toolbar.ariaLabel"
+          buttons={[
+            {
+              type: "sheet",
+              mode: "custom",
+              key: "complete-activity",
+              labelKey: "activities.completeActivity.title",
+              renderSheet: ({ open, onOpenChange }) => (
+                <CompleteActivitySheet
+                  onOpenChange={onOpenChange}
+                  open={open}
+                  onSubmit={completeActivitySubmit}
+                />
+              ),
+            },
+          ]}
+        />
+      )}
+
       <div className="grid gap-6 md:grid-cols-2">
         {/* Informazioni Principali */}
         <Card>
           <CardHeader>
-            <CardTitle>Informazioni</CardTitle>
+            <CardTitle>{tc("info")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Oggetto</p>
+              <p className="text-sm font-medium text-muted-foreground">{t("form.subject")}</p>
               <p className="text-base">{activity.subject}</p>
             </div>
 
             {activity.description && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Descrizione</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("form.description")}</p>
                 <p className="text-base">{activity.description}</p>
               </div>
             )}
@@ -194,7 +119,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
             <Separator />
 
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Azienda</p>
+              <p className="text-sm font-medium text-muted-foreground">{tc("company")}</p>
               {activity.customer && (
                 <p className="text-base">
                   <Link
@@ -229,44 +154,38 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
               )}
             </div>
 
-            {activity.contact && (
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Contatto</p>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">{tc("contact")}</p>
+              {activity.contact && (
                 <p className="text-base">
                   👤 {activity.contact.firstName} {activity.contact.lastName}
                 </p>
-              </div>
-            )}
-
-            {activity.lead && (
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Contatto</p>
+              )}
+              {activity.lead && (
                 <p className="text-base">
                   👤 {activity.lead.contactFirstName} {activity.lead?.contactLastName}
                 </p>
-              </div>
-            )}
-
-            {activity.location && (
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Luogo</p>
+              )}
+              {activity.location && (
                 <p className="text-base flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
                   {activity.location}
                 </p>
-              </div>
-            )}
+              )}
+            </div>
           </CardContent>
         </Card>
 
         {/* Pianificazione */}
         <Card>
           <CardHeader>
-            <CardTitle>Pianificazione</CardTitle>
+            <CardTitle>{t("tabs.schedule.label")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Data e Ora Inizio</p>
+              <p className="text-sm font-medium text-muted-foreground">
+                {t("tabs.schedule.startDate")}
+              </p>
               <p className="text-base flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 {formatDateIT(activity.scheduledStart)}
@@ -275,7 +194,9 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
 
             {activity.scheduledEnd && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Data e Ora Fine</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {t("tabs.schedule.endDate")}
+                </p>
                 <p className="text-base flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   {formatDateIT(activity.scheduledEnd)}
@@ -285,20 +206,20 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
 
             {activity.duration && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Durata</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("form.duration")}</p>
                 <p className="text-base flex items-center gap-2">
                   <Clock className="h-4 w-4" />
-                  {activity.duration} minuti
+                  {t(`duration.${activity.duration}`)}
                 </p>
               </div>
             )}
 
             {activity.reminderMinutes && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Promemoria</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("reminder.title")}</p>
                 <p className="text-base flex items-center gap-2">
                   <AlertCircle className="h-4 w-4" />
-                  {activity.reminderMinutes} minuti prima
+                  {t(`reminder.options.${activity.reminderMinutes}`)}
                 </p>
               </div>
             )}
@@ -306,24 +227,26 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
         </Card>
 
         {/* Esito (se completata) */}
-        {activity.status === "COMPLETED" && (
+        {isCompleted && (
           <Card className="md:col-span-2">
             <CardHeader>
-              <CardTitle>Esito e Risultato</CardTitle>
+              <CardTitle>{t("tabs.outcome.title")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {activity.outcome && (
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Esito</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t("tabs.outcome.label")}
+                  </p>
                   <Badge variant="outline" className="mt-1">
-                    {activity.outcome}
+                    {t(`outcome.${activity.outcome}`)}
                   </Badge>
                 </div>
               )}
 
               {activity.result && (
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Note sul Risultato</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t("form.result")}</p>
                   <p className="text-base mt-1">{activity.result}</p>
                 </div>
               )}
@@ -331,10 +254,15 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
               {activity.followUpActivity && (
                 <div className="flex items-center gap-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                   <AlertCircle className="h-4 w-4 text-yellow-700" />
-                  <span className="text-sm font-medium text-yellow-700">Richiede Follow-up</span>
+                  <span className="text-sm font-medium text-yellow-700">
+                    {t("followUpActivity")}
+                  </span>
                   {activity.followUpActivity.scheduledStart && (
                     <span className="text-sm text-muted-foreground ml-auto">
-                      {formatDateIT(activity.followUpActivity.scheduledStart)}
+                      <Link href={getDetailRoute("activities", activity.followUpActivity.id)}>
+                        {activity.followUpActivity.subject} -{" "}
+                        {formatDateIT(activity.followUpActivity.scheduledStart)}
+                      </Link>
                     </span>
                   )}
                 </div>
@@ -347,7 +275,7 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
         {activity.internalNotes && (
           <Card className="md:col-span-2">
             <CardHeader>
-              <CardTitle>Note Interne</CardTitle>
+              <CardTitle>{t("tabs.settings.title")}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-base whitespace-pre-wrap">{activity.internalNotes}</p>
@@ -359,20 +287,20 @@ export function ActivityDetailClient({ activity }: ActivityDetailClientProps) {
       {/* Metadata */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">Metadata</CardTitle>
+          <CardTitle className="text-sm">{tc("metadata.title")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3 text-sm">
             <div>
-              <p className="text-muted-foreground">Creata il</p>
+              <p className="text-muted-foreground">{tc("metadata.createdAt")}</p>
               <p>{formatDateIT(activity.createdAt)}</p>
             </div>
             <div>
-              <p className="text-muted-foreground">Ultimo aggiornamento</p>
+              <p className="text-muted-foreground">{tc("metadata.updatedAt")}</p>
               <p>{formatDateIT(activity.updatedAt)}</p>
             </div>
             <div>
-              <p className="text-muted-foreground">ID Attività</p>
+              <p className="text-muted-foreground">{tc("metadata.id")}</p>
               <p>#{activity.id}</p>
             </div>
           </div>

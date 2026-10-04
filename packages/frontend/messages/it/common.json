@@ -82,7 +82,10 @@
     "saveChanges": "Salva modifiche",
     "create": "Salva"
   },
-
+  "deleteDialog": {
+    "title": "Vuoi eliminare: {name}?",
+    "description": "L'operazione è irreversibile. Tutti i dati associati verranno eliminati."
+  },
   "feedback": {
     "saved": "Salvato con successo",
     "deleted": "Eliminato con successo",
@@ -146,5 +149,14 @@
     "heroTitle": "Il tuo lavoro,<br></br>in un unico spazio.",
     "heroDescription": "Gestisci relazioni, processi, documenti e operatività quotidiana con un’unica piattaforma."
   },
-  "appDescription": "Gestione aziendale"
+  "metadata": {
+    "title": "Metadata",
+    "createdAt": "Data creazione",
+    "updatedAt": "Ultima modifica",
+    "id": "Codice Identificativo"
+  },
+  "appDescription": "Gestione aziendale",
+  "info": "Informazioni",
+  "company": "Azienda",
+  "contact": "Contatto"
 }

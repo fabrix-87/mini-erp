@@ -10,7 +10,7 @@ import { ApiResponse, DeleteApiResponse } from "@/types/api";
 import {
   ActivityStats,
   ActivityStatus,
-  CompleteActivityInput,
+  CompleteActivityFormValues,
   CreateActivityFormValues,
   PaginatedResponse,
   UpdateActivityInput,
@@ -22,13 +22,14 @@ import {
  */
 export async function fetchActivitiesServer(
   params: ActivityQueryInput,
+  revalidate: number | false = 0, // No cache per dati sempre freschi
 ): Promise<PaginatedResponse<Activity>> {
   try {
     // unwrapData: false per ottenere l'intera risposta con pagination
     const response = await serverApi.get<PaginatedResponse<Activity>>("/activities", {
       params,
       unwrapData: false, // Otteniamo { status, data, pagination }
-      revalidate: 0, // No cache per dati sempre freschi
+      revalidate: revalidate,
       // Alternative per cache: revalidate: 60 per ISR
     });
     return response;
@@ -60,17 +61,15 @@ export async function fetchActivityStatsServer(
 /**
  * Server-side function to fetch a single activity (for SSR)
  */
-export async function fetchActivityByIdServer(id: string): Promise<Activity> {
-  try {
-    // unwrapData: true (default) per ottenere direttamente i dati
-    const activity = await serverApi.get<Activity>(`/activities/${id}`, {
-      revalidate: 0,
-    });
-    return activity;
-  } catch (error) {
-    console.error("Error fetching activity:", error);
-    throw error;
-  }
+export async function fetchActivityByIdServer(
+  id: string,
+  revalidate: number | false = 0,
+): Promise<Activity> {
+  const activity = await serverApi.get<Activity>(`/activities/${id}`, {
+    revalidate: revalidate,
+    tags: [ACTIVITY_TAGS.detail(id), ACTIVITY_TAGS.list],
+  });
+  return activity;
 }
 
 /**
@@ -102,7 +101,9 @@ export async function updateActivity(
  * Delete activity.
  */
 export async function deleteActivity(id: string): Promise<DeleteApiResponse> {
-  return serverApi.delete(`/activities/${id}`);
+  return serverApi.delete(`/activities/${id}`, {
+    tags: [ACTIVITY_TAGS.detail(id), ACTIVITY_TAGS.list],
+  });
 }
 
 /**
@@ -115,7 +116,11 @@ export async function updateActivityStatus(
   id: string,
   status: ActivityStatus,
 ): Promise<ActivitySingleApiResponse> {
-  return serverApi.patch(`/activities/${id}/status`, { status }, { unwrapData: false });
+  return serverApi.patch(
+    `/activities/${id}/status`,
+    { status },
+    { unwrapData: false, tags: [ACTIVITY_TAGS.detail(id), ACTIVITY_TAGS.list] },
+  );
 }
 
 /**
@@ -126,7 +131,10 @@ export async function updateActivityStatus(
  */
 export async function completeActivity(
   id: string,
-  data: CompleteActivityInput,
+  data: CompleteActivityFormValues,
 ): Promise<ActivitySingleApiResponse> {
-  return serverApi.patch(`/activities/${id}/complete`, data, { unwrapData: false });
+  return serverApi.patch(`/activities/${id}/complete`, data, {
+    unwrapData: false,
+    tags: [ACTIVITY_TAGS.detail(id), ACTIVITY_TAGS.list],
+  });
 }

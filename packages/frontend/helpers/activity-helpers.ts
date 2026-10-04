@@ -27,9 +27,9 @@ export function getActivityTypeOptions(t: T, includeAll = false) {
 export function getActivityPriorityOptions(t: T, includeAll = false) {
   const keys: PriorityFilter[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "HIGH",
     "LOW",
     "MEDIUM",
+    "HIGH",
     "URGENT",
   ];
   return keys.map((value) => ({ value, label: t(`priority.${value}`) }));
@@ -39,7 +39,6 @@ export function getActivityStatusOptions(t: T, includeAll = false) {
   const keys: StatusFilter[] = [
     ...(includeAll ? ["ALL" as const] : []),
     "CANCELLED",
-    "COMPLETED",
     "IN_PROGRESS",
     "NO_SHOW",
     "RESCHEDULED",
@@ -63,19 +62,3 @@ export function getActivityOutcomeOptions(t: T, includeAll = false) {
   ];
   return keys.map((value) => ({ value, label: t(`outcome.${value}`) }));
 }
-
-export const ACTIVITY_STATUS_CLASS_NAMES = {
-  COMPLETED: "bg-green-500/5 border-green-500/20",
-  IN_PROGRESS: "bg-blue-500/5 border-blue-500/20",
-  CANCELLED: "bg-red-500/5 border-red-500/20",
-  SCHEDULED: "bg-yellow-500/5 border-yellow-500/20",
-  NO_SHOW: "bg-slate-500/5 border-slate-500/20",
-  RESCHEDULED: "bg-violet-500/5 border-violet-500/20",
-} satisfies Record<ActivityStatus, string>;
-
-export const ACTIVITY_PRIORITY_VARIANTS = {
-  HIGH: "destructive",
-  LOW: "secondary",
-  MEDIUM: "secondary",
-  URGENT: "destructive",
-} satisfies Record<ActivityPriority, "destructive" | "secondary">;

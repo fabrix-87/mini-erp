@@ -52,10 +52,11 @@ export async function completeActivity(
           priority: followUp.priority ?? "MEDIUM",
           description: followUp.description ?? null,
           status: "SCHEDULED",
+          duration: followUp.duration,
           // Inherit relations from parent activity
           leadId: existing.leadId,
           customerId: existing.customerId,
-          companyId: existing.companyId,
+          supplierId: existing.supplierId,
           opportunityId: existing.opportunityId,
           contactId: existing.contactId,
           assignedUserId: followUp.assignedUserId ?? existing.assignedUserId,
@@ -75,8 +76,8 @@ export async function completeActivity(
       where: { id: activityId },
       data: completionData,
       include: {
-        company: true,
         customer: true,
+        supplier: true,
         opportunity: true,
         lead: { select: { id: true } },
         assignedUser: { select: { id: true, username: true, email: true } },

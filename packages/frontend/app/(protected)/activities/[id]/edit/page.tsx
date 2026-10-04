@@ -1,33 +1,33 @@
 // app/activities/[id]/edit/page.tsx
-import { Suspense } from "react";
-import { notFound } from "next/navigation";
 import { fetchActivityByIdServer } from "@/services/server/activity-service";
 import { ActivityForm } from "@/components/activity/activity-form";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getCurrentUser } from "@/lib/server/auth";
+import { getCurrentUser, requirePermission } from "@/lib/server/auth";
+import { PageIdProps } from "@/types/page-types";
+import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { PageHeader } from "@/components/page-header";
 
-export default async function EditActivityPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditActivityPage({ params }: PageIdProps) {
   const { id } = await params;
 
-  try {
-    const activity = await fetchActivityByIdServer(id);
-    const { id: userId } = await getCurrentUser();
+  await requirePermission("activity:update");
 
-    return (
-      <Suspense fallback={<ActivityFormSkeleton />}>
-        <ActivityForm userId={userId} activity={activity} isEditMode={true} />
-      </Suspense>
-    );
-  } catch (error) {
-    notFound();
-  }
+  const activity = await fetchActivityByIdServer(id);
+  const { id: userId } = await getCurrentUser();
+  const t = await getTranslations("activities");
+
+  return (
+    <>
+      <PageHeader title={t("updateTitle")} subtitle={t("updateDescription")} />
+      <ActivityForm userId={userId} activity={activity} isEditMode={true} />
+    </>
+  );
 }
 
-function ActivityFormSkeleton() {
-  return (
-    <div className="space-y-6">
-      <Skeleton className="h-12 w-full" />
-      <Skeleton className="h-96 w-full" />
-    </div>
-  );
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("activities");
+  return {
+    title: `${t("updateTitle")} | ${process.env.APP_NAME}`,
+    description: t("updateDescription"),
+  };
 }

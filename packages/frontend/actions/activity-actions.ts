@@ -2,7 +2,7 @@
 "use server";
 
 import { serverApi } from "@/lib/server/api";
-import { Activity, ActivityFormData } from "@/types/activitiy-types";
+import { Activity } from "@/types/activitiy-types";
 import { ApiResponse, DeleteApiResponse } from "@/types/api";
 import { ServerApiError } from "@/types/server-client";
 import {
@@ -10,7 +10,13 @@ import {
   leadRevalidation,
   opportunityRevalidation,
 } from "@/lib/server/revalidate";
-import { ActivityOutcome, ActivityStatus, UpdateActivityInput } from "@mini-erp/shared";
+import {
+  ActivityOutcome,
+  ActivityStatus,
+  CompleteActivityFormValues,
+  CreateActivityFormValues,
+  UpdateActivityInput,
+} from "@mini-erp/shared";
 import {
   completeActivity,
   createActivity,
@@ -24,12 +30,14 @@ import { ActionResult, withAuth } from "@/lib/server/action";
  * Server Action — Create activity (generic)
  */
 export async function createActivityAction(
-  activityData: ActivityFormData,
+  activityData: CreateActivityFormValues,
 ): Promise<ActionResult<Activity>> {
   return withAuth(async () => {
     const response = await createActivity({
       ...activityData,
-      reminderMinutes: activityData.reminderMinutes ? Number(activityData.reminderMinutes) : undefined
+      reminderMinutes: activityData.reminderMinutes
+        ? Number(activityData.reminderMinutes)
+        : undefined,
     });
 
     activityRevalidation.list();
@@ -40,28 +48,6 @@ export async function createActivityAction(
     if (activityData.opportunityId) {
       opportunityRevalidation.opportunity(activityData.opportunityId);
     }
-
-    return response.data;
-  }, "activity:create");
-}
-
-/**
- * Server Action — Create activity linked to a lead.
- * Revalidates both the activities list and the lead detail page.
- */
-export async function createLeadActivity(
-  leadId: string,
-  activityData: ActivityFormData,
-): Promise<ActionResult<Activity>> {
-  return withAuth(async () => {
-    const response = await serverApi.post<ApiResponse<Activity>>(
-      "/activities",
-      { ...activityData, leadId },
-      { unwrapData: false },
-    );
-
-    activityRevalidation.list();
-    activityRevalidation.forLead(leadId);
 
     return response.data;
   }, "activity:create");
@@ -156,14 +142,10 @@ export async function bulkUpdateActivities(
  */
 export async function completeActivityAction(
   id: string,
-  outcome: ActivityOutcome,
-  outcomeNotes?: string,
+  data: CompleteActivityFormValues,
 ): Promise<ActionResult<Activity>> {
   return withAuth(async () => {
-    const response = await completeActivity(id, {
-      outcome,
-      internalNotes: outcomeNotes,
-    });
+    const response = await completeActivity(id, data);
 
     // Revalidate relevant paths
     activityRevalidation.activityWithList(id);

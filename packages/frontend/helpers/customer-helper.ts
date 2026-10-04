@@ -21,7 +21,6 @@ export function getCustomerSizeOptions(t: T, includeAll = false) {
 export function getCustomerTypeOptions(t: T, includeAll = false) {
   const keys: FilterType[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "ALL",
     "PROSPECT",
     "CUSTOMER",
     "PARTNER",
@@ -39,5 +38,5 @@ export function getCustomerSegmentOptions(t: T, includeAll = false) {
     "BRONZE",
     "STANDARD",
   ];
-  return keys.map((value) => ({ value, label: t(`types.${value}`) }));
+  return keys.map((value) => ({ value, label: t(`segments.${value}`) }));
 }

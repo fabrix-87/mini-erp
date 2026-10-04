@@ -1,67 +1,18 @@
 // app/components/activities/activity-card.tsx
 "use client";
 
-import {
-  Phone,
-  Mail,
-  Users,
-  Video,
-  MapPin,
-  FileText,
-  Clock,
-  AlertCircle,
-  MessageSquare,
-  Smartphone,
-  Building2,
-  Building,
-} from "lucide-react";
+import { Users, MapPin, FileText, Clock, AlertCircle, Building2, Building } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Activity } from "@/types/activitiy-types";
 import { cn } from "@/lib/utils";
 import { formatDateIT } from "@/helpers/date-helper";
 import { useTranslations } from "next-intl";
-
-const activityTypeIcons: Record<string, any> = {
-  CALL: Phone,
-  EMAIL: Mail,
-  MEETING: Users,
-  TASK: FileText,
-  NOTE: FileText,
-  WHATSAPP: MessageSquare,
-  SMS: Smartphone,
-  VIDEO_CALL: Video,
-  SITE_VISIT: MapPin,
-  OTHER: FileText,
-};
-
-const activityTypeColors: Record<string, string> = {
-  CALL: "bg-blue-500/10 text-blue-700",
-  EMAIL: "bg-purple-500/10 text-purple-700",
-  MEETING: "bg-green-500/10 text-green-700",
-  TASK: "bg-orange-500/10 text-orange-700",
-  NOTE: "bg-gray-500/10 text-gray-700",
-  WHATSAPP: "bg-green-600/10 text-green-800",
-  SMS: "bg-indigo-500/10 text-indigo-700",
-  VIDEO_CALL: "bg-pink-500/10 text-pink-700",
-  SITE_VISIT: "bg-cyan-500/10 text-cyan-700",
-  OTHER: "bg-gray-500/10 text-gray-700",
-};
-
-const statusColors: Record<string, string> = {
-  SCHEDULED: "bg-yellow-500/10 text-yellow-700",
-  IN_PROGRESS: "bg-blue-500/10 text-blue-700",
-  COMPLETED: "bg-green-500/10 text-green-700",
-  CANCELLED: "bg-red-500/10 text-red-700",
-  RESCHEDULED: "bg-orange-500/10 text-orange-700",
-  NO_SHOW: "bg-gray-500/10 text-gray-700",
-};
-
-const priorityColors: Record<string, string> = {
-  LOW: "border-gray-300",
-  MEDIUM: "border-blue-500",
-  HIGH: "border-orange-500",
-  URGENT: "border-red-500",
-};
+import {
+  ActivityPriorityColors,
+  ActivityStatusColors,
+  ActivityTypeColors,
+  ActivityTypeIcons,
+} from "@/constants/activity-priority-colors";
 
 interface ActivityCardProps {
   activity: Activity;
@@ -70,7 +21,9 @@ interface ActivityCardProps {
 }
 
 export function ActivityCard({ activity, onClick, className }: ActivityCardProps) {
-  const Icon = activityTypeIcons[activity.type] || FileText;
+  const Icon = ActivityTypeIcons[activity.type] || FileText;
+  const priorityColor = ActivityPriorityColors[activity.priority];
+  const statusColor = ActivityStatusColors[activity.status];
 
   const t = useTranslations("activities");
 
@@ -82,22 +35,22 @@ export function ActivityCard({ activity, onClick, className }: ActivityCardProps
   return (
     <div
       className={cn(
-        "flex items-start gap-4 p-4 border-l-4 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors",
+        "flex cursor-pointer items-start gap-4 rounded-lg border p-4 transition-colors hover:bg-muted/50",
+        statusColor.border,
+        statusColor.accentBorder,
         className,
-        priorityColors[activity.priority],
         isOverdue && "bg-red-500/5",
       )}
       onClick={onClick}
     >
       {/* Icon & Date */}
-      <div className="flex flex-col items-center gap-1 min-w-15">
+      <div className="flex flex-col items-center gap-1 min-w-30">
         <div
           className={cn(
-            "h-10 w-10 rounded-lg flex items-center justify-center",
-            activityTypeColors[activity.type],
+            ActivityTypeColors,
           )}
         >
-          <Icon className="h-5 w-5" />
+          <Icon className="h-7 w-7" />
         </div>
         <div className="text-xs font-medium text-center">{datetime}</div>
       </div>
@@ -107,19 +60,15 @@ export function ActivityCard({ activity, onClick, className }: ActivityCardProps
         <div className="flex items-start justify-between gap-2 mb-1">
           <div className="font-medium truncate">{activity.subject}</div>
           <div className="flex gap-2 shrink-0">
-            <Badge variant="secondary" className={statusColors[activity.status]}>
+            <Badge variant="outline" className={cn(statusColor.text, statusColor.bg)}>
               {t(`status.${activity.status}`)}
             </Badge>
-            {activity.priority === "HIGH" && (
-              <Badge variant="outline" className="border-orange-500 text-orange-700">
-                {t("priority.HIGH")}
-              </Badge>
-            )}
-            {activity.priority === "URGENT" && (
-              <Badge variant="outline" className="border-red-500 text-red-700">
-                {t("priority.URGENT")}
-              </Badge>
-            )}
+            <Badge
+              variant="outline"
+              className={cn(priorityColor.border, priorityColor.text, priorityColor.bg)}
+            >
+              {`${t("form.priority")}: ${t(`priority.${activity.priority}`)}`}
+            </Badge>
           </div>
         </div>
 

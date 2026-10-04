@@ -2,7 +2,6 @@
 import { ActivityForm } from "@/components/activity/activity-form";
 import { PageHeader } from "@/components/page-header";
 import { getCurrentUser, requirePermission } from "@/lib/server/auth";
-import { getLeadByIdServer } from "@/services/server/lead-service";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 

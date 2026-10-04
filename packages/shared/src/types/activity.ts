@@ -106,6 +106,7 @@ export type ActivityQueryInput = z.infer<typeof activityQuerySchema>;
 export type ActivityStatsInput = z.infer<typeof activityStatsSchema>;
 export type UpdateActivityStatusInput = z.infer<typeof updateActivityStatusSchema>;
 export type CompleteActivityInput = z.infer<typeof completeActivitySchema>;
+export type CompleteActivityFormValues = z.input<typeof completeActivitySchema>;
 export type CreateActivityParticipantInput = z.infer<typeof createActivityParticipantSchema>;
 export type UpdateActivityParticipantInput = z.infer<typeof updateActivityParticipantSchema>;
 export type CreateActivityTemplateInput = z.infer<typeof createActivityTemplateSchema>;

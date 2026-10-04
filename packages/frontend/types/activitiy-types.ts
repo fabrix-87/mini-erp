@@ -1,6 +1,10 @@
-import { Activity, ApiResponse } from "@mini-erp/shared";
-
 // types/activity.ts
+
+import {
+  Activity,
+  ApiResponse,
+} from "@mini-erp/shared";
+
 export type {
   ActivityStatsInput,
   ActivityPriority,
@@ -35,6 +39,5 @@ export const ACTIVITY_TAGS = {
   detail: (id: string): string => `activity-${id}`,
   stats: "activities-stats",
 } as const;
-
 
 export type ActivitySingleApiResponse = ApiResponse<Activity>;

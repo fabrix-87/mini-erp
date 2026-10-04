@@ -51,18 +51,20 @@
     "create_new": "Crea un nuovo cliente",
     "entities": "Clienti",
     "searchFilterPlaceholder": "Cerca per nome, email, P.IVA...",
-    "segmentAll": "Tutti i segmenti",
-    "segmentVip": "VIP",
-    "segmentBronze": "Bronze",
-    "segmentSilver": "Silver",
-    "segmentGold": "Gold",
-    "segmentStandard": "Standard",
     "companyDetailsTitle": "Dettaglio cliente",
     "companyDetailsDescription": "Dettagli e gestione del cliente",
     "companyEditTitle": "Modifica cliente",
     "companyEditDescription": "Aggiorna le informazioni del cliente",
     "companyNewTitle": "Nuovo cliente",
     "companyNewDescription": "Aggiungi un nuovo cliente",
+    "segments": {
+      "ALL": "Tutti i segmenti",
+      "VIP": "VIP",
+      "BRONZE": "Bronze",
+      "SILVER": "Silver",
+      "GOLD": "Gold",
+      "STANDARD": "Standard"
+    },
     "types": {
       "ALL": "Tutti i tipi",
       "PROSPECT": "Prospetto",
@@ -222,7 +224,7 @@
       "marketingConsentDescription": "Il cliente ha espresso il consenso alle comunicazioni di marketing",
       "marketingConsentDate": "Data consenso marketing",
       "doNotCall": "Non chiamare",
-      "doNotEmail": "Non inviare email",      
+      "doNotEmail": "Non inviare email",
       "campaign": {
         "label": "Campagna",
         "description": "Nome della campagna associata al lead.",
@@ -238,7 +240,7 @@
         "description": "Mezzo/canale utilizzato per l'acquisizione.",
         "placeholder": "Es. cpc, email, organic"
       },
-      "utmCampaign": { 
+      "utmCampaign": {
         "label": "UTM Campaign",
         "description": "Campagna di marketing associata al lead.",
         "placeholder": "Es. promo_primavera_{year}"

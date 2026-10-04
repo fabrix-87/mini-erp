@@ -240,9 +240,10 @@ export const completeActivitySchema = z
       .object({
         type: activityTypeSchema,
         subject: z.string().min(1).max(255).trim(),
-        scheduledStart: z.iso.datetime("Data follow-up non valida"),
+        scheduledStart: isoDateSchema({ required: true, message: "Data inizio non valida" }),
         assignedUserId: userIdSchema.optional(), // default: stessa persona
         priority: activityPrioritySchema.default("MEDIUM"),
+        duration: positiveNumbersSchema.optional().nullable(),
         description: z.string().optional().nullable(),
       })
       .optional()

@@ -252,15 +252,28 @@ export function ActivitySheet({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("form.duration")}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      value={field.value ?? 30}
-                      onChange={(e) =>
-                        field.onChange(e.target.value ? Number(e.target.value) : undefined)
-                      }
-                    />
-                  </FormControl>
+                  <Select
+                    onValueChange={(value) => field.onChange(Number(value))}
+                    value={field.value?.toString() ?? DEFAULT_VALUES.duration?.toString()}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectContent>
+                        <SelectItem value="5">{t("duration.5")}</SelectItem>
+                        <SelectItem value="15">{t("duration.15")}</SelectItem>
+                        <SelectItem value="30">{t("duration.30")}</SelectItem>
+                        <SelectItem value="45">{t("duration.45")}</SelectItem>
+                        <SelectItem value="60">{t("duration.60")}</SelectItem>
+                        <SelectItem value="90">{t("duration.90")}</SelectItem>
+                        <SelectItem value="120">{t("duration.120")}</SelectItem>
+                        <SelectItem value="180">{t("duration.180")}</SelectItem>
+                      </SelectContent>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

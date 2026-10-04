@@ -3,6 +3,9 @@
   "description": "Gestisci chiamate, meeting e interazioni con i clienti",
   "createTitle": "Nuova Attività",
   "createDescription": "Registra una nuova attività o interazione",
+  "updateTitle": "Modifica Attività",
+  "updateDescription": "Aggiorna i dettagli dell'attività o interazione",
+  "detailDescription": "Inizio il {date} - Durata {duration}",
   "nextActivities": "Prossime attività ({activitiesLength})",
   "newActivity": "Nuova attività",
   "noActivities": "Nessuna attività pianificata",
@@ -27,15 +30,23 @@
     "followUp": "Follow-up",
     "followUpDescription": "Richiedono follow-up"
   },
+  "completeActivity": {
+    "title": "Completa Attività",
+    "description": "Contrassegna l'attività come completa e crea prossimo follow-up se necessario",
+    "success": "Attività completata",
+    "error": "Errore nell'aggiornamento dell'attività"
+  },
   "tabs": {
     "basic": {
       "label": "Info Base",
       "title": "Dettagli Attività",
       "description": "Informazioni principali sull'attività"
-    },
+    }, 
     "schedule": {
       "label": "Pianificazione",
       "title": "Data e Ora",
+      "startDate": "Data e Ora Inizio",
+      "endDate": "Data e Ora Fine",
       "description": "Pianifica quando eseguire l'attività"
     },
     "outcome": {
@@ -62,7 +73,7 @@
     "descriptionPlaceholder": "Descrivi l'attività in dettaglio...",
     "scheduledStart": "Inizio",
     "scheduledEnd": "Fine",
-    "duration": "Durata (minuti)",
+    "duration": "Durata",
     "cancel": "Annulla",
     "submit": "Crea Attività",
     "saving": "Salvataggio...",
@@ -76,9 +87,11 @@
     "outcomePlaceholder": "Seleziona esito...",
     "result": "Note sul risultato",
     "resultPlaceholder": "Descrivi cosa è successo, le decisioni prese, i prossimi passi...",
+    "internalNotes": "Note Interne",
     "internalNotesPlaceholder": "Note interne riservate..."
   },
   "duration": {
+    "5": "5 minuti",
     "15": "15 minuti",
     "30": "30 minuti",
     "45": "45 minuti",
@@ -147,7 +160,11 @@
     "email": "Email",
     "phone": "Tel"
   },
+  "toolbar": {
+    "ariaLabel": "Azioni per l'attività"
+  },
   "createSuccess": "Attività creata!",
   "updateSuccess": "Attività aggiornata!",
-  "isOverdue": "In ritardo"
+  "isOverdue": "In ritardo",
+  "followUpActivity": "Richiede Follow-Up"
 }
