@@ -90,6 +90,15 @@
     "internalNotes": "Note Interne",
     "internalNotesPlaceholder": "Note interne riservate..."
   },
+  "calendar": {
+    "title": "Calendario Attività",
+    "description": "Visualizza e gestisci le tue attività nel calendario",
+    "hasActivities": "Giorni con attività",
+    "newActivity": "Nuova Attività",
+    "loading": "Caricamento...",
+    "noActivities": "Nessuna attività per questo giorno.",
+    "createFirst": "Crea la prima attività"
+  },
   "duration": {
     "5": "5 minuti",
     "15": "15 minuti",

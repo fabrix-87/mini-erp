@@ -25,7 +25,10 @@ export function useNavigation() {
     [router],
   );
 
-  const navigateToNew = useCallback((key: RouteKey) => router.push(getNewRoute(key)), [router]);
+  const navigateToNew = useCallback(
+    (key: RouteKey, params?: Record<string, string>) => router.push(getNewRoute(key, params)),
+    [router],
+  );
 
   /** Refreshes the current route without a full page reload (re-fetches server components). */
   const refresh = useCallback(() => router.refresh(), [router]);

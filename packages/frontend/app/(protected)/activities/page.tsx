@@ -30,8 +30,6 @@ export default async function ActivitiesPage({
     checkEntityPermissions("activity"),
   ]);
 
-  console.log(result)
-
   const actionItems: PageHeaderAction[] = [
     createCreateAction(
       "create",
