@@ -94,10 +94,6 @@ model Product {
     commodityCode String?                 @map("commodity_code") @db.Char(8)
     commodity     IntrastatCommodityCode? @relation(fields: [commodityCode], references: [code])
 
-    /// JSON array of carrier IDs to restrict shipping options for this product (e.g. [1, 3, 7]).
-    /// NULL = no restrictions, all tenant-configured carriers are eligible.
-    carrierReferenceIds Json? @map("carrier_reference_ids")
-
     /// Controls which delivery time note is displayed on the storefront.
     /// 0 = disabled, 1 = show in-stock note, 2 = show out-of-stock note, 3 = show both.
     deliveryTimeNoteType Int @default(0) @map("delivery_time_note_type")
@@ -130,15 +126,13 @@ model Product {
     carriers            ProductCarrier[]
 
     @@unique([tenantId, id])
-    @@unique([tenantId, reference]) // unique per tenant, not globally
-    @@index([tenantId, redirectTargetId], where: { redirectTargetId: { not: null } })
-    @@index([tenantId, status]) // compound: lookup frequente per tenant attivo
+    @@unique([tenantId, reference], where: { deletedAt: null })
+    @@index([tenantId, status])
     @@index([tenantId, active])
-    @@index([reference])
-    @@index([active])
-    @@index([supplierId])
-    @@index([deletedAt])
-    @@index([manufacturerId])
+    @@index([tenantId, supplierId], where: { supplierId: { not: null } })
+    @@index([tenantId, manufacturerId], where: { manufacturerId: { not: null } })
+    @@index([tenantId, redirectTargetId], where: { redirectTargetId: { not: null } })
+    @@index([tenantId, deletedAt])
     @@map("products")
 }
 
@@ -163,7 +157,7 @@ model ProductTranslation {
     metaKeywords    String? @map("meta_keywords") @db.VarChar(500)
 
     /// SEO path string, unique per tenant and language. Router lookups must always include tenantId.
-    slug String? @map("slug") @db.VarChar(255)
+    slug String? @db.VarChar(255)
 
     availableNowLabel   String @default("In stock") @map("available_now_label") @db.VarChar(100)
     availableLaterLabel String @default("Available soon") @map("available_later_label") @db.VarChar(100)

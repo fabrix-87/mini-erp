@@ -25,6 +25,7 @@ enum SdiTransmissionStatus {
   DISPUTED // NE received with EC02 — buyer rejected (B2G only)
   EXPIRED // DT received — 15-day window elapsed; deemed accepted
   UNDELIVERABLE // AT received — permanent delivery failure to PA
+  RECEIVED // INBOUND: file received from SDI; no outbound lifecycle applies
 }
 
 /// SDI transmission record for a Document.
@@ -59,6 +60,11 @@ model SdiTransmission {
   /// Timestamp of the last status update (last notification received).
   lastEventAt DateTime? @map("last_event_at")
 
+  /// 1-based submission attempt for the document. A resend after NS uses a new fileName.
+  attempt   Int    @default(1)
+  /// SHA-256 of the original XML; proves what was sent or received.
+  xmlSha256 String @map("xml_sha256") @db.Char(64)
+
   /// Storage reference to the conservation package (conservazione sostitutiva).
   /// Populated once the document enters the long-term archive.
   conservationRef String? @map("conservation_ref") @db.VarChar(500)
@@ -68,7 +74,7 @@ model SdiTransmission {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@unique([tenantId, documentId])
+  @@unique([tenantId, documentId, attempt])
   @@unique([tenantId, fileName])
   @@unique([sdiIdentifier])
   @@index([tenantId, status])
@@ -83,6 +89,9 @@ model SdiNotification {
   transmissionId String          @map("transmission_id")
   transmission   SdiTransmission @relation(fields: [transmissionId], references: [id], onDelete: Cascade)
 
+  /// Notification file name as delivered by SDI; makes polling/webhook redelivery idempotent.
+  fileName String @map("file_name") @db.VarChar(100)
+
   notificationType SdiNotificationType @map("notification_type")
 
   /// Raw notification XML received from SDI. Stored for audit and dispute resolution.
@@ -94,6 +103,7 @@ model SdiNotification {
 
   receivedAt DateTime @default(now()) @map("received_at")
 
+  @@unique([transmissionId, fileName])
   @@index([transmissionId, receivedAt])
   @@index([notificationType])
   @@map("sdi_notifications")

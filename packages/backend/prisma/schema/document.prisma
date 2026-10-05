@@ -232,8 +232,14 @@ model Document {
     currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
     currency     Currency @relation("DocumentCurrency", fields: [currencyCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
 
-    carrierId String  @map("carrier_id")
-    carrier   Carrier @relation("DocumentCarrier", fields: [tenantId, carrierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+    carrierId String?  @map("carrier_id")
+    carrier   Carrier? @relation("DocumentCarrier", fields: [tenantId, carrierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Snapshot of Carrier.code/name at numbering time; the Carrier master stays editable.
+    carrierCode    String?  @map("carrier_code") @db.VarChar(20)
+    carrierName    String?  @map("carrier_name") @db.VarChar(100)
+    /// Resolved against Carrier.trackingUrlTemplate.
+    trackingNumber String?  @map("tracking_number") @db.VarChar(100)
 
     // === EXCHANGE RATE SNAPSHOT ===
     // Captured at document creation for multi-currency historical reporting.
@@ -271,7 +277,8 @@ model Document {
     /// immutability of the snapshot above. OUTBOUND points to a tenant-owned BankAccount;
     /// INBOUND points to a company-owned BankAccount (the supplier's).
     paymentBankAccountId String?      @map("payment_bank_account_id")
-    paymentBankAccount   BankAccount? @relation("DocumentPaymentBankAccount", fields: [paymentBankAccountId], references: [id], onDelete: SetNull)
+    // Composite FK: the bank account must belong to the same tenant.
+    paymentBankAccount BankAccount? @relation("DocumentPaymentBankAccount", fields: [tenantId, paymentBankAccountId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     // === BANK FRAUD CONTROL (BEC / vendor email compromise) ===
     /// True if bankIban differs from the IBAN used on the last registered INBOUND document
@@ -332,7 +339,7 @@ model Document {
     statusHistory DocumentStatusHistory[]
 
     // === Electronic invoice transmission  ===
-    sdiTransmission SdiTransmission?
+    sdiTransmissions SdiTransmission[]
 
     // === LIFECYCLE TIMESTAMPS ===
     // Set once when the corresponding status transition occurs; never overwritten.
