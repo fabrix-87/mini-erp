@@ -71,9 +71,9 @@ model Product {
     onSale            Boolean @default(false) @map("on_sale")
 
     /// Fallback base retail price. Actual transactional prices reside on ProductVariant.
-    price          Decimal @default(0) @db.Decimal(20, 4)
-    wholesalePrice Decimal @default(0) @map("wholesale_price") @db.Decimal(20, 4)
-    ecotax         Decimal @default(0) @db.Decimal(20, 4)
+    price          Decimal @default(0) @db.Decimal(20, 6)
+    wholesalePrice Decimal @default(0) @map("wholesale_price") @db.Decimal(20, 6)
+    ecotax         Decimal @default(0) @db.Decimal(20, 6)
 
     defaultTaxRuleId Int?     @map("default_tax_rule_id")
     defaultTaxRule   TaxRule? @relation("ProductTaxRule", fields: [defaultTaxRuleId], references: [id])
@@ -82,7 +82,7 @@ model Product {
     condition     ProductCondition  @default(NEW)
     showCondition Boolean           @default(false) @map("show_condition")
 
-    manufacturerId Int?          @map("manufacturer_id")
+    manufacturerId String?       @map("manufacturer_id")
     manufacturer   Manufacturer? @relation(fields: [tenantId, manufacturerId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     supplierId String?   @map("supplier_id")
@@ -103,8 +103,10 @@ model Product {
     deliveryTimeNoteType Int @default(0) @map("delivery_time_note_type")
 
     /// Strategy fallback for handling 404/SEO mitigation when a product is deactivated.
-    redirectType   ProductRedirectType @default(NOT_FOUND) @map("redirect_type")
-    redirectTarget Int?                @map("redirect_target")
+    redirectType     ProductRedirectType @default(NOT_FOUND) @map("redirect_type")
+    redirectTargetId String?             @map("redirect_target_id")
+    redirectTarget   Product?            @relation("ProductRedirect", fields: [tenantId, redirectTargetId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+    redirectSources  Product[]           @relation("ProductRedirect")
 
     /// CDN or absolute URL for public catalog lists optimization.
     coverThumbnailUrl String? @map("cover_thumbnail_url") @db.VarChar(500)
@@ -125,9 +127,11 @@ model Product {
 
     productFeatures     ProductFeature[]
     opportunityProducts OpportunityProduct[]
+    carriers            ProductCarrier[]
 
     @@unique([tenantId, id])
     @@unique([tenantId, reference]) // unique per tenant, not globally
+    @@index([tenantId, redirectTargetId], where: { redirectTargetId: { not: null } })
     @@index([tenantId, status]) // compound: lookup frequente per tenant attivo
     @@index([tenantId, active])
     @@index([reference])
@@ -159,7 +163,7 @@ model ProductTranslation {
     metaKeywords    String? @map("meta_keywords") @db.VarChar(500)
 
     /// SEO path string, unique per tenant and language. Router lookups must always include tenantId.
-    linkRewrite String? @map("link_rewrite") @db.VarChar(255)
+    slug String? @map("slug") @db.VarChar(255)
 
     availableNowLabel   String @default("In stock") @map("available_now_label") @db.VarChar(100)
     availableLaterLabel String @default("Available soon") @map("available_later_label") @db.VarChar(100)
@@ -171,7 +175,7 @@ model ProductTranslation {
     updatedAt DateTime @updatedAt @map("updated_at")
 
     @@id([productId, languageId])
-    @@unique([tenantId, languageId, linkRewrite])
+    @@unique([tenantId, languageId, slug])
     @@index([languageId])
     @@map("product_translations")
 }
@@ -183,7 +187,7 @@ model ProductVariant {
     product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
     /// System generated immutable hash or variant identifier string.
-    variantCode String @unique @map("variant_code") @db.VarChar(64)
+    variantCode String @map("variant_code") @db.VarChar(64)
 
     tenantId String @map("tenant_id")
     tenant   Tenant @relation("TenantProductVariants", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
@@ -243,26 +247,29 @@ model ProductVariant {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([tenantId, sku])
+    @@unique([tenantId, variantCode])
     @@unique([tenantId, id])
-    @@unique([tenantId, ean13])
-    @@index([productId])
-    @@index([productId, active])
-    @@index([variantCode])
-    @@index([isDefault])
-    @@index([deletedAt])
+    @@unique([tenantId, productId, id]) // target of ProductImage composite FK
+    @@unique([tenantId, sku], where: { deletedAt: null })
+    @@unique([tenantId, ean13], where: { deletedAt: null, ean13: { not: null } })
+    // one default variant per product
+    @@unique([tenantId, productId], where: { isDefault: true, deletedAt: null }, map: "uq_variant_one_default_per_product")
+    @@index([tenantId, productId, active])
     @@map("product_variants")
 }
 
 /// Image asset storage mapping with structural variant level inheritance overrides.
 model ProductImage {
-    id        Int     @id @default(autoincrement())
+    id String @id @default(cuid())
+
+    tenantId  String  @map("tenant_id")
     productId String  @map("product_id")
-    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
     /// Optional assignment fallback to bind a specific image to a single variant attribute subset.
     variantId String?         @map("variant_id")
-    variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
+    // MATCH SIMPLE: when variantId is NULL this FK is skipped
+    variant   ProductVariant? @relation(fields: [tenantId, productId, variantId], references: [tenantId, productId, id], onDelete: Cascade, onUpdate: Cascade)
 
     imageUrl  String  @map("image_url") @db.VarChar(500)
     imageType String  @default("extra") @map("image_type") @db.VarChar(20)
@@ -279,16 +286,16 @@ model ProductImage {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@index([productId])
-    @@index([variantId])
-    @@index([imageType])
-    @@index([position])
+    @@unique([tenantId, productId], where: { isCover: true, variantId: null }, map: "uq_image_one_product_cover")
+    @@unique([tenantId, variantId], where: { isCover: true, variantId: { not: null } }, map: "uq_image_one_variant_cover")
+    @@index([tenantId, productId, position])
+    @@index([tenantId, productId, variantId], where: { variantId: { not: null } })
     @@map("product_images")
 }
 
 /// Localization for Image alternative text tags (SEO Alt tags optimization).
 model ProductImageTranslation {
-    productImageId Int          @map("product_image_id")
+    productImageId String       @map("product_image_id")
     productImage   ProductImage @relation(fields: [productImageId], references: [id], onDelete: Cascade)
 
     languageId Int      @map("language_id")
@@ -315,16 +322,14 @@ model ProductCategory {
     position Int @default(0)
 
     @@id([productId, categoryId])
-    /// Composite index optimized for nested order rendering inside category lists.
-    @@index([productId, position])
-    @@index([tenantId, categoryId])
+    @@index([tenantId, categoryId, position])
     @@map("product_categories")
 }
 
 /// Tenant-scoped brand/manufacturer registry.
 /// Each tenant manages its own manufacturer list independently.
 model Manufacturer {
-    id     Int     @id @default(autoincrement())
+    id     String  @id @default(cuid())
     name   String
     active Boolean @default(true)
 
@@ -340,5 +345,6 @@ model Manufacturer {
     products Product[]
 
     @@unique([tenantId, id])
+    @@unique([tenantId, name])
     @@map("manufacturers")
 }

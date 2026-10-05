@@ -232,6 +232,9 @@ model Document {
     currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
     currency     Currency @relation("DocumentCurrency", fields: [currencyCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
 
+    carrierId String  @map("carrier_id")
+    carrier   Carrier @relation("DocumentCarrier", fields: [tenantId, carrierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
     // === EXCHANGE RATE SNAPSHOT ===
     // Captured at document creation for multi-currency historical reporting.
 

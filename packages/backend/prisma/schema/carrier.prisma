@@ -1,0 +1,64 @@
+// ============================================================================
+// CARRIER
+// Tenant-scoped shipping carriers. Referenced by ProductCarrier to restrict
+// the eligible carriers of a product.
+// ============================================================================
+
+/// Shipping carrier configured by a tenant.
+model Carrier {
+    id String @id @default(cuid())
+
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantCarriers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Business identifier used in integrations and DDT (e.g. "BRT"). Unique per tenant.
+    code String @db.VarChar(20)
+    name String @db.VarChar(100)
+
+    /// Optional link when the carrier is also registered as a supplier.
+    supplierId String?   @map("supplier_id")
+    supplier   Supplier? @relation("SupplierCarriers", fields: [tenantId, supplierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Tracking URL with a {trackingNumber} placeholder.
+    trackingUrlTemplate String? @map("tracking_url_template") @db.VarChar(500)
+
+    active   Boolean @default(true)
+    position Int     @default(0)
+
+    customFields Json? @map("custom_fields")
+
+    products  ProductCarrier[]
+    documents Document[]       @relation("DocumentCarrier")
+
+    deletedAt     DateTime? @map("deleted_at")
+    deletedBy     String?   @map("deleted_by")
+    deletedByUser User?     @relation("CarrierDeletedBy", fields: [deletedBy], references: [id])
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([tenantId, id])
+    @@unique([tenantId, code], where: { deletedAt: null })
+    @@index([tenantId, active, position])
+    @@index([tenantId, supplierId], where: { supplierId: { not: null } })
+    @@map("carriers")
+}
+
+/// Restricts the carriers eligible for a product.
+/// No rows for a product = no restriction (all active tenant carriers allowed).
+model ProductCarrier {
+    /// Denormalized from Product.tenantId; composite FKs keep product and carrier in the same tenant.
+    tenantId String @map("tenant_id")
+
+    productId String  @map("product_id")
+    product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+    carrierId String  @map("carrier_id")
+    carrier   Carrier @relation(fields: [tenantId, carrierId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@id([productId, carrierId])
+    @@index([tenantId, carrierId])
+    @@map("product_carriers")
+}

@@ -91,7 +91,7 @@ model PriceListItem {
     minQuantity Int @default(1) @map("min_quantity")
 
     // Il Prezzo
-    price Decimal @db.Decimal(19, 4) // 4 decimali per precisione unitaria
+    price Decimal @db.Decimal(20, 6)
 
     // Opzionale: Sconto specifico per questa riga (sovrascrive logiche generali)
     discountPercent Decimal? @map("discount_percent") @db.Decimal(5, 2)

@@ -10,7 +10,7 @@ model FeatureGroup {
     tenant   Tenant @relation("TenantFeatureGroups", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
     /// Stable system identifier.
-    code String @unique @db.VarChar(50)
+    code String @db.VarChar(50)
 
     /// Display ordering hint.
     position Int @default(0)

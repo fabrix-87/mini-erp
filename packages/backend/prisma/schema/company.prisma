@@ -379,6 +379,7 @@ model Supplier {
     stockBatches               StockBatch[]
     activities                 Activity[]                     @relation("SupplierActivities")
     warehouses                 Warehouse[]                    @relation("SupplierWarehouse")
+    carriers                   Carrier[]                      @relation("SupplierCarriers")
 
     createdAt DateTime  @default(now()) @map("created_at")
     updatedAt DateTime  @updatedAt @map("updated_at")

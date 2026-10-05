@@ -91,6 +91,7 @@ model Tenant {
   products                  Product[]                    @relation("TenantProducts")
   productVariants           ProductVariant[]             @relation("TenantProductVariants")
   manufacturers             Manufacturer[]               @relation("TenantManufacturers")
+  carriers                  Carrier[]                    @relation("TenantCarriers")
   roles                     Role[]                       @relation("TenantRoles")
   priceLists                PriceList[]                  @relation("TenantPriceLists")
   priceListItems            PriceListItem[]              @relation("TenantPriceListItems")

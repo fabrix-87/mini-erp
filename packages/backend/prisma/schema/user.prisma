@@ -104,6 +104,7 @@ model User {
   deletedDocuments       Document[]       @relation("DeletedBy")
   deletedProducts        Product[]        @relation("ProductDeletedBy")
   deletedContacts        Contact[]        @relation("ContactDeletedBy")
+  deletedCarriers        Carrier[]        @relation("CarrierDeletedBy")
   deletedProductVariants ProductVariant[] @relation("ProductVariantDeletedBy")
   deletedCustomers       Customer[]       @relation("DeletedBy")
   deletedSuppliers       Supplier[]       @relation("DeletedBy")
