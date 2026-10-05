@@ -16,9 +16,7 @@ model Country {
   companies        Company[]        @relation("CompanyCountry")
   companyVersions  CompanyVersion[] @relation("CompanyVersionCountry")
   userDetails      UserDetails[]    @relation("UserDetailCountry")
-
-  documentCountry         Document[] @relation("DocumentCountry")
-  documentShippingCountry Document[] @relation("DocumentShippingCountry")
+  documentParties  DocumentParty[]  @relation("DocumentPartyCountry")
 
   instrastatTransations IntrastatTransaction[] @relation("IntrastatPartnerCountry")
 

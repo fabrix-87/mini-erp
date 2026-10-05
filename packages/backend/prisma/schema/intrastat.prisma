@@ -33,7 +33,9 @@ model IntrastatTransaction {
   commodityCode String                 @map("commodity_code") @db.Char(8)
   commCodeRel   IntrastatCommodityCode @relation(fields: [commodityCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
 
-  /// ISO 3166-1 alpha-2 country reference. Immutable audit snapshot from document partner data.
+  /// ISO 3166-1 alpha-2 country reference.
+  /// Copied from the document's COUNTERPARTY party when this transaction is created.
+  /// Preserved independently as an audit snapshot.
   partnerCountryCode String  @map("partner_country_code") @db.Char(2)
   partnerCountry     Country @relation("IntrastatPartnerCountry", fields: [partnerCountryCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
 

@@ -1,0 +1,111 @@
+/// Role of a party snapshotted on a document.
+enum DocumentPartyRole {
+    COUNTERPARTY // Customer or supplier associated with the document
+    TENANT // Tenant's own legal identity
+    SHIPPING // Physical delivery destination
+    CARRIER // Carrier named on the document
+}
+
+/// Shareholder composition represented in FatturaPA.
+enum ReaShareholderType {
+    SU // Single shareholder
+    SM // Multiple shareholders
+}
+
+/// Liquidation status represented in FatturaPA.
+enum ReaLiquidationStatus {
+    LS // In liquidation
+    LN // Not in liquidation
+}
+
+/// Document-owned party snapshot. One row per document and role.
+/// Output must read these values, never reconstruct them from source records.
+/// Database triggers reject writes once Document.snapshotLockedAt is set.
+model DocumentParty {
+    /// Denormalized for tenant-safe document and source references.
+    tenantId   String   @map("tenant_id")
+    documentId String   @map("document_id")
+    document   Document @relation("DocumentParties", fields: [tenantId, documentId], references: [tenantId, id], onDelete: Cascade, onUpdate: Restrict)
+
+    role DocumentPartyRole
+
+    // === IDENTITY ===
+
+    /// Business code copied from the source, when applicable.
+    code       String?            @db.VarChar(20)
+    name       String             @db.VarChar(255)
+    entityType CompanyTypeEntity? @map("entity_type")
+    legalForm  String?            @map("legal_form") @db.VarChar(100)
+
+    // === FISCAL IDENTITY ===
+
+    vatNumber  String? @map("vat_number") @db.VarChar(20)
+    taxCode    String? @map("tax_code") @db.VarChar(20)
+    vatId      String? @map("vat_id") @db.VarChar(20)
+    eoriNumber String? @map("eori_number") @db.VarChar(20)
+
+    /// Fiscal regime copied from the applicable fiscal source.
+    taxRegime TaxRegime? @map("tax_regime")
+
+    pec     String? @db.VarChar(255)
+    sdiCode String? @map("sdi_code") @db.VarChar(7)
+
+    // === ADDRESS ===
+
+    address    String? @db.VarChar(255)
+    city       String? @db.VarChar(100)
+    postalCode String? @map("postal_code") @db.VarChar(20)
+
+    /// Province or region; Italian FatturaPA output requires a valid province code.
+    province String? @db.VarChar(100)
+
+    /// Historical ISO country code. Required for fiscal parties at locking time.
+    countryCode String?  @map("country_code") @db.Char(2)
+    country     Country? @relation("DocumentPartyCountry", fields: [countryCode], references: [code], onDelete: Restrict, onUpdate: Restrict)
+
+    // === CONTACTS ===
+
+    email String? @db.VarChar(255)
+    phone String? @db.VarChar(50)
+
+    // === COMPANY REGISTER SNAPSHOT ===
+
+    /// Province code of the relevant company register office.
+    reaOffice String? @map("rea_office") @db.Char(2)
+    reaNumber String? @map("rea_number") @db.VarChar(20)
+
+    /// Paid-up share capital represented on the document.
+    reaShareCapital      Decimal?              @map("rea_share_capital") @db.Decimal(14, 2)
+    reaShareholderType   ReaShareholderType?   @map("rea_shareholder_type")
+    reaLiquidationStatus ReaLiquidationStatus? @map("rea_liquidation_status")
+
+    // === SOURCE TRACEABILITY ===
+
+    /// Traceability only; source changes must not affect document output.
+    sourceCompanyId String?  @map("source_company_id")
+    sourceCompany   Company? @relation("DocumentPartySourceCompany", fields: [tenantId, sourceCompanyId], references: [tenantId, id], onDelete: Restrict, onUpdate: Restrict)
+
+    /// Must belong to sourceCompanyId when present.
+    sourceAddressId String?         @map("source_address_id")
+    sourceAddress   CompanyAddress? @relation("DocumentPartySourceAddress", fields: [sourceCompanyId, sourceAddressId], references: [companyId, id], onDelete: Restrict, onUpdate: Restrict)
+
+    /// Must belong to sourceCompanyId and tenantId when present.
+    companyVersionId String?         @map("company_version_id")
+    companyVersion   CompanyVersion? @relation("CompanyVersionParties", fields: [tenantId, sourceCompanyId, companyVersionId], references: [tenantId, companyId, id], onDelete: Restrict, onUpdate: Restrict)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    // === SOURCE REFERENCES ===
+
+    // === COUNTERPARTY LOOKUP ===
+
+    @@id([documentId, role])
+    @@index([tenantId, sourceCompanyId])
+    @@index([sourceCompanyId, sourceAddressId], where: { sourceAddressId: { not: null } })
+    @@index([companyVersionId], where: { companyVersionId: { not: null } })
+    @@index([tenantId, name, documentId], where: { role: "COUNTERPARTY" })
+    @@index([tenantId, vatNumber], where: { role: "COUNTERPARTY", vatNumber: { not: null } })
+    @@index([tenantId, taxCode], where: { role: "COUNTERPARTY", taxCode: { not: null } })
+    @@map("document_parties")
+}

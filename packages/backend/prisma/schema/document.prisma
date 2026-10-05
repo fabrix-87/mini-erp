@@ -95,9 +95,8 @@ enum DocumentDirection {
     INBOUND // Received from third parties (cyclical passive phase)
 }
 
-/// Commercial document record covering the full B2B/B2C document lifecycle:
-/// quotes, orders, DDT, invoices, credit/debit notes, and supplier orders.
-/// Customer and counterparty data are snapshotted at creation for fiscal immutability.
+/// Commercial document covering sales, purchases, delivery and fiscal workflows.
+/// Party identity and address snapshots are stored in DocumentParty.
 model Document {
     id String @id @default(cuid())
 
@@ -178,39 +177,6 @@ model Document {
     /// Inbound edges: this document is the target of these relations.
     relatedToDocuments DocumentRelation[] @relation("TargetDocument")
 
-    // === COUNTERPARTY SNAPSHOT (fiscal immutability) ===
-    // Values copied from Customer/Supplier at document creation.
-    // Must not be updated after the document is confirmed.
-
-    counterpartyName      String  @map("counterparty_name")
-    counterpartyVatNumber String? @map("counterparty_vat_number")
-    counterpartyTaxCode   String? @map("counterparty_tax_code")
-    /// PEC address for electronic invoice delivery (SDI).
-    counterpartyPec       String? @map("counterparty_pec")
-    /// SDI recipient code (Codice Destinatario) for FatturaPA routing.
-    counterpartySdiCode   String? @map("counterparty_sdi_code")
-
-    counterpartyAddress     String? @map("counterparty_address")
-    counterpartyCity        String? @map("counterparty_city")
-    counterpartyPostalCode  String? @map("counterparty_postal_code")
-    counterpartyProvince    String? @map("counterparty_province")
-    /// ISO 3166-1 alpha-2 snapshot. Drives Intrastat flow detection (IT vs EU vs extra-EU).
-    counterpartyCountryCode String  @default("IT") @map("counterparty_country_code") @db.Char(2)
-    counterpartyCountry     Country @relation("DocumentCountry", fields: [counterpartyCountryCode], references: [code], onDelete: Restrict)
-
-    counterpartyEmail String? @map("counterparty_email")
-    counterpartyPhone String? @map("counterparty_phone")
-
-    // === SHIPPING ADDRESS SNAPSHOT ===
-
-    shippingName        String?  @map("shipping_name")
-    shippingAddress     String?  @map("shipping_address")
-    shippingCity        String?  @map("shipping_city")
-    shippingPostalCode  String?  @map("shipping_postal_code")
-    shippingProvince    String?  @map("shipping_province")
-    shippingCountryCode String?  @map("shipping_country_code") @db.Char(2)
-    shippingCountry     Country? @relation("DocumentShippingCountry", fields: [shippingCountryCode], references: [code], onDelete: Restrict)
-
     // === AMOUNTS (all in document currency) ===
 
     subtotal          Decimal @default(0) @db.Decimal(15, 2)
@@ -235,11 +201,8 @@ model Document {
     carrierId String?  @map("carrier_id")
     carrier   Carrier? @relation("DocumentCarrier", fields: [tenantId, carrierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
-    /// Snapshot of Carrier.code/name at numbering time; the Carrier master stays editable.
-    carrierCode    String?  @map("carrier_code") @db.VarChar(20)
-    carrierName    String?  @map("carrier_name") @db.VarChar(100)
     /// Resolved against Carrier.trackingUrlTemplate.
-    trackingNumber String?  @map("tracking_number") @db.VarChar(100)
+    trackingNumber String? @map("tracking_number") @db.VarChar(100)
 
     // === EXCHANGE RATE SNAPSHOT ===
     // Captured at document creation for multi-currency historical reporting.
@@ -278,7 +241,7 @@ model Document {
     /// INBOUND points to a company-owned BankAccount (the supplier's).
     paymentBankAccountId String?      @map("payment_bank_account_id")
     // Composite FK: the bank account must belong to the same tenant.
-    paymentBankAccount BankAccount? @relation("DocumentPaymentBankAccount", fields: [tenantId, paymentBankAccountId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+    paymentBankAccount   BankAccount? @relation("DocumentPaymentBankAccount", fields: [tenantId, paymentBankAccountId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     // === BANK FRAUD CONTROL (BEC / vendor email compromise) ===
     /// True if bankIban differs from the IBAN used on the last registered INBOUND document
@@ -361,12 +324,12 @@ model Document {
     intrastatTransactions     IntrastatTransaction[]
     journalEntries            JournalEntry[]                @relation("DocumentJournalEntries")
     withholdingSettlementLine WithholdingTaxSettlementLine? @relation("DocumentWithholdingLines")
+    
+    // === PARTY SNAPSHOTS ===
+parties DocumentParty[] @relation("DocumentParties")
 
-    /// Anagraphic version used at document emission.
-    /// Set when document is created from the current CompanyVersion.
-    /// Immutable once document is confirmed.
-    companyVersionId String?         @map("company_version_id")
-    companyVersion   CompanyVersion? @relation("CompanyVersionDocuments", fields: [tenantId, companyVersionId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+    /// Set once when document-owned snapshots become immutable.
+    snapshotLockedAt DateTime? @map("snapshot_locked_at")
 
     createdAt DateTime  @default(now()) @map("created_at")
     updatedAt DateTime  @updatedAt @map("updated_at")
@@ -390,7 +353,6 @@ model Document {
     @@index([tenantId, documentYear])
     @@index([tenantId, leadId])
     @@index([tenantId, opportunityId])
-    @@index([tenantId, counterpartyCountryCode])
     @@index([tenantId, documentType, documentYear, documentNumber])
     // === CURRENCY (cross-tenant, rate recalculation jobs) ===
     @@index([currencyCode])

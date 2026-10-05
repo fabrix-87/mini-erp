@@ -108,16 +108,25 @@ model Company {
     tenantId String? @map("tenant_id")
     tenant   Tenant? @relation("TenantCompanies", fields: [tenantId], references: [id], onDelete: SetNull)
 
+    // === COMPANY REGISTER ===
+
+    reaOffice            String?               @map("rea_office") @db.Char(2)
+    reaNumber            String?               @map("rea_number") @db.VarChar(20)
+    reaShareCapital      Decimal?              @map("rea_share_capital") @db.Decimal(14, 2)
+    reaShareholderType   ReaShareholderType?   @map("rea_shareholder_type")
+    reaLiquidationStatus ReaLiquidationStatus? @map("rea_liquidation_status")
+
     // === RELATIONS ===
 
-    addresses    CompanyAddress[] @relation("CompanyAddresses")
-    versions     CompanyVersion[] @relation("CompanyVersions")
-    contacts     CompanyContact[]
-    customer     Customer?
-    supplier     Supplier?
-    tenants      Tenant?          @relation("TenantOwnedCompany")
-    notes        CompanyNote[]
-    bankAccounts BankAccount[]    @relation("CompanyBankAccounts")
+    addresses       CompanyAddress[] @relation("CompanyAddresses")
+    versions        CompanyVersion[] @relation("CompanyVersions")
+    contacts        CompanyContact[]
+    customer        Customer?
+    supplier        Supplier?
+    tenants         Tenant?          @relation("TenantOwnedCompany")
+    notes           CompanyNote[]
+    bankAccounts    BankAccount[]    @relation("CompanyBankAccounts")
+    documentParties DocumentParty[]  @relation("DocumentPartySourceCompany")
 
     customFields Json? @map("custom_fields")
 
@@ -173,6 +182,14 @@ model CompanyVersion {
     mainEmail String? @map("main_email") @db.VarChar(255)
     mainPhone String? @map("main_phone") @db.VarChar(50)
 
+    // === COMPANY REGISTER SNAPSHOT ===
+
+    reaOffice            String?               @map("rea_office") @db.Char(2)
+    reaNumber            String?               @map("rea_number") @db.VarChar(20)
+    reaShareCapital      Decimal?              @map("rea_share_capital") @db.Decimal(14, 2)
+    reaShareholderType   ReaShareholderType?   @map("rea_shareholder_type")
+    reaLiquidationStatus ReaLiquidationStatus? @map("rea_liquidation_status")
+
     // === HISTORIZATION AUDIT ===
 
     /// User who triggered the historization. Nullable: preserved as NULL if the user is later deleted.
@@ -188,20 +205,18 @@ model CompanyVersion {
 
     // === RELATIONS ===
 
-    company   Company    @relation("CompanyVersions", fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade)
-    tenant    Tenant     @relation("TenantCompanyVersions", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    documents Document[] @relation("CompanyVersionDocuments")
+    company         Company         @relation("CompanyVersions", fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade)
+    tenant          Tenant          @relation("TenantCompanyVersions", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    documentParties DocumentParty[] @relation("CompanyVersionParties")
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([tenantId, id])
+    // === DOCUMENT PARTY REFERENCE ===
+    @@unique([tenantId, companyId, id])
+    // === VERSION INTEGRITY AND HISTORY ===
     @@unique([companyId, validFrom])
     @@unique([companyId], where: { isCurrent: true })
-    @@index([tenantId, companyId, validFrom])
-    @@index([tenantId, companyId, isCurrent])
-    @@index([tenantId, vatNumber], where: { vatNumber: { not: null } })
-    @@index([tenantId, taxCode], where: { taxCode: { not: null } })
     @@map("company_versions")
 }
 
@@ -431,8 +446,11 @@ model CompanyAddress {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
+    documentParties DocumentParty[] @relation("DocumentPartySourceAddress")
+
     /// Enforces at most one LEGAL address per company.
     @@unique([companyId], map: "unique_company_legal_address", where: raw("address_type = 'LEGAL'"))
+    @@unique([companyId, id])
     @@index([companyId])
     @@index([companyId, addressType])
     @@map("company_addresses")
