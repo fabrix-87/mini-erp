@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { companyIdBaseSchema, countryCodeBaseSchema, inputJsonValueSchema, userIdSchema } from "./base";
-import { createCuidSchema, createIdSchema } from "./primitives/id";
+import { createIdSchema } from "./primitives/id";
 import {
   eoriNumberSchema,
   fiscalCodeSchema,

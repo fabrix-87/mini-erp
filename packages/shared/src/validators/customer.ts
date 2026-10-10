@@ -4,16 +4,13 @@
 
 import { z } from "zod";
 
-import {
-  baseCompanySchema,
-  companyFiltersSchema,
-  updateCompanySchema,
-} from "./company";
+import { baseCompanySchema, companyFiltersSchema, updateCompanySchema } from "./company";
 import { queryBooleanOrAllSchema, queryBooleanSchema, queryEnumOrAllSchema } from "./query/params";
 import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { creditLimitSchema } from "./business/currency";
 import { paginationSchema, sortOrderSchema } from "./query";
 import { customerIdBaseSchema } from "./base";
+import { nestedBankAccountsSchema } from "./bank";
 
 // ============================================================================
 // CUSTOMER-SPECIFIC ENUMS
@@ -59,6 +56,8 @@ export const createCustomerSchema = z
     paymentMethodId: createCuidSchema("Payment Method ID non valido").optional().nullable(),
 
     creditLimit: creditLimitSchema.optional().nullable(),
+    /** Accounts created together with the customer (company-level, see BankAccount). */
+    bankAccounts: nestedBankAccountsSchema.optional(),
   })
   .strict();
 
@@ -128,5 +127,5 @@ export const customerQuerySchema = z.object({
  * Schema per ID Customer (riusa CompanyIdSchema)
  */
 export const customerIdSchema = z.object({
-  id: customerIdBaseSchema
+  id: customerIdBaseSchema,
 });

@@ -18,6 +18,26 @@ export const DOCUMENT_TYPES = {
   DEBIT_NOTE: "DEBIT_NOTE",
   SUPPLIER_ORDER: "SUPPLIER_ORDER",
   ARCHIVED: "ARCHIVED",
+  SUPPLIER_INVOICE: "SUPPLIER_INVOICE",
+  SUPPLIER_CREDIT_NOTE: "SUPPLIER_CREDIT_NOTE",
+  SUPPLIER_DELIVERY_NOTE: "SUPPLIER_DELIVERY_NOTE",
+  SELF_INVOICE: "SELF_INVOICE",
+} as const;
+
+export const DOCUMENT_PARTY_ROLES = {
+  COUNTERPARTY: "COUNTERPARTY",
+  TENANT: "TENANT",
+  SHIPPING: "SHIPPING",
+  CARRIER: "CARRIER",
+} as const;
+
+export const DOCUMENT_DIRECTIONS = { OUTBOUND: "OUTBOUND", INBOUND: "INBOUND" } as const;
+
+export const MATCH_STATUSES = {
+  NOT_MATCHED: "NOT_MATCHED",
+  MATCHED: "MATCHED",
+  MATCHED_WITH_VARIANCE: "MATCHED_WITH_VARIANCE",
+  DISPUTED: "DISPUTED",
 } as const;
 
 /**
@@ -47,6 +67,16 @@ export const DOCUMENT_STATUSES = {
   CLOSED: "CLOSED",
 } as const;
 
+/** Document types received from third parties: numbering is owned by the counterparty. */
+export const INBOUND_DOCUMENT_TYPES = [
+  "SUPPLIER_INVOICE",
+  "SUPPLIER_CREDIT_NOTE",
+  "SUPPLIER_DELIVERY_NOTE",
+] as const satisfies readonly DocumentType[];
+
+export type InboundDocumentType = (typeof INBOUND_DOCUMENT_TYPES)[number];
+export type OutboundDocumentType = Exclude<DocumentType, InboundDocumentType>;
+
 // ============================================================================
 // DOCUMENT NUMBERING CONFIGURATION
 // ============================================================================
@@ -55,7 +85,7 @@ export const DOCUMENT_STATUSES = {
  * Document number prefixes for sequential numbering
  * Used by DocumentSequence to generate documentNumber
  */
-export const DOCUMENT_PREFIXES: Record<DocumentType, string> = {
+export const DOCUMENT_PREFIXES: Record<OutboundDocumentType, string> = {
   QUOTE: "PRV",
   PROFORMA: "PRO",
   ORDER: "ORD",
@@ -65,12 +95,13 @@ export const DOCUMENT_PREFIXES: Record<DocumentType, string> = {
   DEBIT_NOTE: "ND",
   SUPPLIER_ORDER: "ODA",
   ARCHIVED: "ARC",
+  SELF_INVOICE: "AF",
 } as const;
 
 /**
  * Number padding (digit count) for document numbers
  */
-export const DOCUMENT_NUMBER_PADDING: Record<DocumentType, number> = {
+export const DOCUMENT_NUMBER_PADDING: Record<OutboundDocumentType, number> = {
   QUOTE: 4,
   PROFORMA: 4,
   ORDER: 5,
@@ -80,6 +111,7 @@ export const DOCUMENT_NUMBER_PADDING: Record<DocumentType, number> = {
   DEBIT_NOTE: 5,
   SUPPLIER_ORDER: 5,
   ARCHIVED: 4,
+  SELF_INVOICE: 5,
 } as const;
 
 /**
@@ -87,7 +119,7 @@ export const DOCUMENT_NUMBER_PADDING: Record<DocumentType, number> = {
  * true = reset every year (e.g., 1/2026, 1/2027)
  * false = continuous numbering (e.g., 1, 2, 3, ...)
  */
-export const RESET_SEQUENCE_YEARLY: Record<DocumentType, boolean> = {
+export const RESET_SEQUENCE_YEARLY: Record<OutboundDocumentType, boolean> = {
   QUOTE: true,
   PROFORMA: true,
   ORDER: true,
@@ -97,6 +129,7 @@ export const RESET_SEQUENCE_YEARLY: Record<DocumentType, boolean> = {
   DEBIT_NOTE: true,
   SUPPLIER_ORDER: true,
   ARCHIVED: true,
+  SELF_INVOICE: true,
 } as const;
 
 // ============================================================================
@@ -135,38 +168,38 @@ export const DOCUMENT_TYPE_STATUS_TRANSITIONS: Record<
   Partial<Record<DocumentStatus, DocumentStatus[]>>
 > = {
   QUOTE: {
-    DRAFT: ["PENDING_APPROVAL", "SENT", "VOIDED"],
-    PENDING_APPROVAL: ["SENT", "DRAFT", "VOIDED"],
-    SENT: ["ACCEPTED", "REJECTED", "CLOSED", "VOIDED"],
+    DRAFT: ["PENDING_APPROVAL", "SENT"],
+    PENDING_APPROVAL: ["SENT", "DRAFT"],
+    SENT: ["ACCEPTED", "REJECTED", "CLOSED"],
     ACCEPTED: ["CLOSED"],
-    REJECTED: ["CLOSED", "VOIDED"],
+    REJECTED: ["CLOSED"],
   },
   PROFORMA: {
-    DRAFT: ["PENDING_APPROVAL", "SENT", "VOIDED"],
-    PENDING_APPROVAL: ["SENT", "DRAFT", "VOIDED"],
-    SENT: ["ACCEPTED", "REJECTED", "CLOSED", "VOIDED"],
+    DRAFT: ["PENDING_APPROVAL", "SENT"],
+    PENDING_APPROVAL: ["SENT", "DRAFT"],
+    SENT: ["ACCEPTED", "REJECTED", "CLOSED"],
     ACCEPTED: ["CLOSED"],
-    REJECTED: ["CLOSED", "VOIDED"],
+    REJECTED: ["CLOSED"],
   },
   ORDER: {
-    DRAFT: ["PENDING_APPROVAL", "ACCEPTED", "VOIDED"],
-    PENDING_APPROVAL: ["ACCEPTED", "REJECTED", "DRAFT", "VOIDED"],
+    DRAFT: ["PENDING_APPROVAL", "ACCEPTED"],
+    PENDING_APPROVAL: ["ACCEPTED", "REJECTED", "DRAFT"],
     ACCEPTED: ["PREPARING", "PARTIALLY_FULFILLED", "FULFILLED", "VOIDED"],
-    REJECTED: ["CLOSED", "VOIDED"],
+    REJECTED: ["CLOSED"],
     PREPARING: ["PARTIALLY_FULFILLED", "FULFILLED", "IN_TRANSIT", "DELIVERED"],
-    PARTIALLY_FULFILLED: ["FULFILLED", "IN_TRANSIT", "VOIDED"],
+    PARTIALLY_FULFILLED: ["FULFILLED", "IN_TRANSIT"], // VOIDED removed: part of the order is already delivered
     FULFILLED: ["IN_TRANSIT", "DELIVERED"],
     IN_TRANSIT: ["DELIVERED"],
     DELIVERED: ["CLOSED"],
   },
   DELIVERY_NOTE: {
-    DRAFT: ["IN_TRANSIT", "VOIDED"],
+    DRAFT: ["IN_TRANSIT"],
     IN_TRANSIT: ["DELIVERED", "DRAFT"],
     DELIVERED: ["CLOSED"],
   },
   INVOICE: {
-    DRAFT: ["PENDING_APPROVAL", "SENT", "VOIDED"],
-    PENDING_APPROVAL: ["SENT", "DRAFT", "VOIDED"],
+    DRAFT: ["PENDING_APPROVAL", "SENT"],
+    PENDING_APPROVAL: ["SENT", "DRAFT"],
     SENT: ["UNPAID", "VOIDED"],
     UNPAID: ["PARTIALLY_PAID", "PAID", "OVERDUE", "VOIDED"],
     PARTIALLY_PAID: ["PAID", "OVERDUE"],
@@ -174,25 +207,41 @@ export const DOCUMENT_TYPE_STATUS_TRANSITIONS: Record<
     PAID: ["CLOSED"],
   },
   CREDIT_NOTE: {
-    DRAFT: ["PENDING_APPROVAL", "SENT", "VOIDED"],
-    PENDING_APPROVAL: ["SENT", "DRAFT", "VOIDED"],
-    SENT: ["CLOSED"],
+    DRAFT: ["PENDING_APPROVAL", "SENT"],
+    PENDING_APPROVAL: ["SENT", "DRAFT"],
+    SENT: ["CLOSED", "VOIDED"],
   },
   DEBIT_NOTE: {
-    DRAFT: ["PENDING_APPROVAL", "SENT", "VOIDED"],
-    PENDING_APPROVAL: ["SENT", "DRAFT", "VOIDED"],
+    DRAFT: ["PENDING_APPROVAL", "SENT"],
+    PENDING_APPROVAL: ["SENT", "DRAFT"],
     SENT: ["UNPAID", "VOIDED"],
     UNPAID: ["PAID", "OVERDUE"],
     OVERDUE: ["PAID"],
     PAID: ["CLOSED"],
   },
   SUPPLIER_ORDER: {
-    DRAFT: ["SENT", "VOIDED"],
+    DRAFT: ["SENT"],
     SENT: ["ACCEPTED", "REJECTED", "VOIDED"],
     ACCEPTED: ["PREPARING", "DELIVERED"],
     PREPARING: ["DELIVERED"],
     DELIVERED: ["CLOSED"],
   },
+  SUPPLIER_INVOICE: {
+    DRAFT: ["UNPAID"],
+    UNPAID: ["PARTIALLY_PAID", "PAID", "OVERDUE", "VOIDED"],
+    PARTIALLY_PAID: ["PAID", "OVERDUE"],
+    OVERDUE: ["PARTIALLY_PAID", "PAID"],
+    PAID: ["CLOSED"],
+  },
+  SUPPLIER_CREDIT_NOTE: {
+    DRAFT: ["CLOSED"],
+  },
+  SUPPLIER_DELIVERY_NOTE: {
+    DRAFT: ["DELIVERED"],
+    DELIVERED: ["CLOSED"],
+  },
+  /** SELF_INVOICE is system-generated and numbered at creation (reverse charge). */
+  SELF_INVOICE: { SENT: ["CLOSED", "VOIDED"] },
   ARCHIVED: {},
 };
 
@@ -237,7 +286,6 @@ export const DOCUMENT_TYPE_CONFIG: Record<
     requiresCustomer: boolean;
     requiresSupplier: boolean;
     requiresWarehouse: boolean;
-    canBeVoided: boolean;
     requiresPaymentMethod: boolean;
     allowNegativeQuantity: boolean;
     requiresEInvoicing: boolean;
@@ -248,7 +296,6 @@ export const DOCUMENT_TYPE_CONFIG: Record<
     requiresCustomer: true,
     requiresSupplier: false,
     requiresWarehouse: false,
-    canBeVoided: false,
     requiresPaymentMethod: false,
     allowNegativeQuantity: false,
     requiresEInvoicing: false,
@@ -258,7 +305,6 @@ export const DOCUMENT_TYPE_CONFIG: Record<
     requiresCustomer: true,
     requiresSupplier: false,
     requiresWarehouse: false,
-    canBeVoided: false,
     requiresPaymentMethod: true,
     allowNegativeQuantity: false,
     requiresEInvoicing: false,
@@ -268,7 +314,6 @@ export const DOCUMENT_TYPE_CONFIG: Record<
     requiresCustomer: true,
     requiresSupplier: false,
     requiresWarehouse: true,
-    canBeVoided: true,
     requiresPaymentMethod: true,
     allowNegativeQuantity: false,
     requiresEInvoicing: false,
@@ -278,7 +323,6 @@ export const DOCUMENT_TYPE_CONFIG: Record<
     requiresCustomer: true,
     requiresSupplier: false,
     requiresWarehouse: true,
-    canBeVoided: false,
     requiresPaymentMethod: false,
     allowNegativeQuantity: false,
     requiresEInvoicing: false,
@@ -288,7 +332,6 @@ export const DOCUMENT_TYPE_CONFIG: Record<
     requiresCustomer: true,
     requiresSupplier: false,
     requiresWarehouse: false,
-    canBeVoided: true,
     requiresPaymentMethod: true,
     allowNegativeQuantity: false,
     requiresEInvoicing: true,
@@ -298,7 +341,6 @@ export const DOCUMENT_TYPE_CONFIG: Record<
     requiresCustomer: true,
     requiresSupplier: false,
     requiresWarehouse: false,
-    canBeVoided: true,
     requiresPaymentMethod: false,
     allowNegativeQuantity: true,
     requiresEInvoicing: true,
@@ -308,7 +350,6 @@ export const DOCUMENT_TYPE_CONFIG: Record<
     requiresCustomer: true,
     requiresSupplier: false,
     requiresWarehouse: false,
-    canBeVoided: true,
     requiresPaymentMethod: false,
     allowNegativeQuantity: false,
     requiresEInvoicing: true,
@@ -318,17 +359,51 @@ export const DOCUMENT_TYPE_CONFIG: Record<
     requiresCustomer: false,
     requiresSupplier: true,
     requiresWarehouse: true,
-    canBeVoided: true,
     requiresPaymentMethod: false,
     allowNegativeQuantity: false,
     requiresEInvoicing: false,
     affectsStock: true,
   },
+  SUPPLIER_INVOICE: {
+    requiresCustomer: false,
+    requiresSupplier: true,
+    requiresWarehouse: false,
+    requiresPaymentMethod: true,
+    allowNegativeQuantity: false,
+    requiresEInvoicing: false,
+    affectsStock: false,
+  },
+  SUPPLIER_CREDIT_NOTE: {
+    requiresCustomer: false,
+    requiresSupplier: true,
+    requiresWarehouse: false,
+    requiresPaymentMethod: false,
+    allowNegativeQuantity: true,
+    requiresEInvoicing: false,
+    affectsStock: false,
+  },
+  SUPPLIER_DELIVERY_NOTE: {
+    requiresCustomer: false,
+    requiresSupplier: true,
+    requiresWarehouse: true,
+    requiresPaymentMethod: false,
+    allowNegativeQuantity: false,
+    requiresEInvoicing: false,
+    affectsStock: true,
+  },
+  SELF_INVOICE: {
+    requiresCustomer: false,
+    requiresSupplier: true,
+    requiresWarehouse: false,
+    requiresPaymentMethod: false,
+    allowNegativeQuantity: false,
+    requiresEInvoicing: true,
+    affectsStock: false,
+  },
   ARCHIVED: {
     requiresCustomer: false,
     requiresSupplier: false,
     requiresWarehouse: false,
-    canBeVoided: false,
     requiresPaymentMethod: false,
     allowNegativeQuantity: false,
     requiresEInvoicing: false,
@@ -344,6 +419,7 @@ export const DOCUMENT_TYPES_WITH_STOCK_MOVEMENTS: readonly DocumentType[] = [
   "INVOICE",
   "CREDIT_NOTE",
   "SUPPLIER_ORDER",
+  "SUPPLIER_DELIVERY_NOTE",
 ] as const;
 
 // ============================================================================
@@ -388,6 +464,8 @@ export const DOCUMENT_RELATION_TYPES = {
   MERGES_INTO: "MERGES_INTO",
   CREDITS: "CREDITS",
   AMENDS: "AMENDS",
+  FULFILLS: "FULFILLS",
+  MIRRORS: "MIRRORS",
 } as const;
 
 /**
@@ -401,7 +479,11 @@ export const DOCUMENT_CONVERSION_MAP: Record<DocumentType, DocumentType[]> = {
   INVOICE: ["CREDIT_NOTE"],
   CREDIT_NOTE: [],
   DEBIT_NOTE: [],
-  SUPPLIER_ORDER: ["DELIVERY_NOTE"],
+  SUPPLIER_ORDER: ["SUPPLIER_DELIVERY_NOTE"],
+  SUPPLIER_DELIVERY_NOTE: ["SUPPLIER_INVOICE"],
+  SUPPLIER_INVOICE: ["SUPPLIER_CREDIT_NOTE"],
+  SUPPLIER_CREDIT_NOTE: [],
+  SELF_INVOICE: [],
   ARCHIVED: [],
 };
 
@@ -421,7 +503,12 @@ export const DOCUMENTS_REQUIRING_CUSTOMER: readonly DocumentType[] = [
 /**
  * Documents requiring supplier
  */
-export const DOCUMENTS_REQUIRING_SUPPLIER: readonly DocumentType[] = ["SUPPLIER_ORDER"] as const;
+export const DOCUMENTS_REQUIRING_SUPPLIER: readonly DocumentType[] = [
+  "SUPPLIER_ORDER",
+  "SUPPLIER_INVOICE",
+  "SUPPLIER_CREDIT_NOTE",
+  "SUPPLIER_DELIVERY_NOTE",
+] as const;
 
 /**
  * Documents affecting stock
@@ -432,6 +519,7 @@ export const DOCUMENTS_AFFECTING_STOCK: readonly DocumentType[] = [
   "INVOICE",
   "CREDIT_NOTE",
   "SUPPLIER_ORDER",
+  "SUPPLIER_DELIVERY_NOTE",
 ] as const;
 
 // ============================================================================

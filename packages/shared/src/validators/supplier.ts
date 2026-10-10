@@ -15,6 +15,7 @@ import {
 import { createCuidSchema, createIdSchema } from "./primitives";
 import { paginationSchema, sortOrderSchema } from "./query";
 import { supplierIdBaseSchema } from "./base";
+import { nestedBankAccountsSchema } from "./bank";
 
 // ============================================================================
 // SUPPLIER SCHEMAS (Extended from Base)
@@ -41,11 +42,7 @@ export const createSupplierSchema = z
 
     supplierTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
 
-    bankAccount: z
-      .string()
-      .max(100, "Bank account non può superare 100 caratteri")
-      .optional()
-      .nullable(),
+    bankAccounts: nestedBankAccountsSchema.optional(),
 
     // ===== Logistica =====
     leadTimeDays: z.number().int().nonnegative().default(0).optional().nullable(),

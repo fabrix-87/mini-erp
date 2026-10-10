@@ -3,7 +3,6 @@
 // ============================================================================
 
 import { z } from "zod";
-import type { Company } from "./company";
 import type { Customer } from "./customer";
 import type { Supplier } from "./supplier";
 import type { Contact } from "./contact";
@@ -11,7 +10,6 @@ import type { Opportunity } from "./opportunity";
 import type { Lead } from "./lead";
 import type { Warehouse } from "./warehouse";
 import type { Currency } from "./currency";
-import type { Country } from "./country";
 import type { User } from "./user";
 import type { ProductVariant, Product } from "./product";
 import type { PaymentMethod } from "./payment";
@@ -27,10 +25,18 @@ import {
   updateDocumentLineSchema,
   createInstallmentSchema,
   updateInstallmentSchema,
-  payInstallmentSchema,
   createDocumentSchema,
   updateDocumentSchema,
   updateDocumentStatusSchema,
+  documentAttachmentIdParamSchema,  
+  documentDirectionSchema,
+  matchStatusSchema,
+  voidDocumentSchema,
+  documentCustomerIdParamSchema,
+  documentSupplierIdParamSchema,
+  quantityDeliveredSchema,
+  payInstallmentSchema,
+  generateInstallmentPlanSchema,
   approveDocumentSchema,
   rejectDocumentSchema,
   sendDocumentSchema,
@@ -43,28 +49,28 @@ import {
   documentQuerySchema,
   documentLineQuerySchema,
   installmentQuerySchema,
-  documentIdParamSchema,
-  documentLineIdParamSchema,
-  installmentIdParamSchema,
   documentStatsSchema,
   salesReportSchema,
   agingReportSchema,
   topProductsReportSchema,
-  quantityDeliveredSchema,
-  supplierIdParamSchema,
-  documentAttachmentIdParamSchema,
-  generateInstallmentPlanSchema,
+  documentIdParamSchema,
+  documentLineIdParamSchema,
+  installmentIdParamSchema,
 } from "../validators/document";
-import { DOCUMENT_LINE_TYPES, DOCUMENT_STATUSES, DOCUMENT_TYPES } from "../constants";
-import { customerIdParamSchema } from "../validators";
+import { DOCUMENT_LINE_TYPES, DOCUMENT_PARTY_ROLES, DOCUMENT_STATUSES, DOCUMENT_TYPES } from "../constants";
+import { BankAccount } from "./bank";
+import { Carrier } from "./carrier";
 
 // ============================================================================
 // ENUM TYPES
 // ============================================================================
 
 export type DocumentType = keyof typeof DOCUMENT_TYPES;
-export type DocumentStatusCategory = z.infer<typeof documentStatusCategorySchema>;
 export type DocumentStatus = keyof typeof DOCUMENT_STATUSES;
+export type DocumentDirection = z.infer<typeof documentDirectionSchema>;
+export type MatchStatus = z.infer<typeof matchStatusSchema>;
+export type DocumentPartyRole = (typeof DOCUMENT_PARTY_ROLES)[keyof typeof DOCUMENT_PARTY_ROLES];
+export type DocumentStatusCategory = z.infer<typeof documentStatusCategorySchema>;
 export type DocumentRelationType = z.infer<typeof documentRelationTypeSchema>;
 export type DocumentLineType = (typeof DOCUMENT_LINE_TYPES)[keyof typeof DOCUMENT_LINE_TYPES];
 export type InstallmentStatus = z.infer<typeof installmentStatusSchema>;
@@ -74,15 +80,52 @@ export type InstallmentStatus = z.infer<typeof installmentStatusSchema>;
 // ============================================================================
 
 /**
- * Document Line entity
+ * Document-owned party snapshot. One row per document and role.
+ * Output (PDF, XML) must read these values, never the live source records.
  */
+export type DocumentParty = {
+  tenantId: string;
+  documentId: string;
+  role: DocumentPartyRole;
+  code: string | null;
+  name: string;
+  entityType: "JURIDICAL" | "NATURAL" | "FOREIGN" | null;
+  legalForm: string | null;
+  vatNumber: string | null;
+  taxCode: string | null;
+  vatId: string | null;
+  eoriNumber: string | null;
+  taxRegime: string | null;
+  pec: string | null;
+  sdiCode: string | null;
+  address: string | null;
+  city: string | null;
+  postalCode: string | null;
+  province: string | null;
+  countryCode: string | null;
+  email: string | null;
+  phone: string | null;
+  reaOffice: string | null;
+  reaNumber: string | null;
+  reaShareCapital: Decimal | null;
+  reaShareholderType: "SU" | "SM" | null;
+  reaLiquidationStatus: "LS" | "LN" | null;
+  sourceCompanyId: string | null;
+  sourceAddressId: string | null;
+  companyVersionId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+/** Document line entity. */
 export type DocumentLine = {
-  id: number;
-  documentId: number;
-  document: Document;
-  productVariantId: number | null;
+  id: string;
+  tenantId: string;
+  documentId: string;
+  document?: Document;
+  productVariantId: string | null;
   productVariant?: ProductVariant | null;
-  productId: number | null;
+  productId: string | null;
   product?: Product | null;
   lineNumber: number;
   lineType: DocumentLineType;
@@ -104,44 +147,50 @@ export type DocumentLine = {
   taxAmount: Decimal;
   vatNatureCode: string | null;
   vatNormReference: string | null;
+  isReverseCharge: boolean;
+  isSelfInvoice: boolean;
+  /** Only populated on SUPPLIER_INVOICE lines. */
+  matchStatus: MatchStatus | null;
   lineTotalWithTax: Decimal;
   notes: string | null;
-  customFields: Record<string, any> | null;
-  intrastatTransaction?: IntrastatTransaction | null;
-  warehouseId: number | null;
+  customFields: Record<string, unknown> | null;
+  intrastatTransactions?: IntrastatTransaction[];
+  warehouseId: string | null;
   warehouse?: Warehouse | null;
-  stockReservations: StockReservation[];
-  stockMovement: StockMovement[];
-  parentLineId: number | null;
+  stockReservations?: StockReservation[];
+  stockMovements?: StockMovement[];
+  parentLineId: string | null;
   parentLine?: DocumentLine | null;
-  componentLines: DocumentLine[];
+  componentLines?: DocumentLine[];
   isComponent: boolean;
   quantityInvoiced: Decimal;
   quantityDelivered: Decimal;
   quantityReturned: Decimal;
   originalUnitPrice: Decimal | null;
   priceOverrideReason: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
-/**
- * Payment Installment entity
- */
+/** Payment installment entity. */
 export type DocumentPaymentInstallment = {
-  id: number;
-  documentId: number;
-  document: Document;
+  id: string;
+  tenantId: string;
+  documentId: string;
+  document?: Document;
   installmentNumber: number;
   percentage: Decimal;
   amount: Decimal;
   dueDate: Date;
   paidDate: Date | null;
   paidAmount: Decimal;
-  status: string;
+  status: InstallmentStatus;
   notes: string | null;
-  paymentMethodId: number | null;
+  paymentMethodId: string | null;
   paymentMethod?: PaymentMethod | null;
   paymentReference: string | null;
   bankTransactionId: string | null;
+  paymentBatchId: string | null;
   remindersSent: number;
   lastReminderAt: Date | null;
   lateFeeAmount: Decimal;
@@ -149,59 +198,65 @@ export type DocumentPaymentInstallment = {
   updatedAt: Date;
 };
 
-/**
- * Document entity
- */
-export type Document = {
+/** Append-only audit record of a document status transition. */
+export type DocumentStatusHistory = {
   id: number;
+  documentId: string;
+  fromStatus: DocumentStatus | null;
+  toStatus: DocumentStatus;
+  changedBy: string;
+  user?: User;
+  reason: string | null;
+  changedAt: Date;
+};
+
+/** Document entity. Party identity and addresses live in `parties`. */
+export type Document = {
+  id: string;
+  tenantId: string;
   documentType: DocumentType;
-  statusCategory: DocumentStatusCategory;
   status: DocumentStatus;
+  direction: DocumentDirection;
+
+  // Outbound numbering
   documentNumber: string | null;
   sequenceNumber: number | null;
   documentYear: number;
-  customerId: number | null;
+  // Inbound numbering
+  counterpartyDocumentNumber: string | null;
+  // VAT register
+  vatRegisterProtocol: number | null;
+  vatRegisterYear: number | null;
+
+  // Counterparties
+  customerId: string | null;
   customer?: Customer | null;
-  supplierId: number | null;
+  supplierId: string | null;
   supplier?: Supplier | null;
-  contactId: number | null;
+  contactId: string | null;
   contact?: Contact | null;
-  opportunityId: number | null;
+  opportunityId: string | null;
   opportunity?: Opportunity | null;
-  leadId: number | null;
+  leadId: string | null;
   lead?: Lead | null;
-  warehouseId: number | null;
+  warehouseId: string | null;
   warehouse?: Warehouse | null;
+  parties?: DocumentParty[];
+
+  // Dates
   documentDate: Date;
   dueDate: Date | null;
   deliveryDate: Date | null;
   validUntil: Date | null;
   sentDate: Date | null;
-  parentDocumentId: number | null;
-  parentDocument?: Document | null;
-  childDocuments: Document[];
-  relatedDocuments: DocumentRelation[];
-  relatedToDocuments: DocumentRelation[];
-  customerName: string;
-  customerVatNumber: string | null;
-  customerTaxCode: string | null;
-  customerPec: string | null;
-  customerSdiCode: string | null;
-  customerAddress: string | null;
-  customerCity: string | null;
-  customerPostalCode: string | null;
-  customerProvince: string | null;
-  customerCountryCode: string;
-  customerCountry: Country;
-  customerEmail: string | null;
-  customerPhone: string | null;
-  shippingName: string | null;
-  shippingAddress: string | null;
-  shippingCity: string | null;
-  shippingPostalCode: string | null;
-  shippingProvince: string | null;
-  shippingCountryCode: string | null;
-  shippingCountry?: Country | null;
+  receivedDate: Date | null;
+  registrationDate: Date | null;
+
+  // Relations
+  relatedDocuments?: DocumentRelation[];
+  relatedToDocuments?: DocumentRelation[];
+
+  // Amounts (document currency)
   subtotal: Decimal;
   discountPercent: Decimal;
   discountAmount: Decimal;
@@ -210,52 +265,86 @@ export type Document = {
   taxableAmount: Decimal;
   taxAmount: Decimal;
   totalAmount: Decimal;
+  netPayableAmount: Decimal;
   paidAmount: Decimal;
   currencyCode: string;
-  currency: Currency;
+  currency?: Currency;
   exchangeRate: Decimal;
   exchangeRateDate: Date;
   baseCurrencyCode: string;
-  paymentMethodId: number | null;
+
+  // Logistics
+  carrierId: string | null;
+  carrier?: Carrier | null;
+  trackingNumber: string | null;
+
+  // Payment snapshot
+  paymentMethodId: string | null;
   paymentMethodRel?: PaymentMethod | null;
-  paymentMethod: string;
-  paymentTerms: string | null;
+  paymentMethodCode: string;
+  paymentTermsLabel: string | null;
+
+  // Bank snapshot (source of truth for payment execution)
   bankName: string | null;
   bankIban: string | null;
   bankSwift: string | null;
+  bankAccountHolder: string | null;
+  /** Traceability only: never read it to execute a payment. */
+  paymentBankAccountId: string | null;
+  paymentBankAccount?: BankAccount | null;
+  bankDetailsMismatch: boolean;
+  bankDetailsVerifiedByUserId: string | null;
+  bankDetailsVerifiedAt: Date | null;
+
+  // Notes
   notes: string | null;
   internalNotes: string | null;
   termsAndConditions: string | null;
-  createdByUserId: number;
-  createdBy: User;
-  assignedUserId: number | null;
+
+  // Withholding tax and social security (INBOUND)
+  withholdingTaxTypeId: string | null;
+  withholdingTaxTypeCode: string | null;
+  withholdingTaxBase: Decimal | null;
+  withholdingTaxPercent: Decimal | null;
+  withholdingTaxAmount: Decimal | null;
+  contributionPercent: Decimal | null;
+  contributionAmount: Decimal | null;
+
+  // Ownership
+  createdByUserId: string;
+  createdBy?: User;
+  assignedUserId: string | null;
   assignedUser?: User | null;
-  deletedBy: number | null;
+  deletedBy: string | null;
   deletedByUser?: User | null;
-  customFields: Record<string, any> | null;
-  statusHistory: Record<string, any> | null;
+
+  customFields: Record<string, unknown> | null;
+  statusHistory?: DocumentStatusHistory[];
+
+  // Lifecycle timestamps
   approvedAt: Date | null;
   invoicedAt: Date | null;
   deliveredAt: Date | null;
   closedAt: Date | null;
   voidedAt: Date | null;
   voidedReason: string | null;
-  tenantId: number;
-  lines: DocumentLine[];
-  installments: DocumentPaymentInstallment[];
-  stockMovement: StockMovement[];
-  stockReservations: StockReservation[];
-  intrastatTransactions: IntrastatTransaction[];
+  snapshotLockedAt: Date | null;
+
+  lines?: DocumentLine[];
+  installments?: DocumentPaymentInstallment[];
+  stockMovements?: StockMovement[];
+  stockReservations?: StockReservation[];
+  intrastatTransactions?: IntrastatTransaction[];
+
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
 };
 
-/**
- * Document Sequence entity
- */
+/** Per-tenant, per-type, per-year sequence counter. */
 export type DocumentSequence = {
   id: number;
+  tenantId: string;
   documentType: DocumentType;
   year: number;
   lastNumber: number;
@@ -263,14 +352,12 @@ export type DocumentSequence = {
   updatedAt: Date;
 };
 
-/**
- * Document Relation entity
- */
+/** Directed edge between two documents. */
 export type DocumentRelation = {
-  sourceDocumentId: number;
-  sourceDocument: Document;
-  targetDocumentId: number;
-  targetDocument: Document;
+  sourceDocumentId: string;
+  sourceDocument?: Document;
+  targetDocumentId: string;
+  targetDocument?: Document;
   relationType: DocumentRelationType;
   createdAt: Date;
 };
@@ -322,8 +409,9 @@ export type TopProductsReportInput = z.infer<typeof topProductsReportSchema>;
 export type DocumentIdParam = z.infer<typeof documentIdParamSchema>;
 export type DocumentLineIdParam = DocumentIdParam & z.infer<typeof documentLineIdParamSchema>;
 export type InstallmentIdParam = DocumentIdParam & z.infer<typeof installmentIdParamSchema>;
-export type DocumentSupplierIdParam = z.infer<typeof supplierIdParamSchema>;
-export type DocumentCustomerIdParam = z.infer<typeof customerIdParamSchema>;
+export type DocumentSupplierIdParam = z.infer<typeof documentSupplierIdParamSchema>;
+export type DocumentCustomerIdParam = z.infer<typeof documentCustomerIdParamSchema>;
+export type VoidDocumentInput = z.infer<typeof voidDocumentSchema>;
 export type DocumentAttachmentIdParam = DocumentIdParam & z.infer<typeof documentAttachmentIdParamSchema>;
 
 // ============================================================================
@@ -334,7 +422,7 @@ export type DocumentAttachmentIdParam = DocumentIdParam & z.infer<typeof documen
  * Document list item (simplified)
  */
 export type DocumentListItem = {
-  id: number;
+  id: string;
   documentType: DocumentType;
   documentNumber: string | null;
   status: DocumentStatus;
@@ -355,7 +443,7 @@ export type DocumentComplete = Document & {
   lines: DocumentLine[];
   installments: DocumentPaymentInstallment[];
   relatedDocuments: DocumentRelation[];
-  stockMovement: StockMovement[];
+  stockMovements: StockMovement[];
 };
 
 /**

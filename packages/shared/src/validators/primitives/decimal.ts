@@ -1,5 +1,11 @@
 import Decimal from "decimal.js";
 import { z } from "zod";
+import {
+  MAX_DISCOUNT_PERCENT,
+  MAX_DOCUMENT_AMOUNT,
+  MAX_LINE_QUANTITY,
+  MIN_DISCOUNT_PERCENT,
+} from "../../constants";
 
 type DecimalSchemaOptions = {
   min?: Decimal.Value;
@@ -177,3 +183,59 @@ export const toNumberSchema = (options?: { min?: number; required?: boolean }) =
       .nullable(),
   );
 };
+
+/**
+ * Wraps an optional decimal schema so that an explicit `null` survives parsing.
+ *
+ * `createDecimalSchema` turns `null` into `undefined`, so a PATCH sending `null` on a
+ * nullable column would look like "field not provided" and never clear the value.
+ * The union tries `null` first, then falls back to the decimal schema.
+ *
+ * Output: `string | null | undefined` (undefined = not provided, null = clear the value).
+ *
+ * @param schema - A schema returned by createDecimalSchema
+ * @returns Schema that preserves `null` and keeps the key optional
+ * @example
+ * const withholdingPercent = nullableDecimalSchema(createDecimalSchema(2, { min: 0, max: 100 }));
+ */
+export const nullableDecimalSchema = <T extends z.ZodType>(schema: T) =>
+  z.union([z.null(), schema]).optional();
+
+// ============================================================================
+// DOCUMENT HELPERS
+// ============================================================================
+// "Optional" variants have NO default: they are used in the shapes reused by update
+// schemas, so that .partial() never injects values the client did not send.
+// Defaults are re-applied only in create schemas via .extend().
+
+const moneyOptions = { positiveOnly: true, min: 0, max: MAX_DOCUMENT_AMOUNT } as const;
+export const moneyOptionalSchema = createDecimalSchema(2, moneyOptions);
+export const moneySchema = createDecimalSchema(2, { ...moneyOptions, defaultValue: 0 });
+
+/** Unit amounts match Decimal(20,6) in Prisma (unitPrice, unitCost, originalUnitPrice). */
+const unitAmountOptions = { positiveOnly: true, min: 0 } as const;
+export const unitAmountOptionalSchema = createDecimalSchema(6, unitAmountOptions);
+export const unitAmountSchema = createDecimalSchema(6, { ...unitAmountOptions, defaultValue: 0 });
+
+const quantityOptions = { positiveOnly: true, min: 0, max: MAX_LINE_QUANTITY } as const;
+export const quantityOptionalSchema = createDecimalSchema(6, quantityOptions);
+export const quantitySchema = (defaultValue: number) =>
+  createDecimalSchema(6, { ...quantityOptions, defaultValue });
+
+const discountOptions = {
+  positiveOnly: true,
+  min: MIN_DISCOUNT_PERCENT,
+  max: MAX_DISCOUNT_PERCENT,
+} as const;
+export const discountPercentOptionalSchema = createDecimalSchema(2, discountOptions);
+export const discountPercentSchema = createDecimalSchema(2, {
+  ...discountOptions,
+  defaultValue: 0,
+});
+
+const percentOptions = { positiveOnly: true, min: 0, max: 100 } as const;
+export const percentOptionalSchema = createDecimalSchema(2, percentOptions);
+export const taxPercentSchema = createDecimalSchema(2, {
+  ...percentOptions,
+});
+export const exchangeRateSchema = createDecimalSchema(6, { positiveOnly: true, min: 0 });

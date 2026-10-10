@@ -1,6 +1,4 @@
-/// Conto bancario, di proprietà del tenant oppure di una Company controparte
-/// (cliente o fornitore tramite la relazione 1:1 con Customer/Supplier).
-/// Vincolo logico: esattamente uno tra tenantId e companyId è non-null.
+/// Bank account owned by a Company: the tenant's own company, a customer or a supplier.
 model BankAccount {
     id String @id @default(cuid())
 
@@ -10,8 +8,9 @@ model BankAccount {
     tenantId String @map("tenant_id")
     tenant   Tenant @relation("TenantBankAccounts", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    companyId String?  @map("company_id")
-    company   Company? @relation("CompanyBankAccounts", fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+    /// Owner company. Tenant-owned accounts point to Tenant.companyId.
+    companyId String  @map("company_id")
+    company   Company @relation("CompanyBankAccounts", fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
     /// Internal label (e.g. "Conto principale EUR", "IBAN fornitore sede Milano").
     name     String  @db.VarChar(100)
@@ -40,13 +39,8 @@ model BankAccount {
     updatedAt DateTime @updatedAt @map("updated_at")
 
     @@unique([tenantId, id])
-    @@unique([tenantId, iban], where: { companyId: null })
     @@unique([tenantId, companyId, iban])
-    @@unique([tenantId, currencyCode], map: "unique_tenant_default_bank_account", where: { isDefault: true, companyId: null })
     @@unique([tenantId, companyId, currencyCode], map: "unique_company_default_bank_account", where: { isDefault: true })
-    // BankAccount
-    // Non-unique: the same IBAN may legitimately appear on several group companies.
-    // Supports the "same IBAN on other companies" lookup at registration time.
     @@index([tenantId, iban])
     @@index([tenantId, active])
     @@index([companyId, active])

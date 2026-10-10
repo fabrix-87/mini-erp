@@ -15,6 +15,12 @@ export const productVariantIdBaseSchema = createCuidSchema("Product Variant ID n
 export const activityIdBaseSchema = createCuidSchema("Activity ID non valido");
 export const contactIdBaseSchema = createCuidSchema("ID contatto non valido");
 export const warehouseIdBaseSchema = createCuidSchema("Warehouse ID not valid");
+export const documentIdBaseSchema = createCuidSchema("Document ID non valido");
+export const documentLineIdBaseSchema = createCuidSchema("Document Line ID non valido");
+export const carrierIdBaseSchema = createCuidSchema("Carrier ID non valido");
+export const bankAccountIdBaseSchema = createCuidSchema("Bank Account ID non valido");
+export const paymentMethodIdBaseSchema = createCuidSchema("Payment Method ID non valido");
+export const withholdingTaxTypeIdBaseSchema = createCuidSchema("Withholding Tax Type ID non valido");
 
 /**
  * Schema base per Currency Code

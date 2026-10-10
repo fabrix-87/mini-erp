@@ -20,3 +20,4 @@ export * from "./role";
 export * from "./dashboard";
 export * from "./lead";
 export * from "./activity";
+export * from "./bank";

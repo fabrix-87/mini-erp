@@ -83,7 +83,7 @@ export const companyFormDefaultValues: CompanyFormValues = {
   paymentMethodId: null,
   parentSupplierId: null,
   paymentTerms: null,
-  bankAccount: null,
+  bankAccounts: [],
   leadTimeDays: 0,
   transportCost: null,
   rating: 5,

@@ -23,6 +23,7 @@ import { supplierRatingSchema } from "../supplier";
 import { createNestedAddressSchema } from "../address";
 import { toOptionalField } from "../utils";
 import { toNumberSchema } from "../primitives";
+import { nestedBankAccountsSchema } from "../bank";
 
 /**
  * Flat Zod schema for the company form UI.
@@ -73,7 +74,7 @@ export const companyFormSchema = z.object({
   // ── Supplier fields ───────────────────────────────────────────
   parentSupplierId: createCuidSchema("Parent Supplier ID non valido").optional().nullable(),
   paymentTerms: z.string().max(100).optional().nullable(),
-  bankAccount: z.string().max(100).optional().nullable(),
+  bankAccounts: nestedBankAccountsSchema.default([]),
   leadTimeDays: toNumberSchema({ min: 0, required: true }), 
   transportCost: toNumberSchema(),  
   rating: supplierRatingSchema.default(5).optional().nullable(),

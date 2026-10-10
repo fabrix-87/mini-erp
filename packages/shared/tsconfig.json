@@ -16,8 +16,9 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "incremental": true,
-    "tsBuildInfoFile": ".tsbuildinfo"
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "types": ["bun-types"],
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
 }

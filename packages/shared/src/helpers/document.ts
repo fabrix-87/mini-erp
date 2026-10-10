@@ -4,32 +4,42 @@
 // Can be used in both frontend and backend
 // ============================================================================
 
+import { DOCUMENT_TYPE_STATUS_TRANSITIONS, INBOUND_DOCUMENT_TYPES, InboundDocumentType } from "../constants";
 import type { DocumentStatus, DocumentType } from "../types/document";
 
 /**
- * Status descriptions in Italian
+ * Checks whether a status transition is allowed for a document type.
+ *
+ * @param type - Document type
+ * @param from - Current status
+ * @param to - Target status
+ * @returns true when the transition exists in DOCUMENT_TYPE_STATUS_TRANSITIONS
  */
-export const DOCUMENT_STATUS_LABELS: Record<DocumentStatus, string> = {
-  DRAFT: "Bozza",
-  PENDING_APPROVAL: "In attesa di approvazione",
-  SENT: "Inviato",
-  ACCEPTED: "Accettato",
-  REJECTED: "Rifiutato",
-  PREPARING: "In preparazione",
-  PARTIALLY_FULFILLED: "Parzialmente evaso",
-  FULFILLED: "Completamente evaso",
-  IN_TRANSIT: "In transito",
-  DELIVERED: "Consegnato",
-  UNPAID: "Non pagato",
-  PARTIALLY_PAID: "Parzialmente pagato",
-  PAID: "Pagato",
-  OVERDUE: "Scaduto",
-  VOIDED: "Annullato",
-  CLOSED: "Chiuso",
-};
+export const canTransition = (type: DocumentType, from: DocumentStatus, to: DocumentStatus): boolean =>
+  DOCUMENT_TYPE_STATUS_TRANSITIONS[type][from]?.includes(to) ?? false;
 
 /**
- * Status badge colors for UI (Tailwind/shadcn)
+ * Lists the statuses a document can move to. Used by the UI to render the available actions.
+ *
+ * @param type - Document type
+ * @param from - Current status
+ * @returns Allowed target statuses (empty for terminal statuses)
+ */
+export const getAvailableTransitions = (type: DocumentType, from: DocumentStatus): DocumentStatus[] =>
+  DOCUMENT_TYPE_STATUS_TRANSITIONS[type][from] ?? [];
+
+/**
+ * Checks whether a document type can ever be voided, derived from the transition map
+ * so the rule and the workflow cannot diverge.
+ *
+ * @param type - Document type
+ * @returns true when VOIDED is reachable from at least one status
+ */
+export const canDocumentTypeBeVoided = (type: DocumentType): boolean =>
+  Object.values(DOCUMENT_TYPE_STATUS_TRANSITIONS[type]).some((targets) => targets?.includes("VOIDED"));
+
+/**
+ * Status badge colors for UI (Tailwind/shadcn) --- spostare nel frontend
  */
 export const DOCUMENT_STATUS_COLORS: Record<
   DocumentStatus,
@@ -54,13 +64,6 @@ export const DOCUMENT_STATUS_COLORS: Record<
 };
 
 /**
- * Get status description
- */
-export const getStatusLabel = (status: DocumentStatus): string => {
-  return DOCUMENT_STATUS_LABELS[status] || status;
-};
-
-/**
  * Get status color for badge
  */
 export const getStatusColor = (
@@ -69,49 +72,6 @@ export const getStatusColor = (
   return DOCUMENT_STATUS_COLORS[status] || "default";
 };
 
-/**
- * Document type labels in Italian
- */
-export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
-  QUOTE: "Preventivo",
-  PROFORMA: "Proforma",
-  ORDER: "Ordine Cliente",
-  DELIVERY_NOTE: "DDT",
-  INVOICE: "Fattura",
-  CREDIT_NOTE: "Nota di Credito",
-  DEBIT_NOTE: "Nota di Debito",
-  SUPPLIER_ORDER: "Ordine Fornitore",
-  ARCHIVED: "Archiviato",
-};
-
-/**
- * Get document type label
- */
-export const getDocumentTypeLabel = (type: DocumentType): string => {
-  return DOCUMENT_TYPE_LABELS[type] || type;
-};
-
-/**
- * Document type icons (for UI)
- */
-export const DOCUMENT_TYPE_ICONS: Record<DocumentType, string> = {
-  QUOTE: "file-text",
-  PROFORMA: "file-check",
-  ORDER: "shopping-cart",
-  DELIVERY_NOTE: "truck",
-  INVOICE: "receipt",
-  CREDIT_NOTE: "receipt-refund",
-  DEBIT_NOTE: "receipt",
-  SUPPLIER_ORDER: "package",
-  ARCHIVED: "archive",
-};
-
-/**
- * Get document type icon name
- */
-export const getDocumentTypeIcon = (type: DocumentType): string => {
-  return DOCUMENT_TYPE_ICONS[type] || "file";
-};
 
 /**
  * Format document number for display
@@ -175,3 +135,12 @@ export const validateInstallmentsPercentage = (
     totalPercentage,
   };
 };
+
+/**
+ * Checks whether a document type is received from a counterparty (INBOUND direction).
+ *
+ * @param type - The document type to check
+ * @returns true when the type belongs to the inbound (passive) cycle
+ */
+export const isInboundDocumentType = (type: DocumentType): type is InboundDocumentType =>
+  (INBOUND_DOCUMENT_TYPES as readonly DocumentType[]).includes(type);
