@@ -3,6 +3,7 @@ import { emailSchema, phoneSchema } from "./primitives/string";
 import { queryBooleanOrAllSchema, queryEnumOrAllSchema } from "./query/params";
 import { limitSchema, pageSchema, querySortOrderSchema } from "./query/pagination";
 import { companyIdBaseSchema, contactIdBaseSchema } from "./base";
+import { CONTACT_SORT_FIELDS } from "../constants";
 
 // ============================================================================
 // SORT
@@ -12,13 +13,7 @@ import { companyIdBaseSchema, contactIdBaseSchema } from "./base";
  * Sortable fields for Contact entity.
  * Direct fields live on Contact; relational fields (position, department) live on CompanyContact.
  */
-export const contactSortFieldSchema = z.enum([
-  "firstName",
-  "lastName",
-  "email",
-  "createdAt",
-  "updatedAt",
-]);
+export const contactSortFieldSchema = z.enum(CONTACT_SORT_FIELDS);
 
 /**
  * Sortable fields for CompanyContact (join table context).

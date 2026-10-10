@@ -324,9 +324,9 @@ model Document {
     intrastatTransactions     IntrastatTransaction[]
     journalEntries            JournalEntry[]                @relation("DocumentJournalEntries")
     withholdingSettlementLine WithholdingTaxSettlementLine? @relation("DocumentWithholdingLines")
-    
+
     // === PARTY SNAPSHOTS ===
-parties DocumentParty[] @relation("DocumentParties")
+    parties DocumentParty[] @relation("DocumentParties")
 
     /// Set once when document-owned snapshots become immutable.
     snapshotLockedAt DateTime? @map("snapshot_locked_at")

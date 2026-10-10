@@ -2,7 +2,12 @@ import { z } from "zod";
 import { emailSchema, emptyStringToNull, phoneSchema, urlSchema } from "./primitives/string";
 import { isoDateSchema } from "./primitives/date";
 import { createDecimalSchema } from "./primitives/decimal";
-import { countryCodeBaseSchema, inputJsonValueSchema, leadIdBaseSchema, userIdSchema } from "./base";
+import {
+  countryCodeBaseSchema,
+  inputJsonValueSchema,
+  leadIdBaseSchema,
+  userIdSchema,
+} from "./base";
 import { sortOrderSchema, pageSchema, limitSchema } from "./query/pagination";
 import { queryBooleanSchema, queryNumberSchema } from "./query/params";
 import {
@@ -12,6 +17,14 @@ import {
   customerTypeSchema,
 } from "./customer";
 import { companyTypeEntitySchema } from "./company";
+import {
+  LEAD_DECISION_AUTHORITY,
+  LEAD_PURCHASE_TIMEFRAME,
+  LEAD_QUALITY,
+  LEAD_SORT_OPTIONS,
+  LEAD_SOURCE,
+  LEAD_STATUS,
+} from "../constants";
 
 // ============================================================================
 // ENUMS
@@ -20,77 +33,32 @@ import { companyTypeEntitySchema } from "./company";
 /**
  * Lead Status enum
  */
-export const leadStatusSchema = z.enum([
-  "NEW",
-  "CONTACTED",
-  "QUALIFIED",
-  "UNQUALIFIED",
-  "NURTURING",
-  "CONVERTED",
-  "LOST",
-  "DUPLICATE",
-  "ARCHIVED",
-]);
+export const leadStatusSchema = z.enum(LEAD_STATUS);
 
 /**
  * Lead Source enum
  */
-export const leadSourceSchema = z.enum([
-  "WEBSITE",
-  "REFERRAL",
-  "SOCIAL_MEDIA",
-  "EMAIL_CAMPAIGN",
-  "PHONE_CALL",
-  "COLD_CALL",
-  "EVENT",
-  "PARTNER",
-  "ADVERTISING",
-  "CONTENT",
-  "DIRECT",
-  "CHAT",
-  "OTHER",
-]);
+export const leadSourceSchema = z.enum(LEAD_SOURCE);
 
 /**
  * Lead Sort By enum
  */
-export const leadSortBySchema = z.enum([
-  "code",
-  "companyName",
-  "status",
-  "quality",
-  "score",
-  "estimatedValue",
-  "createdAt",
-  "lastContactDate",
-]);
+export const leadSortBySchema = z.enum(LEAD_SORT_OPTIONS);
 
 /**
  * Lead Quality enum
  */
-export const leadQualitySchema = z.enum(["HOT", "WARM", "COLD"]);
+export const leadQualitySchema = z.enum(LEAD_QUALITY);
 
 /**
  * Purchase Timeframe enum
  */
-export const purchaseTimeframeSchema = z.enum([
-  "IMMEDIATE",
-  "SHORT_TERM",
-  "MEDIUM_TERM",
-  "LONG_TERM",
-  "UNDEFINED",
-]);
+export const purchaseTimeframeSchema = z.enum(LEAD_PURCHASE_TIMEFRAME);
 
 /**
  * Decision Authority enum
  */
-export const decisionAuthoritySchema = z.enum([
-  "DECISION_MAKER",
-  "INFLUENCER",
-  "GATEKEEPER",
-  "END_USER",
-  "UNKNOWN",
-]);
+export const decisionAuthoritySchema = z.enum(LEAD_DECISION_AUTHORITY);
 
 // ============================================================================
 // DECIMAL HELPERS

@@ -30,7 +30,7 @@ import { currencyCodeBaseSchema, productVariantIdBaseSchema, supplierIdBaseSchem
 // ENUMS
 // ============================================================================
 
-export const warehouseTypeSchema = z.enum([WAREHOUSE_TYPES.PHYSICAL, WAREHOUSE_TYPES.VIRTUAL]);
+export const warehouseTypeSchema = z.enum(WAREHOUSE_TYPES);
 
 export const movementTypeSchema = z.enum([
   MOVEMENT_TYPES.PURCHASE,

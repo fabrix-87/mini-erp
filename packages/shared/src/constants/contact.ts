@@ -6,6 +6,10 @@ import { companyContactSortFieldSchema, contactSortFieldSchema } from "../valida
  */
 export type ContactSortField = z.infer<typeof contactSortFieldSchema>;
 export type CompanyContactSortField = z.infer<typeof companyContactSortFieldSchema>;
-export const CONTACT_SORT_FIELDS: Readonly<Set<ContactSortField>> = new Set(
-  contactSortFieldSchema.options,
-);
+export const CONTACT_SORT_FIELDS = [
+  "firstName",
+  "lastName",
+  "email",
+  "createdAt",
+  "updatedAt",
+] as const;

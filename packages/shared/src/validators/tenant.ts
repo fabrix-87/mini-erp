@@ -2,61 +2,35 @@ import { z } from "zod";
 import { createIdSchema } from "./primitives/id";
 import { sortOrderSchema } from "./query/pagination";
 import { urlSchema } from "./primitives";
-import { currencyCodeBaseSchema } from "./base";
+import {
+  companyIdBaseSchema,
+  currencyCodeBaseSchema,
+  languageIdBaseSchema,
+  taxRuleIdBaseSchema,
+  tenantIdBaseSchema,
+} from "./base";
+import { SDI_FORMAT, TAX_REGIME, TENANT_PLAN, TENANT_SORT_OPTIONS, TENANT_STATUS } from "../constants";
 
 /**
  * Schema for tenant operational status.
  */
-export const tenantStatusSchema = z.enum(["ACTIVE", "SUSPENDED", "TRIAL", "CANCELLED"]);
+export const tenantStatusSchema = z.enum(TENANT_STATUS);
 
 /**
  * Schema for tenant subscription plan.
  */
-export const tenantPlanSchema = z.enum(["FREE", "STARTER", "PROFESSIONAL", "ENTERPRISE"]);
+export const tenantPlanSchema = z.enum(TENANT_PLAN);
 
-/**
- * Schema for Italian tax regime codes (Regimi Fiscali SDI).
- * Codes follow AdE (Agenzia delle Entrate) specification RF01–RF19.
- *
- * @see {@link https://www.agenziaentrate.gov.it} AdE Fatturazione Elettronica
- */
-export const taxRegimeSchema = z.enum([
-  "RF01", // Ordinario
-  "RF02", // Contribuenti minimi (ex art. 27, DL 98/2011)
-  "RF04", // Agricoltura e attività connesse
-  "RF05", // Vendita sali e tabacchi
-  "RF06", // Commercio fiammiferi
-  "RF07", // Editoria
-  "RF08", // Gestione servizi telefonia pubblica
-  "RF09", // Rivendita documenti di trasporto pubblico
-  "RF10", // Intrattenimenti, giochi e altre attività
-  "RF11", // Agenzie viaggi e turismo
-  "RF12", // Agriturismo
-  "RF13", // Vendite a domicilio
-  "RF14", // Rivenditore beni usati e oggetti d'arte
-  "RF15", // Agenzie di vendite all'asta
-  "RF16", // IVA per cassa (art. 32-bis DL 83/2012)
-  "RF17", // IVA per cassa (art. 6 c.5 DPR 633/1972)
-  "RF18", // Altro
-  "RF19", // Regime forfettario (L. 190/2014)
-]);
+export const taxRegimeSchema = z.enum(TAX_REGIME);
 
 // ============================================================================
 // TENANT SETTINGS SCHEMAS
 // ============================================================================
 
 /**
- * Schema for Tenant ID
- */
-export const tenantIdSchema = createIdSchema("ID Tenant non valido");
-
-/**
  * Schema for SDI transmission format
  */
-export const sdiTransmissionFormatSchema = z.enum([
-  "FPR12", // Fattura ordinaria
-  "FPA12", // Fattura PA (Pubblica Amministrazione)
-]);
+export const sdiTransmissionFormatSchema = z.enum(SDI_FORMAT);
 
 /**
  * Raw object shape for TenantSettings — no refinements.
@@ -68,21 +42,13 @@ const tenantSettingsShape = z.object({
     .trim()
     .optional()
     .nullable(),
-
-  companyId: createIdSchema("Company ID non valido").optional().nullable(),
-
+  companyId: companyIdBaseSchema.nullish(),
   taxRegime: taxRegimeSchema.optional().nullable(),
-
-  defaultSalesTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
-
-  defaultPurchasesTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
-
+  defaultSalesTaxRuleId: taxRuleIdBaseSchema.nullish(),
+  defaultPurchasesTaxRuleId: taxRuleIdBaseSchema.nullish(),
   defaultCurrency: currencyCodeBaseSchema.default("EUR"),
-
-  defaultLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
-
+  defaultLanguageId: languageIdBaseSchema.nullish(),
   sdiTransmissionFormat: sdiTransmissionFormatSchema.optional().nullable(),
-
   sdiCertificatePath: z
     .string()
     .max(500, "Certificate path non può superare 500 caratteri")
@@ -119,10 +85,8 @@ export const updateTenantSettingsSchema = tenantSettingsShape
  */
 export const updateTaxDefaultsSchema = z
   .object({
-    defaultSalesTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
-
-    defaultPurchasesTaxRuleId: createIdSchema("Tax Rule ID non valido").optional().nullable(),
-
+    defaultSalesTaxRuleId: taxRuleIdBaseSchema.nullish(),
+    defaultPurchasesTaxRuleId: taxRuleIdBaseSchema.nullish(),
     taxRegime: taxRegimeSchema.optional().nullable(),
   })
   .strict();
@@ -152,8 +116,7 @@ export const updateSdiConfigSchema = sdiConfigShape.strict().refine(
 export const updateRegionalSettingsSchema = z
   .object({
     defaultCurrency: currencyCodeBaseSchema,
-
-    defaultLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
+    defaultLanguageId: languageIdBaseSchema.optional().nullable(),
   })
   .strict();
 
@@ -166,10 +129,10 @@ export const updateRegionalSettingsSchema = z
  */
 export const tenantSettingsQuerySchema = z.object({
   tenantCode: z.string().optional(),
-  companyId: createIdSchema("Company ID non valido").optional(),
+  companyId: companyIdBaseSchema.optional(),
   status: tenantStatusSchema.optional(),
   plan: tenantPlanSchema.optional(),
-  sortBy: z.enum(["id", "tenantCode", "createdAt"]).default("id"),
+  sortBy: z.enum(TENANT_SORT_OPTIONS).default("id"),
   sortOrder: sortOrderSchema,
 });
 
@@ -178,7 +141,7 @@ export const tenantSettingsQuerySchema = z.object({
 // ============================================================================
 
 export const tenantIdParamSchema = z.object({
-  id: tenantIdSchema,
+  id: tenantIdBaseSchema,
 });
 
 export const tenantCodeParamSchema = z.object({

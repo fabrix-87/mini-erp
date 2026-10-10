@@ -1,6 +1,11 @@
 import { z } from "zod";
 
-import { companyIdBaseSchema, countryCodeBaseSchema, inputJsonValueSchema, userIdSchema } from "./base";
+import {
+  companyIdBaseSchema,
+  countryCodeBaseSchema,
+  inputJsonValueSchema,
+  userIdSchema,
+} from "./base";
 import { createIdSchema } from "./primitives/id";
 import {
   eoriNumberSchema,
@@ -12,25 +17,19 @@ import {
 import { emailSchema, phoneSchema, urlSchema } from "./primitives/string";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import { createNestedAddressSchema } from "./address";
+import { COMPANY_SORT_FIELDS, COMPANY_STATUS, COMPANY_TYPE_ENTITY } from "../constants";
 
 // ============================================================================
 // ENUMS - Shared across all company types
 // ============================================================================
 
 /** Possible lifecycle statuses for a company record. */
-export const companyStatusSchema = z.enum(["ACTIVE", "INACTIVE", "SUSPENDED", "ARCHIVED"]);
+export const companyStatusSchema = z.enum(COMPANY_STATUS);
 
 /** Legal entity classification: juridical person, natural person, or foreign entity. */
-export const companyTypeEntitySchema = z.enum(["JURIDICAL", "NATURAL", "FOREIGN"]);
+export const companyTypeEntitySchema = z.enum(COMPANY_TYPE_ENTITY);
 
-export const companySortFieldSchema = z.enum([
-  "id",
-  "code",
-  "name",
-  "country",
-  "status",
-  "createdAt",
-]);
+export const companySortFieldSchema = z.enum(COMPANY_SORT_FIELDS);
 
 /**
  * Schema that wraps a company identifier under the key `companyId`.

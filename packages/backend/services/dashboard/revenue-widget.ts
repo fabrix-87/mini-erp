@@ -178,7 +178,14 @@ export async function fetchOverdueInstallments(
       document: {
         select: {
           documentNumber: true,
-          counterpartyName: true,
+          parties: {
+            where: { role: "COUNTERPARTY" },
+            select: { name: true },
+            take: 1,
+          },
+          customer: {
+            select: { company: { select: { companyName: true } } },
+          },
         },
       },
     },
@@ -196,7 +203,8 @@ export async function fetchOverdueInstallments(
       amount: inst.amount,
       dueDate: inst.dueDate,
       daysPastDue,
-      counterpartyName: inst.document.counterpartyName,
+      counterpartyName:
+        inst.document.parties[0]?.name ?? inst.document.customer?.company.companyName,
     };
   });
 }

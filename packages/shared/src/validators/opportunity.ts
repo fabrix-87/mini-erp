@@ -12,6 +12,12 @@ import {
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import { queryBooleanSchema, queryEnumOrAllSchema, queryNumberSchema } from "./query/params";
 import { createDecimalSchema } from "./primitives";
+import {
+  OPPORTUNITY_SALES_STAGE,
+  OPPORTUNITY_SORT_FIELDS,
+  OPPORTUNITY_SOURCE,
+  OPPORTUNITY_STATUS,
+} from "../constants";
 
 // ============================================================================
 // ENUMS
@@ -20,43 +26,19 @@ import { createDecimalSchema } from "./primitives";
 /**
  * Opportunity Status enum
  */
-export const opportunityStatusSchema = z.enum(["OPEN", "WON", "LOST", "PENDING", "CLOSED"]);
+export const opportunityStatusSchema = z.enum(OPPORTUNITY_STATUS);
 
 /**
  * Sales Stage enum
  */
-export const salesStageSchema = z.enum([
-  "LEAD_QUALIFICATION",
-  "PROSPECTING",
-  "NEEDS_ANALYSIS",
-  "PROPOSAL_SENT",
-  "NEGOTIATION",
-  "COMMITMENT",
-]);
+export const salesStageSchema = z.enum(OPPORTUNITY_SALES_STAGE);
 
 /**
  * Opportunity Source enum
  */
-export const opportunitySourceSchema = z.enum([
-  "LEAD",
-  "CUSTOMER",
-  "INBOUND",
-  "OUTBOUND",
-  "REFERRAL",
-  "PARTNER",
-  "EVENT",
-  "OTHER",
-]);
+export const opportunitySourceSchema = z.enum(OPPORTUNITY_SOURCE);
 
-export const opportunitySortFieldSchema = z.enum([
-  "title",
-  "estimatedValue",
-  "weightedValue",
-  "probability",
-  "expectedCloseDate",
-  "createdAt",
-  "lastStageChange",
-]);
+export const opportunitySortFieldSchema = z.enum(OPPORTUNITY_SORT_FIELDS);
 
 // ============================================================================
 // DECIMAL HELPERS
@@ -193,9 +175,7 @@ export const createOpportunitySchema = opportunityShape
  * Schema for updating an Opportunity — partial, without immutable FK fields.
  * customerId and leadId are immutable after creation.
  */
-export const updateOpportunitySchema = opportunityShape
-  .partial()
-  .strict();
+export const updateOpportunitySchema = opportunityShape.partial().strict();
 
 /**
  * Schema for updating Opportunity stage
@@ -352,7 +332,7 @@ export const opportunityQuerySchema = z.object({
     ])
     .default("createdAt"),
   sortOrder: sortOrderSchema,
-  view: z.enum(["kanban", "table"]).nullish()
+  view: z.enum(["kanban", "table"]).nullish(),
 });
 
 /**

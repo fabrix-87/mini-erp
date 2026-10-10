@@ -11,20 +11,27 @@ import { creditLimitSchema } from "./business/currency";
 import { paginationSchema, sortOrderSchema } from "./query";
 import { customerIdBaseSchema } from "./base";
 import { nestedBankAccountsSchema } from "./bank";
+import {
+  CUSTOMER_CREDIT_CHECK_STATUS,
+  CUSTOMER_PRIORITY,
+  CUSTOMER_SEGMENT,
+  CUSTOMER_SIZE,
+  CUSTOMER_TYPE,
+} from "../constants";
 
 // ============================================================================
 // CUSTOMER-SPECIFIC ENUMS
 // ============================================================================
 
-export const customerTypeSchema = z.enum(["PROSPECT", "CUSTOMER", "PARTNER", "OTHER"]);
+export const customerTypeSchema = z.enum(CUSTOMER_TYPE);
 
-export const customerPrioritySchema = z.enum(["LOW", "MEDIUM", "HIGH"]);
+export const customerPrioritySchema = z.enum(CUSTOMER_PRIORITY);
 
-export const customerSegmentSchema = z.enum(["VIP", "GOLD", "SILVER", "BRONZE", "STANDARD"]);
+export const customerSegmentSchema = z.enum(CUSTOMER_SEGMENT);
 
-export const creditCheckStatusSchema = z.enum(["PENDING", "APPROVED", "REJECTED", "IN_PROGRESS"]);
+export const creditCheckStatusSchema = z.enum(CUSTOMER_CREDIT_CHECK_STATUS);
 
-export const customerSizeSchema = z.enum(["MICRO", "SMALL", "MEDIUM", "LARGE", "ENTERPRISE"]);
+export const customerSizeSchema = z.enum(CUSTOMER_SIZE);
 
 /**
  * Schema per la creazione di un Customer.

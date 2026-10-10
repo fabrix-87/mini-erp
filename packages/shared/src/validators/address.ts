@@ -1,22 +1,16 @@
 import { z } from "zod";
-import { createCuidSchema, createIdSchema } from "./primitives/id";
+import { createCuidSchema } from "./primitives/id";
 import { countryCodeBaseSchema, inputJsonValueSchema } from "./base";
 import { phoneSchema } from "./primitives/string";
 import { queryBooleanSchema } from "./query/params";
 import { paginationSchema, querySortOrderSchema } from "./query";
+import { ADDRESS_TYPE } from "../constants";
 
 // ============================================================================
 // ADDRESS ENUMS
 // ============================================================================
 
-export const addressTypeSchema = z.enum([
-  "LEGAL",
-  "BILLING",
-  "SHIPPING",
-  "OFFICE",
-  "WAREHOUSE",
-  "OTHER",
-]);
+export const addressTypeSchema = z.enum(ADDRESS_TYPE);
 
 // ============================================================================
 // ADDRESS SCHEMAS

@@ -38,8 +38,12 @@ import {
   getValidatedQuery,
 } from "@/helpers/validated-context";
 import { calculateWeightedValue, STAGE_PROBABILITY_MAP } from "@/helpers/opportunity-helper";
-import { connectOrDisconnectById, withTenantScope, userwithTenantScope } from "@/helpers/prisma-helper";
-import { OpportunitySource, OpportunityStatus, SalesStage } from "@mini-erp/shared";
+import {
+  connectOrDisconnectById,
+  withTenantScope,
+  userwithTenantScope,
+} from "@/helpers/prisma-helper";
+import { OPPORTUNITY_SALES_STAGE, OPPORTUNITY_SOURCE, OPPORTUNITY_STATUS } from "@mini-erp/shared";
 
 // ============================================================================
 // OPPORTUNITY CONTROLLERS
@@ -75,7 +79,7 @@ export const getAllOpportunities = async (c: Context<AppBindings>) => {
     sortOrder = "desc",
   } = getValidatedQuery<OpportunityQueryInput>(c);
   const tenantId = getRequiredTenantId(c);
-  
+
   const skip = (page - 1) * limit;
   const where: Prisma.OpportunityWhereInput = { tenantId };
 
@@ -157,12 +161,12 @@ export const getAllOpportunities = async (c: Context<AppBindings>) => {
         },
         lead: {
           select: {
-            id: true,            
+            id: true,
             companyName: true,
             contactFirstName: true,
             contactLastName: true,
-          }
-        }            
+          },
+        },
       },
     }),
     prisma.opportunity.count({ where }),
@@ -1045,13 +1049,13 @@ export const getOpportunityStats = async (c: Context<AppBindings>): Promise<Resp
   const pendingCount = statusGroups.find((g) => g.status === "PENDING")?._count._all ?? 0;
 
   // Populate enum Records, defaulting every key to 0
-  const byStatus = zeroRecord(OpportunityStatus);
+  const byStatus = zeroRecord(Object.values(OPPORTUNITY_STATUS));
   for (const g of statusGroups) byStatus[g.status] = g._count._all;
 
-  const byStage = zeroRecord(SalesStage);
+  const byStage = zeroRecord(Object.values(OPPORTUNITY_SALES_STAGE));
   for (const g of stageGroups) byStage[g.stage] = g._count._all;
 
-  const bySource = zeroRecord(OpportunitySource);
+  const bySource = zeroRecord(Object.values(OPPORTUNITY_SOURCE));
   for (const g of sourceGroups) bySource[g.source] = g._count._all;
 
   const totalEstimatedValue = aggregate._sum.estimatedValue ?? new Prisma.Decimal(0);

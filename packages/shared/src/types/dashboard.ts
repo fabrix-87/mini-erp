@@ -16,6 +16,7 @@ import {
   updateLayoutSchema,
 } from "../validators/dashboard";
 import type { ApiResponse } from "./api";
+import { SalesStage } from "../constants";
 
 // ============================================================================
 // QUERY / INPUT TYPES
@@ -135,7 +136,7 @@ export interface OpportunitiesKpiData {
  * Single pipeline stage entry — widget OPPORTUNITIES_PIPELINE.
  */
 export interface OpportunitiesPipelineItem {
-  stage: string; // SalesStage enum value
+  stage: SalesStage; // SalesStage enum value
   count: number;
   totalValue: string;
   weightedValue: string;

@@ -2,6 +2,12 @@ import { z } from "zod";
 import { createDecimalSchema, createIdSchema, isoDateSchema, toDecimal } from "./primitives";
 import { countryCodeBaseSchema } from "./base";
 import { paginationSchema, queryBooleanSchema, sortOrderSchema } from "./query";
+import {
+  TAX_RULE_APPLICABILITY,
+  TAX_RULE_CUSTOMER_TYPE,
+  TAX_RULE_SOFT_FIELDS,
+  VAT_NATURE_CATEGORY,
+} from "../constants";
 
 // ============================================================================
 // ENUMS
@@ -10,37 +16,22 @@ import { paginationSchema, queryBooleanSchema, sortOrderSchema } from "./query";
 /**
  * VAT Nature Category enum
  */
-export const vatNatureCategorySchema = z.enum([
-  "EXCLUDED",
-  "NOT_SUBJECT",
-  "NOT_TAXABLE",
-  "EXEMPT",
-  "MARGIN",
-  "REVERSE",
-  "EU_VAT",
-]);
+export const vatNatureCategorySchema = z.enum(VAT_NATURE_CATEGORY);
 
 /**
  * Tax Rule applicability enum
  */
-export const taxRuleApplicabilitySchema = z.enum(["SALES", "PURCHASES", "BOTH"]);
+export const taxRuleApplicabilitySchema = z.enum(TAX_RULE_APPLICABILITY);
 
 /**
  * Tax Rule Counterparty type enum
  */
-export const taxRuleCustomerTypeSchema = z.enum(["B2B", "B2C", "PA", "FOREIGN", "ANY"]);
+export const taxRuleCustomerTypeSchema = z.enum(TAX_RULE_CUSTOMER_TYPE);
 
 /**
  * Tax Rule Sortable fields
  */
-export const taxRuleSortFieldsSchema = z.enum([
-  "code",
-  "name",
-  "rate",
-  "countryCode",
-  "displayOrder",
-  "createdAt",
-]);
+export const taxRuleSortFieldsSchema = z.enum(TAX_RULE_SOFT_FIELDS);
 
 // ============================================================================
 // DECIMAL HELPERS

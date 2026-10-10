@@ -4,14 +4,14 @@ import {
   companyStatusSchema,
   companyTypeEntitySchema,
 } from "../validators";
-import { AddressType } from "./address";
+import { ADDRESS_TYPE } from "./address";
 import { CompanyFormValues } from "../types";
 import {
-  CreditCheckStatus,
-  CustomerPriority,
-  CustomerSegment,
-  CustomerSize,
-  CustomerType,
+  CUSTOMER_CREDIT_CHECK_STATUS,
+  CUSTOMER_PRIORITY,
+  CUSTOMER_SEGMENT,
+  CUSTOMER_SIZE,
+  CUSTOMER_TYPE,
 } from "./customer";
 
 // ============================================================================
@@ -22,8 +22,27 @@ export type CompanyStatus = z.infer<typeof companyStatusSchema>;
 export type CompanyTypeEntity = z.infer<typeof companyTypeEntitySchema>;
 export type CompanySortField = z.infer<typeof companySortFieldSchema>;
 
-export const CompanyStatus = companyStatusSchema.enum;
-export const CompanyTypeEntity = companyTypeEntitySchema.enum;
+export const COMPANY_STATUS = {
+  ARCHIVED: "ARCHIVED",
+  ACTIVE: "ACTIVE",
+  INACTIVE: "INACTIVE",
+  SUSPENDED: "SUSPENDED",
+} as const;
+
+export const COMPANY_TYPE_ENTITY = {
+  JURIDICAL: "JURIDICAL",
+  NATURAL: "NATURAL",
+  FOREIGN: "FOREIGN",
+} as const;
+
+export const COMPANY_SORT_FIELDS = [
+  "id",
+  "code",
+  "name",
+  "country",
+  "status",
+  "createdAt",
+] as const;
 
 /**
  * Maps the commercial role of a company to its generated code prefix.
@@ -45,8 +64,8 @@ export const companyFormDefaultValues: CompanyFormValues = {
   companyName: "",
   tradeName: null,
   legalForm: null,
-  status: CompanyStatus.ACTIVE,
-  entityType: CompanyTypeEntity.JURIDICAL,
+  status: COMPANY_STATUS.ACTIVE,
+  entityType: COMPANY_TYPE_ENTITY.JURIDICAL,
   vatNumber: undefined,
   taxCode: undefined,
   sdiCode: undefined,
@@ -66,18 +85,18 @@ export const companyFormDefaultValues: CompanyFormValues = {
     countryCode: "IT",
     openingHours: null,
     phone: null,
-    addressType: AddressType.LEGAL,
+    addressType: ADDRESS_TYPE.LEGAL,
     isPrimary: true,
     latitude: null,
     longitude: null,
     notes: null,
   },
   parentCustomerId: null,
-  priority: CustomerPriority.LOW,
-  segment: CustomerSegment.STANDARD,
-  size: CustomerSize.SMALL,
-  type: CustomerType.CUSTOMER,
-  creditStatus: CreditCheckStatus.PENDING,
+  priority: CUSTOMER_PRIORITY.LOW,
+  segment: CUSTOMER_SEGMENT.STANDARD,
+  size: CUSTOMER_SIZE.SMALL,
+  type: CUSTOMER_TYPE.CUSTOMER,
+  creditStatus: CUSTOMER_CREDIT_CHECK_STATUS.PENDING,
   defaultPriceListId: null,
   customerTaxRuleId: null,
   paymentMethodId: null,

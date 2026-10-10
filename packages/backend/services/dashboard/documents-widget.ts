@@ -4,6 +4,7 @@
 
 import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
+import { withTenantScope } from "@/helpers/prisma-helper";
 import { DashboardScope } from "@mini-erp/shared";
 
 /**
@@ -25,7 +26,7 @@ export async function fetchDocumentsKPI(
   totalValue: string;
   paidValue: string;
 }> {
-  const where: Prisma.DocumentWhereInput = { tenantId };
+  const where: Prisma.DocumentWhereInput = withTenantScope(tenantId, {});
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;
@@ -133,7 +134,7 @@ export async function fetchRecentDocuments(
     counterpartyName: string | null;
   }>
 > {
-  const where: Prisma.DocumentWhereInput = { tenantId };
+  const where: Prisma.DocumentWhereInput = withTenantScope(tenantId, {});
 
   if (scope === DashboardScope.OWN) {
     where.assignedUserId = userId;
@@ -150,11 +151,21 @@ export async function fetchRecentDocuments(
       status: true,
       documentDate: true,
       totalAmount: true,
-      counterpartyName: true,
+      parties: {
+        where: { role: "COUNTERPARTY" },
+        select: { name: true },
+        take: 1,
+      },
+      customer: {
+        select: { company: { select: { companyName: true } } }
+      }
     },
   });
 
-  return documents;
+  return documents.map(({ parties, customer, ...document }) => ({
+    ...document,
+    counterpartyName: parties[0]?.name ?? customer?.company.companyName,
+  }));
 }
 
 /**
@@ -197,20 +208,27 @@ export async function fetchExpiringQuotes(
     select: {
       id: true,
       documentNumber: true,
-      counterpartyName: true,
       validUntil: true,
       totalAmount: true,
+      parties: {
+        where: { role: "COUNTERPARTY" },
+        select: { name: true },
+        take: 1,
+      },
+      customer: {
+        select: { company: { select: { companyName: true } } }
+      }
     },
   });
 
-  return quotes.map((q) => {
+  return quotes.map(({parties, customer, ...q}) => {
     const daysUntilExpiry = Math.ceil(
       (new Date(q.validUntil!).getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
     );
     return {
       id: q.id,
       documentNumber: q.documentNumber,
-      counterpartyName: q.counterpartyName,
+      counterpartyName: parties[0]?.name ?? customer?.company.companyName,
       validUntil: q.validUntil!,
       totalAmount: q.totalAmount,
       daysUntilExpiry,

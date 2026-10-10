@@ -6,34 +6,16 @@ import { currencySchema, percentageSchema, priceSchema } from "./business/curren
 import { queryBooleanSchema } from "./query/params";
 import { sortOrderSchema } from "./query/pagination";
 import { currencyCodeBaseSchema } from "./base";
+import { PRICE_LIST_ROUNDING_METHOD, PRICE_LIST_STRATEGY, PRICE_LIST_TYPE } from "../constants";
 
 
 // ============================================================================
 // ENUMS
 // ============================================================================
 
-export const priceListTypeSchema = z.enum([
-  "SALE",
-  "PURCHASE",
-  "PROMOTION",
-  "CONTRACT",
-]);
-
-export const priceListStrategySchema = z.enum([
-  "EXPLICIT",
-  "PERCENT_DECREASE",
-  "PERCENT_INCREASE",
-  "FIXED_DECREASE",
-  "FIXED_INCREASE",
-]);
-
-export const roundingMethodSchema = z.enum([
-  "none",
-  "nearest_05",
-  "nearest_10",
-  "up",
-  "down",
-]);
+export const priceListTypeSchema = z.enum(PRICE_LIST_TYPE);
+export const priceListStrategySchema = z.enum(PRICE_LIST_STRATEGY);
+export const roundingMethodSchema = z.enum(PRICE_LIST_ROUNDING_METHOD);
 
 // ============================================================================
 // PRICE LIST SCHEMAS

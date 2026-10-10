@@ -6,17 +6,13 @@ import { isValidPercentageTotal } from "./primitives/decimal";
 import { dateStringSchema } from "./primitives/date";
 import { queryBooleanSchema } from "./query/params";
 import { sortOrderSchema } from "./query/pagination";
+import { PAYMENT_TERM_TYPE } from "../constants";
 
 // ============================================================================
 // ENUMS
 // ============================================================================
 
-export const termTypeSchema = z.enum([
-  "anticipated",
-  "days_from_invoice",
-  "end_of_month",
-  "fixed_date",
-]);
+export const termTypeSchema = z.enum(PAYMENT_TERM_TYPE);
 
 // ============================================================================
 // PAYMENT METHOD SCHEMAS

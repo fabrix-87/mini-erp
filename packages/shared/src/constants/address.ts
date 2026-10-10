@@ -1,4 +1,4 @@
-import {z} from "zod";
+import { z } from "zod";
 import { addressTypeSchema } from "../validators";
 
 // ============================================================================
@@ -7,4 +7,11 @@ import { addressTypeSchema } from "../validators";
 
 export type AddressType = z.infer<typeof addressTypeSchema>;
 
-export const AddressType = addressTypeSchema.enum;
+export const ADDRESS_TYPE = {
+  LEGAL: "LEGAL",
+  BILLING: "BILLING",
+  SHIPPING: "SHIPPING",
+  OFFICE: "OFFICE",
+  WAREHOUSE: "WAREHOUSE",
+  OTHER: "OTHER",
+} as const;

@@ -14,59 +14,27 @@ import { createCuidSchema, createIdSchema, positiveNumbersSchema } from "./primi
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import { queryBooleanSchema, queryEnumOrAllSchema } from "./query/params";
 import { emailSchema } from "./primitives/string";
+import {
+  ACTIVITY_OUTCOME,
+  ACTIVITY_PARTECIPANT_ROLE,
+  ACTIVITY_PARTECIPANT_STATUS,
+  ACTIVITY_PRIORITY,
+  ACTIVITY_SORT_FIELDS,
+  ACTIVITY_STATUS,
+  ACTIVITY_TYPE,
+} from "../constants";
 
 // ============================================================================
 // ENUMS
 // ============================================================================
 
-export const activityTypeSchema = z.enum([
-  "CALL",
-  "EMAIL",
-  "MEETING",
-  "TASK",
-  "NOTE",
-  "WHATSAPP",
-  "SMS",
-  "VIDEO_CALL",
-  "SITE_VISIT",
-  "OTHER",
-]);
-
-export const activityStatusSchema = z.enum([
-  "SCHEDULED",
-  "IN_PROGRESS",
-  "COMPLETED",
-  "CANCELLED",
-  "RESCHEDULED",
-  "NO_SHOW",
-]);
-
-export const activityPrioritySchema = z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]);
-
-export const activityOutcomeSchema = z.enum([
-  "SUCCESSFUL",
-  "NO_ANSWER",
-  "LEFT_MESSAGE",
-  "FOLLOW_UP_NEEDED",
-  "NOT_INTERESTED",
-  "WRONG_CONTACT",
-  "CALLBACK_LATER",
-  "POSTPONED",
-  "OTHER",
-]);
-
-export const participantStatusSchema = z.enum([
-  "INVITED",
-  "ACCEPTED",
-  "DECLINED",
-  "TENTATIVE",
-  "ATTENDED",
-  "NO_SHOW",
-]);
-
-export const activitySortFieldsSchema = z.enum(["scheduledStart", "priority"]);
-
-export const participantRoleSchema = z.enum(["ORGANIZER", "REQUIRED", "OPTIONAL"]);
+export const activityTypeSchema = z.enum(ACTIVITY_TYPE);
+export const activityStatusSchema = z.enum(ACTIVITY_STATUS);
+export const activityPrioritySchema = z.enum(ACTIVITY_PRIORITY);
+export const activityOutcomeSchema = z.enum(ACTIVITY_OUTCOME);
+export const participantStatusSchema = z.enum(ACTIVITY_PARTECIPANT_STATUS);
+export const activitySortFieldsSchema = z.enum(ACTIVITY_SORT_FIELDS);
+export const participantRoleSchema = z.enum(ACTIVITY_PARTECIPANT_ROLE);
 
 // ============================================================================
 // ACTIVITY SCHEMAS

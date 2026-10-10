@@ -1,9 +1,10 @@
 import { z } from "zod";
-import { createCuidSchema } from "./primitives/id";
+import { createCuidSchema, createIdSchema } from "./primitives/id";
 
 /**
  * Entity ID Base Schemas
  */
+export const tenantIdBaseSchema = createCuidSchema("ID tenant non valido");
 export const userIdSchema = createCuidSchema("ID utente non valido");
 export const companyIdBaseSchema = createCuidSchema("Company ID non valido");
 export const customerIdBaseSchema = createCuidSchema("Customer ID non valido");
@@ -21,6 +22,8 @@ export const carrierIdBaseSchema = createCuidSchema("Carrier ID non valido");
 export const bankAccountIdBaseSchema = createCuidSchema("Bank Account ID non valido");
 export const paymentMethodIdBaseSchema = createCuidSchema("Payment Method ID non valido");
 export const withholdingTaxTypeIdBaseSchema = createCuidSchema("Withholding Tax Type ID non valido");
+export const taxRuleIdBaseSchema = createIdSchema("Tax Rule ID non valido");
+export const languageIdBaseSchema = createIdSchema("Language ID non valido");
 
 /**
  * Schema base per Currency Code

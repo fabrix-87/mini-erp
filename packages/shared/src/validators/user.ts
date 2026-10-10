@@ -10,6 +10,7 @@ import {
 import { countryCodeBaseSchema, userIdSchema } from "./base";
 import { roleIdSchema } from "./role";
 import { paginationSchema, queryBooleanOrAllSchema } from "./query";
+import { GENDER, USER_MEMBERSHIP_STATUS, USER_SORT_FIELDS } from "../constants";
 
 // ============================================================================
 // ENUMS
@@ -19,24 +20,18 @@ import { paginationSchema, queryBooleanOrAllSchema } from "./query";
 /**
  * Gender values matching the Prisma `Gender` enum in user.prisma.
  */
-export const genderSchema = z.enum(["MALE", "FEMALE", "OTHER", "PREFER_NOT_TO_SAY"]);
+export const genderSchema = z.enum(GENDER);
 
 /**
  * Lifecycle states for a user's membership in a tenant.
  * Matches the Prisma `MembershipStatus` enum.
  */
-export const membershipStatusSchema = z.enum(["INVITED", "ACTIVE", "SUSPENDED"]);
+export const membershipStatusSchema = z.enum(USER_MEMBERSHIP_STATUS);
 
 /**
  * Allowed sort fields for user list queries.
  */
-export const userSortFieldSchema = z.enum([
-  "createdAt",
-  "updatedAt",
-  "username",
-  "email",
-  "lastLogin",
-]);
+export const userSortFieldSchema = z.enum(USER_SORT_FIELDS);
 
 // ============================================================================
 // PRIMITIVES
