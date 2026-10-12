@@ -6,6 +6,99 @@
     "new": {
       "title": "Crea Prodotto",
       "description": "Creazione anagrafica prodotto"
+    },
+    "form": {
+      "title": "Nuovo prodotto",
+      "description": "Configura i dati generali, i prezzi e le varianti.",
+      "general": {
+        "title": "Dati generali",
+        "reference": "Riferimento",
+        "referencePlaceholder": "Inserisci il riferimento del prodotto",
+        "type": "Tipo di prodotto",
+        "status": "Stato",
+        "visibility": "Visibilità",
+        "condition": "Condizione",
+        "active": "Prodotto attivo",
+        "availableForOrder": "Disponibile per l'ordine",
+        "showPrice": "Mostra il prezzo",
+        "onlineOnly": "Solo online",
+        "onSale": "In promozione",
+        "showCondition": "Mostra la condizione"
+      },
+      "pricing": {
+        "title": "Prezzi e tassazione",
+        "price": "Prezzo di vendita",
+        "pricePlaceholder": "0,00",
+        "wholesalePrice": "Prezzo all'ingrosso",
+        "wholesalePricePlaceholder": "0,00",
+        "ecotax": "Ecotassa",
+        "ecotaxPlaceholder": "0,00",
+        "additionalShippingCost": "Costo di spedizione aggiuntivo",
+        "additionalShippingCostPlaceholder": "0,00",
+        "defaultTaxRule": "Regola fiscale",
+        "defaultTaxRulePlaceholder": "Seleziona una regola fiscale",
+        "defaultTaxRuleHelp": "Scegli la regola fiscale da applicare al prodotto."
+      },
+      "variants": {
+        "title": "Varianti del prodotto",
+        "description": "Gestisci i codici identificativi e i prezzi delle varianti.",
+        "add": "Aggiungi variante",
+        "remove": "Rimuovi variante",
+        "empty": "Nessuna variante presente.",
+        "variantCode": "Codice variante",
+        "variantCodePlaceholder": "Codice variante",
+        "sku": "SKU",
+        "skuPlaceholder": "Codice SKU",
+        "ean13": "EAN-13",
+        "ean13Placeholder": "Codice EAN-13",
+        "price": "Prezzo",
+        "pricePlaceholder": "0,00",
+        "wholesalePrice": "Prezzo all'ingrosso",
+        "wholesalePricePlaceholder": "0,00",
+        "isDefault": "Predefinita",
+        "active": "Attiva",
+        "availableForOrder": "Ordinabile",
+        "actions": "Azioni",
+        "defaultVariant": "Variante predefinita",
+        "confirmRemove": "Vuoi rimuovere questa variante?"
+      },
+      "actions": {
+        "save": "Salva prodotto",
+        "saving": "Salvataggio in corso...",
+        "cancel": "Annulla",
+        "addVariant": "Aggiungi Variante",
+        "removeVariant": "Rimuovi Variante"
+      },
+      "validation": {
+        "required": "Campo obbligatorio",
+        "invalidPrice": "Inserisci un prezzo valido",
+        "atLeastOneVariant": "È necessaria almeno una variante.",
+        "defaultVariantRequired": "Imposta una variante predefinita."
+      }
+    },
+    "options": {
+      "types": {
+        "standard": "Standard",
+        "pack": "Confezione",
+        "virtual": "Virtuale",
+        "service": "Servizio"
+      },
+      "statuses": {
+        "draft": "Bozza",
+        "active": "Attivo",
+        "archived": "Archiviato"
+      },
+      "visibilities": {
+        "both": "Catalogo e ricerca",
+        "catalog": "Solo catalogo",
+        "search": "Solo ricerca",
+        "none": "Nascosto"
+      },
+      "conditions": {
+        "new": "Nuovo",
+        "used": "Usato",
+        "refurbished": "Ricondizionato"
+      }
     }
   }
 }

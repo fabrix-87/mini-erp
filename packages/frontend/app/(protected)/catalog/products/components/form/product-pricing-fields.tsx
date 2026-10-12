@@ -25,7 +25,7 @@ export function ProductPricingFields(): React.JSX.Element {
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("form.price")}</FormLabel>
+              <FormLabel>{t("form.pricing.price")}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -51,7 +51,7 @@ export function ProductPricingFields(): React.JSX.Element {
           name="wholesalePrice"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("form.wholesalePrice")}</FormLabel>
+              <FormLabel>{t("form.pricing.wholesalePrice")}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -77,7 +77,7 @@ export function ProductPricingFields(): React.JSX.Element {
           name="ecotax"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("form.ecotax")}</FormLabel>
+              <FormLabel>{t("form.pricing.ecotax")}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -103,7 +103,7 @@ export function ProductPricingFields(): React.JSX.Element {
           name="additionalShippingCost"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("form.additionalShippingCost")}</FormLabel>
+              <FormLabel>{t("form.pricing.additionalShippingCost")}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -126,7 +126,7 @@ export function ProductPricingFields(): React.JSX.Element {
       </div>
 
       <div className="space-y-2">
-        <FormLabel>{t("form.defaultTaxRuleId")}</FormLabel>
+        <FormLabel>{t("form.pricing.defaultTaxRule")}</FormLabel>
 
         {/*
           TODO: Insert the custom tax-rule combobox here.

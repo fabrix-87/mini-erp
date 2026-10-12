@@ -48,11 +48,11 @@ export function ProductVariantsFields(): React.JSX.Element {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
-        <h3 className="text-sm font-semibold">{t("form.variants")}</h3>
+        <h3 className="text-sm font-semibold">{t("form.variants.title")}</h3>
 
         <Button type="button" variant="outline" size="sm" onClick={handleAddVariant}>
           <Plus className="mr-2 size-4" />
-          {t("form.addVariant")}
+          {t("form.actions.addVariant")}
         </Button>
       </div>
 
@@ -60,16 +60,16 @@ export function ProductVariantsFields(): React.JSX.Element {
         <table className="w-full min-w-275 text-sm">
           <thead className="bg-muted/50">
             <tr className="border-b">
-              <th className="p-3 text-left font-medium">{t("form.variantCode")}</th>
+              <th className="p-3 text-left font-medium">{t("form.variants.variantCode")}</th>
               <th className="p-3 text-left font-medium">SKU</th>
               <th className="p-3 text-left font-medium">EAN-13</th>
-              <th className="p-3 text-left font-medium">{t("form.price")}</th>
-              <th className="p-3 text-left font-medium">{t("form.wholesalePrice")}</th>
-              <th className="p-3 text-center font-medium">{t("form.defaultVariant")}</th>
-              <th className="p-3 text-center font-medium">{t("form.active")}</th>
-              <th className="p-3 text-center font-medium">{t("form.availableForOrder")}</th>
+              <th className="p-3 text-left font-medium">{t("form.variants.price")}</th>
+              <th className="p-3 text-left font-medium">{t("form.variants.wholesalePrice")}</th>
+              <th className="p-3 text-center font-medium">{t("form.variants.defaultVariant")}</th>
+              <th className="p-3 text-center font-medium">{t("form.variants.active")}</th>
+              <th className="p-3 text-center font-medium">{t("form.variants.availableForOrder")}</th>
               <th className="p-3 text-right font-medium">
-                <span className="sr-only">{t("form.actions")}</span>
+                <span className="sr-only">{t("form.variants.actions")}</span>
               </th>
             </tr>
           </thead>
@@ -88,7 +88,7 @@ export function ProductVariantsFields(): React.JSX.Element {
                             {...field}
                             value={field.value ?? ""}
                             maxLength={64}
-                            aria-label={`${t("form.variantCode")} ${index + 1}`}
+                            aria-label={`${t("form.variants.variantCode")} ${index + 1}`}
                           />
                         </FormControl>
                         <FormMessage />
@@ -156,7 +156,7 @@ export function ProductVariantsFields(): React.JSX.Element {
                               const value = event.target.value;
                               field.onChange(value === "" ? null : Number(value));
                             }}
-                            aria-label={`${t("form.price")} ${index + 1}`}
+                            aria-label={`${t("form.variants.price")} ${index + 1}`}
                           />
                         </FormControl>
                         <FormMessage />
@@ -184,7 +184,7 @@ export function ProductVariantsFields(): React.JSX.Element {
                               const value = event.target.value;
                               field.onChange(value === "" ? null : Number(value));
                             }}
-                            aria-label={`${t("form.wholesalePrice")} ${index + 1}`}
+                            aria-label={`${t("form.variants.wholesalePrice")} ${index + 1}`}
                           />
                         </FormControl>
                         <FormMessage />
@@ -203,7 +203,7 @@ export function ProductVariantsFields(): React.JSX.Element {
                           <Switch
                             checked={field.value ?? false}
                             onCheckedChange={field.onChange}
-                            aria-label={`${t("form.defaultVariant")} ${index + 1}`}
+                            aria-label={`${t("form.variants.defaultVariant")} ${index + 1}`}
                           />
                         </FormControl>
                       </FormItem>
@@ -221,7 +221,7 @@ export function ProductVariantsFields(): React.JSX.Element {
                           <Switch
                             checked={field.value ?? false}
                             onCheckedChange={field.onChange}
-                            aria-label={`${t("form.active")} ${index + 1}`}
+                            aria-label={`${t("form.variants.active")} ${index + 1}`}
                           />
                         </FormControl>
                       </FormItem>
@@ -239,7 +239,7 @@ export function ProductVariantsFields(): React.JSX.Element {
                           <Switch
                             checked={field.value ?? false}
                             onCheckedChange={field.onChange}
-                            aria-label={`${t("form.availableForOrder")} ${index + 1}`}
+                            aria-label={`${t("form.variants.availableForOrder")} ${index + 1}`}
                           />
                         </FormControl>
                       </FormItem>
@@ -252,7 +252,7 @@ export function ProductVariantsFields(): React.JSX.Element {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    aria-label={`${t("form.removeVariant")} ${index + 1}`}
+                    aria-label={`${t("form.actions.removeVariant")} ${index + 1}`}
                     disabled={fields.length <= 1}
                     onClick={() => remove(index)}
                   >
@@ -265,7 +265,7 @@ export function ProductVariantsFields(): React.JSX.Element {
             {fields.length === 0 && (
               <tr>
                 <td colSpan={9} className="p-8 text-center text-muted-foreground">
-                  {t("form.noVariants")}
+                  {t("form.variants.noVariants")}
                 </td>
               </tr>
             )}

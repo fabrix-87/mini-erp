@@ -60,5 +60,5 @@ export function ProductFormContainer(): React.JSX.Element {
     // TODO: Connect the product creation/update flow.
   };
 
-  return <ProductForm form={form} onSubmit={handleSubmit} submitLabel={t("form.save")} />;
+  return <ProductForm form={form} onSubmit={handleSubmit} submitLabel={t("form.actions.save")} />;
 }

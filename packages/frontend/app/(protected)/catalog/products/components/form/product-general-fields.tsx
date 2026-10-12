@@ -45,7 +45,7 @@ export function ProductGeneralFields(): React.JSX.Element {
           name="reference"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("form.reference")}</FormLabel>
+              <FormLabel>{t("form.general.reference")}</FormLabel>
               <FormControl>
                 <Input {...field} value={field.value ?? ""} maxLength={64} autoComplete="off" />
               </FormControl>
@@ -59,7 +59,7 @@ export function ProductGeneralFields(): React.JSX.Element {
           name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("form.type")}</FormLabel>
+              <FormLabel>{t("form.general.type")}</FormLabel>
               <Select value={field.value ?? ""} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger>
@@ -84,7 +84,7 @@ export function ProductGeneralFields(): React.JSX.Element {
           name="status"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("form.status")}</FormLabel>
+              <FormLabel>{t("form.general.status")}</FormLabel>
               <Select value={field.value ?? ""} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger>
@@ -109,7 +109,7 @@ export function ProductGeneralFields(): React.JSX.Element {
           name="visibility"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("form.visibility")}</FormLabel>
+              <FormLabel>{t("form.general.visibility")}</FormLabel>
               <Select value={field.value ?? ""} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger>
@@ -134,7 +134,7 @@ export function ProductGeneralFields(): React.JSX.Element {
           name="condition"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("form.condition")}</FormLabel>
+              <FormLabel>{t("form.general.condition")}</FormLabel>
               <Select value={field.value ?? ""} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger>
@@ -161,12 +161,12 @@ export function ProductGeneralFields(): React.JSX.Element {
           name="active"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between gap-4 rounded-md border p-3">
-              <FormLabel>{t("form.active")}</FormLabel>
+              <FormLabel>{t("form.general.active")}</FormLabel>
               <FormControl>
                 <Switch
                   checked={field.value ?? false}
                   onCheckedChange={field.onChange}
-                  aria-label={t("form.active")}
+                  aria-label={t("form.general.active")}
                 />
               </FormControl>
             </FormItem>
@@ -178,12 +178,12 @@ export function ProductGeneralFields(): React.JSX.Element {
           name="availableForOrder"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between gap-4 rounded-md border p-3">
-              <FormLabel>{t("form.availableForOrder")}</FormLabel>
+              <FormLabel>{t("form.general.availableForOrder")}</FormLabel>
               <FormControl>
                 <Switch
                   checked={field.value ?? false}
                   onCheckedChange={field.onChange}
-                  aria-label={t("form.availableForOrder")}
+                  aria-label={t("form.general.availableForOrder")}
                 />
               </FormControl>
             </FormItem>
@@ -195,12 +195,12 @@ export function ProductGeneralFields(): React.JSX.Element {
           name="showPrice"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between gap-4 rounded-md border p-3">
-              <FormLabel>{t("form.showPrice")}</FormLabel>
+              <FormLabel>{t("form.general.showPrice")}</FormLabel>
               <FormControl>
                 <Switch
                   checked={field.value ?? false}
                   onCheckedChange={field.onChange}
-                  aria-label={t("form.showPrice")}
+                  aria-label={t("form.general.showPrice")}
                 />
               </FormControl>
             </FormItem>
@@ -212,12 +212,12 @@ export function ProductGeneralFields(): React.JSX.Element {
           name="onlineOnly"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between gap-4 rounded-md border p-3">
-              <FormLabel>{t("form.onlineOnly")}</FormLabel>
+              <FormLabel>{t("form.general.onlineOnly")}</FormLabel>
               <FormControl>
                 <Switch
                   checked={field.value ?? false}
                   onCheckedChange={field.onChange}
-                  aria-label={t("form.onlineOnly")}
+                  aria-label={t("form.general.onlineOnly")}
                 />
               </FormControl>
             </FormItem>
@@ -229,12 +229,12 @@ export function ProductGeneralFields(): React.JSX.Element {
           name="onSale"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between gap-4 rounded-md border p-3">
-              <FormLabel>{t("form.onSale")}</FormLabel>
+              <FormLabel>{t("form.general.onSale")}</FormLabel>
               <FormControl>
                 <Switch
                   checked={field.value ?? false}
                   onCheckedChange={field.onChange}
-                  aria-label={t("form.onSale")}
+                  aria-label={t("form.general.onSale")}
                 />
               </FormControl>
             </FormItem>
@@ -246,12 +246,12 @@ export function ProductGeneralFields(): React.JSX.Element {
           name="showCondition"
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between gap-4 rounded-md border p-3">
-              <FormLabel>{t("form.showCondition")}</FormLabel>
+              <FormLabel>{t("form.general.showCondition")}</FormLabel>
               <FormControl>
                 <Switch
                   checked={field.value ?? false}
                   onCheckedChange={field.onChange}
-                  aria-label={t("form.showCondition")}
+                  aria-label={t("form.general.showCondition")}
                 />
               </FormControl>
             </FormItem>

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { ProductGeneralFields } from "./product-general-fields";
 import { ProductPricingFields } from "./product-pricing-fields";
 import { ProductVariantsFields } from "./product-variants-fields";
+import { Card, CardContent } from "@/components/ui/card";
 
 type ProductFormValues = CreateProductFormValues | UpdateProductFormValues;
 
@@ -32,11 +33,15 @@ export function ProductForm({ form, onSubmit, submitLabel }: ProductFormProps): 
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" noValidate>
-        <ProductGeneralFields />
+        <Card>
+          <CardContent className="space-y-4 pt-6">
+            <ProductGeneralFields />
 
-        <ProductPricingFields />
+            <ProductPricingFields />
 
-        <ProductVariantsFields />
+            <ProductVariantsFields />
+          </CardContent>
+        </Card>
 
         <div className="flex justify-end border-t pt-6">
           <Button type="submit" disabled={form.formState.isSubmitting}>
