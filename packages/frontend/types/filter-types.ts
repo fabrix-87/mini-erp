@@ -23,15 +23,15 @@ export interface FilterFieldSearch extends BaseFilterField<"search"> {
 /**
  * Config for a numeric filter field.
  */
-export interface FilterNumberFieldConfig extends BaseFilterField<"number">  {
+export interface FilterNumberFieldConfig extends BaseFilterField<"number"> {
   min?: number;
   max?: number;
-  step?: number | 'any';
+  step?: number | "any";
   resetPageOnChange?: boolean;
 }
 
 /** Config for a select (dropdown) field */
-export interface FilterFieldSelect extends BaseFilterField<"select">  {
+export interface FilterFieldSelect extends BaseFilterField<"select"> {
   options: FilterSelectOption[];
 }
 
@@ -46,4 +46,21 @@ export interface FilterFieldSort {
   label?: string;
 }
 
-export type FilterFieldConfig = FilterFieldSearch | FilterFieldSelect | FilterFieldSort | FilterNumberFieldConfig;
+/** Config for a date filter field. The value is an ISO date string (`YYYY-MM-DD`). */
+export interface FilterDateFieldConfig extends BaseFilterField<"date"> {
+  //  precision.
+  mode?: "date" | "datetime";
+
+  // Optional minimum selectable date in ISO format (`YYYY-MM-DD`).
+  min?: string;
+
+  // Optional maximum selectable date in ISO format (`YYYY-MM-DD`).
+  max?: string;
+}
+
+export type FilterFieldConfig =
+  | FilterFieldSearch
+  | FilterFieldSelect
+  | FilterFieldSort
+  | FilterNumberFieldConfig
+  | FilterDateFieldConfig;

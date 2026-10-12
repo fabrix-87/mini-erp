@@ -1,8 +1,10 @@
 // services/server/activity-service.ts - Server-side service functions (SSR)
+import { ActionResult, withAuth } from "@/lib/server/action";
 import { serverApi } from "@/lib/server/api";
 import {
   Activity,
   ACTIVITY_TAGS,
+  ActivityListApiResponse,
   ActivityQueryInput,
   ActivitySingleApiResponse,
 } from "@/types/activitiy-types";
@@ -23,20 +25,16 @@ import {
 export async function fetchActivitiesServer(
   params: ActivityQueryInput,
   revalidate: number | false = 0, // No cache per dati sempre freschi
-): Promise<PaginatedResponse<Activity>> {
-  try {
+): Promise<ActionResult<ActivityListApiResponse>> {
+  return withAuth(async () => {
     // unwrapData: false per ottenere l'intera risposta con pagination
-    const response = await serverApi.get<PaginatedResponse<Activity>>("/activities", {
+    return await serverApi.get<PaginatedResponse<Activity>>("/activities", {
       params,
       unwrapData: false, // Otteniamo { status, data, pagination }
       revalidate: revalidate,
       // Alternative per cache: revalidate: 60 per ISR
     });
-    return response;
-  } catch (error) {
-    console.error("Error fetching activities:", error);
-    throw error;
-  }
+  }, "activity:read");
 }
 
 /**

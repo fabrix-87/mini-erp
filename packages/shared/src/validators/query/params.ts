@@ -151,11 +151,11 @@ export const queryNumberRangeSchema = (
   );
 
 /**
- * Schema factory for enum query string parameters that may contain sentinel
- * values such as `"all"` to represent an empty filter.
+ * Schema factory for optional enum query parameters that treat sentinel
+ * and invalid values as empty filters.
  *
- * Converts `null`, `undefined`, empty strings, and configured sentinel values
- * to `undefined`, then validates the remaining value against the provided enum schema.
+ * Converts `null`, `undefined`, empty strings, configured sentinel values,
+ * and values outside the enum to `undefined`.
  *
  * @param enumSchema - Source Zod enum schema.
  * @param emptyValues - String values treated as empty filters.
@@ -173,7 +173,7 @@ export const queryEnumOrAllSchema = <
     }
 
     if (typeof val !== "string") {
-      return val;
+      return undefined;
     }
 
     const normalized = normalizeQueryString(val);
@@ -182,7 +182,7 @@ export const queryEnumOrAllSchema = <
       return undefined;
     }
 
-    return normalized;
+    return enumSchema.safeParse(normalized).success ? normalized : undefined;
   }, enumSchema.optional());
 
 /**
@@ -212,32 +212,20 @@ export const queryEnumSchema = <
   }, enumSchema.optional());
 
 /**
- * Schema for boolean query string parameters with support for sentinel values
- * such as `"all"` to represent an empty filter.
+ * Schema for optional boolean query parameters that treat sentinel
+ * and invalid values as empty filters.
  *
- * Accepts `"true"` or `"false"` strings and transforms them to native booleans.
- * `null`, `undefined`, empty strings, and configured sentinel values are coerced
- * to `undefined`.
+ * Accepts case-insensitive `"true"` or `"false"` strings and transforms
+ * them to booleans. Other values are converted to `undefined`.
  *
  * @param emptyValues - String values treated as empty filters.
  *                      Defaults to `["all"]`.
- *
- * @example
- * queryBooleanOrAllSchema.parse("true")      // → true
- * queryBooleanOrAllSchema.parse("false")     // → false
- * queryBooleanOrAllSchema.parse("all")       // → undefined
- * queryBooleanOrAllSchema.parse("")          // → undefined
- * queryBooleanOrAllSchema.parse(undefined)   // → undefined
  */
 export const queryBooleanOrAllSchema = (emptyValues: readonly string[] = ["all"]) =>
   z.preprocess(
     (val) => {
-      if (val === null || val === undefined) {
-        return undefined;
-      }
-
       if (typeof val !== "string") {
-        return val;
+        return undefined;
       }
 
       const normalized = val.trim().toLowerCase();
@@ -246,7 +234,9 @@ export const queryBooleanOrAllSchema = (emptyValues: readonly string[] = ["all"]
         return undefined;
       }
 
-      return normalized;
+      return normalized === "true" || normalized === "false"
+        ? normalized
+        : undefined;
     },
     z
       .enum(["true", "false"])

@@ -3,6 +3,7 @@
 import {
   Activity,
   ApiResponse,
+  PaginatedResponse,
 } from "@mini-erp/shared";
 
 export type {
@@ -41,3 +42,4 @@ export const ACTIVITY_TAGS = {
 } as const;
 
 export type ActivitySingleApiResponse = ApiResponse<Activity>;
+export type ActivityListApiResponse = PaginatedResponse<Activity>;

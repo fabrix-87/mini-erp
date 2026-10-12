@@ -64,6 +64,23 @@
       "description": "Note private visibili solo internamente"
     }
   },
+  "filters": {
+    "search": {
+      "label": "Cerca",
+      "placeholder": "Ricerca per attività"
+    },
+    "myActivities": {
+      "label": "Solo le mie attività"
+    },
+    "startDate": {
+      "label": "Da",
+      "placeholder": "Data inizio"
+    },
+    "endDate": {
+      "label": "Al",
+      "placeholder": "Data fine"
+    }
+  },
   "form": {
     "type": "Tipo",
     "priority": "Priorità",
@@ -147,7 +164,8 @@
     "COMPLETED": "Completato",
     "CANCELLED": "Cancellato",
     "RESCHEDULED": "Riprogrammato",
-    "NO_SHOW": "Non presentato"
+    "NO_SHOW": "Non presentato",
+    "ALL": "Qualsiasi"
   },
   "reminder": {
     "title": "Promemoria",

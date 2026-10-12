@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { useUpdateURL } from "@/hooks/use-update-url";
 import { FilterFieldConfig } from "@/types/filter-types";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
+import { toDateInput } from "@/helpers/date-helper";
 
 // ============================================================================
 // Types
@@ -305,6 +306,26 @@ export function FilterBar({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+        );
+
+      case "date":
+        return (
+          <div key={field.key} className="flex flex-col gap-1.5">
+            {label}
+
+            <Input
+              id={fieldId}
+              type={field.mode === "datetime" ? "datetime-local" : "date"}
+              min={toDateInput(field.min)}
+              max={toDateInput(field.max)}
+              value={toDateInput(values[field.key])}
+              onChange={(event) => handleChange(field.key, event.target.value)}
+              disabled={isPending}
+              placeholder={field.placeholder}
+              aria-label={field.label ?? field.placeholder}
+              className="h-9 w-full min-w-36"
+            />
           </div>
         );
 

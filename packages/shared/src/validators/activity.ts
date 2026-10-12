@@ -12,7 +12,7 @@ import {
 import { isoDateSchema } from "./primitives/date";
 import { createCuidSchema, createIdSchema, positiveNumbersSchema } from "./primitives/id";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
-import { queryBooleanSchema, queryEnumOrAllSchema } from "./query/params";
+import { queryBooleanOrAllSchema, queryBooleanSchema, queryEnumOrAllSchema } from "./query/params";
 import { emailSchema } from "./primitives/string";
 import {
   ACTIVITY_OUTCOME,
@@ -150,9 +150,9 @@ export const activityQuerySchema = z
 
     // Filtri
     type: queryEnumOrAllSchema(activityTypeSchema),
-    status: activityStatusSchema.optional().nullable(),
-    priority: activityPrioritySchema.optional().nullable(),
-    outcome: activityOutcomeSchema.optional().nullable(),
+    status: queryEnumOrAllSchema(activityStatusSchema),
+    priority: queryEnumOrAllSchema(activityPrioritySchema),
+    outcome: queryEnumOrAllSchema(activityOutcomeSchema),
 
     supplierId: supplierIdBaseSchema.optional().nullable(),
     customerId: customerIdBaseSchema.optional().nullable(),
@@ -165,9 +165,9 @@ export const activityQuerySchema = z
     endDate: isoDateSchema({ message: "Data fine non valida" }),
 
     // Filtri speciali
-    overdue: queryBooleanSchema.optional().nullable(),
-    hasFollowUpActivity: queryBooleanSchema.optional().nullable(),
-    myActivities: queryBooleanSchema.optional().nullable(), // Solo le mie attività
+    overdue: queryBooleanOrAllSchema(),
+    hasFollowUpActivity: queryBooleanOrAllSchema(),
+    myActivities: queryBooleanOrAllSchema(),
 
     sortBy: activitySortFieldsSchema.default("scheduledStart"),
     sortOrder: sortOrderSchema,

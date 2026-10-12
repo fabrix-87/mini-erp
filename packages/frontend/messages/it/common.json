@@ -158,5 +158,8 @@
   "appDescription": "Gestione aziendale",
   "info": "Informazioni",
   "company": "Azienda",
-  "contact": "Contatto"
+  "contact": "Contatto",
+  "all": "Tutti",
+  "yes": "Si",
+  "no": "No"
 }

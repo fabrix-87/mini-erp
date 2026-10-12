@@ -28,9 +28,11 @@ export function isSameDay(date1: Date, date2: Date): boolean {
  */
 export function toDateInput(val: Date | string | null | undefined): string {
   if (!val) return "";
-  const d = new Date(val);
-  if (isNaN(d.getTime())) return "";
-  return d.toISOString().split("T")[0];
+
+  const date = new Date(val);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return format(date, "yyyy-MM-dd");
 }
 
 /**

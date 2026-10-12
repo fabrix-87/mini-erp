@@ -8,6 +8,8 @@ import { useNavigation } from "@/hooks/use-navigation";
 import { EntityPermissions, PaginationInfo } from "@mini-erp/shared";
 import { useTranslations } from "next-intl";
 import { DataPagination } from "@/components/data-pagination";
+import ActivityFilterBar from "./activity-filter-bar";
+import { useState } from "react";
 
 interface ActivityListPageProps {
   activities: Activity[];
@@ -24,9 +26,11 @@ export function ActivityListPage({
 }: ActivityListPageProps) {
   const { navigateToDetail } = useNavigation();
   const t = useTranslations("activities");
+  const [isPending, setIsPending] = useState(false)
 
   return (
     <div className="space-y-4">
+      <ActivityFilterBar filters={searchParams} onPendingChange={setIsPending} />
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">{t("activityList")}</h2>
       </div>
