@@ -42,10 +42,12 @@ export async function fetchActivitiesServer(
  */
 export async function fetchActivityStatsServer(
   userId?: string,
+  startDate?: string,
+  endDate?: string,
 ): Promise<ApiResponse<ActivityStats>> {
   try {
     const response = await serverApi.get<ApiResponse<ActivityStats>>("/activities/stats", {
-      params: { userId },
+      params: { userId, startDate, endDate },
       unwrapData: false,
       revalidate: 300, // Cache per 5 minuti
     });

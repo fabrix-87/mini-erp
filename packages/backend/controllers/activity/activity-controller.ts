@@ -12,7 +12,6 @@ import {
 import {
   sendCreated,
   sendDeleted,
-  sendFail,
   sendNotFound,
   sendPaginatedResponse,
   sendSuccess,
@@ -27,6 +26,7 @@ import {
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
+import { addDays } from "date-fns";
 
 // ============================================================================
 // ACTIVITY CONTROLLER
@@ -94,7 +94,7 @@ export const getAllActivities = async (c: Context<AppBindings>) => {
   if (startDate || endDate) {
     where.scheduledStart = {};
     if (startDate) where.scheduledStart.gte = new Date(startDate);
-    if (endDate) where.scheduledStart.lte = new Date(endDate);
+    if (endDate) where.scheduledStart.lte = addDays(new Date(endDate), 1);
   }
 
   // Filtro attività scadute
@@ -297,7 +297,7 @@ export const createActivity = async (c: Context<AppBindings>) => {
     if (!opportunity) {
       return sendNotFound(c, "Opportunity non trovata");
     }
-  }  
+  }
 
   if (data.leadId) {
     const lead = await prisma.lead.findUnique({ where: { id: data.leadId, tenantId } });

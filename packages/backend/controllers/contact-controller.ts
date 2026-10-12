@@ -78,7 +78,7 @@ export const getAllContacts = async (c: Context<AppBindings>) => {
 
   const skip = (page - 1) * limit;
 
-  const orderBy: Prisma.ContactOrderByWithRelationInput[] = CONTACT_SORT_FIELDS.has(sortBy as any)
+  const orderBy: Prisma.ContactOrderByWithRelationInput[] = CONTACT_SORT_FIELDS.includes(sortBy)
     ? [{ [sortBy]: sortOrder }]
     : [{ lastName: "asc" }];
 

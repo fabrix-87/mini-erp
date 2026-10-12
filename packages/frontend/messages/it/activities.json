@@ -1,5 +1,6 @@
 {
   "title": "Gestione Attività",
+  "titleFromTo": "Attività dal {startDate} al {endDate}",
   "description": "Gestisci chiamate, meeting e interazioni con i clienti",
   "createTitle": "Nuova Attività",
   "createDescription": "Registra una nuova attività o interazione",

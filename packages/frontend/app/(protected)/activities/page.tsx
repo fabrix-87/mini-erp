@@ -1,5 +1,5 @@
 // app/activities/page.tsx
-import { checkEntityPermissions, requirePermission } from "@/lib/server/auth";
+import { checkEntityPermissions, getCurrentUser, requirePermission } from "@/lib/server/auth";
 import { ActivityQueryInput, activityQuerySchema } from "@mini-erp/shared";
 import { PageHeaderAction, SearchParamsProps } from "@/types/page-types";
 import { getTranslations } from "next-intl/server";
@@ -14,6 +14,7 @@ import {
 import { ActivityStatsGrid } from "@/components/activity/activity-stats-grid";
 import { ActivityListPage } from "./components/activity-list-page";
 import { notFound } from "next/navigation";
+import { formatDateIT } from "@/helpers/date-helper";
 
 const DEFAULT_DATE_RANGE = 14;
 
@@ -21,6 +22,8 @@ export default async function ActivitiesPage({
   searchParams,
 }: SearchParamsProps<ActivityQueryInput>) {
   await requirePermission("activity:read");
+
+  const { id: userId } = await getCurrentUser();
 
   const t = await getTranslations("activities");
   const params = await searchParams;
@@ -44,7 +47,11 @@ export default async function ActivitiesPage({
 
   const [result, stats, permissions] = await Promise.all([
     fetchActivitiesServer(queryParams),
-    fetchActivityStatsServer(),
+    fetchActivityStatsServer(
+      queryParams.myActivities ? userId : undefined,
+      queryParams.startDate,
+      queryParams.endDate,
+    ),
     checkEntityPermissions("activity"),
   ]);
 
@@ -61,7 +68,14 @@ export default async function ActivitiesPage({
 
   return (
     <div className="space-y-6">
-      <PageHeader title={t("title")} subtitle={t("description")} actionItems={actionItems} />
+      <PageHeader
+        title={t("titleFromTo", {
+          startDate: formatDateIT(queryParams.startDate),
+          endDate: formatDateIT(queryParams.endDate),
+        })}
+        subtitle={t("description")}
+        actionItems={actionItems}
+      />
       {/* Stats Grid */}
       <ActivityStatsGrid stats={stats.data} />
 
