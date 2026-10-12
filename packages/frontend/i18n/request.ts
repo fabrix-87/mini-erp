@@ -37,6 +37,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     "system",
     "crm",
     "finance",
+    "catalog",
     "admin",
     "overview",
     "activities",

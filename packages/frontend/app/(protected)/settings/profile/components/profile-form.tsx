@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import {
-  Gender,
+  GENDER,
   type ProfileFormInput,
   profileFormSchema,
   type ProfileFormValues,
@@ -209,10 +209,10 @@ export function ProfileForm({ user }: ProfileFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={Gender.MALE}>Uomo</SelectItem>
-                      <SelectItem value={Gender.FEMALE}>Donna</SelectItem>
-                      <SelectItem value={Gender.OTHER}>Altro</SelectItem>
-                      <SelectItem value={Gender.PREFER_NOT_TO_SAY}>
+                      <SelectItem value={GENDER.MALE}>Uomo</SelectItem>
+                      <SelectItem value={GENDER.FEMALE}>Donna</SelectItem>
+                      <SelectItem value={GENDER.OTHER}>Altro</SelectItem>
+                      <SelectItem value={GENDER.PREFER_NOT_TO_SAY}>
                         Preferisco non specificare
                       </SelectItem>
                     </SelectContent>

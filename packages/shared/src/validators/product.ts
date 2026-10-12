@@ -2,25 +2,28 @@ import { z } from "zod";
 import { createCuidSchema, createIdSchema } from "./primitives/id";
 import { isoDateSchema } from "./primitives/date";
 import { priceSchema } from "./business/currency";
-import Decimal from "decimal.js";
 import { inputJsonValueSchema, productIdBaseSchema, productVariantIdBaseSchema } from "./base";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import { queryBooleanSchema } from "./query/params";
-import { urlSchema } from "./primitives";
+import {
+  PRODUCT_CONDITION,
+  PRODUCT_OUT_OF_STOCK_TYPE,
+  PRODUCT_PACK_STOCK_TYPE,
+  PRODUCT_STATUS,
+  PRODUCT_TYPE,
+  PRODUCT_VISIBILITY,
+} from "../constants";
 
 // ============================================================================
 // ENUMS
 // ============================================================================
 
-export const productTypeSchema = z.enum(["STANDARD", "PACK", "VIRTUAL", "SERVICE"]);
-export const productConditionSchema = z.enum(["NEW", "USED", "REFURBISHED"]);
-export const productStatusSchema = z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]);
-export const packStockType = z.enum([
-  "USE_PACK_STOCK_ONLY",
-  "USE_PRODUCTS_STOCK_ONLY",
-  "USE_BOTH_STOCKS",
-]);
-export const outOfStockType = z.enum(["DENY_ORDERS", "ALLOW_ORDERS", "USE_DEFAULT"]);
+export const productTypeSchema = z.enum(PRODUCT_TYPE);
+export const productConditionSchema = z.enum(PRODUCT_CONDITION);
+export const productStatusSchema = z.enum(PRODUCT_STATUS);
+export const packStockType = z.enum(PRODUCT_PACK_STOCK_TYPE);
+export const outOfStockType = z.enum(PRODUCT_OUT_OF_STOCK_TYPE);
+export const productVisibilitySchema = z.enum(PRODUCT_VISIBILITY);
 
 // ============================================================================
 // PRODUCT VARIANT SCHEMAS
@@ -135,7 +138,7 @@ export const createProductSchema = z
     defaultTaxRuleId: createIdSchema("L'ID della regola fiscale è obbligatorio"),
 
     // Visibilità
-    visibility: z.string().max(20).default("both"),
+    visibility: productVisibilitySchema.default("BOTH"),
     condition: productConditionSchema.default("NEW"),
     showCondition: z.boolean().default(false),
 
