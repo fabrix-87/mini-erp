@@ -7,46 +7,52 @@ interface PageSkeletonProps {
   itemCount?: number;
   /** Mostra o nasconde la barra dei filtri/ricerca */
   withToolbar?: boolean;
+  onlyContent?: boolean;
 }
 
 export function PageSkeleton({
   variant = "table",
   itemCount,
   withToolbar = true,
+  onlyContent = false,
 }: PageSkeletonProps) {
   // Imposta i default in base alla variante scelta
   const effectiveCount = itemCount ?? (variant === "grid" ? 3 : 5);
 
   return (
     <div className="space-y-6 p-1 sm:p-2 animate-pulse">
-      {/* 1. HEADER DELLA PAGINA */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-2">
-        <div className="space-y-2">
-          {/* Titolo della pagina */}
-          <Skeleton className="h-7 w-48 sm:w-64" />
-          {/* Sottotitolo / Descrizione */}
-          <Skeleton className="h-4 w-32 sm:w-40" />
-        </div>
-        {/* Pulsanti d'azione a destra (es. "Nuovo utente") */}
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-9 w-24" />
-          <Skeleton className="h-9 w-32" />
-        </div>
-      </div>
+      {!onlyContent && (
+        <>
+          {/* 1. HEADER DELLA PAGINA */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-2">
+            <div className="space-y-2">
+              {/* Titolo della pagina */}
+              <Skeleton className="h-7 w-48 sm:w-64" />
+              {/* Sottotitolo / Descrizione */}
+              <Skeleton className="h-4 w-32 sm:w-40" />
+            </div>
+            {/* Pulsanti d'azione a destra (es. "Nuovo utente") */}
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-9 w-24" />
+              <Skeleton className="h-9 w-32" />
+            </div>
+          </div>
 
-      {/* 2. TOOLBAR (Filtri / Barra di ricerca) */}
-      {withToolbar && (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-1">
-          <div className="flex flex-1 items-center gap-2 max-w-md">
-            {/* Input di ricerca */}
-            <Skeleton className="h-9 w-full" />
-          </div>
-          <div className="flex items-center gap-2">
-            {/* Select per filtri o ordinamento */}
-            <Skeleton className="h-9 w-28" />
-            <Skeleton className="h-9 w-24" />
-          </div>
-        </div>
+          {/* 2. TOOLBAR (Filtri / Barra di ricerca) */}
+          {withToolbar && (
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-1">
+              <div className="flex flex-1 items-center gap-2 max-w-md">
+                {/* Input di ricerca */}
+                <Skeleton className="h-9 w-full" />
+              </div>
+              <div className="flex items-center gap-2">
+                {/* Select per filtri o ordinamento */}
+                <Skeleton className="h-9 w-28" />
+                <Skeleton className="h-9 w-24" />
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* 3. CONTENUTO PRINCIPALE (VARIANTI) */}

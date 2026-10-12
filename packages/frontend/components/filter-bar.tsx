@@ -320,7 +320,7 @@ export function FilterBar({
               min={toDateInput(field.min)}
               max={toDateInput(field.max)}
               value={toDateInput(values[field.key])}
-              onChange={(event) => handleChange(field.key, event.target.value)}
+              onChange={(event) => handleChange(field.key, event.target.value, field.debounceMs)}
               disabled={isPending}
               placeholder={field.placeholder}
               aria-label={field.label ?? field.placeholder}

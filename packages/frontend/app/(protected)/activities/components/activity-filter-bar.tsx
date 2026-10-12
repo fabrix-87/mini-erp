@@ -53,6 +53,7 @@ export default function ActivityFilterBar({ filters, onPendingChange }: Activity
         label: t("filters.startDate.label"),
         placeholder: t("filters.startDate.placeholder"),
         max: endDate || undefined,
+        debounceMs: 500,
       },
       {
         type: "date",
@@ -60,6 +61,7 @@ export default function ActivityFilterBar({ filters, onPendingChange }: Activity
         label: t("filters.endDate.label"),
         placeholder: t("filters.endDate.placeholder"),
         min: startDate || undefined,
+        debounceMs: 500,
       },
       {
         type: "select",

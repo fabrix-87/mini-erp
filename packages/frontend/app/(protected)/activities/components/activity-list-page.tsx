@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import { DataPagination } from "@/components/data-pagination";
 import ActivityFilterBar from "./activity-filter-bar";
 import { useState } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 
 interface ActivityListPageProps {
   activities: Activity[];
@@ -26,7 +27,7 @@ export function ActivityListPage({
 }: ActivityListPageProps) {
   const { navigateToDetail } = useNavigation();
   const t = useTranslations("activities");
-  const [isPending, setIsPending] = useState(false)
+  const [isPending, setIsPending] = useState(false);
 
   return (
     <div className="space-y-4">
@@ -35,34 +36,40 @@ export function ActivityListPage({
         <h2 className="text-xl font-semibold">{t("activityList")}</h2>
       </div>
 
-      {activities.length === 0 ? (
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground">{t("noResults")}</p>
-          </CardContent>
-        </Card>
+      {isPending ? (
+        <PageSkeleton variant="table" onlyContent />
       ) : (
-        <div className="space-y-3">
-          {activities.map((activity) => (
-            <ActivityCard
-              key={activity.id}
-              className="bg-card"
-              activity={activity}
-              onClick={() => navigateToDetail("activities", activity.id)}
+        <>
+          {activities.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <p className="text-muted-foreground">{t("noResults")}</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {activities.map((activity) => (
+                <ActivityCard
+                  key={activity.id}
+                  className="bg-card"
+                  activity={activity}
+                  onClick={() => navigateToDetail("activities", activity.id)}
+                />
+              ))}
+            </div>
+          )}
+          {pagination && (
+            <DataPagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalItems={pagination.totalItems}
+              limit={pagination.itemsPerPage}
+              hasNextPage={pagination.hasNextPage}
+              hasPrevPage={pagination.hasPrevPage}
+              itemLabel={t("itemLabel")}
             />
-          ))}
-        </div>
-      )}
-      {pagination && (
-        <DataPagination
-          currentPage={pagination.currentPage}
-          totalPages={pagination.totalPages}
-          totalItems={pagination.totalItems}
-          limit={pagination.itemsPerPage}
-          hasNextPage={pagination.hasNextPage}
-          hasPrevPage={pagination.hasPrevPage}
-          itemLabel={t("itemLabel")}
-        />
+          )}
+        </>
       )}
     </div>
   );

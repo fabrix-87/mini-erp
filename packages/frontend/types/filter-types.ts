@@ -50,12 +50,11 @@ export interface FilterFieldSort {
 export interface FilterDateFieldConfig extends BaseFilterField<"date"> {
   //  precision.
   mode?: "date" | "datetime";
-
   // Optional minimum selectable date in ISO format (`YYYY-MM-DD`).
   min?: string;
-
   // Optional maximum selectable date in ISO format (`YYYY-MM-DD`).
   max?: string;
+  debounceMs?: number;
 }
 
 export type FilterFieldConfig =
