@@ -1,0 +1,139 @@
+"use client";
+
+import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
+
+import type { CreateProductFormValues, UpdateProductFormValues } from "@mini-erp/shared";
+
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
+type ProductFormValues = CreateProductFormValues | UpdateProductFormValues;
+
+/**
+ * Renders the pricing fields for a product.
+ */
+export function ProductPricingFields(): React.JSX.Element {
+  const t = useTranslations("catalog.products");
+  const form = useFormContext<ProductFormValues>();
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <FormField
+          control={form.control}
+          name="price"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("form.price")}</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  name={field.name}
+                  ref={field.ref}
+                  onBlur={field.onBlur}
+                  value={field.value ?? 0}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    field.onChange(value === "" ? 0 : Number(value));
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="wholesalePrice"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("form.wholesalePrice")}</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  name={field.name}
+                  ref={field.ref}
+                  onBlur={field.onBlur}
+                  value={field.value ?? 0}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    field.onChange(value === "" ? 0 : Number(value));
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="ecotax"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("form.ecotax")}</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  name={field.name}
+                  ref={field.ref}
+                  onBlur={field.onBlur}
+                  value={field.value ?? 0}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    field.onChange(value === "" ? 0 : Number(value));
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="additionalShippingCost"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("form.additionalShippingCost")}</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  name={field.name}
+                  ref={field.ref}
+                  onBlur={field.onBlur}
+                  value={field.value ?? 0}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    field.onChange(value === "" ? 0 : Number(value));
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <FormLabel>{t("form.defaultTaxRuleId")}</FormLabel>
+
+        {/*
+          TODO: Insert the custom tax-rule combobox here.
+          It should integrate with React Hook Form and update defaultTaxRuleId.
+        */}
+        <div className="min-h-10 rounded-md border border-dashed" aria-hidden="true" />
+      </div>
+    </div>
+  );
+}
