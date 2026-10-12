@@ -13,6 +13,8 @@ export const leadIdBaseSchema = createCuidSchema("ID Lead non valido");
 export const opportunityIdBaseSchema = createCuidSchema("ID Opportunity non valido");
 export const productIdBaseSchema = createCuidSchema("ID Product non valido");
 export const productVariantIdBaseSchema = createCuidSchema("Product Variant ID not valid");
+export const productImageIdBaseSchema = createCuidSchema("Product Image ID not valid");
+export const productCategoryIdBaseSchema = createCuidSchema("Product Category ID not valid");
 export const activityIdBaseSchema = createCuidSchema("Activity ID non valido");
 export const contactIdBaseSchema = createCuidSchema("ID contatto non valido");
 export const warehouseIdBaseSchema = createCuidSchema("Warehouse ID not valid");
@@ -21,9 +23,12 @@ export const documentLineIdBaseSchema = createCuidSchema("Document Line ID non v
 export const carrierIdBaseSchema = createCuidSchema("Carrier ID non valido");
 export const bankAccountIdBaseSchema = createCuidSchema("Bank Account ID non valido");
 export const paymentMethodIdBaseSchema = createCuidSchema("Payment Method ID non valido");
-export const withholdingTaxTypeIdBaseSchema = createCuidSchema("Withholding Tax Type ID non valido");
+export const withholdingTaxTypeIdBaseSchema = createCuidSchema(
+  "Withholding Tax Type ID non valido",
+);
 export const taxRuleIdBaseSchema = createIdSchema("Tax Rule ID non valido");
 export const languageIdBaseSchema = createIdSchema("Language ID non valido");
+export const manufacturerIdBaseSchema = createCuidSchema("ID Manufacturer not valid");
 
 /**
  * Schema base per Currency Code

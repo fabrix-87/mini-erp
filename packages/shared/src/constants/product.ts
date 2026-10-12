@@ -1,6 +1,9 @@
 import { z } from "zod";
 import {
   productConditionSchema,
+  productOutOfStockTypeSchema,
+  productPackStockTypeSchema,
+  productRedirectTypeSchema,
   productStatusSchema,
   productTypeSchema,
   productVisibilitySchema,
@@ -10,6 +13,9 @@ export type ProductType = z.infer<typeof productTypeSchema>;
 export type ProductCondition = z.infer<typeof productConditionSchema>;
 export type ProductStatus = z.infer<typeof productStatusSchema>;
 export type ProductVisibility = z.infer<typeof productVisibilitySchema>;
+export type ProductRedirectType = z.infer<typeof productRedirectTypeSchema>;
+export type ProductPackStockType = z.infer<typeof productPackStockTypeSchema>;
+export type ProductOutOfStockType = z.infer<typeof productOutOfStockTypeSchema>;
 
 export const PRODUCT_TYPE = {
   STANDARD: "STANDARD",

@@ -1,6 +1,11 @@
 {
   "products": {
     "title": "Gestione Prodotti",
-    "description": "Gestisci l'anagrafica articoli, i listini prezzi, le varianti e la disponibilità di magazzino"
+    "description": "Gestisci l'anagrafica articoli, i listini prezzi, le varianti e la disponibilità di magazzino",
+    "createNewButton": "Crea Nuovo Prodotto",
+    "new": {
+      "title": "Crea Prodotto",
+      "description": "Creazione anagrafica prodotto"
+    }
   }
 }

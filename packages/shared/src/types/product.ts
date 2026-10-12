@@ -21,10 +21,16 @@ import {
   updateProductTranslationSchema,
   productIdLanguageIdSchema,
 } from "../validators/product";
-import { ProductCondition, ProductType, ProductStatus } from "../constants";
-import { Supplier } from "./supplier";
-import { Manufacturer } from "./manufacturer";
-import { Attribute, AttributeGroup } from "./attribute";
+import {
+  ProductCondition,
+  ProductType,
+  ProductStatus,
+  ProductVisibility,
+  ProductRedirectType,
+  ProductPackStockType,
+  ProductOutOfStockType,
+} from "../constants";
+import { Attribute } from "./attribute";
 import { Category } from "./category";
 import { Language } from "./language";
 import { StockMovement, VirtualStock } from "./warehouse";
@@ -35,109 +41,103 @@ import { StockMovement, VirtualStock } from "./warehouse";
 
 // Type Entity
 export type Product = {
-  id: number;
+  id: string;
+  tenantId: string;
   type: ProductType;
   status: ProductStatus;
   reference: string;
 
-  // Stati
   active: boolean;
   availableForOrder: boolean;
   showPrice: boolean;
   onlineOnly: boolean;
   onSale: boolean;
 
-  // Prezzi di listino "Base" (opzionale: utile per mostrare "A partire da...")
-  // Il prezzo transazionale reale sarà sulla Variante.
   price: number;
   wholesalePrice: number;
   ecotax: number;
 
-  // Visibilità - Potrebbe essere un Enum o tabella esterna
-  visibility: string;
+  defaultTaxRuleId?: number | null;
 
+  visibility: ProductVisibility;
   condition: ProductCondition;
   showCondition: boolean;
 
-  // Relazione con il Brand del prodotto
-  manufacturerId: number;
-  manufacturer: Manufacturer;
+  manufacturerId?: string | null;
+  supplierId?: string | null;
 
-  // Relazione con il fornitore
-  supplierId: number;
-  supplier: Supplier;
-
-  // Logistica "Generale" (Opzionale, defaults)
   additionalShippingCost: number;
-  carrierReferenceIds: string; // Json
+  commodityCode?: string | null;
   deliveryTimeNoteType: number;
 
-  // Gestione dei redirect
-  redirectType: "404" | string;
-  redirectTarget: number;
+  redirectType: ProductRedirectType;
+  redirectTargetId?: string | null;
 
-  // Media
-  coverThumbnailUrl?: string;
+  coverThumbnailUrl?: string | null;
 
-  // Dettagli del Prodotto
-  translations: ProductTranslation[];
   variants: ProductVariant[];
   images: ProductImage[];
   categories: Category[];
+  translations: ProductTranslation[];
 
+  deletedAt?: Date | null;
+  deletedBy?: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
 
 export type ProductVariant = {
-  id: number;
-  productId: number;
+  id: string;
+  tenantId: string;
+  productId: string;
+
   variantCode: string;
-  sku?: string;
+  sku: string;
 
-  ean13?: string;
-  upc?: string;
-  isbn?: string;
-  mpn?: string;
+  ean13?: string | null;
+  upc?: string | null;
+  isbn?: string | null;
+  mpn?: string | null;
 
-  // Stock e Magazzino
-  quantity: number;
   minimalQuantity: number;
   lowStockThreshold: number;
   lowStockAlertEnabled: boolean;
-  location?: string;
+  location?: string | null;
 
-  packStockType: number;
-  outOfStockType: number;
-  availableDate?: Date;
+  packStockType: ProductPackStockType;
+  outOfStockType: ProductOutOfStockType;
+  availableDate?: Date | null;
 
-  price?: number;
-  wholesalePrice?: number;
+  price?: number | null;
+  wholesalePrice?: number | null;
   unitPriceRatio: number;
 
-  // Dimensioni Fisiche
-  weight: number | null;
-  width: number | null;
-  height: number | null;
-  depth: number | null;
+  weight?: number | null;
+  width?: number | null;
+  height?: number | null;
+  depth?: number | null;
 
-  // Codice Nomenclatura Combinata (NC8) per la variante specifica
-  commodityCode?: string;
-  commodity: any; // TODO IntrastatCommodityCode
-
-  // Configurazione
   position: number;
   isDefault: boolean;
   active: boolean;
   availableForOrder: boolean;
 
-  metadata?: string; // È una stringa JSON
+  metadata?: unknown | null;
 
-  // Relazioni
   attributes: Attribute[];
-  stockMovement: StockMovement[];
-  virtualStock: VirtualStock[];
+  stockMovements: StockMovement[];
+  stockReservations: unknown[];
+  stockBatches: unknown[];
+  virtualStocks: VirtualStock[];
+  documentLines: unknown[];
+  priceListItems: unknown[];
   images: ProductImage[];
+
+  deletedAt?: Date | null;
+  deletedBy?: string | null;
+
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type ProductTranslation = {
@@ -181,6 +181,11 @@ export interface ProductImage {
 }
 
 // Type Input
+export type CreateProductFormValues = z.input<typeof createProductSchema>;
+export type UpdateProductFormValues = z.input<typeof updateProductSchema>;
+export type CreateProductVariantFormValues = z.input<typeof createProductVariantSchema>;
+export type UpdateProductVariantFormValues = z.input<typeof updateProductVariantSchema>;
+
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 export type CreateProductVariantInput = z.infer<typeof createProductVariantSchema>;
