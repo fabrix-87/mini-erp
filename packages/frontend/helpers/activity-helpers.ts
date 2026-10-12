@@ -1,4 +1,13 @@
-import { ActivityOutcome, ActivityPriority, ActivityStatus, ActivityType } from "@mini-erp/shared";
+import {
+  ACTIVITY_OUTCOME,
+  ACTIVITY_PRIORITY,
+  ACTIVITY_STATUS,
+  ACTIVITY_TYPE,
+  ActivityOutcome,
+  ActivityPriority,
+  ActivityStatus,
+  ActivityType,
+} from "@mini-erp/shared";
 import { useTranslations } from "next-intl";
 
 type T = ReturnType<typeof useTranslations<"activities">>;
@@ -10,16 +19,7 @@ type OutcomeFilter = ActivityOutcome | "ALL";
 export function getActivityTypeOptions(t: T, includeAll = false) {
   const keys: TypeFilter[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "CALL",
-    "EMAIL",
-    "MEETING",
-    "NOTE",
-    "OTHER",
-    "SITE_VISIT",
-    "SMS",
-    "TASK",
-    "VIDEO_CALL",
-    "WHATSAPP",
+    ...Object.values(ACTIVITY_TYPE),
   ];
   return keys.map((value) => ({ value, label: t(`type.${value}`) }));
 }
@@ -27,10 +27,7 @@ export function getActivityTypeOptions(t: T, includeAll = false) {
 export function getActivityPriorityOptions(t: T, includeAll = false) {
   const keys: PriorityFilter[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "LOW",
-    "MEDIUM",
-    "HIGH",
-    "URGENT",
+    ...Object.values(ACTIVITY_PRIORITY),
   ];
   return keys.map((value) => ({ value, label: t(`priority.${value}`) }));
 }
@@ -38,11 +35,7 @@ export function getActivityPriorityOptions(t: T, includeAll = false) {
 export function getActivityStatusOptions(t: T, includeAll = false) {
   const keys: StatusFilter[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "CANCELLED",
-    "IN_PROGRESS",
-    "NO_SHOW",
-    "RESCHEDULED",
-    "SCHEDULED"
+    ...Object.values(ACTIVITY_STATUS),
   ];
   return keys.map((value) => ({ value, label: t(`status.${value}`) }));
 }
@@ -50,15 +43,7 @@ export function getActivityStatusOptions(t: T, includeAll = false) {
 export function getActivityOutcomeOptions(t: T, includeAll = false) {
   const keys: OutcomeFilter[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "CALLBACK_LATER",
-    "FOLLOW_UP_NEEDED",
-    "LEFT_MESSAGE",
-    "NOT_INTERESTED",
-    "NO_ANSWER",
-    "OTHER",
-    "POSTPONED",
-    "SUCCESSFUL",
-    "WRONG_CONTACT"
+    ...Object.values(ACTIVITY_OUTCOME),
   ];
   return keys.map((value) => ({ value, label: t(`outcome.${value}`) }));
 }

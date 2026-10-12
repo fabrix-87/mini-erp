@@ -1,4 +1,11 @@
-import { OpportunitySource, OpportunityStatus, SalesStage } from "@mini-erp/shared";
+import {
+  OPPORTUNITY_SALES_STAGE,
+  OPPORTUNITY_SOURCE,
+  OPPORTUNITY_STATUS,
+  OpportunitySource,
+  OpportunityStatus,
+  SalesStage,
+} from "@mini-erp/shared";
 
 import { useTranslations } from "next-intl";
 
@@ -11,11 +18,7 @@ export type FilterSource = OpportunitySource | "ALL";
 export function getOpportunityStatusOptions(t: T, includeAll = false) {
   const keys: FilterStatus[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "OPEN",
-    "WON",
-    "CLOSED",
-    "PENDING",
-    "LOST",
+    ...Object.values(OPPORTUNITY_STATUS),
   ];
   return keys.map((value) => ({ value, label: t(`status.${value.toLowerCase()}`) }));
 }
@@ -23,12 +26,7 @@ export function getOpportunityStatusOptions(t: T, includeAll = false) {
 export function getOpportunityStageOptions(t: T, includeAll = false) {
   const keys: FilterStage[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "LEAD_QUALIFICATION",
-    "PROSPECTING",
-    "NEEDS_ANALYSIS",
-    "PROPOSAL_SENT",
-    "NEGOTIATION",
-    "COMMITMENT",
+    ...Object.values(OPPORTUNITY_SALES_STAGE),
   ];
   return keys.map((value) => ({ value, label: t(`stage.${value.toLowerCase()}`) }));
 }
@@ -36,14 +34,7 @@ export function getOpportunityStageOptions(t: T, includeAll = false) {
 export function getOpportunitySourceOptions(t: T, includeAll = false) {
   const keys: FilterSource[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "CUSTOMER",
-    "EVENT",
-    "INBOUND",
-    "LEAD",
-    "OTHER",
-    "OUTBOUND",
-    "PARTNER",
-    "REFERRAL",
+    ...Object.values(OPPORTUNITY_SOURCE),
   ];
   return keys.map((value) => ({ value, label: t(`source.${value.toLowerCase()}`) }));
 }

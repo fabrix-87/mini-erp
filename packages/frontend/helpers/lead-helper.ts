@@ -4,6 +4,10 @@
 
 import {
   DecisionAuthority,
+  LEAD_DECISION_AUTHORITY,
+  LEAD_PURCHASE_TIMEFRAME,
+  LEAD_SOURCE,
+  LEAD_STATUS,
   LeadQuality,
   LeadSource,
   LeadStatus,
@@ -19,15 +23,7 @@ export type FilterQuality = LeadQuality | "ALL";
 export function getLeadStatusOptions(t: T, includeAll = false) {
   const keys: FilterStatus[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "NEW",
-    "CONTACTED",
-    "QUALIFIED",
-    "UNQUALIFIED",
-    "NURTURING",
-    "CONVERTED",
-    "LOST",
-    "DUPLICATE",
-    "ARCHIVED",
+    ...Object.values(LEAD_STATUS),
   ];
   return keys.map((value) => ({ value, label: t(`status.${value}`) }));
 }
@@ -35,19 +31,7 @@ export function getLeadStatusOptions(t: T, includeAll = false) {
 export function getLeadSourceOptions(t: T, includeAll = false) {
   const keys: FilterSource[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "WEBSITE",
-    "REFERRAL",
-    "SOCIAL_MEDIA",
-    "EMAIL_CAMPAIGN",
-    "PHONE_CALL",
-    "COLD_CALL",
-    "EVENT",
-    "PARTNER",
-    "ADVERTISING",
-    "CONTENT",
-    "DIRECT",
-    "CHAT",
-    "OTHER",
+    ...Object.values(LEAD_SOURCE),
   ];
   return keys.map((value) => ({ value, label: t(`source.${value}`) }));
 }
@@ -58,24 +42,12 @@ export function getLeadQualityOptions(t: T, includeAll = false) {
 }
 
 export function getLeadPurchaseTimeframeOptions(t: T) {
-  const keys: PurchaseTimeframe[] = [
-    "IMMEDIATE",
-    "SHORT_TERM",
-    "MEDIUM_TERM",
-    "LONG_TERM",
-    "UNDEFINED",
-  ];
+  const keys: PurchaseTimeframe[] = [...Object.values(LEAD_PURCHASE_TIMEFRAME)];
   return keys.map((value) => ({ value, label: t(`purchaseTimeframe.${value}`) }));
 }
 
 export function getDecisionAuthorityOptions(t: ReturnType<typeof useTranslations<"crm.leads">>) {
-  const keys: DecisionAuthority[] = [
-    "DECISION_MAKER",
-    "INFLUENCER",
-    "GATEKEEPER",
-    "END_USER",
-    "UNKNOWN",
-  ];
+  const keys: DecisionAuthority[] = [...Object.values(LEAD_DECISION_AUTHORITY)];
   return keys.map((value) => ({ value, label: t(`decisionAuthority.${value}`) }));
 }
 

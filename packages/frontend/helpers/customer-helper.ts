@@ -1,4 +1,4 @@
-import { CustomerSegment, CustomerSize, CustomerType } from "@mini-erp/shared";
+import { CUSTOMER_SEGMENT, CUSTOMER_SIZE, CUSTOMER_TYPE, CustomerSegment, CustomerSize, CustomerType } from "@mini-erp/shared";
 import { useTranslations } from "next-intl";
 
 type T = ReturnType<typeof useTranslations<"crm.customers">>;
@@ -9,11 +9,7 @@ export type FilterSegment = CustomerSegment | "ALL";
 export function getCustomerSizeOptions(t: T, includeAll = false) {
   const keys: FilterSize[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "MICRO",
-    "SMALL",
-    "MEDIUM",
-    "LARGE",
-    "ENTERPRISE",
+    ...Object.values(CUSTOMER_SIZE),
   ];
   return keys.map((value) => ({ value, label: t(`size.${value}`) }));
 }
@@ -21,10 +17,7 @@ export function getCustomerSizeOptions(t: T, includeAll = false) {
 export function getCustomerTypeOptions(t: T, includeAll = false) {
   const keys: FilterType[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "PROSPECT",
-    "CUSTOMER",
-    "PARTNER",
-    "OTHER",
+    ...Object.values(CUSTOMER_TYPE),
   ];
   return keys.map((value) => ({ value, label: t(`types.${value}`) }));
 }
@@ -32,11 +25,7 @@ export function getCustomerTypeOptions(t: T, includeAll = false) {
 export function getCustomerSegmentOptions(t: T, includeAll = false) {
   const keys: FilterSegment[] = [
     ...(includeAll ? ["ALL" as const] : []),
-    "VIP",
-    "GOLD",
-    "SILVER",
-    "BRONZE",
-    "STANDARD",
+    ...Object.values(CUSTOMER_SEGMENT),
   ];
   return keys.map((value) => ({ value, label: t(`segments.${value}`) }));
 }

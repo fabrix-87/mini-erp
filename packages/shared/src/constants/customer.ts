@@ -18,10 +18,10 @@ export type CreditCheckStatus = z.infer<typeof creditCheckStatusSchema>;
 export type CustomerSize = z.infer<typeof customerSizeSchema>;
 
 export const CUSTOMER_TYPE = {
-  OTHER: "OTHER",
   PROSPECT: "PROSPECT",
   CUSTOMER: "CUSTOMER",
   PARTNER: "PARTNER",
+  OTHER: "OTHER",
 } as const;
 
 export const CUSTOMER_PRIORITY = {
@@ -46,9 +46,9 @@ export const CUSTOMER_CREDIT_CHECK_STATUS = {
 } as const;
 
 export const CUSTOMER_SIZE = {
-  MEDIUM: "MEDIUM",
   MICRO: "MICRO",
   SMALL: "SMALL",
+  MEDIUM: "MEDIUM",
   LARGE: "LARGE",
   ENTERPRISE: "ENTERPRISE",
 } as const;
