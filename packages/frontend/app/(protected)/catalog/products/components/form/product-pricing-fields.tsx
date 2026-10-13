@@ -7,6 +7,7 @@ import type { CreateProductFormValues, UpdateProductFormValues } from "@mini-erp
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { TaxRuleCombobox } from "@/components/combobox/tax-rule-combobox";
 
 type ProductFormValues = CreateProductFormValues | UpdateProductFormValues;
 
@@ -126,13 +127,24 @@ export function ProductPricingFields(): React.JSX.Element {
       </div>
 
       <div className="space-y-2">
-        <FormLabel>{t("form.pricing.defaultTaxRule")}</FormLabel>
-
-        {/*
-          TODO: Insert the custom tax-rule combobox here.
-          It should integrate with React Hook Form and update defaultTaxRuleId.
-        */}
-        <div className="min-h-10 rounded-md border border-dashed" aria-hidden="true" />
+        <FormField
+          control={form.control}
+          name="additionalShippingCost"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("form.pricing.defaultTaxRule")}</FormLabel>
+              <FormControl>
+                <TaxRuleCombobox
+                  value={field.value?.toString() ?? undefined}
+                  onValueChange={(value) => {
+                    field.onBlur();
+                    field.onChange(value || null);
+                  }}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
       </div>
     </div>
   );

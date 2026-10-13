@@ -35,7 +35,7 @@
         "ecotaxPlaceholder": "0,00",
         "additionalShippingCost": "Costo di spedizione aggiuntivo",
         "additionalShippingCostPlaceholder": "0,00",
-        "defaultTaxRule": "Regola fiscale",
+        "defaultTaxRule": "Regola fiscale predefinita",
         "defaultTaxRulePlaceholder": "Seleziona una regola fiscale",
         "defaultTaxRuleHelp": "Scegli la regola fiscale da applicare al prodotto."
       },

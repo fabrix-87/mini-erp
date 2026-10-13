@@ -1,17 +1,18 @@
 "use client";
 
-import { useState, useCallback, useTransition } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useTransition } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import contactService from "@/services/client/contact";
-import { contactKeys } from "./contact-keys";
-import type {
-  ContactQueryInput,
-  CreateContactInput,
-  UpdateContactInput,
-  UseContactReturn,
-  UseContactsReturn,
+import contactService from "@/services/client/contact-client";
+
+import {
+  contactKeys,
+  type ContactQueryInput,
+  type CreateContactInput,
+  type UpdateContactInput,
+  type UseContactReturn,
 } from "@/types/contact-types";
+
 import {
   createContactAction,
   deleteContactAction,

@@ -45,7 +45,7 @@ export function ProductForm({ form, onSubmit, submitLabel }: ProductFormProps): 
 
         <div className="flex justify-end border-t pt-6">
           <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? t("form.saving") : submitLabel}
+            {form.formState.isSubmitting ? t("form.actions.saving") : submitLabel}
           </Button>
         </div>
       </form>

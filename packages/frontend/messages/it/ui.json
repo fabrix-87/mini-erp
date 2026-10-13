@@ -27,5 +27,9 @@
     "placeholder": "Seleziona un contatto...",
     "noResults": "Nessun contatto trovato"
   },
+  "taxRuleCombobox": {
+    "placeholder": "Seleziona una regola...",
+    "noResults": "Nessuna regola trovata"
+  },
   "loading": "Caricamento..."
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createDecimalSchema, createIdSchema, isoDateSchema, toDecimal } from "./primitives";
 import { countryCodeBaseSchema } from "./base";
-import { paginationSchema, queryBooleanSchema, sortOrderSchema } from "./query";
+import { paginationSchema, queryBooleanOrAllSchema, sortOrderSchema } from "./query";
 import {
   TAX_RULE_APPLICABILITY,
   TAX_RULE_CUSTOMER_TYPE,
@@ -311,10 +311,10 @@ export const updateTaxRuleTranslationSchema = createTaxRuleTranslationSchema
  * Schema for VAT Nature queries
  */
 export const vatNatureQuerySchema = z.object({
-  active: queryBooleanSchema,
+  active: queryBooleanOrAllSchema(),
   category: vatNatureCategorySchema.optional(),
-  validForSales: queryBooleanSchema,
-  validForPurchases: queryBooleanSchema,
+  validForSales: queryBooleanOrAllSchema(),
+  validForPurchases: queryBooleanOrAllSchema(),
   search: z.string().optional(),
   sortBy: z
     .enum(["code", "description", "category", "displayOrder", "createdAt"])
@@ -326,8 +326,8 @@ export const vatNatureQuerySchema = z.object({
  * Schema for Tax Rule queries
  */
 export const taxRuleQuerySchema = paginationSchema.extend({
-  active: queryBooleanSchema,
-  isDefault: queryBooleanSchema,
+  active: queryBooleanOrAllSchema(),
+  isDefault: queryBooleanOrAllSchema(),
   applicableFor: taxRuleApplicabilitySchema.optional(),
   countryCode: countryCodeBaseSchema.optional(),
   vatNatureId: vatNatureIdSchema.optional(),
