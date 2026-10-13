@@ -42,7 +42,9 @@ export function TaxRuleCombobox({ ...props }: EntityComboboxProps<TaxRule>) {
     },
     // `useTaxRule` already unwraps the response
     useSelected: (id) => {
-      return id ? (useTaxRule(Number(id)).taxRule ?? undefined) : undefined;
+      // Always call the hook; the query is disabled internally when id is falsy.
+      const { taxRule } = useTaxRule(id ? Number(id) : 0);
+      return id ? (taxRule ?? undefined) : undefined;
     },
     toOption: toRuleOption,
     placeholderKey: "taxRuleCombobox.placeholder",
