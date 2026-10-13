@@ -185,3 +185,4 @@ export * from "./role-revalidate";
 export * from "./contact-revalidate";
 export * from "./company-revalidate";
 export * from "./warehouse-revalidate";
+export * from "./product-revalidate";

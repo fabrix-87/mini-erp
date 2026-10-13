@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Product } from "@/types/product";
+import { Product } from "@mini-erp/shared";
 import { FC } from "react";
 
 interface ProductHeaderProps {

@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { Product, ProductVariant } from "@/types/product";
+import { Product, ProductVariant } from "@/types/product-types";
 import { FC } from "react";
 
 interface ProductInfoTabsProps {

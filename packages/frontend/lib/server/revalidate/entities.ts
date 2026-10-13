@@ -1,28 +1,9 @@
 // lib/server/revalidate/entities.ts
-import { CONTACT_TAGS } from "@/types/contact-types";
-import { revalidateEntity, revalidateEntityWithList, revalidatePath, revalidateTag } from ".";
-import { ACTIVITY_TAGS } from "@/types/activitiy-types";
-import { USER_TAGS } from "@/types/user-types";
+import { revalidateEntity, revalidateEntityWithList } from ".";
 
 // ============================================================================
 // Common Entity Revalidators
 // ============================================================================
-
-/**
- * Revalidate product-related cache.
- * Route: /catalog/products
- */
-export const productRevalidation = {
-  /** Revalidate specific product detail and path. */
-  product: (id: number) => revalidateEntity("products", id),
-
-  /** Revalidate products list. */
-  list: () => revalidateEntity("products"),
-
-  /** Revalidate specific product and products list. */
-  productWithList: (id: number) =>
-    revalidateEntityWithList("products", id),
-};
 
 /**
  * Revalidate document-related cache.

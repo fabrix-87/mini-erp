@@ -72,7 +72,7 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
   const skip = (page - 1) * limit;
 
   // Costruisci filtri dinamici
-  const where: Prisma.ProductWhereInput = withSoftDelete(withTenantId({}, tenantId));
+  const where: Prisma.ProductWhereInput = withTenantId({}, tenantId);
 
   // Filtro ricerca testuale
   if (search) {
@@ -153,7 +153,7 @@ export const getProductById = async (c: Context<AppBindings>) => {
  * @access  Private (Admin, Product Manager)
  */
 export const createProduct = async (c: Context<AppBindings>) => {
-  const { variants, ...productData } = getValidatedBody<CreateProductInput>(c);
+  const { variants, defaultTaxRuleId, ...productData } = getValidatedBody<CreateProductInput>(c);
   const tenantId = c.get("currentTenantId")!;
 
   // Verifica unicità reference
@@ -186,6 +186,7 @@ export const createProduct = async (c: Context<AppBindings>) => {
       data: {
         ...productData,
         tenant: connectById(tenantId),
+        defaultTaxRule: connectById(defaultTaxRuleId),
       } as Prisma.ProductCreateInput,
     });
 
@@ -195,7 +196,8 @@ export const createProduct = async (c: Context<AppBindings>) => {
         tx.productVariant.create({
           data: {
             ...variant,
-            productId: newProduct.id,
+            product: connectById(newProduct.id),
+            tenant: connectById(tenantId),
           } as Prisma.ProductVariantCreateInput,
         }),
       ),
@@ -348,7 +350,7 @@ export const createVariant = async (c: Context<AppBindings>) => {
 
   // Verifica unicità variantCode
   const existingVariant = await prisma.productVariant.findUnique({
-    where: { variantCode: variantData.variantCode },
+    where: { variantCode: variantData.variantCode, tenantId, productId: id },
   });
   if (existingVariant) throw new ConflictError("Codice variante già esistente");
 

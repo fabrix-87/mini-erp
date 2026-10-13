@@ -7,12 +7,21 @@
       "title": "Crea Prodotto",
       "description": "Creazione anagrafica prodotto"
     },
+    "table": {
+      "reference": "Codice Articolo",
+      "description": "Descrizione",
+      "status": "Stato",
+      "active": "Attivo",
+      "price": "Prezzo",
+      "noResults": "Nessun risultato",
+      "paginationLabel": "Prodotti"
+    },
     "form": {
       "title": "Nuovo prodotto",
       "description": "Configura i dati generali, i prezzi e le varianti.",
       "general": {
         "title": "Dati generali",
-        "reference": "Riferimento",
+        "reference": "Codice Articolo",
         "referencePlaceholder": "Inserisci il riferimento del prodotto",
         "type": "Tipo di prodotto",
         "status": "Stato",
@@ -67,7 +76,9 @@
         "saving": "Salvataggio in corso...",
         "cancel": "Annulla",
         "addVariant": "Aggiungi Variante",
-        "removeVariant": "Rimuovi Variante"
+        "removeVariant": "Rimuovi Variante",
+        "createSuccess": "Prodotto creato",
+        "updateSuccess": "Prodotto aggiornato"
       },
       "validation": {
         "required": "Campo obbligatorio",

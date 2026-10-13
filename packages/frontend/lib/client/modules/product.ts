@@ -1,4 +1,4 @@
-import { Product, ProductPreview } from "@/types/product";
+import { Product, ProductPreview } from "@/types/product-types";
 import api from "../api";
 import { ApiResponse } from "@/types/api";
 import { ProductImage } from "@mini-erp/shared";

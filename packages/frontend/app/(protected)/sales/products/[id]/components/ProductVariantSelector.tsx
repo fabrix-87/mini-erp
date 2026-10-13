@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { AttributeGroup } from "@/types/product";
+import { AttributeGroup } from "@/types/product-types";
 import { Check } from "lucide-react";
 import { FC } from "react";
 

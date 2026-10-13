@@ -9,14 +9,12 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { TaxRuleCombobox } from "@/components/combobox/tax-rule-combobox";
 
-type ProductFormValues = CreateProductFormValues | UpdateProductFormValues;
-
 /**
  * Renders the pricing fields for a product.
  */
 export function ProductPricingFields(): React.JSX.Element {
   const t = useTranslations("catalog.products");
-  const form = useFormContext<ProductFormValues>();
+  const form = useFormContext<CreateProductFormValues>();
 
   return (
     <div className="space-y-6">
@@ -35,10 +33,10 @@ export function ProductPricingFields(): React.JSX.Element {
                   name={field.name}
                   ref={field.ref}
                   onBlur={field.onBlur}
-                  value={field.value ?? 0}
+                  value={field.value ?? ""}
                   onChange={(event) => {
                     const value = event.target.value;
-                    field.onChange(value === "" ? 0 : Number(value));
+                    field.onChange(value === "" ? null : Number(value));
                   }}
                 />
               </FormControl>
@@ -61,10 +59,10 @@ export function ProductPricingFields(): React.JSX.Element {
                   name={field.name}
                   ref={field.ref}
                   onBlur={field.onBlur}
-                  value={field.value ?? 0}
+                  value={field.value ?? ""}
                   onChange={(event) => {
                     const value = event.target.value;
-                    field.onChange(value === "" ? 0 : Number(value));
+                    field.onChange(value === "" ? null : Number(value));
                   }}
                 />
               </FormControl>
@@ -129,7 +127,7 @@ export function ProductPricingFields(): React.JSX.Element {
       <div className="space-y-2">
         <FormField
           control={form.control}
-          name="additionalShippingCost"
+          name="defaultTaxRuleId"
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t("form.pricing.defaultTaxRule")}</FormLabel>

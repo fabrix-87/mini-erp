@@ -38,7 +38,7 @@ import {
   ArrowDown,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ProductPreview } from "@/types/product";
+import { ProductPreview } from "@/types/product-types";
 import { formatCurrency } from "@/utils/format-currency";
 
 type SortField = "name" | "reference" | "price" | "quantity" | "supplierId";

@@ -13,11 +13,9 @@ import { ProductPricingFields } from "./product-pricing-fields";
 import { ProductVariantsFields } from "./product-variants-fields";
 import { Card, CardContent } from "@/components/ui/card";
 
-type ProductFormValues = CreateProductFormValues | UpdateProductFormValues;
-
 type ProductFormProps = {
-  form: UseFormReturn<ProductFormValues>;
-  onSubmit: SubmitHandler<ProductFormValues>;
+  form: UseFormReturn<CreateProductFormValues>;
+  onSubmit: SubmitHandler<CreateProductFormValues>;
   submitLabel: string;
 };
 

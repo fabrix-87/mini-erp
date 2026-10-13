@@ -19,7 +19,7 @@ import {
   updateProductTranslationSchema,
   productIdLanguageIdSchema,
 } from "@mini-erp/shared";
-import { validateBody, validateParams } from "../middleware/validation-middleware";
+import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 
 // ============================================================================
 // VALIDATION MIDDLEWARE
@@ -154,4 +154,4 @@ export const validateManufacturerId = validateParams(manufacturerIdSchema, "Prod
 /**
  * Middleware per i filtri e paginazione ricerca prodotti
  */
-export const validateProductQuery = validateBody(productQuerySchema, "Product Query");
+export const validateProductQuery = validateQuery(productQuerySchema, "Product Query");

@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { ProductVariant } from "@/types/product";
+import { ProductVariant } from "@/types/product-types";
 
 import { Check, X } from "lucide-react";
 import { FC } from "react";

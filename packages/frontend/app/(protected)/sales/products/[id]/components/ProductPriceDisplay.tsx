@@ -1,5 +1,5 @@
 
-import { Product, ProductVariant } from "@/types/product";
+import { Product, ProductVariant } from "@/types/product-types";
 import { FC } from "react";
 
 interface ProductPriceDisplayProps {

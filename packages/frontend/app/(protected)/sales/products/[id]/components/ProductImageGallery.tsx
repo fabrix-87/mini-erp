@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ProductImage } from "@/types/product";
+import { ProductImage } from "@/types/product-types";
 import { FC } from "react";
 
 interface ProductImageGalleryProps {

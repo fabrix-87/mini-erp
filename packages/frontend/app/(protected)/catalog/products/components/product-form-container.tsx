@@ -3,21 +3,34 @@
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import type { CreateProductFormValues, UpdateProductFormValues } from "@mini-erp/shared";
+import type { CreateProductFormValues, Product, UpdateProductFormValues } from "@mini-erp/shared";
 
 import { ProductForm } from "./form";
+import { createProductAction, updateProductAction } from "@/actions/product-actions";
+import { toast } from "sonner";
 
-type ProductFormValues = CreateProductFormValues | UpdateProductFormValues;
+type ProductFormContainerProps =
+  | {
+      mode?: "create";
+      product?: never;
+    }
+  | {
+      mode: "edit";
+      product: Product;
+    };
 
 /**
  * Initializes and displays the product form in client-side mode.
  *
  * @returns The product form container.
  */
-export function ProductFormContainer(): React.JSX.Element {
+export function ProductFormContainer({
+  mode = "create",
+  product,
+}: ProductFormContainerProps): React.JSX.Element {
   const t = useTranslations("catalog.products");
 
-  const form = useForm<ProductFormValues>({
+  const form = useForm<CreateProductFormValues>({
     defaultValues: {
       reference: "",
       type: "STANDARD",
@@ -56,8 +69,19 @@ export function ProductFormContainer(): React.JSX.Element {
     },
   });
 
-  const handleSubmit: SubmitHandler<ProductFormValues> = () => {
-    // TODO: Connect the product creation/update flow.
+  const handleSubmit: SubmitHandler<CreateProductFormValues> = async (values) => {
+    if (mode === "create") {
+      const result = await createProductAction(values);
+      if(result.success) toast.info(t('form.actions.createSuccess'))
+      // TODO: Gestire il risultato della creazione.
+      return;
+    }
+
+    if (product) {
+      const result = await updateProductAction(product.id, values);
+      if(result.success) toast.info(t('form.actions.updateSuccess'))
+      // TODO: Gestire il risultato dell'aggiornamento.
+    }
   };
 
   return <ProductForm form={form} onSubmit={handleSubmit} submitLabel={t("form.actions.save")} />;

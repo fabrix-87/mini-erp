@@ -74,7 +74,7 @@ const productRoutes = createHonoApp();
  * @access  Public
  * @query   page, limit, search, active, categoryId, manufacturerId, minPrice, maxPrice, sortBy, sortOrder
  */
-productRoutes.get("/", validateProductQuery, getAllProducts);
+productRoutes.get("/", requireTenantScope, validateProductQuery, getAllProducts);
 
 /**
  * @route   GET /api/products/:id

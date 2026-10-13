@@ -11,14 +11,12 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 
-type ProductFormValues = CreateProductFormValues | UpdateProductFormValues;
-
 /**
  * Renders product variants in a table with add and remove actions.
  */
 export function ProductVariantsFields(): React.JSX.Element {
   const t = useTranslations("catalog.products");
-  const form = useFormContext<ProductFormValues>();
+  const form = useFormContext<CreateProductFormValues>();
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
