@@ -34,14 +34,13 @@ model AuditLog {
   id String @id @default(uuid())
 
   // === ENTITY INFORMATION ===
-    entityType String @map("entity_type") @db.VarChar(50)  // "Product", "Document", "Customer"
-  entityId   String @map("entity_id") @db.VarChar(64) // ID dell'entità modificata
+  entityType String  @map("entity_type") @db.VarChar(50) // "Product", "Document", "Customer"
+  entityId   String  @map("entity_id") @db.VarChar(64) // ID dell'entità modificata
   entityName String? @map("entity_name") @db.VarChar(255) // Nome/descrizione dell'entità per facilità di lettura
 
   /// Tenant the event belongs to. NULL only for system-level events (e.g. login before tenant selection).
   tenantId String? @map("tenant_id")
   tenant   Tenant? @relation("TenantAuditLogs", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-
 
   // === ACTION ===
   action   AuditAction

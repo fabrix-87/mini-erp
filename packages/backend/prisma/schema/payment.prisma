@@ -10,147 +10,147 @@
 
 /// Payment due date calculation strategy for a single installment.
 enum PaymentTermType {
-    ANTICIPATED // Due immediately (advance payment)
-    DAYS_FROM_INVOICE // Due N days after invoice date
-    END_OF_MONTH // Due at end of month, optionally plus dueDays
-    FIXED_DAY // Due on a fixed day of the month
+  ANTICIPATED // Due immediately (advance payment)
+  DAYS_FROM_INVOICE // Due N days after invoice date
+  END_OF_MONTH // Due at end of month, optionally plus dueDays
+  FIXED_DAY // Due on a fixed day of the month
 }
 
 /// Tenant-scoped or global payment method defining installment structure and due date rules.
 /// The sum of all related PaymentTermDetail.percentage values must equal 100 (enforced at application level).
 model PaymentMethod {
-    id   String @id @default(cuid())
-    // e.g. "SPLIT_30_30_40", "IMMEDIATE", "NET_60"
-    code String @db.VarChar(50)
+  id   String @id @default(cuid())
+  // e.g. "SPLIT_30_30_40", "IMMEDIATE", "NET_60"
+  code String @db.VarChar(50)
 
-    active   Boolean @default(true)
-    position Int     @default(0)
+  active   Boolean @default(true)
+  position Int     @default(0)
 
-    // NULL = global system payment method; NOT NULL = tenant-private payment method
-    tenantId String? @map("tenant_id")
-    tenant   Tenant? @relation("TenantPaymentMethods", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  // NULL = global system payment method; NOT NULL = tenant-private payment method
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantPaymentMethods", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    // === RELATIONS ===
-    translations                PaymentMethodTranslation[]   @relation("PaymentMethodTranslations")
-    customers                   Customer[]                   @relation("CompanyPaymentMethod")
-    suppliers                   Supplier[]                   @relation("SupplierPaymentMethod")
-    documents                   Document[]                   @relation("DocumentPaymentMethod")
-    documentPaymentInstallments DocumentPaymentInstallment[]
+  // === RELATIONS ===
+  translations                PaymentMethodTranslation[]   @relation("PaymentMethodTranslations")
+  customers                   Customer[]                   @relation("CompanyPaymentMethod")
+  suppliers                   Supplier[]                   @relation("SupplierPaymentMethod")
+  documents                   Document[]                   @relation("DocumentPaymentMethod")
+  documentPaymentInstallments DocumentPaymentInstallment[]
 
-    /// Default bank account to use when this payment method is selected on a document.
-    /// Only relevant for wire transfer methods. NULL = no default account.
-    defaultBankAccountId String?      @map("default_bank_account_id")
-    defaultBankAccount   BankAccount? @relation(fields: [tenantId, defaultBankAccountId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+  /// Default bank account to use when this payment method is selected on a document.
+  /// Only relevant for wire transfer methods. NULL = no default account.
+  defaultBankAccountId String?      @map("default_bank_account_id")
+  defaultBankAccount   BankAccount? @relation(fields: [tenantId, defaultBankAccountId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
-    /// Individual installment rules for this payment method.
-    details PaymentTermDetail[]
+  /// Individual installment rules for this payment method.
+  details PaymentTermDetail[]
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([tenantId, code])
-    @@unique([code], where: { tenantId: null }, map: "unique_global_payment_method_code")
-    @@index([tenantId])
-    @@index([tenantId, active])
-    @@index([active])
-    @@map("payment_methods")
+  @@unique([tenantId, code])
+  @@unique([code], where: { tenantId: null }, map: "unique_global_payment_method_code")
+  @@index([tenantId])
+  @@index([tenantId, active])
+  @@index([active])
+  @@map("payment_methods")
 }
 
 /// Single installment rule within a payment method.
 /// Defines the percentage of the total amount and its due date calculation logic.
 model PaymentTermDetail {
-    id              String        @id @default(cuid())
-    paymentMethodId String        @map("payment_method_id")
-    paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Cascade)
+  id              String        @id @default(cuid())
+  paymentMethodId String        @map("payment_method_id")
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Cascade)
 
-    /// Share of the total amount due for this installment (e.g. 30.00, 40.00).
-    /// All installments of a payment method must sum to 100.
-    percentage Decimal @default(0) @db.Decimal(5, 2)
+  /// Share of the total amount due for this installment (e.g. 30.00, 40.00).
+  /// All installments of a payment method must sum to 100.
+  percentage Decimal @default(0) @db.Decimal(5, 2)
 
-    /// Due date calculation strategy for this installment.
-    termType PaymentTermType @default(DAYS_FROM_INVOICE) @map("term_type")
+  /// Due date calculation strategy for this installment.
+  termType PaymentTermType @default(DAYS_FROM_INVOICE) @map("term_type")
 
-    /// Number of days from the invoice date (used when termType = DAYS_FROM_INVOICE or END_OF_MONTH).
-    dueDays          Int  @default(0) @map("due_days")
-    /// Fixed day of the month when the installment is due (used when termType = FIXED_DAY).
-    fixedDay         Int? @map("fixed_day")
-    /// Number of months to offset from the invoice month (used with FIXED_DAY).
-    fixedMonthOffset Int  @default(0) @map("fixed_month_offset")
+  /// Number of days from the invoice date (used when termType = DAYS_FROM_INVOICE or END_OF_MONTH).
+  dueDays          Int  @default(0) @map("due_days")
+  /// Fixed day of the month when the installment is due (used when termType = FIXED_DAY).
+  fixedDay         Int? @map("fixed_day")
+  /// Number of months to offset from the invoice month (used with FIXED_DAY).
+  fixedMonthOffset Int  @default(0) @map("fixed_month_offset")
 
-    /// Processing order of installments within the payment method.
-    position Int @default(0)
+  /// Processing order of installments within the payment method.
+  position Int @default(0)
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([paymentMethodId, position])
-    @@map("payment_term_details")
+  @@unique([paymentMethodId, position])
+  @@map("payment_term_details")
 }
 
 /// Localized name and description for a PaymentMethod.
 model PaymentMethodTranslation {
-    paymentMethodId String        @map("payment_method_id")
-    paymentMethod   PaymentMethod @relation("PaymentMethodTranslations", fields: [paymentMethodId], references: [id], onDelete: Cascade)
+  paymentMethodId String        @map("payment_method_id")
+  paymentMethod   PaymentMethod @relation("PaymentMethodTranslations", fields: [paymentMethodId], references: [id], onDelete: Cascade)
 
-    languageId Int      @map("language_id")
-    language   Language @relation(fields: [languageId], references: [id])
+  languageId Int      @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id])
 
-    // e.g. "Bonifico Bancario", "Bank Transfer"
-    name        String  @db.VarChar(100)
-    description String? @db.Text
+  // e.g. "Bonifico Bancario", "Bank Transfer"
+  name        String  @db.VarChar(100)
+  description String? @db.Text
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    // Unique translation per payment method and language.
-    @@id([paymentMethodId, languageId])
-    @@index([languageId])
-    @@map("payment_method_translations")
+  // Unique translation per payment method and language.
+  @@id([paymentMethodId, languageId])
+  @@index([languageId])
+  @@map("payment_method_translations")
 }
 
 model PaymentBatch {
-    id       String @id @default(cuid())
-    tenantId String @map("tenant_id")
-    tenant   Tenant @relation("TenantPaymentBatches", fields: [tenantId], references: [id], onDelete: Restrict)
+  id       String @id @default(cuid())
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantPaymentBatches", fields: [tenantId], references: [id], onDelete: Restrict)
 
-    /// Data di esecuzione/disposizione della distinta
-    executionDate DateTime @map("execution_date")
+  /// Data di esecuzione/disposizione della distinta
+  executionDate DateTime @map("execution_date")
 
-    /// Tenant bank account used for this payment run.
-    tenantBankAccountId String?      @map("tenant_bank_account_id")
-    tenantBankAccount   BankAccount? @relation(fields: [tenantId, tenantBankAccountId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+  /// Tenant bank account used for this payment run.
+  tenantBankAccountId String?      @map("tenant_bank_account_id")
+  tenantBankAccount   BankAccount? @relation(fields: [tenantId, tenantBankAccountId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
-    /// Denormalized sum of all installment amounts in this batch.
-    totalAmount Decimal @default(0) @map("total_amount") @db.Decimal(15, 2)
+  /// Denormalized sum of all installment amounts in this batch.
+  totalAmount Decimal @default(0) @map("total_amount") @db.Decimal(15, 2)
 
-    status            PaymentBatchStatus @default(DRAFT)
-    /// Riferimento file SEPA XML generato/esportato
-    sepaFileReference String?            @map("sepa_file_reference")
+  status            PaymentBatchStatus @default(DRAFT)
+  /// Riferimento file SEPA XML generato/esportato
+  sepaFileReference String?            @map("sepa_file_reference")
 
-    notes String? @db.Text
+  notes String? @db.Text
 
-    installments DocumentPaymentInstallment[]
+  installments DocumentPaymentInstallment[]
 
-    createdByUserId String @map("created_by_user_id")
-    createdBy       User   @relation("PaymentBatchCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  createdByUserId String @map("created_by_user_id")
+  createdBy       User   @relation("PaymentBatchCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
 
-    /// User who approved this batch for export. NULL while DRAFT.
-    approvedByUserId String?   @map("approved_by_user_id")
-    approvedBy       User?     @relation("PaymentBatchApprovedBy", fields: [approvedByUserId], references: [id], onDelete: SetNull)
-    approvedAt       DateTime? @map("approved_at")
+  /// User who approved this batch for export. NULL while DRAFT.
+  approvedByUserId String?   @map("approved_by_user_id")
+  approvedBy       User?     @relation("PaymentBatchApprovedBy", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  approvedAt       DateTime? @map("approved_at")
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([tenantId, id])
-    @@index([tenantId, status])
-    @@index([tenantId, executionDate])
-    @@map("payment_batches")
+  @@unique([tenantId, id])
+  @@index([tenantId, status])
+  @@index([tenantId, executionDate])
+  @@map("payment_batches")
 }
 
 enum PaymentBatchStatus {
-    DRAFT
-    EXPORTED
-    EXECUTED
-    RECONCILED
+  DRAFT
+  EXPORTED
+  EXECUTED
+  RECONCILED
 }

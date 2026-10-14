@@ -1,116 +1,116 @@
 /// Purpose/direction of the price list.
 enum PriceListType {
-    SALE // Standard sales price list
-    PURCHASE // Supplier purchase price list
-    PROMOTION // Temporary promotional override
-    CONTRACT // Customer-specific contract pricing
+  SALE // Standard sales price list
+  PURCHASE // Supplier purchase price list
+  PROMOTION // Temporary promotional override
+  CONTRACT // Customer-specific contract pricing
 }
 
 /// Price calculation strategy when the list is derived from a parent list.
 enum PriceListStrategy {
-    EXPLICIT // Prices entered manually line by line
-    PERCENT_DECREASE // Percentage discount from parent list (e.g. -20%)
-    PERCENT_INCREASE // Percentage markup from parent list
-    FIXED_DECREASE // Fixed amount discount (e.g. -5.00)
-    FIXED_INCREASE // Fixed amount markup
+  EXPLICIT // Prices entered manually line by line
+  PERCENT_DECREASE // Percentage discount from parent list (e.g. -20%)
+  PERCENT_INCREASE // Percentage markup from parent list
+  FIXED_DECREASE // Fixed amount discount (e.g. -5.00)
+  FIXED_INCREASE // Fixed amount markup
 }
 
 /// Rounding strategy applied to computed prices.
 enum PriceRoundingMethod {
-    NONE // No rounding applied
-    NEAREST_05 // Round to nearest 0.05
-    NEAREST_10 // Round to nearest 0.10
-    ROUND_UP // Always round up
-    ROUND_DOWN // Always round down
+  NONE // No rounding applied
+  NEAREST_05 // Round to nearest 0.05
+  NEAREST_10 // Round to nearest 0.10
+  ROUND_UP // Always round up
+  ROUND_DOWN // Always round down
 }
 
 /// Tenant-scoped or global price list defining selling, purchase, promotional, or contract prices.
 /// Supports parent-child hierarchy for derived pricing strategies.
 model PriceList {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    // Identificazione
-    code         String   @db.VarChar(50) // Es. LIST_PUB, LIST_GOLD
-    name         String   @db.VarChar(100)
-    currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
-    currency     Currency @relation("PriceListCurrency", fields: [currencyCode], references: [code])
+  // Identificazione
+  code         String   @db.VarChar(50) // Es. LIST_PUB, LIST_GOLD
+  name         String   @db.VarChar(100)
+  currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
+  currency     Currency @relation("PriceListCurrency", fields: [currencyCode], references: [code])
 
-    /// Tenant that owns this price list. Items reference tenant-private variants, so global lists are not supported.
-    tenantId String @map("tenant_id")
-    tenant   Tenant @relation("TenantPriceLists", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  /// Tenant that owns this price list. Items reference tenant-private variants, so global lists are not supported.
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantPriceLists", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    type PriceListType @default(SALE)
+  type PriceListType @default(SALE)
 
-    // Validità (opzionale, se null vale sempre)
-    validFrom DateTime? @map("valid_from")
-    validTo   DateTime? @map("valid_to")
-    active    Boolean   @default(true)
+  // Validità (opzionale, se null vale sempre)
+  validFrom DateTime? @map("valid_from")
+  validTo   DateTime? @map("valid_to")
+  active    Boolean   @default(true)
 
-    // LOGICA EREDITARIETA' (Listini dinamici)
-    // Se parentListId è presente, questo listino calcola i prezzi basandosi sul padre
-    parentListId  String?     @map("parent_list_id")
-    parentList    PriceList?  @relation("PriceListHierarchy", fields: [tenantId, parentListId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
-    childrenLists PriceList[] @relation("PriceListHierarchy")
+  // LOGICA EREDITARIETA' (Listini dinamici)
+  // Se parentListId è presente, questo listino calcola i prezzi basandosi sul padre
+  parentListId  String?     @map("parent_list_id")
+  parentList    PriceList?  @relation("PriceListHierarchy", fields: [tenantId, parentListId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+  childrenLists PriceList[] @relation("PriceListHierarchy")
 
-    strategy       PriceListStrategy   @default(EXPLICIT)
-    strategyValue  Decimal             @default(0) @map("strategy_value") @db.Decimal(10, 2) // Es. 10.00 (per indicare 10%)
-    roundingMethod PriceRoundingMethod @default(NONE) @map("rounding_method") // none, nearest_05, nearest_10, up, down
+  strategy       PriceListStrategy   @default(EXPLICIT)
+  strategyValue  Decimal             @default(0) @map("strategy_value") @db.Decimal(10, 2) // Es. 10.00 (per indicare 10%)
+  roundingMethod PriceRoundingMethod @default(NONE) @map("rounding_method") // none, nearest_05, nearest_10, up, down
 
-    // Relazioni
-    items     PriceListItem[]
-    customers Customer[] // Clienti assegnati a questo listino
+  // Relazioni
+  items     PriceListItem[]
+  customers Customer[] // Clienti assegnati a questo listino
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([tenantId, id])
-    @@unique([tenantId, code])
-    @@index([tenantId, active])
-    @@index([tenantId, validFrom, validTo])
-    @@index([tenantId, parentListId], where: { parentListId: { not: null } })
-    @@map("price_lists")
+  @@unique([tenantId, id])
+  @@unique([tenantId, code])
+  @@index([tenantId, active])
+  @@index([tenantId, validFrom, validTo])
+  @@index([tenantId, parentListId], where: { parentListId: { not: null } })
+  @@map("price_lists")
 }
 
 /// Single pricing entry within a price list, optionally scoped by quantity break.
 model PriceListItem {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    priceListId String    @map("price_list_id")
-    priceList   PriceList @relation(fields: [tenantId, priceListId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+  priceListId String    @map("price_list_id")
+  priceList   PriceList @relation(fields: [tenantId, priceListId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
-    /// Denormalized from PriceList.tenantId for direct tenant-scoped queries.
-    tenantId String @map("tenant_id")
-    tenant   Tenant @relation("TenantPriceListItems", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  /// Denormalized from PriceList.tenantId for direct tenant-scoped queries.
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantPriceListItems", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    // Collegamento Variante Prodotto
-    variantId String         @map("variant_id")
-    variant   ProductVariant @relation(fields: [tenantId, variantId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+  // Collegamento Variante Prodotto
+  variantId String         @map("variant_id")
+  variant   ProductVariant @relation(fields: [tenantId, variantId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
-    // Scaglioni di quantità (Quantity Breaks)
-    // Default 1. Se inserisci una riga con minQuantity 10, si applica da 10 pezzi in su.
-    minQuantity Int @default(1) @map("min_quantity")
+  // Scaglioni di quantità (Quantity Breaks)
+  // Default 1. Se inserisci una riga con minQuantity 10, si applica da 10 pezzi in su.
+  minQuantity Int @default(1) @map("min_quantity")
 
-    // Il Prezzo
-    price Decimal @db.Decimal(20, 6)
+  // Il Prezzo
+  price Decimal @db.Decimal(20, 6)
 
-    // Opzionale: Sconto specifico per questa riga (sovrascrive logiche generali)
-    discountPercent Decimal? @map("discount_percent") @db.Decimal(5, 2)
+  // Opzionale: Sconto specifico per questa riga (sovrascrive logiche generali)
+  discountPercent Decimal? @map("discount_percent") @db.Decimal(5, 2)
 
-    // Date specifiche per la riga (es. offerta lampo su un solo prodotto)
-    validFrom DateTime? @map("valid_from")
-    validTo   DateTime? @map("valid_to")
+  // Date specifiche per la riga (es. offerta lampo su un solo prodotto)
+  validFrom DateTime? @map("valid_from")
+  validTo   DateTime? @map("valid_to")
 
-    // Relazioni
-    taxRuleId Int?     @map("tax_rule_id")
-    taxRule   TaxRule? @relation("PriceListTaxRule", fields: [taxRuleId], references: [id])
+  // Relazioni
+  taxRuleId Int?     @map("tax_rule_id")
+  taxRule   TaxRule? @relation("PriceListTaxRule", fields: [taxRuleId], references: [id])
 
-    opportunityProducts OpportunityProduct[]
+  opportunityProducts OpportunityProduct[]
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    // Unique constraint: no duplicate prices for the same variant/quantity in the same list
-    @@unique([priceListId, variantId, minQuantity])
-    @@index([tenantId, variantId])
-    @@map("price_list_items")
+  // Unique constraint: no duplicate prices for the same variant/quantity in the same list
+  @@unique([priceListId, variantId, minQuantity])
+  @@index([tenantId, variantId])
+  @@map("price_list_items")
 }

@@ -3,141 +3,141 @@
 // ============================================================================
 
 enum CustomerType {
-    PROSPECT // Not yet a paying customer; qualified lead
-    CUSTOMER // Active paying customer
-    PARTNER // Commercial partner
-    OTHER
+  PROSPECT // Not yet a paying customer; qualified lead
+  CUSTOMER // Active paying customer
+  PARTNER // Commercial partner
+  OTHER
 }
 
 enum CreditCheckStatus {
-    PENDING
-    IN_PROGRESS
-    APPROVED
-    REJECTED
+  PENDING
+  IN_PROGRESS
+  APPROVED
+  REJECTED
 }
 
 enum CustomerSize {
-    MICRO
-    SMALL
-    MEDIUM
-    LARGE
-    ENTERPRISE
+  MICRO
+  SMALL
+  MEDIUM
+  LARGE
+  ENTERPRISE
 }
 
 enum CustomerPriority {
-    LOW
-    MEDIUM
-    HIGH
+  LOW
+  MEDIUM
+  HIGH
 }
 
 enum CustomerSegment {
-    VIP
-    GOLD
-    SILVER
-    BRONZE
-    STANDARD
+  VIP
+  GOLD
+  SILVER
+  BRONZE
+  STANDARD
 }
 
 /// Distinguishes legal entity type, driving which fiscal identifiers are required.
 enum CompanyTypeEntity {
-    JURIDICAL // Persona giuridica — P.IVA required
-    NATURAL // Persona fisica / ditta individuale — CF required
-    FOREIGN // Foreign entity — vatId / EORI
+  JURIDICAL // Persona giuridica — P.IVA required
+  NATURAL // Persona fisica / ditta individuale — CF required
+  FOREIGN // Foreign entity — vatId / EORI
 }
 
 enum CompanyStatus {
-    ACTIVE
-    INACTIVE
-    SUSPENDED
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  ARCHIVED
 }
 
 /// Base registry shared by Customer, Supplier, and the tenant's own company.
 /// Always owned by a tenant except during bootstrap (see tenantId comment).
 model Company {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    // === IDENTITY ===
+  // === IDENTITY ===
 
-    code        String            @db.VarChar(20)
-    companyName String            @map("company_name") @db.VarChar(255)
-    tradeName   String?           @map("trade_name") @db.VarChar(255)
-    legalForm   String?           @map("legal_form") @db.VarChar(100)
-    status      CompanyStatus     @default(ACTIVE)
-    entityType  CompanyTypeEntity @default(JURIDICAL) @map("entity_type")
+  code        String            @db.VarChar(20)
+  companyName String            @map("company_name") @db.VarChar(255)
+  tradeName   String?           @map("trade_name") @db.VarChar(255)
+  legalForm   String?           @map("legal_form") @db.VarChar(100)
+  status      CompanyStatus     @default(ACTIVE)
+  entityType  CompanyTypeEntity @default(JURIDICAL) @map("entity_type")
 
-    // === ITALIAN FISCAL DATA ===
+  // === ITALIAN FISCAL DATA ===
 
-    vatNumber String? @map("vat_number") @db.VarChar(20)
-    taxCode   String? @map("tax_code") @db.VarChar(20)
-    /// SDI recipient code for FatturaPA routing. '0000000' for private/foreign.
-    sdiCode   String? @map("sdi_code") @db.VarChar(7)
-    pec       String? @db.VarChar(255)
+  vatNumber String? @map("vat_number") @db.VarChar(20)
+  taxCode   String? @map("tax_code") @db.VarChar(20)
+  /// SDI recipient code for FatturaPA routing. '0000000' for private/foreign.
+  sdiCode   String? @map("sdi_code") @db.VarChar(7)
+  pec       String? @db.VarChar(255)
 
-    // === FOREIGN FISCAL DATA ===
+  // === FOREIGN FISCAL DATA ===
 
-    /// EORI number — required for extra-EU customs transactions.
-    eoriNumber String? @map("eori_number") @db.VarChar(20)
-    /// EU VAT identifier (e.g. FR123456789). Populated when countryCode ≠ IT.
-    vatId      String? @map("vat_id") @db.VarChar(20)
+  /// EORI number — required for extra-EU customs transactions.
+  eoriNumber String? @map("eori_number") @db.VarChar(20)
+  /// EU VAT identifier (e.g. FR123456789). Populated when countryCode ≠ IT.
+  vatId      String? @map("vat_id") @db.VarChar(20)
 
-    // === FISCAL COUNTRY ===
+  // === FISCAL COUNTRY ===
 
-    /// ISO 3166-1 alpha-2. Drives fiscal regime and Intrastat flow detection.
-    countryCode String  @default("IT") @map("country_code") @db.Char(2)
-    country     Country @relation("CompanyCountry", fields: [countryCode], references: [code])
+  /// ISO 3166-1 alpha-2. Drives fiscal regime and Intrastat flow detection.
+  countryCode String  @default("IT") @map("country_code") @db.Char(2)
+  country     Country @relation("CompanyCountry", fields: [countryCode], references: [code])
 
-    // === CONTACTS ===
+  // === CONTACTS ===
 
-    mainEmail   String? @map("main_email") @db.VarChar(255)
-    mainPhone   String? @map("main_phone") @db.VarChar(50)
-    mainWebsite String? @map("main_website") @db.VarChar(255)
+  mainEmail   String? @map("main_email") @db.VarChar(255)
+  mainPhone   String? @map("main_phone") @db.VarChar(50)
+  mainWebsite String? @map("main_website") @db.VarChar(255)
 
-    // === OWNERSHIP ===
+  // === OWNERSHIP ===
 
-    assignedUserId String? @map("assigned_user_id")
-    user           User?   @relation("AssignedUser", fields: [assignedUserId], references: [id])
+  assignedUserId String? @map("assigned_user_id")
+  user           User?   @relation("AssignedUser", fields: [assignedUserId], references: [id])
 
-    /// Nullable for two reasons only:
-    /// (1) Bootstrap window: the tenant's own Company is created before the Tenant row
-    ///     (Tenant.companyId is mandatory). tenantId is back-filled in the same transaction:
-    ///     CREATE Company → CREATE Tenant → UPDATE Company SET tenantId.
-    /// (2) Orphaning: if a Tenant is deleted (onDelete: SetNull), its Companies are
-    ///     preserved for historical traceability with tenantId = NULL.
-    /// All live Company records linked to an active Customer/Supplier always have tenantId set.
-    tenantId String? @map("tenant_id")
-    tenant   Tenant? @relation("TenantCompanies", fields: [tenantId], references: [id], onDelete: SetNull)
+  /// Nullable for two reasons only:
+  /// (1) Bootstrap window: the tenant's own Company is created before the Tenant row
+  ///     (Tenant.companyId is mandatory). tenantId is back-filled in the same transaction:
+  ///     CREATE Company → CREATE Tenant → UPDATE Company SET tenantId.
+  /// (2) Orphaning: if a Tenant is deleted (onDelete: SetNull), its Companies are
+  ///     preserved for historical traceability with tenantId = NULL.
+  /// All live Company records linked to an active Customer/Supplier always have tenantId set.
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantCompanies", fields: [tenantId], references: [id], onDelete: SetNull)
 
-    // === COMPANY REGISTER ===
+  // === COMPANY REGISTER ===
 
-    reaOffice            String?               @map("rea_office") @db.Char(2)
-    reaNumber            String?               @map("rea_number") @db.VarChar(20)
-    reaShareCapital      Decimal?              @map("rea_share_capital") @db.Decimal(14, 2)
-    reaShareholderType   ReaShareholderType?   @map("rea_shareholder_type")
-    reaLiquidationStatus ReaLiquidationStatus? @map("rea_liquidation_status")
+  reaOffice            String?               @map("rea_office") @db.Char(2)
+  reaNumber            String?               @map("rea_number") @db.VarChar(20)
+  reaShareCapital      Decimal?              @map("rea_share_capital") @db.Decimal(14, 2)
+  reaShareholderType   ReaShareholderType?   @map("rea_shareholder_type")
+  reaLiquidationStatus ReaLiquidationStatus? @map("rea_liquidation_status")
 
-    // === RELATIONS ===
+  // === RELATIONS ===
 
-    addresses       CompanyAddress[] @relation("CompanyAddresses")
-    versions        CompanyVersion[] @relation("CompanyVersions")
-    contacts        CompanyContact[]
-    customer        Customer?
-    supplier        Supplier?
-    tenants         Tenant?          @relation("TenantOwnedCompany")
-    notes           CompanyNote[]
-    bankAccounts    BankAccount[]    @relation("CompanyBankAccounts")
-    documentParties DocumentParty[]  @relation("DocumentPartySourceCompany")
+  addresses       CompanyAddress[] @relation("CompanyAddresses")
+  versions        CompanyVersion[] @relation("CompanyVersions")
+  contacts        CompanyContact[]
+  customer        Customer?
+  supplier        Supplier?
+  tenants         Tenant?          @relation("TenantOwnedCompany")
+  notes           CompanyNote[]
+  bankAccounts    BankAccount[]    @relation("CompanyBankAccounts")
+  documentParties DocumentParty[]  @relation("DocumentPartySourceCompany")
 
-    customFields Json? @map("custom_fields")
+  customFields Json? @map("custom_fields")
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([tenantId, code])
-    @@unique([tenantId, id])
-    @@index([tenantId, vatNumber])
-    @@index([tenantId, taxCode])
-    @@map("companies")
+  @@unique([tenantId, code])
+  @@unique([tenantId, id])
+  @@index([tenantId, vatNumber])
+  @@index([tenantId, taxCode])
+  @@map("companies")
 }
 
 /// Historical snapshot of Company anagraphic data.
@@ -145,389 +145,390 @@ model Company {
 /// Only one version can have isCurrent = true per company at any time —
 /// enforced by partial unique index.
 model CompanyVersion {
-    id        String @id @default(cuid())
-    companyId String @map("company_id")
-    tenantId  String @map("tenant_id")
+  id        String @id @default(cuid())
+  companyId String @map("company_id")
+  tenantId  String @map("tenant_id")
 
-    // === TEMPORAL VALIDITY ===
+  // === TEMPORAL VALIDITY ===
 
-    validFrom DateTime  @map("valid_from")
-    validTo   DateTime? @map("valid_to")
-    isCurrent Boolean   @default(true) @map("is_current")
+  validFrom DateTime  @map("valid_from")
+  validTo   DateTime? @map("valid_to")
+  isCurrent Boolean   @default(true) @map("is_current")
 
-    // === ANAGRAPHIC SNAPSHOT (mirrors Company fiscal fields) ===
+  // === ANAGRAPHIC SNAPSHOT (mirrors Company fiscal fields) ===
 
-    companyName String            @map("company_name") @db.VarChar(255)
-    tradeName   String?           @map("trade_name") @db.VarChar(255)
-    legalForm   String?           @map("legal_form") @db.VarChar(100)
-    entityType  CompanyTypeEntity @default(JURIDICAL) @map("entity_type")
+  companyName String            @map("company_name") @db.VarChar(255)
+  tradeName   String?           @map("trade_name") @db.VarChar(255)
+  legalForm   String?           @map("legal_form") @db.VarChar(100)
+  entityType  CompanyTypeEntity @default(JURIDICAL) @map("entity_type")
 
-    vatNumber  String? @map("vat_number") @db.VarChar(20)
-    taxCode    String? @map("tax_code") @db.VarChar(20)
-    sdiCode    String? @map("sdi_code") @db.VarChar(7)
-    pec        String? @db.VarChar(255)
-    eoriNumber String? @map("eori_number") @db.VarChar(20)
-    vatId      String? @map("vat_id") @db.VarChar(20)
+  vatNumber  String? @map("vat_number") @db.VarChar(20)
+  taxCode    String? @map("tax_code") @db.VarChar(20)
+  sdiCode    String? @map("sdi_code") @db.VarChar(7)
+  pec        String? @db.VarChar(255)
+  eoriNumber String? @map("eori_number") @db.VarChar(20)
+  vatId      String? @map("vat_id") @db.VarChar(20)
 
-    countryCode String  @default("IT") @map("country_code") @db.Char(2)
-    country     Country @relation("CompanyVersionCountry", fields: [countryCode], references: [code], onDelete: Restrict)
+  countryCode String  @default("IT") @map("country_code") @db.Char(2)
+  country     Country @relation("CompanyVersionCountry", fields: [countryCode], references: [code], onDelete: Restrict)
 
-    // === BILLING ADDRESS SNAPSHOT ===
+  // === BILLING ADDRESS SNAPSHOT ===
 
-    address      String? @db.VarChar(255)
-    city         String? @db.VarChar(100)
-    provinceCode String? @map("province_code") @db.Char(2)
-    zipCode      String? @map("zip_code") @db.VarChar(20)
+  address      String? @db.VarChar(255)
+  city         String? @db.VarChar(100)
+  provinceCode String? @map("province_code") @db.Char(2)
+  zipCode      String? @map("zip_code") @db.VarChar(20)
 
-    mainEmail String? @map("main_email") @db.VarChar(255)
-    mainPhone String? @map("main_phone") @db.VarChar(50)
+  mainEmail String? @map("main_email") @db.VarChar(255)
+  mainPhone String? @map("main_phone") @db.VarChar(50)
 
-    // === COMPANY REGISTER SNAPSHOT ===
+  // === COMPANY REGISTER SNAPSHOT ===
 
-    reaOffice            String?               @map("rea_office") @db.Char(2)
-    reaNumber            String?               @map("rea_number") @db.VarChar(20)
-    reaShareCapital      Decimal?              @map("rea_share_capital") @db.Decimal(14, 2)
-    reaShareholderType   ReaShareholderType?   @map("rea_shareholder_type")
-    reaLiquidationStatus ReaLiquidationStatus? @map("rea_liquidation_status")
+  reaOffice            String?               @map("rea_office") @db.Char(2)
+  reaNumber            String?               @map("rea_number") @db.VarChar(20)
+  reaShareCapital      Decimal?              @map("rea_share_capital") @db.Decimal(14, 2)
+  reaShareholderType   ReaShareholderType?   @map("rea_shareholder_type")
+  reaLiquidationStatus ReaLiquidationStatus? @map("rea_liquidation_status")
 
-    // === HISTORIZATION AUDIT ===
+  // === HISTORIZATION AUDIT ===
 
-    /// User who triggered the historization. Nullable: preserved as NULL if the user is later deleted.
-    createdByUserId String? @map("created_by_user_id")
-    createdByUser   User?   @relation("CompanyVersionCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  /// User who triggered the historization. Nullable: preserved as NULL if the user is later deleted.
+  createdByUserId String? @map("created_by_user_id")
+  createdByUser   User?   @relation("CompanyVersionCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
 
-    /// User who edited the historization. Nullable: preserved as NULL if the user is later deleted.
-    updatedByUserId String? @map("updated_by_user_id")
-    updatedByUser   User?   @relation("CompanyVersionUpdatedBy", fields: [updatedByUserId], references: [id], onDelete: SetNull)
+  /// User who edited the historization. Nullable: preserved as NULL if the user is later deleted.
+  updatedByUserId String? @map("updated_by_user_id")
+  updatedByUser   User?   @relation("CompanyVersionUpdatedBy", fields: [updatedByUserId], references: [id], onDelete: SetNull)
 
-    /// Mandatory reason for the historization, enforced at application level (min 3, max 500 chars).
-    storicizeReason String? @map("storicize_reason") @db.VarChar(500)
+  /// Mandatory reason for the historization, enforced at application level (min 3, max 500 chars).
+  storicizeReason String? @map("storicize_reason") @db.VarChar(500)
 
-    // === RELATIONS ===
+  // === RELATIONS ===
 
-    company         Company         @relation("CompanyVersions", fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade)
-    tenant          Tenant          @relation("TenantCompanyVersions", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    documentParties DocumentParty[] @relation("CompanyVersionParties")
+  company         Company         @relation("CompanyVersions", fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade)
+  tenant          Tenant          @relation("TenantCompanyVersions", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  documentParties DocumentParty[] @relation("CompanyVersionParties")
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    // === DOCUMENT PARTY REFERENCE ===
-    @@unique([tenantId, companyId, id])
-    // === VERSION INTEGRITY AND HISTORY ===
-    @@unique([companyId, validFrom])
-    @@unique([companyId], where: { isCurrent: true })
-    @@map("company_versions")
+  // === DOCUMENT PARTY REFERENCE ===
+  @@unique([tenantId, companyId, id])
+  // === VERSION INTEGRITY AND HISTORY ===
+  @@unique([companyId, validFrom])
+  @@unique([companyId], where: { isCurrent: true })
+  @@map("company_versions")
 }
 
 /// CRM and commercial profile of a customer, extending Company 1-to-1.
 model Customer {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    companyId String  @unique @map("company_id")
-    company   Company @relation(fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade)
+  companyId String  @unique @map("company_id")
+  company   Company @relation(fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade)
 
-    /// Denormalized from Company for direct tenant-scoped queries without join.
-    /// Must match Company.tenantId — enforced at application level on creation.
-    tenantId String @map("tenant_id")
-    tenant   Tenant @relation("TenantCustomers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  /// Denormalized from Company for direct tenant-scoped queries without join.
+  /// Must match Company.tenantId — enforced at application level on creation.
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantCustomers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    // === CRM CLASSIFICATION ===
+  // === CRM CLASSIFICATION ===
 
-    type         CustomerType      @default(PROSPECT)
-    priority     CustomerPriority  @default(LOW)
-    segment      CustomerSegment   @default(STANDARD)
-    size         CustomerSize      @default(SMALL)
-    creditStatus CreditCheckStatus @default(PENDING)
+  type         CustomerType      @default(PROSPECT)
+  priority     CustomerPriority  @default(LOW)
+  segment      CustomerSegment   @default(STANDARD)
+  size         CustomerSize      @default(SMALL)
+  creditStatus CreditCheckStatus @default(PENDING)
 
-    // === COMMERCIAL DEFAULTS ===
+  // === COMMERCIAL DEFAULTS ===
 
-    defaultPriceListId String?    @map("default_price_list_id")
-    defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id], onDelete: SetNull)
+  defaultPriceListId String?    @map("default_price_list_id")
+  defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id], onDelete: SetNull)
 
-    customerTaxRuleId Int?     @map("customer_tax_rule_id")
-    customerTaxRule   TaxRule? @relation("CustomerTaxRule", fields: [customerTaxRuleId], references: [id])
+  customerTaxRuleId Int?     @map("customer_tax_rule_id")
+  customerTaxRule   TaxRule? @relation("CustomerTaxRule", fields: [customerTaxRuleId], references: [id])
 
-    paymentMethodId String?        @map("payment_method_id")
-    paymentMethod   PaymentMethod? @relation("CompanyPaymentMethod", fields: [paymentMethodId], references: [id])
+  paymentMethodId String?        @map("payment_method_id")
+  paymentMethod   PaymentMethod? @relation("CompanyPaymentMethod", fields: [paymentMethodId], references: [id])
 
-    creditLimit Decimal? @map("credit_limit") @db.Decimal(15, 2)
+  creditLimit Decimal? @map("credit_limit") @db.Decimal(15, 2)
 
-    // === SALES TRACKING (denormalized, updated on payment events) ===
+  // === SALES TRACKING (denormalized, updated on payment events) ===
 
-    firstSaleDate DateTime? @map("first_sale_date")
-    lastSaleDate  DateTime? @map("last_sale_date")
-    totalSales    Int       @default(0) @map("total_sales")
-    totalRevenue  Decimal   @default(0) @map("total_revenue") @db.Decimal(15, 2)
+  firstSaleDate DateTime? @map("first_sale_date")
+  lastSaleDate  DateTime? @map("last_sale_date")
+  totalSales    Int       @default(0) @map("total_sales")
+  totalRevenue  Decimal   @default(0) @map("total_revenue") @db.Decimal(15, 2)
 
-    /// Date of first CRM entry — may precede firstSaleDate.
-    customerSince     DateTime? @map("customer_since")
-    /// Timestamp of the last recorded interaction (sale, email, call, meeting).
-    lastInteractionAt DateTime? @map("last_interaction_at")
+  /// Date of first CRM entry — may precede firstSaleDate.
+  customerSince     DateTime? @map("customer_since")
+  /// Timestamp of the last recorded interaction (sale, email, call, meeting).
+  lastInteractionAt DateTime? @map("last_interaction_at")
 
-    // === COMPUTED METRICS (updated by background job) ===
+  // === COMPUTED METRICS (updated by background job) ===
 
-    /// totalRevenue / totalSales. Zero when totalSales = 0.
-    averageOrderValue Decimal @default(0) @map("average_order_value") @db.Decimal(15, 2)
-    /// Lifetime value — historical spend plus projection.
-    lifetimeValue     Decimal @default(0) @map("lifetime_value") @db.Decimal(15, 2)
+  /// totalRevenue / totalSales. Zero when totalSales = 0.
+  averageOrderValue Decimal @default(0) @map("average_order_value") @db.Decimal(15, 2)
+  /// Lifetime value — historical spend plus projection.
+  lifetimeValue     Decimal @default(0) @map("lifetime_value") @db.Decimal(15, 2)
 
-    // === PREDICTIVE SCORES ===
+  // === PREDICTIVE SCORES ===
 
-    /// Churn risk score 0–100 (higher = more likely to churn). Updated by ML job.
-    churnRisk   Int @default(0) @map("churn_risk") @db.SmallInt
-    /// Overall health score 0–100. Composite of recency, frequency, spend.
-    healthScore Int @default(50) @map("health_score") @db.SmallInt
+  /// Churn risk score 0–100 (higher = more likely to churn). Updated by ML job.
+  churnRisk   Int @default(0) @map("churn_risk") @db.SmallInt
+  /// Overall health score 0–100. Composite of recency, frequency, spend.
+  healthScore Int @default(50) @map("health_score") @db.SmallInt
 
-    // === SATISFACTION ===
+  // === SATISFACTION ===
 
-    /// Net Promoter Score -100 to +100.
-    npsScore         Int?      @map("nps_score") @db.SmallInt
-    /// Average satisfaction rating 0.00–5.00.
-    satisfactionRate Decimal?  @map("satisfaction_rate") @db.Decimal(3, 2)
-    lastSurveyDate   DateTime? @map("last_survey_date")
+  /// Net Promoter Score -100 to +100.
+  npsScore         Int?      @map("nps_score") @db.SmallInt
+  /// Average satisfaction rating 0.00–5.00.
+  satisfactionRate Decimal?  @map("satisfaction_rate") @db.Decimal(3, 2)
+  lastSurveyDate   DateTime? @map("last_survey_date")
 
-    // === HIERARCHY ===
+  // === HIERARCHY ===
 
-    parentCustomerId String?    @map("parent_customer_id")
-    parentCustomer   Customer?  @relation("CustomerHierarchy", fields: [parentCustomerId], references: [id], onDelete: SetNull)
-    subsidiaries     Customer[] @relation("CustomerHierarchy")
+  parentCustomerId String?    @map("parent_customer_id")
+  parentCustomer   Customer?  @relation("CustomerHierarchy", fields: [parentCustomerId], references: [id], onDelete: SetNull)
+  subsidiaries     Customer[] @relation("CustomerHierarchy")
 
-    // === RELATIONS ===
+  // === RELATIONS ===
 
-    documentsOut      Document[]    @relation("CustomerDocuments")
-    opportunities     Opportunity[]
-    activities        Activity[]    @relation("CustomerActivities")
-    convertedFromLead Lead?         @relation("ConvertedCustomer")
+  documentsOut      Document[]    @relation("CustomerDocuments")
+  opportunities     Opportunity[]
+  activities        Activity[]    @relation("CustomerActivities")
+  convertedFromLead Lead?         @relation("ConvertedCustomer")
 
-    createdAt DateTime  @default(now()) @map("created_at")
-    updatedAt DateTime  @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
-    deletedBy     String? @map("deleted_by")
-    deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
+  deletedBy     String? @map("deleted_by")
+  deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
-    @@unique([tenantId, companyId])
-    @@unique([tenantId, id])
-    @@index([tenantId, type])
-    @@index([tenantId, segment])
-    @@index([tenantId, creditStatus])
-    @@index([tenantId, deletedAt])
-    @@index([parentCustomerId])
-    @@index([deletedAt])
-    @@map("customers")
+  @@unique([tenantId, companyId])
+  @@unique([tenantId, id])
+  @@index([tenantId, type])
+  @@index([tenantId, segment])
+  @@index([tenantId, creditStatus])
+  @@index([tenantId, deletedAt])
+  @@index([parentCustomerId])
+  @@index([deletedAt])
+  @@map("customers")
 }
 
 /// Procurement and fiscal profile of a supplier, extending Company 1-to-1.
 model Supplier {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    companyId String  @unique @map("company_id")
-    company   Company @relation(fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade)
+  companyId String  @unique @map("company_id")
+  company   Company @relation(fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade)
 
-    /// Denormalized from Company for direct tenant-scoped queries without join.
-    /// Must match Company.tenantId — enforced at application level on creation.
-    tenantId String @map("tenant_id")
-    tenant   Tenant @relation("TenantSuppliers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  /// Denormalized from Company for direct tenant-scoped queries without join.
+  /// Must match Company.tenantId — enforced at application level on creation.
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantSuppliers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    // === FISCAL ===
+  // === FISCAL ===
 
-    /// FatturaPA fiscal regime code (RF01–RF19).
-    /// Validated at application level against the FatturaPA code list — no FK needed (stable list).
-    fiscalRegimeCode String? @map("fiscal_regime_code") @db.VarChar(4)
+  /// FatturaPA fiscal regime code (RF01–RF19).
+  /// Validated at application level against the FatturaPA code list — no FK needed (stable list).
+  fiscalRegimeCode String? @map("fiscal_regime_code") @db.VarChar(4)
 
-    /// True if this supplier is subject to withholding tax (ritenuta d'acconto).
-    isWithholdingSubject        Boolean             @default(false) @map("is_withholding_subject")
-    /// Default withholding tax type applied to INBOUND invoices from this supplier.
-    /// Drives pre-population of Document.withholdingTaxTypeId at invoice creation.
-    defaultWithholdingTaxTypeId String?             @map("default_withholding_tax_type_id")
-    defaultWithholdingTaxType   WithholdingTaxType? @relation("SupplierDefaultWithholdingTaxType", fields: [defaultWithholdingTaxTypeId], references: [id], onDelete: SetNull)
+  /// True if this supplier is subject to withholding tax (ritenuta d'acconto).
+  isWithholdingSubject        Boolean             @default(false) @map("is_withholding_subject")
+  /// Default withholding tax type applied to INBOUND invoices from this supplier.
+  /// Drives pre-population of Document.withholdingTaxTypeId at invoice creation.
+  defaultWithholdingTaxTypeId String?             @map("default_withholding_tax_type_id")
+  defaultWithholdingTaxType   WithholdingTaxType? @relation("SupplierDefaultWithholdingTaxType", fields: [defaultWithholdingTaxTypeId], references: [id], onDelete: SetNull)
 
-    /// Override rate if this supplier has a negotiated percentage different from WithholdingTaxType.rate.
-    /// NULL means use the standard rate from the related WithholdingTaxType.
-    defaultWithholdingPercent Decimal? @map("default_withholding_percent") @db.Decimal(5, 2)
+  /// Override rate if this supplier has a negotiated percentage different from WithholdingTaxType.rate.
+  /// NULL means use the standard rate from the related WithholdingTaxType.
+  defaultWithholdingPercent Decimal? @map("default_withholding_percent") @db.Decimal(5, 2)
 
-    /// FatturaPA social security fund code (TC01–TC22, e.g. TC02 = INPS, TC07 = ENPAM).
-    socialSecurityFundId String?             @map("social_security_fund_id")
-    socialSecurityFund   SocialSecurityFund? @relation(fields: [socialSecurityFundId], references: [id], onDelete: SetNull)
+  /// FatturaPA social security fund code (TC01–TC22, e.g. TC02 = INPS, TC07 = ENPAM).
+  socialSecurityFundId String?             @map("social_security_fund_id")
+  socialSecurityFund   SocialSecurityFund? @relation(fields: [socialSecurityFundId], references: [id], onDelete: SetNull)
 
-    /// Override rate if this supplier has a negotiated percentage different from SocialSecurityFund.defaultRate.
-    /// NULL means use the standard rate from the related SocialSecurityFund.
-    defaultContributionPercent Decimal? @map("default_contribution_percent") @db.Decimal(5, 2)
+  /// Override rate if this supplier has a negotiated percentage different from SocialSecurityFund.defaultRate.
+  /// NULL means use the standard rate from the related SocialSecurityFund.
+  defaultContributionPercent Decimal? @map("default_contribution_percent") @db.Decimal(5, 2)
 
-    // === COMMERCIAL DEFAULTS ===
+  // === COMMERCIAL DEFAULTS ===
 
-    paymentMethodId String?        @map("payment_method_id")
-    paymentMethod   PaymentMethod? @relation("SupplierPaymentMethod", fields: [paymentMethodId], references: [id])
+  paymentMethodId String?        @map("payment_method_id")
+  paymentMethod   PaymentMethod? @relation("SupplierPaymentMethod", fields: [paymentMethodId], references: [id])
 
-    supplierTaxRuleId Int?     @map("supplier_tax_rule_id")
-    supplierTaxRule   TaxRule? @relation("SupplierTaxRule", fields: [supplierTaxRuleId], references: [id])
+  supplierTaxRuleId Int?     @map("supplier_tax_rule_id")
+  supplierTaxRule   TaxRule? @relation("SupplierTaxRule", fields: [supplierTaxRuleId], references: [id])
 
-    /// Credit limit granted by this supplier to the tenant.
-    creditLimit Decimal? @map("credit_limit") @db.Decimal(15, 2)
+  /// Credit limit granted by this supplier to the tenant.
+  creditLimit Decimal? @map("credit_limit") @db.Decimal(15, 2)
 
-    // === LOGISTICS ===
+  // === LOGISTICS ===
 
-    leadTimeDays  Int?     @default(0) @map("lead_time_days")
-    transportCost Decimal? @map("transport_cost") @db.Decimal(10, 2)
+  leadTimeDays  Int?     @default(0) @map("lead_time_days")
+  transportCost Decimal? @map("transport_cost") @db.Decimal(10, 2)
 
-    // === PURCHASE TRACKING (denormalized, updated on order/invoice events) ===
+  // === PURCHASE TRACKING (denormalized, updated on order/invoice events) ===
 
-    firstOrderDate DateTime? @map("first_order_date")
-    lastOrderDate  DateTime? @map("last_order_date")
-    totalOrders    Int       @default(0) @map("total_orders")
-    totalSpent     Decimal   @default(0) @map("total_spent") @db.Decimal(15, 2)
-    /// Supplier quality rating 1–5.
-    rating         Int?      @default(5)
+  firstOrderDate DateTime? @map("first_order_date")
+  lastOrderDate  DateTime? @map("last_order_date")
+  totalOrders    Int       @default(0) @map("total_orders")
+  totalSpent     Decimal   @default(0) @map("total_spent") @db.Decimal(15, 2)
+  /// Supplier quality rating 1–5.
+  rating         Int?      @default(5)
 
-    // === HIERARCHY ===
+  // === HIERARCHY ===
 
-    parentSupplierId String?    @map("parent_supplier_id")
-    parentSupplier   Supplier?  @relation("SupplierHierarchy", fields: [parentSupplierId], references: [id], onDelete: SetNull)
-    subsidiaries     Supplier[] @relation("SupplierHierarchy")
+  parentSupplierId String?    @map("parent_supplier_id")
+  parentSupplier   Supplier?  @relation("SupplierHierarchy", fields: [parentSupplierId], references: [id], onDelete: SetNull)
+  subsidiaries     Supplier[] @relation("SupplierHierarchy")
 
-    // === RELATIONS ===
+  // === RELATIONS ===
 
-    documentsIn                Document[]                     @relation("SupplierDocuments")
-    withholdingSettlementLines WithholdingTaxSettlementLine[] @relation("SupplierWithholdingLines")
-    products                   Product[]
-    stockBatches               StockBatch[]
-    activities                 Activity[]                     @relation("SupplierActivities")
-    warehouses                 Warehouse[]                    @relation("SupplierWarehouse")
-    carriers                   Carrier[]                      @relation("SupplierCarriers")
+  documentsIn                Document[]                     @relation("SupplierDocuments")
+  withholdingSettlementLines WithholdingTaxSettlementLine[] @relation("SupplierWithholdingLines")
+  products                   Product[]
+  stockBatches               StockBatch[]
+  activities                 Activity[]                     @relation("SupplierActivities")
+  warehouses                 Warehouse[]                    @relation("SupplierWarehouse")
+  carriers                   Carrier[]                      @relation("SupplierCarriers")
+  productVariants            ProductSupplier[]              @relation("SupplierProductVariants")
 
-    createdAt DateTime  @default(now()) @map("created_at")
-    updatedAt DateTime  @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
-    deletedBy     String? @map("deleted_by")
-    deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
+  deletedBy     String? @map("deleted_by")
+  deletedByUser User?   @relation("DeletedBy", fields: [deletedBy], references: [id])
 
-    @@unique([tenantId, companyId])
-    @@unique([tenantId, id])
-    @@index([tenantId, deletedAt])
-    @@index([parentSupplierId])
-    @@index([deletedAt])
-    @@map("suppliers")
+  @@unique([tenantId, companyId])
+  @@unique([tenantId, id])
+  @@index([tenantId, deletedAt])
+  @@index([parentSupplierId])
+  @@index([deletedAt])
+  @@map("suppliers")
 }
 
 enum AddressType {
-    LEGAL
-    BILLING
-    SHIPPING
-    OFFICE
-    WAREHOUSE
-    OTHER
+  LEGAL
+  BILLING
+  SHIPPING
+  OFFICE
+  WAREHOUSE
+  OTHER
 }
 
 model CompanyAddress {
-    id        String  @id @default(cuid())
-    companyId String  @map("company_id")
-    company   Company @relation("CompanyAddresses", fields: [companyId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  companyId String  @map("company_id")
+  company   Company @relation("CompanyAddresses", fields: [companyId], references: [id], onDelete: Cascade)
 
-    addressType AddressType @default(BILLING) @map("address_type")
-    isPrimary   Boolean     @default(false) @map("is_primary")
+  addressType AddressType @default(BILLING) @map("address_type")
+  isPrimary   Boolean     @default(false) @map("is_primary")
 
-    address      String  @db.VarChar(255)
-    city         String  @db.VarChar(100)
-    provinceCode String? @map("province_code") @db.Char(2)
-    zipCode      String  @map("zip_code") @db.VarChar(20)
+  address      String  @db.VarChar(255)
+  city         String  @db.VarChar(100)
+  provinceCode String? @map("province_code") @db.Char(2)
+  zipCode      String  @map("zip_code") @db.VarChar(20)
 
-    countryCode String  @default("IT") @map("country_code") @db.Char(2)
-    country     Country @relation("AddressCountry", fields: [countryCode], references: [code])
+  countryCode String  @default("IT") @map("country_code") @db.Char(2)
+  country     Country @relation("AddressCountry", fields: [countryCode], references: [code])
 
-    latitude  Decimal? @db.Decimal(10, 8)
-    longitude Decimal? @db.Decimal(11, 8)
+  latitude  Decimal? @db.Decimal(10, 8)
+  longitude Decimal? @db.Decimal(11, 8)
 
-    phone        String? @db.VarChar(50)
-    openingHours Json?   @map("opening_hours")
-    notes        String? @db.Text
+  phone        String? @db.VarChar(50)
+  openingHours Json?   @map("opening_hours")
+  notes        String? @db.Text
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    documentParties DocumentParty[] @relation("DocumentPartySourceAddress")
+  documentParties DocumentParty[] @relation("DocumentPartySourceAddress")
 
-    /// Enforces at most one LEGAL address per company.
-    @@unique([companyId], map: "unique_company_legal_address", where: raw("address_type = 'LEGAL'"))
-    @@unique([companyId, id])
-    @@index([companyId])
-    @@index([companyId, addressType])
-    @@map("company_addresses")
+  /// Enforces at most one LEGAL address per company.
+  @@unique([companyId], map: "unique_company_legal_address", where: raw("address_type = 'LEGAL'"))
+  @@unique([companyId, id])
+  @@index([companyId])
+  @@index([companyId, addressType])
+  @@map("company_addresses")
 }
 
 /// Person contact, independent of any single company.
 /// Associated to one or more companies via CompanyContact.
 model Contact {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    firstName   String  @map("first_name") @db.VarChar(100)
-    lastName    String? @map("last_name") @db.VarChar(100)
-    email       String? @db.VarChar(255)
-    phone       String? @db.VarChar(50)
-    mobilePhone String? @map("mobile_phone") @db.VarChar(50)
-    active      Boolean @default(true)
-    notes       String? @db.Text
+  firstName   String  @map("first_name") @db.VarChar(100)
+  lastName    String? @map("last_name") @db.VarChar(100)
+  email       String? @db.VarChar(255)
+  phone       String? @db.VarChar(50)
+  mobilePhone String? @map("mobile_phone") @db.VarChar(50)
+  active      Boolean @default(true)
+  notes       String? @db.Text
 
-    tenantId             String                @map("tenant_id")
-    tenant               Tenant                @relation("TenantContacts", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    companies            CompanyContact[]
-    documents            Document[]
-    activities           Activity[]            @relation("ContactActivities")
-    activityParticipants ActivityParticipant[]
+  tenantId             String                @map("tenant_id")
+  tenant               Tenant                @relation("TenantContacts", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  companies            CompanyContact[]
+  documents            Document[]
+  activities           Activity[]            @relation("ContactActivities")
+  activityParticipants ActivityParticipant[]
 
-    createdAt DateTime  @default(now()) @map("created_at")
-    updatedAt DateTime  @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
-    deletedBy     String? @map("deleted_by")
-    deletedByUser User?   @relation("ContactDeletedBy", fields: [deletedBy], references: [id], onDelete: SetNull)
+  deletedBy     String? @map("deleted_by")
+  deletedByUser User?   @relation("ContactDeletedBy", fields: [deletedBy], references: [id], onDelete: SetNull)
 
-    @@unique([tenantId, id])
-    /// Email unique per tenant. Partial: allows multiple NULL emails within the same tenant.
-    @@unique([tenantId, email], where: { email: { not: null }, deletedAt: null }, map: "unique_tenant_contact_email")
-    @@index([tenantId])
-    @@index([tenantId, active])
-    @@index([tenantId, deletedAt])
-    @@map("contacts")
+  @@unique([tenantId, id])
+  /// Email unique per tenant. Partial: allows multiple NULL emails within the same tenant.
+  @@unique([tenantId, email], where: { email: { not: null }, deletedAt: null }, map: "unique_tenant_contact_email")
+  @@index([tenantId])
+  @@index([tenantId, active])
+  @@index([tenantId, deletedAt])
+  @@map("contacts")
 }
 
 /// Many-to-many join between Contact and Company with role metadata.
 model CompanyContact {
-    id        Int     @id @default(autoincrement())
-    contactId String  @map("contact_id")
-    contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
-    companyId String  @map("company_id")
-    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  id        Int     @id @default(autoincrement())
+  contactId String  @map("contact_id")
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  companyId String  @map("company_id")
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-    position         String? @db.VarChar(100)
-    department       String? @db.VarChar(100)
-    isPrimaryContact Boolean @default(false) @map("is_primary_contact")
+  position         String? @db.VarChar(100)
+  department       String? @db.VarChar(100)
+  isPrimaryContact Boolean @default(false) @map("is_primary_contact")
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([companyId, contactId])
-    /// Enforces at most one primary contact per company.
-    @@unique([companyId], map: "unique_primary_contact_per_company", where: { isPrimaryContact: true })
-    @@index([contactId])
-    @@index([companyId])
-    @@map("company_contacts")
+  @@unique([companyId, contactId])
+  /// Enforces at most one primary contact per company.
+  @@unique([companyId], map: "unique_primary_contact_per_company", where: { isPrimaryContact: true })
+  @@index([contactId])
+  @@index([companyId])
+  @@map("company_contacts")
 }
 
 /// Internal note attached to a company. Append-friendly; not soft-deleted.
 model CompanyNote {
-    id        Int      @id @default(autoincrement())
-    companyId String   @map("company_id")
-    company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-    title     String   @db.VarChar(255)
-    content   String   @db.Text
-    authorId  String?  @map("author_id")
-    author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  id        Int      @id @default(autoincrement())
+  companyId String   @map("company_id")
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  title     String   @db.VarChar(255)
+  content   String   @db.Text
+  authorId  String?  @map("author_id")
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@index([companyId])
-    @@index([authorId])
-    @@map("company_notes")
+  @@index([companyId])
+  @@index([authorId])
+  @@map("company_notes")
 }

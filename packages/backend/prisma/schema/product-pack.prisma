@@ -1,0 +1,25 @@
+/// Component line of a PACK variant. Components are variants (SKU), since stock is tracked per variant.
+/// Application rules: packVariant.product.type = PACK; component product type must not be PACK
+/// (or cycles must be rejected); pack and component must not be the same variant.
+model ProductPackItem {
+  id       String @id @default(cuid())
+  tenantId String @map("tenant_id")
+
+  packVariantId String         @map("pack_variant_id")
+  packVariant   ProductVariant @relation("PackItems", fields: [tenantId, packVariantId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+  componentVariantId String         @map("component_variant_id")
+  componentVariant   ProductVariant @relation("PackComponentOf", fields: [tenantId, componentVariantId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+  /// Quantity of the component per 1 pack, expressed in the component product's base UoM. Must be > 0 (CHECK in migration).
+  quantity Decimal @default(1) @db.Decimal(15, 6)
+
+  position Int @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tenantId, packVariantId, componentVariantId])
+  @@index([tenantId, componentVariantId]) // reverse lookup: where is this variant used?
+  @@map("product_pack_items")
+}

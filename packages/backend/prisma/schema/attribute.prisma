@@ -28,6 +28,7 @@ model AttributeGroup {
 
   translations AttributeGroupTranslation[]
   attributes   Attribute[]
+  productAxes  ProductVariantAxis[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -106,12 +107,15 @@ model AttributeTranslation {
 /// Links a variant to one attribute value. A variant holds at most one value per group.
 model ProductVariantAttribute {
   tenantId         String @map("tenant_id")
+  /// Denormalized from ProductVariant.productId; composite FKs bind variant, axis and value to the same product.
+  productId        String @map("product_id")
   productVariantId String @map("product_variant_id")
   attributeGroupId String @map("attribute_group_id")
   attributeId      String @map("attribute_id")
 
-  productVariant ProductVariant @relation(fields: [tenantId, productVariantId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
-  attribute      Attribute      @relation(fields: [tenantId, attributeGroupId, attributeId], references: [tenantId, attributeGroupId, id], onDelete: Restrict, onUpdate: Cascade)
+  productVariant ProductVariant     @relation(fields: [tenantId, productId, productVariantId], references: [tenantId, productId, id], onDelete: Cascade, onUpdate: Cascade)
+  axis           ProductVariantAxis @relation(fields: [tenantId, productId, attributeGroupId], references: [tenantId, productId, attributeGroupId], onDelete: Restrict, onUpdate: Cascade)
+  attribute      Attribute          @relation(fields: [tenantId, attributeGroupId, attributeId], references: [tenantId, attributeGroupId, id], onDelete: Restrict, onUpdate: Cascade)
 
   @@id([productVariantId, attributeId])
   @@unique([productVariantId, attributeGroupId])

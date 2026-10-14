@@ -1,48 +1,48 @@
 /// Bank account owned by a Company: the tenant's own company, a customer or a supplier.
 model BankAccount {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    // === OWNER (exclusive arc) ===
+  // === OWNER (exclusive arc) ===
 
-    /// Tenant scope. Always set: every account belongs to exactly one tenant's data set.
-    tenantId String @map("tenant_id")
-    tenant   Tenant @relation("TenantBankAccounts", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  /// Tenant scope. Always set: every account belongs to exactly one tenant's data set.
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantBankAccounts", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    /// Owner company. Tenant-owned accounts point to Tenant.companyId.
-    companyId String  @map("company_id")
-    company   Company @relation("CompanyBankAccounts", fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+  /// Owner company. Tenant-owned accounts point to Tenant.companyId.
+  companyId String  @map("company_id")
+  company   Company @relation("CompanyBankAccounts", fields: [tenantId, companyId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
-    /// Internal label (e.g. "Conto principale EUR", "IBAN fornitore sede Milano").
-    name     String  @db.VarChar(100)
-    bankName String  @map("bank_name") @db.VarChar(100)
-    iban     String  @db.VarChar(34)
-    bic      String? @db.VarChar(11)
+  /// Internal label (e.g. "Conto principale EUR", "IBAN fornitore sede Milano").
+  name     String  @db.VarChar(100)
+  bankName String  @map("bank_name") @db.VarChar(100)
+  iban     String  @db.VarChar(34)
+  bic      String? @db.VarChar(11)
 
-    /// Titolare del conto, se diverso dalla ragione sociale (conti cointestati/fiduciari).
-    accountHolder String? @map("account_holder") @db.VarChar(255)
+  /// Titolare del conto, se diverso dalla ragione sociale (conti cointestati/fiduciari).
+  accountHolder String? @map("account_holder") @db.VarChar(255)
 
-    currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
-    currency     Currency @relation("BankAccountCurrency", fields: [currencyCode], references: [code])
+  currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
+  currency     Currency @relation("BankAccountCurrency", fields: [currencyCode], references: [code])
 
-    note String? @db.VarChar(250)
+  note String? @db.VarChar(250)
 
-    active    Boolean @default(true)
-    isDefault Boolean @default(false) @map("is_default")
+  active    Boolean @default(true)
+  isDefault Boolean @default(false) @map("is_default")
 
-    // === RELATIONS ===
-    paymentMethods              PaymentMethod[]
-    paymentBatches              PaymentBatch[]
-    documentPaymentBankAccounts Document[]                 @relation("DocumentPaymentBankAccount")
-    withholdingTaxSettlements   WithholdingTaxSettlement[] @relation("SettlementBankAccount")
+  // === RELATIONS ===
+  paymentMethods              PaymentMethod[]
+  paymentBatches              PaymentBatch[]
+  documentPaymentBankAccounts Document[]                 @relation("DocumentPaymentBankAccount")
+  withholdingTaxSettlements   WithholdingTaxSettlement[] @relation("SettlementBankAccount")
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([tenantId, id])
-    @@unique([tenantId, companyId, iban])
-    @@unique([tenantId, companyId, currencyCode], map: "unique_company_default_bank_account", where: { isDefault: true })
-    @@index([tenantId, iban])
-    @@index([tenantId, active])
-    @@index([companyId, active])
-    @@map("bank_accounts")
+  @@unique([tenantId, id])
+  @@unique([tenantId, companyId, iban])
+  @@unique([tenantId, companyId, currencyCode], map: "unique_company_default_bank_account", where: { isDefault: true })
+  @@index([tenantId, iban])
+  @@index([tenantId, active])
+  @@index([companyId, active])
+  @@map("bank_accounts")
 }

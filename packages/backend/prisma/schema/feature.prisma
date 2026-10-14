@@ -5,30 +5,30 @@
 
 /// Reusable specification group, e.g. material, dimensions, compatibility.
 model FeatureGroup {
-    id       String @id @default(cuid())
-    tenantId String @map("tenant_id")
-    tenant   Tenant @relation("TenantFeatureGroups", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  id       String @id @default(cuid())
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantFeatureGroups", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    /// Stable system identifier.
-    code String @db.VarChar(50)
+  /// Stable system identifier.
+  code String @db.VarChar(50)
 
-    /// Display ordering hint.
-    position Int @default(0)
+  /// Display ordering hint.
+  position Int @default(0)
 
-    /// Controls whether this group can be exposed as a catalog filter.
-    isFilterable Boolean @default(false) @map("is_filterable")
+  /// Controls whether this group can be exposed as a catalog filter.
+  isFilterable Boolean @default(false) @map("is_filterable")
 
-    translations  FeatureGroupTranslation[]
-    features      Feature[]
-    productValues ProductFeature[]
+  translations  FeatureGroupTranslation[]
+  features      Feature[]
+  productValues ProductFeature[]
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([tenantId, id])
-    @@unique([tenantId, code])
-    @@index([tenantId, position])
-    @@map("feature_groups")
+  @@unique([tenantId, id])
+  @@unique([tenantId, code])
+  @@index([tenantId, position])
+  @@map("feature_groups")
 }
 
 // ============================================================================
@@ -38,20 +38,20 @@ model FeatureGroup {
 
 /// Localized name of a feature group. Tenant scope is inherited from the parent group.
 model FeatureGroupTranslation {
-    featureGroupId String       @map("feature_group_id")
-    featureGroup   FeatureGroup @relation(fields: [featureGroupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  featureGroupId String       @map("feature_group_id")
+  featureGroup   FeatureGroup @relation(fields: [featureGroupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    languageId Int      @map("language_id")
-    language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  languageId Int      @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    name String @db.VarChar(128)
+  name String @db.VarChar(128)
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@id([featureGroupId, languageId])
-    @@index([languageId])
-    @@map("feature_group_translations")
+  @@id([featureGroupId, languageId])
+  @@index([languageId])
+  @@map("feature_group_translations")
 }
 
 // ============================================================================
@@ -61,27 +61,27 @@ model FeatureGroupTranslation {
 
 /// Reusable predefined value belonging to a feature group.
 model Feature {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    /// Denormalized from FeatureGroup.tenantId; the composite FK below keeps them aligned.
-    tenantId String @map("tenant_id")
+  /// Denormalized from FeatureGroup.tenantId; the composite FK below keeps them aligned.
+  tenantId String @map("tenant_id")
 
-    featureGroupId String       @map("feature_group_id")
-    featureGroup   FeatureGroup @relation(fields: [tenantId, featureGroupId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+  featureGroupId String       @map("feature_group_id")
+  featureGroup   FeatureGroup @relation(fields: [tenantId, featureGroupId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
-    /// Stable system identifier unique within the same feature group.
-    code String @db.VarChar(50)
+  /// Stable system identifier unique within the same feature group.
+  code String @db.VarChar(50)
 
-    /// Display ordering within the same feature group.
-    position Int @default(0)
+  /// Display ordering within the same feature group.
+  position Int @default(0)
 
-    translations  FeatureTranslation[]
-    productValues ProductFeature[]
+  translations  FeatureTranslation[]
+  productValues ProductFeature[]
 
-    @@unique([tenantId, featureGroupId, id])
-    @@unique([tenantId, featureGroupId, code])
-    @@index([tenantId, featureGroupId])
-    @@map("features")
+  @@unique([tenantId, featureGroupId, id])
+  @@unique([tenantId, featureGroupId, code])
+  @@index([tenantId, featureGroupId])
+  @@map("features")
 }
 
 // ============================================================================
@@ -91,20 +91,20 @@ model Feature {
 
 /// Localized display value of a predefined feature. Tenant scope is inherited from the parent feature.
 model FeatureTranslation {
-    featureId String  @map("feature_id")
-    feature   Feature @relation(fields: [featureId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  featureId String  @map("feature_id")
+  feature   Feature @relation(fields: [featureId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-    languageId Int      @map("language_id")
-    language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  languageId Int      @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    value String @db.VarChar(255)
+  value String @db.VarChar(255)
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@id([featureId, languageId])
-    @@index([languageId])
-    @@map("feature_translations")
+  @@id([featureId, languageId])
+  @@index([languageId])
+  @@map("feature_translations")
 }
 
 // ============================================================================
@@ -115,26 +115,26 @@ model FeatureTranslation {
 
 /// Assigns a single feature-group value to a product.
 model ProductFeature {
-    /// Denormalized from Product.tenantId; the composite FKs keep product, group and feature in the same tenant.
-    tenantId String @map("tenant_id")
+  /// Denormalized from Product.tenantId; the composite FKs keep product, group and feature in the same tenant.
+  tenantId String @map("tenant_id")
 
-    productId String  @map("product_id")
-    product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+  productId String  @map("product_id")
+  product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
-    featureGroupId String       @map("feature_group_id")
-    featureGroup   FeatureGroup @relation(fields: [tenantId, featureGroupId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+  featureGroupId String       @map("feature_group_id")
+  featureGroup   FeatureGroup @relation(fields: [tenantId, featureGroupId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
-    /// Predefined reusable value selected for the group.
-    featureId String?  @map("feature_id")
-    feature   Feature? @relation(fields: [tenantId, featureGroupId, featureId], references: [tenantId, featureGroupId, id], onDelete: Restrict, onUpdate: Cascade)
+  /// Predefined reusable value selected for the group.
+  featureId String?  @map("feature_id")
+  feature   Feature? @relation(fields: [tenantId, featureGroupId, featureId], references: [tenantId, featureGroupId, id], onDelete: Restrict, onUpdate: Cascade)
 
-    /// Product-specific value used when no predefined feature applies.
-    /// Expected shape: localized key/value object.
-    customValue Json? @map("custom_value")
+  /// Product-specific value used when no predefined feature applies.
+  /// Expected shape: localized key/value object.
+  customValue Json? @map("custom_value")
 
-    position Int @default(0)
+  position Int @default(0)
 
-    @@id([productId, featureGroupId])
-    @@index([tenantId, featureGroupId, featureId]) // FK checks on group/feature delete and "products with feature X" filters
-    @@map("product_features")
+  @@id([productId, featureGroupId])
+  @@index([tenantId, featureGroupId, featureId]) // FK checks on group/feature delete and "products with feature X" filters
+  @@map("product_features")
 }

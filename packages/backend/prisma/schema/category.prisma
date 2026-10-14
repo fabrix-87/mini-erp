@@ -5,34 +5,34 @@
 
 /// Product category node in a hierarchical tree.
 model Category {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    tenantId String @map("tenant_id")
-    tenant   Tenant @relation("TenantCategories", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantCategories", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    /// Parent category reference; null identifies a root node.
-    parentId String?   @map("parent_id")
-    /// Immediate parent in the category tree.
-    parent   Category? @relation("CategoryHierarchy", fields: [tenantId, parentId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+  /// Parent category reference; null identifies a root node.
+  parentId String?   @map("parent_id")
+  /// Immediate parent in the category tree.
+  parent   Category? @relation("CategoryHierarchy", fields: [tenantId, parentId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
-    /// Immediate child categories.
-    children Category[] @relation("CategoryHierarchy")
+  /// Immediate child categories.
+  children Category[] @relation("CategoryHierarchy")
 
-    /// Enables operational use without removing historical links.
-    active Boolean @default(true)
+  /// Enables operational use without removing historical links.
+  active Boolean @default(true)
 
-    /// Display ordering within the same parent scope.
-    position Int @default(0)
+  /// Display ordering within the same parent scope.
+  position Int @default(0)
 
-    translations CategoryTranslation[]
-    products     ProductCategory[]
+  translations CategoryTranslation[]
+  products     ProductCategory[]
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([tenantId, id])
-    @@index([tenantId, parentId, active, position])
-    @@map("categories")
+  @@unique([tenantId, id])
+  @@index([tenantId, parentId, active, position])
+  @@map("categories")
 }
 
 // ============================================================================
@@ -42,26 +42,26 @@ model Category {
 
 /// Localized category content by language.
 model CategoryTranslation {
-    /// Denormalized from Category.tenantId; slug is unique per tenant and language.
-    tenantId String @map("tenant_id")
+  /// Denormalized from Category.tenantId; slug is unique per tenant and language.
+  tenantId String @map("tenant_id")
 
-    categoryId String   @map("category_id")
-    category   Category @relation(fields: [tenantId, categoryId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+  categoryId String   @map("category_id")
+  category   Category @relation(fields: [tenantId, categoryId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
-    languageId Int      @map("language_id")
-    language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  languageId Int      @map("language_id")
+  language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-    name            String  @db.VarChar(255)
-    slug            String? @db.VarChar(255)
-    description     String? @db.Text
-    metaTitle       String? @map("meta_title") @db.VarChar(255)
-    metaDescription String? @map("meta_description") @db.Text
+  name            String  @db.VarChar(255)
+  slug            String? @db.VarChar(255)
+  description     String? @db.Text
+  metaTitle       String? @map("meta_title") @db.VarChar(255)
+  metaDescription String? @map("meta_description") @db.Text
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@id([categoryId, languageId])
-    @@unique([tenantId, languageId, slug])
-    @@index([languageId])
-    @@map("category_translations")
+  @@id([categoryId, languageId])
+  @@unique([tenantId, languageId, slug])
+  @@index([languageId])
+  @@map("category_translations")
 }

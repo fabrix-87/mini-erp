@@ -152,8 +152,7 @@ model Lead {
   convertedAt   DateTime? @map("converted_at")
   /// Reference to the Customer record created upon conversion.
   convertedToId String?   @unique @map("converted_to_id")
-  convertedTo Customer? @relation("ConvertedCustomer", fields: [tenantId, convertedToId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
-
+  convertedTo   Customer? @relation("ConvertedCustomer", fields: [tenantId, convertedToId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   convertedByUserId String? @map("converted_by_user_id")
   convertedBy       User?   @relation("LeadConvertedBy", fields: [convertedByUserId], references: [id])
@@ -236,6 +235,5 @@ model Lead {
   @@index([tenantId, lastContactDate], where: { deletedAt: null })
   @@index([tenantId, status, assignedUserId], where: { deletedAt: null })
   @@index([tenantId, quality, score], where: { deletedAt: null })
-
   @@map("leads")
 }

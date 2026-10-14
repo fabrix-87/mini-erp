@@ -1,0 +1,31 @@
+/// Supplier-specific purchasing data per variant.
+model ProductSupplier {
+  id       String @id @default(cuid())
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantProductSuppliers", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  /// Composite FK keeps variant and supplier in the same tenant.
+  variantId String         @map("variant_id")
+  variant   ProductVariant @relation("ProductSupplierVariants", fields: [tenantId, variantId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+  supplierId String   @map("supplier_id")
+  supplier   Supplier @relation("SupplierProductVariants", fields: [tenantId, supplierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+  supplierSku   String?  @map("supplier_sku") @db.VarChar(64)
+  purchasePrice Decimal  @map("purchase_price") @db.Decimal(20, 6)
+  currencyCode  String   @default("EUR") @map("currency_code") @db.Char(3)
+  currency      Currency @relation("ProductSupplierCurrency", fields: [currencyCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
+
+  minOrderQty  Decimal? @map("min_order_qty") @db.Decimal(15, 6)
+  leadTimeDays Int?     @map("lead_time_days")
+  isPreferred  Boolean  @default(false) @map("is_preferred")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, variantId, supplierId])
+  @@unique([tenantId, variantId], where: { isPreferred: true }, map: "uq_one_preferred_supplier")
+  @@index([tenantId, supplierId])
+  @@map("product_suppliers")
+}

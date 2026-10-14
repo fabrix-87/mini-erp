@@ -1,0 +1,97 @@
+/// Transactional sellable stock unit (SKU). All physical and financial attributes live here.
+model ProductVariant {
+  id        String  @id @default(cuid())
+  productId String  @map("product_id")
+  product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+  /// Deterministic key of the attribute combination: "default" for simple products,
+  /// otherwise sha1 of sorted attributeIds. Recomputed in the same transaction when a value changes.
+  combinationKey String @map("combination_key") @db.VarChar(64)
+
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantProductVariants", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  /// Stock Keeping Unit. Primary transactional interface code for ERP/WMS systems.
+  sku String @db.VarChar(64)
+
+  ean13 String? @db.Char(13)
+  upc   String? @db.Char(12)
+  isbn  String? @db.VarChar(32)
+  mpn   String? @db.VarChar(40)
+
+  minimalQuantity      Decimal @default(1) @map("minimal_quantity") @db.Decimal(15, 6)
+  lowStockThreshold    Decimal @default(0) @map("low_stock_threshold") @db.Decimal(15, 6)
+  lowStockAlertEnabled Boolean @default(false) @map("low_stock_alert_enabled")
+
+  /// Physical warehouse coordinates mapping (e.g., Aisle-Shelf-Bin).
+  location String? @db.VarChar(50)
+
+  availableDate DateTime? @map("available_date")
+
+  weight Decimal? @db.Decimal(20, 6)
+  width  Decimal? @db.Decimal(20, 6)
+  height Decimal? @db.Decimal(20, 6)
+  depth  Decimal? @db.Decimal(20, 6)
+
+  position Int @default(0)
+
+  /// Flips rendering priority to show this specific variant on global catalog views.
+  isDefault         Boolean @default(false) @map("is_default")
+  active            Boolean @default(true)
+  availableForOrder Boolean @default(true) @map("available_for_order")
+
+  metadata Json?
+
+  attributes          ProductVariantAttribute[]
+  stockMovements      StockMovement[]
+  stockReservations   StockReservation[]
+  stockBatches        StockBatch[]
+  virtualStocks       VirtualStock[]
+  documentLines       DocumentLine[]
+  priceListItems      PriceListItem[]
+  images              ProductImage[]
+  opportunityProducts OpportunityProduct[]
+  stockSerials        StockSerial[]
+  packItems           ProductPackItem[]         @relation("PackItems")
+  usedInPacks         ProductPackItem[]         @relation("PackComponentOf")
+  supplierItems       ProductSupplier[]         @relation("ProductSupplierVariants")
+
+  deletedAt     DateTime? @map("deleted_at")
+  deletedBy     String?   @map("deleted_by")
+  deletedByUser User?     @relation("ProductVariantDeletedBy", fields: [deletedBy], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tenantId, productId, combinationKey], where: { deletedAt: null }, map: "uq_variant_combination_per_product")
+  @@unique([tenantId, id])
+  @@unique([tenantId, productId, id]) // target of ProductImage composite FK
+  @@unique([tenantId, sku], where: { deletedAt: null })
+  @@unique([tenantId, ean13], where: { deletedAt: null, ean13: { not: null } })
+  // one default variant per product
+  @@unique([tenantId, productId], where: { isDefault: true, deletedAt: null }, map: "uq_variant_one_default_per_product")
+  @@index([tenantId, productId, active])
+  @@map("product_variants")
+}
+
+/// Attribute groups a product varies by (e.g. Color, Size). Recommended max 3 axes per product.
+/// No rows = simple product (single default variant, no attributes).
+model ProductVariantAxis {
+  tenantId String @map("tenant_id")
+
+  productId String  @map("product_id")
+  product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+  attributeGroupId String         @map("attribute_group_id")
+  attributeGroup   AttributeGroup @relation(fields: [tenantId, attributeGroupId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+  position Int @default(0)
+
+  productVariantAttributes ProductVariantAttribute[]
+
+  @@id([productId, attributeGroupId])
+  /// Target of the ProductVariantAttribute composite FK.
+  @@unique([tenantId, productId, attributeGroupId])
+  @@index([tenantId, attributeGroupId])
+  @@map("product_variant_axes")
+}
