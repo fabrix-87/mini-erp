@@ -370,14 +370,13 @@ model DocumentLine {
 
     // === PRODUCT LINK ===
 
-    /// Specific product variant selected. NULL for free-text services, discounts, and text lines.
-    /// Restrict prevents deletion of a variant that appears on a fiscal document.
+    /// Specific variant sold. NULL for free-text services, discounts, and text lines.
+    /// Composite FK guarantees that productId belongs to the same variant and tenant (MATCH SIMPLE: skipped when either is NULL).
     productVariantId String?         @map("product_variant_id")
-    productVariant   ProductVariant? @relation(fields: [tenantId, productVariantId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+    productVariant   ProductVariant? @relation(fields: [tenantId, productId, productVariantId], references: [tenantId, productId, id], onDelete: Restrict, onUpdate: Cascade)
 
-    /// Parent product reference (cuid). Denormalized from productVariant for statistical grouping.
-    productId String?  @map("product_id")
-    product   Product? @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+    /// Denormalized from productVariant for statistical grouping. Set if and only if productVariantId is set.
+    productId String? @map("product_id")
 
     lineNumber Int              @map("line_number")
     lineType   DocumentLineType @default(PRODUCT)
@@ -406,6 +405,14 @@ model DocumentLine {
 
     discountPercent Decimal @default(0) @map("discount_percent") @db.Decimal(5, 2)
     discountAmount  Decimal @default(0) @map("discount_amount") @db.Decimal(15, 2)
+
+    /// Unit selected on the line. NULL for text/discount lines. `unit` stays as printed snapshot.
+    uomId String?        @map("uom_id")
+    uom   UnitOfMeasure? @relation(fields: [tenantId, uomId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Base units per 1 line unit, snapshotted at line creation.
+    /// Stock quantity = quantity × uomFactor. Never recomputed from the live ProductUom.
+    uomFactor Decimal @default(1) @map("uom_factor") @db.Decimal(20, 10)
 
     /// Line net total: (unitPrice × quantity) − discount. Excludes VAT.
     lineTotal Decimal @default(0) @map("line_total") @db.Decimal(15, 2)
@@ -485,8 +492,8 @@ model DocumentLine {
     @@unique([tenantId, documentId, lineNumber])
     // === PRODUCT LOOKUP (storico vendite, repricing) — ora scoped a tenant ===
     @@index([tenantId, productId])
-    @@index([tenantId, productVariantId])
     @@index([tenantId, matchStatus], where: { matchStatus: { not: null } })
+    @@index([tenantId, uomId], where: { uomId: { not: null } })
     // === TAX REPORT — scoped a tenant ===
     @@index([tenantId, taxRuleId], where: { taxRuleId: { not: null } })
     // === WAREHOUSE MOVEMENTS — scoped a tenant ===

@@ -1,0 +1,118 @@
+// ============================================================================
+// SALES CHANNELS & STOREFRONT SETTINGS
+// ERP core (Product/ProductTranslation) stays channel-agnostic.
+// A missing ProductChannelSettings row means "not listed on that channel".
+// ============================================================================
+
+enum SalesChannelType {
+    WEBSHOP
+    MARKETPLACE
+    B2B_PORTAL
+    POS
+}
+
+/// Controls which delivery time note is shown on the storefront.
+enum DeliveryNoteDisplay {
+    NONE
+    IN_STOCK
+    OUT_OF_STOCK
+    BOTH
+}
+
+model SalesChannel {
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantSalesChannels", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    code   String           @db.VarChar(30)
+    name   String           @db.VarChar(100)
+    type   SalesChannelType @default(WEBSHOP)
+    active Boolean          @default(true)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    productSettings ProductChannelSettings[]
+
+    @@unique([tenantId, id])
+    @@unique([tenantId, code])
+    @@map("sales_channels")
+}
+
+/// Per-channel publication and storefront behavior of a product.
+model ProductChannelSettings {
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+
+    productId String  @map("product_id")
+    product   Product @relation("ProductChannelSettings", fields: [tenantId, productId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+    channelId String       @map("channel_id")
+    channel   SalesChannel @relation(fields: [tenantId, channelId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    isPublished Boolean   @default(false) @map("is_published")
+    publishedAt DateTime? @map("published_at")
+
+    visibility    ProductVisibility @default(BOTH)
+    showPrice     Boolean           @default(true) @map("show_price")
+    onSale        Boolean           @default(false) @map("on_sale")
+    /// Sold only through this channel (renamed from Product.onlineOnly, which was ambiguous with multiple channels).
+    isExclusive   Boolean           @default(false) @map("is_exclusive")
+    showCondition Boolean           @default(false) @map("show_condition")
+
+    /// Checkout surcharge applied on this channel only.
+    additionalShippingCost Decimal @default(0) @map("additional_shipping_cost") @db.Decimal(20, 6)
+
+    deliveryNoteDisplay DeliveryNoteDisplay @default(NONE) @map("delivery_note_display")
+
+    /// Behavior when the product is unpublished/archived. MOVED/TEMPORARY require redirectTargetId (CHECK in migration).
+    redirectType     ProductRedirectType @default(NOT_FOUND) @map("redirect_type")
+    redirectTargetId String?             @map("redirect_target_id")
+    redirectTarget   Product?            @relation("ProductChannelRedirect", fields: [tenantId, redirectTargetId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    translations ProductChannelTranslation[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([tenantId, id, channelId])
+    @@unique([tenantId, productId, channelId])
+    @@index([tenantId, channelId, isPublished])
+    @@index([tenantId, redirectTargetId], where: { redirectTargetId: { not: null } })
+    @@map("product_channel_settings")
+}
+
+/// Storefront-facing localized content (SEO and availability copy).
+model ProductChannelTranslation {
+    tenantId  String @map("tenant_id")
+    /// Denormalized from ProductChannelSettings.channelId; enables per-channel slug uniqueness.
+    channelId String @map("channel_id")
+
+    settingsId String                 @map("settings_id")
+    settings   ProductChannelSettings @relation(fields: [tenantId, settingsId, channelId], references: [tenantId, id, channelId], onDelete: Cascade, onUpdate: Cascade)
+
+    languageId Int      @map("language_id")
+    language   Language @relation(fields: [languageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Router lookups must always include tenantId and channelId.
+    slug String? @db.VarChar(255)
+    tags String? @db.VarChar(500)
+
+    metaTitle       String? @map("meta_title") @db.VarChar(255)
+    metaDescription String? @map("meta_description") @db.Text
+    metaKeywords    String? @map("meta_keywords") @db.VarChar(500)
+
+    availableNowLabel   String? @map("available_now_label") @db.VarChar(100)
+    availableLaterLabel String? @map("available_later_label") @db.VarChar(100)
+
+    deliveryTimeInStockNote    String? @map("delivery_time_in_stock_note") @db.VarChar(255)
+    deliveryTimeOutOfStockNote String? @map("delivery_time_out_of_stock_note") @db.VarChar(255)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@id([settingsId, languageId])
+    @@unique([tenantId, channelId, languageId, slug], where: { slug: { not: null } })
+    @@index([languageId])
+    @@map("product_channel_translations")
+}

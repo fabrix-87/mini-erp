@@ -64,31 +64,25 @@ model Product {
     /// Global internal manufacturer/factory fallback code.
     reference String @db.VarChar(64)
 
-    active            Boolean @default(true)
     availableForOrder Boolean @default(true) @map("available_for_order")
-    showPrice         Boolean @default(true) @map("show_price")
-    onlineOnly        Boolean @default(false) @map("online_only")
-    onSale            Boolean @default(false) @map("on_sale")
 
-    /// Fallback base retail price. Actual transactional prices reside on ProductVariant.
-    price          Decimal @default(0) @db.Decimal(20, 6)
-    wholesalePrice Decimal @default(0) @map("wholesale_price") @db.Decimal(20, 6)
-    ecotax         Decimal @default(0) @db.Decimal(20, 6)
+    ecotax Decimal @default(0) @db.Decimal(20, 6)
+
+    /// Immutable once the product has movements (application rule).
+    baseUomId String        @map("base_uom_id")
+    baseUom   UnitOfMeasure @relation("ProductBaseUom", fields: [tenantId, baseUomId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+    uoms      ProductUom[]
 
     defaultTaxRuleId Int?     @map("default_tax_rule_id")
     defaultTaxRule   TaxRule? @relation("ProductTaxRule", fields: [defaultTaxRuleId], references: [id])
 
-    visibility    ProductVisibility @default(BOTH)
-    condition     ProductCondition  @default(NEW)
-    showCondition Boolean           @default(false) @map("show_condition")
+    condition ProductCondition @default(NEW)
 
     manufacturerId String?       @map("manufacturer_id")
     manufacturer   Manufacturer? @relation(fields: [tenantId, manufacturerId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
     supplierId String?   @map("supplier_id")
     supplier   Supplier? @relation(fields: [tenantId, supplierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
-
-    additionalShippingCost Decimal @default(0) @map("additional_shipping_cost") @db.Decimal(20, 6)
 
     /// Combined Nomenclature (NC8) customs tariff number for Intrastat reporting.
     commodityCode String?                 @map("commodity_code") @db.Char(8)
@@ -98,19 +92,15 @@ model Product {
     /// 0 = disabled, 1 = show in-stock note, 2 = show out-of-stock note, 3 = show both.
     deliveryTimeNoteType Int @default(0) @map("delivery_time_note_type")
 
-    /// Strategy fallback for handling 404/SEO mitigation when a product is deactivated.
-    redirectType     ProductRedirectType @default(NOT_FOUND) @map("redirect_type")
-    redirectTargetId String?             @map("redirect_target_id")
-    redirectTarget   Product?            @relation("ProductRedirect", fields: [tenantId, redirectTargetId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
-    redirectSources  Product[]           @relation("ProductRedirect")
-
     /// CDN or absolute URL for public catalog lists optimization.
     coverThumbnailUrl String? @map("cover_thumbnail_url") @db.VarChar(500)
+
+    channelSettings        ProductChannelSettings[] @relation("ProductChannelSettings")
+    channelRedirectSources ProductChannelSettings[] @relation("ProductChannelRedirect")
 
     variants      ProductVariant[]
     images        ProductImage[]
     categories    ProductCategory[]
-    documentLines DocumentLine[]
     translations  ProductTranslation[]
 
     // Audited Soft-Delete Layer
@@ -128,10 +118,9 @@ model Product {
     @@unique([tenantId, id])
     @@unique([tenantId, reference], where: { deletedAt: null })
     @@index([tenantId, status])
-    @@index([tenantId, active])
+    @@index([tenantId, baseUomId])
     @@index([tenantId, supplierId], where: { supplierId: { not: null } })
     @@index([tenantId, manufacturerId], where: { manufacturerId: { not: null } })
-    @@index([tenantId, redirectTargetId], where: { redirectTargetId: { not: null } })
     @@index([tenantId, deletedAt])
     @@map("products")
 }
@@ -233,6 +222,8 @@ model ProductVariant {
     priceListItems      PriceListItem[]
     images              ProductImage[]
     opportunityProducts OpportunityProduct[]
+    packItems           ProductPackItem[]         @relation("PackItems")
+    usedInPacks         ProductPackItem[]         @relation("PackComponentOf")
 
     deletedAt     DateTime? @map("deleted_at")
     deletedBy     String?   @map("deleted_by")
@@ -341,4 +332,49 @@ model Manufacturer {
     @@unique([tenantId, id])
     @@unique([tenantId, name])
     @@map("manufacturers")
+}
+
+/// Component line of a PACK variant. Components are variants (SKU), since stock is tracked per variant.
+/// Application rules: packVariant.product.type = PACK; component product type must not be PACK
+/// (or cycles must be rejected); pack and component must not be the same variant.
+model ProductPackItem {
+    id       String @id @default(cuid())
+    tenantId String @map("tenant_id")
+
+    packVariantId String         @map("pack_variant_id")
+    packVariant   ProductVariant @relation("PackItems", fields: [tenantId, packVariantId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+    componentVariantId String         @map("component_variant_id")
+    componentVariant   ProductVariant @relation("PackComponentOf", fields: [tenantId, componentVariantId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Quantity of the component per 1 pack, expressed in the component product's base UoM. Must be > 0 (CHECK in migration).
+    quantity Decimal @default(1) @db.Decimal(15, 6)
+
+    position Int @default(0)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([tenantId, packVariantId, componentVariantId])
+    @@index([tenantId, componentVariantId]) // reverse lookup: where is this variant used?
+    @@map("product_pack_items")
+}
+
+/// Supplier-specific purchasing data per variant.
+model ProductSupplier {
+    id         String @id @default(cuid())
+    tenantId   String @map("tenant_id")
+    variantId  String @map("variant_id")
+    supplierId String @map("supplier_id")
+
+    supplierSku   String?  @map("supplier_sku") @db.VarChar(64)
+    purchasePrice Decimal  @map("purchase_price") @db.Decimal(20, 6)
+    currencyId    Int      @map("currency_id")
+    minOrderQty   Decimal? @map("min_order_qty") @db.Decimal(20, 6)
+    leadTimeDays  Int?     @map("lead_time_days")
+    isPreferred   Boolean  @default(false) @map("is_preferred")
+
+    @@unique([tenantId, variantId, supplierId])
+    @@unique([tenantId, variantId], where: { isPreferred: true }, map: "uq_one_preferred_supplier")
+    @@map("product_suppliers")
 }
