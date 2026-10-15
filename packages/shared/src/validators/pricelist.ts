@@ -1,13 +1,12 @@
 import { z } from "zod";
 import { isoDateSchema } from "./primitives/date";
-import { createIdSchema, positiveNumbersSchema } from "./primitives/id";
+import { positiveNumbersSchema } from "./primitives/id";
 import { createDecimalSchema } from "./primitives/decimal";
 import { currencySchema, percentageSchema, priceSchema } from "./business/currency";
 import { queryBooleanSchema } from "./query/params";
 import { sortOrderSchema } from "./query/pagination";
-import { currencyCodeBaseSchema } from "./base";
+import { currencyCodeBaseSchema, priceListIdBaseSchema, productVariantIdBaseSchema } from "./base";
 import { PRICE_LIST_ROUNDING_METHOD, PRICE_LIST_STRATEGY, PRICE_LIST_TYPE } from "../constants";
-
 
 // ============================================================================
 // ENUMS
@@ -43,14 +42,14 @@ export const createPriceListSchema = z
     active: z.boolean().default(true),
 
     // Ereditarietà
-    parentListId: createIdSchema("Parent ID non valido"),
+    parentListId: priceListIdBaseSchema,
     strategy: priceListStrategySchema.default("EXPLICIT"),
     strategyValue: createDecimalSchema(2, {
       positiveOnly: true,
       min: 0,
       error: "Il valore deve essere >= 0",
     }),
-    roundingMethod: roundingMethodSchema.default("none"),
+    roundingMethod: roundingMethodSchema.default("NONE"),
   })
   .strict();
 
@@ -68,8 +67,8 @@ export const updatePriceListSchema = createPriceListSchema.partial().strict();
  */
 export const createPriceListItemSchema = z
   .object({
-    priceListId: createIdSchema("ID listino non valido"),
-    variantId: createIdSchema("ID variante non valido"),
+    priceListId: priceListIdBaseSchema,
+    variantId: productVariantIdBaseSchema,
 
     // Scaglioni quantità
     minQuantity: positiveNumbersSchema.default(1),
@@ -87,10 +86,11 @@ export const createPriceListItemSchema = z
 /**
  * Schema per l'aggiornamento di un Price List Item
  */
-export const updatePriceListItemSchema = createPriceListItemSchema.omit({
-  priceListId: true,
-  variantId: true,
-})
+export const updatePriceListItemSchema = createPriceListItemSchema
+  .omit({
+    priceListId: true,
+    variantId: true,
+  })
   .partial()
   .strict();
 
@@ -99,7 +99,7 @@ export const updatePriceListItemSchema = createPriceListItemSchema.omit({
  */
 export const bulkImportItemSchema = z
   .object({
-    variantId: createIdSchema("ID variante non valido"),
+    variantId: productVariantIdBaseSchema,
     minQuantity: positiveNumbersSchema.optional().default(1),
     price: priceSchema({ precision: 4 }),
     discountPercent: percentageSchema.optional().nullable(),
@@ -129,9 +129,7 @@ export const priceListQuerySchema = z.object({
   type: priceListTypeSchema.optional(),
   currencyCode: currencyCodeBaseSchema,
   validAt: isoDateSchema({ message: "Data non valida" }),
-  sortBy: z
-    .enum(["code", "name", "type", "currency", "validFrom", "validTo"])
-    .default("code"),
+  sortBy: z.enum(["code", "name", "type", "currency", "validFrom", "validTo"]).default("code"),
   sortOrder: sortOrderSchema,
 });
 
@@ -139,7 +137,7 @@ export const priceListQuerySchema = z.object({
  * Schema per query Price List Items
  */
 export const priceListItemQuerySchema = z.object({
-  variantId: createIdSchema("ID variante non valido"),
+  variantId: productVariantIdBaseSchema,
   minPrice: currencySchema,
   maxPrice: currencySchema,
   sortBy: z.enum(["variantId", "minQuantity", "price"]).default("variantId"),
@@ -150,8 +148,8 @@ export const priceListItemQuerySchema = z.object({
  * Schema per calcolo prezzo
  */
 export const calculatePriceBodySchema = z.object({
-  priceListId: createIdSchema("ID listino non valido"),
-  variantId: createIdSchema("ID variante non valido"),
+  priceListId: priceListIdBaseSchema,
+  variantId: productVariantIdBaseSchema,
   quantity: positiveNumbersSchema.default(1),
 });
 
@@ -160,13 +158,13 @@ export const calculatePriceBodySchema = z.object({
 // ============================================================================
 
 export const priceListIdParamSchema = z.object({
-  id: createIdSchema("ID listino non valido"),
+  id: priceListIdBaseSchema,
 });
 
 export const priceListItemIdParamSchema = z.object({
-  priceListId: createIdSchema("ID listino non valido")
+  priceListId: priceListIdBaseSchema,
 });
 
 export const bulkPriceListIdParamSchema = z.object({
-  priceListId: createIdSchema("ID listino non valido"),
+  priceListId: priceListIdBaseSchema,
 });

@@ -120,7 +120,6 @@ export async function fetchAlerts(
     select: {
       id: true,
       sku: true,
-      variantCode: true,
       lowStockThreshold: true,
       product: {
         select: {
@@ -137,11 +136,11 @@ export async function fetchAlerts(
 
   const lowStockResults = alertVariants
     .map((v) => {
-      const stock = (inboundMap.get(v.id) ?? 0) - (outboundMap.get(v.id) ?? 0);
-      const threshold = v.lowStockThreshold > 0 ? v.lowStockThreshold : 5;
+      const stock = (Number(inboundMap.get(v.id)) ?? 0) - (Number(outboundMap.get(v.id)) ?? 0);
+      const threshold = Number(v.lowStockThreshold) > 0 ? v.lowStockThreshold : 5;
       return { v, stock, threshold };
     })
-    .filter(({ stock, threshold }) => stock <= threshold)
+    .filter(({ stock, threshold }) => stock <= Number(threshold))
     .sort((a, b) => a.stock - b.stock)
     .slice(0, bucket);
 

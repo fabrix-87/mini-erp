@@ -23,11 +23,13 @@ import {
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
 import { calculatePriceFromParent } from "@/helpers/pricelist-helper";
+import { withTenantId } from "@/helpers/prisma-helper";
 
 // ============================================================================
 // PRICE LIST CONTROLLER
@@ -47,8 +49,9 @@ export const getAllPriceLists = async (c: Context<AppBindings>) => {
     sortBy = "code",
     sortOrder = "asc",
   } = getValidatedQuery<PriceListQueryInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const where: Prisma.PriceListWhereInput = {};
+  const where: Prisma.PriceListWhereInput = withTenantId({}, tenantId);
 
   if (active !== undefined) {
     where.active = active === true;
@@ -109,9 +112,10 @@ export const getAllPriceLists = async (c: Context<AppBindings>) => {
  */
 export const getPriceListById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<PriceListIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const priceList = await prisma.priceList.findUnique({
-    where: { id },
+    where: { id, tenantId },
     include: {
       parentList: {
         select: {
@@ -133,7 +137,6 @@ export const getPriceListById = async (c: Context<AppBindings>) => {
           variant: {
             select: {
               id: true,
-              variantCode: true,
               sku: true,
               product: {
                 select: {
@@ -187,12 +190,13 @@ export const createPriceList = async (c: Context<AppBindings>) => {
     parentListId,
     strategy = "EXPLICIT",
     strategyValue = 0,
-    roundingMethod = "none",
+    roundingMethod = "NONE",
   } = getValidatedBody<CreatePriceListInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   // Verifica unicità code
   const existingCode = await prisma.priceList.findUnique({
-    where: { code },
+    where: { tenantId_code: { code, tenantId } },
   });
 
   if (existingCode) {
@@ -229,6 +233,7 @@ export const createPriceList = async (c: Context<AppBindings>) => {
 
   const priceList = await prisma.priceList.create({
     data: {
+      tenantId,
       code,
       name,
       currencyCode,
@@ -275,9 +280,10 @@ export const updatePriceList = async (c: Context<AppBindings>) => {
     strategyValue,
     roundingMethod,
   } = getValidatedBody<UpdatePriceListInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const existingPriceList = await prisma.priceList.findUnique({
-    where: { id },
+    where: { id, tenantId },
   });
 
   if (!existingPriceList) {
@@ -287,7 +293,7 @@ export const updatePriceList = async (c: Context<AppBindings>) => {
   // Se code cambia, verifica unicità
   if (code && code !== existingPriceList.code) {
     const duplicateCode = await prisma.priceList.findUnique({
-      where: { code },
+      where: { tenantId_code: { tenantId, code } },
     });
 
     if (duplicateCode) {
@@ -331,7 +337,7 @@ export const updatePriceList = async (c: Context<AppBindings>) => {
   if (roundingMethod !== undefined) updateData.roundingMethod = roundingMethod;
 
   const priceList = await prisma.priceList.update({
-    where: { id },
+    where: { id, tenantId },
     data: updateData,
     include: {
       parentList: {
@@ -356,9 +362,10 @@ export const updatePriceList = async (c: Context<AppBindings>) => {
  */
 export const deletePriceList = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<PriceListIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const priceList = await prisma.priceList.findUnique({
-    where: { id },
+    where: { id, tenantId },
     include: {
       items: { select: { id: true } },
       customers: { select: { id: true } },
@@ -387,7 +394,7 @@ export const deletePriceList = async (c: Context<AppBindings>) => {
   }
 
   await prisma.priceList.delete({
-    where: { id },
+    where: { id, tenantId },
   });
   return sendDeleted(c, `Price List #${id} eliminato con successo`);
 };
@@ -404,9 +411,11 @@ export const deletePriceList = async (c: Context<AppBindings>) => {
 export const getPriceListItems = async (c: Context<AppBindings>) => {
   const { priceListId } = getValidatedParams<PriceListItemIdParam>(c);
   const { variantId, minPrice, maxPrice } = getValidatedQuery<PriceListItemQueryInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const where: Prisma.PriceListItemWhereInput = {
     priceListId,
+    tenantId,
   };
 
   if (variantId) {
@@ -439,7 +448,7 @@ export const getPriceListItems = async (c: Context<AppBindings>) => {
         },
       },
     },
-    orderBy: [{ variant: { variantCode: "asc" } }, { minQuantity: "asc" }],
+    orderBy: [{ variant: { sku: "asc" } }, { minQuantity: "asc" }],
   });
 
   return sendSuccess(c, items, {
@@ -462,11 +471,12 @@ export const createPriceListItem = async (c: Context<AppBindings>) => {
     validFrom,
     validTo,
   } = getValidatedBody<CreatePriceListItemInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   // Verifica esistenza Price List e Variant
   const [priceList, variant] = await Promise.all([
-    prisma.priceList.findUnique({ where: { id: priceListId } }),
-    prisma.productVariant.findUnique({ where: { id: variantId } }),
+    prisma.priceList.findUnique({ where: { id: priceListId, tenantId } }),
+    prisma.productVariant.findUnique({ where: { id: variantId, tenantId } }),
   ]);
 
   if (!priceList) {
@@ -485,6 +495,7 @@ export const createPriceListItem = async (c: Context<AppBindings>) => {
         variantId,
         minQuantity,
       },
+      tenantId,
     },
   });
 
@@ -494,6 +505,7 @@ export const createPriceListItem = async (c: Context<AppBindings>) => {
 
   const item = await prisma.priceListItem.create({
     data: {
+      tenantId,
       priceListId,
       variantId,
       minQuantity,
@@ -526,9 +538,10 @@ export const updatePriceListItem = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<PriceListIdParam>(c);
   const { minQuantity, price, discountPercent, validFrom, validTo } =
     getValidatedBody<UpdatePriceListItemInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
   const existingItem = await prisma.priceListItem.findUnique({
-    where: { id },
+    where: { id, tenantId },
   });
 
   if (!existingItem) {
@@ -544,7 +557,7 @@ export const updatePriceListItem = async (c: Context<AppBindings>) => {
   if (validTo !== undefined) updateData.validTo = validTo ? new Date(validTo) : null;
 
   const item = await prisma.priceListItem.update({
-    where: { id },
+    where: { id, tenantId },
     data: updateData,
     include: {
       variant: true,
@@ -563,9 +576,10 @@ export const updatePriceListItem = async (c: Context<AppBindings>) => {
  */
 export const deletePriceListItem = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<PriceListIdParam>(c);
+  const tenantId = getRequiredTenantId(c)
 
   const item = await prisma.priceListItem.findUnique({
-    where: { id },
+    where: { id, tenantId },
   });
 
   if (!item) {
@@ -573,7 +587,7 @@ export const deletePriceListItem = async (c: Context<AppBindings>) => {
   }
 
   await prisma.priceListItem.delete({
-    where: { id },
+    where: { id, tenantId },
   });
 
   return sendDeleted(c, "Price List Item eliminato con successo");
@@ -587,9 +601,10 @@ export const deletePriceListItem = async (c: Context<AppBindings>) => {
 export const bulkImportItems = async (c: Context<AppBindings>) => {
   const { priceListId } = getValidatedParams<PriceListItemIdParam>(c);
   const { items } = getValidatedBody<BulkImportInput>(c);
+  const tenantId = getRequiredTenantId(c)
 
   const priceList = await prisma.priceList.findUnique({
-    where: { id: priceListId },
+    where: { id: priceListId, tenantId },
   });
 
   if (!priceList) {
@@ -602,7 +617,7 @@ export const bulkImportItems = async (c: Context<AppBindings>) => {
   for (const item of items) {
     try {
       const variant = await prisma.productVariant.findUnique({
-        where: { id: item.variantId },
+        where: { id: item.variantId, tenantId },
       });
 
       if (!variant) {
@@ -621,12 +636,14 @@ export const bulkImportItems = async (c: Context<AppBindings>) => {
             variantId: item.variantId,
             minQuantity: item.minQuantity || 1,
           },
+          tenantId,
         },
         update: {
           price: new Prisma.Decimal(item.price),
           discountPercent: item.discountPercent ? new Prisma.Decimal(item.discountPercent) : null,
         },
         create: {
+          tenantId,
           priceListId,
           variantId: item.variantId,
           minQuantity: item.minQuantity || 1,
@@ -664,8 +681,9 @@ export const bulkImportItems = async (c: Context<AppBindings>) => {
  */
 export const calculatePrice = async (c: Context<AppBindings>) => {
   const { priceListId, variantId, quantity = 1 } = getValidatedBody<CalculatePriceInput>(c);
+  const tenantId = getRequiredTenantId(c)
 
-  const price = await calculatePriceFromParent(priceListId, variantId, quantity);
+  const price = await calculatePriceFromParent(priceListId, variantId, tenantId, quantity);
 
   if (price === null) {
     return sendNotFound(c, "Prezzo non trovato per questa combinazione");
@@ -675,6 +693,6 @@ export const calculatePrice = async (c: Context<AppBindings>) => {
     priceListId,
     variantId,
     quantity,
-    price: price.toFixed(4),
+    price,
   });
 };

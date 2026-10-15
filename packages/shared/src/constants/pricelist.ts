@@ -25,9 +25,9 @@ export const PRICE_LIST_STRATEGY = {
 } as const;
 
 export const PRICE_LIST_ROUNDING_METHOD = {
-    none: "none",
-    nearest_05: "nearest_05",
-    nearest_10: "nearest_10",
-    up: "up",
-    down: "down",
+    NONE: "NONE",
+    NEAREST_05: "NEAREST_05",
+    NEAREST_10: "NEAREST_10",
+    ROUND_UP: "ROUND_UP",
+    ROUND_DOWN: "ROUND_DOWN",
 } as const;

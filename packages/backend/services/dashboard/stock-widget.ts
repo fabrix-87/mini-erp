@@ -4,6 +4,7 @@
 
 import { prisma } from "@/config/prisma-config";
 import { MovementType } from "@mini-erp/shared";
+import { Decimal } from "@prisma/client/runtime/client";
 
 /**
  * Fetch stock value (total inventory value based on confirmed movements).
@@ -11,9 +12,9 @@ import { MovementType } from "@mini-erp/shared";
  * Stock value: net quantity × variant wholesalePrice (cost proxy).
  */
 export async function fetchStockValue(tenantId: string): Promise<{
-  totalValue: string;
+  totalValue: Decimal;
   activeProducts: number;
-  totalUnits: number;
+  totalUnits: Decimal;
 }> {
   const INBOUND: MovementType[] = [
     "PURCHASE",
@@ -29,6 +30,7 @@ export async function fetchStockValue(tenantId: string): Promise<{
     prisma.stockMovement.groupBy({
       by: ["productVariantId"],
       where: {
+        tenantId,
         status: "CONFIRMED",
         movementType: { in: INBOUND },
         productVariant: { tenantId, deletedAt: null, active: true },
@@ -38,6 +40,7 @@ export async function fetchStockValue(tenantId: string): Promise<{
     prisma.stockMovement.groupBy({
       by: ["productVariantId"],
       where: {
+        tenantId,
         status: "CONFIRMED",
         movementType: { in: OUTBOUND },
         productVariant: { tenantId, deletedAt: null, active: true },
@@ -46,8 +49,12 @@ export async function fetchStockValue(tenantId: string): Promise<{
     }),
   ]);
 
-  const inboundMap = new Map(inboundAgg.map((r) => [r.productVariantId, r._sum.quantity ?? 0]));
-  const outboundMap = new Map(outboundAgg.map((r) => [r.productVariantId, r._sum.quantity ?? 0]));
+  const inboundMap = new Map(
+    inboundAgg.map((r) => [r.productVariantId, r._sum.quantity ?? new Decimal(0)]),
+  );
+  const outboundMap = new Map(
+    outboundAgg.map((r) => [r.productVariantId, r._sum.quantity ?? new Decimal(0)]),
+  );
 
   const allVariantIds = [...new Set([...inboundMap.keys(), ...outboundMap.keys()])];
 
@@ -61,28 +68,48 @@ export async function fetchStockValue(tenantId: string): Promise<{
     },
     select: {
       id: true,
-      wholesalePrice: true,
+      priceListItems: {
+        where: {
+          priceList: {
+            type: "SALE",
+            active: true,
+            validFrom: { lte: new Date() },
+            OR: [{ validTo: null }, { validTo: { gte: new Date() } }],
+          },
+          minQuantity: 1,
+        },
+        select: {
+          price: true,
+        },
+        take: 1,
+        orderBy: {
+          minQuantity: "asc",
+        },
+      },
     },
   });
 
-  let totalValue = 0;
-  let totalUnits = 0;
+  const totalValue = new Decimal(0);
+  const totalUnits = new Decimal(0);
 
   for (const v of variants) {
-    const netQty = (inboundMap.get(v.id) ?? 0) - (outboundMap.get(v.id) ?? 0);
-    if (netQty <= 0) continue;
+    const price = v.priceListItems[0]?.price ?? null;
+    const netQty = (inboundMap.get(v.id) ?? new Decimal(0)).minus(
+      outboundMap.get(v.id) ?? new Decimal(0),
+    );
+    if (netQty.lte(0)) continue;
 
-    const cost = parseFloat(v.wholesalePrice?.toString() ?? "0");
-    totalValue += netQty * cost;
-    totalUnits += netQty;
+    const cost = price ?? new Decimal(0)
+    totalValue.plus(netQty.mul(cost));
+    totalUnits.plus(netQty);
   }
 
   const activeProducts = await prisma.product.count({
-    where: { tenantId, active: true, deletedAt: null },
+    where: { tenantId, status: "ACTIVE", deletedAt: null },
   });
 
   return {
-    totalValue: totalValue.toFixed(2),
+    totalValue,
     activeProducts,
     totalUnits,
   };
@@ -96,13 +123,13 @@ export async function fetchStockMovements(
   limit: number,
 ): Promise<
   Array<{
-    id: number; // StockMovement.id is Int @id @default(autoincrement())
+    id: string; // StockMovement.id 
     productVariantId: string; // FK to ProductVariant — cuid string
     sku: string;
     productReference: string;
     warehouseName: string;
     movementType: MovementType;
-    quantity: number;
+    quantity: Decimal;
     movementDate: Date;
     referenceId: string | null;
   }>

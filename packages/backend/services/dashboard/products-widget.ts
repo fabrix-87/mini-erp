@@ -5,6 +5,7 @@
 import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
 import { DOCUMENT_STATUSES, DOCUMENT_TYPES } from "@mini-erp/shared";
+import { Decimal } from "@prisma/client/runtime/client";
 
 // Sale document types: stock-affecting documents excluding inbound and corrections
 const SALE_DOCUMENT_TYPES = [DOCUMENT_TYPES.INVOICE, DOCUMENT_TYPES.DELIVERY_NOTE] as const;
@@ -35,7 +36,7 @@ const INBOUND_MOVEMENTS = [
 
 const OUTBOUND_MOVEMENTS = ["SALE", "RETURN_OUT", "ADJUSTMENT_OUT", "TRANSFER_OUT"] as const;
 
-async function buildNetStockMap(tenantId: string): Promise<Map<string, number>> {
+async function buildNetStockMap(tenantId: string): Promise<Map<string, Decimal>> {
   const [inboundAgg, outboundAgg] = await Promise.all([
     prisma.stockMovement.groupBy({
       by: ["productVariantId"],
@@ -57,13 +58,13 @@ async function buildNetStockMap(tenantId: string): Promise<Map<string, number>> 
     }),
   ]);
 
-  const map = new Map<string, number>();
+  const map = new Map<string, Decimal>();
   for (const r of inboundAgg) {
-    map.set(r.productVariantId, r._sum.quantity ?? 0);
+    map.set(r.productVariantId, r._sum.quantity ?? new Decimal(0));
   }
   for (const r of outboundAgg) {
-    const prev = map.get(r.productVariantId) ?? 0;
-    map.set(r.productVariantId, prev - (r._sum.quantity ?? 0));
+    const prev = map.get(r.productVariantId) ?? new Decimal(0);
+    map.set(r.productVariantId, prev.minus(r._sum.quantity ?? 0));
   }
   return map;
 }
@@ -80,45 +81,66 @@ export async function fetchProductsKPI(tenantId: string): Promise<{
 }> {
   const [total, active, inactive] = await Promise.all([
     prisma.product.count({ where: { tenantId, deletedAt: null } }),
-    prisma.product.count({ where: { tenantId, active: true, deletedAt: null } }),
-    prisma.product.count({ where: { tenantId, active: false, deletedAt: null } }),
+    prisma.product.count({ where: { tenantId, status: "ACTIVE", deletedAt: null } }),
+    prisma.product.count({ where: { tenantId, status: "ARCHIVED", deletedAt: null } }),
   ]);
 
   const stockMap = await buildNetStockMap(tenantId);
 
   const variants = await prisma.productVariant.findMany({
-    where: { tenantId, deletedAt: null, active: true },
-    select: {
-      id: true,
-      lowStockThreshold: true,
-      lowStockAlertEnabled: true,
-      wholesalePrice: true,
+  where: {
+    tenantId,
+    deletedAt: null,
+    active: true,
+  },
+  select: {
+    id: true,
+    lowStockThreshold: true,
+    lowStockAlertEnabled: true,
+    priceListItems: {
+      where: {
+        priceList: {
+          type: "SALE",
+          active: true,
+          validFrom: { lte: new Date() },
+          OR: [
+            { validTo: null },
+            { validTo: { gte: new Date() } },
+          ],
+        },
+        minQuantity: 1,
+      },
+      select: {
+        price: true,
+      },
+      take: 1,
+      orderBy: {
+        minQuantity: "asc",
+      },
     },
-  });
+  },
+});
 
   let lowStock = 0;
   let outOfStock = 0;
-  let totalValue = 0;
+  let totalValue = Decimal(0);
 
   for (const v of variants) {
-    const netQty = stockMap.get(v.id) ?? 0;
-    const threshold = v.lowStockThreshold > 0 ? v.lowStockThreshold : 10;
+    const netQty = stockMap.get(v.id) ?? new Decimal(0);
+    const threshold = v.lowStockThreshold.greaterThan(0) ? v.lowStockThreshold : new Decimal(10);
+    const price = v.priceListItems[0]?.price ?? null;
 
-    if (netQty <= 0) {
+    if (netQty.lessThanOrEqualTo(0)) {
       outOfStock++;
     } else if (v.lowStockAlertEnabled && netQty <= threshold) {
       lowStock++;
     }
 
-    if (netQty > 0) {
-      const cost = parseFloat(v.wholesalePrice?.toString() ?? "0");
-      totalValue += netQty * cost;
+    if (netQty.greaterThan(0)) {
+      const cost = price ?? new Decimal(0);
+      totalValue.plus(netQty.mul(cost));
     }
   }
-
-  const activeProducts = await prisma.product.count({
-    where: { tenantId, active: true, deletedAt: null },
-  });
 
   return {
     total,
@@ -214,10 +236,22 @@ export async function fetchProductsByCategory(
   const result = await prisma.productCategory.groupBy({
     by: ["categoryId"],
     where: {
-      product: { tenantId, deletedAt: null, active: true },
+      tenantId,
+      product: {
+        is: {
+          deletedAt: null,
+          status: "ACTIVE",
+        },
+      },
     },
-    _count: { productId: true },
-    orderBy: { _count: { productId: "desc" } },
+    _count: {
+      productId: true,
+    },
+    orderBy: {
+      _count: {
+        productId: "desc",
+      },
+    },
     take: 10,
   });
 

@@ -5,6 +5,7 @@
 import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
 import { DashboardScope, MovementType } from "@mini-erp/shared";
+import { Decimal } from "@prisma/client/runtime/client";
 
 /**
  * Fetch deliveries KPI
@@ -93,11 +94,10 @@ export async function fetchStockAlerts(
   Array<{
     variantId: string;
     sku: string;
-    variantCode: string;
     productReference: string;
     productName: string;
-    currentStock: number;
-    lowStockThreshold: number;
+    currentStock: Decimal;
+    lowStockThreshold: Decimal;
     alertType: "LOW_STOCK" | "OUT_OF_STOCK";
   }>
 > {
@@ -144,8 +144,8 @@ export async function fetchStockAlerts(
   ]);
 
   // Step 2: compute net stock per variant.
-  const inboundMap = new Map(inbound.map((r) => [r.productVariantId, r._sum.quantity ?? 0]));
-  const outboundMap = new Map(outbound.map((r) => [r.productVariantId, r._sum.quantity ?? 0]));
+  const inboundMap = new Map(inbound.map((r) => [r.productVariantId, r._sum.quantity ?? new Decimal(0)]));
+  const outboundMap = new Map(outbound.map((r) => [r.productVariantId, r._sum.quantity ?? new Decimal(0)]));
 
   const allVariantIds = new Set([...inboundMap.keys(), ...outboundMap.keys()]);
 
@@ -160,7 +160,6 @@ export async function fetchStockAlerts(
     select: {
       id: true,
       sku: true,
-      variantCode: true,
       lowStockThreshold: true,
       lowStockAlertEnabled: true,
       product: {
@@ -183,26 +182,25 @@ export async function fetchStockAlerts(
   const alerts = variants
     .filter((v) => v.lowStockAlertEnabled)
     .map((v) => {
-      const ins = inboundMap.get(v.id) ?? 0;
-      const outs = outboundMap.get(v.id) ?? 0;
-      const currentStock = ins - outs;
-      const threshold = v.lowStockThreshold > 0 ? v.lowStockThreshold : 10;
+      const ins = inboundMap.get(v.id) ?? new Decimal(0);
+      const outs = outboundMap.get(v.id) ?? new Decimal(0);
+      const currentStock = ins.minus(outs);
+      const threshold = v.lowStockThreshold.gt(0) ? v.lowStockThreshold : new Decimal(10);
 
       if (currentStock > threshold) return null;
 
       return {
         variantId: v.id,
         sku: v.sku,
-        variantCode: v.variantCode,
         productReference: v.product!.reference,
         productName: v.product!.translations[0]?.name ?? v.product!.reference,
         currentStock,
         lowStockThreshold: threshold,
-        alertType: currentStock <= 0 ? ("OUT_OF_STOCK" as const) : ("LOW_STOCK" as const),
+        alertType: currentStock.lte(0) ? ("OUT_OF_STOCK" as const) : ("LOW_STOCK" as const),
       };
     })
     .filter((item): item is NonNullable<typeof item> => item !== null)
-    .sort((a, b) => a.currentStock - b.currentStock)
+    .sort((a, b) => Number(a.currentStock.minus(b.currentStock)))
     .slice(0, limit);
 
   return alerts;

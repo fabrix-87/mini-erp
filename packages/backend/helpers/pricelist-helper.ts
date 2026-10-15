@@ -3,67 +3,81 @@
 // ============================================================================
 
 import { prisma } from "@/config/prisma-config";
+import { PriceListStrategy, RoundingMethod } from "@mini-erp/shared";
+import { Decimal } from "@prisma/client/runtime/client";
 
 /**
  * Applica strategia di pricing
  */
 export const applyPricingStrategy = (
-  basePrice: number,
-  strategy: string,
-  strategyValue: number,
-  roundingMethod: string | null,
-): number => {
+  basePrice: Decimal,
+  strategy: PriceListStrategy,
+  strategyValue: Decimal,
+  roundingMethod: RoundingMethod | null,
+): Decimal => {
   let finalPrice = basePrice;
 
   switch (strategy) {
     case "PERCENT_DECREASE":
-      finalPrice = basePrice * (1 - strategyValue / 100);
+      // basePrice * (1 - strategyValue / 100)
+      finalPrice = basePrice.mul(new Decimal(1).minus(strategyValue.div(100)));
       break;
     case "PERCENT_INCREASE":
-      finalPrice = basePrice * (1 + strategyValue / 100);
+      // basePrice * (1 + strategyValue / 100)
+      finalPrice = basePrice.mul(new Decimal(1).plus(strategyValue.div(100)));
       break;
     case "FIXED_DECREASE":
-      finalPrice = basePrice - strategyValue;
+      finalPrice = basePrice.minus(strategyValue);
       break;
     case "FIXED_INCREASE":
-      finalPrice = basePrice + strategyValue;
+      finalPrice = basePrice.plus(strategyValue);
       break;
     case "EXPLICIT":
     default:
       finalPrice = basePrice;
   }
 
-  // Arrotondamento
+  // Arrotondamento con Decimal
   if (roundingMethod) {
     switch (roundingMethod) {
-      case "nearest_05":
-        finalPrice = Math.round(finalPrice * 20) / 20;
+      case "NEAREST_05": {
+        // Equivalente a Math.round(val * 20) / 20 (arrotondamento al 0.05 più vicino)
+        const multiplier = new Decimal(20);
+        finalPrice = finalPrice
+          .mul(multiplier)
+          .toDecimalPlaces(0, Decimal.ROUND_HALF_UP)
+          .div(multiplier);
         break;
-      case "nearest_10":
-        finalPrice = Math.round(finalPrice / 10) * 10;
+      }
+      case "NEAREST_10": {
+        // Arrotondamento al 10 più vicino (es. 123 -> 120)
+        const divisor = new Decimal(10);
+        finalPrice = finalPrice.div(divisor).toDecimalPlaces(0, Decimal.ROUND_HALF_UP).mul(divisor);
         break;
-      case "up":
-        finalPrice = Math.ceil(finalPrice);
+      }
+      case "ROUND_UP":
+        finalPrice = finalPrice.toDecimalPlaces(0, Decimal.ROUND_CEIL);
         break;
-      case "down":
-        finalPrice = Math.floor(finalPrice);
+      case "ROUND_DOWN":
+        finalPrice = finalPrice.toDecimalPlaces(0, Decimal.ROUND_FLOOR);
         break;
     }
   }
 
-  return Math.max(0, finalPrice);
+  // Assicura che il prezzo non sia mai inferiore a 0
+  return Decimal.max(0, finalPrice);
 };
-
 /**
  * Calcola prezzo ricorsivamente da listini parent
  */
 export const calculatePriceFromParent = async (
-  priceListId: number,
-  variantId: number,
+  priceListId: string,
+  variantId: string,
+  tenantId: string,
   quantity: number = 1,
-): Promise<number | null> => {
+): Promise<Decimal | null> => {
   const priceList = await prisma.priceList.findUnique({
-    where: { id: priceListId },
+    where: { id: priceListId, tenantId },
     include: {
       parentList: true,
     },
@@ -74,6 +88,7 @@ export const calculatePriceFromParent = async (
   // Cerca prezzo esplicito nel listino corrente
   const item = await prisma.priceListItem.findFirst({
     where: {
+      tenantId,
       priceListId,
       variantId,
       minQuantity: { lte: quantity },
@@ -82,18 +97,23 @@ export const calculatePriceFromParent = async (
   });
 
   if (item && priceList.strategy === "EXPLICIT") {
-    return parseFloat(item.price.toString());
+    return item.price;
   }
 
   // Se non trovato o strategia dinamica, cerca nel parent
   if (priceList.parentListId) {
-    const parentPrice = await calculatePriceFromParent(priceList.parentListId, variantId, quantity);
+    const parentPrice = await calculatePriceFromParent(
+      priceList.parentListId,
+      variantId,
+      tenantId,
+      quantity,
+    );
 
     if (parentPrice !== null) {
       return applyPricingStrategy(
         parentPrice,
         priceList.strategy,
-        parseFloat(priceList.strategyValue.toString()),
+        priceList.strategyValue,
         priceList.roundingMethod,
       );
     }
@@ -101,7 +121,7 @@ export const calculatePriceFromParent = async (
 
   // Se esiste item esplicito ma strategia dinamica
   if (item) {
-    return parseFloat(item.price.toString());
+    return item.price;
   }
 
   return null;
