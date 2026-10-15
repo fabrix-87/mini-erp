@@ -1,0 +1,58 @@
+/// Payment installment generated from a document's payment terms.
+/// Tracks individual due dates, amounts, reminders, and late fees.
+model DocumentPaymentInstallment {
+  id         String   @id @default(cuid())
+  documentId String   @map("document_id")
+  document   Document @relation(fields: [tenantId, documentId], references: [tenantId, id], onDelete: Cascade)
+
+  /// Sequential position within the document's installment schedule (1-based).
+  installmentNumber Int     @default(1) @map("installment_number")
+  /// Share of the document total assigned to this installment (e.g. 30.00 = 30%).
+  percentage        Decimal @db.Decimal(5, 2)
+  /// Absolute amount due in document currency.
+  amount            Decimal @default(0) @db.Decimal(15, 2)
+
+  dueDate    DateTime          @map("due_date")
+  paidDate   DateTime?         @map("paid_date")
+  paidAmount Decimal           @default(0) @map("paid_amount") @db.Decimal(15, 2)
+  status     InstallmentStatus @default(PENDING)
+
+  notes String? @db.Text
+
+  /// Payment method for this specific installment (can differ from document-level method).
+  paymentMethodId String?        @map("payment_method_id")
+  paymentMethod   PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+
+  /// Bank transaction reference (CRO, TRN, SEPA end-to-end ID).
+  paymentReference  String? @map("payment_reference") @db.VarChar(100)
+  /// Internal bank transaction identifier for reconciliation.
+  bankTransactionId String? @map("bank_transaction_id") @db.VarChar(100)
+
+  paymentBatchId String?       @map("payment_batch_id")
+  paymentBatch   PaymentBatch? @relation(fields: [tenantId, paymentBatchId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+  /// Denormalized from Document.tenantId for direct tenant-scoped queries.
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantInstallments", fields: [tenantId], references: [id], onDelete: Restrict)
+
+  // === DUNNING ===
+
+  /// Number of payment reminders sent for this installment.
+  remindersSent  Int       @default(0) @map("reminders_sent")
+  lastReminderAt DateTime? @map("last_reminder_at")
+
+  /// Late payment penalty accrued on this installment.
+  lateFeeAmount Decimal @default(0) @map("late_fee_amount") @db.Decimal(15, 2)
+
+  journalEntries JournalEntry[] @relation("InstallmentJournalEntries")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([tenantId, id])
+  @@index([tenantId, status, dueDate])
+  @@index([tenantId, dueDate], where: raw("status <> 'CANCELLED'"))
+  @@index([tenantId, paymentBatchId], where: { paymentBatchId: { not: null } })
+  @@index([documentId])
+  @@map("document_payment_installments")
+}

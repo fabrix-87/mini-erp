@@ -1,0 +1,141 @@
+/// Single line item within a document. Supports products, services, discounts,
+/// text annotations, and kit/bundle components via self-join.
+model DocumentLine {
+  id         String   @id @default(cuid())
+  documentId String   @map("document_id")
+  document   Document @relation(fields: [tenantId, documentId], references: [tenantId, id], onDelete: Cascade)
+
+  // === PRODUCT LINK ===
+
+  /// Specific variant sold. NULL for free-text services, discounts, and text lines.
+  /// Composite FK guarantees that productId belongs to the same variant and tenant (MATCH SIMPLE: skipped when either is NULL).
+  productVariantId String?         @map("product_variant_id")
+  productVariant   ProductVariant? @relation(fields: [tenantId, productId, productVariantId], references: [tenantId, productId, id], onDelete: Restrict, onUpdate: Cascade)
+
+  /// Denormalized from productVariant for statistical grouping. Set if and only if productVariantId is set.
+  productId String? @map("product_id")
+
+  lineNumber Int              @map("line_number")
+  lineType   DocumentLineType @default(PRODUCT)
+  /// Supplier or internal article code. Snapshotted at line creation.
+  code       String?
+
+  // === DESCRIPTIONS (dual-language snapshot) ===
+
+  /// Article name in the system/operator base language. Always populated.
+  nameSystem        String  @map("name_system") @db.VarChar(255)
+  descriptionSystem String? @map("description_system") @db.Text
+
+  /// Article name translated into the customer's language. NULL if same as system language.
+  nameCustomer        String? @map("name_customer") @db.VarChar(255)
+  descriptionCustomer String? @map("description_customer") @db.Text
+
+  // === QUANTITIES AND PRICING ===
+
+  quantity Decimal @default(1) @db.Decimal(15, 6)
+  /// Unit of measure code (e.g. "pz", "kg", "h").
+  unit     String  @default("pz")
+
+  unitPrice Decimal @default(0) @map("unit_price") @db.Decimal(20, 6)
+  /// Purchase cost snapshot for margin calculation. Not exposed to the customer.
+  unitCost  Decimal @default(0) @map("unit_cost") @db.Decimal(20, 6)
+
+  discountPercent Decimal @default(0) @map("discount_percent") @db.Decimal(5, 2)
+  discountAmount  Decimal @default(0) @map("discount_amount") @db.Decimal(15, 2)
+
+  /// Unit selected on the line. NULL for text/discount lines. `unit` stays as printed snapshot.
+  uomId String?        @map("uom_id")
+  uom   UnitOfMeasure? @relation(fields: [tenantId, uomId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+  /// Base units per 1 line unit, snapshotted at line creation.
+  /// Stock quantity = quantity × uomFactor. Never recomputed from the live ProductUom.
+  uomFactor Decimal @default(1) @map("uom_factor") @db.Decimal(20, 10)
+
+  /// Line net total: (unitPrice × quantity) − discount. Excludes VAT.
+  lineTotal Decimal @default(0) @map("line_total") @db.Decimal(15, 2)
+
+  // === TAX (snapshot at document creation) ===
+
+  /// TaxRule applied. Restrict prevents deletion of a rule used on a fiscal document.
+  taxRuleId Int?     @map("tax_rule_id")
+  taxRule   TaxRule? @relation("DocumentLineTaxRule", fields: [taxRuleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  /// VAT rate percentage snapshotted from TaxRule.rate at creation.
+  taxPercent       Decimal @default(22) @map("tax_percent") @db.Decimal(5, 2)
+  taxAmount        Decimal @default(0) @map("tax_amount") @db.Decimal(15, 2)
+  /// SDI Natura code snapshotted when rate = 0 (e.g. N2.1, N3.2).
+  vatNatureCode    String? @map("vat_nature_code") @db.VarChar(10)
+  /// Normative reference for the <RiferimentoNormativo> tag in FatturaPA XML.
+  vatNormReference String? @map("vat_norm_reference") @db.VarChar(255)
+
+  isReverseCharge Boolean @default(false) @map("is_reverse_charge")
+  isSelfInvoice   Boolean @default(false) @map("is_self_invoice")
+
+  // Only for SUPPLIER_INVOICE
+  matchStatus MatchStatus? @map("match_status")
+
+  /// Line gross total: lineTotal + taxAmount.
+  lineTotalWithTax Decimal @default(0) @map("line_total_with_tax") @db.Decimal(15, 2)
+
+  notes        String? @db.Text
+  customFields Json?   @map("custom_fields")
+
+  intrastatTransactions IntrastatTransaction[]
+
+  // === WAREHOUSE ===
+
+  /// Override warehouse for this specific line. Falls back to Document.warehouseId if NULL.
+  warehouseId String?    @map("warehouse_id")
+  warehouse   Warehouse? @relation(fields: [tenantId, warehouseId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+
+  stockReservations StockReservation[]
+  stockMovements    StockMovement[]
+
+  // === KIT / BUNDLE ===
+
+  /// Parent line ID when this line is a component of a kit. NULL for top-level lines.
+  parentLineId   String?        @map("parent_line_id")
+  parentLine     DocumentLine?  @relation("LineComponents", fields: [tenantId, parentLineId], references: [tenantId, id])
+  componentLines DocumentLine[] @relation("LineComponents")
+
+  /// True if this line belongs to a kit/bundle; its amounts may be rolled up into the parent.
+  isComponent Boolean @default(false) @map("is_component")
+
+  // === FULFILLMENT TRACKING ===
+
+  /// Cumulative quantity transferred to invoices from this order line.
+  quantityInvoiced  Decimal @default(0) @map("quantity_invoiced") @db.Decimal(15, 6)
+  /// Cumulative quantity confirmed delivered via DDT.
+  quantityDelivered Decimal @default(0) @map("quantity_delivered") @db.Decimal(15, 6)
+  /// Cumulative quantity returned via credit note or return DDT.
+  quantityReturned  Decimal @default(0) @map("quantity_returned") @db.Decimal(15, 6)
+
+  // === PRICE AUDIT ===
+
+  /// Original list price before any manual override. NULL if no override occurred.
+  originalUnitPrice   Decimal? @map("original_unit_price") @db.Decimal(20, 6)
+  /// Mandatory justification when unitPrice deviates from originalUnitPrice.
+  priceOverrideReason String?  @map("price_override_reason") @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  /// Denormalized from Document.tenantId for direct tenant-scoped queries.
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantDocumentLines", fields: [tenantId], references: [id], onDelete: Restrict)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, documentId, id])
+  @@unique([tenantId, documentId, lineNumber])
+  // === PRODUCT LOOKUP (storico vendite, repricing) — ora scoped a tenant ===
+  @@index([tenantId, productId])
+  @@index([tenantId, matchStatus], where: { matchStatus: { not: null } })
+  @@index([tenantId, uomId], where: { uomId: { not: null } })
+  // === TAX REPORT — scoped a tenant ===
+  @@index([tenantId, taxRuleId], where: { taxRuleId: { not: null } })
+  // === WAREHOUSE MOVEMENTS — scoped a tenant ===
+  @@index([tenantId, warehouseId], where: { warehouseId: { not: null } })
+  // === KIT / BUNDLE — sempre via documentId, partial sufficiente ===
+  @@index([parentLineId], where: { parentLineId: { not: null } })
+  @@map("document_lines")
+}
