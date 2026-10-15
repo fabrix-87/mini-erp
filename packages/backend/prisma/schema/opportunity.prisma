@@ -144,12 +144,9 @@ model OpportunityProduct {
   // === PRODUCT LINK ===
 
   /// Specific variant selected. Restrict: cannot delete a variant in an active opportunity.
+  productId        String         @map("product_id")
   productVariantId String         @map("product_variant_id")
-  productVariant   ProductVariant @relation(fields: [tenantId, productVariantId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
-
-  /// Denormalized from productVariant for statistical grouping (mirrors DocumentLine pattern).
-  productId String  @map("product_id")
-  product   Product @relation(fields: [tenantId, productId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+  productVariant   ProductVariant @relation(fields: [tenantId, productId, productVariantId], references: [tenantId, productId, id], onDelete: Restrict, onUpdate: Cascade)
 
   /// Tenant denormalized for direct filtering without joining Opportunity.
   tenantId String @map("tenant_id")
@@ -179,7 +176,7 @@ model OpportunityProduct {
   /// PriceListItem used to resolve listPrice. NULL if no active price list matched
   /// (fallback to ProductVariant.price or Product.price).
   priceListItemId String?        @map("price_list_item_id")
-  priceListItem   PriceListItem? @relation(fields: [priceListItemId], references: [id], onDelete: SetNull)
+  priceListItem   PriceListItem? @relation(fields: [tenantId, priceListItemId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   discountPercent Decimal @default(0) @map("discount_percent") @db.Decimal(5, 2)
   discountAmount  Decimal @default(0) @map("discount_amount") @db.Decimal(15, 2)

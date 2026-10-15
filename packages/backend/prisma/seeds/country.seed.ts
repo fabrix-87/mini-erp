@@ -1,5 +1,7 @@
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "../../config/prisma-config";
+import { CountryCreateInput } from "@/generated/prisma/models";
+import { connectByCode } from "@/helpers/prisma-helper";
 
 async function main() {
   console.log("🌱 Inizio seeding Country & Language...");
@@ -730,14 +732,14 @@ async function main() {
         numericCode: country.numericCode,
         phoneCode: country.phoneCode,
         continent: country.continent,
-        currencyCode: country.currencyCode,
+        currency: connectByCode(country.currencyCode),
         active: true,
         isEU: country.isEU,
         languages:
           validLanguages.length > 0
             ? { connect: validLanguages.map((iso) => ({ isoCode: iso })) }
             : undefined,
-      },
+      } satisfies CountryCreateInput,
     });
   }
 

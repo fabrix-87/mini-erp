@@ -110,6 +110,7 @@ model PriceListItem {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Unique constraint: no duplicate prices for the same variant/quantity in the same list
+  @@unique([tenantId, id])
   @@unique([priceListId, variantId, minQuantity])
   @@index([tenantId, variantId])
   @@map("price_list_items")

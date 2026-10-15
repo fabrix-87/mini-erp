@@ -280,7 +280,7 @@ model StockReservation {
   document   Document @relation(fields: [tenantId, documentId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
   documentLineId String?       @map("document_line_id")
-  documentLine   DocumentLine? @relation(fields: [tenantId, documentLineId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+  documentLine DocumentLine? @relation(fields: [tenantId, documentId, documentLineId], references: [tenantId, documentId, id], onDelete: Restrict, onUpdate: Cascade)
 
   status StockReservationStatus @default(ACTIVE)
 

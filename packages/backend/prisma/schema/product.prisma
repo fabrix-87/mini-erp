@@ -94,18 +94,17 @@ model Product {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  productFeatures     ProductFeature[]
-  opportunityProducts OpportunityProduct[]
-  carriers            ProductCarrier[]
-  supplier            Supplier?            @relation(fields: [supplierId], references: [id])
-  supplierId          String?
+  productFeatures ProductFeature[]
+  carriers        ProductCarrier[]
+  supplier        Supplier?        @relation(fields: [supplierId], references: [id])
+  supplierId      String?
 
   @@unique([tenantId, id])
   @@unique([tenantId, reference], where: { deletedAt: null })
-  @@index([tenantId, status])
   @@index([tenantId, baseUomId])
   @@index([tenantId, manufacturerId], where: { manufacturerId: { not: null } })
-  @@index([tenantId, deletedAt])
+  @@index([tenantId, status], where: { deletedAt: null })
+  @@index([tenantId, deletedAt], where: { deletedAt: { not: null } })
   @@map("products")
 }
 

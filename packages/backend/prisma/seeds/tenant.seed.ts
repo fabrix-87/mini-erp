@@ -1,5 +1,7 @@
 // prisma/seeds/tenant.seed.ts
 import { prisma } from "@/config/prisma-config";
+import { BankAccountCreateInput } from "@/generated/prisma/models";
+import { connectByCode } from "@/helpers/prisma-helper";
 
 async function seedTenants() {
   console.log("🏢 Seeding tenants...");
@@ -44,7 +46,8 @@ async function seedTenants() {
         bic: "BPMOIT22XXX",
         currencyCode: "EUR",
         isDefault: true,
-      },
+        active: true,
+      }
     },
 
     // ── Tenant 2 ─────────────────────────────────────────────────────────
@@ -86,6 +89,7 @@ async function seedTenants() {
         bic: "BAPPIT21XXX",
         currencyCode: "EUR",
         isDefault: true,
+        active: true,
       },
     },
   ];
@@ -170,7 +174,7 @@ async function seedTenants() {
       // NOTE: the model is `BankAccount` (relation name "TenantBankAccounts" on Tenant),
       // NOT `TenantBankAccount` — that Prisma Client property does not exist.
       await tx.bankAccount.create({
-        data: { tenantId: tenant.id, ...data.bankAccount },
+        data: { tenantId: tenant.id, companyId: company.id, ...data.bankAccount },
       });
 
       return { tenant, company };
