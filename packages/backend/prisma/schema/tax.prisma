@@ -271,6 +271,7 @@ model WithholdingTaxType {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([tenantId, code])
+  @@unique([tenantId, id])
   @@unique([code], where: { tenantId: null }, map: "unique_global_withholding_tax_type_code")
   @@map("withholding_tax_types")
 }
@@ -380,19 +381,21 @@ enum WithholdingTaxSettlementStatus {
 /// Single withholding tax line linking a supplier invoice to a settlement.
 /// One line per SUPPLIER_INVOICE that carried a withholding tax accrual.
 model WithholdingTaxSettlementLine {
-  id           String                   @id @default(cuid())
-  settlementId String                   @map("settlement_id")
-  settlement   WithholdingTaxSettlement @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+  id       String @id @default(cuid())
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantWithholdingTaxSettlementLines", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-  /// Source invoice that generated the withholding tax accrual.
+  settlementId String                   @map("settlement_id")
+  settlement   WithholdingTaxSettlement @relation(fields: [tenantId, settlementId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
   documentId String   @map("document_id")
-  document   Document @relation("DocumentWithholdingLines", fields: [documentId], references: [id], onDelete: Restrict)
+  document   Document @relation("DocumentWithholdingLines", fields: [tenantId, documentId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   supplierId String   @map("supplier_id")
-  supplier   Supplier @relation("SupplierWithholdingLines", fields: [supplierId], references: [id], onDelete: Restrict)
+  supplier   Supplier @relation("SupplierWithholdingLines", fields: [tenantId, supplierId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   withholdingTaxTypeId String             @map("withholding_tax_type_id")
-  withholdingTaxType   WithholdingTaxType @relation(fields: [withholdingTaxTypeId], references: [id], onDelete: Restrict)
+  withholdingTaxType   WithholdingTaxType @relation(fields: [tenantId, withholdingTaxTypeId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
 
   /// Taxable base amount from the source invoice.
   taxableBase        Decimal @map("taxable_base") @db.Decimal(15, 2)
@@ -406,9 +409,9 @@ model WithholdingTaxSettlementLine {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  /// Each invoice can appear in at most one settlement.
+  @@unique([tenantId, id])
   @@unique([documentId])
-  @@index([settlementId])
-  @@index([supplierId])
+  @@index([tenantId, settlementId])
+  @@index([tenantId, supplierId])
   @@map("withholding_tax_settlement_lines")
 }

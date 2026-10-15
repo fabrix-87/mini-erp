@@ -49,6 +49,7 @@ model PaymentMethod {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([tenantId, code])
+  @@unique([tenantId, id])
   @@unique([code], where: { tenantId: null }, map: "unique_global_payment_method_code")
   @@index([tenantId])
   @@index([tenantId, active])
@@ -59,13 +60,15 @@ model PaymentMethod {
 /// Single installment rule within a payment method.
 /// Defines the percentage of the total amount and its due date calculation logic.
 model PaymentTermDetail {
-  id              String        @id @default(cuid())
-  paymentMethodId String        @map("payment_method_id")
-  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Cascade)
+  id       String @id @default(cuid())
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation("TenantPaymentTermDetails", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
+  paymentMethodId String        @map("payment_method_id")
+  paymentMethod   PaymentMethod @relation(fields: [tenantId, paymentMethodId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
   /// Share of the total amount due for this installment (e.g. 30.00, 40.00).
   /// All installments of a payment method must sum to 100.
-  percentage Decimal @default(0) @db.Decimal(5, 2)
+  percentage      Decimal       @default(0) @db.Decimal(5, 2)
 
   /// Due date calculation strategy for this installment.
   termType PaymentTermType @default(DAYS_FROM_INVOICE) @map("term_type")
@@ -83,6 +86,7 @@ model PaymentTermDetail {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([tenantId, id])
   @@unique([paymentMethodId, position])
   @@map("payment_term_details")
 }

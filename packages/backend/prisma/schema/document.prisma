@@ -317,13 +317,13 @@ model Document {
 
   // === RELATIONS ===
 
-  lines                     DocumentLine[]
-  installments              DocumentPaymentInstallment[]
-  stockMovements            StockMovement[]
-  stockReservations         StockReservation[]
-  intrastatTransactions     IntrastatTransaction[]
-  journalEntries            JournalEntry[]                @relation("DocumentJournalEntries")
-  withholdingSettlementLine WithholdingTaxSettlementLine? @relation("DocumentWithholdingLines")
+  lines                      DocumentLine[]
+  installments               DocumentPaymentInstallment[]
+  stockMovements             StockMovement[]
+  stockReservations          StockReservation[]
+  intrastatTransactions      IntrastatTransaction[]
+  journalEntries             JournalEntry[]                 @relation("DocumentJournalEntries")
+  withholdingSettlementLines WithholdingTaxSettlementLine[] @relation("DocumentWithholdingLines")
 
   // === PARTY SNAPSHOTS ===
   parties DocumentParty[] @relation("DocumentParties")
@@ -383,13 +383,14 @@ model DocumentSequence {
 }
 
 /// Directed graph edge representing a semantic relationship between two documents.
-/// Enables multi-hop traceability (e.g. Quote → Order → DDT → Invoice → Credit Note).
 model DocumentRelation {
+  tenantId String @map("tenant_id")
+
   sourceDocumentId String   @map("source_document_id")
-  sourceDocument   Document @relation("SourceDocument", fields: [sourceDocumentId], references: [id], onDelete: Cascade)
+  sourceDocument   Document @relation("SourceDocument", fields: [tenantId, sourceDocumentId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
   targetDocumentId String   @map("target_document_id")
-  targetDocument   Document @relation("TargetDocument", fields: [targetDocumentId], references: [id], onDelete: Cascade)
+  targetDocument   Document @relation("TargetDocument", fields: [tenantId, targetDocumentId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
 
   relationType DocumentRelationType @map("relation_type")
 
@@ -397,7 +398,7 @@ model DocumentRelation {
 
   @@id([sourceDocumentId, targetDocumentId, relationType])
   @@unique([sourceDocumentId], where: raw("relation_type = 'MIRRORS'"))
-  @@index([targetDocumentId])
+  @@index([tenantId, targetDocumentId])
   @@map("document_relations")
 }
 

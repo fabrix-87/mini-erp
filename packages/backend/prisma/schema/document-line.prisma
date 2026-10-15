@@ -95,7 +95,7 @@ model DocumentLine {
 
   /// Parent line ID when this line is a component of a kit. NULL for top-level lines.
   parentLineId   String?        @map("parent_line_id")
-  parentLine     DocumentLine?  @relation("LineComponents", fields: [tenantId, parentLineId], references: [tenantId, id])
+  parentLine     DocumentLine?  @relation("LineComponents", fields: [tenantId, documentId, parentLineId], references: [tenantId, documentId, id], onDelete: Restrict, onUpdate: Cascade)
   componentLines DocumentLine[] @relation("LineComponents")
 
   /// True if this line belongs to a kit/bundle; its amounts may be rolled up into the parent.
