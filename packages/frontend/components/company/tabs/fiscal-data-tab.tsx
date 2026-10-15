@@ -11,8 +11,12 @@ import { FormFieldError } from "@/components/ui/form-field-error";
 export function FiscalDataTab() {
   const {
     register,
+    watch,
     formState: { errors },
   } = useFormContext<CompanyFormInput>();
+
+  const isForeign = watch("entityType") === "FOREIGN";
+  const isNatural = watch("entityType") === "NATURAL";
 
   return (
     <Card>
@@ -24,17 +28,33 @@ export function FiscalDataTab() {
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="vatNumber">Partita IVA</Label>
-            <Input id="vatNumber" {...register("vatNumber")} placeholder="12345678901" />
+            <Input
+              id="vatNumber"
+              {...register("vatNumber")}
+              disabled={isForeign}
+              placeholder="12345678901"
+            />
             <FormFieldError error={errors.vatNumber} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="taxCode">Codice Fiscale</Label>
-            <Input id="taxCode" {...register("taxCode")} placeholder="12345678901" />
+            <Input
+              id="taxCode"
+              {...register("taxCode")}
+              disabled={isForeign}
+              placeholder="12345678901"
+            />
             <FormFieldError error={errors.taxCode} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="sdiCode">Codice SDI</Label>
-            <Input id="sdiCode" {...register("sdiCode")} placeholder="ABCDEFG" maxLength={7} />
+            <Input
+              id="sdiCode"
+              {...register("sdiCode")}
+              disabled={isForeign || isNatural}
+              placeholder="ABCDEFG"
+              maxLength={7}
+            />
             <p className="text-xs text-muted-foreground">
               Codice destinatario per fatturazione elettronica
             </p>
@@ -53,7 +73,7 @@ export function FiscalDataTab() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="vatId">VAT ID (UE)</Label>
-            <Input id="vatId" {...register("vatId")} placeholder="FR12345678901" />
+            <Input id="vatId" {...register("vatId")} disabled={!isForeign} placeholder="FR12345678901" />
             <p className="text-xs text-muted-foreground">Per clienti/fornitori UE</p>
             <FormFieldError error={errors.vatId} />
           </div>

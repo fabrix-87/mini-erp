@@ -20,8 +20,12 @@ export function BasicInfoTab() {
   const {
     control,
     register,
+    setValue,
+    watch,
     formState: { errors },
   } = useFormContext<CompanyFormInput>();
+
+  const isForeign = watch("entityType") === "FOREIGN";
 
   return (
     <>
@@ -38,7 +42,26 @@ export function BasicInfoTab() {
                 name="entityType"
                 control={control}
                 render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      if (value === "FOREIGN") {
+                        setValue("legalAddress.provinceCode", "EE");
+                        setValue("vatNumber", "");
+                        setValue("taxCode", "");
+                        setValue("sdiCode", "XXXXXXX")
+                      }else if(value === "NATURAL"){
+                        setValue("sdiCode", "0000000")
+                        setValue("legalAddress.provinceCode", "");
+                      }else{
+                        setValue("legalAddress.provinceCode", "");
+                        setValue("vatNumber", "");
+                        setValue("taxCode", "");
+                        setValue("sdiCode", "")
+                      }
+                    }}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -119,7 +142,11 @@ export function BasicInfoTab() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="mainWebsite">Sito web</Label>
-              <Input id="mainWebsite" {...register("mainWebsite")} placeholder="https://www.example.com" />
+              <Input
+                id="mainWebsite"
+                {...register("mainWebsite")}
+                placeholder="https://www.example.com"
+              />
               <FormFieldError error={errors.mainWebsite} />
             </div>
           </div>
@@ -153,12 +180,13 @@ export function BasicInfoTab() {
                 id="provinceCode"
                 {...register("legalAddress.provinceCode")}
                 placeholder="MI"
+                disabled={isForeign}
                 maxLength={2}
               />
               <FormFieldError error={errors.legalAddress?.provinceCode} />
             </div>
             <div className="space-y-2">
-              <Label>Stato *</Label>              
+              <Label>Stato *</Label>
               <Controller
                 name="legalAddress.countryCode"
                 control={control}

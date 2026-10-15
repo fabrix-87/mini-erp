@@ -1,8 +1,8 @@
 import type { CompanyFormValues, CompanyType } from "@/types/company-types";
 import {
   ADDRESS_TYPE,
-  CompanyStatus,
-  CompanyTypeEntity,
+  COMPANY_STATUS,
+  COMPANY_TYPE_ENTITY,
   CreateCompanyInput,
   CreateCustomerInput,
   CUSTOMER_CREDIT_CHECK_STATUS,
@@ -13,12 +13,7 @@ import {
   UpdateCustomerCompanyInput,
   UpdateSupplierCompanyInput,
 } from "@mini-erp/shared";
-import {
-  CreateCustomerForm,
-  CreateSupplierForm,
-  Customer,
-  Supplier,
-} from "@mini-erp/shared/types";
+import { CreateCustomerForm, CreateSupplierForm, Customer, Supplier } from "@mini-erp/shared/types";
 
 // ============================================================================
 // API → FORM
@@ -38,8 +33,8 @@ export function mapApiToForm(data: Customer | Supplier, type: CompanyType): Comp
     companyName: company.companyName ?? "",
     tradeName: company.tradeName ?? null,
     legalForm: company.legalForm ?? null,
-    status: company.status ?? CompanyStatus.ACTIVE,
-    entityType: company.entityType ?? CompanyTypeEntity.JURIDICAL,
+    status: company.status ?? COMPANY_STATUS.ACTIVE,
+    entityType: company.entityType ?? COMPANY_TYPE_ENTITY.JURIDICAL,
     vatNumber: company.vatNumber ?? "",
     taxCode: company.taxCode ?? "",
     sdiCode: company.sdiCode ?? "",
@@ -134,8 +129,8 @@ export function extractCompanyData(data: CompanyFormValues): CreateCompanyInput 
     companyName: data.companyName,
     tradeName: data.tradeName,
     legalForm: data.legalForm,
-    status: data.status ?? CompanyStatus.ACTIVE,
-    entityType: data.entityType ?? CompanyTypeEntity.JURIDICAL,
+    status: data.status ?? COMPANY_STATUS.ACTIVE,
+    entityType: data.entityType ?? COMPANY_TYPE_ENTITY.JURIDICAL,
     countryCode: data.countryCode ?? "IT",
     vatNumber: data.vatNumber,
     taxCode: data.taxCode,
