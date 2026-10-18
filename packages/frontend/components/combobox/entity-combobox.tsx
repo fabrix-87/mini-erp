@@ -24,19 +24,39 @@ export interface EntityComboboxConfig<TItem> extends Omit<
   noResultsKey: string;
 }
 
-/// Props shared by every entity combobox.
-export interface EntityComboboxProps<TItem> {
+/**
+ * Shared entity selector props, including input accessibility and form bindings.
+ */
+export interface EntityComboboxProps<TItem> extends Pick<
+  React.ComponentPropsWithRef<"input">,
+  | "id"
+  | "name"
+  | "ref"
+  | "onBlur"
+  | "aria-label"
+  | "aria-labelledby"
+  | "aria-describedby"
+  | "aria-invalid"
+  | "aria-required"
+> {
   value?: string;
-  /// Fired with the selected ID. On clear: `""`.
+
+  /** Called with the selected entity ID, or an empty string when cleared. */
   onValueChange?: (value: string) => void;
-  /// Fired with the full entity returned by the API. On clear: `undefined`.
+
+  /** Called with the selected entity, or undefined when cleared. */
   onItemChange?: (item: TItem | undefined) => void;
+
   disabled?: boolean;
   className?: string;
   portalContainer?: React.ComponentProps<typeof ComboboxContent>["portalContainer"];
 }
 
-/// Generic async combobox with debounced search and selected-label restoration.
+/**
+ * Renders an async entity selector with searchable options and form bindings.
+ * @param props - Data source configuration, selection callbacks, and input props.
+ * @returns A searchable entity combobox connected to its input bindings.
+ */
 export function AsyncEntityCombobox<TItem>({
   value,
   onValueChange,
@@ -49,7 +69,8 @@ export function AsyncEntityCombobox<TItem>({
   toOption,
   placeholderKey,
   noResultsKey,
-}: EntityComboboxConfig<TItem> & EntityComboboxProps<TItem>) {
+  ...inputProps
+}: EntityComboboxConfig<TItem> & EntityComboboxProps<TItem>): React.JSX.Element {
   const t = useTranslations("ui");
 
   const { options, isLoading, onSearchChange, itemsByValue } = useEntityCombobox({
@@ -74,14 +95,19 @@ export function AsyncEntityCombobox<TItem>({
       filter={null}
     >
       <ComboboxInput
+        {...inputProps}
         placeholder={t(placeholderKey)}
         className={className}
         showClear
         disabled={disabled}
-        onInput={(e) => {
-          const search = e.currentTarget.value;
-          // Skip the search when the input just displays the selected label
-          if (selectedOption && search === selectedOption.label) return;
+        onInput={(event) => {
+          const search = event.currentTarget.value;
+
+          // Avoid searching when the input displays the selected option label.
+          if (selectedOption && search === selectedOption.label) {
+            return;
+          }
+
           onSearchChange(search);
         }}
       />

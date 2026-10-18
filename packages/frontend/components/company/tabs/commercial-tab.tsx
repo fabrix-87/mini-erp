@@ -1,203 +1,97 @@
 // packages/frontend/components/company/tabs/commercial-tab.tsx
 "use client";
 
-import { useFormContext, Controller } from "react-hook-form";
-import { CompanyFormInput, CompanyFormValues } from "@mini-erp/shared";
+import { useFormContext } from "react-hook-form";
+import type { CompanyFormInput } from "@mini-erp/shared";
+import { useTranslations } from "next-intl";
+
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FormFieldError } from "@/components/ui/form-field-error";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { CustomerCommercialFields } from "./customer-commercial-fields";
+import { SupplierCommercialFields } from "./supplier-commercial-fields";
 import { CompanyType } from "@/types/company-types";
 
-interface CommercialTabProps {
+/** Props for the company commercial terms tab. */
+export interface CommercialTabProps {
   companyType: CompanyType;
 }
 
-export function CommercialTab({ companyType }: CommercialTabProps) {
-  const {
-    control,
-    register,
-    formState: { errors },
-  } = useFormContext<CompanyFormInput>();
+/**
+ * Renders shared and company-specific commercial terms.
+ * @param props - Company category controlling the visible commercial fields.
+ * @returns Commercial fields connected to the parent form context.
+ */
+export function CommercialTab({
+  companyType,
+}: CommercialTabProps): React.JSX.Element {
+  const { control } = useFormContext<CompanyFormInput>();
+  const t = useTranslations("crm.companies.form.commercial-tab");
+  const isCustomer = companyType === "CUSTOMER";
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Condizioni Commerciali</CardTitle>
+        <CardTitle>{t("title")}</CardTitle>
         <CardDescription>
-          {companyType === "CUSTOMER"
-            ? "Termini di pagamento e condizioni di vendita"
-            : "Condizioni di acquisto dal fornitore"}
+          {isCustomer
+            ? t("description.customer")
+            : t("description.supplier")}
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid gap-4 md:grid-cols-2">
-          {companyType === "CUSTOMER" && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="creditLimit">Fido Commerciale (€)</Label>
-                <Input
-                  id="creditLimit"
-                  type="number"
-                  step="0.01"
-                  {...register("creditLimit", { valueAsNumber: true })}
-                  placeholder="0.00"
-                />
-                <FormFieldError error={errors.creditLimit} />
-              </div>
-              <div className="space-y-2">
-                <Label>Segmento Cliente</Label>
-                <Controller
-                  name="segment"
-                  control={control}
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="VIP">VIP</SelectItem>
-                        <SelectItem value="GOLD">Gold</SelectItem>
-                        <SelectItem value="SILVER">Silver</SelectItem>
-                        <SelectItem value="BRONZE">Bronze</SelectItem>
-                        <SelectItem value="STANDARD">Standard</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                <FormFieldError error={errors.segment} />
-              </div>
-              <div className="space-y-2">
-                <Label>Priorità</Label>
-                <Controller
-                  name="priority"
-                  control={control}
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="LOW">Bassa</SelectItem>
-                        <SelectItem value="MEDIUM">Media</SelectItem>
-                        <SelectItem value="HIGH">Alta</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                <FormFieldError error={errors.priority} />
-              </div>
-              <div className="space-y-2">
-                <Label>Dimensione</Label>
-                <Controller
-                  name="size"
-                  control={control}
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="MICRO">Micro</SelectItem>
-                        <SelectItem value="SMALL">Piccola</SelectItem>
-                        <SelectItem value="MEDIUM">Media</SelectItem>
-                        <SelectItem value="LARGE">Grande</SelectItem>
-                        <SelectItem value="ENTERPRISE">Enterprise</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                <FormFieldError error={errors.size} />
-              </div>
-            </>
-          )}
 
-          {companyType === "SUPPLIER" && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="paymentTerms">Termini di Pagamento</Label>
+      <CardContent className="grid gap-4 md:grid-cols-2">
+        <FormField
+          control={control}
+          name="creditLimit"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                {isCustomer
+                  ? t("fields.creditLimit.customerLabel")
+                  : t("fields.creditLimit.supplierLabel")}
+              </FormLabel>
+
+              <FormControl>
                 <Input
-                  id="paymentTerms"
-                  {...register("paymentTerms")}
-                  placeholder="Es: 30 giorni data fattura"
-                />
-                <FormFieldError error={errors.paymentTerms} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bankAccount">Coordinate bancarie</Label>
-                <Input
-                  id="bankAccount"
-                  {...register("bankAccount")}
-                  placeholder=""
-                />
-                <FormFieldError error={errors.bankAccount} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="creditLimit">Fido Fornitore (€)</Label>
-                <Input
-                  id="creditLimit"
+                  {...field}
+                  value={field.value ?? ""}
                   type="number"
+                  min={0}
                   step="0.01"
-                  {...register("creditLimit", { valueAsNumber: true })}
-                  placeholder="0.00"
+                  placeholder={t("fields.creditLimit.placeholder")}
                 />
-                <p className="text-xs text-muted-foreground">Credito concesso dal fornitore</p>
-                <FormFieldError error={errors.creditLimit} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="leadTimeDays">Tempo di Consegna (giorni)</Label>
-                <Input
-                  id="leadTimeDays"
-                  type="number"
-                  {...register("leadTimeDays", { valueAsNumber: true })}
-                  placeholder="0"
-                />
-                <FormFieldError error={errors.leadTimeDays} />
-              </div>
-              <div className="space-y-2">
-                <Label>Valutazione (1-5)</Label>
-                <Controller
-                  name="rating"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      value={field.value?.toString()}
-                      onValueChange={(v) => field.onChange(parseInt(v))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">⭐ (1)</SelectItem>
-                        <SelectItem value="2">⭐⭐ (2)</SelectItem>
-                        <SelectItem value="3">⭐⭐⭐ (3)</SelectItem>
-                        <SelectItem value="4">⭐⭐⭐⭐ (4)</SelectItem>
-                        <SelectItem value="5">⭐⭐⭐⭐⭐ (5)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                <FormFieldError error={errors.rating} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="transportCost">Spese di trasporto</Label>
-                <Input
-                  id="transportCost"
-                  {...register("transportCost")}
-                  placeholder="0"
-                />
-                <FormFieldError error={errors.transportCost} />
-              </div>
-            </>
+              </FormControl>
+
+              {!isCustomer && (
+                <FormDescription>
+                  {t("fields.creditLimit.description")}
+                </FormDescription>
+              )}
+
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
+        />
+
+        {isCustomer ? (
+          <CustomerCommercialFields />
+        ) : (
+          <SupplierCommercialFields />
+        )}
       </CardContent>
     </Card>
   );

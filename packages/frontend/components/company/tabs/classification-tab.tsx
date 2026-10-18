@@ -1,88 +1,163 @@
 // packages/frontend/components/company/tabs/classification-tab.tsx
 "use client";
 
-import { useFormContext, Controller } from "react-hook-form";
-import { CompanyFormInput, CompanyFormValues } from "@mini-erp/shared";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FormFieldError } from "@/components/ui/form-field-error";
-import { CompanyType } from "@/types/company-types";
+import { useFormContext } from "react-hook-form";
+import type { CompanyFormInput } from "@mini-erp/shared";
+import { useTranslations } from "next-intl";
 
-interface ClassificationTabProps {
+import { Textarea } from "../../ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../ui/form";
+import { CompanyType } from "@/types/company-types";
+import { getCustomerCreditStatusOptions, getCustomerTypeOptions } from "@/helpers/customer-helper";
+
+/** Props for the company classification tab. */
+export interface ClassificationTabProps {
   companyType: CompanyType;
 }
 
-export function ClassificationTab({ companyType }: ClassificationTabProps) {
-  const { control, register, formState: { errors } } = useFormContext<CompanyFormInput>();
+/**
+ * Renders customer classification and custom JSON fields.
+ * @param props - Company category controlling customer-specific fields.
+ * @returns Classification fields connected to the parent form context.
+ */
+export function ClassificationTab({ companyType }: ClassificationTabProps): React.JSX.Element {
+  const { control } = useFormContext<CompanyFormInput>();
+  const t = useTranslations("crm.companies.form.classification-tab");
+  const tc = useTranslations("crm.customers")
 
   return (
     <>
       {companyType === "CUSTOMER" && (
         <Card>
-          <CardHeader><CardTitle>Classificazione Cliente</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label>Tipo Cliente</Label>
-                <Controller name="type" control={control} render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+          <CardHeader>
+            <CardTitle>{t("customer.title")}</CardTitle>
+          </CardHeader>
+
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            <FormField
+              control={control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("fields.type.label")}</FormLabel>
+
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                    disabled={field.disabled}
+                  >
+                    <FormControl>
+                      <SelectTrigger ref={field.ref} onBlur={field.onBlur} className="w-full">
+                        <SelectValue placeholder={t("fields.type.placeholder")} />
+                      </SelectTrigger>
+                    </FormControl>
+
                     <SelectContent>
-                      <SelectItem value="PROSPECT">Prospect</SelectItem>
-                      <SelectItem value="CUSTOMER">Cliente</SelectItem>
-                      <SelectItem value="PARTNER">Partner</SelectItem>
-                      <SelectItem value="OTHER">Altro</SelectItem>
+                      {getCustomerTypeOptions(tc).map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
-                )} />
-                <FormFieldError error={errors.type} />
-              </div>
-              <div className="space-y-2">
-                <Label>Status Credit Check</Label>
-                <Controller name="creditStatus" control={control} render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="creditStatus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("fields.creditStatus.label")}</FormLabel>
+
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                    disabled={field.disabled}
+                  >
+                    <FormControl>
+                      <SelectTrigger ref={field.ref} onBlur={field.onBlur} className="w-full">
+                        <SelectValue placeholder={t("fields.creditStatus.placeholder")} />
+                      </SelectTrigger>
+                    </FormControl>
+
                     <SelectContent>
-                      <SelectItem value="PENDING">In Attesa</SelectItem>
-                      <SelectItem value="APPROVED">Approvato</SelectItem>
-                      <SelectItem value="REJECTED">Rifiutato</SelectItem>
-                      <SelectItem value="IN_PROGRESS">In Corso</SelectItem>
+                      {getCustomerCreditStatusOptions(tc).map((credit) => (
+                        <SelectItem key={credit.value} value={credit.value}>
+                          {credit.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
-                )} />
-                <FormFieldError error={errors.creditStatus} />
-              </div>
-            </div>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </CardContent>
         </Card>
       )}
 
       <Card>
         <CardHeader>
-          <CardTitle>Note e Informazioni Aggiuntive</CardTitle>
-          <CardDescription>Campi personalizzati in formato JSON</CardDescription>
+          <CardTitle>{t("additional.title")}</CardTitle>
+          <CardDescription>{t("additional.description")}</CardDescription>
         </CardHeader>
+
         <CardContent>
-          <div className="space-y-2">
-            <Label htmlFor="customFields">Campi Personalizzati (JSON)</Label>
-            <Controller name="customFields" control={control} render={({ field }) => (
-              <Textarea
-                id="customFields"
-                value={typeof field.value === "string" ? field.value : JSON.stringify(field.value ?? {}, null, 2)}
-                onChange={(e) => {
-                  try { field.onChange(JSON.parse(e.target.value)); }
-                  catch { field.onChange(e.target.value); }
-                }}
-                placeholder='{"note": "valore"}'
-                rows={6}
-                className="font-mono text-sm"
-              />
-            )} />
-            <p className="text-xs text-muted-foreground">Inserisci dati in formato JSON valido</p>
-            <FormFieldError error={errors.customFields} />
-          </div>
+          <FormField
+            control={control}
+            name="customFields"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("fields.customFields.label")}</FormLabel>
+
+                <FormControl>
+                  <Textarea
+                    ref={field.ref}
+                    name={field.name}
+                    onBlur={field.onBlur}
+                    disabled={field.disabled}
+                    value={
+                      typeof field.value === "string"
+                        ? field.value
+                        : JSON.stringify(field.value ?? {}, null, 2)
+                    }
+                    onChange={(event) => {
+                      const value = event.target.value;
+
+                      try {
+                        field.onChange(JSON.parse(value));
+                      } catch {
+                        // Preserve incomplete JSON while the user is typing.
+                        field.onChange(value);
+                      }
+                    }}
+                    placeholder={t("fields.customFields.placeholder")}
+                    rows={6}
+                    spellCheck={false}
+                    className="font-mono text-sm"
+                  />
+                </FormControl>
+
+                <FormDescription>{t("fields.customFields.description")}</FormDescription>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </CardContent>
       </Card>
     </>

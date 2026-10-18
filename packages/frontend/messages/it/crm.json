@@ -53,6 +53,150 @@
             "checkButton": "Verifica VAT ID tramite VIES"
           }
         }
+      },
+      "info-tab": {
+        "general": {
+          "title": "Informazioni generali",
+          "description": "Dati identificativi dell'azienda"
+        },
+        "contacts": {
+          "title": "Contatti"
+        },
+        "legalAddress": {
+          "title": "Sede legale"
+        },
+        "fields": {
+          "entityType": {
+            "label": "Tipo di entità",
+            "placeholder": "Seleziona il tipo di entità",
+            "options": {
+              "JURIDICAL": "Persona giuridica",
+              "NATURAL": "Persona fisica",
+              "FOREIGN": "Entità estera"
+            }
+          },
+          "status": {
+            "label": "Stato",
+            "placeholder": "Seleziona lo stato",
+            "options": {
+              "ACTIVE": "Attivo",
+              "INACTIVE": "Inattivo",
+              "SUSPENDED": "Sospeso",
+              "ARCHIVED": "Archiviato"
+            }
+          },
+          "companyName": {
+            "label": "Ragione sociale",
+            "placeholder": "Es. Acme S.r.l."
+          },
+          "tradeName": {
+            "label": "Nome commerciale",
+            "placeholder": "Es. Acme Store"
+          },
+          "legalForm": {
+            "label": "Forma giuridica",
+            "placeholder": "Es. S.r.l., S.p.A."
+          },
+          "mainEmail": {
+            "label": "Email principale",
+            "placeholder": "info@azienda.it"
+          },
+          "mainPhone": {
+            "label": "Telefono",
+            "placeholder": "+39 02 1234567"
+          },
+          "mainWebsite": {
+            "label": "Sito web",
+            "placeholder": "https://www.example.com"
+          },
+          "address": {
+            "label": "Indirizzo",
+            "placeholder": "Via Roma 123"
+          },
+          "zipCode": {
+            "label": "CAP",
+            "placeholder": "20121"
+          },
+          "city": {
+            "label": "Città",
+            "placeholder": "Milano"
+          },
+          "provinceCode": {
+            "label": "Provincia (EE per l'estero)",
+            "placeholder": "MI"
+          },
+          "countryCode": {
+            "label": "Paese"
+          }
+        }
+      },
+      "classification-tab": {
+        "customer": {
+          "title": "Classificazione cliente"
+        },
+        "additional": {
+          "title": "Note e informazioni aggiuntive",
+          "description": "Campi personalizzati in formato JSON"
+        },
+        "fields": {
+          "type": {
+            "label": "Tipo cliente",
+            "placeholder": "Seleziona il tipo di cliente"
+          },
+          "creditStatus": {
+            "label": "Stato della verifica creditizia",
+            "placeholder": "Seleziona lo stato della verifica"
+          },
+          "customFields": {
+            "label": "Campi personalizzati (JSON)",
+            "placeholder": "note: valore",
+            "description": "Inserisci dati in formato JSON valido"
+          }
+        }
+      },
+      "commercial-tab": {
+        "title": "Condizioni commerciali",
+        "description": {
+          "customer": "Termini di pagamento e condizioni di vendita",
+          "supplier": "Condizioni di acquisto dal fornitore"
+        },
+        "fields": {
+          "creditLimit": {
+            "customerLabel": "Fido commerciale (€)",
+            "supplierLabel": "Fido fornitore (€)",
+            "placeholder": "0.00",
+            "description": "Credito concesso dal fornitore"
+          },
+          "segment": {
+            "label": "Segmento cliente",
+            "placeholder": "Seleziona il segmento"
+          },
+          "priority": {
+            "label": "Priorità",
+            "placeholder": "Seleziona la priorità"
+          },
+          "size": {
+            "label": "Dimensione",
+            "placeholder": "Seleziona la dimensione"
+          },
+          "paymentTerms": {
+            "label": "Termini di pagamento",
+            "placeholder": "Es. 30 giorni data fattura"
+          },
+          "leadTimeDays": {
+            "label": "Tempo di consegna (giorni)",
+            "placeholder": "0"
+          },
+          "rating": {
+            "label": "Valutazione (1–5)",
+            "placeholder": "Seleziona la valutazione",
+            "option": "{value} / 5"
+          },
+          "transportCost": {
+            "label": "Spese di trasporto (€)",
+            "placeholder": "0.00"
+          }
+        }
       }
     }
   },
@@ -138,6 +282,17 @@
       "bySegment": "Per segmento",
       "noSegments": "Nessun segmento",
       "summary": "Riepilogo clienti"
+    },
+    "creditStatus": {
+      "PENDING": "In attesa",
+      "APPROVED": "Approvato",
+      "REJECTED": "Rifiutato",
+      "IN_PROGRESS": "In corso"
+    },
+    "priority": {
+      "LOW": "Bassa",
+      "MEDIUM": "Media",
+      "HIGH": "Alta"
     }
   },
   "suppliers": {
