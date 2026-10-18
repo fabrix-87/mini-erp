@@ -243,7 +243,7 @@ model Customer {
   // === COMMERCIAL DEFAULTS ===
 
   defaultPriceListId String?    @map("default_price_list_id")
-  defaultPriceList   PriceList? @relation(fields: [defaultPriceListId], references: [id], onDelete: SetNull)
+  defaultPriceList   PriceList? @relation(fields: [tenantId, defaultPriceListId], references: [tenantId, id], onDelete: Restrict)
 
   customerTaxRuleId Int?     @map("customer_tax_rule_id")
   customerTaxRule   TaxRule? @relation("CustomerTaxRule", fields: [customerTaxRuleId], references: [id])

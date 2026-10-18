@@ -3,13 +3,13 @@ import { Prisma } from "../generated/prisma/client";
 
 import {
   BulkImportInput,
-  CalculatePriceInput,
   CreatePriceListInput,
   CreatePriceListItemInput,
   PriceListIdParam,
   PriceListItemIdParam,
   PriceListItemQueryInput,
   PriceListQueryInput,
+  ResolvePriceInput,
   UpdatePriceListInput,
   UpdatePriceListItemInput,
 } from "@mini-erp/shared";
@@ -28,8 +28,9 @@ import {
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
-import { calculatePriceFromParent } from "@/helpers/pricelist-helper";
+import { assertValidPriceListParent, PriceListError } from "@/helpers/pricelist-helper";
 import { withTenantId } from "@/helpers/prisma-helper";
+import { resolveVariantPrice } from "@/services/pricelist/price-resolver-service";
 
 // ============================================================================
 // PRICE LIST CONTROLLER
@@ -207,28 +208,10 @@ export const createPriceList = async (c: Context<AppBindings>) => {
 
   // Se parentListId fornito, verifica esistenza
   if (parentListId) {
-    const parentList = await prisma.priceList.findUnique({
-      where: { id: parentListId },
+    await assertValidPriceListParent(prisma, tenantId, {
+      parentListId,
+      currencyCode: currencyCode ?? currencyCode,
     });
-
-    if (!parentList) {
-      return sendNotFound(c, "Parent Price List non trovato");
-    }
-
-    // Verifica cicli (non può essere parent di se stesso o suoi antenati)
-    let currentParent = parentList;
-    while (currentParent.parentListId) {
-      if (currentParent.parentListId === parentListId) {
-        return sendFail(c, {
-          message: "Rilevato ciclo nella gerarchia dei listini",
-        });
-      }
-      const nextParent = await prisma.priceList.findUnique({
-        where: { id: currentParent.parentListId },
-      });
-      if (!nextParent) break;
-      currentParent = nextParent;
-    }
   }
 
   const priceList = await prisma.priceList.create({
@@ -304,23 +287,12 @@ export const updatePriceList = async (c: Context<AppBindings>) => {
   }
 
   // Se parentListId cambia, verifica esistenza e cicli
-  if (parentListId !== undefined && parentListId !== existingPriceList.parentListId) {
-    if (parentListId !== null) {
-      const parentList = await prisma.priceList.findUnique({
-        where: { id: parentListId },
-      });
-
-      if (!parentList) {
-        return sendNotFound(c, "Parent Price List non trovata");
-      }
-
-      // Verifica cicli
-      if (parentListId === id) {
-        return sendFail(c, {
-          message: "Un listino non può essere parent di se stesso",
-        });
-      }
-    }
+  if (parentListId) {
+    await assertValidPriceListParent(prisma, tenantId, {
+      listId: id,
+      parentListId,
+      currencyCode: currencyCode ?? existingPriceList.currencyCode,
+    });
   }
 
   const updateData: any = {};
@@ -458,12 +430,11 @@ export const getPriceListItems = async (c: Context<AppBindings>) => {
 
 /**
  * @desc    Crea Price List Item
- * @route   POST /api/price-lists/items
+ * @route   POST /api/price-lists/:id/items
  * @access  Private (pricelist:create)
  */
 export const createPriceListItem = async (c: Context<AppBindings>) => {
   const {
-    priceListId,
     variantId,
     minQuantity = 1,
     price,
@@ -472,6 +443,7 @@ export const createPriceListItem = async (c: Context<AppBindings>) => {
     validTo,
   } = getValidatedBody<CreatePriceListItemInput>(c);
   const tenantId = getRequiredTenantId(c);
+  const { id: priceListId } = getValidatedParams<PriceListIdParam>(c);
 
   // Verifica esistenza Price List e Variant
   const [priceList, variant] = await Promise.all([
@@ -576,7 +548,7 @@ export const updatePriceListItem = async (c: Context<AppBindings>) => {
  */
 export const deletePriceListItem = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<PriceListIdParam>(c);
-  const tenantId = getRequiredTenantId(c)
+  const tenantId = getRequiredTenantId(c);
 
   const item = await prisma.priceListItem.findUnique({
     where: { id, tenantId },
@@ -601,7 +573,7 @@ export const deletePriceListItem = async (c: Context<AppBindings>) => {
 export const bulkImportItems = async (c: Context<AppBindings>) => {
   const { priceListId } = getValidatedParams<PriceListItemIdParam>(c);
   const { items } = getValidatedBody<BulkImportInput>(c);
-  const tenantId = getRequiredTenantId(c)
+  const tenantId = getRequiredTenantId(c);
 
   const priceList = await prisma.priceList.findUnique({
     where: { id: priceListId, tenantId },
@@ -675,24 +647,25 @@ export const bulkImportItems = async (c: Context<AppBindings>) => {
 };
 
 /**
- * @desc    Calcola prezzo per variant
- * @route   POST /api/price-lists/calculate-price
+ * @desc    Resolve the unit price of a variant
+ * @route   POST /api/price-lists/resolve-price
  * @access  Private (pricelist:read)
  */
-export const calculatePrice = async (c: Context<AppBindings>) => {
-  const { priceListId, variantId, quantity = 1 } = getValidatedBody<CalculatePriceInput>(c);
-  const tenantId = getRequiredTenantId(c)
+export const resolvePrice = async (c: Context<AppBindings>) => {
+  const input = getValidatedBody<ResolvePriceInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const price = await calculatePriceFromParent(priceListId, variantId, tenantId, quantity);
-
-  if (price === null) {
-    return sendNotFound(c, "Prezzo non trovato per questa combinazione");
+  try {
+    const resolved = await resolveVariantPrice(prisma, tenantId, input);
+    return sendSuccess(c, resolved, {
+      message: resolved.unitPrice === null ? "Nessun prezzo disponibile" : "Prezzo risolto",
+    });
+  } catch (err) {
+    if (err instanceof PriceListError) {
+      return err.code === "NOT_FOUND"
+        ? sendNotFound(c, err.message)
+        : sendFail(c, { message: err.message });
+    }
+    throw err;
   }
-
-  return sendSuccess(c, {
-    priceListId,
-    variantId,
-    quantity,
-    price,
-  });
 };

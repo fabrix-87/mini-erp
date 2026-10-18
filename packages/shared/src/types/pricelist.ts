@@ -13,7 +13,7 @@ import {
   priceListItemIdParamSchema,
   priceListItemQuerySchema,
   priceListQuerySchema,
-  resolvePriceQuerySchema,
+  resolvePriceBodySchema,
   updatePriceListItemSchema,
   updatePriceListSchema,
 } from "../validators/pricelist";
@@ -118,7 +118,7 @@ export type CreatePriceListItemInput = z.infer<typeof createPriceListItemSchema>
 export type UpdatePriceListItemInput = z.infer<typeof updatePriceListItemSchema>;
 export type BulkImportItemInput = z.infer<typeof bulkImportItemSchema>;
 export type BulkImportInput = z.infer<typeof bulkImportBodySchema>;
-export type ResolvePriceInput = z.infer<typeof resolvePriceQuerySchema>;
+export type ResolvePriceInput = z.infer<typeof resolvePriceBodySchema>;
 
 // ============================================================================
 // FORM VALUES (z.input)

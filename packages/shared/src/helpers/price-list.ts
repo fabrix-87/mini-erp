@@ -3,6 +3,10 @@ import Decimal from "decimal.js";
 import { PRICE_LIST_ROUNDING_METHOD, PRICE_LIST_STRATEGY } from "../constants";
 import type { PriceListStrategy, RoundingMethod } from "../constants";
 
+const CENTS = new Decimal("0.01");
+const FIVE_CENTS = new Decimal("0.05");
+const TEN_CENTS = new Decimal("0.10");
+
 /**
  * Applies a price list strategy to the parent price. The result is not rounded.
  * @param base - Parent list unit price (base UoM)
@@ -32,23 +36,32 @@ export function applyPriceListStrategy(
 }
 
 /**
- * Rounds a computed price according to the list rounding method (applied once, at the end).
- * @returns Price with 6 decimals
+ * Rounds a computed price to currency cents, applying the list granularity.
+ * Applied once, to the final price of a derived list (never to explicit items).
+ * @param price - Price before rounding
+ * @param method - Rounding method of the requested price list
+ * @returns Price with exactly 2 decimal places
  */
-export function roundPrice(price: Decimal.Value, method: RoundingMethod): Decimal {
-  const p = new Decimal(price);
+export function roundPrice(price: Decimal.Value, method: RoundingMethod): string {
+  const value = new Decimal(price);
+  let rounded: Decimal;
   switch (method) {
     case PRICE_LIST_ROUNDING_METHOD.NEAREST_05:
-      return p.div("0.05").toDecimalPlaces(0, Decimal.ROUND_HALF_UP).times("0.05");
+      rounded = value.div("0.05").toDecimalPlaces(0, Decimal.ROUND_HALF_UP).times("0.05");
+      break;
     case PRICE_LIST_ROUNDING_METHOD.NEAREST_10:
-      return p.div("0.10").toDecimalPlaces(0, Decimal.ROUND_HALF_UP).times("0.10");
+      rounded = value.div("0.10").toDecimalPlaces(0, Decimal.ROUND_HALF_UP).times("0.10");
+      break;
     case PRICE_LIST_ROUNDING_METHOD.ROUND_UP:
-      return p.toDecimalPlaces(0, Decimal.ROUND_CEIL);
+      rounded = value.toDecimalPlaces(2, Decimal.ROUND_CEIL);
+      break;
     case PRICE_LIST_ROUNDING_METHOD.ROUND_DOWN:
-      return p.toDecimalPlaces(0, Decimal.ROUND_FLOOR);
+      rounded = value.toDecimalPlaces(2, Decimal.ROUND_FLOOR);
+      break;
     default:
-      return p.toDecimalPlaces(6, Decimal.ROUND_HALF_UP);
+      rounded = value.toDecimalPlaces(2, Decimal.ROUND_HALF_UP);
   }
+  return rounded.toFixed(2);
 }
 
 export type PriceItemCandidate = {

@@ -135,6 +135,9 @@ model Document {
 
   // === COUNTERPARTIES ===
 
+  priceListId      String?    @map("price_list_id")
+  defaultPriceList PriceList? @relation(fields: [tenantId, priceListId], references: [tenantId, id], onDelete: Restrict)
+
   /// Present on sale documents (QUOTE, ORDER, INVOICE, CREDIT_NOTE, DELIVERY_NOTE).
   customerId String?   @map("customer_id")
   customer   Customer? @relation("CustomerDocuments", fields: [tenantId, customerId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)

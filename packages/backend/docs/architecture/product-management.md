@@ -182,6 +182,18 @@ possono sovrapporsi. `validTo` richiede `validFrom`.
   `priceOverrideReason`). Se `unitPrice` è diverso dal prezzo risolto, `originalUnitPrice`
   conserva il prezzo di listino e `priceOverrideReason` è obbligatorio.
 
+### Precisione e arrotondamento
+- `PriceListItem.price` e `DocumentLine.unitPrice` sono a 6 decimali: preservano
+  prezzi millesimali e conversioni di UoM.
+- `DocumentLine.lineTotal`, `taxAmount` e tutti i totali documento sono a 2 decimali.
+- `lineTotal = (unitPrice × quantity) − discountAmount`, arrotondato alla centesima.
+- I totali documento sono la somma dei `lineTotal` e dei `taxAmount` già arrotondati.
+- L'arrotondamento del listino (`roundingMethod`) si applica al prezzo base, una sola
+  volta, al prezzo finale di un listino derivato. Le voci `EXPLICIT` non vengono mai
+  arrotondate.
+- `NEAREST_05`: multiplo più vicino di 0,05. `NEAREST_10`: multiplo più vicino di 0,10.
+- `ROUND_UP` / `ROUND_DOWN`: per eccesso / per difetto alla sesta cifra decimale.
+
 ## 7. Canali di vendita
 
 Un **canale** (`SalesChannel`) è un punto di vendita (webshop, marketplace,
@@ -288,6 +300,8 @@ Un `StockSerial` traccia una singola unità fisica attraverso il suo ciclo di vi
 - I movimenti confermati sono immutabili; le correzioni passano da reversal.
 - Ogni documento conserva snapshot di prezzi, tasse, UoM e descrizioni:
   il catalogo può cambiare, lo storico no.
+- I prezzi unitari sono a 6 decimali; i totali di riga e documento a 2 decimali.
+- L'arrotondamento del listino non si applica alle voci esplicite
 
 ## 10. Glossario
 

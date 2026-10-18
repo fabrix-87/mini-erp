@@ -189,14 +189,10 @@ export const bulkImportBodySchema = z
   })
   .strict();
 
-// ---- Price resolution (guide section 6) ---------------------------------------
-/**
- * Input of the price resolver. Without priceListId the customer's list is used.
- * Output type is ResolvedPrice (types/pricelist.ts).
- */
-export const resolvePriceQuerySchema = z
+export const resolvePriceBodySchema = z
   .object({
     variantId: productVariantIdBaseSchema,
+    /** Quantity expressed in the unit selected by uomId (base UoM when omitted). */
     quantity: createDecimalSchema(6, {
       positiveOnly: true,
       min: MIN_POSITIVE_QUANTITY,
@@ -206,6 +202,8 @@ export const resolvePriceQuerySchema = z
     uomId: uomIdBaseSchema.optional(),
     priceListId: priceListIdBaseSchema.optional(),
     customerId: customerIdBaseSchema.optional(),
+    /** Document currency. Required to pick the tenant default list. */
+    currencyCode: currencyCodeBaseSchema.optional(),
     at: isoDateSchema({ message: "Data non valida" }).optional(),
   })
   .strict();

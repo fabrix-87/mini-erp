@@ -60,8 +60,8 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
     supplierId,
     type,
     condition,
-    minPrice,
-    maxPrice,
+    //minPrice,
+    //maxPrice,
     sortBy = "createdAt",
     sortOrder = "desc",
   } = getValidatedQuery<ProductQueryInput>(c);
@@ -101,11 +101,13 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
   }
 
   // Filtro range prezzo
+  /*
   if (minPrice || maxPrice) {
     where.price = {};
     if (minPrice) where.price.gte = minPrice;
     if (maxPrice) where.price.lte = maxPrice;
   }
+    */
 
   // Query con paginazione
   const [products, total] = await Promise.all([

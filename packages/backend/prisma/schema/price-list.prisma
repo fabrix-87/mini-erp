@@ -61,6 +61,7 @@ model PriceList {
   // Relazioni
   items     PriceListItem[]
   customers Customer[] // Clienti assegnati a questo listino
+  documents Document[] // Documenti assegnati a questo listino
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

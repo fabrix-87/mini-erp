@@ -38,11 +38,11 @@ export const MAX_PRICE_LIST_BULK_ITEMS = 1000;
 /** Smallest positive unit price representable by Decimal(20,6). */
 export const MIN_POSITIVE_UNIT_PRICE = "0.000001";
 
-/** Origin of a resolved price (guide section 6). */
 export const PRICE_SOURCE = {
   PRICE_LIST_ITEM: "PRICE_LIST_ITEM",
   MANUAL_OVERRIDE: "MANUAL_OVERRIDE",
   NONE: "NONE",
+  DERIVED: "DERIVED",
 } as const;
 export type PriceSource = (typeof PRICE_SOURCE)[keyof typeof PRICE_SOURCE];
 

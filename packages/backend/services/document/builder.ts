@@ -14,10 +14,12 @@ import {
   calculateDocumentTotals,
   STATUSES_REQUIRING_NUMBER,
   UpdateDocumentInput,
+  CreateDocumentLineInput,
 } from "@mini-erp/shared";
 import { generateDocumentNumber } from "./numbering";
 import { Decimal } from "@prisma/client/runtime/client";
 import { toJsonField } from "@/helpers/prisma-helper";
+import { calculateDocumentLineTotals } from "./document-pricing-service";
 
 // ============================================================================
 // TYPES
@@ -64,58 +66,45 @@ export interface UpdateDocumentPayload {
  * @param index - Zero-based index used to compute lineNumber
  * @returns ProcessedLine with totals (for calculateDocumentTotals) and prismaInput (for create)
  */
-export function buildDocumentLine(
-  line: CreateDocumentInput["lines"][number],
-  index: number,
-): ProcessedLine {
-  const raw = calculateLineTotals(
-    line.quantity,
-    line.unitPrice,
-    line.discountPercent ?? 0,
-    line.taxPercent ?? 22,
-  );
+export interface BuildLineArgs {
+  line: CreateDocumentLineInput;
+  index: number;
+  tenantId: string;
+  productId: string;
+  unitPrice: string;
+  originalUnitPrice: string | null;
+  priceOverrideReason: string | null;
+}
 
-  const lineTotal = new Decimal(raw.lineTotal);
-  const taxAmount = new Decimal(raw.taxAmount);
+export function buildDocumentLine(args: BuildLineArgs): ProcessedLine {
+  const { line } = args;
+  const totals = calculateDocumentLineTotals({
+    quantity: line.quantity,
+    unitPrice: args.unitPrice,
+    discountPercent: line.discountPercent,
+    taxPercent: line.taxPercent,
+  });
 
   return {
-    // Used only by calculateDocumentTotals — always defined, correct type
-    totals: { lineTotal, taxAmount },
-
-    // Used by Prisma tx.document.create — fully typed UncheckedCreateInput
+    totals: { lineTotal: totals.lineTotal, taxAmount: totals.taxAmount },
     prismaInput: {
-      lineNumber: index + 1,
-      lineType: line.lineType ?? "product",
-      code: line.code ?? null,
-      productId: line.productId ?? null,
+      tenantId: args.tenantId,
+      lineNumber: args.index + 1,
+      lineType: line.lineType ?? "PRODUCT",
+      productId: args.productId,
       productVariantId: line.productVariantId ?? null,
-      nameSystem: line.nameSystem,
-      descriptionSystem: line.descriptionSystem ?? null,
-      nameCustomer: line.nameCustomer ?? null,
-      descriptionCustomer: line.descriptionCustomer ?? null,
-      quantity: Number(line.quantity),
-      unit: line.unit ?? "pz",
-      unitPrice: Number(line.unitPrice),
-      unitCost: Number(line.unitCost ?? 0),
-      discountPercent: Number(line.discountPercent ?? 0),
-      discountAmount: new Decimal(raw.discountAmount),
-      lineTotal,
-      taxRuleId: line.taxRuleId ?? null,
-      taxPercent: Number(line.taxPercent ?? 22),
-      taxAmount,
-      vatNatureCode: line.vatNatureCode ?? null,
-      vatNormReference: line.vatNormReference ?? null,
-      lineTotalWithTax: new Decimal(raw.lineTotalWithTax),
-      quantityInvoiced: new Decimal(0),
-      quantityDelivered: new Decimal(0),
-      quantityReturned: new Decimal(0),
-      notes: line.notes ?? null,
-      customFields: toJsonField(line.customFields),
-      warehouseId: line.warehouseId ?? null,
-      parentLineId: line.parentLineId ?? null,
-      isComponent: line.isComponent ?? false,
-      originalUnitPrice: line.originalUnitPrice ? Number(line.originalUnitPrice) : null,
-      priceOverrideReason: line.priceOverrideReason ?? null,
+      quantity: line.quantity,           // string, Prisma accepts it
+      unitPrice: args.unitPrice,          // string, 6 decimals
+      unitCost: "0",                      // set by the service, never by the client
+      discountPercent: line.discountPercent ?? "0",
+      discountAmount: totals.discountAmount.toFixed(2),
+      lineTotal: totals.lineTotal.toFixed(2),
+      taxPercent: line.taxPercent ?? "0",
+      taxAmount: totals.taxAmount.toFixed(2),
+      lineTotalWithTax: totals.lineTotalWithTax.toFixed(2),
+      originalUnitPrice: args.originalUnitPrice,
+      priceOverrideReason: args.priceOverrideReason,
+      // ...rest of the mapped fields
     },
   };
 }
