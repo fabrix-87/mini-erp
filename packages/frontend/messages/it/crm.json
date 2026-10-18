@@ -12,6 +12,48 @@
     "granted": "✓ Accordato",
     "denied": "Non accordato"
   },
+  "companies": {
+    "form": {
+      "fiscal-data": {
+        "title": "Dati fiscali",
+        "description": "Informazioni per fatturazione e adempimenti fiscali",
+        "vies-check": {
+          "success": "P.IVA estera Valida!",
+          "error": "P.IVA estera non valida!"
+        },
+        "fields": {
+          "vatNumber": {
+            "label": "Partita IVA",
+            "placeholder": "12345678901"
+          },
+          "taxCode": {
+            "label": "Codice fiscale",
+            "placeholder": "12345678901"
+          },
+          "sdiCode": {
+            "label": "Codice SDI",
+            "placeholder": "ABCDEFG",
+            "hint": "Codice destinatario per la fatturazione elettronica"
+          },
+          "pec": {
+            "label": "PEC",
+            "placeholder": "azienda@pec.it"
+          },
+          "eoriNumber": {
+            "label": "Numero EORI",
+            "placeholder": "IT123456789000",
+            "hint": "Per le transazioni extra UE"
+          },
+          "vatId": {
+            "label": "VAT ID (UE)",
+            "placeholder": "FR12345678901",
+            "hint": "Per clienti e fornitori UE",
+            "checkButton": "Verifica VAT ID tramite VIES"
+          }
+        }
+      }
+    }
+  },
   "contacts": {
     "title": "Gestione Contatti",
     "description": "Gestisci i contatti delle aziende",

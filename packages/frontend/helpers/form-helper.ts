@@ -15,3 +15,12 @@ export const displayFormErrors = (errorObject: any) => {
     displayFormErrors(errorObject[key]);
   });
 };
+
+/**
+ * Normalizes optional form field values for controlled text inputs.
+ * @param value - Value coming from React Hook Form.
+ * @returns A string suitable for an HTML input value.
+ */
+export function toInputValue(value:unknown): string {
+  return typeof value === "string" ? value : "";
+}
