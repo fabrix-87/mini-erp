@@ -1,22 +1,3 @@
-import { z } from "zod";
-import {
-  productConditionSchema,
-  productOutOfStockTypeSchema,
-  productPackStockTypeSchema,
-  productRedirectTypeSchema,
-  productStatusSchema,
-  productTypeSchema,
-  productVisibilitySchema,
-} from "../validators/product";
-
-export type ProductType = z.infer<typeof productTypeSchema>;
-export type ProductCondition = z.infer<typeof productConditionSchema>;
-export type ProductStatus = z.infer<typeof productStatusSchema>;
-export type ProductVisibility = z.infer<typeof productVisibilitySchema>;
-export type ProductRedirectType = z.infer<typeof productRedirectTypeSchema>;
-export type ProductPackStockType = z.infer<typeof productPackStockTypeSchema>;
-export type ProductOutOfStockType = z.infer<typeof productOutOfStockTypeSchema>;
-
 export const PRODUCT_TYPE = {
   STANDARD: "STANDARD",
   PACK: "PACK",
@@ -60,3 +41,19 @@ export const PRODUCT_REDIRECT_TYPE = {
   MOVED: "MOVED",
   TEMPORARY: "TEMPORARY",
 } as const;
+
+export const PRODUCT_SORT_FIELDS = ["createdAt", "updatedAt", "reference", "status"] as const;
+
+/** Maximum number of variant axes per product (Prisma doc recommends 3). */
+export const MAX_PRODUCT_VARIANT_AXES = 3;
+
+/** Smallest strictly positive value for Decimal(15,6) quantities. */
+export const MIN_POSITIVE_QUANTITY = "0.000001";
+
+export type ProductType = (typeof PRODUCT_TYPE)[keyof typeof PRODUCT_TYPE];
+export type ProductCondition = (typeof PRODUCT_CONDITION)[keyof typeof PRODUCT_CONDITION];
+export type ProductStatus = (typeof PRODUCT_STATUS)[keyof typeof PRODUCT_STATUS];
+export type ProductVisibility = (typeof PRODUCT_VISIBILITY)[keyof typeof PRODUCT_VISIBILITY];
+export type ProductRedirectType = (typeof PRODUCT_REDIRECT_TYPE)[keyof typeof PRODUCT_REDIRECT_TYPE];
+export type ProductPackStockType = (typeof PRODUCT_PACK_STOCK_TYPE)[keyof typeof PRODUCT_PACK_STOCK_TYPE];
+export type ProductOutOfStockType = (typeof PRODUCT_OUT_OF_STOCK_TYPE)[keyof typeof PRODUCT_OUT_OF_STOCK_TYPE];

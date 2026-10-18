@@ -25,61 +25,44 @@ import {
   ProductCondition,
   ProductType,
   ProductStatus,
-  ProductVisibility,
-  ProductRedirectType,
   ProductPackStockType,
   ProductOutOfStockType,
 } from "../constants";
 import { Attribute } from "./attribute";
 import { Category } from "./category";
-import { Language } from "./language";
-import { StockMovement, VirtualStock } from "./warehouse";
+import { ProductPackItem } from "./product-pack";
+import { ProductChannelSetting } from "./product-channel";
+import { ProductSupplier } from "./product-supplier";
+import { ProductUom } from "./uom";
+import { ProductVariantAxis } from "./product-variant-axis";
 
 // ============================================================================
 // TYPE EXPORTS
 // ============================================================================
 
-// Type Entity
 export type Product = {
   id: string;
   tenantId: string;
   type: ProductType;
   status: ProductStatus;
   reference: string;
-
-  active: boolean;
   availableForOrder: boolean;
-  showPrice: boolean;
-  onlineOnly: boolean;
-  onSale: boolean;
-
-  price: number;
-  wholesalePrice: number;
-  ecotax: number;
-
+  ecotax: string;
+  packStockType: ProductPackStockType;
+  outOfStockType: ProductOutOfStockType;
+  baseUomId: string;
   defaultTaxRuleId?: number | null;
-
-  visibility: ProductVisibility;
   condition: ProductCondition;
-  showCondition: boolean;
-
   manufacturerId?: string | null;
-  supplierId?: string | null;
-
-  additionalShippingCost: number;
   commodityCode?: string | null;
-  deliveryTimeNoteType: number;
-
-  redirectType: ProductRedirectType;
-  redirectTargetId?: string | null;
-
   coverThumbnailUrl?: string | null;
-
   variants: ProductVariant[];
+  variantAxes: ProductVariantAxis[];
+  uoms: ProductUom[];
   images: ProductImage[];
   categories: Category[];
   translations: ProductTranslation[];
-
+  channelSettings: ProductChannelSetting[];
   deletedAt?: Date | null;
   deletedBy?: string | null;
   createdAt: Date;
@@ -90,95 +73,64 @@ export type ProductVariant = {
   id: string;
   tenantId: string;
   productId: string;
-
-  variantCode: string;
+  combinationKey: string;
   sku: string;
-
   ean13?: string | null;
   upc?: string | null;
   isbn?: string | null;
   mpn?: string | null;
-
-  minimalQuantity: number;
-  lowStockThreshold: number;
+  minimalQuantity: string;
+  lowStockThreshold: string;
   lowStockAlertEnabled: boolean;
   location?: string | null;
-
-  packStockType: ProductPackStockType;
-  outOfStockType: ProductOutOfStockType;
   availableDate?: Date | null;
-
-  price?: number | null;
-  wholesalePrice?: number | null;
-  unitPriceRatio: number;
-
-  weight?: number | null;
-  width?: number | null;
-  height?: number | null;
-  depth?: number | null;
-
+  weight?: string | null;
+  width?: string | null;
+  height?: string | null;
+  depth?: string | null;
   position: number;
   isDefault: boolean;
   active: boolean;
   availableForOrder: boolean;
-
   metadata?: unknown | null;
-
   attributes: Attribute[];
-  stockMovements: StockMovement[];
-  stockReservations: unknown[];
-  stockBatches: unknown[];
-  virtualStocks: VirtualStock[];
-  documentLines: unknown[];
-  priceListItems: unknown[];
+  packItems: ProductPackItem[];
+  supplierItems: ProductSupplier[];
   images: ProductImage[];
-
   deletedAt?: Date | null;
   deletedBy?: string | null;
-
   createdAt: Date;
   updatedAt: Date;
 };
 
 export type ProductTranslation = {
-  id: number;
-  productId: number;
+  tenantId: string;
+  productId: string;
   languageId: number;
-  language: Language;
   name: string;
-  description?: string;
-  shortDescription?: string;
-  tags?: string;
-  // SEO
-  metaTitle?: string;
-  metaDescription?: string | null;
-  metaKeywords?: string;
-  linkRewrite?: string;
-  // Etichette disponibilità
-  availableNowLabel: string;
-  availableLaterLabel: string;
-  deliveryTimeInStockNote?: string;
-  deliveryTimeOutOfStockNote?: string;
+  description?: string | null;
+  shortDescription?: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
 
-export interface ProductImage {
-  id: number;
-  productId: number;
-  variantId: number | null;
+export type ProductImage = {
+  id: string;
+  tenantId: string;
+  productId: string;
+  variantId: string | null;
   imageUrl: string;
-  imageType: "main" | "extra" | string;
+  imageType: string;
   position: number;
   isCover: boolean;
-  altText: Record<string, any> | null;
   width: number | null;
   height: number | null;
   fileSize: number | null;
   mimeType: string | null;
+  translations: { languageId: number; description: string | null }[];
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 // Type Input
 export type CreateProductFormValues = z.input<typeof createProductSchema>;

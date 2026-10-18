@@ -5,6 +5,7 @@ import {
   MAX_DOCUMENT_AMOUNT,
   MAX_LINE_QUANTITY,
   MIN_DISCOUNT_PERCENT,
+  MIN_POSITIVE_QUANTITY,
 } from "../../constants";
 
 type DecimalSchemaOptions = {
@@ -217,7 +218,7 @@ const unitAmountOptions = { positiveOnly: true, min: 0 } as const;
 export const unitAmountOptionalSchema = createDecimalSchema(6, unitAmountOptions);
 export const unitAmountSchema = createDecimalSchema(6, { ...unitAmountOptions, defaultValue: 0 });
 
-const quantityOptions = { positiveOnly: true, min: 0, max: MAX_LINE_QUANTITY } as const;
+const quantityOptions = { positiveOnly: true, min: MIN_POSITIVE_QUANTITY, max: MAX_LINE_QUANTITY } as const;
 export const quantityOptionalSchema = createDecimalSchema(6, quantityOptions);
 export const quantitySchema = (defaultValue: number) =>
   createDecimalSchema(6, { ...quantityOptions, defaultValue });

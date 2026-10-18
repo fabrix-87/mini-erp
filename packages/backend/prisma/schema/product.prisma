@@ -96,8 +96,6 @@ model Product {
 
   productFeatures ProductFeature[]
   carriers        ProductCarrier[]
-  supplier        Supplier?        @relation(fields: [supplierId], references: [id])
-  supplierId      String?
 
   @@unique([tenantId, id])
   @@unique([tenantId, reference], where: { deletedAt: null })

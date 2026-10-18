@@ -390,7 +390,6 @@ model Supplier {
 
   documentsIn                Document[]                     @relation("SupplierDocuments")
   withholdingSettlementLines WithholdingTaxSettlementLine[] @relation("SupplierWithholdingLines")
-  products                   Product[]
   stockBatches               StockBatch[]
   activities                 Activity[]                     @relation("SupplierActivities")
   warehouses                 Warehouse[]                    @relation("SupplierWarehouse")

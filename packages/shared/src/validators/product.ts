@@ -1,8 +1,17 @@
+// packages/shared/src/validators/product.ts
 import { z } from "zod";
-import { createCuidSchema } from "./primitives/id";
 import { isoDateSchema } from "./primitives/date";
-import { priceSchema } from "./business/currency";
 import {
+  createDecimalSchema,
+  nullableDecimalSchema,
+  quantityOptionalSchema,
+  quantitySchema,
+  unitAmountOptionalSchema,
+  unitAmountSchema,
+} from "./primitives/decimal";
+import {
+  attributeGroupIdBaseSchema,
+  attributeIdBaseSchema,
   inputJsonValueSchema,
   languageIdBaseSchema,
   manufacturerIdBaseSchema,
@@ -10,20 +19,26 @@ import {
   productIdBaseSchema,
   productImageIdBaseSchema,
   productVariantIdBaseSchema,
+  salesChannelIdBaseSchema,
   supplierIdBaseSchema,
   taxRuleIdBaseSchema,
+  uomIdBaseSchema,
 } from "./base";
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
-import { queryBooleanOrAllSchema, queryBooleanSchema } from "./query/params";
 import {
+  MAX_LINE_QUANTITY,
+  MAX_PRODUCT_VARIANT_AXES,
+  MIN_POSITIVE_QUANTITY,
   PRODUCT_CONDITION,
   PRODUCT_OUT_OF_STOCK_TYPE,
   PRODUCT_PACK_STOCK_TYPE,
   PRODUCT_REDIRECT_TYPE,
+  PRODUCT_SORT_FIELDS,
   PRODUCT_STATUS,
   PRODUCT_TYPE,
   PRODUCT_VISIBILITY,
 } from "../constants";
+import { queryBooleanOrAllSchema } from "./query";
 
 // ============================================================================
 // ENUMS
@@ -36,345 +51,222 @@ export const productPackStockTypeSchema = z.enum(PRODUCT_PACK_STOCK_TYPE);
 export const productOutOfStockTypeSchema = z.enum(PRODUCT_OUT_OF_STOCK_TYPE);
 export const productVisibilitySchema = z.enum(PRODUCT_VISIBILITY);
 export const productRedirectTypeSchema = z.enum(PRODUCT_REDIRECT_TYPE);
+export const productSortFieldSchema = z.enum(PRODUCT_SORT_FIELDS);
 
 // ============================================================================
-// PRODUCT VARIANT SCHEMAS
+// PRODUCT VARIANT
 // ============================================================================
 
-/**
- * Schema per la creazione di una ProductVariant
- */
+const dimensionSchema = nullableDecimalSchema(
+  createDecimalSchema(6, { positiveOnly: true, min: 0 }),
+);
+
+const minimalQuantityOptions = {
+  positiveOnly: true,
+  min: MIN_POSITIVE_QUANTITY,
+  max: MAX_LINE_QUANTITY,
+  messages: { min: "La quantità minima deve essere maggiore di zero" },
+} as const;
+
+const variantBaseShape = {
+  sku: z.string().min(1, "Lo SKU è obbligatorio").max(64, "Lo SKU non può superare 64 caratteri").trim(),
+  ean13: z.string().regex(/^\d{13}$/, "L'EAN-13 deve contenere 13 cifre").nullish(),
+  upc: z.string().regex(/^\d{12}$/, "L'UPC deve contenere 12 cifre").nullish(),
+  isbn: z.string().max(32).nullish(),
+  mpn: z.string().max(40).nullish(),
+
+  minimalQuantity: createDecimalSchema(6, minimalQuantityOptions),
+  lowStockThreshold: quantityOptionalSchema,
+  lowStockAlertEnabled: z.boolean(),
+  location: z.string().max(50).nullish(),
+  availableDate: isoDateSchema().nullish(),
+
+  weight: dimensionSchema,
+  width: dimensionSchema,
+  height: dimensionSchema,
+  depth: dimensionSchema,
+
+  position: z.number().int().min(0),
+  isDefault: z.boolean(),
+  active: z.boolean(),
+  availableForOrder: z.boolean(),
+  metadata: inputJsonValueSchema.nullish(),
+
+  /** Attribute values of this variant, one per axis. combinationKey is computed server-side. */
+  attributeIds: z.array(attributeIdBaseSchema).max(MAX_PRODUCT_VARIANT_AXES),
+};
+
+const variantCreateDefaults = {
+  minimalQuantity: createDecimalSchema(6, { ...minimalQuantityOptions, defaultValue: 1 }),
+  lowStockThreshold: quantitySchema(0),
+  lowStockAlertEnabled: z.boolean().default(false),
+  position: z.number().int().min(0).default(0),
+  isDefault: z.boolean().default(false),
+  active: z.boolean().default(true),
+  availableForOrder: z.boolean().default(true),
+  attributeIds: z.array(attributeIdBaseSchema).max(MAX_PRODUCT_VARIANT_AXES).default([]),
+};
+
+/** Variant payload nested inside createProductSchema (no productId). */
+export const createProductVariantInlineSchema = z
+  .object(variantBaseShape)
+  .extend(variantCreateDefaults)
+  .strict();
+
+/** Standalone variant creation (POST /products/:id/variants). */
 export const createProductVariantSchema = z
+  .object({ productId: productIdBaseSchema, ...variantBaseShape })
+  .extend(variantCreateDefaults)
+  .strict();
+
+export const updateProductVariantSchema = z.object(variantBaseShape).partial().strict();
+
+export const productVariantIdSchema = z.object({ id: productVariantIdBaseSchema });
+
+// ============================================================================
+// PRODUCT
+// ============================================================================
+
+const productBaseShape = {
+  type: productTypeSchema,
+  status: productStatusSchema,
+  reference: z.string().min(1, "Il riferimento è obbligatorio").max(64, "Il riferimento non può superare 64 caratteri").trim(),
+  availableForOrder: z.boolean(),
+  ecotax: unitAmountOptionalSchema,
+  packStockType: productPackStockTypeSchema,
+  outOfStockType: productOutOfStockTypeSchema,
+  /** Immutable once the product has stock movements (enforced in controller). */
+  baseUomId: uomIdBaseSchema,
+  defaultTaxRuleId: taxRuleIdBaseSchema.nullish(),
+  condition: productConditionSchema,
+  manufacturerId: manufacturerIdBaseSchema.nullish(),
+  /** NC8 code; existence in IntrastatCommodityCode is checked in controller. */
+  commodityCode: z.string().regex(/^\d{8}$/, "Il codice NC8 deve contenere 8 cifre").nullish(),
+  coverThumbnailUrl: z.string().max(500).nullish(),
+};
+
+export const productVariantAxisInputSchema = z
   .object({
-    productId: productIdBaseSchema,
-
-    // Identificatori univoci
-    variantCode: z
-      .string()
-      .min(1, "Il codice variante è obbligatorio")
-      .max(64, "Il codice variante non può superare 64 caratteri")
-      .trim(),
-    sku: z
-      .string()
-      .min(1, "Lo SKU è obbligatorio")
-      .max(64, "Lo SKU non può superare 64 caratteri")
-      .trim(),
-
-    // Codici a barre
-    ean13: z.string().length(13, "L'EAN-13 deve essere di 13 caratteri").optional().nullable(),
-    upc: z.string().length(12, "L'UPC deve essere di 12 caratteri").optional().nullable(),
-    isbn: z.string().max(32).optional().nullable(),
-    mpn: z.string().max(40).optional().nullable(),
-
-    // Stock e magazzino
-    minimalQuantity: z.number().int().positive().default(1),
-    lowStockThreshold: z.number().int().nonnegative().default(0),
-    lowStockAlertEnabled: z.boolean().default(false),
-    location: z.string().max(50).optional().nullable(),
-
-    packStockType: productPackStockTypeSchema.default("USE_PACK_STOCK_ONLY"),
-    outOfStockType: productOutOfStockTypeSchema.default("DENY_ORDERS"),
-    availableDate: isoDateSchema().optional().nullable(),
-
-    // Prezzi specifici
-    price: priceSchema({ precision: 6 }).optional().nullable(),
-    wholesalePrice: priceSchema({ precision: 6 }).optional().nullable(),
-    unitPriceRatio: priceSchema({ precision: 8 }).default("0"),
-
-    // Dimensioni fisiche
-    weight: z.number().nonnegative().default(0).optional().nullable(),
-    width: z.number().nonnegative().default(0).optional().nullable(),
-    height: z.number().nonnegative().default(0).optional().nullable(),
-    depth: z.number().nonnegative().default(0).optional().nullable(),
-
-    // Configurazione
-    position: z.number().int().default(0),
-    isDefault: z.boolean().default(false),
-    active: z.boolean().default(true),
-    availableForOrder: z.boolean().default(true),
-
-    metadata: inputJsonValueSchema.optional().nullable(),
+    attributeGroupId: attributeGroupIdBaseSchema,
+    position: z.number().int().min(0).default(0),
   })
   .strict();
 
-/**
- * Schema per l'aggiornamento di una ProductVariant
- */
-export const updateProductVariantSchema = createProductVariantSchema
-  .omit({
-    productId: true,
-  })
-  .partial()
-  .strict();
-
-/**
- * Schema per la validazione dell'ID variante
- */
-export const productVariantIdSchema = z.object({
-  id: productVariantIdBaseSchema,
-});
-
-// ============================================================================
-// PRODUCT SCHEMAS
-// ============================================================================
-
-/**
- * Schema per la creazione di un nuovo Product
- */
 export const createProductSchema = z
-  .object({
+  .object(productBaseShape)
+  .extend({
     type: productTypeSchema.default("STANDARD"),
     status: productStatusSchema.default("DRAFT"),
-    reference: z
-      .string()
-      .min(1, "Il riferimento è obbligatorio")
-      .max(64, "Il riferimento non può superare 64 caratteri")
-      .trim(),
-
-    // Stati
-    active: z.boolean().default(true),
     availableForOrder: z.boolean().default(true),
-    showPrice: z.boolean().default(true),
-    onlineOnly: z.boolean().default(false),
-    onSale: z.boolean().default(false),
-
-    // Prezzi
-    price: priceSchema({ defaultValue: 0 }),
-    wholesalePrice: priceSchema({ defaultValue: 0 }),
-    ecotax: priceSchema({ defaultValue: 0 }),
-
-    // Tassazione
-    defaultTaxRuleId: taxRuleIdBaseSchema.nullish(),
-
-    // Visibilità
-    visibility: productVisibilitySchema.default("BOTH"),
+    ecotax: unitAmountSchema,
+    packStockType: productPackStockTypeSchema.default("USE_PACK_STOCK_ONLY"),
+    outOfStockType: productOutOfStockTypeSchema.default("DENY_ORDERS"),
     condition: productConditionSchema.default("NEW"),
-    showCondition: z.boolean().default(false),
-
-    // Relazioni opzionali
-    manufacturerId: manufacturerIdBaseSchema.optional().nullable(),
-    supplierId: supplierIdBaseSchema.optional().nullable(),
-
-    // Logistica
-    additionalShippingCost: priceSchema({ defaultValue: 0 }),
-    carrierReferenceIds: z.any().optional().nullable(),
-    deliveryTimeNoteType: z.number().int().default(0),
-
-    // Redirect e SEO
-    redirectType: productRedirectTypeSchema.default("NOT_FOUND"),
-    redirectTargetId: createCuidSchema("Redirect target ID non valido").optional().nullable(),
-
-    // Media
-    coverThumbnailUrl: z.string().max(500).optional().nullable(),
-
-    // VARIANTI OBBLIGATORIE
-    variants: z
-      .array(createProductVariantSchema.omit({ productId: true }))
-      .min(1, "Almeno una variante è obbligatoria")
-      .refine((variants) => variants.some((v) => v.isDefault === true) || variants.length === 1, {
-        message: "Almeno una variante deve essere impostata come default",
-      }),
+    axes: z.array(productVariantAxisInputSchema).max(MAX_PRODUCT_VARIANT_AXES).default([]),
+    variants: z.array(createProductVariantInlineSchema).min(1, "Almeno una variante è obbligatoria"),
   })
-  .strict();
+  .strict()
+  .superRefine((data, ctx) => {
+    const defaults = data.variants.filter((v) => v.isDefault).length;
+    if (defaults > 1 || (data.variants.length > 1 && defaults !== 1)) {
+      ctx.addIssue({ code: "custom", path: ["variants"], message: "Una sola variante deve essere impostata come default" });
+    }
+    if (new Set(data.axes.map((a) => a.attributeGroupId)).size !== data.axes.length) {
+      ctx.addIssue({ code: "custom", path: ["axes"], message: "Gli assi devono riferirsi a gruppi di attributi distinti" });
+    }
+    if (data.axes.length === 0 && data.variants.length > 1) {
+      ctx.addIssue({ code: "custom", path: ["variants"], message: "Senza assi è ammessa una sola variante" });
+    }
+    data.variants.forEach((v, i) => {
+      if (v.attributeIds.length !== data.axes.length) {
+        ctx.addIssue({ code: "custom", path: ["variants", i, "attributeIds"], message: "Un valore di attributo per ogni asse" });
+      }
+    });
+  });
 
-/**
- * Schema per l'aggiornamento di un Product
- */
-export const updateProductSchema = createProductSchema.partial().strict();
+/** Variants and axes are managed through dedicated endpoints, not through product update. */
+export const updateProductSchema = z.object(productBaseShape).partial().strict();
 
-/**
- * Schema per la validazione dell'ID prodotto
- */
-export const productIdSchema = z.object({
-  id: productIdBaseSchema,
-});
-
-/**
- * Schema per la validazione dell'ID prodotto come productId
- */
-export const productIdAsProductIdSchema = z.object({
-  productId: productIdBaseSchema,
-});
+export const productIdSchema = z.object({ id: productIdBaseSchema });
+export const productIdAsProductIdSchema = z.object({ productId: productIdBaseSchema });
 
 // ============================================================================
-// PRODUCT TRANSLATION SCHEMAS
+// TRANSLATION / IMAGE / CATEGORY / MANUFACTURER
 // ============================================================================
 
-/**
- * Schema per la creazione di una ProductVariantTranslation
- */
+const productTranslationBaseShape = {
+  name: z.string().min(1, "Il nome è obbligatorio").max(255, "Il nome non può superare 255 caratteri").trim(),
+  description: z.string().nullish(),
+  shortDescription: z.string().max(500).nullish(),
+};
+
 export const createProductTranslationSchema = z
-  .object({
-    productId: productIdBaseSchema,
-    languageId: languageIdBaseSchema,
-
-    name: z
-      .string()
-      .min(1, "Il nome è obbligatorio")
-      .max(255, "Il nome non può superare 255 caratteri")
-      .trim(),
-    description: z.string().optional().nullable(),
-    shortDescription: z.string().max(500).optional().nullable(),
-    tags: z.string().max(500).optional().nullable(),
-
-    // SEO
-    metaTitle: z.string().max(255).optional().nullable(),
-    metaDescription: z.string().optional().nullable(),
-    metaKeywords: z.string().max(500).optional().nullable(),
-    slug: z
-      .string()
-      .max(255, "Lo slug non può superare 255 caratteri")
-      .regex(
-        /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-        "Lo slug può contenere solo lettere minuscole, numeri e trattini",
-      )
-      .optional()
-      .nullable(),
-
-    // Etichette disponibilità
-    availableNowLabel: z.string().max(100).default("In stock"),
-    availableLaterLabel: z.string().max(100).default("Available soon"),
-    deliveryTimeInStockNote: z.string().max(255).optional().nullable(),
-    deliveryTimeOutOfStockNote: z.string().max(255).optional().nullable(),
-  })
+  .object({ productId: productIdBaseSchema, languageId: languageIdBaseSchema, ...productTranslationBaseShape })
   .strict();
+export const updateProductTranslationSchema = z.object(productTranslationBaseShape).partial().strict();
+export const productIdLanguageIdSchema = z.object({ id: productIdBaseSchema, languageId: languageIdBaseSchema });
 
-/**
- * Schema per l'aggiornamento di una ProductVariantTranslation
- */
-export const updateProductTranslationSchema = createProductTranslationSchema
-  .omit({ productId: true, languageId: true })
-  .partial()
-  .strict();
+const productImageBaseShape = {
+  variantId: productVariantIdBaseSchema.nullish(),
+  imageUrl: z.url("URL non valido").max(500),
+  imageType: z.string().max(20),
+  position: z.number().int().min(0),
+  isCover: z.boolean(),
+  width: z.number().int().positive().nullish(),
+  height: z.number().int().positive().nullish(),
+  fileSize: z.number().int().positive().nullish(),
+  mimeType: z.string().max(50).nullish(),
+  /** Localized alt text, stored in ProductImageTranslation. */
+  translations: z
+    .array(z.object({ languageId: languageIdBaseSchema, description: z.string().nullish() }).strict())
+    .default([]),
+};
 
-/**
- * Schema for product+language params
- */
-export const productIdLanguageIdSchema = z.object({
-  id: productIdBaseSchema,
-  languageId: languageIdBaseSchema,
-});
-
-// ============================================================================
-// PRODUCT IMAGE SCHEMAS
-// ============================================================================
-
-/**
- * Schema per la creazione di una ProductImage
- */
 export const createProductImageSchema = z
-  .object({
-    productId: productIdBaseSchema,
-    variantId: productIdBaseSchema.optional().nullable(),
-
-    imageUrl: z.url("URL non valido"),
+  .object({ productId: productIdBaseSchema, ...productImageBaseShape })
+  .extend({
     imageType: z.string().max(20).default("extra"),
-    position: z.number().int().default(0),
+    position: z.number().int().min(0).default(0),
     isCover: z.boolean().default(false),
-
-    altText: inputJsonValueSchema.nullable().optional(),
-
-    width: z.number().int().positive().optional().nullable(),
-    height: z.number().int().positive().optional().nullable(),
-    fileSize: z.number().int().positive().optional().nullable(),
-    mimeType: z.string().max(50).optional().nullable(),
   })
   .strict();
+export const updateProductImageSchema = z.object(productImageBaseShape).partial().strict();
+export const productImageIdSchema = z.object({ id: productImageIdBaseSchema, productId: productIdBaseSchema });
 
-/**
- * Schema per l'aggiornamento di una ProductImage
- */
-export const updateProductImageSchema = createProductImageSchema
-  .omit({
-    productId: true,
-  })
-  .partial()
-  .strict();
-
-/**
- * Schema per la validazione dell'ID immagine
- */
-export const productImageIdSchema = z.object({
-  id: productImageIdBaseSchema,
-  productId: productIdBaseSchema,
-});
-
-// ============================================================================
-// PRODUCT CATEGORY SCHEMAS
-// ============================================================================
-
-/**
- * Schema per l'associazione Product-Category
- */
 export const createProductCategorySchema = z
-  .object({
-    productId: productIdBaseSchema,
-    categoryId: productCategoryIdBaseSchema,
-    position: z.number().int().default(0),
-  })
+  .object({ productId: productIdBaseSchema, categoryId: productCategoryIdBaseSchema, position: z.number().int().min(0).default(0) })
   .strict();
+export const updateProductCategorySchema = z.object({ position: z.number().int().min(0) }).strict();
+export const productCategoryIdSchema = z.object({ categoryId: productCategoryIdBaseSchema, productId: productIdBaseSchema });
 
-/**
- * Schema per l'aggiornamento della posizione Product-Category
- */
-export const updateProductCategorySchema = z
-  .object({
-    position: z.number().int(),
-  })
-  .strict();
-
-/**
- * Schema per la validazione dell'ID categoria
- */
-export const productCategoryIdSchema = z.object({
-  categoryId: productCategoryIdBaseSchema,
-  productId: productIdBaseSchema,
-});
+// Manufacturer: unchanged, except customFields
+const manufacturerBaseShape = {
+  name: z.string().min(1, "Il nome è obbligatorio").trim(),
+  active: z.boolean(),
+  customFields: inputJsonValueSchema.nullish(),
+};
+export const createManufacturerSchema = z.object(manufacturerBaseShape).extend({ active: z.boolean().default(true) }).strict();
+export const updateManufacturerSchema = z.object(manufacturerBaseShape).partial().strict();
+export const manufacturerIdSchema = z.object({ id: manufacturerIdBaseSchema });
 
 // ============================================================================
-// MANUFACTURER SCHEMAS
-// ============================================================================
-
-/**
- * Schema per la creazione di un Manufacturer
- */
-export const createManufacturerSchema = z
-  .object({
-    name: z.string().min(1, "Il nome è obbligatorio").trim(),
-    active: z.boolean().default(true),
-    customFields: z.any().optional().nullable(),
-  })
-  .strict();
-
-/**
- * Schema per l'aggiornamento di un Manufacturer
- */
-export const updateManufacturerSchema = createManufacturerSchema.partial().strict();
-
-/**
- * Schema per la validazione dell'ID manufacturer
- */
-export const manufacturerIdSchema = z.object({
-  id: manufacturerIdBaseSchema,
-});
-
-// ============================================================================
-// QUERY SCHEMAS
+// QUERY
 // ============================================================================
 
 export const productQuerySchema = z.object({
   page: pageSchema,
   limit: limitSchema,
   search: z.string().optional(),
-  active: queryBooleanOrAllSchema(),
-  categoryId: productCategoryIdBaseSchema.optional(),
-  manufacturerId: manufacturerIdBaseSchema.optional(),
-  supplierId: supplierIdBaseSchema.optional(),
+  status: productStatusSchema.optional(),
   type: productTypeSchema.optional(),
   condition: productConditionSchema.optional(),
-  minPrice: priceSchema().optional().nullable(),
-  maxPrice: priceSchema().optional().nullable(),
-  onSale: queryBooleanOrAllSchema(),
-  sortBy: z.string().default("createdAt"),
+  categoryId: productCategoryIdBaseSchema.optional(),
+  manufacturerId: manufacturerIdBaseSchema.optional(),
+  /** Resolved through ProductSupplier -> variants, not a Product column. */
+  supplierId: supplierIdBaseSchema.optional(),
+  /** Filters products published on a given sales channel. */
+  channelId: salesChannelIdBaseSchema.optional(),
+  isPublished: queryBooleanOrAllSchema(),
+  sortBy: productSortFieldSchema.default("createdAt"),
   sortOrder: sortOrderSchema,
 });

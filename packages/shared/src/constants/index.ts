@@ -1,3 +1,4 @@
+export * from "./attribute";
 export * from "./common";
 export * from "./audit";
 export * from "./contact";
@@ -7,6 +8,7 @@ export * from "./customer";
 export * from "./pricelist";
 export * from "./opportunity";
 export * from "./product";
+export * from "./product-channel";
 export * from "./warehouse";
 export * from "./company";
 export * from "./tenant";

@@ -45,8 +45,9 @@ export type AttributeDisplayType = z.infer<typeof attributeDisplayTypeSchema>;
  * Attribute Group entity
  */
 export type AttributeGroup = {
-  id: number;
+  id: string;
   code: string;
+  externalCode: string;
   displayType: AttributeDisplayType;
   position: number;
   isPublic: boolean;
@@ -60,13 +61,12 @@ export type AttributeGroup = {
  * Attribute Group Translation entity
  */
 export type AttributeGroupTranslation = {
-  id: number;
-  attributeGroupId: number;
+  attributeGroupId: string;
   attributeGroup: AttributeGroup;
   languageId: number;
   language: Language;
   name: string;
-  publicName: string | null;
+  displayName: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -75,15 +75,17 @@ export type AttributeGroupTranslation = {
  * Attribute entity
  */
 export type Attribute = {
-  id: number;
-  attributeGroupId: number;
+  id: string;
+  attributeGroupId: string;
   attributeGroup: AttributeGroup;
   code: string;
-  colorHex: string | null;
-  colorHex2: string | null;
-  colorPms: string | null;
-  colorPms2: string | null;
-  imageUrl: string | null;
+  metadata?: {
+    colorHex: string | null;
+    colorHex2: string | null;
+    colorPms: string | null;
+    colorPms2: string | null;
+    imageUrl: string | null;
+  };
   position: number;
   translations: AttributeTranslation[];
   variants: ProductVariantAttribute[];
@@ -95,8 +97,7 @@ export type Attribute = {
  * Attribute Translation entity
  */
 export type AttributeTranslation = {
-  id: number;
-  attributeId: number;
+  attributeId: string;
   attribute: Attribute;
   languageId: number;
   language: Language;
@@ -109,10 +110,11 @@ export type AttributeTranslation = {
  * Product Variant Attribute junction entity
  */
 export type ProductVariantAttribute = {
-  productVariantId: number;
-  productVariant: ProductVariant;
-  attributeId: number;
-  attribute: Attribute;
+  productId: string;
+  productVariantId: string;
+  attributeGroupId: string;
+  attributeId: string;
+  attribute?: Attribute;
 };
 
 // ============================================================================
@@ -132,12 +134,8 @@ export type UpdateAttributeGroupTranslationInput = z.infer<
 export type CreateAttributeInput = z.infer<typeof createAttributeSchema>;
 export type UpdateAttributeInput = z.infer<typeof updateAttributeSchema>;
 
-export type CreateAttributeTranslationInput = z.infer<
-  typeof createAttributeTranslationSchema
->;
-export type UpdateAttributeTranslationInput = z.infer<
-  typeof updateAttributeTranslationSchema
->;
+export type CreateAttributeTranslationInput = z.infer<typeof createAttributeTranslationSchema>;
+export type UpdateAttributeTranslationInput = z.infer<typeof updateAttributeTranslationSchema>;
 
 export type CreateProductVariantAttributeInput = z.infer<
   typeof createProductVariantAttributeSchema
@@ -155,9 +153,7 @@ export type BatchDeleteAttributesInput = z.infer<typeof batchDeleteAttributesSch
 
 export type AttributeGroupQueryInput = z.infer<typeof attributeGroupQuerySchema>;
 export type AttributeQueryInput = z.infer<typeof attributeQuerySchema>;
-export type ProductVariantAttributeQueryInput = z.infer<
-  typeof productVariantAttributeQuerySchema
->;
+export type ProductVariantAttributeQueryInput = z.infer<typeof productVariantAttributeQuerySchema>;
 
 // ============================================================================
 // PARAM TYPES (using z.infer)
@@ -165,13 +161,9 @@ export type ProductVariantAttributeQueryInput = z.infer<
 
 export type AttributeGroupIdParam = z.infer<typeof attributeGroupIdParamSchema>;
 export type AttributeIdParam = z.infer<typeof attributeIdParamSchema>;
-export type AttributeGroupTranslationParam = z.infer<
-  typeof attributeGroupTranslationParamSchema
->;
+export type AttributeGroupTranslationParam = z.infer<typeof attributeGroupTranslationParamSchema>;
 export type AttributeTranslationParam = z.infer<typeof attributeTranslationParamSchema>;
-export type ProductVariantAttributeParam = z.infer<
-  typeof productVariantAttributeParamSchema
->;
+export type ProductVariantAttributeParam = z.infer<typeof productVariantAttributeParamSchema>;
 
 // ============================================================================
 // UTILITY TYPES

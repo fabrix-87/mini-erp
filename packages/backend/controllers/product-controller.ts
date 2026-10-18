@@ -92,12 +92,11 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
   }
 
   // Filtri semplici
-  if (active !== undefined) where.active = active;
+  if (active !== undefined) where.status = "ACTIVE";
   if (type) where.type = type;
   if (condition) where.condition = condition;
-  if (onSale !== undefined) where.onSale = onSale;
   if (manufacturerId) where.manufacturerId = manufacturerId;
-  if (supplierId) where.supplierId = supplierId;
+  if (supplierId) where.variants = { some: { supplierItems: { some: { supplierId: supplierId } } } };
 
   // Filtro categoria
   if (categoryId) {

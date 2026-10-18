@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { createIdSchema } from "./primitives/id";
 import { sortOrderSchema, pageSchema, limitSchema } from "./query/pagination";
 import { queryBooleanSchema } from "./query/params";
 import {
@@ -10,8 +9,17 @@ import {
   COLOR_HEX_PATTERN,
   PMS_COLOR_PATTERN,
   MAX_IMAGE_URL_LENGTH,
-} from "../constants/attribute";
+  ATTRIBUTE_GROUP_SORT_OPTIONS,
+  ATTRIBUTE_SORT_OPTIONS,
+} from "../constants";
 import { urlSchema } from "./primitives";
+import {
+  attributeGroupIdBaseSchema,
+  attributeIdBaseSchema,
+  languageIdBaseSchema,
+  productVariantIdBaseSchema,
+} from "./base";
+import { MAX_PRODUCT_VARIANT_AXES } from "../constants";
 
 // ============================================================================
 // ENUMS
@@ -91,16 +99,12 @@ const attributeCodeSchema = z
 // ATTRIBUTE GROUP SCHEMAS
 // ============================================================================
 
-export const attributeGroupIdSchema = createIdSchema("ID Attribute Group non valido");
-
 export const createAttributeGroupSchema = z
   .object({
     code: attributeGroupCodeSchema,
-
+    externalCode: z.string().max(100).nullish(),
     displayType: attributeDisplayTypeSchema.default(ATTRIBUTE_DISPLAY_TYPES.SELECT),
-
     position: z.number().int().nonnegative("Position non può essere negativa").default(0),
-
     isPublic: z.boolean().default(true),
   })
   .strict();
@@ -113,17 +117,14 @@ export const updateAttributeGroupSchema = createAttributeGroupSchema.partial().s
 
 export const createAttributeGroupTranslationSchema = z
   .object({
-    attributeGroupId: attributeGroupIdSchema,
-
-    languageId: createIdSchema("Language ID non valido"),
-
+    attributeGroupId: attributeGroupIdBaseSchema,
+    languageId: languageIdBaseSchema,
     name: z
       .string()
       .min(1, "Nome obbligatorio")
       .max(MAX_ATTRIBUTE_NAME_LENGTH, `Nome max ${MAX_ATTRIBUTE_NAME_LENGTH} caratteri`)
       .trim(),
-
-    publicName: z
+    displayName: z
       .string()
       .max(MAX_ATTRIBUTE_NAME_LENGTH, `Nome pubblico max ${MAX_ATTRIBUTE_NAME_LENGTH} caratteri`)
       .optional()
@@ -140,16 +141,11 @@ export const updateAttributeGroupTranslationSchema = createAttributeGroupTransla
 // ATTRIBUTE SCHEMAS
 // ============================================================================
 
-export const attributeIdSchema = createIdSchema("ID Attribute non valido");
-
 export const createAttributeSchema = z
   .object({
-    attributeGroupId: attributeGroupIdSchema,
-
+    attributeGroupId: attributeGroupIdBaseSchema,
     code: attributeCodeSchema,
-
-    metadata: attributeMetadataSchema,
-
+    metadata: attributeMetadataSchema.nullish(),
     position: z.number().int().nonnegative("Position non può essere negativa").default(0),
   })
   .strict();
@@ -165,10 +161,8 @@ export const updateAttributeSchema = createAttributeSchema
 
 export const createAttributeTranslationSchema = z
   .object({
-    attributeId: attributeIdSchema,
-
-    languageId: createIdSchema("Language ID non valido"),
-
+    attributeId: attributeIdBaseSchema,
+    languageId: languageIdBaseSchema,
     name: z
       .string()
       .min(1, "Nome obbligatorio")
@@ -188,27 +182,40 @@ export const updateAttributeTranslationSchema = createAttributeTranslationSchema
 
 export const createProductVariantAttributeSchema = z
   .object({
-    productVariantId: createIdSchema("Product Variant ID non valido"),
-
-    attributeId: attributeIdSchema,
+    productVariantId: productVariantIdBaseSchema,
+    attributeId: attributeIdBaseSchema,
   })
   .strict();
 
 export const bulkAssignAttributesSchema = z
   .object({
-    productVariantId: createIdSchema("Product Variant ID non valido"),
-
-    attributeIds: z.array(attributeIdSchema).min(1, "Seleziona almeno un attributo"),
+    productVariantId: productVariantIdBaseSchema,
+    attributeIds: z.array(attributeIdBaseSchema).min(1, "Seleziona almeno un attributo"),
   })
   .strict();
 
 export const bulkRemoveAttributesSchema = z
   .object({
-    productVariantId: createIdSchema("Product Variant ID non valido"),
-
-    attributeIds: z.array(attributeIdSchema).min(1, "Seleziona almeno un attributo"),
+    productVariantId: productVariantIdBaseSchema,
+    attributeIds: z.array(attributeIdBaseSchema).min(1, "Seleziona almeno un attributo"),
   })
   .strict();
+
+// packages/shared/src/validators/attribute.ts
+/** Replaces all attribute values of a variant (PUT /variants/:id/attributes). One value per product axis. */
+export const setProductVariantAttributesSchema = z
+  .object({
+    attributeIds: z
+      .array(attributeIdBaseSchema)
+      .max(MAX_PRODUCT_VARIANT_AXES)
+      .refine((ids) => new Set(ids).size === ids.length, "Attributi duplicati"),
+  })
+  .strict();
+
+export const productVariantAttributeParamSchema = z.object({
+  productVariantId: productVariantIdBaseSchema,
+  attributeId: attributeIdBaseSchema,
+});
 
 // ============================================================================
 // QUERY SCHEMAS
@@ -220,7 +227,7 @@ export const attributeGroupQuerySchema = z.object({
   search: z.string().optional(),
   displayType: attributeDisplayTypeSchema.optional(),
   isPublic: queryBooleanSchema,
-  sortBy: z.enum(["code", "position", "createdAt"]).default("position"),
+  sortBy: z.enum(ATTRIBUTE_GROUP_SORT_OPTIONS).default("position"),
   sortOrder: sortOrderSchema,
 });
 
@@ -228,18 +235,18 @@ export const attributeQuerySchema = z.object({
   page: pageSchema,
   limit: limitSchema,
   search: z.string().optional(),
-  attributeGroupId: attributeGroupIdSchema.optional(),
+  attributeGroupId: attributeGroupIdBaseSchema.optional(),
   hasColor: queryBooleanSchema,
   hasImage: queryBooleanSchema,
-  sortBy: z.enum(["code", "position", "createdAt"]).default("position"),
+  sortBy: z.enum(ATTRIBUTE_SORT_OPTIONS).default("position"),
   sortOrder: sortOrderSchema,
 });
 
 export const productVariantAttributeQuerySchema = z.object({
   page: pageSchema,
   limit: limitSchema,
-  productVariantId: createIdSchema("Product Variant ID non valido").optional(),
-  attributeGroupId: attributeGroupIdSchema.optional(),
+  productVariantId: productVariantIdBaseSchema.optional(),
+  attributeGroupId: attributeGroupIdBaseSchema.optional(),
   sortBy: z.enum(["position", "createdAt"]).default("position"),
   sortOrder: sortOrderSchema,
 });
@@ -249,26 +256,21 @@ export const productVariantAttributeQuerySchema = z.object({
 // ============================================================================
 
 export const attributeGroupIdParamSchema = z.object({
-  id: attributeGroupIdSchema,
+  id: attributeGroupIdBaseSchema,
 });
 
 export const attributeIdParamSchema = z.object({
-  id: attributeIdSchema,
+  id: attributeIdBaseSchema,
 });
 
 export const attributeGroupTranslationParamSchema = z.object({
-  attributeGroupId: attributeGroupIdSchema,
-  languageId: createIdSchema("Language ID non valido"),
+  attributeGroupId: attributeGroupIdBaseSchema,
+  languageId: languageIdBaseSchema,
 });
 
 export const attributeTranslationParamSchema = z.object({
-  attributeId: attributeIdSchema,
-  languageId: createIdSchema("Language ID non valido"),
-});
-
-export const productVariantAttributeParamSchema = z.object({
-  productVariantId: createIdSchema("Product Variant ID non valido"),
-  attributeId: attributeIdSchema,
+  attributeId: attributeIdBaseSchema,
+  languageId: languageIdBaseSchema,
 });
 
 // ============================================================================
@@ -277,7 +279,7 @@ export const productVariantAttributeParamSchema = z.object({
 
 export const batchCreateAttributesSchema = z
   .object({
-    attributeGroupId: attributeGroupIdSchema,
+    attributeGroupId: attributeGroupIdBaseSchema,
 
     attributes: z
       .array(
@@ -295,7 +297,7 @@ export const batchUpdateAttributesSchema = z
     updates: z
       .array(
         z.object({
-          id: attributeIdSchema,
+          id: attributeIdBaseSchema,
           data: updateAttributeSchema,
         }),
       )
@@ -307,7 +309,7 @@ export const batchUpdateAttributesSchema = z
 export const batchDeleteAttributesSchema = z
   .object({
     attributeIds: z
-      .array(attributeIdSchema)
+      .array(attributeIdBaseSchema)
       .min(1, "Seleziona almeno un attributo")
       .max(100, "Massimo 100 attributi per richiesta"),
   })

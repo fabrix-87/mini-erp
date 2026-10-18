@@ -31,6 +31,15 @@ export const languageIdBaseSchema = createIdSchema("Language ID non valido");
 export const manufacturerIdBaseSchema = createCuidSchema("ID Manufacturer not valid");
 export const priceListIdBaseSchema = createCuidSchema("PriceList ID not valid");
 
+export const salesChannelIdBaseSchema = createCuidSchema("Sales Channel ID non valido");
+export const productChannelSettingsIdBaseSchema = createCuidSchema("Channel Settings ID non valido");
+export const productPackItemIdBaseSchema = createCuidSchema("Pack Item ID non valido");
+export const productSupplierIdBaseSchema = createCuidSchema("Product Supplier ID non valido");
+export const productUomIdBaseSchema = createCuidSchema("Product UoM ID non valido");
+export const uomIdBaseSchema = createCuidSchema("UoM ID non valido");
+export const attributeIdBaseSchema = createCuidSchema("Attribute ID non valido");
+export const attributeGroupIdBaseSchema = createCuidSchema("Attribute Group ID non valido");
+
 /**
  * Schema base per Currency Code
  */
