@@ -1,7 +1,6 @@
 /// Purpose/direction of the price list.
 enum PriceListType {
   SALE // Standard sales price list
-  PURCHASE // Supplier purchase price list
   PROMOTION // Temporary promotional override
   CONTRACT // Customer-specific contract pricing
 }
@@ -56,6 +55,9 @@ model PriceList {
   strategyValue  Decimal             @default(0) @map("strategy_value") @db.Decimal(10, 2) // Es. 10.00 (per indicare 10%)
   roundingMethod PriceRoundingMethod @default(NONE) @map("rounding_method") // none, nearest_05, nearest_10, up, down
 
+  /// Fallback list for documents whose customer has no assigned list. One per tenant and currency.
+  isDefault Boolean @default(false) @map("is_default")
+
   // Relazioni
   items     PriceListItem[]
   customers Customer[] // Clienti assegnati a questo listino
@@ -63,6 +65,7 @@ model PriceList {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([tenantId, currencyCode], where: { isDefault: true }, map: "uq_price_list_one_default")
   @@unique([tenantId, id])
   @@unique([tenantId, code])
   @@index([tenantId, active])
@@ -88,7 +91,8 @@ model PriceListItem {
 
   // Scaglioni di quantità (Quantity Breaks)
   // Default 1. Se inserisci una riga con minQuantity 10, si applica da 10 pezzi in su.
-  minQuantity Int @default(1) @map("min_quantity")
+  /// Lower bound of the quantity break, expressed in the product base UoM. Must be > 0 
+  minQuantity Decimal @default(1) @map("min_quantity") @db.Decimal(15, 6)
 
   // Il Prezzo
   price Decimal @db.Decimal(20, 6)
@@ -111,7 +115,9 @@ model PriceListItem {
 
   // Unique constraint: no duplicate prices for the same variant/quantity in the same list
   @@unique([tenantId, id])
-  @@unique([priceListId, variantId, minQuantity])
+  @@unique([priceListId, variantId, minQuantity], where: { validFrom: null }, map: "uq_pli_undated")
+  @@unique([priceListId, variantId, minQuantity, validFrom], where: { validFrom: { not: null } }, map: "uq_pli_dated")
+  @@index([priceListId, variantId])
   @@index([tenantId, variantId])
   @@map("price_list_items")
 }

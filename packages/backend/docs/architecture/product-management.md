@@ -143,27 +143,44 @@ Il "fornitore predefinito" non è un campo sul prodotto: si legge da
 
 **Single source of truth: `PriceListItem`.**
 
-- Il prezzo di vendita vive nel listino (`PriceList` → `PriceListItem`),
-  con supporto per scaglioni di quantità, validità temporale e sconti.
-- `Product` non ha campi prezzo.
-- `ProductVariant` non ha campi prezzo (eventuale `listPrice` solo come
-  default di catalogo, subordinato al listino).
-- Il prezzo applicato su una riga documento è sempre uno snapshot:
-  `unitPrice`, `originalUnitPrice`, `priceOverrideReason`.
+- Il prezzo di vendita vive nel listino (`PriceList` → `PriceListItem`), con scaglioni
+  di quantità, validità temporale e sconto proposto.
+- `Product` e `ProductVariant` non hanno campi prezzo.
+- Il prezzo d'acquisto non è un listino: vive in `ProductSupplier`.
+- Tipi di listino: `SALE`, `PROMOTION`, `CONTRACT`.
+- Un listino non converte valuta: documento, listino e listino padre hanno la stessa valuta.
 
-```mermaid
-flowchart TD
-    PL[PriceList] --> PLI[PriceListItem<br/>prezzo per variante<br/>+ scaglioni e validità]
-    PLI --> DL[DocumentLine<br/>unitPrice snapshot]
-    DL --> OV{Override manuale?}
-    OV -- Sì --> R[originalUnitPrice<br/>+ priceOverrideReason]
-    OV -- No --> OK[Prezzo da listino]
-```
+### Unità di misura dei prezzi
+`PriceListItem.price` e `minQuantity` sono espressi nella UoM base del prodotto.
+Sulla riga documento: `unitPrice = price × uomFactor`; lo scaglione si confronta con
+`quantity × uomFactor`.
 
-Gerarchia di risoluzione prezzo (in ordine):
-1. `PriceListItem` con validità e scaglione applicabili.
-2. Override manuale sulla riga documento (con motivazione obbligatoria).
-3. Nessun prezzo → la riga non può essere confermata.
+### Scelta del listino
+Un solo listino effettivo per documento, in quest'ordine:
+1. listino impostato sul documento;
+2. listino assegnato al cliente;
+3. listino predefinito del tenant per la valuta del documento (`isDefault`).
+
+### Risoluzione del prezzo
+1. Voci della variante valide alla data (`validFrom`/`validTo`, estremi inclusi) con
+   `minQuantity` ≤ quantità in UoM base.
+2. Vince lo scaglione più alto; a parità, la voce con validità datata su quella senza data.
+3. Senza voce, se il listino ha un padre: si risolve nel padre e si applica `strategy`
+   (profondità massima 5). Una voce propria del listino derivato ha sempre la precedenza
+   e non subisce la strategia.
+4. L'arrotondamento (`roundingMethod`) si applica una sola volta, sul risultato finale.
+   `NEAREST_05`/`NEAREST_10` arrotondano al multiplo più vicino; `ROUND_UP`/`ROUND_DOWN`
+   all'unità intera di valuta.
+5. Nessun prezzo → la riga non può essere confermata.
+
+Le finestre di validità delle voci con la stessa variante e lo stesso scaglione non
+possono sovrapporsi. `validTo` richiede `validFrom`.
+
+### Sconto e override
+- `PriceListItem.discountPercent` non cambia `unitPrice`: viene proposto come sconto della riga.
+- Il prezzo applicato su una riga documento è uno snapshot (`unitPrice`, `originalUnitPrice`,
+  `priceOverrideReason`). Se `unitPrice` è diverso dal prezzo risolto, `originalUnitPrice`
+  conserva il prezzo di listino e `priceOverrideReason` è obbligatorio.
 
 ## 7. Canali di vendita
 

@@ -30,6 +30,7 @@ export const taxRuleIdBaseSchema = createIdSchema("Tax Rule ID non valido");
 export const languageIdBaseSchema = createIdSchema("Language ID non valido");
 export const manufacturerIdBaseSchema = createCuidSchema("ID Manufacturer not valid");
 export const priceListIdBaseSchema = createCuidSchema("PriceList ID not valid");
+export const priceListItemIdBaseSchema  = createCuidSchema("PriceListItem ID not valid");
 
 export const salesChannelIdBaseSchema = createCuidSchema("Sales Channel ID non valido");
 export const productChannelSettingsIdBaseSchema = createCuidSchema("Channel Settings ID non valido");

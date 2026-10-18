@@ -55,7 +55,6 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
     page = 1,
     limit = 20,
     search,
-    active,
     categoryId,
     manufacturerId,
     supplierId,
@@ -63,7 +62,6 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
     condition,
     minPrice,
     maxPrice,
-    onSale,
     sortBy = "createdAt",
     sortOrder = "desc",
   } = getValidatedQuery<ProductQueryInput>(c);
@@ -92,7 +90,6 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
   }
 
   // Filtri semplici
-  if (active !== undefined) where.status = "ACTIVE";
   if (type) where.type = type;
   if (condition) where.condition = condition;
   if (manufacturerId) where.manufacturerId = manufacturerId;
