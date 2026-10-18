@@ -20,6 +20,7 @@ import {
 import { getVIESData } from "@/services/client/vies-client";
 import { toast } from "sonner";
 import { toInputValue } from "@/helpers/form-helper";
+import { applyViesCompanyData } from "@/helpers/apply-vies-company-data";
 
 /**
  * Fiscal data tab for the company form.
@@ -41,18 +42,37 @@ export function FiscalDataTab(): React.JSX.Element {
     if (!vatId) return;
 
     const res = await getVIESData(vatId);
-    if (res && res?.data.valid) {
-      toast.success(t('vies-check.success'), {
+    if (res && res?.valid) {
+      const toastId = toast.success(t("vies-check.success"), {
+        duration: 10000,
         description: (
-          <>
-            {res.data.name}
-            <br />
-            {res.data.address}
-          </>
+          <div className="mt-1 space-y-1">
+            <p className="font-medium">{res.name}</p>
+            <p className="whitespace-pre-line text-xs leading-relaxed opacity-80">{res.address}</p>
+          </div>
+        ),
+        action: (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="ml-auto h-8 shrink-0 rounded-md border-current/20 bg-transparent px-3 text-xs font-medium text-inherit shadow-none hover:bg-black/5 hover:text-inherit dark:hover:bg-white/10"
+            aria-label={t("vies-check.actionDescription")}
+            title={t("vies-check.actionDescription")}
+            onClick={() => {
+              const updated = applyViesCompanyData(form.setValue, res);
+
+              if (updated) {
+                toast.dismiss(toastId);
+              }
+            }}
+          >
+            {t("vies-check.action")}
+          </Button>
         ),
       });
     } else {
-      toast.error(t('vies-check.error'));
+      toast.error(t("vies-check.error"));
     }
   };
 

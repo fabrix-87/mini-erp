@@ -1,12 +1,13 @@
 import { viesapi } from "@/lib/client/vies-api";
+import { ViesCompanyData } from "@/types/vies-types";
 
 /**
- * TODO: Serve abbonamento API
  * @param vatId
  */
-export async function getVIESData(vatId: string) {
+export async function getVIESData(vatId: string): Promise<ViesCompanyData | false> {
   try {
-    return await viesapi.get("vat/", { params: { vat_number: vatId } });    
+    const res = await viesapi.get<ViesCompanyData>("vat/", { params: { vat_number: vatId } });
+    return res.data;
   } catch {
     return false;
   }

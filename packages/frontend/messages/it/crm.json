@@ -19,7 +19,9 @@
         "description": "Informazioni per fatturazione e adempimenti fiscali",
         "vies-check": {
           "success": "P.IVA estera Valida!",
-          "error": "P.IVA estera non valida!"
+          "error": "P.IVA estera non valida!",
+          "action": "Inserisci dati",
+          "actionDescription": "Inserisci nel modulo i dati recuperati da VIES"
         },
         "fields": {
           "vatNumber": {
