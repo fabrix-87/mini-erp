@@ -185,8 +185,7 @@ model Document {
   subtotal          Decimal @default(0) @db.Decimal(15, 2)
   discountPercent   Decimal @default(0) @map("discount_percent") @db.Decimal(5, 2)
   discountAmount    Decimal @default(0) @map("discount_amount") @db.Decimal(15, 2)
-  shippingCost      Decimal @default(0) @map("shipping_cost") @db.Decimal(15, 2)
-  shippingTaxAmount Decimal @default(0) @map("shipping_tax_amount") @db.Decimal(15, 2)
+
   /// Taxable base after discounts and before VAT.
   taxableAmount     Decimal @default(0) @map("taxable_amount") @db.Decimal(15, 2)
   taxAmount         Decimal @default(0) @map("tax_amount") @db.Decimal(15, 2)
