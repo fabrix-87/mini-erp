@@ -4,7 +4,13 @@
 // Can be used in both frontend and backend
 // ============================================================================
 
-import { DOCUMENT_TYPE_STATUS_TRANSITIONS, INBOUND_DOCUMENT_TYPES, InboundDocumentType } from "../constants";
+import {
+  DOCUMENT_FORMALIZATION_STATUS,
+  DOCUMENT_TYPE_STATUS_TRANSITIONS,
+  INBOUND_DOCUMENT_TYPES,
+  InboundDocumentType,
+  OutboundDocumentType,
+} from "../constants";
 import type { DocumentStatus, DocumentType } from "../types/document";
 
 /**
@@ -15,8 +21,23 @@ import type { DocumentStatus, DocumentType } from "../types/document";
  * @param to - Target status
  * @returns true when the transition exists in DOCUMENT_TYPE_STATUS_TRANSITIONS
  */
-export const canTransition = (type: DocumentType, from: DocumentStatus, to: DocumentStatus): boolean =>
-  DOCUMENT_TYPE_STATUS_TRANSITIONS[type][from]?.includes(to) ?? false;
+export const canTransition = (
+  type: DocumentType,
+  from: DocumentStatus,
+  to: DocumentStatus,
+): boolean => DOCUMENT_TYPE_STATUS_TRANSITIONS[type][from]?.includes(to) ?? false;
+
+/**
+ * Returns the formalization status for a given document type.
+ *
+ * @param {DocumentType} documentType - The type of document to check the formalization status for.
+ * @returns {DocumentStatus | null} The corresponding document status, or `null` if the document type has no formalization workflow.
+ *
+ * @example
+ * const status = getDocumentFormalizationStatus(DocumentType.INVOICE); // Returns DocumentStatus or null
+ */
+export const getDocumentFormalizationStatus = (documentType: DocumentType): DocumentStatus | null =>
+  DOCUMENT_FORMALIZATION_STATUS[documentType];
 
 /**
  * Lists the statuses a document can move to. Used by the UI to render the available actions.
@@ -25,8 +46,10 @@ export const canTransition = (type: DocumentType, from: DocumentStatus, to: Docu
  * @param from - Current status
  * @returns Allowed target statuses (empty for terminal statuses)
  */
-export const getAvailableTransitions = (type: DocumentType, from: DocumentStatus): DocumentStatus[] =>
-  DOCUMENT_TYPE_STATUS_TRANSITIONS[type][from] ?? [];
+export const getAvailableTransitions = (
+  type: DocumentType,
+  from: DocumentStatus,
+): DocumentStatus[] => DOCUMENT_TYPE_STATUS_TRANSITIONS[type][from] ?? [];
 
 /**
  * Checks whether a document type can ever be voided, derived from the transition map
@@ -36,7 +59,9 @@ export const getAvailableTransitions = (type: DocumentType, from: DocumentStatus
  * @returns true when VOIDED is reachable from at least one status
  */
 export const canDocumentTypeBeVoided = (type: DocumentType): boolean =>
-  Object.values(DOCUMENT_TYPE_STATUS_TRANSITIONS[type]).some((targets) => targets?.includes("VOIDED"));
+  Object.values(DOCUMENT_TYPE_STATUS_TRANSITIONS[type]).some((targets) =>
+    targets?.includes("VOIDED"),
+  );
 
 /**
  * Status badge colors for UI (Tailwind/shadcn) --- spostare nel frontend
@@ -72,13 +97,10 @@ export const getStatusColor = (
   return DOCUMENT_STATUS_COLORS[status] || "default";
 };
 
-
 /**
  * Format document number for display
  */
-export const formatDocumentNumberDisplay = (
-  documentNumber: string | null,
-): string => {
+export const formatDocumentNumberDisplay = (documentNumber: string | null): string => {
   return documentNumber || "BOZZA";
 };
 
@@ -95,10 +117,7 @@ export const isOverdue = (dueDate: Date | string | null): boolean => {
 /**
  * Get fulfillment status label
  */
-export const getFulfillmentStatusLabel = (
-  deliveredQty: number,
-  totalQty: number,
-): string => {
+export const getFulfillmentStatusLabel = (deliveredQty: number, totalQty: number): string => {
   if (deliveredQty === 0) return "Da evadere";
   if (deliveredQty >= totalQty) return "Completamente evaso";
   return "Parzialmente evaso";
@@ -107,10 +126,7 @@ export const getFulfillmentStatusLabel = (
 /**
  * Get payment status label
  */
-export const getPaymentStatusLabel = (
-  paidAmount: number,
-  totalAmount: number,
-): string => {
+export const getPaymentStatusLabel = (paidAmount: number, totalAmount: number): string => {
   if (paidAmount === 0) return "Non pagato";
   if (paidAmount >= totalAmount) return "Pagato";
   return "Parzialmente pagato";
@@ -125,10 +141,7 @@ export const validateInstallmentsPercentage = (
   valid: boolean;
   totalPercentage: number;
 } => {
-  const totalPercentage = installments.reduce(
-    (sum, inst) => sum + Number(inst.percentage),
-    0,
-  );
+  const totalPercentage = installments.reduce((sum, inst) => sum + Number(inst.percentage), 0);
 
   return {
     valid: Math.abs(totalPercentage - 100) < 0.01,
@@ -144,3 +157,11 @@ export const validateInstallmentsPercentage = (
  */
 export const isInboundDocumentType = (type: DocumentType): type is InboundDocumentType =>
   (INBOUND_DOCUMENT_TYPES as readonly DocumentType[]).includes(type);
+
+/**
+ * Checks whether a document type is outbound.
+ * Outbound documents are numbered by the tenant.
+ */
+export const isOutboundDocumentType = (
+  documentType: DocumentType,
+): documentType is OutboundDocumentType => !isInboundDocumentType(documentType);

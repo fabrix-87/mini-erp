@@ -160,6 +160,30 @@ export const DOCUMENT_STATUS_TRANSITIONS = {
 } as const;
 
 /**
+ * First formal status reached by each document type.
+ * Formalization is the transition that assigns the document number,
+ * creates immutable snapshots and locks them.
+ *
+ * The value must be the first allowed target status in
+ * DOCUMENT_TYPE_STATUS_TRANSITIONS[documentType].DRAFT.
+ */
+export const DOCUMENT_FORMALIZATION_STATUS: Record<DocumentType, DocumentStatus | null> = {
+  QUOTE: DOCUMENT_STATUSES.SENT,
+  PROFORMA: DOCUMENT_STATUSES.SENT,
+  ORDER: DOCUMENT_STATUSES.ACCEPTED,
+  DELIVERY_NOTE: DOCUMENT_STATUSES.IN_TRANSIT,
+  INVOICE: DOCUMENT_STATUSES.SENT,
+  CREDIT_NOTE: DOCUMENT_STATUSES.SENT,
+  DEBIT_NOTE: DOCUMENT_STATUSES.SENT,
+  SUPPLIER_ORDER: DOCUMENT_STATUSES.SENT,
+  SUPPLIER_INVOICE: DOCUMENT_STATUSES.UNPAID,
+  SUPPLIER_CREDIT_NOTE: DOCUMENT_STATUSES.CLOSED,
+  SUPPLIER_DELIVERY_NOTE: DOCUMENT_STATUSES.DELIVERED,
+  SELF_INVOICE: DOCUMENT_STATUSES.SENT,
+  ARCHIVED: null,
+} as const;
+
+/**
  * Status transitions specific per document type
  * Use this for strict workflow enforcement
  */

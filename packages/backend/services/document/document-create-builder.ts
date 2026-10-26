@@ -6,58 +6,42 @@ import {
   isInboundDocumentType,
 } from "@mini-erp/shared";
 import { toJsonField, toDecimal } from "@/helpers/prisma-helper";
-import { buildDocumentLines, type ResolvedLinePricing } from "./document-line-builder";
+import { buildDocumentLines, type ProcessedDocumentLine } from "./document-line-builder";
 import { buildDocumentInstallments } from "./document-installment-builder";
-import type { DocumentCreateContext, DocumentCreateSnapshots } from "./types";
-
-/** Arguments for the synchronous document create builder. */
-export interface BuildDocumentCreateDataArgs {
-  /** Validated document creation payload. */
-  input: CreateDocumentInput;
-  /** Tenant and authenticated user context. */
-  context: DocumentCreateContext;
-  /** Server-resolved snapshots. */
-  snapshots: DocumentCreateSnapshots;
-  /** Pricing resolved for each input line, in the same order. */
-  linePricing: ResolvedLinePricing[];
-}
+import type { BuildDocumentCreateDataArgs } from "@/types";
 
 /**
- * Builds a Prisma DocumentUncheckedCreateInput for a new document.
- * Documents are always created as DRAFT: numbering is assigned later, during
- * the first status transition that requires a number.
- * Client-provided totals are ignored and recomputed from the lines.
+ * Builds a Prisma DocumentUncheckedCreateInput for a new DRAFT document.
  *
- * @param args - Input, context, snapshots and resolved line pricing
+ * Numbering, party snapshots and payment/bank snapshots are not created here.
+ * They are created during document formalization.
+ * Client-provided totals are ignored and recomputed from the lines.
+ * Shipping is modeled as a normal document line and is not accepted here.
+ *
+ * @param args - Input, tenant/user context and resolved line pricing
  * @returns Prisma input ready for tx.document.create({ data })
  */
 export function buildDocumentCreateData(
   args: BuildDocumentCreateDataArgs,
-): Promise<Prisma.DocumentUncheckedCreateInput> {
-  const { input, context, snapshots, linePricing } = args;
+): Prisma.DocumentUncheckedCreateInput {
+  const { input, context, linePricing } = args;
   const inbound = isInboundDocumentType(input.documentType);
 
-  const processedLines = buildDocumentLines(input.lines, linePricing);
+  const processedLines: ProcessedDocumentLine[] = buildDocumentLines(input.lines, linePricing);
 
   const totals =
     processedLines.length > 0
       ? calculateDocumentTotals({
           lines: processedLines.map((line) => line.totals),
           documentDiscountPercent: input.discountPercent,
-          shippingCost: input.shippingCost,
         })
       : {
           subtotal: new Decimal(0),
           discountAmount: new Decimal(0),
           taxableAmount: new Decimal(0),
           taxAmount: new Decimal(0),
-          shippingTaxAmount: new Decimal(0),
           totalAmount: new Decimal(0),
         };
-
-  const withholdingTaxAmount = snapshots.withholding?.withholdingTaxAmount ?? new Decimal(0);
-
-  const netPayableAmount = totals.totalAmount.minus(withholdingTaxAmount);
 
   const documentData: Prisma.DocumentUncheckedCreateInput = {
     tenantId: context.tenantId,
@@ -87,13 +71,13 @@ export function buildDocumentCreateData(
     createdByUserId: context.userId,
 
     discountPercent: toDecimal(input.discountPercent),
-    shippingCost: toDecimal(input.shippingCost),
     subtotal: totals.subtotal,
     discountAmount: totals.discountAmount,
     taxableAmount: totals.taxableAmount,
     taxAmount: totals.taxAmount,
-    shippingTaxAmount: totals.shippingTaxAmount,
     totalAmount: totals.totalAmount,
+
+    // Withholding tax is not implemented yet: net payable equals total amount.
     netPayableAmount: totals.totalAmount,
 
     currencyCode: input.currencyCode,
@@ -105,33 +89,20 @@ export function buildDocumentCreateData(
     trackingNumber: input.trackingNumber ?? undefined,
 
     paymentMethodId: input.paymentMethodId ?? undefined,
-    paymentMethodCode: snapshots.payment.paymentMethodCode,
-    paymentTermsLabel: snapshots.payment.paymentTermsLabel ?? undefined,
 
-    bankName: snapshots.bank.bankName ?? undefined,
-    bankIban: snapshots.bank.bankIban ?? undefined,
-    bankSwift: snapshots.bank.bankSwift ?? undefined,
-    bankAccountHolder: snapshots.bank.bankAccountHolder ?? undefined,
-    paymentBankAccountId: snapshots.bank.paymentBankAccountId ?? undefined,
-    bankDetailsMismatch: snapshots.bank.bankDetailsMismatch,
+    // paymentMethodCode becomes required again after the model change decision.
+    paymentMethodCode: input.paymentMethodCode,
 
-    withholdingTaxTypeId: snapshots.withholding?.withholdingTaxTypeId,
-    withholdingTaxTypeCode: snapshots.withholding?.withholdingTaxTypeCode,
-    withholdingTaxBase: snapshots.withholding?.withholdingTaxBase,
-    withholdingTaxPercent: snapshots.withholding?.withholdingTaxPercent,
-    withholdingTaxAmount: snapshots.withholding?.withholdingTaxAmount,
-
-    contributionPercent: snapshots.contribution?.contributionPercent,
-    contributionAmount: snapshots.contribution?.contributionAmount,
+    bankName: input.bankName ?? undefined,
+    bankIban: input.bankIban ?? undefined,
+    bankSwift: input.bankSwift ?? undefined,
+    bankAccountHolder: input.bankAccountHolder ?? undefined,
+    paymentBankAccountId: input.paymentBankAccountId ?? undefined,
 
     notes: input.notes ?? undefined,
     internalNotes: input.internalNotes ?? undefined,
     termsAndConditions: input.termsAndConditions ?? undefined,
     customFields: toJsonField(input.customFields),
-
-    parties: {
-      create: snapshots.parties,
-    },
 
     ...(processedLines.length > 0 && {
       lines: {

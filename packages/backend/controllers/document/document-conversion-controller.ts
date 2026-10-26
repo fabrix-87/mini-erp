@@ -12,7 +12,7 @@ import {
 } from "@mini-erp/shared";
 import { getDocumentSelection } from "@/helpers/document";
 import { buildDocumentCreateData, buildDocumentLine } from "@/services/document/builder";
-import { generateDocumentNumber } from "@/services/document/numbering";
+import { generateDocumentNumber } from "@/services/document/document-numbering";
 import { toIntId, withSoftDelete, toJsonField } from "@/helpers/prisma-helper";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";

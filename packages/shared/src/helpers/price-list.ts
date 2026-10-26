@@ -36,15 +36,18 @@ export function applyPriceListStrategy(
 }
 
 /**
- * Rounds a computed price to currency cents, applying the list granularity.
- * Applied once, to the final price of a derived list (never to explicit items).
- * @param price - Price before rounding
- * @param method - Rounding method of the requested price list
- * @returns Price with exactly 2 decimal places
+ * Applies a specific rounding method to a price or currency value based on the provided price list rounding strategy.
+ *
+ * @param {import("decimal.js").Decimal.Value} price - The numerical or Decimal value to round.
+ * @param {RoundingMethod} method - The rounding strategy to apply (e.g., nearest 0.05, 0.10, round up, round down).
+ * @returns {Decimal} A new Decimal instance rounded according to the specified method.
+ *
+ * @example
+ * const rounded = applyPriceListRounding(12.34, PRICE_LIST_ROUNDING_METHOD.NEAREST_05); // Returns Decimal(12.35)
  */
-export function roundPrice(
+export function applyPriceListRounding(
   price: Decimal.Value,
-  method: RoundingMethod = PRICE_LIST_ROUNDING_METHOD.ROUND_UP,
+  method: RoundingMethod,
 ): Decimal {
   const value = new Decimal(price);
   let rounded: Decimal;

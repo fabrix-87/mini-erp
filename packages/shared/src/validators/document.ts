@@ -308,8 +308,6 @@ const documentShape = z.object({
   subtotal: moneyOptionalSchema,
   discountPercent: discountPercentOptionalSchema,
   discountAmount: moneyOptionalSchema,
-  shippingCost: moneyOptionalSchema,
-  shippingTaxAmount: moneyOptionalSchema,
   taxableAmount: moneyOptionalSchema,
   taxAmount: moneyOptionalSchema,
   totalAmount: moneyOptionalSchema,
@@ -358,7 +356,7 @@ export const createDocumentSchema = documentShape
       .min(2000)
       .max(2100)
       .default(() => new Date().getFullYear()),
-    documentDate: isoDateSchema().default(() => new Date().toISOString()),
+    documentDate: isoDateSchema({required: true}).default(() => new Date().toISOString()),
     status: documentStatusSchema.default("DRAFT"),
     subtotal: moneySchema,
     discountPercent: discountPercentSchema,

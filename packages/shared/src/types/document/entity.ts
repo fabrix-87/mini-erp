@@ -209,8 +209,6 @@ export type Document = {
   subtotal: Decimal;
   discountPercent: Decimal;
   discountAmount: Decimal;
-  shippingCost: Decimal;
-  shippingTaxAmount: Decimal;
   taxableAmount: Decimal;
   taxAmount: Decimal;
   totalAmount: Decimal;
@@ -230,8 +228,8 @@ export type Document = {
   // Payment snapshot
   paymentMethodId: string | null;
   paymentMethodRel?: PaymentMethod | null;
-  paymentMethodCode: string;
-  paymentTermsLabel: string | null;
+  paymentMethodCode?: string;
+  paymentTermsLabel?: string | null;
 
   // Bank snapshot (source of truth for payment execution)
   bankName: string | null;

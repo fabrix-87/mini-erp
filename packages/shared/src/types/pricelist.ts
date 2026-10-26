@@ -98,7 +98,7 @@ export type ResolvedPrice = {
   unitPrice: string | null;
   /** Base UoM units per 1 line unit, to be snapshotted on the document line. */
   uomFactor: string;
-
+  roundingMethod: RoundingMethod;
   priceListId?: string;
   /** Set when source is PRICE_LIST_ITEM. */
   priceListItemId?: string;

@@ -182,20 +182,20 @@ model Document {
 
   // === AMOUNTS (all in document currency) ===
 
-  subtotal          Decimal @default(0) @db.Decimal(15, 2)
-  discountPercent   Decimal @default(0) @map("discount_percent") @db.Decimal(5, 2)
-  discountAmount    Decimal @default(0) @map("discount_amount") @db.Decimal(15, 2)
+  subtotal        Decimal @default(0) @db.Decimal(15, 2)
+  discountPercent Decimal @default(0) @map("discount_percent") @db.Decimal(5, 2)
+  discountAmount  Decimal @default(0) @map("discount_amount") @db.Decimal(15, 2)
 
   /// Taxable base after discounts and before VAT.
-  taxableAmount     Decimal @default(0) @map("taxable_amount") @db.Decimal(15, 2)
-  taxAmount         Decimal @default(0) @map("tax_amount") @db.Decimal(15, 2)
-  totalAmount       Decimal @default(0) @map("total_amount") @db.Decimal(15, 2)
+  taxableAmount    Decimal @default(0) @map("taxable_amount") @db.Decimal(15, 2)
+  taxAmount        Decimal @default(0) @map("tax_amount") @db.Decimal(15, 2)
+  totalAmount      Decimal @default(0) @map("total_amount") @db.Decimal(15, 2)
   /// For INBOUND with withholding tax: totalAmount - withholdingTaxAmount.
   /// Equals totalAmount for all other documents.
   /// This is the amount that feeds DocumentPaymentInstallment schedules.
-  netPayableAmount  Decimal @default(0) @map("net_payable_amount") @db.Decimal(15, 2)
+  netPayableAmount Decimal @default(0) @map("net_payable_amount") @db.Decimal(15, 2)
   /// Denormalized sum of all settled installment amounts. Updated on each payment event.
-  paidAmount        Decimal @default(0) @map("paid_amount") @db.Decimal(15, 2)
+  paidAmount       Decimal @default(0) @map("paid_amount") @db.Decimal(15, 2)
 
   currencyCode String   @default("EUR") @map("currency_code") @db.Char(3)
   currency     Currency @relation("DocumentCurrency", fields: [currencyCode], references: [code], onDelete: Restrict, onUpdate: Cascade)
@@ -221,7 +221,7 @@ model Document {
   paymentMethodRel  PaymentMethod? @relation("DocumentPaymentMethod", fields: [paymentMethodId], references: [id], onDelete: SetNull)
   // Payment snapshot — frozen at document creation; independent of future PaymentMethod changes.
   /// Snapshot of PaymentMethod.code at creation (e.g. "bank_transfer", "cash").
-  paymentMethodCode String         @map("payment_method_code") @db.VarChar(50)
+  paymentMethodCode String?        @map("payment_method_code") @db.VarChar(50)
   /// Human-readable snapshot of payment terms (e.g. "30 days end of month").
   paymentTermsLabel String?        @map("payment_terms_label") @db.VarChar(100)
 

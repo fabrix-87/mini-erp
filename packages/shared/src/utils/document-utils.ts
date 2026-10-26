@@ -11,8 +11,7 @@ import {
   DocumentLinePricingInput,
   DocumentTotalsInput,
 } from "../types";
-import { roundPrice } from "../helpers";
-import { PRICE_LIST_ROUNDING_METHOD, RoundingMethod } from "../constants";
+import { roundCurrency } from "../helpers";
 
 /**
  * Calculate discount from percentage
@@ -20,10 +19,9 @@ import { PRICE_LIST_ROUNDING_METHOD, RoundingMethod } from "../constants";
 export const calculateDiscount = (
   grossTotal: Decimal,
   discountPercent: Decimal.Value | null | undefined,
-  roundingMethod: RoundingMethod = PRICE_LIST_ROUNDING_METHOD.ROUND_UP,
 ): Decimal => {
   const percent = new Decimal(discountPercent ?? 0);
-  return roundPrice(grossTotal.times(percent).div(100), roundingMethod);
+  return roundCurrency(grossTotal.times(percent).div(100));
 };
 
 /**
@@ -87,26 +85,19 @@ export function calculateDocumentLineTotals(
   const unitPrice = new Decimal(input.unitPrice);
   const grossTotal = unitPrice.times(quantity);
 
-  const percentDiscount = calculateDiscount(
-    grossTotal,
-    input.discountPercent,
-    input.roundingMethod,
-  );
-  const explicitDiscount = roundPrice(input.discountAmount ?? 0, input.roundingMethod);
+  const percentDiscount = calculateDiscount(grossTotal, input.discountPercent);
+  const explicitDiscount = roundCurrency(input.discountAmount ?? 0);
   const discountAmount = Decimal.min(percentDiscount.plus(explicitDiscount), grossTotal);
 
-  const lineTotal = roundPrice(grossTotal.minus(discountAmount), input.roundingMethod);
-  const taxAmount = roundPrice(
-    lineTotal.times(new Decimal(input.taxPercent ?? 0)).div(100),
-    input.roundingMethod,
-  );
+  const lineTotal = roundCurrency(grossTotal.minus(discountAmount));
+  const taxAmount = roundCurrency(lineTotal.times(new Decimal(input.taxPercent ?? 0)).div(100));
 
   return {
-    grossTotal: roundPrice(grossTotal, input.roundingMethod),
+    grossTotal: roundCurrency(grossTotal),
     discountAmount,
     lineTotal,
     taxAmount,
-    lineTotalWithTax: roundPrice(lineTotal.plus(taxAmount), input.roundingMethod),
+    lineTotalWithTax: roundCurrency(lineTotal.plus(taxAmount)),
   };
 }
 
@@ -117,27 +108,21 @@ export function calculateDocumentLineTotals(
  * @returns Document totals rounded to cents
  */
 export function calculateDocumentTotals(input: DocumentTotalsInput): CalculatedDocumentTotals {
-  const subtotal = roundPrice(
+  const subtotal = roundCurrency(
     input.lines.reduce((sum, l) => sum.plus(l.lineTotal), new Decimal(0)),
   );
   const discountAmount = calculateDiscount(subtotal, input.documentDiscountPercent);
 
-  const taxableAmount = roundPrice(subtotal.minus(discountAmount));
+  const taxableAmount = roundCurrency(subtotal.minus(discountAmount));
 
-  const lineTax = input.lines.reduce((sum, l) => sum.plus(l.taxAmount), new Decimal(0));
-  const shippingCost = roundPrice(input.shippingCost ?? 0);
-  const shippingTaxAmount = roundPrice(
-    shippingCost.times(new Decimal(input.shippingTaxPercent ?? 0)).div(100),
-  );
-  const taxAmount = roundPrice(lineTax.plus(shippingTaxAmount));
+  const taxAmount = input.lines.reduce((sum, l) => sum.plus(l.taxAmount), new Decimal(0));
 
   return {
     subtotal,
     discountAmount,
     taxableAmount,
     taxAmount,
-    shippingTaxAmount,
-    totalAmount: roundPrice(taxableAmount.plus(taxAmount).plus(shippingCost)),
+    totalAmount: roundCurrency(taxableAmount.plus(taxAmount)),
   };
 }
 

@@ -3,11 +3,12 @@ import {
   PRICE_SOURCE,
   MAX_PRICE_LIST_DEPTH,
   applyPriceListStrategy,
-  roundPrice,
   selectPriceListItem,
   type ResolvedPrice,
   type ResolvePriceInput,
   Decimal,
+  PRICE_LIST_ROUNDING_METHOD,
+  applyPriceListRounding,
 } from "@mini-erp/shared";
 import { PriceListError, type Db } from "@/helpers/pricelist-helper";
 
@@ -154,6 +155,7 @@ export async function resolveVariantPrice(
     source: PRICE_SOURCE.NONE,
     unitPrice: null,
     uomFactor: factor.toFixed(10),
+    roundingMethod: PRICE_LIST_ROUNDING_METHOD.NONE,
   };
 
   const head = await pickPriceList(db, tenantId, input, at);
@@ -195,7 +197,7 @@ export async function resolveVariantPrice(
       for (let i = level - 1; i >= 0; i--) {
         price = applyPriceListStrategy(price, chain[i].strategy, chain[i].strategyValue.toString());
       }
-      price = roundPrice(price, head.roundingMethod);
+      price = applyPriceListRounding(price, head.roundingMethod);
     }
 
     const basePrice = new Decimal(item.price); // price per base UoM
@@ -204,7 +206,7 @@ export async function resolveVariantPrice(
       level === 0
         ? basePrice
         : new Decimal(
-            roundPrice(
+            applyPriceListRounding(
               applyPriceListStrategy(
                 basePrice,
                 chain[level - 1].strategy,
@@ -222,6 +224,7 @@ export async function resolveVariantPrice(
       priceListItemId: item.id,
       appliedMinQuantity: item.minQuantity,
       discountPercent: item.discountPercent,
+      roundingMethod: head.roundingMethod,
     };
   }
   return none;

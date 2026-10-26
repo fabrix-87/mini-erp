@@ -1,5 +1,4 @@
 import Decimal from "decimal.js";
-import { RoundingMethod } from "../../constants";
 
 export interface DocumentLinePricingInput {
   quantity: Decimal.Value;
@@ -7,7 +6,6 @@ export interface DocumentLinePricingInput {
   discountPercent?: Decimal.Value | null;
   discountAmount?: Decimal.Value | null;
   taxPercent?: Decimal.Value | null;
-  roundingMethod: RoundingMethod;
 }
 
 export interface CalculatedDocumentLineTotals {
@@ -19,10 +17,11 @@ export interface CalculatedDocumentLineTotals {
 }
 
 export interface DocumentTotalsInput {
-  lines: Array<Pick<CalculatedDocumentLineTotals, "lineTotal" | "taxAmount">>;
+  lines: Array<{
+    lineTotal: Decimal;
+    taxAmount: Decimal;
+  }>;
   documentDiscountPercent?: Decimal.Value | null;
-  shippingCost?: Decimal.Value | null;
-  shippingTaxPercent?: Decimal.Value | null;
 }
 
 export interface CalculatedDocumentTotals {
@@ -30,6 +29,5 @@ export interface CalculatedDocumentTotals {
   discountAmount: Decimal;
   taxableAmount: Decimal;
   taxAmount: Decimal;
-  shippingTaxAmount: Decimal;
   totalAmount: Decimal;
 }

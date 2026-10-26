@@ -1,48 +1,38 @@
 import { Prisma } from "@/generated/prisma/client";
-import { Decimal } from "@prisma/client/runtime/client";
-import {
-  calculateDocumentLineTotals,
-  PRICE_LIST_ROUNDING_METHOD,
-  RoundingMethod,
-  type CreateDocumentLineInput,
-} from "@mini-erp/shared";
+import { type CreateDocumentLineInput, calculateDocumentLineTotals } from "@mini-erp/shared";
 import { toJsonField } from "@/helpers/prisma-helper";
-
-/** Resolved pricing data for one document line. */
-export interface ResolvedLinePricing {
-  /** Final unit price, with up to 6 decimal places. */
-  unitPrice: string;
-  /** Original list price before manual override, or null. */
-  originalUnitPrice: string | null;
-  /** Mandatory justification when the price was overridden. */
-  priceOverrideReason: string | null;
-}
+import { ResolvedLinePricing } from "@/types";
 
 /** Arguments required to build one document line. */
 export interface BuildDocumentLineArgs {
   /** Validated line payload. */
   line: CreateDocumentLineInput;
+
   /** Zero-based index; the builder assigns `lineNumber = index + 1`. */
   index: number;
-  /** Price snapshot resolved by the price resolver. */
+
+  /** Pricing snapshot resolved by the price resolver. */
   pricing: ResolvedLinePricing;
-  roundingMethod: RoundingMethod;
 }
 
 /** Intermediate result containing computed totals and the Prisma create input. */
 export interface ProcessedDocumentLine {
   totals: {
-    lineTotal: Decimal;
-    taxAmount: Decimal;
+    lineTotal: ReturnType<typeof calculateDocumentLineTotals>["lineTotal"];
+    taxAmount: ReturnType<typeof calculateDocumentLineTotals>["taxAmount"];
   };
+
   prismaInput: Prisma.DocumentLineUncheckedCreateWithoutDocumentInput;
 }
 
 /**
- * Builds a Prisma DocumentLineUncheckedCreateWithoutDocumentInput from a validated line.
- * Server-managed fulfillment counters remain at their database defaults.
+ * Builds a Prisma DocumentLineUncheckedCreateWithoutDocumentInput from a
+ * validated line and its resolved pricing.
  *
- * @param args - Line payload, tenant context and resolved pricing
+ * The input is intended for a nested create inside Document creation:
+ * `tenantId` and `documentId` are derived by Prisma from the parent document.
+ *
+ * @param args - Line payload, zero-based index and resolved pricing
  * @returns Computed totals and the Prisma input for nested creation
  */
 export function buildDocumentLine(args: BuildDocumentLineArgs): ProcessedDocumentLine {
@@ -108,27 +98,13 @@ export function buildDocumentLine(args: BuildDocumentLineArgs): ProcessedDocumen
   };
 }
 
-export interface ResolveDocumentLinePricingArgs {
-  line: CreateDocumentLineInput;
-  index: number;
-  tenantId: string;
-  tx: Prisma.TransactionClient;
-  roundingMethod: RoundingMethod;
-  documentDate: string;
-  customerId?: string;
-  priceListId?: string;
-}
-
-export type ResolveDocumentLinePricing = (
-  args: ResolveDocumentLinePricingArgs,
-) => Promise<ResolvedLinePricing>;
-
 /**
- * Builds all document lines and returns both the Prisma inputs and the totals
- * required by calculateDocumentTotals.
+ * Builds all document lines from validated payloads and their resolved pricing.
  *
  * @param lines - Validated line payloads
+ * @param linePricing - Resolved pricing, in the same order as `lines`
  * @returns Processed lines in input order
+ * @throws Error when the pricing array length does not match the lines array length
  */
 export function buildDocumentLines(
   lines: CreateDocumentLineInput[],
@@ -143,7 +119,6 @@ export function buildDocumentLines(
       line,
       index,
       pricing: linePricing[index],
-      roundingMethod: PRICE_LIST_ROUNDING_METHOD.ROUND_UP,
     }),
   );
 }
