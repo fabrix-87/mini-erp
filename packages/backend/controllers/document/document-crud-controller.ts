@@ -17,7 +17,7 @@ import {
   UpdateDocumentInput,
 } from "@mini-erp/shared";
 import { getDocumentSelection } from "@/helpers/document";
-import { buildDocumentCreateData, buildDocumentUpdateData } from "@/services/document";
+import { buildDocumentCreateData } from "@/services/document";
 import { toPagination, toIntId, withSoftDelete } from "@/helpers/prisma-helper";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";

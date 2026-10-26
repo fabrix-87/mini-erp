@@ -1,6 +1,6 @@
 // packages/shared/src/helpers/price-list-helper.ts
 import Decimal from "decimal.js";
-import { PRICE_LIST_ROUNDING_METHOD, PRICE_LIST_STRATEGY } from "../constants";
+import { MONEY_PRECISION, PRICE_LIST_ROUNDING_METHOD, PRICE_LIST_STRATEGY } from "../constants";
 import type { PriceListStrategy, RoundingMethod } from "../constants";
 
 const CENTS = new Decimal("0.01");
@@ -42,7 +42,10 @@ export function applyPriceListStrategy(
  * @param method - Rounding method of the requested price list
  * @returns Price with exactly 2 decimal places
  */
-export function roundPrice(price: Decimal.Value, method: RoundingMethod): string {
+export function roundPrice(
+  price: Decimal.Value,
+  method: RoundingMethod = PRICE_LIST_ROUNDING_METHOD.ROUND_UP,
+): Decimal {
   const value = new Decimal(price);
   let rounded: Decimal;
   switch (method) {
@@ -53,15 +56,15 @@ export function roundPrice(price: Decimal.Value, method: RoundingMethod): string
       rounded = value.div("0.10").toDecimalPlaces(0, Decimal.ROUND_HALF_UP).times("0.10");
       break;
     case PRICE_LIST_ROUNDING_METHOD.ROUND_UP:
-      rounded = value.toDecimalPlaces(2, Decimal.ROUND_CEIL);
+      rounded = value.toDecimalPlaces(MONEY_PRECISION, Decimal.ROUND_CEIL);
       break;
     case PRICE_LIST_ROUNDING_METHOD.ROUND_DOWN:
-      rounded = value.toDecimalPlaces(2, Decimal.ROUND_FLOOR);
+      rounded = value.toDecimalPlaces(MONEY_PRECISION, Decimal.ROUND_FLOOR);
       break;
     default:
-      rounded = value.toDecimalPlaces(2, Decimal.ROUND_HALF_UP);
+      rounded = value.toDecimalPlaces(MONEY_PRECISION, Decimal.ROUND_HALF_UP);
   }
-  return rounded.toFixed(2);
+  return rounded;
 }
 
 export type PriceItemCandidate = {

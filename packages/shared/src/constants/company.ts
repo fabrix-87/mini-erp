@@ -1,9 +1,3 @@
-import { z } from "zod";
-import {
-  companySortFieldSchema,
-  companyStatusSchema,
-  companyTypeEntitySchema,
-} from "../validators";
 import { ADDRESS_TYPE } from "./address";
 import { CompanyFormValues } from "../types";
 import {
@@ -18,9 +12,9 @@ import {
 // ENUM TYPES
 // ============================================================================
 
-export type CompanyStatus = z.infer<typeof companyStatusSchema>;
-export type CompanyTypeEntity = z.infer<typeof companyTypeEntitySchema>;
-export type CompanySortField = z.infer<typeof companySortFieldSchema>;
+export type CompanyStatus = (typeof COMPANY_STATUS)[keyof typeof COMPANY_STATUS];
+export type CompanyTypeEntity = (typeof COMPANY_TYPE_ENTITY)[keyof typeof COMPANY_TYPE_ENTITY];
+export type CompanySortField = (typeof COMPANY_SORT_FIELDS)[keyof typeof COMPANY_SORT_FIELDS];
 
 export const COMPANY_STATUS = {
   ARCHIVED: "ARCHIVED",

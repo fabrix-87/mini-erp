@@ -195,7 +195,7 @@ export async function resolveVariantPrice(
       for (let i = level - 1; i >= 0; i--) {
         price = applyPriceListStrategy(price, chain[i].strategy, chain[i].strategyValue.toString());
       }
-      price = new Decimal(roundPrice(price, head.roundingMethod));
+      price = roundPrice(price, head.roundingMethod);
     }
 
     const basePrice = new Decimal(item.price); // price per base UoM

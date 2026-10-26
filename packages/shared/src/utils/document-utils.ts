@@ -5,15 +5,25 @@
 // ============================================================================
 
 import Decimal from "decimal.js";
+import {
+  CalculatedDocumentLineTotals,
+  CalculatedDocumentTotals,
+  DocumentLinePricingInput,
+  DocumentTotalsInput,
+} from "../types";
+import { roundPrice } from "../helpers";
+import { PRICE_LIST_ROUNDING_METHOD, RoundingMethod } from "../constants";
 
 /**
  * Calculate discount from percentage
  */
 export const calculateDiscount = (
-  amount: number,
-  discountPercent: number,
-): number => {
-  return (amount * discountPercent) / 100;
+  grossTotal: Decimal,
+  discountPercent: Decimal.Value | null | undefined,
+  roundingMethod: RoundingMethod = PRICE_LIST_ROUNDING_METHOD.ROUND_UP,
+): Decimal => {
+  const percent = new Decimal(discountPercent ?? 0);
+  return roundPrice(grossTotal.times(percent).div(100), roundingMethod);
 };
 
 /**
@@ -65,82 +75,61 @@ export const calculateInstallmentTotal = (
 };
 
 /**
- * Calculate line totals with discount and tax using Decimal for precision
- *
- * @param quantity - Line quantity
- * @param unitPrice - Unit price (can be number or Decimal)
- * @param discountPercent - Discount percentage (default 0)
- * @param taxPercent - Tax percentage (default 22)
- * @returns Object with calculated totals as numbers
+ * Computes the totals of one document line.
+ * unitPrice keeps 6 decimals; all monetary results are rounded to 2 decimals.
+ * @param {DocumentLinePricingInput} input - Line pricing values (quantity in line UoM)
+ * @returns Totals rounded to cents
  */
-export const calculateLineTotals = (
-  quantity: number | Decimal,
-  unitPrice: number | Decimal,
-  discountPercent: number | Decimal = 0,
-  taxPercent: number | Decimal = 22,
-) => {
-  // Convert all inputs to Decimal for precision
-  const qty = new Decimal(quantity);
-  const price = new Decimal(unitPrice);
-  const discountPct = new Decimal(discountPercent);
-  const taxPct = new Decimal(taxPercent);
+export function calculateDocumentLineTotals(
+  input: DocumentLinePricingInput,
+): CalculatedDocumentLineTotals {
+  const quantity = new Decimal(input.quantity);
+  const unitPrice = new Decimal(input.unitPrice);
+  const grossTotal = unitPrice.times(quantity);
 
-  // Calculate line subtotal
-  const lineSubtotal = qty.mul(price);
+  const percentDiscount = calculateDiscount(
+    grossTotal,
+    input.discountPercent,
+    input.roundingMethod,
+  );
+  const explicitDiscount = roundPrice(input.discountAmount ?? 0, input.roundingMethod);
+  const discountAmount = Decimal.min(percentDiscount.plus(explicitDiscount), grossTotal);
 
-  // Calculate discount amount
-  const discountAmount = lineSubtotal.mul(discountPct).div(100);
+  const lineTotal = roundPrice(grossTotal.minus(discountAmount), input.roundingMethod);
+  const taxAmount = roundPrice(
+    lineTotal.times(new Decimal(input.taxPercent ?? 0)).div(100),
+    input.roundingMethod,
+  );
 
-  // Calculate line total after discount
-  const lineTotal = lineSubtotal.sub(discountAmount);
-
-  // Calculate tax amount
-  const taxAmount = lineTotal.mul(taxPct).div(100);
-
-  // Calculate line total with tax
-  const lineTotalWithTax = lineTotal.add(taxAmount);
-
-  // Return as numbers (Prisma expects Decimal fields as numbers or strings)
   return {
-    lineSubtotal: lineSubtotal.toNumber(),
-    lineTotal: lineTotal.toNumber(),
-    discountAmount: discountAmount.toNumber(),
-    taxAmount: taxAmount.toNumber(),
-    lineTotalWithTax: lineTotalWithTax.toNumber(),
+    grossTotal: roundPrice(grossTotal, input.roundingMethod),
+    discountAmount,
+    lineTotal,
+    taxAmount,
+    lineTotalWithTax: roundPrice(lineTotal.plus(taxAmount), input.roundingMethod),
   };
-};
+}
 
 /**
- * Calculate document totals from lines
+ * Computes document totals from already-rounded line totals.
+ * The document-level percentage discount applies to the taxable base.
+ * @param {DocumentTotalsInput} input - Line totals plus document-level discount and shipping
+ * @returns Document totals rounded to cents
  */
-export const calculateDocumentTotals = (
-  lines: Array<{
-    lineTotal: number | string | Decimal;
-    taxAmount: number | string | Decimal;
-  }>,
-  discountPercent: number | string | Decimal = 0,
-  shippingCost: number | string | Decimal = 0,
-  shippingTaxPercent: number | string | Decimal = 22,
-) => {
-  const subtotal = lines.reduce((sum, line) => {
-    return sum.plus(new Decimal(line.lineTotal));
-  }, new Decimal(0));
+export function calculateDocumentTotals(input: DocumentTotalsInput): CalculatedDocumentTotals {
+  const subtotal = roundPrice(
+    input.lines.reduce((sum, l) => sum.plus(l.lineTotal), new Decimal(0)),
+  );
+  const discountAmount = calculateDiscount(subtotal, input.documentDiscountPercent);
 
-  const discountAmount = subtotal.mul(discountPercent).div(100);
-  const taxableAmount = subtotal.minus(discountAmount);
+  const taxableAmount = roundPrice(subtotal.minus(discountAmount));
 
-  const taxAmount = lines.reduce((sum, line) => {
-    return sum.plus(new Decimal(line.taxAmount));
-  }, new Decimal(0));
-
-  const shippingTaxAmount = new Decimal(shippingCost)
-    .mul(shippingTaxPercent)
-    .div(100);
-
-  const totalAmount = taxableAmount
-    .plus(taxAmount)
-    .plus(shippingCost)
-    .plus(shippingTaxAmount);
+  const lineTax = input.lines.reduce((sum, l) => sum.plus(l.taxAmount), new Decimal(0));
+  const shippingCost = roundPrice(input.shippingCost ?? 0);
+  const shippingTaxAmount = roundPrice(
+    shippingCost.times(new Decimal(input.shippingTaxPercent ?? 0)).div(100),
+  );
+  const taxAmount = roundPrice(lineTax.plus(shippingTaxAmount));
 
   return {
     subtotal,
@@ -148,9 +137,9 @@ export const calculateDocumentTotals = (
     taxableAmount,
     taxAmount,
     shippingTaxAmount,
-    totalAmount,
+    totalAmount: roundPrice(taxableAmount.plus(taxAmount).plus(shippingCost)),
   };
-};
+}
 
 /**
  * Check if document is editable based on status
@@ -162,10 +151,7 @@ export const isDocumentEditable = (status: string): boolean => {
 /**
  * Check if document can be deleted
  */
-export const isDocumentDeletable = (
-  status: string,
-  hasNumber: boolean,
-): boolean => {
+export const isDocumentDeletable = (status: string, hasNumber: boolean): boolean => {
   return status === "DRAFT" && !hasNumber;
 };
 
@@ -183,10 +169,7 @@ export const calculateFulfillmentPercentage = (
 /**
  * Calculate payment percentage
  */
-export const calculatePaymentPercentage = (
-  totalAmount: number,
-  paidAmount: number,
-): number => {
+export const calculatePaymentPercentage = (totalAmount: number, paidAmount: number): number => {
   if (totalAmount === 0) return 0;
   return Math.round((paidAmount / totalAmount) * 100);
 };

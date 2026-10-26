@@ -218,10 +218,14 @@ const unitAmountOptions = { positiveOnly: true, min: 0 } as const;
 export const unitAmountOptionalSchema = createDecimalSchema(6, unitAmountOptions);
 export const unitAmountSchema = createDecimalSchema(6, { ...unitAmountOptions, defaultValue: 0 });
 
-const quantityOptions = { positiveOnly: true, min: MIN_POSITIVE_QUANTITY, max: MAX_LINE_QUANTITY } as const;
+const quantityOptions = {
+  positiveOnly: true,
+  min: MIN_POSITIVE_QUANTITY,
+  max: MAX_LINE_QUANTITY,
+} as const;
 export const quantityOptionalSchema = createDecimalSchema(6, quantityOptions);
 export const quantitySchema = (defaultValue: number) =>
-  createDecimalSchema(6, { ...quantityOptions, defaultValue });
+  createDecimalSchema(6, { ...quantityOptions, defaultValue, required: true });
 
 const discountOptions = {
   positiveOnly: true,
@@ -236,6 +240,7 @@ export const discountPercentSchema = createDecimalSchema(2, {
 
 const percentOptions = { positiveOnly: true, min: 0, max: 100 } as const;
 export const percentOptionalSchema = createDecimalSchema(2, percentOptions);
+export const percentSchema = createDecimalSchema(2, { ...percentOptions, required: true });
 export const taxPercentSchema = createDecimalSchema(2, {
   ...percentOptions,
 });

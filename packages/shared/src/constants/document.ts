@@ -589,6 +589,8 @@ export const MIN_DISCOUNT_PERCENT = 0;
 export const DEFAULT_VAT_PERCENT = 22;
 export const MAX_LINE_QUANTITY = 999999.999999;
 export const MAX_DOCUMENT_AMOUNT = 9999999999999.99;
+/* Rounding used for all document amounts (cents). */
+export const MONEY_PRECISION = 2;
 
 // ============================================================================
 // FINANCIAL SETTINGS

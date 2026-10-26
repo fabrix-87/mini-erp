@@ -8,6 +8,7 @@ import {
   moneySchema,
   nullableDecimalSchema,
   percentOptionalSchema,
+  percentSchema,
   quantityOptionalSchema,
   quantitySchema,
   taxPercentSchema,
@@ -231,7 +232,7 @@ export const installmentIdSchema = createCuidSchema("ID Installment non valido")
  */
 const installmentShape = z.object({
   installmentNumber: z.number().int().positive(),
-  percentage: percentOptionalSchema,
+  percentage: percentSchema,
   amount: moneyOptionalSchema,
   dueDate: isoDateSchema({ required: true }),
   status: installmentStatusSchema,
@@ -358,6 +359,7 @@ export const createDocumentSchema = documentShape
       .max(2100)
       .default(() => new Date().getFullYear()),
     documentDate: isoDateSchema().default(() => new Date().toISOString()),
+    status: documentStatusSchema.default("DRAFT"),
     subtotal: moneySchema,
     discountPercent: discountPercentSchema,
     discountAmount: moneySchema,

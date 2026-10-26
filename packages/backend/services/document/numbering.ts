@@ -4,7 +4,7 @@
 // ============================================================================
 
 import { Prisma, DocumentType, PrismaClient } from "@/generated/prisma/client";
-import { DOCUMENT_NUMBER_PADDING, DOCUMENT_PREFIXES } from "@mini-erp/shared";
+import { DOCUMENT_NUMBER_PADDING, DOCUMENT_PREFIXES, OutboundDocumentType } from "@mini-erp/shared";
 
 /**
  * Genera il numero documento in modo atomico usando DocumentSequence
@@ -40,8 +40,8 @@ interface GeneratedDocumentNumber {
 }
 
 export async function generateDocumentNumber(
-  documentType: DocumentType,
-  tenantId: number,
+  documentType: OutboundDocumentType,
+  tenantId: string,
   year: number,
   tx: Prisma.TransactionClient,
 ): Promise<GeneratedDocumentNumber> {
@@ -98,14 +98,19 @@ export async function generateDocumentNumber(
  * Usa questa funzione quando approvi/invii un documento
  *
  * @param documentId - ID del documento
+ * @param tenantId - ID del tenant
  * @param prisma - PrismaClient
  * @returns Documento aggiornato con numero
  */
-export async function assignDocumentNumber(documentId: number, prisma: PrismaClient) {
+export async function assignDocumentNumber(
+  documentId: string,
+  tenantId: string,
+  prisma: PrismaClient,
+) {
   return prisma.$transaction(async (tx) => {
     // 1. Recupera documento
     const document = await tx.document.findUnique({
-      where: { id: documentId },
+      where: { id: documentId, tenantId },
     });
 
     if (!document) {
@@ -123,7 +128,7 @@ export async function assignDocumentNumber(documentId: number, prisma: PrismaCli
 
     // 3. Genera numero
     const numbering = await generateDocumentNumber(
-      document.documentType,
+      document.documentType as OutboundDocumentType,
       document.tenantId,
       document.documentYear,
       tx,

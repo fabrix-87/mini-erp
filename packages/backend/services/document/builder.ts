@@ -10,11 +10,11 @@ import {
   type CreateInstallmentInput,
   type DocumentStatus,
   type DocumentType,
-  calculateLineTotals,
   calculateDocumentTotals,
   STATUSES_REQUIRING_NUMBER,
   UpdateDocumentInput,
   CreateDocumentLineInput,
+  OutboundDocumentType,
 } from "@mini-erp/shared";
 import { generateDocumentNumber } from "./numbering";
 import { Decimal } from "@prisma/client/runtime/client";
@@ -88,14 +88,13 @@ export function buildDocumentLine(args: BuildLineArgs): ProcessedLine {
   return {
     totals: { lineTotal: totals.lineTotal, taxAmount: totals.taxAmount },
     prismaInput: {
-      tenantId: args.tenantId,
       lineNumber: args.index + 1,
       lineType: line.lineType ?? "PRODUCT",
       productId: args.productId,
       productVariantId: line.productVariantId ?? null,
-      quantity: line.quantity,           // string, Prisma accepts it
-      unitPrice: args.unitPrice,          // string, 6 decimals
-      unitCost: "0",                      // set by the service, never by the client
+      quantity: line.quantity, // string, Prisma accepts it
+      unitPrice: args.unitPrice, // string, 6 decimals
+      unitCost: "0", // set by the service, never by the client
       discountPercent: line.discountPercent ?? "0",
       discountAmount: totals.discountAmount.toFixed(2),
       lineTotal: totals.lineTotal.toFixed(2),
@@ -104,7 +103,23 @@ export function buildDocumentLine(args: BuildLineArgs): ProcessedLine {
       lineTotalWithTax: totals.lineTotalWithTax.toFixed(2),
       originalUnitPrice: args.originalUnitPrice,
       priceOverrideReason: args.priceOverrideReason,
-      // ...rest of the mapped fields
+      code: line.code ?? null,
+      nameSystem: line.nameSystem,
+      descriptionSystem: line.descriptionSystem ?? null,
+      nameCustomer: line.nameCustomer ?? null,
+      descriptionCustomer: line.descriptionCustomer ?? null,
+      unit: line.unit ?? "pz",
+      taxRuleId: line.taxRuleId ?? null,
+      vatNatureCode: line.vatNatureCode ?? null,
+      vatNormReference: line.vatNormReference ?? null,
+      quantityInvoiced: new Decimal(0),
+      quantityDelivered: new Decimal(0),
+      quantityReturned: new Decimal(0),
+      notes: line.notes ?? null,
+      customFields: toJsonField(line.customFields),
+      warehouseId: line.warehouseId ?? null,
+      parentLineId: line.parentLineId ?? null,
+      isComponent: line.isComponent ?? false,
     },
   };
 }
@@ -115,7 +130,8 @@ export function buildDocumentLine(args: BuildLineArgs): ProcessedLine {
 
 export async function buildDocumentCreateData(
   input: CreateDocumentInput,
-  userId: number,
+  userId: string,
+  tenantId: string,
   tx: Prisma.TransactionClient,
 ): Promise<Prisma.DocumentUncheckedCreateInput> {
   const { lines = [], installments = [], ...documentData } = input;
@@ -130,7 +146,8 @@ export async function buildDocumentCreateData(
     STATUSES_REQUIRING_NUMBER.includes(documentData.status as DocumentStatus)
   ) {
     const generated = await generateDocumentNumber(
-      documentData.documentType as DocumentType,
+      documentData.documentType as OutboundDocumentType,
+      tenantId,
       currentYear,
       tx,
     );
@@ -140,7 +157,7 @@ export async function buildDocumentCreateData(
 
   // ── Lines ────────────────────────────────────────────────────────────────
   // Step 1: build both totals snapshots and Prisma inputs in one pass
-  const processedLines = lines.map((line, index) => buildDocumentLine(line, index));
+  const processedLines = lines.map((line, index) => buildDocumentLine({ line, index, tenantId }));
 
   // Step 2: extract totals snapshots for calculateDocumentTotals
   //         type is always { lineTotal: Decimal; taxAmount: Decimal } — no undefined
@@ -183,7 +200,7 @@ export async function buildDocumentCreateData(
   // ── Return UncheckedCreateInput ───────────────────────────────────────────
   return {
     documentType: documentData.documentType,
-    status: documentData.status ?? "DRAFT",
+    status: documentData.status ?? "",
     documentNumber,
     sequenceNumber,
     documentYear: currentYear,
@@ -277,7 +294,7 @@ export function buildDocumentUpdateData(
 
   if (payload.status !== undefined) set("status", payload.status);
   if (payload.statusCategory !== undefined) set("statusCategory", payload.statusCategory);
-  if (payload.documentDate !== undefined) set("documentDate", new Date(payload.documentDate ?? ''));
+  if (payload.documentDate !== undefined) set("documentDate", new Date(payload.documentDate ?? ""));
   if (payload.dueDate !== undefined)
     set("dueDate", payload.dueDate ? new Date(payload.dueDate) : null);
   if (payload.deliveryDate !== undefined)
