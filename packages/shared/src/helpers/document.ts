@@ -9,6 +9,7 @@ import {
   DOCUMENT_TYPE_STATUS_TRANSITIONS,
   INBOUND_DOCUMENT_TYPES,
   InboundDocumentType,
+  NON_PRICED_LINE_TYPES,
   OutboundDocumentType,
 } from "../constants";
 import type { DocumentStatus, DocumentType } from "../types/document";
@@ -113,6 +114,18 @@ export const isOverdue = (dueDate: Date | string | null): boolean => {
   const today = new Date();
   return due < today;
 };
+
+/**
+ * Checks whether the given value is a valid non-priced document line type.
+ *
+ * @param value - The string value to validate.
+ * @returns True if the value matches one of the non-priced line types.
+ */
+export function isNonPricedLineType(
+  value: string,
+): value is (typeof NON_PRICED_LINE_TYPES)[keyof typeof NON_PRICED_LINE_TYPES] {
+  return Object.values(NON_PRICED_LINE_TYPES).some((type) => type === value);
+}
 
 /**
  * Get fulfillment status label

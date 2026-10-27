@@ -153,73 +153,72 @@ export const matchStatusSchema = z.enum([
 // DOCUMENT LINE SCHEMAS
 // ============================================================================
 
-export const documentLineIdSchema = documentLineIdBaseSchema;
-
-/** Raw DocumentLine shape — no defaults, safe for omit/partial. */
-const documentLineShape = z.object({
-  productVariantId: productVariantIdBaseSchema.nullish(),
+/** Base fields shared by every document line type. */
+const documentLineBaseShape = z.object({
   productId: productIdBaseSchema.nullish(),
-  lineNumber: z.number().int().positive("Line number deve essere positivo"),
-  lineType: documentLineTypeSchema,
+  productVariantId: productVariantIdBaseSchema.nullish(),
   code: z.string().max(100).nullish(),
-  nameSystem: z.string().min(1, "Nome sistema obbligatorio").max(255, "Nome max 255 caratteri"),
+  nameSystem: z.string().min(1).max(255),
   descriptionSystem: z.string().max(5000).nullish(),
   nameCustomer: z.string().max(255).nullish(),
   descriptionCustomer: z.string().max(5000).nullish(),
-  quantity: quantityOptionalSchema,
-  unit: z.string().max(20),
-  unitPrice: unitAmountOptionalSchema,
+  unit: z.string().max(20).nullish(),
   unitCost: unitAmountOptionalSchema,
-  discountPercent: discountPercentOptionalSchema,
-  discountAmount: moneyOptionalSchema,
-  lineTotal: moneyOptionalSchema,
   taxRuleId: createIdSchema("Tax Rule ID non valido").nullish(),
   taxPercent: taxPercentSchema,
-  taxAmount: moneyOptionalSchema,
   vatNatureCode: z.string().max(10).nullish(),
   vatNormReference: z.string().max(255).nullish(),
-  isReverseCharge: z.boolean(),
-  isSelfInvoice: z.boolean(),
-  /** Only meaningful on SUPPLIER_INVOICE lines (enforced in createDocumentSchema). */
+  isReverseCharge: z.boolean().default(false),
+  isSelfInvoice: z.boolean().default(false),
   matchStatus: matchStatusSchema.nullish(),
-  lineTotalWithTax: moneyOptionalSchema,
   notes: z.string().max(1000).nullish(),
   customFields: inputJsonValueSchema.nullish(),
   warehouseId: warehouseIdBaseSchema.nullish(),
   parentLineId: documentLineIdBaseSchema.nullish(),
-  isComponent: z.boolean(),
-  originalUnitPrice: nullableDecimalSchema(unitAmountOptionalSchema),
-  priceOverrideReason: z.string().max(500).nullish(),
+  isComponent: z.boolean().default(false),
 });
 
-/**
- * Schema for creating a DocumentLine.
- * quantityInvoiced/Delivered/Returned are server-managed fulfillment counters and are not accepted.
- */
-export const createDocumentLineSchema = documentLineShape
-  .extend({
-    lineType: documentLineTypeSchema.default(DOCUMENT_LINE_TYPES.PRODUCT),
-    quantity: quantitySchema(1),
-    unit: z.string().max(20).default("pz"),
-    unitPrice: unitAmountSchema,
-    unitCost: unitAmountSchema,
-    discountPercent: discountPercentSchema,
-    discountAmount: moneySchema,
-    lineTotal: moneySchema,
-    taxPercent: taxPercentSchema,
-    taxAmount: moneySchema,
-    lineTotalWithTax: moneySchema,
-    isReverseCharge: z.boolean().default(false),
-    isSelfInvoice: z.boolean().default(false),
-    isComponent: z.boolean().default(false),
-  })
-  .strict();
+/** Priced line resolved from a price list or entered manually. */
+const pricedDocumentLineShape = documentLineBaseShape.extend({
+  lineType: z.enum([
+    DOCUMENT_LINE_TYPES.PRODUCT,
+    DOCUMENT_LINE_TYPES.SERVICE,
+    DOCUMENT_LINE_TYPES.DISCOUNT,
+  ]),
+  quantity: quantitySchema(1),
+  unit: z.string().max(20).default("pz"),
+  unitPrice: unitAmountSchema,
+  discountPercent: discountPercentSchema,
+  discountAmount: moneySchema,
+  taxPercent: taxPercentSchema,
+});
+
+/** Non-priced presentation line. It never contributes to document totals. */
+const nonPricedDocumentLineShape = documentLineBaseShape.extend({
+  lineType: z.enum([
+    DOCUMENT_LINE_TYPES.TEXT,
+    DOCUMENT_LINE_TYPES.PAGE_BREAK,
+    DOCUMENT_LINE_TYPES.SUBTOTAL,
+  ]),
+  quantity: z.literal(0).default(0),
+  unit: z.string().max(20).default(""),
+  unitPrice: z.literal(0).default(0),
+  discountPercent: z.literal(0).default(0),
+  discountAmount: z.literal(0).default(0),
+  taxPercent: z.literal(0).default(0),
+});
+
+/** Discriminated schema for creating a document line. */
+export const createDocumentLineSchema = z.discriminatedUnion("lineType", [
+  pricedDocumentLineShape,
+  nonPricedDocumentLineShape,
+]);
 
 /** Schema for updating a DocumentLine — lineNumber is immutable. */
-export const updateDocumentLineSchema = documentLineShape
-  .omit({ lineNumber: true })
-  .partial()
-  .strict();
+export const updateDocumentLineSchema = z.discriminatedUnion("lineType", [
+  pricedDocumentLineShape.partial().strict(),
+  nonPricedDocumentLineShape.partial().strict(),
+]);
 
 // ============================================================================
 // PAYMENT INSTALLMENT SCHEMAS
@@ -356,7 +355,7 @@ export const createDocumentSchema = documentShape
       .min(2000)
       .max(2100)
       .default(() => new Date().getFullYear()),
-    documentDate: isoDateSchema({required: true}).default(() => new Date().toISOString()),
+    documentDate: isoDateSchema({ required: true }).default(() => new Date().toISOString()),
     status: documentStatusSchema.default("DRAFT"),
     subtotal: moneySchema,
     discountPercent: discountPercentSchema,

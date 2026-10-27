@@ -326,6 +326,8 @@ model Document {
   intrastatTransactions      IntrastatTransaction[]
   journalEntries             JournalEntry[]                 @relation("DocumentJournalEntries")
   withholdingSettlementLines WithholdingTaxSettlementLine[] @relation("DocumentWithholdingLines")
+  /// Idempotency key that created this document, if the client provided one.
+  idempotencyKey             DocumentIdempotencyKey?        @relation("DocumentIdempotencyKey")
 
   // === PARTY SNAPSHOTS ===
   parties DocumentParty[] @relation("DocumentParties")

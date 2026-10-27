@@ -74,6 +74,9 @@ export const INBOUND_DOCUMENT_TYPES = [
   "SUPPLIER_DELIVERY_NOTE",
 ] as const satisfies readonly DocumentType[];
 
+/** Retention window for a document creation idempotency key. */
+export const IDEMPOTENCY_KEY_TTL_MS = 24 * 60 * 60 * 1000;
+
 export type InboundDocumentType = (typeof INBOUND_DOCUMENT_TYPES)[number];
 export type OutboundDocumentType = Exclude<DocumentType, InboundDocumentType>;
 
@@ -557,6 +560,13 @@ export const DOCUMENT_LINE_TYPES = {
   PRODUCT: "PRODUCT",
   SERVICE: "SERVICE",
   DISCOUNT: "DISCOUNT",
+  SUBTOTAL: "SUBTOTAL",
+  TEXT: "TEXT",
+  PAGE_BREAK: "PAGE_BREAK",
+} as const;
+
+/** Document line types that never contribute to document totals. */
+export const NON_PRICED_LINE_TYPES = {
   SUBTOTAL: "SUBTOTAL",
   TEXT: "TEXT",
   PAGE_BREAK: "PAGE_BREAK",

@@ -1,0 +1,31 @@
+// ============================================================================
+// DOCUMENT IDEMPOTENCY
+// ============================================================================
+
+/// Stores the idempotency key used to create a commercial document.
+/// One key belongs to exactly one tenant and resolves to one document.
+/// The record is created in the same transaction as the document creation.
+model DocumentIdempotencyKey {
+    id String @id @default(cuid())
+
+    /// Tenant that issued the idempotency key.
+    tenantId String @map("tenant_id")
+    tenant   Tenant @relation("TenantDocumentIdempotencyKeys", fields: [tenantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    /// Client-provided idempotency key. Must be unique within the tenant.
+    key String @db.VarChar(255)
+
+    /// Document created by the request identified by this key.
+    documentId String   @map("document_id")
+    document   Document @relation("DocumentIdempotencyKey", fields: [tenantId, documentId], references: [tenantId, id], onDelete: Cascade, onUpdate: Cascade)
+
+    /// Instant after which the key is no longer reusable for duplicate-request replay.
+    expiresAt DateTime @map("expires_at")
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@unique([tenantId, documentId])
+    @@unique([tenantId, key])
+    @@index([expiresAt])
+    @@map("document_idempotency_keys")
+}

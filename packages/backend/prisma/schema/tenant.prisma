@@ -125,6 +125,8 @@ model Tenant {
   stockSerials                  StockSerial[]                  @relation("TenantStockSerials")
   withholdingTaxSettlementLines WithholdingTaxSettlementLine[] @relation("TenantWithholdingTaxSettlementLines")
   paymentTermDetails            PaymentTermDetail[]            @relation("TenantPaymentTermDetails")
+  /// Idempotency keys used for document creation.
+  documentIdempotencyKeys       DocumentIdempotencyKey[]       @relation("TenantDocumentIdempotencyKeys")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
