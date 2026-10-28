@@ -1,7 +1,8 @@
-import { Document, Prisma, PrismaClient } from "@/generated/prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 import {
   DOCUMENT_NUMBER_PADDING,
   DOCUMENT_PREFIXES,
+  formatDocumentNumber,
   type OutboundDocumentType,
 } from "@mini-erp/shared";
 
@@ -41,7 +42,6 @@ export async function generateDocumentNumber(
   tx: Prisma.TransactionClient,
 ): Promise<GeneratedDocumentNumber> {
   const prefix = DOCUMENT_PREFIXES[documentType];
-  const padding = DOCUMENT_NUMBER_PADDING[documentType];
 
   const sequence = await tx.documentSequence.upsert({
     where: {
@@ -71,8 +71,7 @@ export async function generateDocumentNumber(
   });
 
   const sequenceNumber = updated.lastNumber;
-  const paddedNumber = sequenceNumber.toString().padStart(padding, "0");
-  const documentNumber = `${prefix}/${year}/${paddedNumber}`;
+  const documentNumber = formatDocumentNumber(documentType, year, sequenceNumber);
 
   return {
     sequenceNumber,

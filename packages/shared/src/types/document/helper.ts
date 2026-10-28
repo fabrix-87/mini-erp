@@ -16,10 +16,17 @@ export interface CalculatedDocumentLineTotals {
   lineTotalWithTax: Decimal;
 }
 
+/** Taxable base and tax for one VAT rate. */
+export interface TaxRateSummary {
+  taxPercent: Decimal;
+  taxableAmount: Decimal;
+  taxAmount: Decimal;
+}
+
 export interface DocumentTotalsInput {
   lines: Array<{
     lineTotal: Decimal;
-    taxAmount: Decimal;
+    taxPercent: Decimal.Value | null | undefined;
   }>;
   documentDiscountPercent?: Decimal.Value | null;
 }
@@ -30,4 +37,6 @@ export interface CalculatedDocumentTotals {
   taxableAmount: Decimal;
   taxAmount: Decimal;
   totalAmount: Decimal;
+  /** VAT summary grouped by rate, sorted by rate ascending. */
+  byTaxRate: TaxRateSummary[];
 }

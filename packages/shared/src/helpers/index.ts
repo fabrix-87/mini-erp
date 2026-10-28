@@ -4,3 +4,4 @@ export * from "./carrier";
 export * from "./bank";
 export * from "./price-list";
 export * from "./money";
+export * from "../utils/date";

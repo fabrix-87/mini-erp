@@ -60,13 +60,18 @@ export async function transitionDocumentStatus(
       throw new BadRequestError(`Document in status ${document.status} cannot be transitioned`);
     }
 
+    const formalizationStatus = getDocumentFormalizationStatus(document.documentType);
+    const isFormalizing = targetStatus === formalizationStatus;
+
     assertTransitionIsAllowed({
       documentType: document.documentType,
       currentStatus: document.status,
       targetStatus,
     });
 
-    const formalizationStatus = getDocumentFormalizationStatus(document.documentType);
+    if (isFormalizing && !isDocumentEditable(document.status)) {
+      throw new BadRequestError(`Document in status ${document.status} cannot be formalized`);
+    }
 
     if (targetStatus !== formalizationStatus) {
       return updateDocumentStatus({

@@ -1,10 +1,5 @@
 import { Prisma } from "@/generated/prisma/client";
-import { Decimal } from "@prisma/client/runtime/client";
-import {
-  type CreateDocumentInput,
-  calculateDocumentTotals,
-  isInboundDocumentType,
-} from "@mini-erp/shared";
+import { calculateDocumentTotals, Decimal, isInboundDocumentType } from "@mini-erp/shared";
 import { toJsonField, toDecimal } from "@/helpers/prisma-helper";
 import { buildDocumentLines, type ProcessedDocumentLine } from "./document-line-builder";
 import { buildDocumentInstallments } from "./document-installment-builder";
@@ -41,6 +36,7 @@ export function buildDocumentCreateData(
           taxableAmount: new Decimal(0),
           taxAmount: new Decimal(0),
           totalAmount: new Decimal(0),
+          byTaxRate: [],
         };
 
   const documentData: Prisma.DocumentUncheckedCreateInput = {

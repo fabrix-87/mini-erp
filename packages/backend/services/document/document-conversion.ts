@@ -4,7 +4,6 @@ import {
   DOCUMENT_CONVERSION_MAP,
   DOCUMENT_RELATION_TYPES,
   type CreateDocumentLineInput,
-  type DocumentRelationType,
 } from "@mini-erp/shared";
 import { prisma } from "@/config/prisma-config";
 import { BadRequestError, NotFoundError } from "@/utils/app-error-utils";
@@ -131,7 +130,6 @@ export async function convertOrderToDeliveryNote(
     const documentLines: CreateDocumentLineInput[] = conversionLines.map(
       ({ sourceLine, quantity }) =>
         ({
-          productId: sourceLine.productId,
           productVariantId: sourceLine.productVariantId,
           lineType: sourceLine.lineType,
           code: sourceLine.code,
@@ -156,6 +154,7 @@ export async function convertOrderToDeliveryNote(
           priceOverrideReason: sourceLine.priceOverrideReason,
           notes: sourceLine.notes,
           customFields: sourceLine.customFields,
+          discountAmount: 0,
         }) satisfies CreateDocumentLineInput,
     );
 
@@ -163,6 +162,7 @@ export async function convertOrderToDeliveryNote(
       unitPrice: sourceLine.unitPrice.toString(),
       originalUnitPrice: sourceLine.originalUnitPrice?.toString() ?? null,
       priceOverrideReason: sourceLine.priceOverrideReason,
+      productId: sourceLine.productId
     }));
 
     const documentData = buildDocumentCreateData({

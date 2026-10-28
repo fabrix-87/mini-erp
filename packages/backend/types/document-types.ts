@@ -20,6 +20,8 @@ export interface ResolvedLinePricing {
 
   /** Mandatory justification when the unit price was overridden. */
   priceOverrideReason: string | null;
+  
+  productId: string | null;
 }
 
 /** Server-resolved snapshots required to formalize a document. */
@@ -92,4 +94,18 @@ export interface BuildDocumentFormalizationDataArgs {
 
   /** Numbering result; required for OUTBOUND documents. */
   numbering?: DocumentNumberingResult;
+}
+
+/** Document-level data that influences price resolution. */
+export interface DocumentLinePricingContext {
+  /** Current tenant ID. */
+  tenantId: string;
+  /** Type of the document being created. */
+  documentType: DocumentType;
+  /** Document currency; the resolver only accepts price lists in this currency. */
+  currencyCode: string;
+  /** Reference date for price list validity. */
+  documentDate: Date;
+  /** Customer whose default price list applies, when present. */
+  customerId?: string | null;
 }

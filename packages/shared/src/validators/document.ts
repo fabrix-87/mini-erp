@@ -155,7 +155,7 @@ export const matchStatusSchema = z.enum([
 
 /** Base fields shared by every document line type. */
 const documentLineBaseShape = z.object({
-  productId: productIdBaseSchema.nullish(),
+  // productId is intentionally absent: the server derives it from productVariantId.
   productVariantId: productVariantIdBaseSchema.nullish(),
   code: z.string().max(100).nullish(),
   nameSystem: z.string().min(1).max(255),
@@ -178,7 +178,7 @@ const documentLineBaseShape = z.object({
   isComponent: z.boolean().default(false),
 });
 
-/** Priced line resolved from a price list or entered manually. */
+/** Priced line: price-list price (variant) or manual price (no variant). */
 const pricedDocumentLineShape = documentLineBaseShape.extend({
   lineType: z.enum([
     DOCUMENT_LINE_TYPES.PRODUCT,
@@ -187,7 +187,11 @@ const pricedDocumentLineShape = documentLineBaseShape.extend({
   ]),
   quantity: quantitySchema(1),
   unit: z.string().max(20).default("pz"),
-  unitPrice: unitAmountSchema,
+  /**
+   * No default on purpose. With a variant, a value is a manual price override;
+   * without a variant it is the line price and is required (see createDocumentLineSchema).
+   */
+  unitPrice: unitAmountOptionalSchema,
   discountPercent: discountPercentSchema,
   discountAmount: moneySchema,
   taxPercent: taxPercentSchema,
@@ -208,11 +212,57 @@ const nonPricedDocumentLineShape = documentLineBaseShape.extend({
   taxPercent: z.literal(0).default(0),
 });
 
-/** Discriminated schema for creating a document line. */
-export const createDocumentLineSchema = z.discriminatedUnion("lineType", [
-  pricedDocumentLineShape,
-  nonPricedDocumentLineShape,
-]);
+/**
+ * Discriminated schema for creating a document line.
+ * - Descriptive lines (TEXT, PAGE_BREAK, SUBTOTAL) must not reference a product variant.
+ * - PRODUCT lines require productVariantId (every product has at least one variant).
+ * - DISCOUNT lines are always manual: no variant allowed.
+ * - Lines without a variant (manual lines) require an explicit unitPrice.
+ */
+export const createDocumentLineSchema = z
+  .discriminatedUnion("lineType", [pricedDocumentLineShape, nonPricedDocumentLineShape])
+  .superRefine((line, ctx) => {
+    const hasVariant = Boolean(line.productVariantId);
+
+    if (
+      line.lineType === DOCUMENT_LINE_TYPES.TEXT ||
+      line.lineType === DOCUMENT_LINE_TYPES.PAGE_BREAK ||
+      line.lineType === DOCUMENT_LINE_TYPES.SUBTOTAL
+    ) {
+      if (hasVariant) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Le righe descrittive non possono riferire un prodotto",
+          path: ["productVariantId"],
+        });
+      }
+      return;
+    }
+
+    if (line.lineType === DOCUMENT_LINE_TYPES.PRODUCT && !hasVariant) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Variante obbligatoria per le righe prodotto",
+        path: ["productVariantId"],
+      });
+    }
+
+    if (line.lineType === DOCUMENT_LINE_TYPES.DISCOUNT && hasVariant) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Le righe sconto non possono riferire una variante",
+        path: ["productVariantId"],
+      });
+    }
+
+    if (!hasVariant && line.unitPrice === undefined) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Prezzo obbligatorio per le righe manuali",
+        path: ["unitPrice"],
+      });
+    }
+  });
 
 /** Schema for updating a DocumentLine — lineNumber is immutable. */
 export const updateDocumentLineSchema = z.discriminatedUnion("lineType", [

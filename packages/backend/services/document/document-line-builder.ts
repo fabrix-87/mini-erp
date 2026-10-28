@@ -20,6 +20,7 @@ export interface ProcessedDocumentLine {
   totals: {
     lineTotal: ReturnType<typeof calculateDocumentLineTotals>["lineTotal"];
     taxAmount: ReturnType<typeof calculateDocumentLineTotals>["taxAmount"];
+    taxPercent: ReturnType<typeof calculateDocumentLineTotals>["taxPercent"];
   };
 
   prismaInput: Prisma.DocumentLineUncheckedCreateWithoutDocumentInput;
@@ -49,7 +50,7 @@ export function buildDocumentLine(args: BuildDocumentLineArgs): ProcessedDocumen
   const prismaInput: Prisma.DocumentLineUncheckedCreateWithoutDocumentInput = {
     lineNumber: index + 1,
     lineType: line.lineType,
-    productId: line.productId ?? undefined,
+    productId: pricing.productId ?? undefined,
     productVariantId: line.productVariantId ?? undefined,
 
     code: line.code ?? undefined,
@@ -93,6 +94,7 @@ export function buildDocumentLine(args: BuildDocumentLineArgs): ProcessedDocumen
     totals: {
       lineTotal: totals.lineTotal,
       taxAmount: totals.taxAmount,
+      taxPercent: line.taxPercent,
     },
     prismaInput,
   };

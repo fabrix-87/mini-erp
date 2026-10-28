@@ -11,8 +11,10 @@ import {
   InboundDocumentType,
   NON_PRICED_LINE_TYPES,
   OutboundDocumentType,
+  STATUS_CATEGORIES,
 } from "../constants";
 import type { DocumentStatus, DocumentType } from "../types/document";
+import { normalizeToMidnight } from "../utils";
 
 /**
  * Checks whether a status transition is allowed for a document type.
@@ -106,13 +108,34 @@ export const formatDocumentNumberDisplay = (documentNumber: string | null): stri
 };
 
 /**
- * Get overdue status
+ * Checks if a given due date is in the past compared to today (evaluated at day level).
+ * Returns false if no due date is provided.
+ *
+ * @param {Date | string | null} dueDate - The due date to check.
+ * @returns {boolean} True if the due date is strictly before today, false otherwise.
+ *
+ * @example
+ * const overdue = isOverdue("2026-10-25"); // Returns true (if today is after)
  */
 export const isOverdue = (dueDate: Date | string | null): boolean => {
   if (!dueDate) return false;
-  const due = new Date(dueDate);
-  const today = new Date();
-  return due < today;
+  return normalizeToMidnight(dueDate) < normalizeToMidnight(new Date());
+};
+
+/**
+ * Calculates the number of full days remaining until the due date (evaluated at day level).
+ * Returns negative numbers for past due dates.
+ *
+ * @param {Date | string} dueDate - The target due date.
+ * @returns {number} The integer number of days until due.
+ *
+ * @example
+ * const days = getDaysUntilDue("2026-10-30"); // Returns the difference in days
+ */
+export const getDaysUntilDue = (dueDate: Date | string): number => {
+  const diffTime =
+    normalizeToMidnight(dueDate).getTime() - normalizeToMidnight(new Date()).getTime();
+  return Math.round(diffTime / (1000 * 60 * 60 * 24));
 };
 
 /**
@@ -178,3 +201,27 @@ export const isInboundDocumentType = (type: DocumentType): type is InboundDocume
 export const isOutboundDocumentType = (
   documentType: DocumentType,
 ): documentType is OutboundDocumentType => !isInboundDocumentType(documentType);
+
+/**
+ * Checks whether a document is still in the draft phase and can be edited
+ * or formalized. Derived from STATUS_CATEGORIES so the rule cannot diverge
+ * from the workflow constants.
+ *
+ * @param status - Current document status
+ * @returns true when the status belongs to the draft phase (DRAFT, PENDING_APPROVAL)
+ */
+export const isDocumentEditable = (status: DocumentStatus): boolean =>
+  (STATUS_CATEGORIES.DRAFT_PHASE as readonly DocumentStatus[]).includes(status);
+
+/**
+ * Checks whether a document can be deleted.
+ * Only DRAFT documents that never received a number can be deleted.
+ *
+ * @param status - Current document status
+ * @param documentNumber - Assigned document number, if any
+ * @returns true when the document can be deleted
+ */
+export const isDocumentDeletable = (
+  status: DocumentStatus,
+  documentNumber: string | null | undefined,
+): boolean => status === "DRAFT" && !documentNumber;

@@ -2,7 +2,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/config/prisma-config";
 import { ConflictError } from "@/utils/app-error-utils";
 import { buildDocumentCreateData } from "./document-create-builder";
-import type { DocumentCreateContext } from "@/types";
+import type { DocumentCreateContext, DocumentLinePricingContext } from "@/types";
 import { CreateDocumentInput, IDEMPOTENCY_KEY_TTL_MS } from "@mini-erp/shared";
 import { resolveDocumentLinePricing } from "./document-line-pricing-service";
 
@@ -36,8 +36,16 @@ export async function createDocument(
 
   try {
     return await prisma.$transaction(async (tx) => {
+      const pricingContext = {
+        tenantId: context.tenantId,
+        documentType: input.documentType,
+        currencyCode: input.currencyCode,
+        documentDate: new Date(input.documentDate),
+        customerId: input.customerId,
+      } satisfies DocumentLinePricingContext;
+
       const linePricing = await Promise.all(
-        input.lines.map((line) => resolveDocumentLinePricing(tx, context.tenantId, line)),
+        input.lines.map((line) => resolveDocumentLinePricing(tx, pricingContext, line)),
       );
 
       const documentData = buildDocumentCreateData({
