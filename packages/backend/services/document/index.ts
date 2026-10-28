@@ -11,3 +11,4 @@ export * from "./document-formalization-builder";
 export * from "./document-formalization-snapshot-service";
 export * from "./document-line-pricing-service";
 export * from "./document-conversion";
+export * from "./document-concurrency";

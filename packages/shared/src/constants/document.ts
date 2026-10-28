@@ -221,7 +221,7 @@ export const DOCUMENT_TYPE_STATUS_TRANSITIONS: Record<
   },
   DELIVERY_NOTE: {
     DRAFT: ["IN_TRANSIT"],
-    IN_TRANSIT: ["DELIVERED", "DRAFT"],
+    IN_TRANSIT: ["DELIVERED"],
     DELIVERED: ["CLOSED"],
   },
   INVOICE: {
@@ -299,6 +299,18 @@ export const STATUSES_WITHOUT_NUMBER: readonly DocumentStatus[] = [
   "DRAFT",
   "PENDING_APPROVAL",
 ] as const;
+
+/**
+ * Statuses derived by the system and never requested manually through the generic
+ * status transition: fulfillment states follow delivered quantities, and VOIDED
+ * requires a dedicated operation with a mandatory reason.
+ * TODO: add PARTIALLY_PAID, PAID and OVERDUE once the installment service drives them.
+ */
+export const SYSTEM_DRIVEN_STATUSES = [
+  "PARTIALLY_FULFILLED",
+  "FULFILLED",
+  "VOIDED",
+] as const satisfies readonly DocumentStatus[];
 
 // ============================================================================
 // DOCUMENT TYPE CONFIGURATION

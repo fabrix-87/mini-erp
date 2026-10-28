@@ -5,6 +5,7 @@ import {
   getDocumentFormalizationStatus,
   isDocumentEditable,
   isOutboundDocumentType,
+  isSystemDrivenStatus,
   type DocumentStatus,
   type DocumentType,
 } from "@mini-erp/shared";
@@ -17,6 +18,7 @@ import {
 } from "./document-formalization-snapshot-service";
 import { buildDocumentFormalizationData } from "./document-formalization-builder";
 import type { DocumentCreateContext } from "@/types";
+import { lockDocumentStatus } from "./document-concurrency";
 
 /** Arguments required to transition a document status. */
 export interface TransitionDocumentStatusArgs {
@@ -47,6 +49,10 @@ export async function transitionDocumentStatus(
 ): Promise<Document> {
   const { documentId, targetStatus, context } = args;
 
+  if (isSystemDrivenStatus(targetStatus)) {
+    throw new BadRequestError(`Status ${targetStatus} cannot be requested manually`);
+  }
+
   return prisma.$transaction(async (tx) => {
     const document = await tx.document.findFirst({
       where: withSoftDelete(withTenantId({ id: documentId }, context.tenantId)),
@@ -56,24 +62,15 @@ export async function transitionDocumentStatus(
       throw new NotFoundError("Document not found");
     }
 
-    if (!isDocumentEditable(document.status)) {
-      throw new BadRequestError(`Document in status ${document.status} cannot be transitioned`);
-    }
-
-    const formalizationStatus = getDocumentFormalizationStatus(document.documentType);
-    const isFormalizing = targetStatus === formalizationStatus;
-
     assertTransitionIsAllowed({
       documentType: document.documentType,
       currentStatus: document.status,
       targetStatus,
     });
 
-    if (isFormalizing && !isDocumentEditable(document.status)) {
-      throw new BadRequestError(`Document in status ${document.status} cannot be formalized`);
-    }
+    await lockDocumentStatus(tx, document);
 
-    if (targetStatus !== formalizationStatus) {
+    if (targetStatus !== getDocumentFormalizationStatus(document.documentType)) {
       return updateDocumentStatus({
         documentId: document.id,
         fromStatus: document.status,
@@ -83,13 +80,27 @@ export async function transitionDocumentStatus(
       });
     }
 
-    return formalizeDocument({
-      document,
-      targetStatus,
-      context,
-      tx,
-    });
+    assertCanBeFormalized(document);
+
+    return formalizeDocument({ document, targetStatus, context, tx });
   });
+}
+
+/**
+ * Ensures that a document can still be formalized.
+ * Formalization is only allowed from the draft phase and only once.
+ *
+ * @param document - Document to formalize
+ * @throws BadRequestError when the document is outside the draft phase or already formalized
+ */
+function assertCanBeFormalized(document: Document): void {
+  if (!isDocumentEditable(document.status)) {
+    throw new BadRequestError(`Document in status ${document.status} cannot be formalized`);
+  }
+
+  if (document.snapshotLockedAt) {
+    throw new BadRequestError("Document has already been formalized");
+  }
 }
 
 /**
@@ -221,7 +232,7 @@ async function formalizeDocument(args: {
  * @param args.context - Tenant and authenticated user context
  * @param args.tx - Prisma transaction client
  */
-async function createStatusHistory(args: {
+export async function createStatusHistory(args: {
   documentId: string;
   fromStatus: DocumentStatus;
   toStatus: DocumentStatus;

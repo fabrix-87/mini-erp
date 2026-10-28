@@ -1,14 +1,26 @@
 import { Document, DocumentType, Prisma } from "@/generated/prisma/client";
 import { Decimal } from "@prisma/client/runtime/client";
 import {
+  canTransition,
   DOCUMENT_TYPE_STATUS_TRANSITIONS,
-  isDocumentEditable,
   type DocumentStatus,
 } from "@mini-erp/shared";
 import { prisma } from "@/config/prisma-config";
 import { BadRequestError, NotFoundError } from "@/utils/app-error-utils";
 import { withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 import type { DocumentCreateContext } from "@/types";
+import { createStatusHistory } from "./document-status-service";
+import { lockDocumentStatus } from "./document-concurrency";
+
+/** Statuses from which line deliveries can be registered. */
+const FULFILLABLE_STATUSES: readonly DocumentStatus[] = [
+  "ACCEPTED",
+  "PREPARING",
+  "PARTIALLY_FULFILLED",
+];
+
+/** Line types that carry deliverable quantities. */
+const FULFILLABLE_LINE_TYPES = ["PRODUCT", "SERVICE"] as const;
 
 /** Fulfillment status computed from document lines. */
 export type FulfillmentStatus = "PENDING" | "PARTIALLY_FULFILLED" | "FULFILLED";
@@ -69,52 +81,14 @@ export async function calculateFulfillmentStatus(
 
   const document = await prisma.document.findFirst({
     where: withSoftDelete(withTenantId({ id: documentId }, tenantId)),
-    select: {
-      id: true,
-      lines: {
-        where: {
-          lineType: {
-            in: ["PRODUCT", "SERVICE"],
-          },
-        },
-        select: {
-          quantity: true,
-          quantityDelivered: true,
-        },
-      },
-    },
+    select: { id: true },
   });
 
   if (!document) {
     throw new NotFoundError("Document not found");
   }
 
-  const totalQuantity = document.lines.reduce(
-    (sum, line) => sum.plus(line.quantity),
-    new Decimal(0),
-  );
-
-  const deliveredQuantity = document.lines.reduce(
-    (sum, line) => sum.plus(line.quantityDelivered),
-    new Decimal(0),
-  );
-
-  const fulfillmentRate = totalQuantity.isZero()
-    ? new Decimal(0)
-    : deliveredQuantity.div(totalQuantity).times(100);
-
-  const status: FulfillmentStatus = deliveredQuantity.isZero()
-    ? "PENDING"
-    : deliveredQuantity.lessThan(totalQuantity)
-      ? "PARTIALLY_FULFILLED"
-      : "FULFILLED";
-
-  return {
-    status,
-    totalQuantity,
-    deliveredQuantity,
-    fulfillmentRate,
-  };
+  return computeFulfillment(prisma, documentId, tenantId);
 }
 
 /**
@@ -205,15 +179,15 @@ export async function updateLineDeliveredQuantity(
   return prisma.$transaction(async (tx) => {
     const line = await tx.documentLine.findFirst({
       where: withSoftDelete(withTenantId({ id: lineId }, tenantId)),
-      select: {
-        id: true,
-        documentId: true,
-        quantity: true,
-      },
+      select: { id: true, documentId: true, lineType: true, quantity: true },
     });
 
     if (!line) {
       throw new NotFoundError("Document line not found");
+    }
+
+    if (!(FULFILLABLE_LINE_TYPES as readonly string[]).includes(line.lineType)) {
+      throw new BadRequestError("Only PRODUCT and SERVICE lines can be delivered");
     }
 
     const deliveredQuantity = new Decimal(quantityDelivered);
@@ -228,54 +202,45 @@ export async function updateLineDeliveredQuantity(
 
     const document = await tx.document.findFirst({
       where: withSoftDelete(withTenantId({ id: line.documentId }, tenantId)),
-      select: {
-        id: true,
-        documentType: true,
-        status: true,
-      },
     });
 
     if (!document) {
       throw new NotFoundError("Document not found");
     }
 
-    if (!isDocumentEditable(document.status)) {
+    if (!FULFILLABLE_STATUSES.includes(document.status)) {
       throw new BadRequestError(`Document in status ${document.status} cannot be fulfilled`);
     }
 
+    await lockDocumentStatus(tx, document);
+
     await tx.documentLine.update({
       where: { id: line.id },
-      data: {
-        quantityDelivered: deliveredQuantity,
-      },
+      data: { quantityDelivered: deliveredQuantity },
     });
 
-    const fulfillment = await calculateFulfillmentInTransaction({
-      documentId: document.id,
-      tenantId,
-      tx,
-    });
-
-    const targetStatus = mapFulfillmentToDocumentStatus(
+    const fulfillment = await computeFulfillment(tx, document.id, tenantId);
+    const targetStatus = resolveFulfillmentTargetStatus(
       document.documentType,
       document.status,
       fulfillment.status,
     );
 
+    if (targetStatus === null) {
+      return document;
+    }
+
     const updatedDocument = await tx.document.update({
       where: { id: document.id },
-      data: {
-        status: targetStatus,
-      },
+      data: { status: targetStatus },
     });
 
-    await tx.documentStatusHistory.create({
-      data: {
-        documentId: document.id,
-        fromStatus: document.status,
-        toStatus: targetStatus,
-        changedBy: context.userId,
-      },
+    await createStatusHistory({
+      documentId: document.id,
+      fromStatus: document.status,
+      toStatus: targetStatus,
+      context,
+      tx,
     });
 
     return updatedDocument;
@@ -283,43 +248,27 @@ export async function updateLineDeliveredQuantity(
 }
 
 /**
- * Calculates fulfillment inside an existing transaction.
+ * Computes the aggregate fulfillment of a document from its non-deleted lines.
  *
- * @param args - Fulfillment context
- * @param args.documentId - Document ID
- * @param args.tenantId - Current tenant ID
- * @param args.tx - Prisma transaction client
+ * @param db - Prisma client or transaction client
+ * @param documentId - Document ID
+ * @param tenantId - Current tenant ID
  * @returns Aggregate fulfillment status
  */
-async function calculateFulfillmentInTransaction(args: {
-  documentId: string;
-  tenantId: string;
-  tx: Prisma.TransactionClient;
-}): Promise<DocumentFulfillmentStatus> {
-  const { documentId, tenantId, tx } = args;
-
-  const lines = await tx.documentLine.findMany({
-    where: withTenantId(
-      {
-        documentId,
-        lineType: {
-          in: ["PRODUCT", "SERVICE"],
-        },
-      },
-      tenantId,
+async function computeFulfillment(
+  db: Prisma.TransactionClient,
+  documentId: string,
+  tenantId: string,
+): Promise<DocumentFulfillmentStatus> {
+  const lines = await db.documentLine.findMany({
+    where: withSoftDelete(
+      withTenantId({ documentId, lineType: { in: [...FULFILLABLE_LINE_TYPES] } }, tenantId),
     ),
-    select: {
-      quantity: true,
-      quantityDelivered: true,
-    },
+    select: { quantity: true, quantityDelivered: true },
   });
 
-  const totalQuantity = lines.reduce((sum, line) => sum.plus(line.quantity), new Decimal(0));
-
-  const deliveredQuantity = lines.reduce(
-    (sum, line) => sum.plus(line.quantityDelivered),
-    new Decimal(0),
-  );
+  const totalQuantity = lines.reduce((sum, l) => sum.plus(l.quantity), new Decimal(0));
+  const deliveredQuantity = lines.reduce((sum, l) => sum.plus(l.quantityDelivered), new Decimal(0));
 
   const fulfillmentRate = totalQuantity.isZero()
     ? new Decimal(0)
@@ -331,12 +280,7 @@ async function calculateFulfillmentInTransaction(args: {
       ? "PARTIALLY_FULFILLED"
       : "FULFILLED";
 
-  return {
-    status,
-    totalQuantity,
-    deliveredQuantity,
-    fulfillmentRate,
-  };
+  return { status, totalQuantity, deliveredQuantity, fulfillmentRate };
 }
 
 /**
@@ -363,6 +307,42 @@ function mapFulfillmentToDocumentStatus(
         : "ACCEPTED";
 
   if (!allowedStatuses.includes(targetStatus)) {
+    throw new BadRequestError(
+      `Transition from ${currentStatus} to ${targetStatus} is not allowed for ${documentType}`,
+    );
+  }
+
+  return targetStatus;
+}
+
+/**
+ * Maps a computed fulfillment status to the document status transition to apply.
+ *
+ * @param documentType - Document type
+ * @param currentStatus - Current document status
+ * @param fulfillmentStatus - Computed fulfillment status
+ * @returns The target status, or null when the document status must not change
+ * @throws BadRequestError when fulfillment would be reverted or the transition is not allowed
+ */
+function resolveFulfillmentTargetStatus(
+  documentType: DocumentType,
+  currentStatus: DocumentStatus,
+  fulfillmentStatus: FulfillmentStatus,
+): DocumentStatus | null {
+  if (fulfillmentStatus === "PENDING") {
+    if (currentStatus === "PARTIALLY_FULFILLED") {
+      throw new BadRequestError("Fulfillment cannot be reverted to zero");
+    }
+    return null;
+  }
+
+  const targetStatus: DocumentStatus = fulfillmentStatus;
+
+  if (targetStatus === currentStatus) {
+    return null;
+  }
+
+  if (!canTransition(documentType, currentStatus, targetStatus)) {
     throw new BadRequestError(
       `Transition from ${currentStatus} to ${targetStatus} is not allowed for ${documentType}`,
     );

@@ -12,6 +12,7 @@ import {
   NON_PRICED_LINE_TYPES,
   OutboundDocumentType,
   STATUS_CATEGORIES,
+  SYSTEM_DRIVEN_STATUSES,
 } from "../constants";
 import type { DocumentStatus, DocumentType } from "../types/document";
 import { normalizeToMidnight } from "../utils";
@@ -225,3 +226,12 @@ export const isDocumentDeletable = (
   status: DocumentStatus,
   documentNumber: string | null | undefined,
 ): boolean => status === "DRAFT" && !documentNumber;
+
+/**
+ * Checks whether a status is derived by the system and cannot be requested manually.
+ *
+ * @param status - Target status
+ * @returns true when the status must not be set through the generic status transition
+ */
+export const isSystemDrivenStatus = (status: DocumentStatus): boolean =>
+  (SYSTEM_DRIVEN_STATUSES as readonly DocumentStatus[]).includes(status);
