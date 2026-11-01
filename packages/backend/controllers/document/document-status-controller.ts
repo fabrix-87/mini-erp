@@ -12,8 +12,7 @@ import {
   STATUSES_REQUIRING_NUMBER,
   UpdateDocumentStatusInput,
 } from "@mini-erp/shared";
-import { getDocumentSelection } from "@/helpers/document";
-import { generateDocumentNumber, resolveAllowedTransitions } from "@/services/document";
+import { generateDocumentNumber } from "@/services/document";
 import { connectOrDisconnectById, toIntId, withSoftDelete } from "@/helpers/prisma-helper";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
@@ -35,7 +34,6 @@ export const updateDocumentStatus = async (c: Context<AppBindings>) => {
   const {
     status: newStatus,
     reason,
-    voidedReason,
   } = getValidatedBody<UpdateDocumentStatusInput>(c);
   const userId = c.get("user")!.userId;
 

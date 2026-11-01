@@ -24,7 +24,7 @@ import {
   updatePriceListItem,
   deletePriceListItem,
   bulkImportItems,
-  calculatePrice,
+  resolvePrice,
 } from "../controllers/pricelist-controller";
 import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
@@ -35,17 +35,17 @@ const pricelistRoutes = createHonoApp();
 // ============================================================================
 
 /**
- * @route   POST /api/price-lists/calculate-price
+ * @route   POST /api/price-lists/resolve-price
  * @desc    Calcola prezzo per variant considerando gerarchia listini
  * @access  Private (pricelist:read)
  * @body    priceListId, variantId, quantity
  */
 pricelistRoutes.post(
-  "/calculate-price",
+  "/resolve-price",
   requireTenantScope,
   authorize(["pricelist:read", "pricelist:manage"]),
   validateCalculatePrice,
-  calculatePrice,
+  resolvePrice,
 );
 
 /**

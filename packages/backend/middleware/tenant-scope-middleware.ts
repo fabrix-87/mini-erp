@@ -36,7 +36,7 @@ function isAuthUserTenantScope(value: unknown): value is AuthUserTenantScope {
   };
 
   const tenantIdIsValid =
-    candidate.tenantId === undefined || typeof candidate.tenantId === "number";
+    candidate.tenantId === undefined || typeof candidate.tenantId === "string";
 
   const rolesAreValid =
     candidate.roles === undefined ||

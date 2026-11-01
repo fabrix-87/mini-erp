@@ -1,13 +1,13 @@
 import {
   bulkImportBodySchema,
   bulkPriceListIdParamSchema,
-  calculatePriceBodySchema,
   createPriceListItemSchema,
   createPriceListSchema,
   priceListIdParamSchema,
   priceListItemIdParamSchema,
   priceListItemQuerySchema,
   priceListQuerySchema,
+  resolvePriceBodySchema,
   updatePriceListItemSchema,
   updatePriceListSchema,
 } from "@mini-erp/shared";
@@ -33,7 +33,7 @@ export const validateUpdatePriceListItem = validateBody(
 
 export const validateBulkImportItems = validateBody(bulkImportBodySchema, "Bulk import items");
 
-export const validateCalculatePrice = validateBody(calculatePriceBodySchema, "Calculate price");
+export const validateCalculatePrice = validateBody(resolvePriceBodySchema, "Calculate price");
 
 export const validatePriceListId = validateParams(priceListIdParamSchema, "Price List ID");
 

@@ -11,7 +11,7 @@ import {
   SendDocumentInput,
   STATUSES_REQUIRING_NUMBER,
 } from "@mini-erp/shared";
-import { generateDocumentNumber, resolveAllowedTransitions } from "@/services/document";
+import { generateDocumentNumber } from "@/services/document";
 import { toIntId } from "@/helpers/prisma-helper";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";

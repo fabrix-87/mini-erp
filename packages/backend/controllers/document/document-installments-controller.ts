@@ -10,8 +10,7 @@ import {
   PayInstallmentInput,
   UpdateInstallmentInput,
 } from "@mini-erp/shared";
-import { toIntId, withSoftDelete, toDecimal, parseOptionalDate } from "@/helpers/prisma-helper";
-import { updateDocumentPaidAmount } from "@/services/document";
+import { toIntId, withSoftDelete } from "@/helpers/prisma-helper";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import { getValidatedBody, getValidatedParams } from "@/helpers/validated-context";

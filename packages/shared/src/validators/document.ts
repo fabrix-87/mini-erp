@@ -354,13 +354,7 @@ const documentShape = z.object({
   registrationDate: isoDateSchema(),
 
   // Amounts
-  subtotal: moneyOptionalSchema,
-  discountPercent: discountPercentOptionalSchema,
-  discountAmount: moneyOptionalSchema,
-  taxableAmount: moneyOptionalSchema,
-  taxAmount: moneyOptionalSchema,
-  totalAmount: moneyOptionalSchema,
-  netPayableAmount: moneyOptionalSchema,
+  discountPercent: discountPercentOptionalSchema, 
   currencyCode: currencyCodeBaseSchema.optional(),
   exchangeRate: exchangeRateSchema,
   exchangeRateDate: isoDateSchema(),
@@ -726,19 +720,6 @@ export const topProductsReportSchema = z.object({
   limit: limitSchema,
 });
 
-// ============================================================================
-// CALCULATION SCHEMAS
-// ============================================================================
-
-/**
- * Schema per ricalcolare totali documento
- */
-export const recalculateDocumentSchema = z
-  .object({
-    applyDiscount: z.boolean().default(true),
-    recalculateTax: z.boolean().default(true),
-  })
-  .strict();
 
 // ============================================================================
 // CONVERSION SCHEMAS

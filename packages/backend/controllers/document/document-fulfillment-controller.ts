@@ -3,10 +3,8 @@ import { prisma } from "@/config/prisma-config";
 import { Prisma } from "@/generated/prisma/client";
 import { sendSuccess } from "@/utils/response-utils";
 import { DocumentIdParam } from "@mini-erp/shared";
-import { getDocumentSelection } from "@/helpers/document";
 import {
   calculateFulfillmentStatus,
-  createPartialDeliveryNote,
   getDocumentFulfillmentDetails,
   updateLineDeliveredQuantity,
 } from "@/services/document";

@@ -1,8 +1,4 @@
-import {
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "../middleware/validation-middleware";
+import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 import {
   bulkSendDocumentsSchema,
   bulkUpdateDocumentsStatusSchema,
@@ -11,14 +7,11 @@ import {
   createDocumentSchema,
   createInstallmentSchema,
   documentAttachmentIdParamSchema,
-  documentCustomerIdParamSchema,
   documentIdParamSchema,
   documentLineIdParamSchema,
   documentQuerySchema,
-  documentSupplierIdParamSchema,
   duplicateDocumentSchema,
   installmentIdParamSchema,
-  recalculateDocumentSchema,
   topProductsReportSchema,
   updateDocumentLineSchema,
   updateDocumentSchema,
@@ -113,39 +106,8 @@ export const validateDuplicateDocument = validateBody(
 );
 
 // ============================================================================
-// CALCULATIONS
-// ============================================================================
-
-/**
- * Validates the request body for a document recalculation request.
- * Delegates to the shared {@link recalculateDocumentSchema}.
- */
-export const validateRecalculateDocument = validateBody(
-  recalculateDocumentSchema,
-  "Recalculate document",
-);
-
-// ============================================================================
 // ROUTE PARAMS
 // ============================================================================
-
-/**
- * Validates the `:customerId` route parameter for customer-scoped document endpoints.
- * Delegates to the shared {@link documentCustomerIdParamSchema}.
- */
-export const validateDocumentCustomerIdParam = validateParams(
-  documentCustomerIdParamSchema,
-  "Customer ID",
-);
-
-/**
- * Validates the `:supplierId` route parameter for supplier-scoped document endpoints.
- * Delegates to the shared {@link documentSupplierIdParamSchema}.
- */
-export const validateDocumentSupplierIdParam = validateParams(
-  documentSupplierIdParamSchema,
-  "Supplier ID", // ← fix del bug #3 del validator
-);
 
 /**
  * Validates the `:attachmentId` route parameter for document attachment endpoints.
@@ -153,7 +115,7 @@ export const validateDocumentSupplierIdParam = validateParams(
  */
 export const validateDocumentAttachmentIdParam = validateParams(
   documentAttachmentIdParamSchema,
-  "Attachment ID", // ← fix del bug #3 del validator
+  "Attachment ID",
 );
 
 // ============================================================================

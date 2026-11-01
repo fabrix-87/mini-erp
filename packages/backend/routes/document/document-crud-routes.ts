@@ -10,9 +10,6 @@ import {
   validateUpdateDocument,
   validateDocumentId,
   validateDocumentQuery,
-  validateRecalculateDocument,
-  validateDocumentCustomerIdParam,
-  validateDocumentSupplierIdParam,
 } from "../../validators/document-validator";
 import {
   getAllDocuments,
@@ -22,7 +19,7 @@ import {
   deleteDocument,
   recalculateDocument,
 } from "../../controllers/document";
-import { getAllDeliveryNotes, getAllInvoices, getAllOrders, getAllQuotes } from "@/controllers/document/document-crud-controller";
+
 import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const crudRoutes = createHonoApp();
@@ -34,87 +31,9 @@ const crudRoutes = createHonoApp();
  */
 crudRoutes.get(
   "/",
-  requireTenantScope,
   authorize(["document:read", "document:manage"]),
+  requireTenantScope,
   validateDocumentQuery,
-  getAllDocuments,
-);
-
-/**
- * @route GET /api/documents/quotes
- * @desc  List documents of type QUOTE
- * @access Private (document:read)
- */
-crudRoutes.get(
-  "/quotes",
-  requireTenantScope,
-  authorize(["document:read", "document:manage"]),
-  validateDocumentQuery,
-  getAllQuotes,
-);
-
-/**
- * @route GET /api/documents/orders
- * @desc  List documents of type ORDER
- * @access Private (document:read)
- */
-crudRoutes.get(
-  "/orders",
-  requireTenantScope,
-  authorize(["document:read", "document:manage"]),
-  validateDocumentQuery,
-  getAllOrders,
-);
-
-/**
- * @route GET /api/documents/invoices
- * @desc  List documents of type INVOICE
- * @access Private (document:read)
- */
-crudRoutes.get(
-  "/invoices",
-  requireTenantScope,
-  authorize(["document:read", "document:manage"]),
-  validateDocumentQuery,
-  getAllInvoices,
-);
-
-/**
- * @route GET /api/documents/delivery-notes
- * @desc  List documents of type DELIVERY_NOTE
- * @access Private (document:read)
- */
-crudRoutes.get(
-  "/delivery-notes",
-  requireTenantScope,
-  authorize(["document:read", "document:manage"]),
-  validateDocumentQuery,
-  getAllDeliveryNotes,
-);
-
-/**
- * @route GET /api/documents/customer/:customerId
- * @desc  List documents belonging to a specific customer
- * @access Private (document:read)
- */
-crudRoutes.get(
-  "/customer/:customerId",
-  requireTenantScope,
-  authorize(["document:read", "document:manage"]),
-  validateDocumentCustomerIdParam,
-  getAllDocuments,
-);
-
-/**
- * @route GET /api/documents/supplier/:supplierId
- * @desc  List documents belonging to a specific supplier
- * @access Private (document:read)
- */
-crudRoutes.get(
-  "/supplier/:supplierId",
-  requireTenantScope,
-  authorize(["document:read", "document:manage"]),
-  validateDocumentSupplierIdParam,
   getAllDocuments,
 );
 
@@ -125,8 +44,8 @@ crudRoutes.get(
  */
 crudRoutes.post(
   "/",
-  requireTenantScope,
   authorize(["document:create", "document:manage"]),
+  requireTenantScope,
   validateCreateDocument,
   createDocument,
 );
@@ -138,8 +57,8 @@ crudRoutes.post(
  */
 crudRoutes.get(
   "/:id",
-  requireTenantScope,
   authorize(["document:read", "document:manage"]),
+  requireTenantScope,
   validateDocumentId,
   getDocumentById,
 );
@@ -151,8 +70,8 @@ crudRoutes.get(
  */
 crudRoutes.put(
   "/:id",
-  requireTenantScope,
   authorize(["document:update", "document:manage"]),
+  requireTenantScope,
   validateDocumentId,
   validateUpdateDocument,
   updateDocument,
@@ -165,8 +84,8 @@ crudRoutes.put(
  */
 crudRoutes.delete(
   "/:id",
-  requireTenantScope,
   authorize(["document:delete", "document:manage"]),
+  requireTenantScope,
   validateDocumentId,
   deleteDocument,
 );
@@ -178,10 +97,9 @@ crudRoutes.delete(
  */
 crudRoutes.post(
   "/:id/recalculate",
-  requireTenantScope,
   authorize(["document:update", "document:manage"]),
+  requireTenantScope,
   validateDocumentId,
-  validateRecalculateDocument,
   recalculateDocument,
 );
 

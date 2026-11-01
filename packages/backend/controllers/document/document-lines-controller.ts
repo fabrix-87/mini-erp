@@ -4,7 +4,6 @@ import { sendCreated, sendDeleted, sendSuccess } from "@/utils/response-utils";
 import { toIntId, withSoftDelete } from "@/helpers/prisma-helper";
 import { getValidatedBody, getValidatedParams } from "@/helpers/validated-context";
 import {
-  calculateLineTotals,
   CreateDocumentLineInput,
   DocumentIdParam,
   DocumentLineIdParam,
