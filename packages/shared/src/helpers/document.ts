@@ -14,7 +14,7 @@ import {
   STATUS_CATEGORIES,
   SYSTEM_DRIVEN_STATUSES,
 } from "../constants";
-import type { DocumentStatus, DocumentType } from "../types/document";
+import type { DocumentStatus, DocumentType, EInvoicePartyData } from "../types/document";
 import { normalizeToMidnight } from "../utils";
 
 /**
@@ -235,3 +235,32 @@ export const isDocumentDeletable = (
  */
 export const isSystemDrivenStatus = (status: DocumentStatus): boolean =>
   (SYSTEM_DRIVEN_STATUSES as readonly DocumentStatus[]).includes(status);
+
+/**
+ * Lists the fields missing from a party snapshot for Italian electronic invoicing.
+ * The province and postal code are required only for Italian addresses; foreign
+ * addresses use conventional values applied by the XML generator.
+ * SDI code and PEC are intentionally not required here.
+ *
+ * @param party - Party snapshot data
+ * @returns Names of the missing fields (empty when the party is complete)
+ */
+export const getEInvoicePartyIssues = (party: EInvoicePartyData): string[] => {
+  const blank = (value?: string | null): boolean => !value || value.trim() === "";
+  const missing: string[] = [];
+
+  if (blank(party.name)) missing.push("name");
+  if (blank(party.vatNumber) && blank(party.vatId) && blank(party.taxCode)) {
+    missing.push("vatNumber or taxCode");
+  }
+  if (blank(party.address)) missing.push("address");
+  if (blank(party.city)) missing.push("city");
+  if (blank(party.countryCode)) missing.push("countryCode");
+
+  if (party.countryCode === "IT") {
+    if (blank(party.postalCode)) missing.push("postalCode");
+    if (blank(party.province)) missing.push("province");
+  }
+
+  return missing;
+};

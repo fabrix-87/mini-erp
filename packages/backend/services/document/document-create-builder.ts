@@ -66,6 +66,11 @@ export function buildDocumentCreateData(
     assignedUserId: input.assignedUserId ?? undefined,
     createdByUserId: context.userId,
 
+    shippingAddressId: input.shippingAddressId ?? undefined,
+    statusHistory: {
+      create: { toStatus: "DRAFT", changedBy: context.userId },
+    },
+
     discountPercent: toDecimal(input.discountPercent),
     subtotal: totals.subtotal,
     discountAmount: totals.discountAmount,

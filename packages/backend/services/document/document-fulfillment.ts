@@ -232,7 +232,7 @@ export async function updateLineDeliveredQuantity(
 
     const updatedDocument = await tx.document.update({
       where: { id: document.id },
-      data: { status: targetStatus },
+      data: { status: targetStatus, updatedByUserId: context.userId },
     });
 
     await createStatusHistory({

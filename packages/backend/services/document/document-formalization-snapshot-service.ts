@@ -1,7 +1,8 @@
 import { DocumentType, Prisma } from "@/generated/prisma/client";
-import { DOCUMENT_TYPE_CONFIG } from "@mini-erp/shared";
+import { DOCUMENT_TYPE_CONFIG, normalizeIban } from "@mini-erp/shared";
 import { BadRequestError, NotFoundError } from "@/utils/app-error-utils";
 import type { DocumentCreateContext, DocumentFormalizationSnapshots } from "@/types";
+import { withSoftDelete } from "@/helpers/prisma-helper";
 
 /** Prisma transaction client used by the snapshot resolver. */
 type TransactionClient = Prisma.TransactionClient;
@@ -271,10 +272,9 @@ async function resolveBankSnapshot(args: {
   bankAccountId: string;
   tenantId: string;
   supplierId: string | null;
-  currentIban: string | null;
   tx: TransactionClient;
 }): Promise<DocumentFormalizationSnapshots["bank"]> {
-  const { bankAccountId, tenantId, supplierId, currentIban, tx } = args;
+  const { bankAccountId, tenantId, supplierId, tx } = args;
 
   const bankAccount = await tx.bankAccount.findFirst({
     where: {
@@ -327,27 +327,24 @@ async function hasBankDetailsMismatch(args: {
     return false;
   }
 
-  const lastRegisteredDocument = await tx.document.findFirst({
-    where: {
+  // Baseline: last formalized INBOUND document, not a draft that merely carries a date.
+  const lastFormalized = await tx.document.findFirst({
+    where: withSoftDelete({
       tenantId,
       supplierId,
       direction: "INBOUND",
-      registrationDate: { not: null },
+      snapshotLockedAt: { not: null },
       bankIban: { not: null },
-    },
-    orderBy: {
-      registrationDate: "desc",
-    },
-    select: {
-      bankIban: true,
-    },
+    }),
+    orderBy: { snapshotLockedAt: "desc" },
+    select: { bankIban: true },
   });
 
-  if (!lastRegisteredDocument?.bankIban) {
+  if (!lastFormalized?.bankIban) {
     return false;
   }
 
-  return lastRegisteredDocument.bankIban !== currentIban;
+  return normalizeIban(lastFormalized.bankIban) !== normalizeIban(currentIban);
 }
 
 /**
@@ -452,11 +449,17 @@ export async function resolveDocumentFormalizationSnapshots(
         bankAccountId: document.paymentBankAccountId,
         tenantId: context.tenantId,
         supplierId: document.supplierId,
-        currentIban: document.bankIban,
         tx,
       })
     : {
-        bankDetailsMismatch: false,
+        bankDetailsMismatch: document.bankIban
+          ? await hasBankDetailsMismatch({
+              tenantId: context.tenantId,
+              supplierId: document.supplierId,
+              currentIban: document.bankIban,
+              tx,
+            })
+          : false,
       };
 
   return {

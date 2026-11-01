@@ -40,3 +40,16 @@ export interface CalculatedDocumentTotals {
   /** VAT summary grouped by rate, sorted by rate ascending. */
   byTaxRate: TaxRateSummary[];
 }
+
+/** Minimal party data needed to evaluate electronic invoicing readiness. */
+export interface EInvoicePartyData {
+  name?: string | null;
+  vatNumber?: string | null;
+  vatId?: string | null;
+  taxCode?: string | null;
+  address?: string | null;
+  city?: string | null;
+  postalCode?: string | null;
+  province?: string | null;
+  countryCode?: string | null;
+}

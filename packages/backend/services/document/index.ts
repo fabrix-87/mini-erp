@@ -9,6 +9,8 @@ export * from "./document-installment-builder";
 export * from "./document-create-builder";
 export * from "./document-formalization-builder";
 export * from "./document-formalization-snapshot-service";
+export * from "./document-formalization-validation";
 export * from "./document-line-pricing-service";
 export * from "./document-conversion";
 export * from "./document-concurrency";
+export * from "./document-lifecycle";

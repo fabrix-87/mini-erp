@@ -19,6 +19,8 @@ import {
 import { buildDocumentFormalizationData } from "./document-formalization-builder";
 import type { DocumentCreateContext } from "@/types";
 import { lockDocumentStatus } from "./document-concurrency";
+import { buildLifecycleData } from "./document-lifecycle";
+import { assertDocumentReadyForFormalization, assertSnapshotsAreComplete } from "./document-formalization-validation";
 
 /** Arguments required to transition a document status. */
 export interface TransitionDocumentStatusArgs {
@@ -30,6 +32,9 @@ export interface TransitionDocumentStatusArgs {
 
   /** Tenant and authenticated user context. */
   context: DocumentCreateContext;
+
+  /** Operator note; mandatory when rejecting a document. */
+  reason?: string | null;
 }
 
 /**
@@ -48,6 +53,11 @@ export async function transitionDocumentStatus(
   args: TransitionDocumentStatusArgs,
 ): Promise<Document> {
   const { documentId, targetStatus, context } = args;
+
+  const reason = args.reason?.trim() || undefined;
+  if (targetStatus === "REJECTED" && !reason) {
+    throw new BadRequestError("A reason is required to reject a document");
+  }
 
   if (isSystemDrivenStatus(targetStatus)) {
     throw new BadRequestError(`Status ${targetStatus} cannot be requested manually`);
@@ -72,9 +82,10 @@ export async function transitionDocumentStatus(
 
     if (targetStatus !== getDocumentFormalizationStatus(document.documentType)) {
       return updateDocumentStatus({
-        documentId: document.id,
+        current: document,
         fromStatus: document.status,
         targetStatus,
+        reason,
         context,
         tx,
       });
@@ -140,26 +151,29 @@ function assertTransitionIsAllowed(args: {
  * @returns The updated document
  */
 async function updateDocumentStatus(args: {
-  documentId: string;
+  current: Document;
   fromStatus: DocumentStatus;
   targetStatus: DocumentStatus;
   context: DocumentCreateContext;
+  reason: string | undefined;
   tx: Prisma.TransactionClient;
 }): Promise<Document> {
-  const { documentId, fromStatus, targetStatus, context, tx } = args;
+  const { current, fromStatus, targetStatus, context, reason, tx } = args;
 
   const document = await tx.document.update({
-    where: { id: documentId },
+    where: { id: current.id },
     data: {
       status: targetStatus,
+      ...buildLifecycleData({ document: current, fromStatus, targetStatus, context }),
     },
   });
 
   await createStatusHistory({
-    documentId,
+    documentId: current.id,
     fromStatus,
     toStatus: targetStatus,
     context,
+    reason,
     tx,
   });
 
@@ -181,9 +195,19 @@ async function formalizeDocument(args: {
   document: Document;
   targetStatus: DocumentStatus;
   context: DocumentCreateContext;
+  reason?: string;
   tx: Prisma.TransactionClient;
 }): Promise<Document> {
-  const { document, targetStatus, context, tx } = args;
+  const { document, targetStatus, context, reason, tx } = args;
+
+  await assertDocumentReadyForFormalization(document, tx);
+
+  const snapshots = await resolveDocumentFormalizationSnapshots(
+    document satisfies ResolveSnapshotsDocument,
+    context,
+    tx,
+  );
+  assertSnapshotsAreComplete(document.documentType, snapshots);
 
   const numbering = isOutboundDocumentType(document.documentType)
     ? await generateDocumentNumber(
@@ -194,12 +218,6 @@ async function formalizeDocument(args: {
       )
     : undefined;
 
-  const snapshots = await resolveDocumentFormalizationSnapshots(
-    document satisfies ResolveSnapshotsDocument,
-    context,
-    tx,
-  );
-
   const data = buildDocumentFormalizationData({
     documentType: document.documentType,
     snapshots,
@@ -208,7 +226,10 @@ async function formalizeDocument(args: {
 
   const updatedDocument = await tx.document.update({
     where: { id: document.id },
-    data,
+    data: {
+      ...data,
+      ...buildLifecycleData({ document, fromStatus: document.status, targetStatus, context }),
+    },
   });
 
   await createStatusHistory({
@@ -216,6 +237,7 @@ async function formalizeDocument(args: {
     fromStatus: document.status,
     toStatus: targetStatus,
     context,
+    reason,
     tx,
   });
 
@@ -238,12 +260,14 @@ export async function createStatusHistory(args: {
   toStatus: DocumentStatus;
   context: DocumentCreateContext;
   tx: Prisma.TransactionClient;
+  reason?: string | null;
 }): Promise<void> {
-  const { documentId, fromStatus, toStatus, context, tx } = args;
+  const { documentId, fromStatus, toStatus, context, reason, tx } = args;
 
   await tx.documentStatusHistory.create({
     data: {
       documentId,
+      reason: reason ?? undefined,
       fromStatus,
       toStatus,
       changedBy: context.userId,
