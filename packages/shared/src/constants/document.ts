@@ -77,6 +77,9 @@ export const INBOUND_DOCUMENT_TYPES = [
 /** Retention window for a document creation idempotency key. */
 export const IDEMPOTENCY_KEY_TTL_MS = 24 * 60 * 60 * 1000;
 
+/** Name of the HTTP header carrying the client-generated idempotency key. */
+export const IDEMPOTENCY_KEY_HEADER = "Idempotency-Key";
+
 export type InboundDocumentType = (typeof INBOUND_DOCUMENT_TYPES)[number];
 export type OutboundDocumentType = Exclude<DocumentType, InboundDocumentType>;
 

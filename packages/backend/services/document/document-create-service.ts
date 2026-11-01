@@ -1,41 +1,96 @@
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/config/prisma-config";
-import { ConflictError } from "@/utils/app-error-utils";
+import { ConflictError, ValidationError } from "@/utils/app-error-utils";
 import { buildDocumentCreateData } from "./document-create-builder";
 import type { DocumentCreateContext, DocumentLinePricingContext } from "@/types";
 import { CreateDocumentInput, IDEMPOTENCY_KEY_TTL_MS } from "@mini-erp/shared";
 import { resolveDocumentLinePricing } from "./document-line-pricing-service";
+import { acquireIdempotencyLock } from "./document-idempotency";
+import { withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 
 /** Shape returned by the document creation service. */
-export type CreatedDocument = Prisma.DocumentGetPayload<{
-  include: {
-    lines: true;
-  };
-}>;
+export type CreatedDocument = Prisma.DocumentGetPayload<{ include: { lines: true } }>;
+
+/** Idempotency data of a creation request. */
+export interface DocumentIdempotency {
+  /** Client-provided idempotency key. */
+  key: string;
+  /** SHA-256 fingerprint of the raw request body. */
+  requestHash: string;
+}
+
+/** Result of a creation request. */
+export interface CreateDocumentResult {
+  /** The created document, or the original one when the request is a replay. */
+  document: CreatedDocument;
+  /** True when the key had already been used and no new document was created. */
+  replayed: boolean;
+}
+
+/** Interactive transaction limits: pricing up to MAX_DOCUMENT_LINES lines can be slow. */
+const CREATE_TRANSACTION_OPTIONS = { maxWait: 5_000, timeout: 20_000 } as const;
 
 /**
  * Creates a commercial document as a DRAFT using an idempotency key.
  *
- * Line prices are resolved inside the same transaction used to create the
- * document. The resulting document contains no party, payment, bank, shipping
- * or numbering snapshots: those are created only during formalization.
+ * - The first request creates the document and stores the key with the payload hash.
+ * - A retry with the same key and payload returns the original document (replay),
+ *   whatever its current status, as long as the key has not expired.
+ * - The same key with a different payload is rejected.
+ * - Expired keys are removed and treated as new requests.
+ *
+ * Line prices are resolved inside the same transaction as the document. The draft
+ * contains no party, payment, bank, shipping or numbering snapshots: those are
+ * created during formalization.
  *
  * @param input - Validated document creation payload.
  * @param context - Authenticated tenant and user creation context.
- * @param idempotencyKey - Client-provided idempotency key.
- * @returns The created DRAFT document, including its lines.
- * @throws ConflictError When the idempotency key is expired or already bound
- * to a non-replayable document.
+ * @param idempotency - Idempotency key and payload fingerprint.
+ * @returns The document and whether the request was a replay.
+ * @throws ConflictError When the same key is in flight, the replayed document no
+ * longer exists, or a unique constraint (e.g. duplicate supplier document) is violated.
+ * @throws ValidationError When the key was already used with a different payload.
  */
 export async function createDocument(
   input: CreateDocumentInput,
   context: DocumentCreateContext,
-  idempotencyKey: string,
-): Promise<CreatedDocument> {
-  const expiresAt = new Date(Date.now() + IDEMPOTENCY_KEY_TTL_MS);
+  idempotency: DocumentIdempotency,
+): Promise<CreateDocumentResult> {
+  const { key, requestHash } = idempotency;
 
   try {
     return await prisma.$transaction(async (tx) => {
+      await acquireIdempotencyLock(tx, context.tenantId, key);
+
+      const existingKey = await tx.documentIdempotencyKey.findUnique({
+        where: { tenantId_key: { tenantId: context.tenantId, key } },
+      });
+
+      if (existingKey) {
+        if (existingKey.expiresAt > new Date()) {
+          if (existingKey.requestHash !== requestHash) {
+            throw new ValidationError(
+              "Idempotency key already used with a different request payload",
+            );
+          }
+
+          const document = await tx.document.findFirst({
+            where: withSoftDelete(withTenantId({ id: existingKey.documentId }, context.tenantId)),
+            include: { lines: true },
+          });
+
+          if (!document) {
+            throw new ConflictError(
+              "The document created with this idempotency key no longer exists",
+            );
+          }
+
+          return { document, replayed: true };
+        }
+
+        await tx.documentIdempotencyKey.delete({ where: { id: existingKey.id } });
+      }
+
       const pricingContext = {
         tenantId: context.tenantId,
         documentType: input.documentType,
@@ -48,57 +103,28 @@ export async function createDocument(
         input.lines.map((line) => resolveDocumentLinePricing(tx, pricingContext, line)),
       );
 
-      const documentData = buildDocumentCreateData({
-        input,
-        context,
-        linePricing,
-      });
-
       const document = await tx.document.create({
-        data: documentData,
-        include: {
-          lines: true,
-        },
+        data: buildDocumentCreateData({ input, context, linePricing }),
+        include: { lines: true },
       });
 
       await tx.documentIdempotencyKey.create({
         data: {
           tenantId: context.tenantId,
-          key: idempotencyKey,
+          key,
+          requestHash,
           documentId: document.id,
-          expiresAt,
+          expiresAt: new Date(Date.now() + IDEMPOTENCY_KEY_TTL_MS),
         },
       });
 
-      return document;
-    });
+      return { document, replayed: false };
+    }, CREATE_TRANSACTION_OPTIONS);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      const existingKey = await prisma.documentIdempotencyKey.findUnique({
-        where: {
-          tenantId_key: {
-            tenantId: context.tenantId,
-            key: idempotencyKey,
-          },
-        },
-        include: {
-          document: {
-            include: {
-              lines: true,
-            },
-          },
-        },
-      });
-
-      if (
-        existingKey &&
-        existingKey.expiresAt > new Date() &&
-        existingKey.document.status === "DRAFT"
-      ) {
-        return existingKey.document;
-      }
-
-      throw new ConflictError("Idempotency key already used or expired for document creation");
+      throw new ConflictError(
+        "A document with the same unique data already exists (for supplier documents: same supplier, number and date)",
+      );
     }
 
     throw error;

@@ -777,3 +777,11 @@ export const cloneDocumentSchema = z
     customerId: customerIdBaseSchema.optional().nullable(),
   })
   .strict();
+
+/** Idempotency key sent by the client (for example a UUID); fits DocumentIdempotencyKey.key. */
+export const idempotencyKeySchema = z
+  .string()
+  .trim()
+  .min(16, "Idempotency key troppo corta")
+  .max(255)
+  .regex(/^[A-Za-z0-9._:-]+$/, "Idempotency key non valida");

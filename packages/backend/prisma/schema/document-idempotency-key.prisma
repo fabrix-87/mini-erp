@@ -22,6 +22,9 @@ model DocumentIdempotencyKey {
     /// Instant after which the key is no longer reusable for duplicate-request replay.
     expiresAt DateTime @map("expires_at")
 
+    /// SHA-256 (hex) of the canonical request body. A replay with a different payload is rejected.
+    requestHash String @map("request_hash") @db.Char(64)
+
     createdAt DateTime @default(now()) @map("created_at")
 
     @@unique([tenantId, documentId])

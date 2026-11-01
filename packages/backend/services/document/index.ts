@@ -14,3 +14,4 @@ export * from "./document-line-pricing-service";
 export * from "./document-conversion";
 export * from "./document-concurrency";
 export * from "./document-lifecycle";
+export * from "./document-idempotency";
