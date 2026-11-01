@@ -41,6 +41,9 @@ export interface TransitionDocumentStatusArgs {
 
   /** When set, the document must currently be in this status (checked inside the transaction). */
   expectedCurrentStatus?: DocumentStatus;
+
+  /** True only for the approve/reject operations: the generic transition cannot leave PENDING_APPROVAL except back to DRAFT. */
+  viaApprovalWorkflow?: boolean;
 }
 
 /**
@@ -82,6 +85,14 @@ export async function transitionDocumentStatus(
       throw new BadRequestError(
         `Document must be in status ${args.expectedCurrentStatus}, found ${document.status}`,
       );
+    }
+
+    if (
+      !args.viaApprovalWorkflow &&
+      document.status === "PENDING_APPROVAL" &&
+      targetStatus !== "DRAFT"
+    ) {
+      throw new BadRequestError("Use the approve or reject operations to leave PENDING_APPROVAL");
     }
 
     assertTransitionIsAllowed({

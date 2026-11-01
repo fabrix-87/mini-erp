@@ -59,6 +59,8 @@ export async function rejectDocument(args: {
   return transitionDocumentStatus({
     documentId: args.documentId,
     targetStatus: "REJECTED",
+    expectedCurrentStatus: "PENDING_APPROVAL",
+    viaApprovalWorkflow: true,
     reason: args.reason,
     context: args.context,
   });

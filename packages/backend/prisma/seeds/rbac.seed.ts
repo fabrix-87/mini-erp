@@ -482,7 +482,21 @@ async function seedRBAC() {
         scope: PermissionScope.ALL,
         description: "Gestione completa documenti",
       },
-
+      {
+        code: "document:approve",
+        resource: "document",
+        action: "approve",
+        scope: PermissionScope.ALL,
+        description: "Approvazione e rifiuto documenti",
+      },
+      {
+        code: "document:void",
+        resource: "document",
+        action: "void",
+        scope: PermissionScope.ALL,
+        description: "Annullamento documenti",
+      },
+      
       // Company
       {
         code: "company:read",

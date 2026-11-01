@@ -230,8 +230,8 @@ export const DOCUMENT_TYPE_STATUS_TRANSITIONS: Record<
   INVOICE: {
     DRAFT: ["PENDING_APPROVAL", "SENT"],
     PENDING_APPROVAL: ["SENT", "DRAFT"],
-    SENT: ["UNPAID", "VOIDED"],
-    UNPAID: ["PARTIALLY_PAID", "PAID", "OVERDUE", "VOIDED"],
+    SENT: ["UNPAID"],
+    UNPAID: ["PARTIALLY_PAID", "PAID", "OVERDUE"],
     PARTIALLY_PAID: ["PAID", "OVERDUE"],
     OVERDUE: ["PARTIALLY_PAID", "PAID"],
     PAID: ["CLOSED"],
@@ -304,15 +304,13 @@ export const STATUSES_WITHOUT_NUMBER: readonly DocumentStatus[] = [
 ] as const;
 
 /**
- * Statuses derived by the system and never requested manually through the generic
- * status transition: fulfillment states follow delivered quantities, and VOIDED
- * requires a dedicated operation with a mandatory reason.
- * TODO: add PARTIALLY_PAID, PAID and OVERDUE once the installment service drives them.
+ * Statuses derived by the system and never requested manually: fulfillment states follow
+ * delivered quantities, payment states follow installments, VOIDED has a dedicated operation.
+ * TODO: remove the payment statuses from manual control only once the installment service exists
+ * and is the single writer of these transitions.
  */
 export const SYSTEM_DRIVEN_STATUSES = [
-  "PARTIALLY_FULFILLED",
-  "FULFILLED",
-  "VOIDED",
+  "PARTIALLY_FULFILLED", "FULFILLED", "PARTIALLY_PAID", "PAID", "OVERDUE", "VOIDED",
 ] as const satisfies readonly DocumentStatus[];
 
 // ============================================================================
