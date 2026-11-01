@@ -1,5 +1,6 @@
 import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 import {
+  approveDocumentSchema,
   bulkSendDocumentsSchema,
   bulkUpdateDocumentsStatusSchema,
   convertDocumentSchema,
@@ -12,11 +13,13 @@ import {
   documentQuerySchema,
   duplicateDocumentSchema,
   installmentIdParamSchema,
+  rejectDocumentSchema,
   topProductsReportSchema,
   updateDocumentLineSchema,
   updateDocumentSchema,
   updateDocumentStatusSchema,
   updateInstallmentSchema,
+  voidDocumentSchema,
 } from "@mini-erp/shared/validators/document";
 
 // ============================================================================
@@ -183,3 +186,10 @@ export const validateTopProductsReportQuery = validateQuery(
   topProductsReportSchema,
   "Top Products Report",
 );
+
+// ============================================================================
+// STATUS ACTIONS
+// ============================================================================
+export const validateApproveDocument = validateBody(approveDocumentSchema, "Approve document");
+export const validateRejectDocument = validateBody(rejectDocumentSchema, "Reject document");
+export const validateVoidDocument = validateBody(voidDocumentSchema, "Void document");

@@ -2,6 +2,7 @@
 // DOCUMENT SERVICES - MAIN EXPORT
 // ============================================================================
 
+export * from "./document-approval-service";
 export * from "./document-concurrency";
 export * from "./document-conversion";
 export * from "./document-create-builder";
@@ -12,6 +13,7 @@ export * from "./document-formalization-snapshot-service";
 export * from "./document-formalization-validation";
 export * from "./document-fulfillment";
 export * from "./document-guards";
+export * from "./document-history-service";
 export * from "./document-idempotency";
 export * from "./document-installment-builder";
 export * from "./document-lifecycle";
@@ -22,3 +24,4 @@ export * from "./document-query-service";
 export * from "./document-status-service";
 export * from "./document-totals-service";
 export * from "./document-update-service";
+export * from "./document-void-service";

@@ -54,6 +54,7 @@ import {
   MATCH_STATUSES,
   DOCUMENT_SORT_OPTIONS,
   DOCUMENT_LINE_SORT_OPTIONS,
+  SYSTEM_DRIVEN_STATUSES,
 } from "../constants/document";
 import { bicSchema, ibanSchema } from "./business";
 import { isInboundDocumentType } from "../helpers";
@@ -354,7 +355,7 @@ const documentShape = z.object({
   registrationDate: isoDateSchema(),
 
   // Amounts
-  discountPercent: discountPercentOptionalSchema, 
+  discountPercent: discountPercentOptionalSchema,
   currencyCode: currencyCodeBaseSchema.optional(),
   exchangeRate: exchangeRateSchema,
   exchangeRateDate: isoDateSchema(),
@@ -393,12 +394,6 @@ const documentShape = z.object({
  */
 export const createDocumentSchema = documentShape
   .extend({
-    documentYear: z
-      .number()
-      .int()
-      .min(2000)
-      .max(2100)
-      .default(() => new Date().getFullYear()),
     documentDate: isoDateSchema({ required: true }).default(() => new Date().toISOString()),
     status: documentStatusSchema.default("DRAFT"),
     subtotal: moneySchema,
@@ -501,10 +496,19 @@ export const updateDocumentSchema = documentShape.omit({ documentType: true }).p
 
 export const updateDocumentStatusSchema = z
   .object({
-    status: documentStatusSchema.exclude([DOCUMENT_STATUSES.VOIDED]),
-    reason: z.string().max(500).nullish(),
+    status: documentStatusSchema.exclude(SYSTEM_DRIVEN_STATUSES),
+    reason: z.string().trim().max(500).nullish(),
   })
-  .strict();
+  .strict()
+  .superRefine((data, ctx) => {
+    if (data.status === DOCUMENT_STATUSES.REJECTED && !data.reason) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Motivo obbligatorio per il rifiuto",
+        path: ["reason"],
+      });
+    }
+  });
 
 /** Voids a numbered document. The reason is mandatory and stored in Document.voidedReason. */
 export const voidDocumentSchema = z
@@ -719,7 +723,6 @@ export const topProductsReportSchema = z.object({
   dateTo: isoDateSchema(),
   limit: limitSchema,
 });
-
 
 // ============================================================================
 // CONVERSION SCHEMAS

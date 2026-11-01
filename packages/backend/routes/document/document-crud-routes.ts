@@ -64,11 +64,11 @@ crudRoutes.get(
 );
 
 /**
- * @route PUT /api/documents/:id
+ * @route PATCH /api/documents/:id
  * @desc  Update a document by ID
  * @access Private (document:update)
  */
-crudRoutes.put(
+crudRoutes.patch(
   "/:id",
   authorize(["document:update", "document:manage"]),
   requireTenantScope,

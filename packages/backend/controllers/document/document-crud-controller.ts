@@ -92,7 +92,7 @@ export const createDocument = async (c: Context<AppBindings>) => {
 
 /**
  * Updates the header of an editable document.
- * @route PUT /api/documents/:id
+ * @route PATCH /api/documents/:id
  * @access Private (document:update | document:manage)
  * @param c - Hono context
  */

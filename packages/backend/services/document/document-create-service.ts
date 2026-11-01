@@ -2,7 +2,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/config/prisma-config";
 import { ConflictError, ValidationError } from "@/utils/app-error-utils";
 import { buildDocumentCreateData } from "./document-create-builder";
-import type { DocumentCreateContext, DocumentLinePricingContext } from "@/types";
+import { TRANSACTION_LIMITS_OPTIONS, type DocumentCreateContext, type DocumentLinePricingContext } from "@/types";
 import { CreateDocumentInput, IDEMPOTENCY_KEY_TTL_MS } from "@mini-erp/shared";
 import { resolveDocumentLinePricing } from "./document-line-pricing-service";
 import { acquireIdempotencyLock } from "./document-idempotency";
@@ -26,9 +26,6 @@ export interface CreateDocumentResult {
   /** True when the key had already been used and no new document was created. */
   replayed: boolean;
 }
-
-/** Interactive transaction limits: pricing up to MAX_DOCUMENT_LINES lines can be slow. */
-const CREATE_TRANSACTION_OPTIONS = { maxWait: 5_000, timeout: 20_000 } as const;
 
 /**
  * Creates a commercial document as a DRAFT using an idempotency key.
@@ -119,7 +116,7 @@ export async function createDocument(
       });
 
       return { document, replayed: false };
-    }, CREATE_TRANSACTION_OPTIONS);
+    }, TRANSACTION_LIMITS_OPTIONS);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       throw new ConflictError(

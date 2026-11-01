@@ -1,5 +1,5 @@
 import { Prisma } from "@/generated/prisma/client";
-import { calculateDocumentTotals, Decimal, isInboundDocumentType } from "@mini-erp/shared";
+import { calculateDocumentTotals, Decimal, getDocumentYear, isInboundDocumentType } from "@mini-erp/shared";
 import { toJsonField, toDecimal } from "@/helpers/prisma-helper";
 import { buildDocumentLines, type ProcessedDocumentLine } from "./document-line-builder";
 import { buildDocumentInstallments } from "./document-installment-builder";
@@ -46,7 +46,7 @@ export function buildDocumentCreateData(
     status: "DRAFT",
     direction: inbound ? "INBOUND" : "OUTBOUND",
 
-    documentYear: input.documentYear,
+    documentYear: getDocumentYear(input.documentDate),
     documentDate: new Date(input.documentDate),
     dueDate: input.dueDate ? new Date(input.dueDate) : undefined,
     deliveryDate: input.deliveryDate ? new Date(input.deliveryDate) : undefined,

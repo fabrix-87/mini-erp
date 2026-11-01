@@ -6,8 +6,11 @@
 import { createHonoApp } from "../../lib/hono-app";
 import { authorize } from "../../middleware/auth-middleware";
 import {
+  validateApproveDocument,
   validateDocumentId,
+  validateRejectDocument,
   validateUpdateDocumentStatus,
+  validateVoidDocument,
 } from "../../validators/document-validator";
 import {
   updateDocumentStatus,
@@ -20,6 +23,7 @@ import {
 import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const statusRoutes = createHonoApp();
+const canUpdate = authorize(["document:update", "document:manage"]);
 
 /**
  * @route PATCH /api/documents/:id/status
@@ -28,8 +32,8 @@ const statusRoutes = createHonoApp();
  */
 statusRoutes.patch(
   "/:id/status",
+  canUpdate,
   requireTenantScope,
-  authorize(["document:update", "document:manage"]),
   validateDocumentId,
   validateUpdateDocumentStatus,
   updateDocumentStatus,
@@ -40,13 +44,7 @@ statusRoutes.patch(
  * @desc  Mark document as sent to the customer
  * @access Private (document:update)
  */
-statusRoutes.post(
-  "/:id/send",
-  requireTenantScope,
-  authorize(["document:update", "document:manage"]),
-  validateDocumentId,
-  sendDocument,
-);
+statusRoutes.post("/:id/send", canUpdate, requireTenantScope, validateDocumentId, sendDocument);
 
 /**
  * @route POST /api/documents/:id/approve
@@ -55,9 +53,10 @@ statusRoutes.post(
  */
 statusRoutes.post(
   "/:id/approve",
+  canUpdate,
   requireTenantScope,
-  authorize(["document:update", "document:manage"]),
   validateDocumentId,
+  validateApproveDocument,
   approveDocument,
 );
 
@@ -68,9 +67,10 @@ statusRoutes.post(
  */
 statusRoutes.post(
   "/:id/reject",
+  canUpdate,
   requireTenantScope,
-  authorize(["document:update", "document:manage"]),
   validateDocumentId,
+  validateRejectDocument,
   rejectDocument,
 );
 
@@ -81,9 +81,10 @@ statusRoutes.post(
  */
 statusRoutes.post(
   "/:id/void",
+  canUpdate,
   requireTenantScope,
-  authorize(["document:update", "document:manage"]),
   validateDocumentId,
+  validateVoidDocument,
   voidDocument,
 );
 
@@ -94,8 +95,8 @@ statusRoutes.post(
  */
 statusRoutes.get(
   "/:id/history",
-  requireTenantScope,
   authorize(["document:read", "document:manage"]),
+  requireTenantScope,
   validateDocumentId,
   getDocumentHistory,
 );

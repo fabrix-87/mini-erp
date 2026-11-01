@@ -21,7 +21,7 @@ import type { DocumentCreateContext } from "@/types";
 export function buildLifecycleData(args: {
   document: Pick<
     Document,
-    "documentType" | "approvedAt" | "invoicedAt" | "deliveredAt" | "closedAt"
+    "documentType" | "approvedAt" | "invoicedAt" | "deliveredAt" | "closedAt" | "voidedAt"
   >;
   fromStatus: DocumentStatus;
   targetStatus: DocumentStatus;
@@ -46,5 +46,6 @@ export function buildLifecycleData(args: {
     ...(isFormalization && isFiscal && !document.invoicedAt && { invoicedAt: now }),
     ...(targetStatus === "DELIVERED" && !document.deliveredAt && { deliveredAt: now }),
     ...(targetStatus === "CLOSED" && !document.closedAt && { closedAt: now }),
+    ...(targetStatus === "VOIDED" && !document.voidedAt && { voidedAt: now }),
   } satisfies Prisma.DocumentUncheckedUpdateInput;
 }

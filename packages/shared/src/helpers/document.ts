@@ -264,3 +264,18 @@ export const getEInvoicePartyIssues = (party: EInvoicePartyData): string[] => {
 
   return missing;
 };
+
+/**
+ * Derives the fiscal document year from a document date in the fiscal time zone.
+ * TODO: use the tenant time zone instead of a fixed one.
+ *
+ * @param date - Document date (Date or ISO string)
+ * @param timeZone - IANA time zone (defaults to Europe/Rome)
+ * @returns The calendar year in the given time zone
+ * @throws Error when the date is invalid
+ */
+export const getDocumentYear = (date: Date | string, timeZone = "Europe/Rome"): number => {
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) throw new Error("Invalid document date");
+  return Number(new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric" }).format(parsed));
+};

@@ -1,6 +1,5 @@
 import { Prisma } from "@/generated/prisma/client";
 import {
-  DOCUMENT_NUMBER_PADDING,
   DOCUMENT_PREFIXES,
   formatDocumentNumber,
   type OutboundDocumentType,

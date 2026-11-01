@@ -69,7 +69,11 @@ function buildDocumentListWhere(
     ...(and.length > 0 && { AND: and }),
   } satisfies Prisma.DocumentWhereInput;
 
-  return withSoftDelete(withTenantId(filters, tenantId)) as Prisma.DocumentWhereInput;
+  // TODO: decide how the deleted-documents history is used (permission, UI, retention).
+  const scoped = withSoftDelete(withTenantId(filters, tenantId), query.deleted === true);
+  return (
+    query.deleted ? { ...scoped, deletedAt: { not: null } } : scoped
+  ) as Prisma.DocumentWhereInput;
 }
 
 /**
@@ -80,8 +84,6 @@ function buildDocumentListWhere(
  * @throws BadRequestError when the unsupported `deleted` filter is requested.
  */
 export async function listDocuments(query: DocumentQueryInput, tenantId: string) {
-  if (query.deleted) throw new BadRequestError("Listing deleted documents is not supported yet");
-
   const where = buildDocumentListWhere(query, tenantId);
   const { skip, take } = toPagination(query.page, query.limit);
   const orderBy = [

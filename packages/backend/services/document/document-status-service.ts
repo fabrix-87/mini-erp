@@ -17,10 +17,13 @@ import {
   type ResolveSnapshotsDocument,
 } from "./document-formalization-snapshot-service";
 import { buildDocumentFormalizationData } from "./document-formalization-builder";
-import type { DocumentCreateContext } from "@/types";
+import { TRANSACTION_LIMITS_OPTIONS, type DocumentCreateContext } from "@/types";
 import { lockDocumentStatus } from "./document-concurrency";
 import { buildLifecycleData } from "./document-lifecycle";
-import { assertDocumentReadyForFormalization, assertSnapshotsAreComplete } from "./document-formalization-validation";
+import {
+  assertDocumentReadyForFormalization,
+  assertSnapshotsAreComplete,
+} from "./document-formalization-validation";
 
 /** Arguments required to transition a document status. */
 export interface TransitionDocumentStatusArgs {
@@ -35,6 +38,9 @@ export interface TransitionDocumentStatusArgs {
 
   /** Operator note; mandatory when rejecting a document. */
   reason?: string | null;
+
+  /** When set, the document must currently be in this status (checked inside the transaction). */
+  expectedCurrentStatus?: DocumentStatus;
 }
 
 /**
@@ -72,6 +78,12 @@ export async function transitionDocumentStatus(
       throw new NotFoundError("Document not found");
     }
 
+    if (args.expectedCurrentStatus && document.status !== args.expectedCurrentStatus) {
+      throw new BadRequestError(
+        `Document must be in status ${args.expectedCurrentStatus}, found ${document.status}`,
+      );
+    }
+
     assertTransitionIsAllowed({
       documentType: document.documentType,
       currentStatus: document.status,
@@ -93,8 +105,8 @@ export async function transitionDocumentStatus(
 
     assertCanBeFormalized(document);
 
-    return formalizeDocument({ document, targetStatus, context, tx });
-  });
+    return formalizeDocument({ document, targetStatus, reason, context, tx });
+  }, TRANSACTION_LIMITS_OPTIONS);
 }
 
 /**

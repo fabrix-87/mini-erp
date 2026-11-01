@@ -1,6 +1,9 @@
 import type { DocumentType, Prisma } from "@/generated/prisma/client";
 import type { CreateDocumentInput } from "@mini-erp/shared";
 
+/** Interactive transaction limits: pricing up to MAX_DOCUMENT_LINES lines can be slow. */
+export const TRANSACTION_LIMITS_OPTIONS = { maxWait: 5_000, timeout: 20_000 } as const;
+
 /** Authenticated and tenant-scoped context required by document services. */
 export interface DocumentCreateContext {
   /** Current tenant ID. */

@@ -3,6 +3,7 @@ import { prisma } from "@/config/prisma-config";
 import {
   DOCUMENTS_REQUIRING_CUSTOMER,
   DOCUMENTS_REQUIRING_SUPPLIER,
+  getDocumentYear,
   isInboundDocumentType,
   type UpdateDocumentInput,
 } from "@mini-erp/shared";
@@ -60,6 +61,12 @@ function buildDocumentHeaderUpdateData(
     termsAndConditions: input.termsAndConditions,
     customFields: input.customFields === undefined ? undefined : toJsonField(input.customFields),
     updatedByUserId: userId,
+    documentYear: input.documentDate ? getDocumentYear(input.documentDate) : undefined,
+    bankName: input.bankName,
+    bankIban: input.bankIban,
+    bankSwift: input.bankSwift,
+    bankAccountHolder: input.bankAccountHolder,
+    paymentMethodCode: input.paymentMethodCode,
   } satisfies Prisma.DocumentUncheckedUpdateInput;
 }
 

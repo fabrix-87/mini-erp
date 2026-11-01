@@ -32,6 +32,8 @@ export const getDocumentListSelection = () =>
     createdAt: true,
     customerId: true,
     supplierId: true,
+    deletedAt: true,
+    deletedBy: true,
     customer: { select: { id: true, company: { select: { companyName: true } } } },
     supplier: { select: { id: true, company: { select: { companyName: true } } } },
     parties: { where: { role: "COUNTERPARTY" as const }, select: { name: true } },
