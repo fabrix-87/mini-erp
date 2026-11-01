@@ -122,7 +122,9 @@ export const authorize = (requiredPermissions: string[]) => {
       return sendAuthenticationError(c);
     }
 
-    const hasRequiredPermission = await hasPermission(user.userId, requiredPermissions);
+    const tenantId = user.currentTenant?.tenantId;
+    if (!tenantId) return sendAuthenticationError(c, "Tenant corrente non presente");
+    const hasRequiredPermission = await hasPermission(user.userId, requiredPermissions, tenantId);
 
     if (!hasRequiredPermission) {
       return sendFail(c, {

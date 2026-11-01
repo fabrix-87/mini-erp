@@ -7,14 +7,13 @@
 import { createHonoApp } from "../../lib/hono-app";
 import { authorize } from "../../middleware/auth-middleware";
 import {
+  validateAddDocumentLine,
   validateDocumentId,
   validateDocumentLineId,
-  validateAddDocumentLine,
-  validateUpdateDocumentLine,
+  validateReorderDocumentLines,
+  validateReplaceDocumentLine,
 } from "../../validators/document-validator";
 import {
-  getDocumentLines,
-  getDocumentLineById,
   addDocumentLine,
   updateDocumentLine,
   deleteDocumentLine,
@@ -23,19 +22,7 @@ import {
 import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const linesRoutes = createHonoApp();
-
-/**
- * @route GET /api/documents/:id/lines
- * @desc  List all lines of a document ordered by lineNumber
- * @access Private (document:read)
- */
-linesRoutes.get(
-  "/:id/lines",
-  requireTenantScope,
-  authorize(["document:read", "document:manage"]),
-  validateDocumentId,
-  getDocumentLines,
-);
+const canUpdate = authorize(["document:update", "document:manage"]);
 
 /**
  * @route PATCH /api/documents/:id/lines/reorder
@@ -44,23 +31,11 @@ linesRoutes.get(
  */
 linesRoutes.patch(
   "/:id/lines/reorder",
+  canUpdate,
   requireTenantScope,
-  authorize(["document:update", "document:manage"]),
   validateDocumentId,
+  validateReorderDocumentLines,
   reorderDocumentLines,
-);
-
-/**
- * @route GET /api/documents/:id/lines/:lineId
- * @desc  Get a single document line by ID
- * @access Private (document:read)
- */
-linesRoutes.get(
-  "/:id/lines/:lineId",
-  requireTenantScope,
-  authorize(["document:read", "document:manage"]),
-  validateDocumentLineId,
-  getDocumentLineById,
 );
 
 /**
@@ -70,8 +45,8 @@ linesRoutes.get(
  */
 linesRoutes.post(
   "/:id/lines",
+  canUpdate,
   requireTenantScope,
-  authorize(["document:update", "document:manage"]),
   validateDocumentId,
   validateAddDocumentLine,
   addDocumentLine,
@@ -84,10 +59,10 @@ linesRoutes.post(
  */
 linesRoutes.put(
   "/:id/lines/:lineId",
+  canUpdate,
   requireTenantScope,
-  authorize(["document:update", "document:manage"]),
   validateDocumentLineId,
-  validateUpdateDocumentLine,
+  validateReplaceDocumentLine,
   updateDocumentLine,
 );
 
@@ -98,8 +73,8 @@ linesRoutes.put(
  */
 linesRoutes.delete(
   "/:id/lines/:lineId",
+  canUpdate,
   requireTenantScope,
-  authorize(["document:update", "document:manage"]),
   validateDocumentLineId,
   deleteDocumentLine,
 );

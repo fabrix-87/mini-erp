@@ -29,3 +29,8 @@ export const USER_SORT_FIELDS = [
   "email",
   "lastLogin",
 ] as const;
+
+/**
+ * Maximum plausible age (in years) accepted for a user's date of birth.
+ */
+export const USER_MAX_AGE_YEARS = 120;

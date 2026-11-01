@@ -9,11 +9,8 @@ import {
   nullableDecimalSchema,
   percentOptionalSchema,
   percentSchema,
-  quantityOptionalSchema,
   quantitySchema,
-  taxPercentSchema,
   unitAmountOptionalSchema,
-  unitAmountSchema,
 } from "./primitives/decimal";
 import { isoDateSchema } from "./primitives/date";
 
@@ -33,6 +30,7 @@ import {
   productIdBaseSchema,
   productVariantIdBaseSchema,
   supplierIdBaseSchema,
+  taxRuleIdBaseSchema,
   userIdSchema,
   warehouseIdBaseSchema,
   withholdingTaxTypeIdBaseSchema,
@@ -165,10 +163,6 @@ const documentLineBaseShape = z.object({
   descriptionCustomer: z.string().max(5000).nullish(),
   unit: z.string().max(20).nullish(),
   unitCost: unitAmountOptionalSchema,
-  taxRuleId: createIdSchema("Tax Rule ID non valido").nullish(),
-  taxPercent: taxPercentSchema,
-  vatNatureCode: z.string().max(10).nullish(),
-  vatNormReference: z.string().max(255).nullish(),
   isReverseCharge: z.boolean().default(false),
   isSelfInvoice: z.boolean().default(false),
   matchStatus: matchStatusSchema.nullish(),
@@ -195,7 +189,7 @@ const pricedDocumentLineShape = documentLineBaseShape.extend({
   unitPrice: unitAmountOptionalSchema,
   discountPercent: discountPercentSchema,
   discountAmount: moneySchema,
-  taxPercent: taxPercentSchema,
+  taxRuleId: taxRuleIdBaseSchema,
 });
 
 /** Non-priced presentation line. It never contributes to document totals. */
@@ -210,7 +204,6 @@ const nonPricedDocumentLineShape = documentLineBaseShape.extend({
   unitPrice: z.literal(0).default(0),
   discountPercent: z.literal(0).default(0),
   discountAmount: z.literal(0).default(0),
-  taxPercent: z.literal(0).default(0),
 });
 
 /**
@@ -264,12 +257,6 @@ export const createDocumentLineSchema = z
       });
     }
   });
-
-/** Schema for updating a DocumentLine — lineNumber is immutable. */
-export const updateDocumentLineSchema = z.discriminatedUnion("lineType", [
-  pricedDocumentLineShape.partial().strict(),
-  nonPricedDocumentLineShape.partial().strict(),
-]);
 
 // ============================================================================
 // PAYMENT INSTALLMENT SCHEMAS
@@ -597,6 +584,15 @@ export const bulkSendDocumentsSchema = z
     emailTemplate: z.string().optional(),
   })
   .strict();
+
+/** Reorders the lines of a document: every line ID exactly once, in the new order. */
+export const reorderDocumentLinesSchema = z
+  .object({ lineIds: z.array(documentLineIdBaseSchema).min(1).max(MAX_DOCUMENT_LINES) })
+  .strict()
+  .refine((data) => new Set(data.lineIds).size === data.lineIds.length, {
+    message: "ID righe duplicati",
+    path: ["lineIds"],
+  });
 
 // ============================================================================
 // QUERY SCHEMAS

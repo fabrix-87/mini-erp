@@ -44,6 +44,10 @@ export async function voidDocument(args: {
       throw new BadRequestError(`A document in status ${document.status} cannot be voided`);
     }
 
+    if (document.vatRegisterProtocol !== null) {
+      throw new BadRequestError("A document registered in the VAT ledger cannot be voided");
+    }
+
     await lockDocumentStatus(tx, document);
 
     const blocking = await tx.documentPaymentInstallment.count({

@@ -2,11 +2,16 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/config/prisma-config";
 import { ConflictError, ValidationError } from "@/utils/app-error-utils";
 import { buildDocumentCreateData } from "./document-create-builder";
-import { TRANSACTION_LIMITS_OPTIONS, type DocumentCreateContext, type DocumentLinePricingContext } from "@/types";
+import {
+  TRANSACTION_LIMITS_OPTIONS,
+  type DocumentCreateContext,
+  type DocumentLinePricingContext,
+} from "@/types";
 import { CreateDocumentInput, IDEMPOTENCY_KEY_TTL_MS } from "@mini-erp/shared";
 import { resolveDocumentLinePricing } from "./document-line-pricing-service";
 import { acquireIdempotencyLock } from "./document-idempotency";
 import { withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
+import { resolveDocumentLinesTax } from "./document-line-tax-service";
 
 /** Shape returned by the document creation service. */
 export type CreatedDocument = Prisma.DocumentGetPayload<{ include: { lines: true } }>;
@@ -96,12 +101,14 @@ export async function createDocument(
         customerId: input.customerId,
       } satisfies DocumentLinePricingContext;
 
-      const linePricing = await Promise.all(
-        input.lines.map((line) => resolveDocumentLinePricing(tx, pricingContext, line)),
-      );
-
+      const [linePricing, lineTax] = await Promise.all([
+        Promise.all(
+          input.lines.map((line) => resolveDocumentLinePricing(tx, pricingContext, line)),
+        ),
+        resolveDocumentLinesTax(tx, pricingContext, input.lines),
+      ]);
       const document = await tx.document.create({
-        data: buildDocumentCreateData({ input, context, linePricing }),
+        data: buildDocumentCreateData({ input, context, linePricing, lineTax }),
         include: { lines: true },
       });
 

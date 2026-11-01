@@ -1,7 +1,7 @@
 // helpers/user-helper.ts
 
 import jwt from "jsonwebtoken";
-import { getCookie, setCookie, deleteCookie } from "hono/cookie";
+import { setCookie, deleteCookie } from "hono/cookie";
 import type { Context } from "hono";
 import { TokenPair, UserSessionPayload, SessionData } from "../types/user-types";
 import crypto from "crypto";
@@ -105,9 +105,9 @@ export const getUserDetailedSelection = () =>
         country: {
           select: {
             name: true,
-          }
+          },
         },
-      }
+      },
     },
     memberships: {
       where: { status: "ACTIVE" },
@@ -440,12 +440,23 @@ export const destroyAllUserSessions = async (userId: string): Promise<void> => {
 // PERMISSIONS CACHE (Redis)
 // ============================================================================
 
+/** Permission codes grouped by tenant (active memberships only). */
+type PermissionsByTenant = Record<string, string[]>;
+
+const isPermissionsByTenant = (value: unknown): value is PermissionsByTenant =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
 /**
- * Returns the user's permission codes from Redis cache or database.
+ * Returns the user's permission codes for one tenant, from the Redis cache or the database.
+ * A user has no permission in a tenant where he has no active membership.
  */
-export const getUserPermissions = async (userId: string): Promise<string[]> => {
+export const getUserPermissions = async (userId: string, tenantId: string): Promise<string[]> => {
   const cached = await redisClient.get(sessionKeys.permissions(userId));
-  if (cached) return JSON.parse(cached) as string[];
+  if (cached) {
+    const parsed: unknown = JSON.parse(cached);
+    // A legacy flat-array entry is ignored and rebuilt below.
+    if (isPermissionsByTenant(parsed)) return parsed[tenantId] ?? [];
+  }
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -453,6 +464,7 @@ export const getUserPermissions = async (userId: string): Promise<string[]> => {
       memberships: {
         where: { status: "ACTIVE" },
         select: {
+          tenantId: true,
           roles: {
             select: {
               role: {
@@ -464,23 +476,32 @@ export const getUserPermissions = async (userId: string): Promise<string[]> => {
       },
     },
   });
-
   if (!user) return [];
 
-  const permissions = new Set<string>();
+  const byTenant: PermissionsByTenant = {};
   for (const membership of user.memberships) {
+    const codes = new Set(byTenant[membership.tenantId] ?? []);
     for (const mr of membership.roles) {
       for (const rp of mr.role.permissions) {
-        if (rp.permission?.code) permissions.add(rp.permission.code);
+        if (rp.permission?.code) codes.add(rp.permission.code);
       }
     }
+    byTenant[membership.tenantId] = [...codes];
   }
 
-  const permissionArray = Array.from(permissions);
-  await redisClient.set(sessionKeys.permissions(userId), JSON.stringify(permissionArray), {
+  await redisClient.set(sessionKeys.permissions(userId), JSON.stringify(byTenant), {
     EX: RedisTTL.PERMISSIONS,
   });
-  return permissionArray;
+  return byTenant[tenantId] ?? [];
+};
+
+export const hasPermission = async (
+  userId: string,
+  requiredPermissions: string[],
+  tenantId: string,
+): Promise<boolean> => {
+  const userPermissions = await getUserPermissions(userId, tenantId);
+  return requiredPermissions.some((perm) => userPermissions.includes(perm));
 };
 
 /**
@@ -510,17 +531,6 @@ export async function invalidatePermissionsCacheForRole(roleId: number): Promise
   }
   await pipeline.exec();
 }
-
-/**
- * Returns true if the user has at least one of the required permissions.
- */
-export const hasPermission = async (
-  userId: string,
-  requiredPermissions: string[],
-): Promise<boolean> => {
-  const userPermissions = await getUserPermissions(userId);
-  return requiredPermissions.some((perm) => userPermissions.includes(perm));
-};
 
 // ============================================================================
 // COOKIE MANAGEMENT

@@ -3,14 +3,7 @@
 // ============================================================================
 
 // CRUD — create, read, update, delete, list, recalculate
-export {
-  getAllDocuments,
-  getDocumentById,
-  createDocument,
-  updateDocument,
-  deleteDocument,
-  recalculateDocument,
-} from "./document-crud-controller";
+export * from "./document-crud-controller";
 
 // STATUS — transitions, approval workflow, send, history
 export {
@@ -23,14 +16,7 @@ export {
 } from "./document-status-controller";
 
 // LINES — add, update, delete, reorder, bulk
-export {
-  getDocumentLines,
-  getDocumentLineById,
-  addDocumentLine,
-  updateDocumentLine,
-  deleteDocumentLine,
-  reorderDocumentLines,  
-} from "./document-lines-controller";
+export * from "./document-lines-controller";
 
 // FULFILLMENT — status, per-line delivered qty, delivery note
 export {

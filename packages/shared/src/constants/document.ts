@@ -239,12 +239,12 @@ export const DOCUMENT_TYPE_STATUS_TRANSITIONS: Record<
   CREDIT_NOTE: {
     DRAFT: ["PENDING_APPROVAL", "SENT"],
     PENDING_APPROVAL: ["SENT", "DRAFT"],
-    SENT: ["CLOSED", "VOIDED"],
+    SENT: ["CLOSED"],
   },
   DEBIT_NOTE: {
     DRAFT: ["PENDING_APPROVAL", "SENT"],
     PENDING_APPROVAL: ["SENT", "DRAFT"],
-    SENT: ["UNPAID", "VOIDED"],
+    SENT: ["UNPAID"],
     UNPAID: ["PAID", "OVERDUE"],
     OVERDUE: ["PAID"],
     PAID: ["CLOSED"],
@@ -271,7 +271,7 @@ export const DOCUMENT_TYPE_STATUS_TRANSITIONS: Record<
     DELIVERED: ["CLOSED"],
   },
   /** SELF_INVOICE is system-generated and numbered at creation (reverse charge). */
-  SELF_INVOICE: { SENT: ["CLOSED", "VOIDED"] },
+  SELF_INVOICE: { SENT: ["CLOSED"] },
   ARCHIVED: {},
 };
 
@@ -310,7 +310,12 @@ export const STATUSES_WITHOUT_NUMBER: readonly DocumentStatus[] = [
  * and is the single writer of these transitions.
  */
 export const SYSTEM_DRIVEN_STATUSES = [
-  "PARTIALLY_FULFILLED", "FULFILLED", "PARTIALLY_PAID", "PAID", "OVERDUE", "VOIDED",
+  "PARTIALLY_FULFILLED",
+  "FULFILLED",
+  "PARTIALLY_PAID",
+  "PAID",
+  "OVERDUE",
+  "VOIDED",
 ] as const satisfies readonly DocumentStatus[];
 
 // ============================================================================

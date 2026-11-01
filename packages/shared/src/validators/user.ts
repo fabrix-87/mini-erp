@@ -1,6 +1,7 @@
 // packages/shared/src/validators/user.ts
 import { z } from "zod";
 import {
+  birthDateStringSchema,
   createIdSchema,
   dateStringSchema,
   emailSchema,
@@ -10,7 +11,7 @@ import {
 import { countryCodeBaseSchema, userIdSchema } from "./base";
 import { roleIdSchema } from "./role";
 import { paginationSchema, queryBooleanOrAllSchema } from "./query";
-import { GENDER, USER_MEMBERSHIP_STATUS, USER_SORT_FIELDS } from "../constants";
+import { GENDER, USER_MAX_AGE_YEARS, USER_MEMBERSHIP_STATUS, USER_SORT_FIELDS } from "../constants";
 
 // ============================================================================
 // ENUMS
@@ -182,30 +183,16 @@ export const updateUserDetailsSchema = userDetailsSchema
   .required({ firstName: true, lastName: true })
   .strict();
 
-export const profileFormSchema = updateUserDetailsSchema
-  .omit({ dateOfBirth: true }) // rimuove il campo con output Date
-  .extend({
-    username: usernameSchema,
-    preferredLanguageId: z.number().int().positive().optional().nullable(),
-    // dateOfBirth rimane stringa nel form — la trasformazione avviene lato action
-    dateOfBirth: z
-      .string()
-      .optional()
-      .nullable()
-      .refine((val) => !val || !isNaN(new Date(val).getTime()), { message: "Data non valida" })
-      .refine((val) => !val || new Date(val) <= new Date(), {
-        message: "La data di nascita non può essere futura",
-      })
-      .refine(
-        (val) => {
-          if (!val) return true;
-          const min = new Date();
-          min.setFullYear(min.getFullYear() - 120);
-          return new Date(val) >= min;
-        },
-        { message: "La data di nascita non è valida (massimo 120 anni fa)" },
-      ),
-  });
+/**
+ * Form schema for the "My profile" page.
+ * Same as `updateUserDetailsSchema` but `dateOfBirth` stays a string
+ * (the Date conversion happens server-side via `updateUserProfileSchema`).
+ */
+export const profileFormSchema = updateUserDetailsSchema.omit({ dateOfBirth: true }).extend({
+  username: usernameSchema,
+  preferredLanguageId: createIdSchema("Language ID non valido").optional().nullable(),
+  dateOfBirth: birthDateStringSchema({ maxAgeYears: USER_MAX_AGE_YEARS }),
+});
 
 /**
  * Partial update of core User fields + optional details block.
@@ -262,22 +249,29 @@ export const userQuerySchema = paginationSchema
   .strict();
 
 /**
- * Authenticated password change (current user knows their password).
- * Invalidates all sessions on success — confirmPassword is UI-only.
- * Used by: PUT /api/users/me/change-password  →  ChangePasswordInput
+ * Base object for the authenticated password change (no cross-field rules).
+ * Kept separate so the refinement callback can be explicitly typed.
  */
-export const changePasswordSchema = z
+const changePasswordBaseSchema = z
   .object({
     currentPassword: z.string().min(1, "Password attuale obbligatoria"),
     newPassword: passwordSchema,
     confirmPassword: z.string(),
   })
-  .strict()
-  .refine((data) => data.newPassword === data.confirmPassword, {
+  .strict();
+
+/**
+ * Authenticated password change (current user knows their password).
+ * Invalidates all sessions on success — confirmPassword is UI-only.
+ * Used by: PUT /api/users/me/change-password  →  ChangePasswordInput
+ */
+export const changePasswordSchema = changePasswordBaseSchema.refine(
+  (data: z.infer<typeof changePasswordBaseSchema>) => data.newPassword === data.confirmPassword,
+  {
     message: "Le password non corrispondono",
     path: ["confirmPassword"],
-  });
-
+  },
+);
 // ============================================================================
 // TWO-FACTOR AUTHENTICATION SCHEMAS
 // ============================================================================

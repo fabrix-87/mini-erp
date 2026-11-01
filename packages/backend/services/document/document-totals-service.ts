@@ -1,10 +1,11 @@
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/config/prisma-config";
 import { calculateDocumentTotals, Decimal } from "@mini-erp/shared";
-import type { DocumentCreateContext } from "@/types";
+import type { DocumentCreateContext, DocumentTotalsSummary } from "@/types";
 import { assertDocumentEditable, findDocumentOrThrow } from "./document-guards";
 import { lockDocumentStatus } from "./document-concurrency";
 import { getDocumentDetail } from "./document-query-service";
+import { ValidationError } from "@/utils/app-error-utils";
 
 /**
  * Recomputes and persists the totals of a document from its persisted lines.
@@ -15,7 +16,7 @@ export async function recalculateDocumentTotals(
   tx: Prisma.TransactionClient,
   target: { documentId: string; tenantId: string },
   userId: string,
-): Promise<void> {
+): Promise<DocumentTotalsSummary> {
   const { documentId, tenantId } = target;
   const [document, lines] = await Promise.all([
     tx.document.findFirstOrThrow({
@@ -40,18 +41,30 @@ export async function recalculateDocumentTotals(
           totalAmount: zero,
         };
 
+  const summary: DocumentTotalsSummary = {
+    subtotal: totals.subtotal,
+    discountAmount: totals.discountAmount,
+    taxableAmount: totals.taxableAmount,
+    taxAmount: totals.taxAmount,
+    totalAmount: totals.totalAmount,
+  };
+  if (summary.totalAmount.isNegative())
+    throw new ValidationError("Document total cannot be negative");
+
   await tx.document.update({
     where: { tenantId_id: { tenantId, id: documentId }, deletedAt: null },
     data: {
-      subtotal: totals.subtotal,
-      discountAmount: totals.discountAmount,
-      taxableAmount: totals.taxableAmount,
-      taxAmount: totals.taxAmount,
-      totalAmount: totals.totalAmount,
-      netPayableAmount: totals.totalAmount,
+      subtotal: summary.subtotal,
+      discountAmount: summary.discountAmount,
+      taxableAmount: summary.taxableAmount,
+      taxAmount: summary.taxAmount,
+      totalAmount: summary.totalAmount,
+      netPayableAmount: summary.totalAmount,
       updatedByUserId: userId,
     } satisfies Prisma.DocumentUncheckedUpdateInput,
   });
+
+  return summary;
 }
 
 /**

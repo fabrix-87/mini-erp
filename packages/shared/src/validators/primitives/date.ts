@@ -104,3 +104,50 @@ export function isoDateSchema(options?: { required?: boolean; message?: string }
     string | null | undefined
   >;
 }
+
+/**
+ * Validates a date-of-birth string coming from an HTML date input,
+ * WITHOUT transforming it to a Date (output stays `string | null | undefined`).
+ * Bounds are evaluated at parse time, so they never go stale in long-running processes.
+ *
+ * @param options.maxAgeYears - Oldest accepted age in years.
+ * @param options.message - Custom messages for each failure type.
+ * @returns A Zod schema accepting empty/null/undefined or a valid past date string.
+ */
+export const birthDateStringSchema = (options: {
+  maxAgeYears: number;
+  message?: { invalid?: string; future?: string; tooOld?: string };
+}) =>
+  z
+    .string()
+    .nullable()
+    .optional()
+    .superRefine((val, ctx) => {
+      if (!val || val.trim() === "") return;
+
+      const date = new Date(val);
+      if (isNaN(date.getTime())) {
+        ctx.addIssue({ code: "custom", message: options.message?.invalid ?? "Data non valida" });
+        return;
+      }
+
+      const now = new Date();
+      if (date > now) {
+        ctx.addIssue({
+          code: "custom",
+          message: options.message?.future ?? "La data di nascita non può essere futura",
+        });
+        return;
+      }
+
+      const min = new Date(now);
+      min.setFullYear(min.getFullYear() - options.maxAgeYears);
+      if (date < min) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            options.message?.tooOld ??
+            `La data di nascita non è valida (massimo ${options.maxAgeYears} anni fa)`,
+        });
+      }
+    });

@@ -1,11 +1,12 @@
 // packages/shared/src/constants/document.test.ts
 import { describe, expect, test } from "bun:test";
 import {
+  DOCUMENT_TYPE_CONFIG,
   DOCUMENT_TYPE_STATUS_TRANSITIONS,
   STATUSES_REQUIRING_NUMBER,
 } from "./document";
 import type { DocumentType } from "../types";
-import { isInboundDocumentType } from "../helpers";
+import { canDocumentTypeBeVoided, isInboundDocumentType } from "../helpers";
 
 describe("DOCUMENT_TYPE_STATUS_TRANSITIONS", () => {
   test("VOIDED is reachable only from statuses that already have a number", () => {
@@ -17,6 +18,12 @@ describe("DOCUMENT_TYPE_STATUS_TRANSITIONS", () => {
           expect(STATUSES_REQUIRING_NUMBER).toContain(from);
         }
       }
+    }
+  });
+  test("document types requiring e-invoicing can never be voided", () => {
+    for (const [type, config] of Object.entries(DOCUMENT_TYPE_CONFIG)) {
+      if (config.requiresEInvoicing)
+        expect(canDocumentTypeBeVoided(type as DocumentType)).toBe(false);
     }
   });
 });

@@ -25,10 +25,10 @@ import {
   payInstallmentSchema,
   quantityDeliveredSchema,
   rejectDocumentSchema,
+  reorderDocumentLinesSchema,
   salesReportSchema,
   sendDocumentSchema,
   topProductsReportSchema,
-  updateDocumentLineSchema,
   updateDocumentSchema,
   updateDocumentStatusSchema,
   updateInstallmentSchema,
@@ -40,7 +40,6 @@ import {
 // ============================================================================
 
 export type CreateDocumentLineInput = z.infer<typeof createDocumentLineSchema>;
-export type UpdateDocumentLineInput = z.infer<typeof updateDocumentLineSchema>;
 export type UpdateLineDeliveredQuantity = z.infer<typeof quantityDeliveredSchema>;
 
 export type CreateInstallmentInput = z.infer<typeof createInstallmentSchema>;
@@ -58,6 +57,8 @@ export type ConvertDocumentInput = z.infer<typeof convertDocumentSchema>;
 export type CloneDocumentInput = z.infer<typeof cloneDocumentSchema>;
 
 export type CreateDocumentRelationInput = z.infer<typeof createDocumentRelationSchema>;
+
+export type ReorderDocumentLinesInput = z.infer<typeof reorderDocumentLinesSchema>;
 
 export type BulkUpdateDocumentsStatusInput = z.infer<typeof bulkUpdateDocumentsStatusSchema>;
 export type BulkDeleteDocumentsInput = z.infer<typeof bulkDeleteDocumentsSchema>;

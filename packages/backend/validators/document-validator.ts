@@ -14,8 +14,8 @@ import {
   duplicateDocumentSchema,
   installmentIdParamSchema,
   rejectDocumentSchema,
+  reorderDocumentLinesSchema,
   topProductsReportSchema,
-  updateDocumentLineSchema,
   updateDocumentSchema,
   updateDocumentStatusSchema,
   updateInstallmentSchema,
@@ -79,13 +79,16 @@ export const validateDocumentLineId = validateParams(
  */
 export const validateAddDocumentLine = validateBody(createDocumentLineSchema, "Add document line");
 
-/**
- * Validates the request body for updating an existing document line.
- * Delegates to the shared {@link updateDocumentLineSchema}.
- */
-export const validateUpdateDocumentLine = validateBody(
-  updateDocumentLineSchema,
-  "Update document line",
+/** Validates the full line payload of a line replacement. Delegates to the shared {@link createDocumentLineSchema}. */
+export const validateReplaceDocumentLine = validateBody(
+  createDocumentLineSchema,
+  "Replace document line",
+);
+
+/** Validates the ordered line IDs of a reorder request. Delegates to the shared {@link reorderDocumentLinesSchema}. */
+export const validateReorderDocumentLines = validateBody(
+  reorderDocumentLinesSchema,
+  "Reorder document lines",
 );
 
 // ============================================================================

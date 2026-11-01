@@ -1,5 +1,5 @@
 import type { DocumentType, Prisma } from "@/generated/prisma/client";
-import type { CreateDocumentInput } from "@mini-erp/shared";
+import type { CreateDocumentInput, Decimal } from "@mini-erp/shared";
 
 /** Interactive transaction limits: pricing up to MAX_DOCUMENT_LINES lines can be slow. */
 export const TRANSACTION_LIMITS_OPTIONS = { maxWait: 5_000, timeout: 20_000 } as const;
@@ -23,8 +23,16 @@ export interface ResolvedLinePricing {
 
   /** Mandatory justification when the unit price was overridden. */
   priceOverrideReason: string | null;
-  
+
   productId: string | null;
+}
+
+/** Server-resolved VAT snapshot of one document line, derived from its TaxRule. */
+export interface ResolvedLineTax {
+  taxRuleId: number | null;
+  taxPercent: string;
+  vatNatureCode: string | null;
+  vatNormReference: string | null;
 }
 
 /** Server-resolved snapshots required to formalize a document. */
@@ -74,6 +82,8 @@ export interface BuildDocumentCreateDataArgs {
 
   /** Pricing resolved for each input line, in the same order. */
   linePricing: ResolvedLinePricing[];
+
+  lineTax: ResolvedLineTax[]
 }
 
 /** Numbering result generated during document formalization. */
@@ -111,4 +121,13 @@ export interface DocumentLinePricingContext {
   documentDate: Date;
   /** Customer whose default price list applies, when present. */
   customerId?: string | null;
+}
+
+/** Persisted document totals returned by the recalculation. */
+export interface DocumentTotalsSummary {
+  subtotal: Decimal;
+  discountAmount: Decimal;
+  taxableAmount: Decimal;
+  taxAmount: Decimal;
+  totalAmount: Decimal;
 }

@@ -1,5 +1,10 @@
 import { Prisma } from "@/generated/prisma/client";
-import { calculateDocumentTotals, Decimal, getDocumentYear, isInboundDocumentType } from "@mini-erp/shared";
+import {
+  calculateDocumentTotals,
+  Decimal,
+  getDocumentYear,
+  isInboundDocumentType,
+} from "@mini-erp/shared";
 import { toJsonField, toDecimal } from "@/helpers/prisma-helper";
 import { buildDocumentLines, type ProcessedDocumentLine } from "./document-line-builder";
 import { buildDocumentInstallments } from "./document-installment-builder";
@@ -19,10 +24,14 @@ import type { BuildDocumentCreateDataArgs } from "@/types";
 export function buildDocumentCreateData(
   args: BuildDocumentCreateDataArgs,
 ): Prisma.DocumentUncheckedCreateInput {
-  const { input, context, linePricing } = args;
+  const { input, context, linePricing, lineTax } = args;
   const inbound = isInboundDocumentType(input.documentType);
 
-  const processedLines: ProcessedDocumentLine[] = buildDocumentLines(input.lines, linePricing);
+  const processedLines: ProcessedDocumentLine[] = buildDocumentLines(
+    input.lines,
+    linePricing,
+    lineTax,
+  );
 
   const totals =
     processedLines.length > 0

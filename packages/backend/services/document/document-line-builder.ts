@@ -1,18 +1,20 @@
 import { Prisma } from "@/generated/prisma/client";
-import { type CreateDocumentLineInput, calculateDocumentLineTotals } from "@mini-erp/shared";
+import {
+  type CreateDocumentLineInput,
+  DEFAULT_VAT_PERCENT,
+  Decimal,
+  calculateDocumentLineTotals,
+} from "@mini-erp/shared";
 import { toJsonField } from "@/helpers/prisma-helper";
-import { ResolvedLinePricing } from "@/types";
+import { ResolvedLinePricing, ResolvedLineTax } from "@/types";
 
 /** Arguments required to build one document line. */
 export interface BuildDocumentLineArgs {
-  /** Validated line payload. */
   line: CreateDocumentLineInput;
-
-  /** Zero-based index; the builder assigns `lineNumber = index + 1`. */
   index: number;
-
-  /** Pricing snapshot resolved by the price resolver. */
   pricing: ResolvedLinePricing;
+  /** VAT snapshot resolved from the line's tax rule. */
+  tax: ResolvedLineTax;
 }
 
 /** Intermediate result containing computed totals and the Prisma create input. */
@@ -20,10 +22,25 @@ export interface ProcessedDocumentLine {
   totals: {
     lineTotal: ReturnType<typeof calculateDocumentLineTotals>["lineTotal"];
     taxAmount: ReturnType<typeof calculateDocumentLineTotals>["taxAmount"];
-    taxPercent: ReturnType<typeof calculateDocumentLineTotals>["taxPercent"];
+    taxPercent: string;
   };
 
   prismaInput: Prisma.DocumentLineUncheckedCreateWithoutDocumentInput;
+}
+
+/** Stores DISCOUNT lines with a negative unit price so that totals carry the sign. */
+function applyDiscountSign(
+  line: CreateDocumentLineInput,
+  pricing: ResolvedLinePricing,
+): ResolvedLinePricing {
+  if (line.lineType !== "DISCOUNT") return pricing;
+  const negate = (value: string) => new Decimal(value).abs().neg().toString();
+  return {
+    ...pricing,
+    unitPrice: negate(pricing.unitPrice),
+    originalUnitPrice:
+      pricing.originalUnitPrice === null ? null : negate(pricing.originalUnitPrice),
+  };
 }
 
 /**
@@ -37,14 +54,15 @@ export interface ProcessedDocumentLine {
  * @returns Computed totals and the Prisma input for nested creation
  */
 export function buildDocumentLine(args: BuildDocumentLineArgs): ProcessedDocumentLine {
-  const { line, index, pricing } = args;
+  const { line, index, tax } = args;
+  const pricing = applyDiscountSign(line, args.pricing);
 
   const totals = calculateDocumentLineTotals({
     quantity: line.quantity,
     unitPrice: pricing.unitPrice,
     discountPercent: line.discountPercent,
     discountAmount: line.discountAmount,
-    taxPercent: line.taxPercent,
+    taxPercent: tax.taxPercent,
   });
 
   const prismaInput: Prisma.DocumentLineUncheckedCreateWithoutDocumentInput = {
@@ -68,13 +86,13 @@ export function buildDocumentLine(args: BuildDocumentLineArgs): ProcessedDocumen
     discountAmount: totals.discountAmount,
     lineTotal: totals.lineTotal,
 
-    taxRuleId: line.taxRuleId ?? undefined,
-    taxPercent: line.taxPercent,
+    taxRuleId: tax.taxRuleId ?? undefined,
+    taxPercent: tax.taxPercent,
     taxAmount: totals.taxAmount,
     lineTotalWithTax: totals.lineTotalWithTax,
 
-    vatNatureCode: line.vatNatureCode ?? undefined,
-    vatNormReference: line.vatNormReference ?? undefined,
+    vatNatureCode: tax.vatNatureCode ?? undefined,
+    vatNormReference: tax.vatNormReference ?? undefined,
     isReverseCharge: line.isReverseCharge,
     isSelfInvoice: line.isSelfInvoice,
     matchStatus: line.matchStatus ?? undefined,
@@ -94,7 +112,7 @@ export function buildDocumentLine(args: BuildDocumentLineArgs): ProcessedDocumen
     totals: {
       lineTotal: totals.lineTotal,
       taxAmount: totals.taxAmount,
-      taxPercent: line.taxPercent,
+      taxPercent: tax.taxPercent,
     },
     prismaInput,
   };
@@ -105,22 +123,19 @@ export function buildDocumentLine(args: BuildDocumentLineArgs): ProcessedDocumen
  *
  * @param lines - Validated line payloads
  * @param linePricing - Resolved pricing, in the same order as `lines`
+ * @param lineTax - Resolved taxes, in the same order as `lines`
  * @returns Processed lines in input order
  * @throws Error when the pricing array length does not match the lines array length
  */
 export function buildDocumentLines(
   lines: CreateDocumentLineInput[],
   linePricing: ResolvedLinePricing[],
+  lineTax: ResolvedLineTax[],
 ): ProcessedDocumentLine[] {
-  if (lines.length !== linePricing.length) {
-    throw new Error("Line pricing count does not match line count");
+  if (lines.length !== linePricing.length || lines.length !== lineTax.length) {
+    throw new Error("Line pricing/tax count does not match line count");
   }
-
   return lines.map((line, index) =>
-    buildDocumentLine({
-      line,
-      index,
-      pricing: linePricing[index],
-    }),
+    buildDocumentLine({ line, index, pricing: linePricing[index], tax: lineTax[index] }),
   );
 }
