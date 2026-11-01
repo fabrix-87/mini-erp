@@ -82,6 +82,8 @@ model User {
   activitiesCreated       Activity[]                 @relation("ActivityCreated")
   paymentBatches          PaymentBatch[]             @relation("PaymentBatchCreatedBy")
   approvedPaymentBatches  PaymentBatch[]             @relation("PaymentBatchApprovedBy")
+  approvedDocuments       Document[]                 @relation("DocumentApprovedBy")
+  updatedDocuments        Document[]                 @relation("DocumentUpdatedBy")
   activityParticipants    ActivityParticipant[]
   companyNotes            CompanyNote[]
   companyVersionsCreated  CompanyVersion[]           @relation("CompanyVersionCreatedBy")

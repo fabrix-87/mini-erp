@@ -447,6 +447,7 @@ model CompanyAddress {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   documentParties DocumentParty[] @relation("DocumentPartySourceAddress")
+  documents       Document[]      @relation("DocumentShippingAddress")
 
   /// Enforces at most one LEGAL address per company.
   @@unique([companyId], map: "unique_company_legal_address", where: raw("address_type = 'LEGAL'"))

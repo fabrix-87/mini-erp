@@ -317,6 +317,17 @@ model Document {
   /// Mandatory free-text explanation when status transitions to VOIDED.
   voidedReason String?   @map("voided_reason") @db.Text
 
+  /// User who approved the document (set together with approvedAt, once).
+  approvedByUserId String? @map("approved_by_user_id")
+  approvedBy       User?   @relation("DocumentApprovedBy", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  /// Last user who modified the document.
+  updatedByUserId  String? @map("updated_by_user_id")
+  updatedBy        User?   @relation("DocumentUpdatedBy", fields: [updatedByUserId], references: [id], onDelete: SetNull)
+
+  /// CompanyAddress used to build the SHIPPING party snapshot at formalization.
+  shippingAddressId String?         @map("shipping_address_id")
+  shippingAddress   CompanyAddress? @relation("DocumentShippingAddress", fields: [shippingAddressId], references: [id], onDelete: SetNull)
+
   // === RELATIONS ===
 
   lines                      DocumentLine[]
