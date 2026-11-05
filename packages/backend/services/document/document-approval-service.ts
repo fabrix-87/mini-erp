@@ -46,8 +46,7 @@ export async function approveDocument(args: {
 
 /**
  * Rejects a document. The transition map decides where this is allowed
- * (ORDER from PENDING_APPROVAL; QUOTE, PROFORMA and SUPPLIER_ORDER from SENT).
- *
+  *
  * @param args - Document ID, mandatory reason and context
  * @returns The rejected document
  * @throws BadRequestError when the reason is missing or the transition is not allowed

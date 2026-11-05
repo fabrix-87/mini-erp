@@ -21,9 +21,6 @@ export * from "./document-lines-controller";
 // FULFILLMENT — status, per-line delivered qty, delivery note
 export {
   getDocumentFulfillment,
-  getFulfillmentStatus,
-  updateLineDelivered,
-  createDeliveryNote,
 } from "./document-fulfillment-controller";
 
 // INSTALLMENTS — CRUD, pay, generate plan

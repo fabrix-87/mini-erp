@@ -24,6 +24,8 @@ import {
   assertDocumentReadyForFormalization,
   assertSnapshotsAreComplete,
 } from "./document-formalization-validation";
+import { createStatusHistory } from "./document-status-history";
+import { applyDeliveryNoteToOrder } from "./document-fulfillment";
 
 /** Arguments required to transition a document status. */
 export interface TransitionDocumentStatusArgs {
@@ -264,36 +266,9 @@ async function formalizeDocument(args: {
     tx,
   });
 
+  if (updatedDocument.documentType === "DELIVERY_NOTE") {
+    await applyDeliveryNoteToOrder({ deliveryNote: updatedDocument, context, tx });
+  }
+
   return updatedDocument;
-}
-
-/**
- * Creates an immutable status-history entry for a document transition.
- *
- * @param args - History context
- * @param args.documentId - Document ID
- * @param args.fromStatus - Previous status
- * @param args.toStatus - New status
- * @param args.context - Tenant and authenticated user context
- * @param args.tx - Prisma transaction client
- */
-export async function createStatusHistory(args: {
-  documentId: string;
-  fromStatus: DocumentStatus;
-  toStatus: DocumentStatus;
-  context: DocumentCreateContext;
-  tx: Prisma.TransactionClient;
-  reason?: string | null;
-}): Promise<void> {
-  const { documentId, fromStatus, toStatus, context, reason, tx } = args;
-
-  await tx.documentStatusHistory.create({
-    data: {
-      documentId,
-      reason: reason ?? undefined,
-      fromStatus,
-      toStatus,
-      changedBy: context.userId,
-    },
-  });
 }

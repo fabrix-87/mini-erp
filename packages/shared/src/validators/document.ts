@@ -645,10 +645,6 @@ export const installmentQuerySchema = z.object({
   sortOrder: sortOrderSchema,
 });
 
-export const quantityDeliveredSchema = z.object({
-  quantityDelivered: quantitySchema(0),
-});
-
 // ============================================================================
 // PARAM SCHEMAS
 // ============================================================================

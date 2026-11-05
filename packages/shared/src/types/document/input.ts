@@ -23,7 +23,6 @@ import {
   installmentIdParamSchema,
   installmentQuerySchema,
   payInstallmentSchema,
-  quantityDeliveredSchema,
   rejectDocumentSchema,
   reorderDocumentLinesSchema,
   salesReportSchema,
@@ -40,7 +39,6 @@ import {
 // ============================================================================
 
 export type CreateDocumentLineInput = z.infer<typeof createDocumentLineSchema>;
-export type UpdateLineDeliveredQuantity = z.infer<typeof quantityDeliveredSchema>;
 
 export type CreateInstallmentInput = z.infer<typeof createInstallmentSchema>;
 export type UpdateInstallmentInput = z.infer<typeof updateInstallmentSchema>;

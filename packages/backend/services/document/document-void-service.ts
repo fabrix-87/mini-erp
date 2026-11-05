@@ -6,7 +6,7 @@ import type { DocumentCreateContext } from "@/types";
 import { findDocumentOrThrow } from "./document-guards";
 import { lockDocumentStatus } from "./document-concurrency";
 import { buildLifecycleData } from "./document-lifecycle";
-import { createStatusHistory } from "./document-status-service";
+import { createStatusHistory } from "./document-status-history";
 
 /**
  * Voids a formalized document. VOIDED is system-driven, so it is reachable only here.

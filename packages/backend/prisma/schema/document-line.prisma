@@ -124,6 +124,14 @@ model DocumentLine {
   tenantId String @map("tenant_id")
   tenant   Tenant @relation("TenantDocumentLines", fields: [tenantId], references: [id], onDelete: Restrict)
 
+  // === DERIVATION ===
+
+  /// Line this line was derived from (e.g. order line -> delivery note line).
+  /// Server-only: used to apply delivery quantities to the source order.
+  sourceLineId String?        @map("source_line_id")
+  sourceLine   DocumentLine?  @relation("LineDerivations", fields: [tenantId, sourceLineId], references: [tenantId, id], onDelete: Restrict, onUpdate: Cascade)
+  derivedLines DocumentLine[] @relation("LineDerivations")
+
   @@unique([tenantId, id])
   @@unique([tenantId, documentId, id])
   @@unique([tenantId, documentId, lineNumber])
@@ -137,5 +145,6 @@ model DocumentLine {
   @@index([tenantId, warehouseId], where: { warehouseId: { not: null } })
   // === KIT / BUNDLE — sempre via documentId, partial sufficiente ===
   @@index([parentLineId], where: { parentLineId: { not: null } })
+  @@index([tenantId, sourceLineId], where: { sourceLineId: { not: null } })
   @@map("document_lines")
 }

@@ -6,68 +6,26 @@
  */
 import { createHonoApp } from "../../lib/hono-app";
 import { authorize } from "../../middleware/auth-middleware";
-import { validateDocumentId, validateDocumentLineId } from "../../validators/document-validator";
+import { validateDocumentId } from "../../validators/document-validator";
 import {
   getDocumentFulfillment,
-  getFulfillmentStatus,
-  updateLineDelivered,
-  createDeliveryNote,
 } from "../../controllers/document";
 import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const fulfillmentRoutes = createHonoApp();
 
 /**
+ * Returns the fulfillment status and per-line breakdown of an order.
+ * Delivered quantities derive from formalized delivery notes and are read-only.
  * @route GET /api/documents/:id/fulfillment
- * @desc  Get full fulfillment details for a document (lines with delivered/invoiced qty)
- * @access Private (document:read)
- */
+ * @access Private (document:read | document:manage)
+  */
 fulfillmentRoutes.get(
   "/:id/fulfillment",
-  requireTenantScope,
   authorize(["document:read", "document:manage"]),
+  requireTenantScope,
   validateDocumentId,
   getDocumentFulfillment,
-);
-
-/**
- * @route GET /api/documents/:id/fulfillment/status
- * @desc  Get a summary fulfillment status (PENDING | PARTIAL | COMPLETE)
- * @access Private (document:read)
- */
-fulfillmentRoutes.get(
-  "/:id/fulfillment/status",
-  requireTenantScope,
-  authorize(["document:read", "document:manage"]),
-  validateDocumentId,
-  getFulfillmentStatus,
-);
-
-/**
- * @route PATCH /api/documents/:id/lines/:lineId/delivered
- * @desc  Update the delivered quantity for a single document line
- * @access Private (document:update)
- */
-fulfillmentRoutes.patch(
-  "/:id/lines/:lineId/delivered",
-  requireTenantScope,
-  authorize(["document:update", "document:manage"]),
-  validateDocumentId,
-  validateDocumentLineId,
-  updateLineDelivered,
-);
-
-/**
- * @route POST /api/documents/:id/create-delivery-note
- * @desc  Generate a delivery note (DDT) from a confirmed order
- * @access Private (document:create)
- */
-fulfillmentRoutes.post(
-  "/:id/create-delivery-note",
-  requireTenantScope,
-  authorize(["document:create", "document:manage"]),
-  validateDocumentId,
-  createDeliveryNote,
 );
 
 export default fulfillmentRoutes;

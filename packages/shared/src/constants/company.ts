@@ -29,14 +29,14 @@ export const COMPANY_TYPE_ENTITY = {
   FOREIGN: "FOREIGN",
 } as const;
 
-export const COMPANY_SORT_FIELDS = [
-  "id",
-  "code",
-  "name",
-  "country",
-  "status",
-  "createdAt",
-] as const;
+export const COMPANY_SORT_FIELDS = {
+  id: "id",
+  code: "code",
+  name: "name",
+  country: "country",
+  status: "status",
+  createdAt: "createdAt",
+} as const;
 
 /**
  * Maps the commercial role of a company to its generated code prefix.

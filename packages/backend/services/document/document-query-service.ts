@@ -3,8 +3,7 @@ import { prisma } from "@/config/prisma-config";
 import { STATUS_CATEGORIES, type DocumentQueryInput } from "@mini-erp/shared";
 import { NotFoundError } from "@/utils/app-error-utils";
 import { toPagination, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
-import { getDocumentDetailInclude, getDocumentListSelection } from "@/helpers/document";
-import { buildOrderBy } from "@/helpers/company-helper";
+import { buildDocumentOrderBy, getDocumentDetailInclude, getDocumentListSelection } from "@/helpers/document";
 
 type StatusFilter = Prisma.DocumentWhereInput["status"];
 const UNPAID_STATUSES = ["UNPAID", "PARTIALLY_PAID", "OVERDUE"] as const;
@@ -82,12 +81,11 @@ function buildDocumentListWhere(
  * @param query - Validated query string.
  * @param tenantId - Current tenant ID.
  * @returns Page items and the total count.
- * @throws BadRequestError when the unsupported `deleted` filter is requested.
  */
 export async function listDocuments(query: DocumentQueryInput, tenantId: string) {
   const where = buildDocumentListWhere(query, tenantId);
   const { skip, take } = toPagination(query.page, query.limit);
-  const orderBy = buildOrderBy(query.sortBy, query.sortOrder);
+  const orderBy = buildDocumentOrderBy(query.sortBy, query.sortOrder);
 
   const [items, total] = await Promise.all([
     prisma.document.findMany({ where, select: getDocumentListSelection(), orderBy, skip, take }),
