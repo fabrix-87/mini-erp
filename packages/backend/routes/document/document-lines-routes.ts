@@ -1,8 +1,6 @@
 /**
  * @module document-lines-routes
  * @description Routes for document line management:
- * list, get by ID, add, bulk-add, update, delete, reorder.
- * Static sub-paths (/bulk, /reorder) are registered before /:lineId.
  */
 import { createHonoApp } from "../../lib/hono-app";
 import { authorize } from "../../middleware/auth-middleware";

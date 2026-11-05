@@ -16,11 +16,10 @@ import {
   AddressFilters,
   COMPANY_CODE_PREFIX_MAP,
   CompanyFilters,
-  CompanySortField,
   CustomerFilters,
+  DocumentQueryInput,
   SupplierFilters,
 } from "@mini-erp/shared";
-import { withTenantScope } from "./prisma-helper";
 import { AddressUpsertInput, upsertLegalAddress } from "./address-helper";
 import { storicizeCompany, syncCurrentVersion } from "./company-version-helper";
 
@@ -107,7 +106,7 @@ export const buildSupplierWhereClause = (
   }
 
   if (filters.hasProducts !== undefined) {
-    where.products = filters.hasProducts ? { some: {} } : { none: {} };
+    where.productVariants = filters.hasProducts ? { some: {} } : { none: {} };
   }
 
   if (filters.isDeleted !== undefined) {
@@ -139,15 +138,6 @@ export const buildAddressWhereClause = (
 // ORDER BY BUILDER
 // ============================================================================
 
-const ORDER_BY_MAP: Record<CompanySortField, Prisma.CompanyOrderByWithRelationInput> = {
-  id: { id: "asc" }, // placeholder, sortOrder applied below
-  code: { code: "asc" },
-  name: { companyName: "asc" },
-  country: { country: { name: "asc" } },
-  status: { status: "asc" },
-  createdAt: { createdAt: "asc" },
-};
-
 /**
  * Builds a typed Prisma orderBy input for Company queries.
  * Falls back to { id: sortOrder } for unrecognized sortBy values.
@@ -155,24 +145,19 @@ const ORDER_BY_MAP: Record<CompanySortField, Prisma.CompanyOrderByWithRelationIn
  * @param sortBy    - Field name to sort by (constrained to CompanySortField)
  * @param sortOrder - Sort direction, defaults to "desc"
  */
-export const buildOrderBy = (
-  sortBy: CompanySortField = "id",
-  sortOrder: Prisma.SortOrder = "desc",
-): Prisma.CompanyOrderByWithRelationInput => {
-  const base = ORDER_BY_MAP[sortBy] ?? { id: sortOrder };
-
-  // Replace the placeholder asc with the actual sortOrder
-  const [key] = Object.keys(base) as [string];
-  const value = (base as Record<string, unknown>)[key];
-
-  // Handle nested objects (e.g. country: { name: ... })
-  if (typeof value === "object" && value !== null) {
-    const [nestedKey] = Object.keys(value as object);
-    return { [key]: { [nestedKey]: sortOrder } };
-  }
-
-  return { [key]: sortOrder };
-};
+export function buildOrderBy(
+  sortBy: DocumentQueryInput["sortBy"],
+  order: DocumentQueryInput["sortOrder"],
+): Prisma.DocumentOrderByWithRelationInput[] {
+  const primary: Prisma.DocumentOrderByWithRelationInput[] =
+    sortBy === "customerName"
+      ? [
+          { customer: { company: { companyName: order } } },
+          { supplier: { company: { companyName: order } } },
+        ]
+      : [{ [sortBy]: order }];
+  return [...primary, { id: "asc" }];
+}
 
 // ============================================================================
 // INCLUDE BUILDERS

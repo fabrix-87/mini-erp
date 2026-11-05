@@ -1,8 +1,12 @@
-import { Prisma, type Document } from "@/generated/prisma/client";
+import { type DocumentLine, Prisma, type Document } from "@/generated/prisma/client";
 import { prisma } from "@/config/prisma-config";
 import { MAX_DOCUMENT_LINES, type CreateDocumentLineInput } from "@mini-erp/shared";
 import { BadRequestError, ConflictError, NotFoundError } from "@/utils/app-error-utils";
-import type { DocumentCreateContext, DocumentLinePricingContext } from "@/types";
+import type {
+  DocumentCreateContext,
+  DocumentLinePricingContext,
+  DocumentTotalsSummary,
+} from "@/types";
 import { TRANSACTION_LIMITS_OPTIONS } from "@/types/document-types";
 import { assertDocumentEditable, findDocumentOrThrow } from "./document-guards";
 import { lockDocumentStatus } from "./document-concurrency";
@@ -131,16 +135,24 @@ export async function addDocumentLine(args: {
 }
 
 /**
- * Replaces a line with a full payload (same rules and pricing as creation), keeping its position.
- * Fulfillment quantities (delivered/invoiced/returned) are never touched.
- * @returns The updated line and the updated document totals.
+ * Replaces an existing document line with new input data, validating business rules,
+ * resolving pricing and tax information, updating the line record, and recalculating totals within a transaction.
+ *
+ * @param {Object} args - The arguments for replacing the document line.
+ * @param {string} args.documentId - The ID of the document containing the line.
+ * @param {string} args.lineId - The ID of the line to be replaced.
+ * @param {CreateDocumentLineInput} args.input - The new input data for the document line.
+ * @param {DocumentCreateContext} args.context - The execution context containing user and tenant details.
+ * @returns {Promise<{ line: DocumentLine; totals: DocumentTotalsSummary }>} An object containing the updated document line and the recalculated totals.
+ * @throws {BadRequestError} If the line is set as its own parent.
+ * @throws {NotFoundError} If the document line does not exist.
  */
 export async function replaceDocumentLine(args: {
   documentId: string;
   lineId: string;
   input: CreateDocumentLineInput;
   context: DocumentCreateContext;
-}) {
+}): Promise<{ line: DocumentLine; totals: DocumentTotalsSummary }> {
   const { documentId, lineId, input, context } = args;
   return runLineTransaction(async (tx) => {
     const document = await loadEditableDocument(tx, documentId, context);
@@ -151,7 +163,7 @@ export async function replaceDocumentLine(args: {
       where: { id: lineId, tenantId: document.tenantId, documentId },
     });
     if (!existing) throw new NotFoundError("Document line not found");
-    
+
     const index = existing.lineNumber - 1;
     const pricingContext = toPricingContext(document);
     const pricing = await resolveDocumentLinePricing(tx, pricingContext, input);
@@ -172,16 +184,22 @@ export async function replaceDocumentLine(args: {
 }
 
 /**
- * Removes a line, renumbers the following lines (ascending, one by one, because the
- * unique constraint is checked row by row [8]) and recalculates the totals.
- * A line that still has component lines cannot be removed.
- * @returns The updated document totals.
+ * Removes a document line after validating its existence, ensuring no child components are attached,
+ * reordering subsequent line numbers, and recalculating the document totals within a transaction.
+ *
+ * @param {Object} args - The arguments for removing the document line.
+ * @param {string} args.documentId - The ID of the document containing the line.
+ * @param {string} args.lineId - The ID of the line to be removed.
+ * @param {DocumentCreateContext} args.context - The execution context containing user and tenant details.
+ * @returns {Promise<{ totals: DocumentTotalsSummary }>} An object containing the recalculated document totals.
+ * @throws {NotFoundError} If the document line does not exist.
+ * @throws {BadRequestError} If the line has child component lines attached.
  */
 export async function removeDocumentLine(args: {
   documentId: string;
   lineId: string;
   context: DocumentCreateContext;
-}) {
+}): Promise<{ totals: DocumentTotalsSummary }> {
   const { documentId, lineId, context } = args;
   return runLineTransaction(async (tx) => {
     const document = await loadEditableDocument(tx, documentId, context);

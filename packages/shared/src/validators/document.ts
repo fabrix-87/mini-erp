@@ -354,8 +354,7 @@ const documentShape = z.object({
 
   // Payment snapshot (code/label are resolved by the server when paymentMethodId is set)
   paymentMethodId: paymentMethodIdBaseSchema.nullish(),
-  paymentMethodCode: z.string().trim().min(1).max(50).optional(),
-  paymentTermsLabel: z.string().max(100).nullish(),
+  paymentMethodCode: z.string().trim().min(1).max(50).optional(),  
 
   // Bank snapshot
   paymentBankAccountId: bankAccountIdBaseSchema.nullish(),
@@ -366,8 +365,6 @@ const documentShape = z.object({
 
   // Withholding / social security (INBOUND). Amounts are computed server-side.
   withholdingTaxTypeId: withholdingTaxTypeIdBaseSchema.nullish(),
-  withholdingTaxPercent: nullableDecimalSchema(percentOptionalSchema),
-  contributionPercent: nullableDecimalSchema(percentOptionalSchema),
 
   notes: z.string().max(5000).nullish(),
   internalNotes: z.string().max(5000).nullish(),
@@ -382,16 +379,7 @@ const documentShape = z.object({
 export const createDocumentSchema = documentShape
   .extend({
     documentDate: isoDateSchema({ required: true }).default(() => new Date().toISOString()),
-    status: documentStatusSchema.default("DRAFT"),
-    subtotal: moneySchema,
     discountPercent: discountPercentSchema,
-    discountAmount: moneySchema,
-    shippingCost: moneySchema,
-    shippingTaxAmount: moneySchema,
-    taxableAmount: moneySchema,
-    taxAmount: moneySchema,
-    totalAmount: moneySchema,
-    netPayableAmount: moneySchema,
     currencyCode: currencyCodeBaseSchema.default("EUR"),
     exchangeRate: exchangeRateSchema.default("1.0"),
     exchangeRateDate: isoDateSchema().default(() => new Date().toISOString()),

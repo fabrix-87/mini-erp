@@ -11,6 +11,7 @@ import {
 } from "@mini-erp/shared/types";
 import { prisma } from "@/config/prisma-config";
 import { BadRequestError, NotFoundError } from "@/utils/app-error-utils";
+import { invalidateUserPermissionsCache } from "@/helpers/user-helper";
 
 // ============================================================================
 // INTERNAL HELPERS
@@ -170,6 +171,8 @@ export const replaceMembershipRoles = async (c: Context<AppBindings>) => {
     });
   });
 
+  invalidateUserPermissionsCache(userId);
+
   return sendSuccess(
     c,
     { userId, membershipId: updated.id, roles: updated.roles.map((r) => r.role) },
@@ -204,6 +207,7 @@ export const addMembershipRoles = async (c: Context<AppBindings>) => {
   await prisma.userTenantMembershipRole.createMany({
     data: roleIds.map((roleId: number) => ({
       membershipId: membership.id,
+      tenantId,
       roleId,
     })),
     skipDuplicates: true,
@@ -211,6 +215,8 @@ export const addMembershipRoles = async (c: Context<AppBindings>) => {
 
   const updated = await resolveMembership(userId, tenantId);
   const updatedRoles = updated.roles.map((r) => r.role);
+
+  invalidateUserPermissionsCache(userId);
 
   return sendSuccess(
     c,
@@ -248,6 +254,8 @@ export const removeMembershipRoles = async (c: Context<AppBindings>) => {
       },
     });
   });
+
+  invalidateUserPermissionsCache(userId);
 
   return sendSuccess(
     c,

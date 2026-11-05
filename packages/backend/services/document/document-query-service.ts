@@ -1,9 +1,10 @@
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/config/prisma-config";
 import { STATUS_CATEGORIES, type DocumentQueryInput } from "@mini-erp/shared";
-import { BadRequestError, NotFoundError } from "@/utils/app-error-utils";
+import { NotFoundError } from "@/utils/app-error-utils";
 import { toPagination, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 import { getDocumentDetailInclude, getDocumentListSelection } from "@/helpers/document";
+import { buildOrderBy } from "@/helpers/company-helper";
 
 type StatusFilter = Prisma.DocumentWhereInput["status"];
 const UNPAID_STATUSES = ["UNPAID", "PARTIALLY_PAID", "OVERDUE"] as const;
@@ -86,10 +87,7 @@ function buildDocumentListWhere(
 export async function listDocuments(query: DocumentQueryInput, tenantId: string) {
   const where = buildDocumentListWhere(query, tenantId);
   const { skip, take } = toPagination(query.page, query.limit);
-  const orderBy = [
-    { [query.sortBy]: query.sortOrder },
-    { id: "asc" },
-  ] as Prisma.DocumentOrderByWithRelationInput[];
+  const orderBy = buildOrderBy(query.sortBy, query.sortOrder);
 
   const [items, total] = await Promise.all([
     prisma.document.findMany({ where, select: getDocumentListSelection(), orderBy, skip, take }),

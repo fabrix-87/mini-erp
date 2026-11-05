@@ -1,7 +1,6 @@
 import { Prisma } from "@/generated/prisma/client";
 import {
   type CreateDocumentLineInput,
-  DEFAULT_VAT_PERCENT,
   Decimal,
   calculateDocumentLineTotals,
 } from "@mini-erp/shared";

@@ -38,6 +38,7 @@ export async function approveDocument(args: {
     documentId,
     targetStatus,
     expectedCurrentStatus: "PENDING_APPROVAL",
+    viaApprovalWorkflow: true,
     reason: notes,
     context,
   });

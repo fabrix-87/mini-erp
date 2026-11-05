@@ -24,6 +24,8 @@ import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const statusRoutes = createHonoApp();
 const canUpdate = authorize(["document:update", "document:manage"]);
+const canApprove = authorize(["document:approve", "document:manage"]);
+const canVoid = authorize(["document:void", "document:manage"]);
 
 /**
  * @route PATCH /api/documents/:id/status
@@ -49,11 +51,11 @@ statusRoutes.post("/:id/send", canUpdate, requireTenantScope, validateDocumentId
 /**
  * @route POST /api/documents/:id/approve
  * @desc  Approve a document pending approval
- * @access Private (document:update)
+ * @access Private (document:approve)
  */
 statusRoutes.post(
   "/:id/approve",
-  canUpdate,
+  canApprove,
   requireTenantScope,
   validateDocumentId,
   validateApproveDocument,
@@ -63,11 +65,11 @@ statusRoutes.post(
 /**
  * @route POST /api/documents/:id/reject
  * @desc  Reject a document pending approval
- * @access Private (document:update)
+ * @access Private (document:approve)
  */
 statusRoutes.post(
   "/:id/reject",
-  canUpdate,
+  canApprove,
   requireTenantScope,
   validateDocumentId,
   validateRejectDocument,
@@ -77,11 +79,11 @@ statusRoutes.post(
 /**
  * @route POST /api/documents/:id/void
  * @desc  Void (annul) a document
- * @access Private (document:update)
+ * @access Private (document:void)
  */
 statusRoutes.post(
   "/:id/void",
-  canUpdate,
+  canVoid,
   requireTenantScope,
   validateDocumentId,
   validateVoidDocument,
