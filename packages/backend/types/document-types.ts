@@ -157,3 +157,29 @@ export type CreatableDocumentType = CreateDocumentInput["documentType"];
 export function isCreatableType(type: DocumentType): type is CreatableDocumentType {
   return type !== "SELF_INVOICE";
 }
+
+/** Order statuses from which an invoice can be created. */
+export const INVOICEABLE_ORDER_STATUSES: readonly DocumentStatus[] = [
+  "ACCEPTED",
+  "PREPARING",
+  "PARTIALLY_FULFILLED",
+  "FULFILLED",
+  "IN_TRANSIT",
+  "DELIVERED",
+];
+
+/** Delivery note statuses from which an invoice can be created. */
+export const INVOICEABLE_DELIVERY_NOTE_STATUSES: readonly DocumentStatus[] = [
+  "IN_TRANSIT",
+  "DELIVERED",
+];
+
+/** Invoice statuses from which a credit note can be created. */
+export const CREDITABLE_INVOICE_STATUSES: readonly DocumentStatus[] = [
+  "SENT",
+  "UNPAID",
+  "PARTIALLY_PAID",
+  "PAID",
+  "OVERDUE",
+  "CLOSED",
+];

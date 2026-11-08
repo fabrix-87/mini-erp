@@ -26,6 +26,7 @@ import {
 } from "./document-formalization-validation";
 import { createStatusHistory } from "./document-status-history";
 import { applyDeliveryNoteToOrder } from "./document-fulfillment";
+import { applyCreditNoteToInvoice, applyInvoiceToSources } from "./document-invoicing";
 
 /** Arguments required to transition a document status. */
 export interface TransitionDocumentStatusArgs {
@@ -266,8 +267,16 @@ async function formalizeDocument(args: {
     tx,
   });
 
-  if (updatedDocument.documentType === "DELIVERY_NOTE") {
-    await applyDeliveryNoteToOrder({ deliveryNote: updatedDocument, context, tx });
+  switch (updatedDocument.documentType) {
+    case "DELIVERY_NOTE":
+      await applyDeliveryNoteToOrder({ deliveryNote: updatedDocument, context, tx });
+      break;
+    case "INVOICE":
+      await applyInvoiceToSources({ invoice: updatedDocument, tx });
+      break;
+    case "CREDIT_NOTE":
+      await applyCreditNoteToInvoice({ creditNote: updatedDocument, tx });
+      break;
   }
 
   return updatedDocument;

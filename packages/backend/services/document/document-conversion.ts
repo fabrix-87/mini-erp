@@ -4,11 +4,11 @@ import {
   type DocumentLine,
   type DocumentRelationType,
   type DocumentStatus,
+  type DocumentLineType,
   type DocumentType,
 } from "@/generated/prisma/client";
 import {
   DOCUMENT_CONVERSION_MAP,
-  DOCUMENT_TYPES,
   Decimal,
   isInboundDocumentType,
   type CloneDocumentInput,
@@ -16,15 +16,23 @@ import {
   type CreateDocumentInput,
 } from "@mini-erp/shared";
 import { prisma } from "@/config/prisma-config";
-import { BadRequestError, ConflictError, NotFoundError } from "@/utils/app-error-utils";
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from "@/utils/app-error-utils";
 import { withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 import {
-  CreatableDocumentType,
+  type CreatableDocumentType,
   FULFILLABLE_STATUSES,
   isCreatableType,
   TRANSACTION_LIMITS_OPTIONS,
   type DocumentCreateContext,
   type DocumentLinePricingContext,
+  INVOICEABLE_ORDER_STATUSES,
+  INVOICEABLE_DELIVERY_NOTE_STATUSES,
+  CREDITABLE_INVOICE_STATUSES,
 } from "@/types";
 import { buildDocumentCreateData } from "./document-create-builder";
 import type { CreatedDocument } from "./document-create-service";
@@ -33,26 +41,29 @@ import { lockDocumentStatus } from "./document-concurrency";
 import { copyLine, type CopiedLine } from "./document-line-copy";
 import { resolveDocumentLinesTax } from "./document-line-tax-service";
 
-/** How the lines of the source are carried into the target. */
-type ConversionMode = "FULL" | "REMAINING_TO_DELIVER";
+const dec = (value: { toString(): string }) => new Decimal(value.toString());
+
+type RemainingFn = (line: DocumentLine) => Decimal;
 
 interface ConversionRule {
-  mode: ConversionMode;
-  /** Source statuses from which the conversion is allowed. */
   sourceStatuses: readonly DocumentStatus[];
   relationType: DocumentRelationType;
+  /** True when the relation points from the new document to the source (CREDITS). */
+  reverseRelation?: boolean;
+  /** Line types that carry quantities in this conversion. */
+  lineTypes: readonly DocumentLineType[];
+  /** Remaining convertible quantity of a line; absent = full copy, allowed once. */
+  remaining?: RemainingFn;
 }
 
+const PRICED_TYPES = ["PRODUCT", "SERVICE", "DISCOUNT"] as const;
+
 const FULL_COPY_RULE: ConversionRule = {
-  mode: "FULL",
   sourceStatuses: ["ACCEPTED"],
   relationType: "CONVERTS_TO",
+  lineTypes: PRICED_TYPES,
 };
 
-/**
- * Conversions available today. Pairs present in DOCUMENT_CONVERSION_MAP but missing here
- * (invoicing, credit notes, purchase chain) are not available yet.
- */
 const CONVERSION_RULES: Partial<
   Record<DocumentType, Partial<Record<DocumentType, ConversionRule>>>
 > = {
@@ -60,9 +71,34 @@ const CONVERSION_RULES: Partial<
   PROFORMA: { ORDER: FULL_COPY_RULE, INVOICE: FULL_COPY_RULE },
   ORDER: {
     DELIVERY_NOTE: {
-      mode: "REMAINING_TO_DELIVER",
       sourceStatuses: FULFILLABLE_STATUSES,
       relationType: "FULFILLS",
+      lineTypes: ["PRODUCT", "SERVICE"],
+      remaining: (l) => dec(l.quantity).minus(dec(l.quantityDelivered)),
+    },
+    INVOICE: {
+      sourceStatuses: INVOICEABLE_ORDER_STATUSES,
+      relationType: "CONVERTS_TO",
+      lineTypes: PRICED_TYPES,
+      remaining: (l) =>
+        dec(l.quantity).minus(Decimal.max(dec(l.quantityDelivered), dec(l.quantityInvoiced))),
+    },
+  },
+  DELIVERY_NOTE: {
+    INVOICE: {
+      sourceStatuses: INVOICEABLE_DELIVERY_NOTE_STATUSES,
+      relationType: "CONVERTS_TO",
+      lineTypes: ["PRODUCT", "SERVICE"],
+      remaining: (l) => dec(l.quantity).minus(dec(l.quantityInvoiced)),
+    },
+  },
+  INVOICE: {
+    CREDIT_NOTE: {
+      sourceStatuses: CREDITABLE_INVOICE_STATUSES,
+      relationType: "CREDITS",
+      reverseRelation: true,
+      lineTypes: PRICED_TYPES,
+      remaining: (l) => dec(l.quantity).minus(dec(l.quantityReturned)),
     },
   },
 };
@@ -146,6 +182,8 @@ async function createDerivedDocument(args: {
   relationType: DocumentRelationType;
   linkSourceLines: boolean;
   context: DocumentCreateContext;
+  reverseRelation?: boolean;
+  taxDate?: Date;
 }): Promise<CreatedDocument> {
   const { tx, source, copies, context } = args;
   const input = buildDerivedInput(args);
@@ -157,7 +195,11 @@ async function createDerivedDocument(args: {
     documentDate: new Date(args.documentDate),
     customerId: source.customerId,
   } satisfies DocumentLinePricingContext;
-  const lineTax = await resolveDocumentLinesTax(tx, pricingContext, input.lines);
+  const lineTax = await resolveDocumentLinesTax(
+    tx,
+    { ...pricingContext, documentDate: args.taxDate ?? pricingContext.documentDate },
+    input.lines,
+  );
 
   const document = await tx.document.create({
     data: buildDocumentCreateData({
@@ -170,14 +212,19 @@ async function createDerivedDocument(args: {
     include: { lines: true },
   });
 
+  if (document.totalAmount.isNegative()) {
+    throw new ValidationError("The new document would have a negative total");
+  }
+  const [from, to] = args.reverseRelation ? [document.id, source.id] : [source.id, document.id];
   await tx.documentRelation.create({
     data: {
       tenantId: source.tenantId,
-      sourceDocumentId: source.id,
-      targetDocumentId: document.id,
+      sourceDocumentId: from,
+      targetDocumentId: to,
       relationType: args.relationType,
     },
   });
+
   return document;
 }
 
@@ -187,36 +234,40 @@ function remainingToDeliver(line: DocumentLine): Decimal {
 }
 
 /**
- * Picks the order lines (and quantities) for a delivery note.
- * Without a request: every product/service line with a remaining quantity.
+ * Picks the source lines (and quantities) for a partial conversion.
+ * Without a request: every quantified line with a remaining quantity.
  * With a request: the requested lines; descriptive lines are copied as they are.
  */
-function selectLinesToDeliver(
+function selectLinesByRemaining(
   lines: DocumentLine[],
+  lineTypes: readonly DocumentLineType[],
+  remaining: RemainingFn,
   requested: ConvertDocumentInput["lines"],
 ): Array<{ line: DocumentLine; quantity: Decimal }> {
-  const deliverable = (line: DocumentLine) => DELIVERABLE_LINE_TYPES.includes(line.lineType);
+  const quantified = (line: DocumentLine) => lineTypes.includes(line.lineType);
 
   if (!requested) {
     return lines
-      .filter((line) => deliverable(line) && remainingToDeliver(line).greaterThan(0))
-      .map((line) => ({ line, quantity: remainingToDeliver(line) }));
+      .filter((line) => quantified(line) && remaining(line).greaterThan(0))
+      .map((line) => ({ line, quantity: remaining(line) }));
   }
 
   const byId = new Map(lines.map((line) => [line.id, line]));
   return requested
     .map((entry) => {
       const line = byId.get(entry.lineId);
-      if (!line) throw new NotFoundError(`Order line ${entry.lineId} not found`);
-      if (line.lineType === "DISCOUNT") {
-        throw new BadRequestError("Discount lines cannot be delivered");
+      if (!line) throw new NotFoundError(`Source line ${entry.lineId} not found`);
+      if (!quantified(line)) {
+        if (line.lineType === "DISCOUNT") {
+          throw new BadRequestError("Discount lines cannot be converted to this document");
+        }
+        return { line, quantity: new Decimal(0) };
       }
-      if (!deliverable(line)) return { line, quantity: new Decimal(0) };
       if (entry.quantity === undefined) {
         throw new BadRequestError(`Quantity is required for line ${entry.lineId}`);
       }
       const quantity = new Decimal(entry.quantity);
-      if (quantity.greaterThan(remainingToDeliver(line))) {
+      if (quantity.greaterThan(remaining(line))) {
         throw new BadRequestError(
           `Quantity exceeds the remaining quantity of line ${entry.lineId}`,
         );
@@ -263,7 +314,7 @@ export async function convertDocument(args: {
     }
     await lockDocumentStatus(tx, source);
 
-    if (rule.mode === "FULL") {
+    if (!rule.remaining) {
       if (input.lines) {
         throw new BadRequestError("Partial conversion is not available for this conversion");
       }
@@ -286,16 +337,10 @@ export async function convertDocument(args: {
       orderBy: { lineNumber: "asc" },
     });
 
-    const selection =
-      rule.mode === "FULL"
-        ? sourceLines.map((line) => ({ line, quantity: new Decimal(line.quantity.toString()) }))
-        : selectLinesToDeliver(sourceLines, input.lines);
-    if (
-      !selection.some(
-        ({ line }) =>
-          DELIVERABLE_LINE_TYPES.includes(line.lineType) || line.lineType === "DISCOUNT",
-      )
-    ) {
+    const selection = rule.remaining
+      ? selectLinesByRemaining(sourceLines, rule.lineTypes, rule.remaining, input.lines)
+      : sourceLines.map((line) => ({ line, quantity: dec(line.quantity) }));
+    if (!selection.some(({ line }) => rule.lineTypes.includes(line.lineType))) {
       throw new BadRequestError("There are no lines to convert");
     }
 
@@ -306,9 +351,12 @@ export async function convertDocument(args: {
       documentDate: input.documentDate,
       notes: input.notes,
       copies: selection.map(({ line, quantity }) => copyLine(line, quantity)),
-      relationType: rule.relationType,
       linkSourceLines: true,
       context,
+      relationType: rule.relationType,
+      reverseRelation: rule.reverseRelation,
+      // Credit notes reverse VAT at the rate of the original invoice.
+      taxDate: rule.reverseRelation ? source.documentDate : undefined,
     });
   });
 }
@@ -341,14 +389,6 @@ export async function cloneDocument(args: {
       throw new BadRequestError(`${documentType} documents cannot be cloned`);
     }
 
-    if (
-      isInboundDocumentType(source.documentType) ||
-      source.documentType === "SELF_INVOICE" ||
-      source.documentType === "ARCHIVED"
-    ) {
-      throw new BadRequestError(`${source.documentType} documents cannot be cloned`);
-    }
-
     const sourceLines = await tx.documentLine.findMany({
       where: { tenantId: source.tenantId, documentId: source.id },
       orderBy: { lineNumber: "asc" },
@@ -357,7 +397,7 @@ export async function cloneDocument(args: {
     return createDerivedDocument({
       tx,
       source,
-      documentType: source.documentType,
+      documentType: documentType,
       documentDate: input.documentDate,
       notes: input.notes,
       copies: sourceLines.map((line) => copyLine(line, line.quantity.toString())),

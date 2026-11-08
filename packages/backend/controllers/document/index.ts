@@ -38,9 +38,7 @@ export {
 export {
   cloneDocument,
   convertDocument,
-  createDocumentRelation,
   getDocumentRelations,
-  deleteDocumentRelation,
 } from "./document-conversion-controller";
 
 // REPORTS — stats, sales, aging, top products, timeline, overdue installments

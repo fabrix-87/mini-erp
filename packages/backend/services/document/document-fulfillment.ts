@@ -145,7 +145,7 @@ export async function calculateFulfillmentStatus(
  * The order is locked, so concurrent formalizations of notes for the same order are serialized.
  *
  * @param args - Formalized delivery note, context and transaction client
- * @throws BadRequestError when the order is not fulfillable, a note line has no source line,
+ * @throws BadRequestError when the order is not fulfillable, 
  * references a line of another order, or exceeds the remaining quantity
  */
 export async function applyDeliveryNoteToOrder(args: {

@@ -13,9 +13,7 @@ import {
 import {
   cloneDocument,
   convertDocument,
-  createDocumentRelation,
   getDocumentRelations,
-  deleteDocumentRelation,
 } from "../../controllers/document";
 import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
@@ -61,32 +59,6 @@ conversionRoutes.get(
   requireTenantScope,
   validateDocumentId,
   getDocumentRelations,
-);
-
-/**
- * @route POST /api/documents/:id/relations
- * @desc  Create a relation between two documents
- * @access Private (document:create)
- */
-conversionRoutes.post(
-  "/:id/relations",
-  requireTenantScope,
-  authorize(["document:create", "document:manage"]),
-  validateDocumentId,
-  createDocumentRelation,
-);
-
-/**
- * @route DELETE /api/documents/:id/relations/:relationId
- * @desc  Remove a document relation by ID
- * @access Private (document:delete)
- */
-conversionRoutes.delete(
-  "/:id/relations/:relationId",
-  requireTenantScope,
-  authorize(["document:delete", "document:manage"]),
-  validateDocumentId,
-  deleteDocumentRelation,
 );
 
 export default conversionRoutes;
