@@ -31,6 +31,7 @@ export function buildDocumentCreateData(
     input.lines,
     linePricing,
     lineTax,
+    args.sourceLineIds
   );
 
   const totals =

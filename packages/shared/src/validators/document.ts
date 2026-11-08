@@ -9,6 +9,7 @@ import {
   nullableDecimalSchema,
   percentOptionalSchema,
   percentSchema,
+  quantityRequiredSchema,
   quantitySchema,
   unitAmountOptionalSchema,
 } from "./primitives/decimal";
@@ -354,7 +355,7 @@ const documentShape = z.object({
 
   // Payment snapshot (code/label are resolved by the server when paymentMethodId is set)
   paymentMethodId: paymentMethodIdBaseSchema.nullish(),
-  paymentMethodCode: z.string().trim().min(1).max(50).optional(),  
+  paymentMethodCode: z.string().trim().min(1).max(50).optional(),
 
   // Bank snapshot
   paymentBankAccountId: bankAccountIdBaseSchema.nullish(),
@@ -523,27 +524,6 @@ export const sendDocumentSchema = z
   .strict();
 
 // ============================================================================
-// DOCUMENT RELATION SCHEMAS
-// ============================================================================
-
-const documentRelationShape = z.object({
-  sourceDocumentId: documentIdSchema,
-  targetDocumentId: documentIdSchema,
-  /** MIRRORS is excluded: it is created by the server in the same transaction as the source document. */
-  relationType: documentRelationTypeSchema.exclude([DOCUMENT_RELATION_TYPES.MIRRORS]),
-});
-
-/**
- * Schema for creating a Document relation — source and target must differ.
- */
-export const createDocumentRelationSchema = documentRelationShape
-  .strict()
-  .refine((data) => data.sourceDocumentId !== data.targetDocumentId, {
-    message: "Documento sorgente e destinazione devono essere diversi",
-    path: ["targetDocumentId"],
-  });
-
-// ============================================================================
 // BULK OPERATIONS SCHEMAS
 // ============================================================================
 
@@ -656,9 +636,6 @@ export const documentLineIdParamSchema = z.object({
   lineId: documentLineIdBaseSchema,
 });
 
-export const documentCustomerIdParamSchema = z.object({ customerId: customerIdBaseSchema });
-export const documentSupplierIdParamSchema = z.object({ supplierId: supplierIdBaseSchema });
-
 export const documentAttachmentIdParamSchema = z.object({
   attachmentId: createIdSchema("Attachment ID non valido"),
 });
@@ -708,37 +685,34 @@ export const topProductsReportSchema = z.object({
 // CONVERSION SCHEMAS
 // ============================================================================
 
-/**
- * Schema per duplicare documento
- */
-export const duplicateDocumentSchema = z
-  .object({
-    includeLines: z.boolean().default(true),
-    includeInstallments: z.boolean().default(false),
-    status: documentStatusSchema.default("DRAFT"),
-  })
+/** One source line to convert; `quantity` is required for product/service lines and ignored for descriptive ones. */
+const convertLineSchema = z
+  .object({ lineId: documentLineIdBaseSchema, quantity: quantityRequiredSchema.optional() })
   .strict();
 
+/**
+ * Converts a document into another type, always as a DRAFT.
+ * `lines` is allowed only for conversions that deliver part of the source (ORDER -> DELIVERY_NOTE);
+ * when omitted, every line with a remaining quantity is converted.
+ */
 export const convertDocumentSchema = z
   .object({
-    targetDocumentType: documentTypeSchema,
-    copyLines: z.boolean().default(true),
-    copyInstallments: z.boolean().default(true),
-    copyNotes: z.boolean().default(true),
-    documentDate: isoDateSchema(),
-    notes: z.string().max(500).optional().nullable(),
-    status: documentStatusSchema.default("DRAFT"),
-    dueDate: isoDateSchema(),
+    targetDocumentType: createDocumentTypeSchema,
+    lines: z.array(convertLineSchema).min(1).max(MAX_DOCUMENT_LINES).optional(),
+    documentDate: isoDateSchema({ required: true }).default(() => new Date().toISOString()),
+    notes: z.string().max(5000).nullish(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (data) => !data.lines || new Set(data.lines.map((l) => l.lineId)).size === data.lines.length,
+    { message: "ID righe duplicati", path: ["lines"] },
+  );
 
+/** Clones a document as a new DRAFT of the same type, with the same counterparty. */
 export const cloneDocumentSchema = z
   .object({
-    documentDate: isoDateSchema().default(() => new Date().toISOString()),
-    resetStatus: z.boolean().default(true),
-    notes: z.string().max(500).optional().nullable(),
-    warehouseId: warehouseIdBaseSchema.optional().nullable(),
-    customerId: customerIdBaseSchema.optional().nullable(),
+    documentDate: isoDateSchema({ required: true }).default(() => new Date().toISOString()),
+    notes: z.string().max(5000).nullish(),
   })
   .strict();
 

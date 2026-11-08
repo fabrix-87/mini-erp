@@ -8,7 +8,7 @@ import { authorize } from "../../middleware/auth-middleware";
 import {
   validateDocumentId,
   validateConvertDocument,
-  validateDuplicateDocument,
+  validateCloneDocument,
 } from "../../validators/document-validator";
 import {
   cloneDocument,
@@ -20,6 +20,7 @@ import {
 import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 
 const conversionRoutes = createHonoApp();
+const canCreate = authorize(["document:create", "document:manage"]);
 
 /**
  * @route POST /api/documents/:id/clone
@@ -28,10 +29,10 @@ const conversionRoutes = createHonoApp();
  */
 conversionRoutes.post(
   "/:id/clone",
+  canCreate,
   requireTenantScope,
-  authorize(["document:create", "document:manage"]),
   validateDocumentId,
-  validateDuplicateDocument,
+  validateCloneDocument,
   cloneDocument,
 );
 
@@ -42,8 +43,8 @@ conversionRoutes.post(
  */
 conversionRoutes.post(
   "/:id/convert",
+  canCreate,
   requireTenantScope,
-  authorize(["document:create", "document:manage"]),
   validateDocumentId,
   validateConvertDocument,
   convertDocument,
@@ -56,8 +57,8 @@ conversionRoutes.post(
  */
 conversionRoutes.get(
   "/:id/relations",
-  requireTenantScope,
   authorize(["document:read", "document:manage"]),
+  requireTenantScope,
   validateDocumentId,
   getDocumentRelations,
 );

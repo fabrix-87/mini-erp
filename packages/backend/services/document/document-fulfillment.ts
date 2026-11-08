@@ -4,25 +4,9 @@ import { canTransition, type DocumentStatus } from "@mini-erp/shared";
 import { prisma } from "@/config/prisma-config";
 import { BadRequestError, NotFoundError } from "@/utils/app-error-utils";
 import { withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
-import type { DocumentCreateContext } from "@/types";
+import { FULFILLABLE_LINE_TYPES, FULFILLABLE_STATUSES, FULFILLMENT_TRACKED_TYPES, type DocumentCreateContext, type FulfillmentStatus } from "@/types";
 import { createStatusHistory } from "./document-status-history";
 import { lockDocumentStatus } from "./document-concurrency";
-
-/** Order statuses from which delivery quantities can be applied. */
-const FULFILLABLE_STATUSES: readonly DocumentStatus[] = [
-  "ACCEPTED",
-  "PREPARING",
-  "PARTIALLY_FULFILLED",
-];
-
-/** Line types that carry deliverable quantities. */
-const FULFILLABLE_LINE_TYPES = ["PRODUCT", "SERVICE"] as const;
-
-/** Document types whose fulfillment is tracked. */
-const FULFILLMENT_TRACKED_TYPES: readonly DocumentType[] = ["ORDER"];
-
-/** Fulfillment status computed from document lines. */
-export type FulfillmentStatus = "PENDING" | "PARTIALLY_FULFILLED" | "FULFILLED";
 
 /** Fulfillment breakdown for one document line. */
 export interface DocumentLineFulfillment {
@@ -199,15 +183,14 @@ export async function applyDeliveryNoteToOrder(args: {
 
   const delivered = new Map<string, Decimal>();
   for (const line of noteLines) {
-    if (!line.sourceLineId) {
-      throw new BadRequestError("Every delivery note line must reference an order line");
-    }
+    // Extra or manual lines have no source line and do not affect the order.
+    if (!line.sourceLineId) continue;
     delivered.set(
       line.sourceLineId,
       (delivered.get(line.sourceLineId) ?? new Decimal(0)).plus(line.quantity),
     );
   }
-  if (delivered.size === 0) throw new BadRequestError("The delivery note has no deliverable lines");
+  if (delivered.size === 0) return;
 
   const orderLines = await tx.documentLine.findMany({
     where: { tenantId, documentId: order.id, id: { in: [...delivered.keys()] } },

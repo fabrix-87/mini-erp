@@ -1,4 +1,4 @@
-import type { DocumentType, Prisma } from "@/generated/prisma/client";
+import type { DocumentStatus, DocumentType, Prisma } from "@/generated/prisma/client";
 import type { CreateDocumentInput, Decimal } from "@mini-erp/shared";
 
 /** Interactive transaction limits: pricing up to MAX_DOCUMENT_LINES lines can be slow. */
@@ -83,7 +83,10 @@ export interface BuildDocumentCreateDataArgs {
   /** Pricing resolved for each input line, in the same order. */
   linePricing: ResolvedLinePricing[];
 
-  lineTax: ResolvedLineTax[]
+  lineTax: ResolvedLineTax[];
+
+  /** Source line ID of each line (conversions only), in the same order as `input.lines`. */
+  sourceLineIds?: Array<string | null | undefined>;
 }
 
 /** Numbering result generated during document formalization. */
@@ -130,4 +133,27 @@ export interface DocumentTotalsSummary {
   taxableAmount: Decimal;
   taxAmount: Decimal;
   totalAmount: Decimal;
+}
+
+/** Order statuses from which delivery quantities can be applied. */
+export const FULFILLABLE_STATUSES: readonly DocumentStatus[] = [
+  "ACCEPTED",
+  "PREPARING",
+  "PARTIALLY_FULFILLED",
+];
+
+/** Line types that carry deliverable quantities. */
+export const FULFILLABLE_LINE_TYPES = ["PRODUCT", "SERVICE"] as const;
+
+/** Document types whose fulfillment is tracked. */
+export const FULFILLMENT_TRACKED_TYPES: readonly DocumentType[] = ["ORDER"];
+
+/** Fulfillment status computed from document lines. */
+export type FulfillmentStatus = "PENDING" | "PARTIALLY_FULFILLED" | "FULFILLED";
+
+export type CreatableDocumentType = CreateDocumentInput["documentType"];
+
+/** Narrows to the types a user can create (SELF_INVOICE is system-generated). */
+export function isCreatableType(type: DocumentType): type is CreatableDocumentType {
+  return type !== "SELF_INVOICE";
 }

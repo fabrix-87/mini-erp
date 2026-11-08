@@ -119,11 +119,39 @@ export async function updateDocumentHeader(args: UpdateDocumentHeaderArgs) {
       const document = await findDocumentOrThrow(tx, documentId, context.tenantId);
       assertDocumentEditable(document);
       await assertHeaderUpdateAllowed(tx, document, input);
+
+      const counterpartyChanged =
+        (input.customerId !== undefined && input.customerId !== document.customerId) ||
+        (input.supplierId !== undefined && input.supplierId !== document.supplierId);
+
+      if (counterpartyChanged) {
+        const fulfills = await tx.documentRelation.count({
+          where: {
+            tenantId: document.tenantId,
+            targetDocumentId: document.id,
+            relationType: "FULFILLS",
+          },
+        });
+        if (fulfills > 0) {
+          throw new BadRequestError(
+            "The counterparty of a delivery note cannot differ from its order",
+          );
+        }
+      }
+
       await lockDocumentStatus(tx, document);
+
+      const data = buildDocumentHeaderUpdateData(input, context.userId);
+      if (counterpartyChanged) {
+        data.contactId = input.contactId ?? null;
+        data.shippingAddressId = input.shippingAddressId ?? null;
+        data.opportunityId = input.opportunityId ?? null;
+        data.leadId = input.leadId ?? null;
+      }
 
       await tx.document.update({
         where: { tenantId_id: { tenantId: document.tenantId, id: document.id }, deletedAt: null },
-        data: buildDocumentHeaderUpdateData(input, context.userId),
+        data,
       });
       if (input.discountPercent !== undefined) {
         await recalculateDocumentTotals(

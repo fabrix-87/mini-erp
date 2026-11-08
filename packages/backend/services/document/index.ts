@@ -18,6 +18,7 @@ export * from "./document-idempotency";
 export * from "./document-installment-builder";
 export * from "./document-lifecycle";
 export * from "./document-line-builder";
+export * from "./document-line-copy";
 export * from "./document-line-pricing-service";
 export * from "./document-line-tax-service";
 export * from "./document-lines-service";

@@ -14,6 +14,7 @@ export interface BuildDocumentLineArgs {
   pricing: ResolvedLinePricing;
   /** VAT snapshot resolved from the line's tax rule. */
   tax: ResolvedLineTax;
+  sourceLineId?: string | null;
 }
 
 /** Intermediate result containing computed totals and the Prisma create input. */
@@ -105,6 +106,8 @@ export function buildDocumentLine(args: BuildDocumentLineArgs): ProcessedDocumen
 
     originalUnitPrice: pricing.originalUnitPrice ?? undefined,
     priceOverrideReason: pricing.priceOverrideReason ?? undefined,
+
+    sourceLineId: args.sourceLineId ?? undefined,
   };
 
   return {
@@ -130,11 +133,21 @@ export function buildDocumentLines(
   lines: CreateDocumentLineInput[],
   linePricing: ResolvedLinePricing[],
   lineTax: ResolvedLineTax[],
+  sourceLineIds?: Array<string | null | undefined>,
 ): ProcessedDocumentLine[] {
   if (lines.length !== linePricing.length || lines.length !== lineTax.length) {
     throw new Error("Line pricing/tax count does not match line count");
   }
+  if (sourceLineIds && sourceLineIds.length !== lines.length) {
+    throw new Error("Source line count does not match line count");
+  }
   return lines.map((line, index) =>
-    buildDocumentLine({ line, index, pricing: linePricing[index], tax: lineTax[index] }),
+    buildDocumentLine({
+      line,
+      index,
+      pricing: linePricing[index],
+      tax: lineTax[index],
+      sourceLineId: sourceLineIds?.[index],
+    }),
   );
 }

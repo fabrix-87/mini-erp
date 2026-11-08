@@ -8,17 +8,14 @@ import {
   cloneDocumentSchema,
   convertDocumentSchema,
   createDocumentLineSchema,
-  createDocumentRelationSchema,
   createDocumentSchema,
   createInstallmentSchema,
   documentAttachmentIdParamSchema,
-  documentCustomerIdParamSchema,
   documentIdParamSchema,
   documentLineIdParamSchema,
   documentLineQuerySchema,
   documentQuerySchema,
   documentStatsSchema,
-  documentSupplierIdParamSchema,
   generateInstallmentPlanSchema,
   installmentIdParamSchema,
   installmentQuerySchema,
@@ -54,8 +51,6 @@ export type SendDocumentInput = z.infer<typeof sendDocumentSchema>;
 export type ConvertDocumentInput = z.infer<typeof convertDocumentSchema>;
 export type CloneDocumentInput = z.infer<typeof cloneDocumentSchema>;
 
-export type CreateDocumentRelationInput = z.infer<typeof createDocumentRelationSchema>;
-
 export type ReorderDocumentLinesInput = z.infer<typeof reorderDocumentLinesSchema>;
 
 export type BulkUpdateDocumentsStatusInput = z.infer<typeof bulkUpdateDocumentsStatusSchema>;
@@ -81,8 +76,6 @@ export type TopProductsReportInput = z.infer<typeof topProductsReportSchema>;
 export type DocumentIdParam = z.infer<typeof documentIdParamSchema>;
 export type DocumentLineIdParam = DocumentIdParam & z.infer<typeof documentLineIdParamSchema>;
 export type InstallmentIdParam = DocumentIdParam & z.infer<typeof installmentIdParamSchema>;
-export type DocumentSupplierIdParam = z.infer<typeof documentSupplierIdParamSchema>;
-export type DocumentCustomerIdParam = z.infer<typeof documentCustomerIdParamSchema>;
 export type VoidDocumentInput = z.infer<typeof voidDocumentSchema>;
 export type DocumentAttachmentIdParam = DocumentIdParam &
   z.infer<typeof documentAttachmentIdParamSchema>;

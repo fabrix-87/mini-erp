@@ -245,3 +245,8 @@ export const taxPercentSchema = createDecimalSchema(2, {
   ...percentOptions,
 });
 export const exchangeRateSchema = createDecimalSchema(6, { positiveOnly: true, min: 0 });
+
+export const quantityRequiredSchema = createDecimalSchema(6, {
+  ...quantityOptions,
+  required: true,
+});

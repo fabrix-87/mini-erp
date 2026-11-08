@@ -3,6 +3,7 @@ import {
   approveDocumentSchema,
   bulkSendDocumentsSchema,
   bulkUpdateDocumentsStatusSchema,
+  cloneDocumentSchema,
   convertDocumentSchema,
   createDocumentLineSchema,
   createDocumentSchema,
@@ -11,7 +12,6 @@ import {
   documentIdParamSchema,
   documentLineIdParamSchema,
   documentQuerySchema,
-  duplicateDocumentSchema,
   installmentIdParamSchema,
   rejectDocumentSchema,
   reorderDocumentLinesSchema,
@@ -102,14 +102,8 @@ export const validateReorderDocumentLines = validateBody(
  */
 export const validateConvertDocument = validateBody(convertDocumentSchema, "Convert document");
 
-/**
- * Validates the request body for cloning/duplicating a document.
- * Delegates to the shared {@link duplicateDocumentSchema}.
- */
-export const validateDuplicateDocument = validateBody(
-  duplicateDocumentSchema,
-  "Duplicate document",
-);
+/** Validates the request body for cloning a document. Delegates to the shared {@link cloneDocumentSchema}. */
+export const validateCloneDocument = validateBody(cloneDocumentSchema, "Clone document");
 
 // ============================================================================
 // ROUTE PARAMS

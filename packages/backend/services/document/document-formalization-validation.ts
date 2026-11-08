@@ -6,7 +6,7 @@ import {
   isInboundDocumentType,
   type DocumentType,
 } from "@mini-erp/shared";
-import { withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
+import { withTenantId } from "@/helpers/prisma-helper";
 import { ValidationError } from "@/utils/app-error-utils";
 import type { DocumentFormalizationSnapshots } from "@/types";
 
@@ -47,7 +47,7 @@ export async function assertDocumentReadyForFormalization(
   const issues: string[] = [];
 
   const lines = await tx.documentLine.findMany({
-    where: withSoftDelete(withTenantId({ documentId: document.id }, document.tenantId)),
+    where: withTenantId({ documentId: document.id }, document.tenantId),
     select: { lineType: true, warehouseId: true },
   });
 
