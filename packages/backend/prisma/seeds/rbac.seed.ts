@@ -496,6 +496,13 @@ async function seedRBAC() {
         scope: PermissionScope.ALL,
         description: "Annullamento documenti",
       },
+      {
+        code: "document:pay",
+        resource: "document",
+        action: "pay",
+        scope: PermissionScope.ALL,
+        description: "Pagamento rate documenti",
+      },
       
       // Company
       {

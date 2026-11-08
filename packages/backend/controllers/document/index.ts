@@ -24,15 +24,7 @@ export {
 } from "./document-fulfillment-controller";
 
 // INSTALLMENTS — CRUD, pay, generate plan
-export {
-  getDocumentInstallments,
-  getInstallmentById,
-  createInstallment,
-  updateInstallment,
-  deleteInstallment,
-  payInstallment,
-  generateInstallmentPlan,
-} from "./document-installments-controller";
+export * from "./document-installments-controller";
 
 // CONVERSION — clone, convert, relations
 export {

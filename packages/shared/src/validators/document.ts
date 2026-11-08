@@ -1,14 +1,11 @@
 import { z } from "zod";
-import { createCuidSchema, createIdSchema, positiveNumbersSchema } from "./primitives/id";
+import { createCuidSchema, createIdSchema } from "./primitives/id";
 import {
   discountPercentOptionalSchema,
   discountPercentSchema,
   exchangeRateSchema,
-  moneyOptionalSchema,
   moneySchema,
-  nullableDecimalSchema,
-  percentOptionalSchema,
-  percentSchema,
+  positiveMoneySchema,
   quantityRequiredSchema,
   quantitySchema,
   unitAmountOptionalSchema,
@@ -265,46 +262,39 @@ export const createDocumentLineSchema = z
 
 export const installmentIdSchema = createCuidSchema("ID Installment non valido");
 
-/**
- * Raw object shape for Installment.
- */
-const installmentShape = z.object({
-  installmentNumber: z.number().int().positive(),
-  percentage: percentSchema,
-  amount: moneyOptionalSchema,
-  dueDate: isoDateSchema({ required: true }),
-  status: installmentStatusSchema,
-  notes: z.string().max(500).nullish(),
-  paymentMethodId: paymentMethodIdBaseSchema.nullish(),
-});
-
-export const createInstallmentSchema = installmentShape
-  .extend({
-    installmentNumber: z.number().int().positive().default(1),
-    amount: moneySchema,
-    status: installmentStatusSchema.default(INSTALLMENT_STATUSES.PENDING),
+const installmentInputSchema = z
+  .object({
+    dueDate: isoDateSchema({ required: true }),
+    amount: positiveMoneySchema,
+    paymentMethodId: paymentMethodIdBaseSchema.nullish(),
+    notes: z.string().max(500).nullish(),
   })
   .strict();
 
-export const updateInstallmentSchema = installmentShape.partial().strict();
+/** Replaces the whole installment plan of a draft; amounts must add up to the net payable amount. */
+export const replaceInstallmentsSchema = z
+  .object({ installments: z.array(installmentInputSchema).min(1).max(MAX_INSTALLMENTS) })
+  .strict();
 
+/** Generates the installment plan from a payment method (defaults to the document's method). */
+export const generateInstallmentsSchema = z
+  .object({ paymentMethodId: paymentMethodIdBaseSchema.optional() })
+  .strict();
+
+/**
+ * Registers a payment on an installment. `expectedPaidAmount` is the paid amount the client
+ * last saw; a mismatch rejects duplicate or stale submissions.
+ */
 export const payInstallmentSchema = z
   .object({
-    paidAmount: moneySchema,
-    paymentMethodId: paymentMethodIdBaseSchema,
+    paidAmount: positiveMoneySchema,
+    expectedPaidAmount: moneySchema,
     paidDate: isoDateSchema({ required: true }).default(() => new Date().toISOString()),
-    paymentReference: z.string().max(100).optional().nullable(),
-    bankTransactionId: z.string().max(100).optional().nullable(),
-    notes: z.string().max(500).optional().nullable(),
+    paymentMethodId: paymentMethodIdBaseSchema.optional(),
+    paymentReference: z.string().max(100).nullish(),
+    bankTransactionId: z.string().max(100).nullish(),
   })
   .strict();
-
-export const generateInstallmentPlanSchema = z.object({
-  count: positiveNumbersSchema,
-  firstDueDate: isoDateSchema({ required: true }),
-  intervalDays: positiveNumbersSchema,
-  paymentMethodId: paymentMethodIdBaseSchema,
-});
 
 // ============================================================================
 // DOCUMENT SCHEMAS
@@ -376,6 +366,8 @@ const documentShape = z.object({
 /**
  * Schema for creating a Document.
  * Direction is derived from documentType (see isInboundDocumentType), not sent by the client.
+ * Installments are not part of the payload: they are generated at formalization from the payment
+ * method, or managed through the /installments endpoints while the document is a draft.
  */
 export const createDocumentSchema = documentShape
   .extend({
@@ -388,10 +380,6 @@ export const createDocumentSchema = documentShape
     lines: z
       .array(createDocumentLineSchema)
       .max(MAX_DOCUMENT_LINES, `Massimo ${MAX_DOCUMENT_LINES} righe`)
-      .default([]),
-    installments: z
-      .array(createInstallmentSchema)
-      .max(MAX_INSTALLMENTS, `Massimo ${MAX_INSTALLMENTS} rate`)
       .default([]),
   })
   .strict()
@@ -449,17 +437,6 @@ export const createDocumentSchema = documentShape
         message: "matchStatus è ammesso solo su righe di fattura fornitore",
         path: ["lines"],
       });
-    }
-
-    if (data.installments.length > 0) {
-      const total = data.installments.reduce((sum, inst) => sum + Number(inst.percentage), 0);
-      if (Math.abs(total - 100) >= 0.01) {
-        ctx.addIssue({
-          code: "custom",
-          message: "La somma delle percentuali delle rate deve essere 100%",
-          path: ["installments"],
-        });
-      }
     }
   });
 

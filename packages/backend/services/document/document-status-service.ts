@@ -28,6 +28,7 @@ import { createStatusHistory } from "./document-status-history";
 import { applyDeliveryNoteToOrder } from "./document-fulfillment";
 import { applyCreditNoteToInvoice, applyInvoiceToSources } from "./document-invoicing";
 import { closeIfFullyProcessed } from "./document-auto-close";
+import { ensureInstallmentsOnFormalization } from "./document-installments-service";
 
 /** Arguments required to transition a document status. */
 export interface TransitionDocumentStatusArgs {
@@ -267,6 +268,8 @@ async function formalizeDocument(args: {
     reason,
     tx,
   });
+
+  await ensureInstallmentsOnFormalization({ document: updatedDocument, tx });
 
   switch (updatedDocument.documentType) {
     case "DELIVERY_NOTE":

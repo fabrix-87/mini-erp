@@ -12,7 +12,7 @@
 enum PaymentTermType {
   ANTICIPATED // Due immediately (advance payment)
   DAYS_FROM_INVOICE // Due N days after invoice date
-  END_OF_MONTH // Due at end of month, optionally plus dueDays
+  END_OF_MONTH // Due at the end of the month of (document date + dueDays)
   FIXED_DAY // Due on a fixed day of the month
 }
 

@@ -183,3 +183,13 @@ export const CREDITABLE_INVOICE_STATUSES: readonly DocumentStatus[] = [
   "OVERDUE",
   "CLOSED",
 ];
+
+/** Document types that carry installments and receive payments. */
+export const PAYABLE_DOCUMENT_TYPES: readonly DocumentType[] = [
+  "INVOICE",
+  "DEBIT_NOTE",
+  "SUPPLIER_INVOICE",
+];
+
+/** Statuses in which payments can be registered. */
+export const PAYABLE_STATUSES: readonly DocumentStatus[] = ["UNPAID", "PARTIALLY_PAID", "OVERDUE"];

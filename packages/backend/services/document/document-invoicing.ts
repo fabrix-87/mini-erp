@@ -4,7 +4,7 @@ import { BadRequestError, NotFoundError } from "@/utils/app-error-utils";
 import { withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 import {
   CREDITABLE_INVOICE_STATUSES,
-  DocumentCreateContext,
+  type DocumentCreateContext,
   INVOICEABLE_DELIVERY_NOTE_STATUSES,
   INVOICEABLE_ORDER_STATUSES,
 } from "@/types";
@@ -147,7 +147,6 @@ export async function applyInvoiceToSources(args: {
       where: { tenantId_id: { tenantId, id: line.id } },
       data: { quantityInvoiced: { increment: quantity } },
     });
-    await closeIfFullyProcessed({ document: source, context, tx });
     if (line.sourceLineId) {
       perOrderLine.set(
         line.sourceLineId,
@@ -155,6 +154,8 @@ export async function applyInvoiceToSources(args: {
       );
     }
   }
+  await closeIfFullyProcessed({ document: source, context, tx });
+
   if (perOrderLine.size === 0) return;
 
   const orderRelation = await tx.documentRelation.findFirst({
@@ -177,7 +178,7 @@ export async function applyInvoiceToSources(args: {
       data: { quantityInvoiced: { increment: quantity } },
     });
   }
-  closeIfFullyProcessed({ document: order, context, tx });
+  await closeIfFullyProcessed({ document: order, context, tx });
 }
 
 /**

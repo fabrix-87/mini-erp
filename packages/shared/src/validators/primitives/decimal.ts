@@ -250,3 +250,10 @@ export const quantityRequiredSchema = createDecimalSchema(6, {
   ...quantityOptions,
   required: true,
 });
+
+export const positiveMoneySchema = createDecimalSchema(2, {
+  positiveOnly: true,
+  min: 0.01,
+  max: MAX_DOCUMENT_AMOUNT,
+  required: true,
+});

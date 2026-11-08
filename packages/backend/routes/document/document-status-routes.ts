@@ -30,7 +30,7 @@ const canVoid = authorize(["document:void", "document:manage"]);
 /**
  * @route PATCH /api/documents/:id/status
  * @desc  Update document status
- * @access Private (document:update)
+ * @access Private (document:update | document:manage)
  */
 statusRoutes.patch(
   "/:id/status",
@@ -44,14 +44,14 @@ statusRoutes.patch(
 /**
  * @route POST /api/documents/:id/send
  * @desc  Mark document as sent to the customer
- * @access Private (document:update)
+ * @access Private (document:update | document:manage)
  */
 statusRoutes.post("/:id/send", canUpdate, requireTenantScope, validateDocumentId, sendDocument);
 
 /**
  * @route POST /api/documents/:id/approve
  * @desc  Approve a document pending approval
- * @access Private (document:approve)
+ * @access Private (document:approve | document:manage)
  */
 statusRoutes.post(
   "/:id/approve",
@@ -65,7 +65,7 @@ statusRoutes.post(
 /**
  * @route POST /api/documents/:id/reject
  * @desc  Reject a document pending approval
- * @access Private (document:approve)
+ * @access Private (document:approve | document:manage)
  */
 statusRoutes.post(
   "/:id/reject",
@@ -79,7 +79,7 @@ statusRoutes.post(
 /**
  * @route POST /api/documents/:id/void
  * @desc  Void (annul) a document
- * @access Private (document:void)
+ * @access Private (document:void | document:manage)
  */
 statusRoutes.post(
   "/:id/void",
@@ -93,7 +93,7 @@ statusRoutes.post(
 /**
  * @route GET /api/documents/:id/history
  * @desc  Retrieve the audit trail of a document
- * @access Private (document:read)
+ * @access Private (document:read | document:manage)
  */
 statusRoutes.get(
   "/:id/history",

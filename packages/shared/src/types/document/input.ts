@@ -9,25 +9,24 @@ import {
   convertDocumentSchema,
   createDocumentLineSchema,
   createDocumentSchema,
-  createInstallmentSchema,
   documentAttachmentIdParamSchema,
   documentIdParamSchema,
   documentLineIdParamSchema,
   documentLineQuerySchema,
   documentQuerySchema,
   documentStatsSchema,
-  generateInstallmentPlanSchema,
+  generateInstallmentsSchema,
   installmentIdParamSchema,
   installmentQuerySchema,
   payInstallmentSchema,
   rejectDocumentSchema,
   reorderDocumentLinesSchema,
+  replaceInstallmentsSchema,
   salesReportSchema,
   sendDocumentSchema,
   topProductsReportSchema,
   updateDocumentSchema,
   updateDocumentStatusSchema,
-  updateInstallmentSchema,
   voidDocumentSchema,
 } from "../../validators/document";
 
@@ -37,10 +36,9 @@ import {
 
 export type CreateDocumentLineInput = z.infer<typeof createDocumentLineSchema>;
 
-export type CreateInstallmentInput = z.infer<typeof createInstallmentSchema>;
-export type UpdateInstallmentInput = z.infer<typeof updateInstallmentSchema>;
+export type GenerateInstallmentsInput = z.infer<typeof generateInstallmentsSchema>;
+export type ReplaceInstallmentsInput = z.infer<typeof replaceInstallmentsSchema>;
 export type PayInstallmentInput = z.infer<typeof payInstallmentSchema>;
-export type GenerateInstallmentPlanInput = z.infer<typeof generateInstallmentPlanSchema>;
 
 export type CreateDocumentInput = z.infer<typeof createDocumentSchema>;
 export type UpdateDocumentInput = z.infer<typeof updateDocumentSchema>;

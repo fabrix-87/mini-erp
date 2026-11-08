@@ -46,6 +46,10 @@ export async function assertDocumentReadyForFormalization(
   const config = DOCUMENT_TYPE_CONFIG[document.documentType];
   const issues: string[] = [];
 
+  if (config.requiresPaymentMethod && !document.paymentMethodId) {
+    issues.push("payment method is required");
+  }
+
   const lines = await tx.documentLine.findMany({
     where: withTenantId({ documentId: document.id }, document.tenantId),
     select: { lineType: true, warehouseId: true },

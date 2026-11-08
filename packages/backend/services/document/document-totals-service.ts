@@ -6,6 +6,7 @@ import { assertDocumentEditable, findDocumentOrThrow } from "./document-guards";
 import { lockDocumentStatus } from "./document-concurrency";
 import { getDocumentDetail } from "./document-query-service";
 import { ValidationError } from "@/utils/app-error-utils";
+import { realignDraftInstallments } from "./document-installment-plan";
 
 /**
  * Recomputes and persists the totals of a document from its persisted lines.
@@ -64,6 +65,8 @@ export async function recalculateDocumentTotals(
     } satisfies Prisma.DocumentUncheckedUpdateInput,
   });
 
+  await realignDraftInstallments(tx, { documentId, tenantId, netPayable: summary.totalAmount });
+  
   return summary;
 }
 

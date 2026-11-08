@@ -41,7 +41,7 @@ export const updateDocumentStatus = async (c: Context<AppBindings>) => {
 /**
  * Approves a document in PENDING_APPROVAL (formalizes it).
  * @route POST /api/documents/:id/approve
- * @access Private (document:update | document:manage)
+ * @access Private (document:approve | document:manage)
  * @param c - Hono context
  */
 export const approveDocument = async (c: Context<AppBindings>) => {
@@ -55,7 +55,7 @@ export const approveDocument = async (c: Context<AppBindings>) => {
 /**
  * Rejects a document; the reason is mandatory.
  * @route POST /api/documents/:id/reject
- * @access Private (document:update | document:manage)
+ * @access Private (document:approve | document:manage)
  * @param c - Hono context
  */
 export const rejectDocument = async (c: Context<AppBindings>) => {
@@ -69,7 +69,7 @@ export const rejectDocument = async (c: Context<AppBindings>) => {
 /**
  * Voids a formalized document; the reason is mandatory.
  * @route POST /api/documents/:id/void
- * @access Private (document:update | document:manage)
+ * @access Private (document:void | document:manage)
  * @param c - Hono context
  */
 export const voidDocument = async (c: Context<AppBindings>) => {

@@ -13,3 +13,11 @@
 - [ ] Orders that are never delivered (services, immediate invoice) do not close automatically.
 - [ ] Stock movements on delivery notes and credit notes; accounting entries.
 - [ ] Date consistency checks (invoice vs order/delivery note, credit note vs invoice).
+
+- [ ] Payment ledger: one record per payment (amount, date, method, reference) with reversal;
+      today `paidAmount` is cumulative on the installment and only the last date/reference is kept.
+- [ ] Seed a system user and run `markOverdueInstallments` daily (with the idempotency-key cleanup).
+- [ ] Credit notes do not reduce the open installments of the credited invoice.
+- [ ] Late fees and reminders (`lateFeeAmount`, `remindersSent`).
+- [ ] PaymentTermDetail: month-end offset ("end of month + N days").
+- [ ] Derived documents: fall back to the counterparty default payment method when the source has none.

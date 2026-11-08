@@ -158,7 +158,6 @@ function buildDerivedInput(args: {
     termsAndConditions: source.termsAndConditions,
     customFields: source.customFields,
     lines: args.copies.map((copy) => copy.input),
-    installments: [],
     dueDate: undefined,
     deliveryDate: undefined,
     validUntil: undefined,
@@ -226,11 +225,6 @@ async function createDerivedDocument(args: {
   });
 
   return document;
-}
-
-/** Remaining deliverable quantity of an order line. */
-function remainingToDeliver(line: DocumentLine): Decimal {
-  return new Decimal(line.quantity.toString()).minus(line.quantityDelivered.toString());
 }
 
 /**

@@ -7,7 +7,6 @@ import {
 } from "@mini-erp/shared";
 import { toJsonField, toDecimal } from "@/helpers/prisma-helper";
 import { buildDocumentLines, type ProcessedDocumentLine } from "./document-line-builder";
-import { buildDocumentInstallments } from "./document-installment-builder";
 import type { BuildDocumentCreateDataArgs } from "@/types";
 
 /**
@@ -118,12 +117,6 @@ export function buildDocumentCreateData(
     ...(processedLines.length > 0 && {
       lines: {
         create: processedLines.map((line) => line.prismaInput),
-      },
-    }),
-
-    ...(input.installments.length > 0 && {
-      installments: {
-        create: buildDocumentInstallments(input.installments, context.tenantId),
       },
     }),
   };

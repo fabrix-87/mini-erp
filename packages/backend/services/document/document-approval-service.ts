@@ -45,11 +45,16 @@ export async function approveDocument(args: {
 }
 
 /**
- * Rejects a document. The transition map decides where this is allowed
-  *
+ * Rejects a document waiting for approval (PENDING_APPROVAL → REJECTED). The reason is mandatory
+ * and is stored in the status history. This is the only way out of PENDING_APPROVAL other than
+ * going back to DRAFT: the generic status endpoint cannot be used for it. A rejection by the
+ * customer of an already sent document goes through the generic status transition instead.
+ *
  * @param args - Document ID, mandatory reason and context
  * @returns The rejected document
- * @throws BadRequestError when the reason is missing or the transition is not allowed
+ * @throws NotFoundError when the document does not exist
+ * @throws BadRequestError when the reason is empty, the document is not in PENDING_APPROVAL
+ * or the transition is not allowed for its type
  */
 export async function rejectDocument(args: {
   documentId: string;

@@ -7,18 +7,19 @@ import {
   convertDocumentSchema,
   createDocumentLineSchema,
   createDocumentSchema,
-  createInstallmentSchema,
   documentAttachmentIdParamSchema,
   documentIdParamSchema,
   documentLineIdParamSchema,
   documentQuerySchema,
+  generateInstallmentsSchema,
   installmentIdParamSchema,
+  payInstallmentSchema,
   rejectDocumentSchema,
   reorderDocumentLinesSchema,
+  replaceInstallmentsSchema,
   topProductsReportSchema,
   updateDocumentSchema,
   updateDocumentStatusSchema,
-  updateInstallmentSchema,
   voidDocumentSchema,
 } from "@mini-erp/shared/validators/document";
 
@@ -132,23 +133,28 @@ export const validateDocumentInstallmentIdParam = validateParams(
 );
 
 /**
- * Validates the request body for creating a new payment installment on a document.
- * Delegates to the shared {@link createInstallmentSchema}.
+ * Validates the request body for generating document installments.
+ * Delegates to the shared {@link generateInstallmentsSchema}.
  */
-export const validateCreateDocumentInstallments = validateBody(
-  createInstallmentSchema,
-  "Document Installment Creation",
+export const validateGenerateDocumentInstallments = validateBody(
+  generateInstallmentsSchema,
+  "Generate installments",
 );
 
 /**
- * Validates the request body for updating an existing payment installment.
- * Delegates to the shared {@link updateInstallmentSchema}.
+ * Validates the request body for replacing document installments.
+ * Delegates to the shared {@link replaceInstallmentsSchema}.
  */
-export const validateUpdateDocumentInstallments = validateBody(
-  updateInstallmentSchema,
-  "Update Document Installment",
+export const validateReplaceDocumentInstallments = validateBody(
+  replaceInstallmentsSchema,
+  "Replace installments",
 );
 
+/**
+ * Validates the request body for paying a document installment.
+ * Delegates to the shared {@link payInstallmentSchema}.
+ */
+export const validatePayDocumentInstallment = validateBody(payInstallmentSchema, "Pay installment");
 // ============================================================================
 // BULK ACTIONS
 // ============================================================================
