@@ -1,8 +1,7 @@
 /**
  * @module document-installments-routes
- * @description Routes for payment installment management on documents.
- * Covers full CRUD, payment registration, and automatic plan generation.
- * Static sub-paths (/generate-plan) are registered before /:installmentId.
+ * @description Routes for the installment plan of payable documents:
+ * list, generate from the payment method, replace the plan, register a payment.
  */
 import { createHonoApp } from "../../lib/hono-app";
 import { authorize } from "../../middleware/auth-middleware";
@@ -29,7 +28,7 @@ const canPay = authorize(["document:pay", "document:manage"]);
 /**
  * @route GET /api/documents/:id/installments
  * @desc  List all payment installments for a document
- * @access Private (document:read)
+ * @access Private (document:read | document:manage)
  */
 installmentRoutes.get(
   "/:id/installments",
@@ -42,7 +41,7 @@ installmentRoutes.get(
 /**
  * @route POST /api/documents/:id/installments/generate
  * @desc  Auto-generate a payment plan based on terms and total amount
- * @access Private (document:update)
+ * @access Private (document:update | document:manage)
  */
 installmentRoutes.post(
   "/:id/installments/generate",
@@ -56,7 +55,7 @@ installmentRoutes.post(
 /**
  * @route POST /api/documents/:id/installments/:installmentId/pay
  * @desc  Register a payment against an installment
- * @access Private (document:pay)
+ * @access Private (document:pay | document:manage)
  */
 installmentRoutes.post(
   "/:id/installments/:installmentId/pay",
@@ -70,8 +69,8 @@ installmentRoutes.post(
 
 /**
  * @route PUT /api/documents/:id/installments
- * @descr Replace all installments with a new set of installments
- * @access Private (document:update)
+ * @desc Replace all installments with a new set of installments
+ * @access Private (document:update | document:manage)
  */
 installmentRoutes.put(
   "/:id/installments",

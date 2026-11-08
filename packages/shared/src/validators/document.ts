@@ -51,6 +51,7 @@ import {
   DOCUMENT_SORT_OPTIONS,
   DOCUMENT_LINE_SORT_OPTIONS,
   SYSTEM_DRIVEN_STATUSES,
+  MAX_BULK_DOCUMENTS,
 } from "../constants/document";
 import { bicSchema, ibanSchema } from "./business";
 import { isInboundDocumentType } from "../helpers";
@@ -504,31 +505,31 @@ export const sendDocumentSchema = z
 // BULK OPERATIONS SCHEMAS
 // ============================================================================
 
+/** IDs of the documents of a bulk request: 1 to MAX_BULK_DOCUMENTS, no duplicates. */
+const bulkDocumentIdsSchema = z
+  .array(documentIdSchema)
+  .min(1, "Seleziona almeno un documento")
+  .max(MAX_BULK_DOCUMENTS, `Massimo ${MAX_BULK_DOCUMENTS} documenti`)
+  .refine((ids) => new Set(ids).size === ids.length, { message: "ID documenti duplicati" });
+
+/**
+ * Changes the status of several documents through the regular transition rules.
+ * System-driven statuses, REJECTED and VOIDED are excluded: they have dedicated operations.
+ */
 export const bulkUpdateDocumentsStatusSchema = z
   .object({
-    documentIds: z.array(documentIdSchema).min(1, "Seleziona almeno un documento"),
-
-    status: documentStatusSchema,
-
-    reason: z.string().max(500).optional().nullable(),
+    documentIds: bulkDocumentIdsSchema,
+    status: documentStatusSchema.exclude([
+      ...SYSTEM_DRIVEN_STATUSES,
+      DOCUMENT_STATUSES.REJECTED,
+      DOCUMENT_STATUSES.VOIDED,
+    ]),
+    reason: z.string().trim().max(500).nullish(),
   })
   .strict();
 
-export const bulkDeleteDocumentsSchema = z
-  .object({
-    documentIds: z.array(documentIdSchema).min(1, "Seleziona almeno un documento"),
-
-    reason: z.string().max(500).optional().nullable(),
-  })
-  .strict();
-
-export const bulkSendDocumentsSchema = z
-  .object({
-    documentIds: z.array(documentIdSchema).min(1, "Seleziona almeno un documento"),
-
-    emailTemplate: z.string().optional(),
-  })
-  .strict();
+/** Soft-deletes several draft documents without a number. */
+export const bulkDeleteDocumentsSchema = z.object({ documentIds: bulkDocumentIdsSchema }).strict();
 
 /** Reorders the lines of a document: every line ID exactly once, in the new order. */
 export const reorderDocumentLinesSchema = z

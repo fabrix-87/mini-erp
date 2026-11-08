@@ -2,8 +2,7 @@ import { z } from "zod";
 import {
   agingReportSchema,
   approveDocumentSchema,
-  bulkDeleteDocumentsSchema,
-  bulkSendDocumentsSchema,
+  bulkDeleteDocumentsSchema,  
   bulkUpdateDocumentsStatusSchema,
   cloneDocumentSchema,
   convertDocumentSchema,
@@ -53,7 +52,7 @@ export type ReorderDocumentLinesInput = z.infer<typeof reorderDocumentLinesSchem
 
 export type BulkUpdateDocumentsStatusInput = z.infer<typeof bulkUpdateDocumentsStatusSchema>;
 export type BulkDeleteDocumentsInput = z.infer<typeof bulkDeleteDocumentsSchema>;
-export type BulkSendDocumentsInput = z.infer<typeof bulkSendDocumentsSchema>;
+
 
 // ============================================================================
 // QUERY TYPES (using z.infer)

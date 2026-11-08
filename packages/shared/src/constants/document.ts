@@ -138,6 +138,8 @@ export const RESET_SEQUENCE_YEARLY: Record<OutboundDocumentType, boolean> = {
   SELF_INVOICE: true,
 } as const;
 
+export const MAX_BULK_DOCUMENTS = 50;
+
 // ============================================================================
 // STATUS TRANSITIONS & WORKFLOWS
 // ============================================================================

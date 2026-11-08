@@ -64,9 +64,7 @@ export async function recalculateDocumentTotals(
       updatedByUserId: userId,
     } satisfies Prisma.DocumentUncheckedUpdateInput,
   });
-
   await realignDraftInstallments(tx, { documentId, tenantId, netPayable: summary.totalAmount });
-  
   return summary;
 }
 

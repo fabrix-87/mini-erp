@@ -19,9 +19,7 @@ export {
 export * from "./document-lines-controller";
 
 // FULFILLMENT — status, per-line delivered qty, delivery note
-export {
-  getDocumentFulfillment,
-} from "./document-fulfillment-controller";
+export { getDocumentFulfillment } from "./document-fulfillment-controller";
 
 // INSTALLMENTS — CRUD, pay, generate plan
 export * from "./document-installments-controller";
@@ -43,10 +41,5 @@ export {
   getOverdueInstallments,
 } from "./document-reports-controller";
 
-// BULK — status update, soft delete, send, export
-export {
-  bulkChangeStatus,
-  bulkDeleteDocuments,
-  bulkSendDocuments,
-  bulkExportDocuments,
-} from "./document-bulk-controller";
+// BULK — status update, soft delete
+export * from "./document-bulk-controller";

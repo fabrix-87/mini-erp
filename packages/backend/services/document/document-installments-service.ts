@@ -269,7 +269,7 @@ export async function registerInstallmentPayment(args: {
     if (installment.paymentBatchId) {
       throw new BadRequestError("The installment belongs to a payment batch");
     }
-    if (!dec(installment.paidAmount).equals(input.expectedPaidAmount ?? 0)) {
+    if (!dec(installment.paidAmount).equals(input.expectedPaidAmount)) {
       throw new ConflictError("The installment was modified, reload it and retry");
     }
     if (input.paymentMethodId) {

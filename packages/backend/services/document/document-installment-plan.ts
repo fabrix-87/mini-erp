@@ -32,9 +32,8 @@ const endOfMonth = (date: Date): Date =>
 
 /**
  * Computes the due date of one term from the document date (UTC calendar days).
- * END_OF_MONTH is the end of the month of the document date plus dueDays
- * FIXED_DAY is the given day of the month offset by `fixedMonthOffset`,
- * clamped to the month length.
+ * END_OF_MONTH is the end of the month of (document date + dueDays)
+ * FIXED_DAY is the given day of the month offset by fixedMonthOffset, clamped to the month length.
  */
 export function calculateDueDate(term: TermRule, base: Date): Date {
   switch (term.termType) {

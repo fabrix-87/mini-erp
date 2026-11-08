@@ -1,7 +1,7 @@
 import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 import {
   approveDocumentSchema,
-  bulkSendDocumentsSchema,
+  bulkDeleteDocumentsSchema,
   bulkUpdateDocumentsStatusSchema,
   cloneDocumentSchema,
   convertDocumentSchema,
@@ -155,6 +155,7 @@ export const validateReplaceDocumentInstallments = validateBody(
  * Delegates to the shared {@link payInstallmentSchema}.
  */
 export const validatePayDocumentInstallment = validateBody(payInstallmentSchema, "Pay installment");
+
 // ============================================================================
 // BULK ACTIONS
 // ============================================================================
@@ -169,12 +170,12 @@ export const validateBulkUpdateDocumentsStatus = validateBody(
 );
 
 /**
- * Validates the request body for a bulk send operation on multiple documents.
- * Delegates to the shared {@link bulkSendDocumentsSchema}.
+ * Validates the request body for a bulk soft-delete of documents.
+ * Delegates to the shared {@link bulkDeleteDocumentsSchema}.
  */
-export const validateBulkSendDocuments = validateBody(
-  bulkSendDocumentsSchema,
-  "Bulk Send Documents",
+export const validateBulkDeleteDocuments = validateBody(
+  bulkDeleteDocumentsSchema,
+  "Bulk Delete Documents",
 );
 
 // ============================================================================

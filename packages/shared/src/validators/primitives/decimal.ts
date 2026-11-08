@@ -211,7 +211,7 @@ export const nullableDecimalSchema = <T extends z.ZodType>(schema: T) =>
 
 const moneyOptions = { positiveOnly: true, min: 0, max: MAX_DOCUMENT_AMOUNT } as const;
 export const moneyOptionalSchema = createDecimalSchema(2, moneyOptions);
-export const moneySchema = createDecimalSchema(2, { ...moneyOptions, defaultValue: 0 });
+export const moneySchema = createDecimalSchema(2, { ...moneyOptions, required: true });
 
 /** Unit amounts match Decimal(20,6) in Prisma (unitPrice, unitCost, originalUnitPrice). */
 const unitAmountOptions = { positiveOnly: true, min: 0 } as const;

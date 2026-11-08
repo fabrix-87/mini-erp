@@ -4,6 +4,7 @@
 
 export * from "./document-approval-service";
 export * from "./document-auto-close";
+export * from "./document-bulk-service";
 export * from "./document-concurrency";
 export * from "./document-conversion";
 export * from "./document-counterparty-recalculation";
