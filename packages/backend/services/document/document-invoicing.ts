@@ -4,10 +4,12 @@ import { BadRequestError, NotFoundError } from "@/utils/app-error-utils";
 import { withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 import {
   CREDITABLE_INVOICE_STATUSES,
+  DocumentCreateContext,
   INVOICEABLE_DELIVERY_NOTE_STATUSES,
   INVOICEABLE_ORDER_STATUSES,
 } from "@/types";
 import { lockDocumentStatus } from "./document-concurrency";
+import { closeIfFullyProcessed } from "./document-auto-close";
 
 const TRACKED_LINE_TYPES = ["PRODUCT", "SERVICE", "DISCOUNT"] as const;
 
@@ -85,9 +87,10 @@ async function loadLines(
  */
 export async function applyInvoiceToSources(args: {
   invoice: Document;
+  context: DocumentCreateContext;
   tx: Prisma.TransactionClient;
 }): Promise<void> {
-  const { invoice, tx } = args;
+  const { invoice, tx, context } = args;
   const { tenantId } = invoice;
 
   const relation = await tx.documentRelation.findFirst({
@@ -123,6 +126,7 @@ export async function applyInvoiceToSources(args: {
         data: { quantityInvoiced: { increment: quantities.get(line.id) as Decimal } },
       });
     }
+    await closeIfFullyProcessed({ document: source, context, tx });
     return;
   }
 
@@ -143,6 +147,7 @@ export async function applyInvoiceToSources(args: {
       where: { tenantId_id: { tenantId, id: line.id } },
       data: { quantityInvoiced: { increment: quantity } },
     });
+    await closeIfFullyProcessed({ document: source, context, tx });
     if (line.sourceLineId) {
       perOrderLine.set(
         line.sourceLineId,
@@ -172,6 +177,7 @@ export async function applyInvoiceToSources(args: {
       data: { quantityInvoiced: { increment: quantity } },
     });
   }
+  closeIfFullyProcessed({ document: order, context, tx });
 }
 
 /**

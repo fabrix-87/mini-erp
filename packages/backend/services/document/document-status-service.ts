@@ -27,6 +27,7 @@ import {
 import { createStatusHistory } from "./document-status-history";
 import { applyDeliveryNoteToOrder } from "./document-fulfillment";
 import { applyCreditNoteToInvoice, applyInvoiceToSources } from "./document-invoicing";
+import { closeIfFullyProcessed } from "./document-auto-close";
 
 /** Arguments required to transition a document status. */
 export interface TransitionDocumentStatusArgs {
@@ -203,7 +204,7 @@ async function updateDocumentStatus(args: {
     tx,
   });
 
-  return document;
+  return targetStatus === "DELIVERED" ? closeIfFullyProcessed({ document, context, tx }) : document;
 }
 
 /**
@@ -272,7 +273,7 @@ async function formalizeDocument(args: {
       await applyDeliveryNoteToOrder({ deliveryNote: updatedDocument, context, tx });
       break;
     case "INVOICE":
-      await applyInvoiceToSources({ invoice: updatedDocument, tx });
+      await applyInvoiceToSources({ invoice: updatedDocument, context, tx });
       break;
     case "CREDIT_NOTE":
       await applyCreditNoteToInvoice({ creditNote: updatedDocument, tx });
