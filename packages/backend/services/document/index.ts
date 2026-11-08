@@ -5,6 +5,7 @@
 export * from "./document-approval-service";
 export * from "./document-concurrency";
 export * from "./document-conversion";
+export * from "./document-counterparty-recalculation";
 export * from "./document-create-builder";
 export * from "./document-create-service";
 export * from "./document-delete-service";

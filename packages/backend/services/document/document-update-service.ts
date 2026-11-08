@@ -9,11 +9,12 @@ import {
 } from "@mini-erp/shared";
 import { BadRequestError, ConflictError } from "@/utils/app-error-utils";
 import { parseOptionalDate, toDecimal, toJsonField, toRequiredDate } from "@/helpers/prisma-helper";
-import type { DocumentCreateContext } from "@/types";
+import { TRANSACTION_LIMITS_OPTIONS, type DocumentCreateContext } from "@/types";
 import { assertDocumentEditable, findDocumentOrThrow } from "./document-guards";
 import { lockDocumentStatus } from "./document-concurrency";
 import { recalculateDocumentTotals } from "./document-totals-service";
 import { getDocumentDetail } from "./document-query-service";
+import { recalculateForCounterpartyChange } from "./document-counterparty-recalculation";
 
 /** Arguments of a draft header update. */
 export interface UpdateDocumentHeaderArgs {
@@ -70,6 +71,18 @@ function buildDocumentHeaderUpdateData(
   } satisfies Prisma.DocumentUncheckedUpdateInput;
 }
 
+/** A delivery note must keep the counterparty of the order it fulfills. */
+async function assertCounterpartyChangeAllowed(
+  tx: Prisma.TransactionClient,
+  document: Document,
+): Promise<void> {
+  const fulfills = await tx.documentRelation.count({
+    where: { tenantId: document.tenantId, targetDocumentId: document.id, relationType: "FULFILLS" },
+  });
+  if (fulfills > 0)
+    throw new BadRequestError("The counterparty of a delivery note cannot differ from its order");
+}
+
 /** Rejects updates inconsistent with the document type or its current lines. */
 async function assertHeaderUpdateAllowed(
   tx: Prisma.TransactionClient,
@@ -108,7 +121,7 @@ async function assertHeaderUpdateAllowed(
 
 /**
  * Updates the header of an editable (DRAFT / PENDING_APPROVAL) document.
- * Recalculates totals when the document discount changes. Lines are not repriced.
+ * Recalculates totals when the document discount changes.
  * @returns The updated document detail.
  * @throws NotFoundError | BadRequestError | ConflictError
  */
@@ -119,41 +132,39 @@ export async function updateDocumentHeader(args: UpdateDocumentHeaderArgs) {
       const document = await findDocumentOrThrow(tx, documentId, context.tenantId);
       assertDocumentEditable(document);
       await assertHeaderUpdateAllowed(tx, document, input);
+      await lockDocumentStatus(tx, document);
 
       const counterpartyChanged =
         (input.customerId !== undefined && input.customerId !== document.customerId) ||
         (input.supplierId !== undefined && input.supplierId !== document.supplierId);
-
-      if (counterpartyChanged) {
-        const fulfills = await tx.documentRelation.count({
-          where: {
-            tenantId: document.tenantId,
-            targetDocumentId: document.id,
-            relationType: "FULFILLS",
-          },
-        });
-        if (fulfills > 0) {
-          throw new BadRequestError(
-            "The counterparty of a delivery note cannot differ from its order",
-          );
-        }
-      }
-
-      await lockDocumentStatus(tx, document);
+      if (counterpartyChanged) await assertCounterpartyChangeAllowed(tx, document);
 
       const data = buildDocumentHeaderUpdateData(input, context.userId);
       if (counterpartyChanged) {
+        // Links that belong to the previous counterparty must not survive the change.
         data.contactId = input.contactId ?? null;
         data.shippingAddressId = input.shippingAddressId ?? null;
         data.opportunityId = input.opportunityId ?? null;
         data.leadId = input.leadId ?? null;
       }
-
-      await tx.document.update({
+      const updated = await tx.document.update({
         where: { tenantId_id: { tenantId: document.tenantId, id: document.id }, deletedAt: null },
         data,
       });
-      if (input.discountPercent !== undefined) {
+
+      if (counterpartyChanged) {
+        const { paymentMethodId } = await recalculateForCounterpartyChange({
+          tx,
+          document: updated,
+          context,
+        });
+        if (input.paymentMethodId === undefined) {
+          await tx.document.update({
+            where: { tenantId_id: { tenantId: document.tenantId, id: document.id } },
+            data: { paymentMethodId, paymentMethodCode: null },
+          });
+        }
+      } else if (input.discountPercent !== undefined) {
         await recalculateDocumentTotals(
           tx,
           { documentId, tenantId: document.tenantId },
@@ -161,7 +172,7 @@ export async function updateDocumentHeader(args: UpdateDocumentHeaderArgs) {
         );
       }
       return getDocumentDetail(documentId, context.tenantId, tx);
-    });
+    }, TRANSACTION_LIMITS_OPTIONS);
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002")
