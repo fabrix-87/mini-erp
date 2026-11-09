@@ -469,8 +469,14 @@ export const DOCUMENT_TYPES_WITH_STOCK_MOVEMENTS: readonly DocumentType[] = [
   "SUPPLIER_DELIVERY_NOTE",
 ] as const;
 
-/** Sales documents that contribute to revenue; credit notes carry negative line amounts. */
-export const SALES_DOCUMENT_TYPES: DocumentType[] = ["INVOICE", "CREDIT_NOTE"];
+/**
+ * Sales document types included in revenue reports.
+ * Credit notes are stored as positive documents and reversed by reporting queries.
+ */
+export const SALES_DOCUMENT_TYPES: DocumentType[] = [
+  "INVOICE",
+  "CREDIT_NOTE",
+];
 
 /** Document types that carry installments and receive payments. */
 export const PAYABLE_DOCUMENT_TYPES: readonly DocumentType[] = [

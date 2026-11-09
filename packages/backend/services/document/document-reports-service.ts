@@ -1,7 +1,5 @@
-import { Prisma, type DocumentType } from "@/generated/prisma/client";
 import { Decimal } from "@prisma/client/runtime/client";
 import {
-    normalizeToMidnight,
   PAYABLE_DOCUMENT_TYPES,
   SALES_DOCUMENT_TYPES,
   type AgingReportInput,
@@ -10,488 +8,785 @@ import {
   type SalesReportInput,
   type TopProductsReportInput,
 } from "@mini-erp/shared";
-import { prisma } from "@/config/prisma-config";
-import { dateRange, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 
-const zero = new Decimal(0);
+import {
+  Prisma,
+  type DocumentStatus,
+  type DocumentType,
+  type InstallmentStatus,
+} from "../../generated/prisma/client";
 
-/** Runs the time-series query shared by statistics and sales, with the given filters. */
-async function timeSeries(args: {
+import type {
+  AgingReport,
+  DocumentStatisticsReport,
+  OverdueInstallmentsReport,
+  ReportPeriod,
+  SalesReport,
+  TopProductsReport,
+} from "@mini-erp/shared";
+
+import { prisma } from "../../config/prisma-config";
+import { BadRequestError } from "../../utils/app-error-utils";
+
+const REPORT_TIME_ZONE = "Europe/Rome";
+
+interface DocumentScope {
   tenantId: string;
-  trunc: "day" | "week" | "month" | "year";
-  from?: Date;
-  to?: Date;
-  documentTypes: DocumentType[];
-  customerId?: string | null;
-  includeVoided?: boolean;
-}) {
-  const { tenantId, trunc, from, to, documentTypes, customerId, includeVoided } = args;
-  const rows = await prisma.$queryRaw<
-    {
-      period: Date;
-      count: bigint;
-      total_amount: Decimal;
-      paid_amount: Decimal;
-      taxable_amount: Decimal;
-      tax_amount: Decimal;
-    }[]
-  >`
+  dateFrom?: string | undefined;
+  dateTo?: string | undefined;
+  customerId?: string | undefined;
+  documentTypes?: readonly DocumentType[] | undefined;
+  sales?: boolean | undefined;
+  includeVoided?: boolean | undefined;
+}
+
+interface AmountRow {
+  count: bigint;
+  totalAmount: Decimal;
+  paidAmount: Decimal;
+  taxableAmount: Decimal;
+  taxAmount: Decimal;
+}
+
+interface CustomerRow extends AmountRow {
+  customerId: string;
+  customerName: string | null;
+}
+
+interface ProductRow {
+  productVariantId: string;
+  productName: string;
+  quantitySold: Decimal;
+  revenueNet: Decimal;
+  revenueGross: Decimal;
+  lineCount: bigint;
+}
+
+interface BucketRow {
+  bucketIndex: number;
+  amount: Decimal;
+  count: bigint;
+}
+
+interface AgingCustomerRow {
+  customerId: string;
+  customerName: string | null;
+  totalOutstanding: Decimal;
+  oldestDueDateDaysAgo: number;
+}
+
+interface OverdueRow {
+  installmentId: string;
+  documentId: string;
+  documentNumber: string | null;
+  documentType: DocumentType;
+  customerId: string | null;
+  customerName: string | null;
+  installmentNumber: number;
+  amount: Decimal;
+  paidAmount: Decimal;
+  outstanding: Decimal;
+  dueDate: Date;
+  daysOverdue: number;
+  status: InstallmentStatus;
+  paymentMethodCode: string | null;
+}
+
+const romeDateFormatter = new Intl.DateTimeFormat("en-GB", {
+  timeZone: REPORT_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+/** Returns a civil date in the reporting time zone. */
+function toReportDate(value: string | Date): string {
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    throw new BadRequestError("Data del report non valida");
+  }
+
+  const parts = romeDateFormatter.formatToParts(date);
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+
+  if (!year || !month || !day) {
+    throw new BadRequestError("Impossibile determinare la data del report");
+  }
+
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Converts a UTC timestamp without time zone to Rome local wall-clock time.
+ * Prisma DateTime uses PostgreSQL timestamp(3) in the current schema.
+ */
+function localDocumentDate(): Prisma.Sql {
+  return Prisma.sql`
+    (
+      d."document_date"
+      AT TIME ZONE 'UTC'
+      AT TIME ZONE ${REPORT_TIME_ZONE}
+    )
+  `;
+}
+
+/** Builds a tenant-scoped, soft-delete-safe document reporting CTE. */
+function documentScope(args: DocumentScope): Prisma.Sql {
+  const from = args.dateFrom ? toReportDate(args.dateFrom) : undefined;
+  const to = args.dateTo ? toReportDate(args.dateTo) : undefined;
+
+  if (from && to && from > to) {
+    throw new BadRequestError("La data iniziale non può essere successiva alla data finale");
+  }
+
+  if (args.documentTypes?.length === 0) {
+    throw new BadRequestError("Nessun tipo documento selezionato");
+  }
+
+  const sign = args.sales
+    ? Prisma.sql`
+        CASE
+          WHEN d."document_type" = 'CREDIT_NOTE' THEN -1
+          ELSE 1
+        END
+      `
+    : Prisma.sql`1`;
+
+  return Prisma.sql`
+    WITH scoped_documents AS (
+      SELECT
+        d.*,
+        ${sign} AS report_sign,
+        (
+          SELECT p."name"
+          FROM "document_parties" p
+          WHERE p."tenant_id" = d."tenant_id"
+            AND p."document_id" = d."id"
+            AND p."role" = 'COUNTERPARTY'
+        ) AS customer_name
+      FROM "documents" d
+      WHERE d."tenant_id" = ${args.tenantId}
+        AND d."deleted_at" IS NULL
+        AND d."currency_code" = d."base_currency_code"
+
+        ${
+          args.documentTypes
+            ? Prisma.sql`
+                AND d."document_type"::text IN (
+                  ${Prisma.join([...args.documentTypes])}
+                )
+              `
+            : Prisma.empty
+        }
+
+        ${args.customerId ? Prisma.sql`AND d."customer_id" = ${args.customerId}` : Prisma.empty}
+
+        ${
+          args.sales
+            ? Prisma.sql`
+                AND d."direction" = 'OUTBOUND'
+                AND d."status" NOT IN ('DRAFT', 'PENDING_APPROVAL')
+              `
+            : Prisma.empty
+        }
+
+        ${args.includeVoided === false ? Prisma.sql`AND d."status" <> 'VOIDED'` : Prisma.empty}
+
+        ${
+          from
+            ? Prisma.sql`
+                AND d."document_date" >= (
+                  ${from}::date::timestamp
+                  AT TIME ZONE ${REPORT_TIME_ZONE}
+                  AT TIME ZONE 'UTC'
+                )
+              `
+            : Prisma.empty
+        }
+
+        ${
+          to
+            ? Prisma.sql`
+                AND d."document_date" < (
+                  (${to}::date + 1)::timestamp
+                  AT TIME ZONE ${REPORT_TIME_ZONE}
+                  AT TIME ZONE 'UTC'
+                )
+              `
+            : Prisma.empty
+        }
+    )
+  `;
+}
+
+/** Returns the shared signed document aggregation expressions. */
+function documentAmounts(): Prisma.Sql {
+  return Prisma.sql`
+    COUNT(*)::bigint AS "count",
+    COALESCE(
+      SUM(d."total_amount" * d.report_sign), 0
+    ) AS "totalAmount",
+    COALESCE(
+      SUM(d."paid_amount" * d.report_sign), 0
+    ) AS "paidAmount",
+    COALESCE(
+      SUM(d."taxable_amount" * d.report_sign), 0
+    ) AS "taxableAmount",
+    COALESCE(
+      SUM(d."tax_amount" * d.report_sign), 0
+    ) AS "taxAmount"
+  `;
+}
+
+/** Aggregates documents by customer using the latest available party snapshot. */
+async function customerTotals(scope: Prisma.Sql) {
+  const rows = await prisma.$queryRaw<CustomerRow[]>(Prisma.sql`
+    ${scope}
     SELECT
-      DATE_TRUNC(${Prisma.sql.raw(`'${trunc}'`)}, "document_date") AS period,
-      COUNT(*)::bigint AS count,
-      COALESCE(SUM("total_amount"), 0) AS total_amount,
-      COALESCE(SUM("paid_amount"), 0) AS paid_amount,
-      COALESCE(SUM("taxable_amount"), 0) AS taxable_amount,
-      COALESCE(SUM("tax_amount"), 0) AS tax_amount
-    FROM "documents"
-    WHERE "tenant_id" = ${tenantId}
-      AND "deleted_at" IS NULL
-      AND "document_type" IN (${Prisma.join(documentTypes)})
-      ${!includeVoided ? Prisma.sql`AND "status" <> 'VOIDED'` : Prisma.empty}
-      ${from ? Prisma.sql`AND "document_date" >= ${from}` : Prisma.empty}
-      ${to ? Prisma.sql`AND "document_date" <= ${to}` : Prisma.empty}
-      ${customerId ? Prisma.sql`AND "customer_id" = ${customerId}` : Prisma.empty}
+      d."customer_id" AS "customerId",
+      (
+        ARRAY_AGG(
+          d.customer_name
+          ORDER BY d."document_date" DESC, d."id" DESC
+        ) FILTER (WHERE d.customer_name IS NOT NULL)
+      )[1] AS "customerName",
+      ${documentAmounts()}
+    FROM scoped_documents d
+    WHERE d."customer_id" IS NOT NULL
+    GROUP BY d."customer_id"
+    ORDER BY "totalAmount" DESC, "customerId" ASC
+  `);
+
+  return rows.map((row) => ({
+    ...row,
+    count: Number(row.count),
+  }));
+}
+
+/** Aggregates signed document totals by a Rome-local calendar period. */
+async function timeSeries(scope: Prisma.Sql, period: ReportPeriod) {
+  const rows = await prisma.$queryRaw<Array<AmountRow & { period: Date }>>(Prisma.sql`
+    ${scope}
+    SELECT
+      (
+        DATE_TRUNC(${period}::text, ${localDocumentDate()})
+        AT TIME ZONE ${REPORT_TIME_ZONE}
+        AT TIME ZONE 'UTC'
+      ) AS period,
+      ${documentAmounts()}
+    FROM scoped_documents d
     GROUP BY 1
     ORDER BY 1 ASC
-  `;
+  `);
+
   return rows.map((row) => ({
-    period: row.period,
+    ...row,
     count: Number(row.count),
-    totalAmount: row.total_amount,
-    paidAmount: row.paid_amount,
-    taxableAmount: row.taxable_amount,
-    taxAmount: row.tax_amount,
+  }));
+}
+
+/** Aggregates product variants without splitting results by historical names. */
+async function productTotals(scope: Prisma.Sql, limit?: number) {
+  const rows = await prisma.$queryRaw<ProductRow[]>(Prisma.sql`
+    ${scope}
+    SELECT
+      l."product_variant_id" AS "productVariantId",
+      (
+        ARRAY_AGG(
+          l."name_system"
+          ORDER BY
+            d."document_date" DESC,
+            d."id" DESC,
+            l."line_number" DESC,
+            l."id" DESC
+        )
+      )[1] AS "productName",
+      COALESCE(
+        SUM(l."quantity" * l."uom_factor" * d.report_sign), 0
+      ) AS "quantitySold",
+      COALESCE(
+        SUM(l."line_total" * d.report_sign), 0
+      ) AS "revenueNet",
+      COALESCE(
+        SUM(l."line_total_with_tax" * d.report_sign), 0
+      ) AS "revenueGross",
+      COUNT(*)::bigint AS "lineCount"
+    FROM "document_lines" l
+    INNER JOIN scoped_documents d
+      ON d."tenant_id" = l."tenant_id"
+      AND d."id" = l."document_id"
+    WHERE l."lineType" = 'PRODUCT'
+      AND l."product_variant_id" IS NOT NULL
+      AND l."is_component" = false
+    GROUP BY l."product_variant_id"
+    ORDER BY "revenueNet" DESC, "productVariantId" ASC
+    ${limit !== undefined ? Prisma.sql`LIMIT ${limit}` : Prisma.empty}
+  `);
+
+  return rows.map((row) => ({
+    ...row,
+    lineCount: Number(row.lineCount),
   }));
 }
 
 /**
- * Aggregates document counts and amounts by type, status, customer or period.
- * Customer rows use the company name; period rows use the document date truncated in SQL
- * (day/week/month), with the tenant filter applied through Prisma.
+ * Aggregates base-currency documents by type, status, customer or calendar period.
+ * Generic statistics preserve document signs and include draft and voided documents.
  *
- * @param args - Validated input and tenant ID
- * @returns Rows in the requested grouping, ordered by count (type/status) or amount (customer)
- * or period (time)
+ * @param args - Validated report input and authenticated tenant ID.
+ * @returns Document statistics for the requested grouping.
  */
-export async function getDocumentStatistics(args: { input: DocumentStatsInput; tenantId: string }) {
+export async function getDocumentStatistics(args: {
+  input: DocumentStatsInput;
+  tenantId: string;
+}): Promise<DocumentStatisticsReport<Decimal, Date>> {
   const { input, tenantId } = args;
-  const documentDate = dateRange(input.dateFrom, input.dateTo);
-  const where = withSoftDelete(
-    withTenantId(
-      {
-        ...(documentDate && { documentDate }),
-        ...(input.documentType && { documentType: input.documentType }),
-        ...(input.customerId && { customerId: input.customerId }),
-      },
-      tenantId,
-    ),
-  ) as Prisma.DocumentWhereInput;
 
-  if (input.groupBy === "documentType" || input.groupBy === "status") {
-    const by =
-      input.groupBy === "documentType" ? (["documentType"] as const) : (["status"] as const);
-    const rows = await prisma.document.groupBy({
-      by,
-      where,
-      _count: { id: true },
-      _sum: { totalAmount: true, paidAmount: true },
-      orderBy: { _count: { id: "desc" } },
-    });
+  const scope = documentScope({
+    tenantId,
+    dateFrom: input.dateFrom,
+    dateTo: input.dateTo,
+    customerId: input.customerId,
+    documentTypes: input.documentType ? [input.documentType] : undefined,
+  });
+
+  if (input.groupBy === "documentType") {
+    const rows = await prisma.$queryRaw<
+      Array<AmountRow & { documentType: DocumentType }>
+    >(Prisma.sql`
+      ${scope}
+      SELECT
+        d."document_type" AS "documentType",
+        ${documentAmounts()}
+      FROM scoped_documents d
+      GROUP BY d."document_type"
+      ORDER BY "count" DESC, "documentType" ASC
+    `);
+
     return {
-      groupBy: input.groupBy,
+      groupBy: "documentType" as const,
       data: rows.map((row) => ({
-        ...(input.groupBy === "documentType"
-          ? { documentType: row.documentType }
-          : { status: row.status }),
-        count: row._count.id,
-        totalAmount: row._sum.totalAmount ?? zero,
-        paidAmount: row._sum.paidAmount ?? zero,
+        documentType: row.documentType,
+        count: Number(row.count),
+        totalAmount: row.totalAmount,
+        paidAmount: row.paidAmount,
+      })),
+    };
+  }
+
+  if (input.groupBy === "status") {
+    const rows = await prisma.$queryRaw<Array<AmountRow & { status: DocumentStatus }>>(Prisma.sql`
+      ${scope}
+      SELECT
+        d."status",
+        ${documentAmounts()}
+      FROM scoped_documents d
+      GROUP BY d."status"
+      ORDER BY "count" DESC, d."status" ASC
+    `);
+
+    return {
+      groupBy: "status" as const,
+      data: rows.map((row) => ({
+        status: row.status,
+        count: Number(row.count),
+        totalAmount: row.totalAmount,
+        paidAmount: row.paidAmount,
       })),
     };
   }
 
   if (input.groupBy === "customer") {
-    const rows = await prisma.document.groupBy({
-      by: ["customerId", "customerName"],
-      where: { ...where, customerId: { not: null } },
-      _count: { id: true },
-      _sum: { totalAmount: true, paidAmount: true },
-      orderBy: { _sum: { totalAmount: "desc" } },
-    });
+    const rows = await customerTotals(scope);
+
     return {
-      groupBy: "customer",
+      groupBy: "customer" as const,
       data: rows.map((row) => ({
         customerId: row.customerId,
         customerName: row.customerName,
-        count: row._count.id,
-        totalAmount: row._sum.totalAmount ?? zero,
-        paidAmount: row._sum.paidAmount ?? zero,
+        count: row.count,
+        totalAmount: row.totalAmount,
+        paidAmount: row.paidAmount,
       })),
     };
   }
 
-  const trunc = input.groupBy === "day" || input.groupBy === "week" ? input.groupBy : "month";
-  const rows = await timeSeries({
-    tenantId,
-    trunc,
-    from: documentDate?.gte,
-    to: documentDate?.lte,
-    documentTypes: input.documentType ? [input.documentType] : Object.values(DocumentType),
-    customerId: input.customerId,
-    includeVoided: true,
-  });
+  const rows = await timeSeries(scope, input.groupBy);
+
   return {
-    groupBy: trunc,
-    data: rows.map(({ period, count, totalAmount, paidAmount }) => ({
-      period,
-      count,
-      totalAmount,
-      paidAmount,
+    groupBy: input.groupBy,
+    data: rows.map((row) => ({
+      period: row.period,
+      count: row.count,
+      totalAmount: row.totalAmount,
+      paidAmount: row.paidAmount,
     })),
   };
 }
 
 /**
- * Sales report on invoices and credit notes, grouped by customer, product or period.
- * Credit notes carry negative line amounts, so totals are already net of credits.
+ * Reports finalized outbound sales in base currency.
+ * Positive stored credit-note amounts are reversed at query time.
  *
- * @param args - Validated input and tenant ID
- * @returns Rows in the requested grouping, ordered by amount (customer/product) or period (time)
+ * @param args - Validated report input and authenticated tenant ID.
+ * @returns Sales grouped by customer, variant or calendar period.
  */
-export async function getSalesReport(args: { input: SalesReportInput; tenantId: string }) {
+export async function getSalesReport(args: {
+  input: SalesReportInput;
+  tenantId: string;
+}): Promise<SalesReport<Decimal, Date>> {
   const { input, tenantId } = args;
-  const documentDate = dateRange(input.dateFrom, input.dateTo);
-  const where = withSoftDelete(
-    withTenantId(
-      {
-        documentType: { in: SALES_DOCUMENT_TYPES },
-        ...(input.includeVoided ? {} : { status: { not: "VOIDED" as const } }),
-        ...(documentDate && { documentDate }),
-        ...(input.customerId && { customerId: input.customerId }),
-      },
-      tenantId,
-    ),
-  ) as Prisma.DocumentWhereInput;
+
+  const scope = documentScope({
+    tenantId,
+    dateFrom: input.dateFrom,
+    dateTo: input.dateTo,
+    customerId: input.customerId,
+    documentTypes: SALES_DOCUMENT_TYPES,
+    sales: true,
+    includeVoided: input.includeVoided ?? false,
+  });
 
   if (input.groupBy === "customer") {
-    const rows = await prisma.document.groupBy({
-      by: ["customerId", "customerName"],
-      where: { ...where, customerId: { not: null } },
-      _count: { id: true },
-      _sum: { totalAmount: true, paidAmount: true, taxAmount: true, taxableAmount: true },
-      orderBy: { _sum: { totalAmount: "desc" } },
-    });
+    const rows = await customerTotals(scope);
+
     return {
-      groupBy: "customer",
-      data: rows.map((row) => ({
-        customerId: row.customerId,
-        customerName: row.customerName,
-        documentCount: row._count.id,
-        totalAmount: row._sum.totalAmount ?? zero,
-        paidAmount: row._sum.paidAmount ?? zero,
-        taxAmount: row._sum.taxAmount ?? zero,
-        taxableAmount: row._sum.taxableAmount ?? zero,
+      groupBy: "customer" as const,
+      data: rows.map(({ count, ...row }) => ({
+        ...row,
+        documentCount: count,
       })),
     };
   }
 
   if (input.groupBy === "product") {
-    const rows = await prisma.documentLine.groupBy({
-      by: ["productVariantId", "nameSystem"],
-      where: {
-        tenantId,
-        deletedAt: null,
-        lineType: "PRODUCT",
-        productVariantId: { not: null },
-        document: where,
-      },
-      _sum: { quantity: true, lineTotal: true, lineTotalWithTax: true },
-      _count: { id: true },
-      orderBy: { _sum: { lineTotal: "desc" } },
-    });
     return {
-      groupBy: "product",
-      data: rows.map((row) => ({
-        productVariantId: row.productVariantId,
-        productName: row.nameSystem,
-        quantitySold: row._sum.quantity ?? zero,
-        revenueNet: row._sum.lineTotal ?? zero,
-        revenueGross: row._sum.lineTotalWithTax ?? zero,
-        lineCount: row._count.id,
-      })),
+      groupBy: "product" as const,
+      data: await productTotals(scope),
     };
   }
 
-  const trunc = (
-    ["day", "week", "month", "year"].includes(input.groupBy) ? input.groupBy : "month"
-  ) as "day" | "week" | "month" | "year";
-  const rows = await timeSeries({
-    tenantId,
-    trunc,
-    from: documentDate?.gte,
-    to: documentDate?.lte,
-    documentTypes: SALES_DOCUMENT_TYPES,
-    customerId: input.customerId,
-    includeVoided: input.includeVoided,
-  });
+  const rows = await timeSeries(scope, input.groupBy);
+
   return {
-    groupBy: trunc,
-    data: rows.map(({ period, count, totalAmount, taxableAmount, taxAmount }) => ({
-      period,
-      count,
-      totalAmount,
-      taxableAmount,
-      taxAmount,
+    groupBy: input.groupBy,
+    data: rows.map((row) => ({
+      period: row.period,
+      count: row.count,
+      totalAmount: row.totalAmount,
+      taxableAmount: row.taxableAmount,
+      taxAmount: row.taxAmount,
     })),
   };
 }
 
+/** Builds the shared overdue receivables CTE using current installment balances. */
+function overdueScope(args: {
+  tenantId: string;
+  asOfDate: string;
+  customerId?: string | undefined;
+  documentType?: DocumentType | undefined;
+}): Prisma.Sql {
+  const scope = documentScope({
+    tenantId: args.tenantId,
+    customerId: args.customerId,
+    documentTypes: PAYABLE_DOCUMENT_TYPES,
+    sales: true,
+    includeVoided: false,
+  });
+
+  return Prisma.sql`
+    ${scope},
+    overdue_installments AS (
+      SELECT
+        i.*,
+        d."document_number",
+        d."document_type",
+        d."customer_id",
+        d.customer_name,
+        d."document_date",
+        i."amount" - i."paid_amount" AS outstanding,
+        (
+          ${args.asOfDate}::date -
+          (
+            i."due_date"
+            AT TIME ZONE 'UTC'
+            AT TIME ZONE ${REPORT_TIME_ZONE}
+          )::date
+        )::integer AS days_overdue
+      FROM "document_payment_installments" i
+      INNER JOIN scoped_documents d
+        ON d."tenant_id" = i."tenant_id"
+        AND d."id" = i."document_id"
+      WHERE i."tenant_id" = ${args.tenantId}
+        AND i."status" IN ('PENDING', 'PARTIAL', 'OVERDUE')
+        AND i."amount" > i."paid_amount"
+        AND i."due_date" < (
+          ${args.asOfDate}::date::timestamp
+          AT TIME ZONE ${REPORT_TIME_ZONE}
+          AT TIME ZONE 'UTC'
+        )
+        ${
+          args.documentType
+            ? Prisma.sql`
+                AND d."document_type"::text = ${args.documentType}
+              `
+            : Prisma.empty
+        }
+    )
+  `;
+}
+
 /**
- * Receivables aging on overdue sales invoices, with configurable buckets.
- * Outstanding is `netPayableAmount - paidAmount`; credit notes are not considered.
+ * Reports overdue installment balances with global buckets and paginated customers.
+ * The reference date controls aging; balances reflect current recorded payments.
  *
- * @param args - Validated input and tenant ID
- * @returns Bucket totals, per-customer breakdown (paginated) and the overall outstanding
+ * @param args - Validated report input and authenticated tenant ID.
+ * @returns Global outstanding, installment buckets and one page of customers.
  */
-export async function getAgingReport(args: { input: AgingReportInput; tenantId: string }) {
+export async function getAgingReport(args: {
+  input: AgingReportInput;
+  tenantId: string;
+}): Promise<AgingReport<Decimal>> {
   const { input, tenantId } = args;
-  const asOf = normalizeToMidnight(new Date(input.asOfDate));
-  const intervals = [...input.intervals].sort((a, b) => a - b);
 
-  const documents = await prisma.document.findMany({
-    where: withSoftDelete(
-      withTenantId(
-        {
-          documentType: "INVOICE",
-          status: { in: ["UNPAID", "PARTIALLY_PAID", "OVERDUE"] as const },
-          dueDate: { lte: asOf },
-          ...(input.customerId && { customerId: input.customerId }),
-        },
-        tenantId,
-      ),
-    ) as Prisma.DocumentWhereInput,
-    select: {
-      id: true,
-      customerId: true,
-      customerName: true,
-      dueDate: true,
-      netPayableAmount: true,
-      paidAmount: true,
-    },
-    orderBy: { dueDate: "asc" },
-    skip: (input.page - 1) * input.limit,
-    take: input.limit,
-  });
+  const asOfDate = toReportDate(input.asOfDate ?? new Date());
+  const intervals = [...new Set(input.intervals)].sort((a, b) => a - b);
 
-  const buckets = intervals.map((days, index) => ({
-    label: index === 0 ? `0-${days}` : `${intervals[index - 1] + 1}-${days}`,
-    minDays: index === 0 ? 0 : intervals[index - 1] + 1,
-    maxDays: days,
-    amount: new Decimal(0),
-    count: 0,
-  }));
-  buckets.push({
-    label: `${intervals[intervals.length - 1]}+`,
-    minDays: intervals[intervals.length - 1] + 1,
-    maxDays: Number.MAX_SAFE_INTEGER,
-    amount: new Decimal(0),
-    count: 0,
-  });
+  const lastInterval = intervals.at(-1);
 
-  const byCustomer = new Map<
-    string,
-    {
-      customerId: string;
-      customerName: string | null;
-      totalOutstanding: Decimal;
-      oldestDueDate: Date;
-    }
-  >();
-  let totalOutstanding = new Decimal(0);
-
-  for (const document of documents) {
-    const outstanding = document.netPayableAmount.minus(document.paidAmount);
-    if (!document.dueDate || outstanding.lessThanOrEqualTo(0)) continue;
-
-    const daysOverdue = Math.floor(
-      (asOf.getTime() - normalizeToMidnight(document.dueDate).getTime()) / 86_400_000,
-    );
-    const bucket =
-      buckets.find((b) => daysOverdue >= b.minDays && daysOverdue <= b.maxDays) ??
-      buckets[buckets.length - 1];
-    bucket.amount = bucket.amount.plus(outstanding);
-    bucket.count += 1;
-    totalOutstanding = totalOutstanding.plus(outstanding);
-
-    if (document.customerId) {
-      const entry = byCustomer.get(document.customerId) ?? {
-        customerId: document.customerId,
-        customerName: document.customerName,
-        totalOutstanding: new Decimal(0),
-        oldestDueDate: document.dueDate,
-      };
-      entry.totalOutstanding = entry.totalOutstanding.plus(outstanding);
-      if (document.dueDate < entry.oldestDueDate) entry.oldestDueDate = document.dueDate;
-      byCustomer.set(document.customerId, entry);
-    }
+  if (lastInterval === undefined) {
+    throw new BadRequestError("Specificare almeno un intervallo di aging");
   }
 
-  return {
-    asOfDate: asOf,
-    totalOutstanding,
-    buckets: buckets.map((bucket) => ({
-      label: bucket.label,
-      amount: bucket.amount,
-      count: bucket.count,
+  const scope = overdueScope({
+    tenantId,
+    asOfDate,
+    customerId: input.customerId,
+  });
+
+  const bucketExpression = Prisma.sql`
+    CASE
+      ${Prisma.join(
+        intervals.map(
+          (days, index) => Prisma.sql`WHEN days_overdue <= ${days} THEN ${index}::integer`,
+        ),
+        " ",
+      )}
+      ELSE ${intervals.length}::integer
+    END
+  `;
+
+  const skip = (input.page - 1) * input.limit;
+
+  const [bucketRows, customerRows, customerCounts] = await prisma.$transaction(
+    [
+      prisma.$queryRaw<BucketRow[]>(Prisma.sql`
+          ${scope}
+          SELECT
+            ${bucketExpression} AS "bucketIndex",
+            COALESCE(SUM(outstanding), 0) AS amount,
+            COUNT(*)::bigint AS count
+          FROM overdue_installments
+          GROUP BY 1
+          ORDER BY 1
+        `),
+
+      prisma.$queryRaw<AgingCustomerRow[]>(Prisma.sql`
+          ${scope}
+          SELECT
+            "customer_id" AS "customerId",
+            (
+              ARRAY_AGG(
+                customer_name
+                ORDER BY "document_date" DESC, "document_id" DESC
+              ) FILTER (WHERE customer_name IS NOT NULL)
+            )[1] AS "customerName",
+            SUM(outstanding) AS "totalOutstanding",
+            MAX(days_overdue)::integer AS "oldestDueDateDaysAgo"
+          FROM overdue_installments
+          WHERE "customer_id" IS NOT NULL
+          GROUP BY "customer_id"
+          ORDER BY "totalOutstanding" DESC, "customerId" ASC
+          LIMIT ${input.limit}
+          OFFSET ${skip}
+        `),
+
+      prisma.$queryRaw<Array<{ count: bigint }>>(Prisma.sql`
+          ${scope}
+          SELECT COUNT(DISTINCT "customer_id")::bigint AS count
+          FROM overdue_installments
+        `),
+    ],
+    {
+      isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead,
+    },
+  );
+
+  const totalOutstanding = bucketRows.reduce((sum, row) => sum.plus(row.amount), new Decimal(0));
+
+  const installmentCount = bucketRows.reduce((sum, row) => sum + Number(row.count), 0);
+
+  const buckets = [...intervals, undefined].map((maxDays, index) => {
+    const previousMax = index === 0 ? 0 : intervals[index - 1]!;
+    const minDays = previousMax + 1;
+
+    const row = bucketRows.find((item) => item.bucketIndex === index);
+    const amount = row?.amount ?? new Decimal(0);
+
+    return {
+      label: maxDays === undefined ? `${minDays}+` : `${minDays}-${maxDays}`,
+      amount,
+      count: Number(row?.count ?? 0n),
       percentage: totalOutstanding.greaterThan(0)
-        ? bucket.amount.div(totalOutstanding).times(100).toDecimalPlaces(1).toNumber()
+        ? amount.div(totalOutstanding).times(100).toDecimalPlaces(1).toNumber()
         : 0,
-    })),
-    byCustomer: Array.from(byCustomer.values()).map((entry) => ({
-      customerId: entry.customerId,
-      customerName: entry.customerName,
-      totalOutstanding: entry.totalOutstanding,
-      oldestDueDateDaysAgo: Math.floor(
-        (asOf.getTime() - normalizeToMidnight(entry.oldestDueDate).getTime()) / 86_400_000,
-      ),
-    })),
+    };
+  });
+
+  const customerCount = Number(customerCounts[0]?.count ?? 0n);
+
+  return {
+    asOfDate,
+    totalOutstanding,
+    installmentCount,
+    buckets,
+    byCustomer: customerRows,
+    pagination: {
+      page: input.page,
+      limit: input.limit,
+      total: customerCount,
+      totalPages: Math.ceil(customerCount / input.limit),
+    },
   };
 }
 
 /**
- * Top products by net revenue on sales invoices (credit notes carry negative amounts).
+ * Ranks outbound product variants by net base-currency revenue.
+ * Credit notes reverse revenue and base-unit quantities.
  *
- * @param args - Validated input and tenant ID
- * @returns Ranked products by net revenue, limited to `limit`
+ * @param args - Validated report input and authenticated tenant ID.
+ * @returns Ranked variants limited to the requested result count.
  */
-export async function getTopProducts(args: { input: TopProductsReportInput; tenantId: string }) {
+export async function getTopProducts(args: {
+  input: TopProductsReportInput;
+  tenantId: string;
+}): Promise<TopProductsReport<Decimal>> {
   const { input, tenantId } = args;
-  const documentDate = dateRange(input.dateFrom, input.dateTo);
-  const rows = await prisma.documentLine.groupBy({
-    by: ["productVariantId", "nameSystem"],
-    where: {
-      tenantId,
-      deletedAt: null,
-      lineType: "PRODUCT",
-      productVariantId: { not: null },
-      document: withSoftDelete(
-        withTenantId(
-          {
-            documentType: "INVOICE",
-            status: { not: "VOIDED" as const },
-            ...(documentDate && { documentDate }),
-          },
-          tenantId,
-        ),
-      ) as Prisma.DocumentWhereInput,
-    },
-    _sum: { quantity: true, lineTotal: true, lineTotalWithTax: true },
-    _count: { id: true },
-    orderBy: { _sum: { lineTotal: "desc" } },
-    take: input.limit,
+
+  const scope = documentScope({
+    tenantId,
+    dateFrom: input.dateFrom,
+    dateTo: input.dateTo,
+    documentTypes: SALES_DOCUMENT_TYPES,
+    sales: true,
+    includeVoided: false,
   });
+
+  const rows = await productTotals(scope, input.limit);
+
   return {
-    dateFrom: input.dateFrom ?? null,
-    dateTo: input.dateTo ?? null,
+    dateFrom: input.dateFrom ?? undefined,
+    dateTo: input.dateTo ?? undefined,
     limit: input.limit,
     data: rows.map((row, index) => ({
       rank: index + 1,
-      productVariantId: row.productVariantId,
-      productName: row.nameSystem,
-      quantitySold: row._sum.quantity ?? zero,
-      revenueNet: row._sum.lineTotal ?? zero,
-      revenueGross: row._sum.lineTotalWithTax ?? zero,
-      lineCount: row._count.id,
+      ...row,
     })),
   };
 }
 
 /**
- * Overdue payment installments of payable documents (INVOICE, DEBIT_NOTE), with the document
- * not voided. Includes installments still PENDING or PARTIAL past their due date, even when the
- * daily job has not run yet.
+ * Lists overdue outbound receivable installments with global totals.
+ * Page rows, count and total outstanding share a repeatable-read snapshot.
  *
- * @param args - Validated input and tenant ID
- * @returns Paginated installments with aging and the overall outstanding
+ * @param args - Validated query input and authenticated tenant ID.
+ * @returns One installment page and totals across all matching installments.
  */
 export async function getOverdueInstallments(args: {
   input: OverdueInstallmentsQueryInput;
   tenantId: string;
-}) {
+}): Promise<OverdueInstallmentsReport<Decimal, Date>> {
   const { input, tenantId } = args;
-  const today = normalizeToMidnight(new Date());
-  const where = {
-    tenantId,
-    status: { in: ["PENDING", "PARTIAL", "OVERDUE"] as const },
-    dueDate: { lt: today },
-    document: withSoftDelete(
-      withTenantId(
-        {
-          documentType: { in: PAYABLE_DOCUMENT_TYPES },
-          status: { not: "VOIDED" as const },
-          ...(input.customerId && { customerId: input.customerId }),
-          ...(input.documentType && { documentType: input.documentType }),
-        },
-        tenantId,
-      ),
-    ) as Prisma.DocumentWhereInput,
-  } satisfies Prisma.DocumentPaymentInstallmentWhereInput;
 
-  const [installments, total] = await Promise.all([
-    prisma.documentPaymentInstallment.findMany({
-      where,
-      select: {
-        id: true,
-        installmentNumber: true,
-        amount: true,
-        paidAmount: true,
-        dueDate: true,
-        status: true,
-        paymentMethod: { select: { code: true } },
-        document: {
-          select: {
-            id: true,
-            documentNumber: true,
-            documentType: true,
-            customerId: true,
-            customerName: true,
-          },
-        },
-      },
-      orderBy: { dueDate: "asc" },
-      skip: (input.page - 1) * input.limit,
-      take: input.limit,
-    }),
-    prisma.documentPaymentInstallment.count({ where }),
-  ]);
-
-  const data = installments.map((installment) => ({
-    installmentId: installment.id,
-    documentId: installment.document.id,
-    documentNumber: installment.document.documentNumber,
-    documentType: installment.document.documentType,
-    customerId: installment.document.customerId,
-    customerName: installment.document.customerName,
-    installmentNumber: installment.installmentNumber,
-    amount: installment.amount,
-    paidAmount: installment.paidAmount,
-    outstanding: installment.amount.minus(installment.paidAmount),
-    dueDate: installment.dueDate,
-    daysOverdue: Math.floor(
-      (today.getTime() - normalizeToMidnight(installment.dueDate).getTime()) / 86_400_000,
-    ),
-    status: installment.status,
-    paymentMethodCode: installment.paymentMethod?.code ?? null,
-  }));
-  const totalOutstanding = data.reduce(
-    (sum, item) => sum.plus(item.outstanding.toString()),
-    new Decimal(0),
+  const allowedTypes: readonly DocumentType[] = PAYABLE_DOCUMENT_TYPES.filter(
+    (type) => type !== "SUPPLIER_INVOICE",
   );
 
+  if (input.documentType !== undefined && !allowedTypes.includes(input.documentType)) {
+    throw new BadRequestError("Il tipo documento non è ammesso nello scadenzario clienti");
+  }
+
+  const asOfDate = toReportDate(new Date());
+
+  const scope = overdueScope({
+    tenantId,
+    asOfDate,
+    customerId: input.customerId,
+    documentType: input.documentType,
+  });
+
+  const skip = (input.page - 1) * input.limit;
+
+  const [installments, totals] = await prisma.$transaction(
+    [
+      prisma.$queryRaw<OverdueRow[]>(Prisma.sql`
+        ${scope}
+        SELECT
+          i."id" AS "installmentId",
+          i."document_id" AS "documentId",
+          i."document_number" AS "documentNumber",
+          i."document_type" AS "documentType",
+          i."customer_id" AS "customerId",
+          i.customer_name AS "customerName",
+          i."installment_number" AS "installmentNumber",
+          i."amount",
+          i."paid_amount" AS "paidAmount",
+          i.outstanding,
+          i."due_date" AS "dueDate",
+          i.days_overdue AS "daysOverdue",
+          i."status",
+          pm."code" AS "paymentMethodCode"
+        FROM overdue_installments i
+        LEFT JOIN "payment_methods" pm
+          ON pm."id" = i."payment_method_id"
+        ORDER BY i."due_date" ASC, i."id" ASC
+        LIMIT ${input.limit}
+        OFFSET ${skip}
+      `),
+
+      prisma.$queryRaw<Array<{ count: bigint; totalOutstanding: Decimal }>>(Prisma.sql`
+        ${scope}
+        SELECT
+          COUNT(*)::bigint AS count,
+          COALESCE(SUM(outstanding), 0) AS "totalOutstanding"
+        FROM overdue_installments
+      `),
+    ],
+    {
+      isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead,
+    },
+  );
+
+  const count = Number(totals[0]?.count ?? 0n);
+
   return {
-    asOfDate: today,
-    totalOutstanding,
-    count: total,
-    installments: data,
+    asOfDate,
+    totalOutstanding: totals[0]?.totalOutstanding ?? new Decimal(0),
+    count,
+    installments,
+    pagination: {
+      page: input.page,
+      limit: input.limit,
+      total: count,
+      totalPages: Math.ceil(count / input.limit),
+    },
   };
 }

@@ -113,31 +113,6 @@ export interface SalesReportSummary {
 }
 
 /**
- * Aging report (accounts receivable)
- */
-export interface AgingReport {
-  asOfDate: Date;
-  totalOutstanding: Decimal;
-  intervals: {
-    label: string;
-    days: number;
-    amount: Decimal;
-    count: number;
-    percentage: number;
-  }[];
-  byCustomer: {
-    customerId: number;
-    customerName: string;
-    totalOutstanding: Decimal;
-    current: Decimal;
-    overdue: Decimal;
-    byInterval: Record<string, Decimal>;
-    oldestInvoiceDate: Date;
-    oldestInvoiceDays: number;
-  }[];
-}
-
-/**
  * Document conversion result
  */
 export interface DocumentConversionResult {

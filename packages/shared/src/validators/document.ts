@@ -642,8 +642,8 @@ export const documentStatsSchema = z
 /** Sales report on invoices and credit notes, grouped by customer, product or period. */
 export const salesReportSchema = z
   .object({
-    dateFrom: isoDateSchema(),
-    dateTo: isoDateSchema(),
+    dateFrom: isoDateSchema({required: true}),
+    dateTo: isoDateSchema({required: true}),
     customerId: customerIdBaseSchema.optional(),
     groupBy: z.enum(["customer", "product", "day", "week", "month", "year"]).default("month"),
     includeVoided: queryBooleanSchema,
@@ -664,8 +664,8 @@ export const agingReportSchema = z
 /** Top products by net revenue on sales invoices. */
 export const topProductsReportSchema = z
   .object({
-    dateFrom: isoDateSchema(),
-    dateTo: isoDateSchema(),
+    dateFrom: isoDateSchema({required: true}),
+    dateTo: isoDateSchema({required: true}),
     limit: limitSchema,
   })
   .strict();

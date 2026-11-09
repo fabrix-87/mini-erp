@@ -66,7 +66,7 @@ export type DocumentStatsInput = z.infer<typeof documentStatsSchema>;
 export type SalesReportInput = z.infer<typeof salesReportSchema>;
 export type AgingReportInput = z.infer<typeof agingReportSchema>;
 export type TopProductsReportInput = z.infer<typeof topProductsReportSchema>;
-export type OverdueInstallmentsQueryInput = z.input<typeof overdueInstallmentsQuerySchema>;
+export type OverdueInstallmentsQueryInput = z.output<typeof overdueInstallmentsQuerySchema>;
 
 // ============================================================================
 // PARAM TYPES (using z.infer)

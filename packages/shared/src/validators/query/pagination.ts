@@ -12,17 +12,26 @@ export const sortOrderSchema = z.enum(["asc", "desc"]).default("asc");
 
 /**
  * Schema for pagination page query string parameters.
- * Parses the string as a base-10 integer and defaults to `1` when the value is absent.
+ * Accepts only positive decimal integers and defaults to `1`
+ * when the value is absent or invalid.
  *
  * @example
- * pageSchema.parse("3")       // → 3
- * pageSchema.parse(undefined) // → 1
+ * pageSchema.parse("3")        // → 3
+ * pageSchema.parse(undefined)  // → 1
+ * pageSchema.parse("abc")      // → 1
+ * pageSchema.parse("-2")       // → 1
  */
 export const pageSchema = z
   .string()
   .optional()
-  .transform((val) => (val ? parseInt(val, 10) : 1));
+  .transform((value) => {
+    if (!value || !/^[0-9]+$/.test(value)) return 1;
 
+    const page = Number(value);
+
+    return Number.isSafeInteger(page) && page > 0 ? page : 1;
+  });
+  
 /**
  * Schema for pagination limit query string parameters.
  * Parses the string as a base-10 integer and defaults to `20` when the value is absent.
@@ -64,8 +73,6 @@ export const querySortOrderSchema = (defaultValue: "asc" | "desc" = "asc") =>
       message: 'sortOrder must be "asc" or "desc"',
     });
 
-
-  
 export const paginationSchema = z.object({
   page: pageSchema,
   limit: limitSchema,
