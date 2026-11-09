@@ -37,7 +37,6 @@ export {
   getSalesReport,
   getAgingReport,
   getTopProducts,
-  getDocumentTimeline,
   getOverdueInstallments,
 } from "./document-reports-controller";
 

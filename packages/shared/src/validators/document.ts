@@ -626,38 +626,59 @@ export const installmentIdParamSchema = z.object({
 // STATISTICS & REPORTS SCHEMAS
 // ============================================================================
 
-export const documentStatsSchema = z.object({
-  dateFrom: isoDateSchema(),
-  dateTo: isoDateSchema(),
-  documentType: documentTypeSchema.optional(),
-  customerId: customerIdBaseSchema.optional(),
-  groupBy: z
-    .enum(["documentType", "status", "customer", "day", "week", "month"])
-    .default("documentType"),
-});
+/** Aggregates document counts and amounts by type, status, customer or period. */
+export const documentStatsSchema = z
+  .object({
+    dateFrom: isoDateSchema({required: true}),
+    dateTo: isoDateSchema({required: true}),
+    documentType: documentTypeSchema.optional(),
+    customerId: customerIdBaseSchema.optional(),
+    groupBy: z
+      .enum(["documentType", "status", "customer", "day", "week", "month"])
+      .default("month"),
+  })
+  .strict();
 
-export const salesReportSchema = z.object({
-  dateFrom: isoDateSchema(),
-  dateTo: isoDateSchema(),
-  customerId: customerIdBaseSchema.optional(),
-  productId: productIdBaseSchema.optional(),
-  groupBy: z
-    .enum(["customer", "product", "category", "day", "week", "month", "year"])
-    .default("month"),
-  includeVoided: z.boolean().default(false),
-});
+/** Sales report on invoices and credit notes, grouped by customer, product or period. */
+export const salesReportSchema = z
+  .object({
+    dateFrom: isoDateSchema(),
+    dateTo: isoDateSchema(),
+    customerId: customerIdBaseSchema.optional(),
+    groupBy: z.enum(["customer", "product", "day", "week", "month", "year"]).default("month"),
+    includeVoided: queryBooleanSchema,
+  })
+  .strict();
 
-export const agingReportSchema = z.object({
-  asOfDate: isoDateSchema().default(() => new Date().toISOString()),
-  customerId: customerIdBaseSchema.optional(),
-  intervals: z.array(z.number().int().nonnegative()).default([30, 60, 90, 120]),
-});
+/** Receivables aging on overdue sales invoices, with configurable buckets. */
+export const agingReportSchema = z
+  .object({
+    asOfDate: isoDateSchema().default(() => new Date().toISOString()),
+    customerId: customerIdBaseSchema.optional(),
+    intervals: z.array(z.number().int().positive()).min(1).max(6).default([30, 60, 90, 120]),
+    page: pageSchema,
+    limit: limitSchema,
+  })
+  .strict();
 
-export const topProductsReportSchema = z.object({
-  dateFrom: isoDateSchema(),
-  dateTo: isoDateSchema(),
-  limit: limitSchema,
-});
+/** Top products by net revenue on sales invoices. */
+export const topProductsReportSchema = z
+  .object({
+    dateFrom: isoDateSchema(),
+    dateTo: isoDateSchema(),
+    limit: limitSchema,
+  })
+  .strict();
+
+/** Overdue payment installments of payable documents. */
+export const overdueInstallmentsQuerySchema = z
+  .object({
+    page: pageSchema,
+    limit: limitSchema,
+    customerId: customerIdBaseSchema.optional(),
+    documentType: documentTypeSchema.optional(),
+  })
+  .strict();
 
 // ============================================================================
 // CONVERSION SCHEMAS

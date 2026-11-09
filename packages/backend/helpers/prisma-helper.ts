@@ -320,3 +320,12 @@ export const toPagination = (
   const l = Math.min(100, Math.max(1, Number(limit)));
   return { skip: (p - 1) * l, take: l };
 };
+
+/** Inclusive date range on the document date (dates are stored at UTC midnight). */
+export const dateRange = (from?: string, to?: string): Prisma.DateTimeFilter | undefined => {
+  if (!from && !to) return undefined;
+  return {
+    ...(from && { gte: new Date(from) }),
+    ...(to && { lte: new Date(to) }),
+  };
+};

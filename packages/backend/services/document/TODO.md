@@ -21,3 +21,21 @@
 - [ ] Late fees and reminders (`lateFeeAmount`, `remindersSent`).
 - [ ] PaymentTermDetail: month-end offset ("end of month + N days").
 - [ ] Derived documents: fall back to the counterparty default payment method when the source has none.
+
+- [ ] Bulk email sending: needs the email service; `sendDocument` and bulk send are not implemented
+      (the former answers 501, the latter has been removed).
+- [ ] Bulk export (PDF, XML, CSV): needs a job queue and a way to poll job status; removed until then.
+- [ ] Bulk operations are not atomic: documents already processed stay processed if the request
+      is interrupted. If bulk formalization becomes slow, consider a job with per-document progress.
+- [ ] Bulk operations log failures with `console.error`: switch to the project logger.
+- [ ] Check whether VOIDED is a system-driven status: if it is not, `PATCH /:id/status` lets
+      `document:update` void documents, bypassing `document:void`.
+
+- [ ] Reports: mixed currencies are summed without conversion; add a currency filter
+      (default EUR) or convert to a reporting currency.
+
+- [ ] Reports: add indexes on (tenant_id, document_date) and consider materialized views
+      for high-volume time-series reports.
+- [ ] Reports: aging and overdue installments do not account for credit notes linked to
+      the invoice (a credit note does not reduce the outstanding balance).
+- [ ] Reports: `week` follows the ISO week (Monday–Sunday), not a tenant-configurable week.

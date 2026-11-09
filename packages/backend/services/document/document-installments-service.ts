@@ -6,20 +6,26 @@ import {
   type GenerateInstallmentsInput,
   type PayInstallmentInput,
   type ReplaceInstallmentsInput,
-} from "@mini-erp/shared";
-import { prisma } from "@/config/prisma-config";
-import { BadRequestError, ConflictError, NotFoundError, ValidationError } from "@/utils/app-error-utils";
-import { withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
-import {
   PAYABLE_DOCUMENT_TYPES,
   PAYABLE_STATUSES,
-  TRANSACTION_LIMITS_OPTIONS,
-  type DocumentCreateContext,
-} from "@/types";
+} from "@mini-erp/shared";
+import { prisma } from "@/config/prisma-config";
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from "@/utils/app-error-utils";
+import { withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
+import { TRANSACTION_LIMITS_OPTIONS, type DocumentCreateContext } from "@/types";
 import { assertDocumentEditable, findDocumentOrThrow } from "./document-guards";
 import { lockDocumentStatus } from "./document-concurrency";
 import { createStatusHistory } from "./document-status-history";
-import { buildInstallmentPlan, replaceInstallments, type TermRule } from "./document-installment-plan";
+import {
+  buildInstallmentPlan,
+  replaceInstallments,
+  type TermRule,
+} from "./document-installment-plan";
 
 const dec = (value: { toString(): string }) => new Decimal(value.toString());
 
@@ -38,7 +44,9 @@ function todayInDocumentTimeZone(now = new Date()): Date {
 }
 
 /** Runs an installment transaction and maps constraint violations to AppErrors. */
-async function runInstallmentTransaction<T>(fn: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
+async function runInstallmentTransaction<T>(
+  fn: (tx: Prisma.TransactionClient) => Promise<T>,
+): Promise<T> {
   try {
     return await prisma.$transaction(fn, TRANSACTION_LIMITS_OPTIONS);
   } catch (error) {
@@ -57,7 +65,9 @@ async function loadEditablePayableDocument(
 ): Promise<Document> {
   const document = await findDocumentOrThrow(tx, documentId, context.tenantId);
   if (!PAYABLE_DOCUMENT_TYPES.includes(document.documentType)) {
-    throw new BadRequestError("Installments are only managed on invoices, debit notes and supplier invoices");
+    throw new BadRequestError(
+      "Installments are only managed on invoices, debit notes and supplier invoices",
+    );
   }
   assertDocumentEditable(document);
   await lockDocumentStatus(tx, document);
@@ -88,7 +98,13 @@ async function loadPaymentTerms(
   return tx.paymentTermDetail.findMany({
     where: { paymentMethodId },
     orderBy: { position: "asc" },
-    select: { termType: true, dueDays: true, fixedDay: true, fixedMonthOffset: true, percentage: true },
+    select: {
+      termType: true,
+      dueDays: true,
+      fixedDay: true,
+      fixedMonthOffset: true,
+      percentage: true,
+    },
   });
 }
 
@@ -122,7 +138,8 @@ export async function generateDocumentInstallments(args: {
   return runInstallmentTransaction(async (tx) => {
     const document = await loadEditablePayableDocument(tx, documentId, context);
     const methodId = input.paymentMethodId ?? document.paymentMethodId;
-    if (!methodId) throw new BadRequestError("A payment method is required to generate installments");
+    if (!methodId)
+      throw new BadRequestError("A payment method is required to generate installments");
 
     const terms = await loadPaymentTerms(tx, document.tenantId, methodId);
     const plan = buildInstallmentPlan({
@@ -130,11 +147,19 @@ export async function generateDocumentInstallments(args: {
       baseDate: document.documentDate,
       total: dec(document.netPayableAmount),
     });
-    await replaceInstallments(tx, document, plan.map((item) => ({ ...item, paymentMethodId: methodId })));
+    await replaceInstallments(
+      tx,
+      document,
+      plan.map((item) => ({ ...item, paymentMethodId: methodId })),
+    );
     if (methodId !== document.paymentMethodId) {
       await tx.document.update({
         where: { tenantId_id: { tenantId: document.tenantId, id: document.id } },
-        data: { paymentMethodId: methodId, paymentMethodCode: null, updatedByUserId: context.userId },
+        data: {
+          paymentMethodId: methodId,
+          paymentMethodCode: null,
+          updatedByUserId: context.userId,
+        },
       });
     }
     return tx.documentPaymentInstallment.findMany({
@@ -158,7 +183,10 @@ export async function replaceDocumentInstallments(args: {
   return runInstallmentTransaction(async (tx) => {
     const document = await loadEditablePayableDocument(tx, documentId, context);
     const total = dec(document.netPayableAmount);
-    const requested = input.installments.map((item) => ({ ...item, amount: new Decimal(item.amount) }));
+    const requested = input.installments.map((item) => ({
+      ...item,
+      amount: new Decimal(item.amount),
+    }));
 
     const sum = requested.reduce((acc, item) => acc.plus(item.amount), new Decimal(0));
     if (!sum.equals(total)) {
@@ -206,7 +234,10 @@ export async function syncDocumentPaymentStatus(args: {
     where: { tenantId: document.tenantId, documentId: document.id, status: { not: "CANCELLED" } },
     select: { status: true, paidAmount: true },
   });
-  const paidAmount = installments.reduce((sum, i) => sum.plus(i.paidAmount.toString()), new Decimal(0));
+  const paidAmount = installments.reduce(
+    (sum, i) => sum.plus(i.paidAmount.toString()),
+    new Decimal(0),
+  );
   const allPaid = installments.length > 0 && installments.every((i) => i.status === "PAID");
   const target = allPaid
     ? "PAID"
@@ -215,11 +246,16 @@ export async function syncDocumentPaymentStatus(args: {
       : paidAmount.greaterThan(0)
         ? "PARTIALLY_PAID"
         : "UNPAID";
-  const move = target !== document.status && canTransition(document.documentType, document.status, target);
+  const move =
+    target !== document.status && canTransition(document.documentType, document.status, target);
 
   await tx.document.update({
     where: { tenantId_id: { tenantId: document.tenantId, id: document.id } },
-    data: { paidAmount: paidAmount.toFixed(2), updatedByUserId: context.userId, ...(move && { status: target }) },
+    data: {
+      paidAmount: paidAmount.toFixed(2),
+      updatedByUserId: context.userId,
+      ...(move && { status: target }),
+    },
   });
   if (move) {
     await createStatusHistory({
@@ -264,7 +300,9 @@ export async function registerInstallmentPayment(args: {
     });
     if (!installment) throw new NotFoundError("Installment not found");
     if (installment.status === "PAID" || installment.status === "CANCELLED") {
-      throw new BadRequestError(`An installment in status ${installment.status} cannot receive payments`);
+      throw new BadRequestError(
+        `An installment in status ${installment.status} cannot receive payments`,
+      );
     }
     if (installment.paymentBatchId) {
       throw new BadRequestError("The installment belongs to a payment batch");
@@ -279,7 +317,9 @@ export async function registerInstallmentPayment(args: {
     const newPaid = dec(installment.paidAmount).plus(input.paidAmount);
     const due = dec(installment.amount);
     if (newPaid.greaterThan(due)) {
-      throw new BadRequestError(`The payment exceeds the remaining ${due.minus(installment.paidAmount.toString()).toFixed(2)}`);
+      throw new BadRequestError(
+        `The payment exceeds the remaining ${due.minus(installment.paidAmount.toString()).toFixed(2)}`,
+      );
     }
     const status = newPaid.equals(due)
       ? "PAID"
@@ -370,7 +410,11 @@ export async function markOverdueInstallments(args: {
         where: { tenantId, documentId, id: { in: ids }, status: { in: ["PENDING", "PARTIAL"] } },
         data: { status: "OVERDUE" },
       });
-      await syncDocumentPaymentStatus({ tx, document, context: { tenantId, userId: args.systemUserId } });
+      await syncDocumentPaymentStatus({
+        tx,
+        document,
+        context: { tenantId, userId: args.systemUserId },
+      });
       return count;
     }, TRANSACTION_LIMITS_OPTIONS);
   }

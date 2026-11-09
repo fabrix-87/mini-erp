@@ -5,13 +5,18 @@
  */
 import { createHonoApp } from "../../lib/hono-app";
 import { authorize } from "../../middleware/auth-middleware";
-import { validateTopProductsReportQuery } from "../../validators/document-validator";
+import {
+  validateAgingReportQuery,
+  validateDocumentStatsQuery,
+  validateOverdueInstallmentsQuery,
+  validateSalesReportQuery,
+  validateTopProductsReportQuery,
+} from "../../validators/document-validator";
 import {
   getDocumentStats,
   getSalesReport,
   getAgingReport,
   getTopProducts,
-  getDocumentTimeline,
   getOverdueInstallments,
 } from "../../controllers/document";
 import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
@@ -21,12 +26,13 @@ const reportsRoutes = createHonoApp();
 /**
  * @route GET /api/documents/reports/statistics
  * @desc  Aggregate document statistics (counts by type and status)
- * @access Private (document:read)
+ * @access Private (report:read)
  */
 reportsRoutes.get(
   "/statistics",
   requireTenantScope,
-  authorize(["document:read", "document:manage"]),
+  authorize(["report:read", "document:manage"]),
+  validateDocumentStatsQuery,
   getDocumentStats,
 );
 
@@ -39,6 +45,7 @@ reportsRoutes.get(
   "/sales",
   requireTenantScope,
   authorize(["report:read", "document:manage"]),
+  validateSalesReportQuery,
   getSalesReport,
 );
 
@@ -51,6 +58,7 @@ reportsRoutes.get(
   "/aging",
   requireTenantScope,
   authorize(["report:read", "document:manage"]),
+  validateAgingReportQuery,
   getAgingReport,
 );
 
@@ -68,18 +76,6 @@ reportsRoutes.get(
 );
 
 /**
- * @route GET /api/documents/reports/timeline
- * @desc  Document activity timeline for a given period
- * @access Private (report:read)
- */
-reportsRoutes.get(
-  "/timeline",
-  requireTenantScope,
-  authorize(["report:read", "document:manage"]),
-  getDocumentTimeline,
-);
-
-/**
  * @route GET /api/documents/reports/overdue-installments
  * @desc  List overdue payment installments across all documents
  * @access Private (report:read)
@@ -88,6 +84,7 @@ reportsRoutes.get(
   "/overdue-installments",
   requireTenantScope,
   authorize(["report:read", "document:manage"]),
+  validateOverdueInstallmentsQuery,
   getOverdueInstallments,
 );
 

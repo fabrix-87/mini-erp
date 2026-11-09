@@ -469,6 +469,19 @@ export const DOCUMENT_TYPES_WITH_STOCK_MOVEMENTS: readonly DocumentType[] = [
   "SUPPLIER_DELIVERY_NOTE",
 ] as const;
 
+/** Sales documents that contribute to revenue; credit notes carry negative line amounts. */
+export const SALES_DOCUMENT_TYPES: DocumentType[] = ["INVOICE", "CREDIT_NOTE"];
+
+/** Document types that carry installments and receive payments. */
+export const PAYABLE_DOCUMENT_TYPES: readonly DocumentType[] = [
+  "INVOICE",
+  "DEBIT_NOTE",
+  "SUPPLIER_INVOICE",
+];
+
+/** Statuses in which payments can be registered. */
+export const PAYABLE_STATUSES: readonly DocumentStatus[] = ["UNPAID", "PARTIALLY_PAID", "OVERDUE"];
+
 // ============================================================================
 // STATUS CATEGORIES (for UI)
 // ============================================================================

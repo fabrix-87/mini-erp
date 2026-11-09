@@ -29,6 +29,7 @@ export * from "./document-line-tax-service";
 export * from "./document-lines-service";
 export * from "./document-numbering";
 export * from "./document-query-service";
+export * from "./document-reports-service";
 export * from "./document-status-service";
 export * from "./document-totals-service";
 export * from "./document-update-service";

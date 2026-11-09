@@ -1,5 +1,6 @@
 import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 import {
+  agingReportSchema,
   approveDocumentSchema,
   bulkDeleteDocumentsSchema,
   bulkUpdateDocumentsStatusSchema,
@@ -11,12 +12,15 @@ import {
   documentIdParamSchema,
   documentLineIdParamSchema,
   documentQuerySchema,
+  documentStatsSchema,
   generateInstallmentsSchema,
   installmentIdParamSchema,
+  overdueInstallmentsQuerySchema,
   payInstallmentSchema,
   rejectDocumentSchema,
   reorderDocumentLinesSchema,
   replaceInstallmentsSchema,
+  salesReportSchema,
   topProductsReportSchema,
   updateDocumentSchema,
   updateDocumentStatusSchema,
@@ -197,3 +201,15 @@ export const validateTopProductsReportQuery = validateQuery(
 export const validateApproveDocument = validateBody(approveDocumentSchema, "Approve document");
 export const validateRejectDocument = validateBody(rejectDocumentSchema, "Reject document");
 export const validateVoidDocument = validateBody(voidDocumentSchema, "Void document");
+
+// ============================================================================
+// STATS
+// ============================================================================
+
+export const validateDocumentStatsQuery = validateQuery(documentStatsSchema, "Document Stats");
+export const validateSalesReportQuery = validateQuery(salesReportSchema, "Sales Report");
+export const validateAgingReportQuery = validateQuery(agingReportSchema, "Aging Report");
+export const validateOverdueInstallmentsQuery = validateQuery(
+  overdueInstallmentsQuerySchema,
+  "Overdue Installments",
+);
