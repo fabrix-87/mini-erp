@@ -21,6 +21,7 @@
     "@mini-erp/shared": "workspace:*",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
+    "@prisma/orm-postgres": "^8.0.0-rc.24",
     "bcryptjs": "^3.0.3",
     "bullmq": "^5.81.3",
     "cookie-parser": "^1.4.7",
@@ -51,6 +52,7 @@
     "@types/multer": "^2.2.0",
     "@types/pg": "^8.23.1",
     "@types/uuid": "^11.0.0",
+    "prisma": "^8.0.0-rc.34",
     "ts-node": "^10.9.2",
     "tsx": "^4.23.12",
     "typescript": "^5.9.3"
