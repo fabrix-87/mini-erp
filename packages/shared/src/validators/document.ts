@@ -661,7 +661,10 @@ export const agingReportSchema = z
   })
   .strict();
 
-/** Top products by net revenue on sales invoices. */
+/**
+ * Receivables aging on overdue outbound invoice and debit-note installments,
+ * with configurable aging buckets.
+ */
 export const topProductsReportSchema = z
   .object({
     dateFrom: isoDateSchema({required: true}),

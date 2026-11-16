@@ -638,7 +638,9 @@ export async function getAgingReport(args: {
     const previousMax = index === 0 ? 0 : intervals[index - 1]!;
     const minDays = previousMax + 1;
 
-    const row = bucketRows.find((item) => item.bucketIndex === index);
+    const bucketMap = new Map(bucketRows.map((row) => [row.bucketIndex, row]));
+    const row = bucketMap.get(index);
+    //const row = bucketRows.find((item) => item.bucketIndex === index);
     const amount = row?.amount ?? new Decimal(0);
 
     return {
@@ -693,8 +695,8 @@ export async function getTopProducts(args: {
   const rows = await productTotals(scope, input.limit);
 
   return {
-    dateFrom: input.dateFrom ?? undefined,
-    dateTo: input.dateTo ?? undefined,
+    dateFrom: input.dateFrom,
+    dateTo: input.dateTo,
     limit: input.limit,
     data: rows.map((row, index) => ({
       rank: index + 1,
@@ -757,6 +759,10 @@ export async function getOverdueInstallments(args: {
         FROM overdue_installments i
         LEFT JOIN "payment_methods" pm
           ON pm."id" = i."payment_method_id"
+          AND (
+            pm."tenant_id" IS NULL
+            OR pm."tenant_id" = i."tenant_id"
+          )
         ORDER BY i."due_date" ASC, i."id" ASC
         LIMIT ${input.limit}
         OFFSET ${skip}

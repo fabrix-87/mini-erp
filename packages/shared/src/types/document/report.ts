@@ -140,8 +140,8 @@ export interface TopProductReportItem<TAmount = string> extends ProductSalesRepo
 
 /** Ranked product variants within the requested reporting range. */
 export interface TopProductsReport<TAmount = string> {
-  dateFrom?: string | undefined;
-  dateTo?: string | undefined;
+  dateFrom: string;
+  dateTo: string;
   limit: number;
   data: TopProductReportItem<TAmount>[];
 }

@@ -42,7 +42,8 @@ export const getSalesReport = async (c: Context<AppBindings>) => {
 };
 
 /**
- * Receivables aging on overdue sales invoices.
+ * Reports current overdue receivable installment balances.
+ * Includes outbound invoices and debit notes.
  * @route GET /api/documents/reports/aging
  * @access Private (report:read | document:manage)
  */
