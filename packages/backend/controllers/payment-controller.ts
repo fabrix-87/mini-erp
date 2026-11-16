@@ -1,6 +1,7 @@
 import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
 import {
+  calculateDueDate,
   CalculateDueDatesInput,
   CreatePaymentMethodInput,
   PaymentMethodIdParam,
@@ -57,7 +58,7 @@ export const getAllPaymentMethods = async (c: Context<AppBindings>) => {
             select: {
               id: true,
               name: true,
-              iso_code: true,
+              isoCode: true,
             },
           },
         },
@@ -456,38 +457,7 @@ export const calculateDueDates = async (c: Context<AppBindings>) => {
   const installments = paymentMethod.details.map((detail, index) => {
     const installmentAmount = (amount * parseFloat(detail.percentage.toString())) / 100;
 
-    let dueDate = new Date(baseDate);
-
-    switch (detail.termType) {
-      case "anticipated":
-        // Data fattura stessa
-        break;
-
-      case "days_from_invoice":
-        dueDate.setDate(dueDate.getDate() + detail.dueDays);
-        if (detail.isEndOfMonth) {
-          dueDate = new Date(dueDate.getFullYear(), dueDate.getMonth() + 1, 0);
-        }
-        break;
-
-      case "end_of_month":
-        dueDate = new Date(
-          dueDate.getFullYear(),
-          dueDate.getMonth() + 1 + detail.fixedMonthOffset,
-          0,
-        );
-        break;
-
-      case "fixed_date":
-        if (detail.fixedDay) {
-          dueDate = new Date(
-            dueDate.getFullYear(),
-            dueDate.getMonth() + detail.fixedMonthOffset,
-            detail.fixedDay,
-          );
-        }
-        break;
-    }
+    const dueDate = calculateDueDate(detail, baseDate);
 
     return {
       installmentNumber: index + 1,

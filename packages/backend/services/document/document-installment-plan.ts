@@ -1,5 +1,5 @@
 import type { Document, PaymentTermType, Prisma } from "@/generated/prisma/client";
-import { Decimal, roundCurrency } from "@mini-erp/shared";
+import { calculateDueDate, Decimal, roundCurrency } from "@mini-erp/shared";
 import { ValidationError } from "@/utils/app-error-utils";
 
 /** One payment term rule of a payment method. */
@@ -18,41 +18,6 @@ export interface PlannedInstallment {
   percentage: Decimal;
   paymentMethodId?: string | null;
   notes?: string | null;
-}
-
-const addDays = (date: Date, days: number): Date => {
-  const result = new Date(date);
-  result.setUTCDate(result.getUTCDate() + days);
-  return result;
-};
-
-/** Last day of the month of `date` (UTC). */
-const endOfMonth = (date: Date): Date =>
-  new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0));
-
-/**
- * Computes the due date of one term from the document date (UTC calendar days).
- * END_OF_MONTH is the end of the month of (document date + dueDays)
- * FIXED_DAY is the given day of the month offset by fixedMonthOffset, clamped to the month length.
- */
-export function calculateDueDate(term: TermRule, base: Date): Date {
-  switch (term.termType) {
-    case "ANTICIPATED":
-      return base;
-    case "DAYS_FROM_INVOICE":
-      return addDays(base, term.dueDays);
-    case "END_OF_MONTH":
-      return endOfMonth(addDays(base, term.dueDays));
-    case "FIXED_DAY": {
-      const month = new Date(
-        Date.UTC(base.getUTCFullYear(), base.getUTCMonth() + term.fixedMonthOffset, 1),
-      );
-      const last = endOfMonth(month).getUTCDate();
-      return new Date(
-        Date.UTC(month.getUTCFullYear(), month.getUTCMonth(), Math.min(term.fixedDay ?? 1, last)),
-      );
-    }
-  }
 }
 
 /**

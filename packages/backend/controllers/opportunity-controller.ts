@@ -1133,7 +1133,7 @@ export const getAllClosedReasons = async (c: Context<AppBindings>) => {
  * @access Private (opportunity:manage)
  */
 export const createClosedReason = async (c: Context<AppBindings>) => {
-  const { code, description, isWon, active, displayOrder } =
+  const { code, isWon, active, displayOrder } =
     getValidatedBody<CreateClosedReasonInput>(c);
 
   const existing = await prisma.closedReason.findFirst({ where: { code } });
@@ -1145,8 +1145,10 @@ export const createClosedReason = async (c: Context<AppBindings>) => {
   }
 
   const reason = await prisma.closedReason.create({
-    data: { code, description, isWon, active, displayOrder },
+    data: { code, isWon, active, displayOrder },
   });
+
+  // @TODO salvare le traduzioni
 
   return sendCreated(c, reason, "Motivo chiusura creato con successo");
 };

@@ -14,6 +14,18 @@ import {
   updatePaymentMethodSchema,
   updatePaymentTermDetailsSchema,
 } from "../validators";
+import { TermType } from "../constants";
+
+// ============================================================================
+// HELPER TYPES
+// ============================================================================
+
+export interface DueDateRule {
+  termType: TermType;
+  dueDays: number;
+  fixedDay: number | null;
+  fixedMonthOffset: number;
+}
 
 // ============================================================================
 // ENTITY TYPES

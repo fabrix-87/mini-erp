@@ -219,7 +219,7 @@ export const createActivityFromTemplate = async (c: Context<AppBindings>) => {
   const activity = await prisma.activity.create({
     data: prismaData,
     include: {
-      company: true,
+      supplier: true,
       customer: true,
       opportunity: true,
       assignedUser: { select: { id: true, username: true, email: true } },

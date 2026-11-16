@@ -14,6 +14,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { UserMembershipStatus } from "@mini-erp/shared";
 import { getPermissionsFromMembership, getRolesFromMembership } from "./user-membership-helper";
 import { NotFoundError } from "@/utils/app-error-utils";
+import { withSoftDelete } from "./prisma-helper";
 
 // ============================================================================
 // USER SELECTION
@@ -720,26 +721,38 @@ export function calculateLockUntil(failedAttempts: number): Date {
 }
 
 /**
- * Finds a user by their ID and tenant ID.
+ * Finds a non-deleted user with an active membership in the given tenant.
  *
- * @param {string} userId - The unique identifier of the user.
- * @param {string} tenantId - The identifier of the tenant the user belongs to.
- * @returns The user record if found.
- * @throws {NotFoundError} If no user matches the provided ID and tenant ID.
+ * @param userId - The global user identifier.
+ * @param tenantId - The tenant in which an active membership is required.
+ * @returns The user record associated with the matching membership.
+ * @throws {NotFoundError} If the membership is missing, inactive,
+ * or associated with a soft-deleted user.
  */
 export async function findUserOrThrow(userId: string, tenantId: string) {
-  const user = await prisma.user.findFirst({
+  const membership = await prisma.userTenantMembership.findUnique({
     where: {
-      id: userId,
-      tenantId: tenantId,
+      userId_tenantId: {
+        userId,
+        tenantId,
+      },
+      status: "ACTIVE",
+      user: {
+        is: withSoftDelete({
+          active: true,
+        }),
+      },
+    },
+    select: {
+      user: true,
     },
   });
 
-  if (!user) {
+  if (!membership) {
     throw new NotFoundError("Utente non trovato");
   }
 
-  return user;
+  return membership.user;
 }
 
 interface CheckUserMembershipInput {

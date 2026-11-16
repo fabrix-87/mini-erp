@@ -4,6 +4,7 @@ import { isoDateSchema } from "./primitives/date";
 import {
   customerIdBaseSchema,
   inputJsonValueSchema,
+  languageIdBaseSchema,
   leadIdBaseSchema,
   opportunityIdBaseSchema,
   productIdBaseSchema,
@@ -83,12 +84,6 @@ export const createClosedReasonSchema = z
       .trim()
       .toUpperCase(),
 
-    description: z
-      .string()
-      .min(1, "Descrizione obbligatoria")
-      .max(255, "Descrizione max 255 caratteri")
-      .trim(),
-
     isWon: z.boolean(),
 
     active: z.boolean().default(true),
@@ -105,6 +100,30 @@ export const updateClosedReasonSchema = createClosedReasonSchema
   .partial()
   .strict();
 
+/**
+ * Schema for creating a localized closed reason translation.
+ */
+export const createClosedReasonTranslationSchema = z
+  .object({
+    closedReasonId: closedReasonIdSchema,
+    languageId: languageIdBaseSchema,
+    name: z.string().trim().min(1, "Nome obbligatorio").max(255, "Nome max 255 caratteri"),
+    description: z.string().trim().nullish(),
+  })
+  .strict();
+
+/**
+ * Schema for updating a localized closed reason translation.
+ * The closed reason and language identifiers cannot be changed.
+ */
+export const updateClosedReasonTranslationSchema = createClosedReasonTranslationSchema
+  .omit({
+    closedReasonId: true,
+    languageId: true,
+  })
+  .partial()
+  .strict();
+  
 // ============================================================================
 // OPPORTUNITY SCHEMAS
 // ============================================================================

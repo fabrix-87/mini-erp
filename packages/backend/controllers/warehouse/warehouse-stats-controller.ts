@@ -1,12 +1,16 @@
 import { prisma } from "@/config/prisma-config";
-import { withTenantId } from "@/helpers/prisma-helper";
+import { withSoftDelete, withTenantId, withTenantScope } from "@/helpers/prisma-helper";
 import { sendSuccess } from "@/utils/response-utils";
-import { BadRequestError } from "@/utils/app-error-utils";
+import { BadRequestError, NotFoundError } from "@/utils/app-error-utils";
 import { Decimal } from "@prisma/client/runtime/client";
 import type { Prisma } from "@/generated/prisma/client";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
-import { getRequiredTenantId, getValidatedQuery } from "@/helpers/validated-context";
+import {
+  getRequiredLanguageId,
+  getRequiredTenantId,
+  getValidatedQuery,
+} from "@/helpers/validated-context";
 import {
   MovementType,
   OPERATIONS_INCREASING_STOCK,
@@ -307,71 +311,100 @@ export const getAvailableStats = async (c: Context<AppBindings>) => {
 };
 
 /**
- * Returns virtual stock snapshots for a virtual warehouse.
+ * Returns supplier stock snapshots for a virtual warehouse.
+ *
+ * Product and currency names use the request language.
+ * Supplier information comes from the warehouse configuration.
  *
  * @route GET /api/warehouse/stats/virtual
  * @access Private
- * @param c - Hono context
+ * @param c - Hono request context.
+ * @returns Virtual stock snapshots and synchronization details.
  */
-export const getVirtualStockStats = async (c: Context<AppBindings>) => {
+export const getVirtualStockStats = async (c: Context<AppBindings>): Promise<Response> => {
   const { warehouseId, productVariantId, syncStatus } =
     getValidatedQuery<WarehouseVirtualStatsInput>(c);
 
   const tenantId = getRequiredTenantId(c);
+  const languageId = getRequiredLanguageId(c);
 
-  // Verify warehouse is VIRTUAL type
-  const warehouse = await prisma.warehouse.findUnique({
+  const warehouse = await prisma.warehouse.findFirst({
     where: {
-      tenantId_code: {
-        tenantId: tenantId,
-        code: warehouseId, // Note: using code as identifier per schema
+      tenantId,
+      id: warehouseId,
+    },
+    select: {
+      id: true,
+      type: true,
+      supplier: {
+        where: withSoftDelete({ tenantId }),
+        select: {
+          id: true,
+          company: {
+            select: {
+              companyName: true,
+            },
+          },
+        },
       },
     },
   });
 
   if (!warehouse) {
-    throw new BadRequestError("Warehouse not found");
+    throw new NotFoundError("Magazzino non trovato");
   }
 
   if (warehouse.type !== "VIRTUAL") {
-    throw new BadRequestError("This endpoint is only for VIRTUAL warehouses");
+    throw new BadRequestError("Questo endpoint è disponibile solo per magazzini virtuali");
   }
 
-  const whereClause: Prisma.VirtualStockWhereInput = withTenantId(
-    {
-      warehouseId,
-    },
+  const where = {
     tenantId,
-  );
-
-  if (productVariantId) {
-    whereClause.productVariantId = productVariantId;
-  }
-
-  if (syncStatus) {
-    whereClause.syncStatus = syncStatus;
-  }
+    warehouseId: warehouse.id,
+    ...(productVariantId ? { productVariantId } : {}),
+    ...(syncStatus ? { syncStatus } : {}),
+    productVariant: {
+      is: {
+        ...withTenantScope(tenantId),
+        product: {
+          is: withTenantScope(tenantId),
+        },
+      },
+    },
+  } satisfies Prisma.VirtualStockWhereInput;
 
   const virtualStocks = await prisma.virtualStock.findMany({
-    where: whereClause,
+    where,
     include: {
       productVariant: {
         select: {
           id: true,
           sku: true,
-          name: true,
-        },
-      },
-      supplier: {
-        select: {
-          id: true,
-          name: true,
+          product: {
+            select: {
+              translations: {
+                where: {
+                  tenantId,
+                  languageId,
+                },
+                select: {
+                  name: true,
+                },
+                take: 1,
+              },
+            },
+          },
         },
       },
       supplierCurrency: {
         select: {
           code: true,
-          name: true,
+          symbol: true,
+          translations: {
+            where: { languageId },
+            select: { name: true },
+            take: 1,
+          },
         },
       },
     },
@@ -380,97 +413,206 @@ export const getVirtualStockStats = async (c: Context<AppBindings>) => {
     },
   });
 
+  const supplier = warehouse.supplier
+    ? {
+        id: warehouse.supplier.id,
+        name: warehouse.supplier.company.companyName,
+      }
+    : null;
+
   return sendSuccess(c, {
-    warehouseId,
-    warehouseType: "VIRTUAL",
-    stats: virtualStocks.map((vs) => ({
-      productVariantId: vs.productVariantId,
-      productVariant: vs.productVariant,
-      quantity: vs.quantity.toNumber(),
-      supplier: vs.supplier,
-      supplierPrice: vs.supplierPrice?.toNumber() ?? null,
-      supplierCurrency: vs.supplierCurrency,
-      lastSyncAt: vs.lastSyncAt,
-      syncStatus: vs.syncStatus,
-      syncError: vs.syncError,
-      leadTimeDays: vs.leadTimeDays,
-      expectedAvailableDate: vs.expectedAvailableDate,
+    warehouseId: warehouse.id,
+    warehouseType: warehouse.type,
+    stats: virtualStocks.map((stock) => ({
+      productVariantId: stock.productVariantId,
+      productVariant: {
+        id: stock.productVariant.id,
+        sku: stock.productVariant.sku,
+        name: stock.productVariant.product.translations[0]?.name ?? stock.productVariant.sku,
+      },
+      quantity: stock.quantity.toNumber(),
+      supplier,
+      supplierPrice: stock.supplierPrice?.toNumber() ?? null,
+      supplierCurrency: stock.supplierCurrency
+        ? {
+            code: stock.supplierCurrency.code,
+            symbol: stock.supplierCurrency.symbol,
+            name: stock.supplierCurrency.translations[0]?.name ?? stock.supplierCurrency.code,
+          }
+        : null,
+      lastSyncAt: stock.lastSyncAt,
+      syncStatus: stock.syncStatus,
+      syncError: stock.syncError,
+      leadTimeDays: stock.leadTimeDays,
+      expectedAvailableDate: stock.expectedAvailableDate,
     })),
   });
 };
 
 /**
- * Returns batch-level stock information for lot-tracked inventory.
+ * Returns batch balances and batch-specific active reservations.
+ *
+ * Unallocated reservations without a batch number are not distributed
+ * across batches. Availability is quantity minus batch-specific reserved stock.
  *
  * @route GET /api/warehouse/stats/batches
  * @access Private
- * @param c - Hono context
+ * @param c - Hono request context.
+ * @returns Batch balances, reservation totals, and supplier details.
  */
-export const getBatchStats = async (c: Context<AppBindings>) => {
+export const getBatchStats = async (c: Context<AppBindings>): Promise<Response> => {
   const tenantId = getRequiredTenantId(c);
+  const languageId = getRequiredLanguageId(c);
 
   const { warehouseId, productVariantId, status, includeExpired } =
     getValidatedQuery<WarehouseBatchStatsInput>(c);
 
-  const whereClause: Prisma.StockBatchWhereInput = withTenantId(
-    {
-      warehouseId,
+  const now = new Date();
+
+  const warehouse = await prisma.warehouse.findFirst({
+    where: {
+      tenantId,
+      id: warehouseId,
     },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!warehouse) {
+    throw new NotFoundError("Magazzino non trovato");
+  }
+
+  const where = {
     tenantId,
-  );
-
-  if (productVariantId) {
-    whereClause.productVariantId = productVariantId;
-  }
-
-  if (status) {
-    whereClause.status = status;
-  }
-
-  if (!includeExpired) {
-    whereClause.status = {
-      not: "EXPIRED",
-    };
-  }
+    warehouseId: warehouse.id,
+    ...(productVariantId ? { productVariantId } : {}),
+    ...(status ? { status } : {}),
+    ...(!includeExpired
+      ? {
+          AND: [
+            { status: { not: "EXPIRED" } },
+            {
+              OR: [{ expiryDate: null }, { expiryDate: { gt: now } }],
+            },
+          ],
+        }
+      : {}),
+    productVariant: {
+      is: {
+        ...withTenantScope(tenantId),
+        product: {
+          is: withTenantScope(tenantId),
+        },
+      },
+    },
+  } satisfies Prisma.StockBatchWhereInput;
 
   const batches = await prisma.stockBatch.findMany({
-    where: whereClause,
+    where,
     include: {
       productVariant: {
         select: {
           id: true,
           sku: true,
-          name: true,
+          product: {
+            select: {
+              translations: {
+                where: {
+                  tenantId,
+                  languageId,
+                },
+                select: {
+                  name: true,
+                },
+                take: 1,
+              },
+            },
+          },
         },
       },
       supplier: {
+        where: withSoftDelete({ tenantId }),
         select: {
           id: true,
-          name: true,
+          company: {
+            select: {
+              companyName: true,
+            },
+          },
         },
       },
     },
-    orderBy: {
-      expiryDate: "asc",
-    },
+    orderBy: [{ expiryDate: "asc" }, { id: "asc" }],
   });
 
+  const reservedByBatch = new Map<string, Decimal>();
+
+  if (batches.length > 0) {
+    const reservations = await prisma.stockReservation.groupBy({
+      by: ["productVariantId", "batchNumber"],
+      where: {
+        tenantId,
+        warehouseId: warehouse.id,
+        status: "ACTIVE",
+        batchNumber: {
+          in: [...new Set(batches.map((batch) => batch.batchNumber))],
+        },
+        productVariantId: {
+          in: [...new Set(batches.map((batch) => batch.productVariantId))],
+        },
+        OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+        document: {
+          is: withTenantScope(tenantId),
+        },
+      },
+      _sum: {
+        quantity: true,
+      },
+    });
+
+    for (const reservation of reservations) {
+      if (reservation.batchNumber === null) {
+        continue;
+      }
+
+      const key = JSON.stringify([reservation.productVariantId, reservation.batchNumber]);
+
+      reservedByBatch.set(key, reservation._sum.quantity ?? new Decimal(0));
+    }
+  }
+
   return sendSuccess(c, {
-    warehouseId,
-    stats: batches.map((batch) => ({
-      batchNumber: batch.batchNumber,
-      productVariantId: batch.productVariantId,
-      productVariant: batch.productVariant,
-      quantity: batch.quantity.toNumber(),
-      reserved: batch.reserved.toNumber(),
-      available: batch.quantity.minus(batch.reserved).toNumber(),
-      status: batch.status,
-      manufacturedDate: batch.manufacturedDate,
-      expiryDate: batch.expiryDate,
-      supplier: batch.supplier,
-      createdAt: batch.createdAt,
-      updatedAt: batch.updatedAt,
-    })),
+    warehouseId: warehouse.id,
+    stats: batches.map((batch) => {
+      const key = JSON.stringify([batch.productVariantId, batch.batchNumber]);
+
+      const reserved = reservedByBatch.get(key) ?? new Decimal(0);
+
+      return {
+        batchNumber: batch.batchNumber,
+        productVariantId: batch.productVariantId,
+        productVariant: {
+          id: batch.productVariant.id,
+          sku: batch.productVariant.sku,
+          name: batch.productVariant.product.translations[0]?.name ?? batch.productVariant.sku,
+        },
+        quantity: batch.quantity.toNumber(),
+        reserved: reserved.toNumber(),
+        available: batch.quantity.minus(reserved).toNumber(),
+        status: batch.status,
+        manufacturedDate: batch.manufacturedDate,
+        expiryDate: batch.expiryDate,
+        supplier: batch.supplier
+          ? {
+              id: batch.supplier.id,
+              name: batch.supplier.company.companyName,
+            }
+          : null,
+        createdAt: batch.createdAt,
+        updatedAt: batch.updatedAt,
+      };
+    }),
   });
 };
 

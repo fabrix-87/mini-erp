@@ -1,4 +1,4 @@
-import { ValidationError } from "@mini-erp/shared";
+import { Supplier, ValidationError } from "@mini-erp/shared";
 import { ValidationResult } from "../types/company-types";
 import { AddressType } from "@/generated/prisma/enums";
 import { CompanyAddress } from "@/generated/prisma/client";
@@ -156,15 +156,22 @@ export const calculateCustomerStats = (customer: any) => ({
 });
 
 /**
- * Calcola statistiche supplier
+ * Builds supplier statistics from denormalized purchase counters.
+ *
+ * Monetary values are serialized as decimal strings to avoid
+ * implicit conversion to JavaScript floating-point numbers.
+ *
+ * @param supplier - Supplier purchase counters and quality rating.
+ * @returns Purchase totals, average order value, and supplier rating.
  */
-export const calculateSupplierStats = (supplier: any) => ({
-  totalOrders: supplier._count?.documentsIn || 0,
-  totalSpent: supplier.totalSpent || 0,
+export const calculateSupplierStats = (
+  supplier: Pick<Supplier, "totalOrders" | "totalSpent" | "rating">,
+) => ({
+  totalOrders: supplier.totalOrders,
+  totalSpent: supplier.totalSpent.toFixed(2),
   averageOrderValue:
-    supplier._count?.documentsIn > 0 ? supplier.totalSpent / supplier._count.documentsIn : 0,
-  productsSupplied: supplier._count?.products || 0,
-  rating: supplier.rating || 0,
+    supplier.totalOrders > 0 ? supplier.totalSpent.div(supplier.totalOrders).toFixed(2) : "0.00",
+  rating: supplier.rating ?? 0,
 });
 
 /**

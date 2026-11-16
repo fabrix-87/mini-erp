@@ -1,10 +1,6 @@
 import { Prisma } from "../generated/prisma/client";
 import { prisma } from "../config/prisma-config";
-import {
-  formatPaginatedResponse,
-  sendNotFound,
-  sendSuccess,
-} from "../utils/response-utils";
+import { formatPaginatedResponse, sendNotFound, sendSuccess } from "../utils/response-utils";
 import { Country, CountryCodeParam, CountryQueryInput, PaginatedResponse } from "@mini-erp/shared";
 import { buildCacheKey, getCache, setCache } from "@/utils/cache-utils";
 import { Context } from "hono";
@@ -18,7 +14,7 @@ import { getValidatedParams, getValidatedQuery } from "@/helpers/validated-conte
  */
 export const getAllCountries = async (c: Context<AppBindings>) => {
   const { limit = 10, page = 1, isEU, search } = getValidatedQuery<CountryQueryInput>(c);
-/*
+  /*
   const languageId = c.get("user")?.preferredLanguageId;
 
   if (!languageId) {
@@ -87,8 +83,8 @@ export const getCountryByCode = async (c: Context<AppBindings>) => {
       languages: {
         select: {
           name: true,
-          iso_code: true,
-          language_code: true,
+          isoCode: true,
+          languageCode: true,
         },
       },
     },

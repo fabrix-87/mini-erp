@@ -48,7 +48,8 @@ import {
 import { withTenantScope, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 import { createInitialCompanyVersion } from "@/helpers/company-version-helper";
 import { upsertLegalAddress } from "@/helpers/address-helper";
-import { ConflictError } from "@/utils/app-error-utils";
+import { ConflictError, NotFoundError } from "@/utils/app-error-utils";
+import { Prisma } from "@/generated/prisma/client";
 
 // ============================================================================
 // SUPPLIER CONTROLLERS
@@ -89,7 +90,7 @@ export const getSupplierById = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<SupplierIdParam>(c);
   const tenantId = getRequiredTenantId(c);
   const languageId = getRequiredLanguageId(c);
-  
+
   const supplier = await prisma.supplier.findFirst({
     where: withTenantScope(tenantId, { id }),
     include: getSupplierInclude(true, languageId),
@@ -338,38 +339,64 @@ export const updateSupplierRating = async (c: Context<AppBindings>) => {
 };
 
 /**
- * @desc    Ottieni statistiche supplier
- * @route   GET /api/suppliers/:id/stats
- * @access  Private (supplier:read)
+ * Returns supplier statistics grouped by master product.
+ *
+ * Product rankings count purchase-order lines, not distinct orders or units.
+ * Only non-deleted documents, products, and variants are included.
+ *
+ * @route GET /api/suppliers/:id/stats
+ * @access Private (supplier:read)
+ * @param c - Hono request context.
+ * @returns Supplier summary, recent purchase orders, and product rankings.
  */
-export const getSupplierStats = async (c: Context<AppBindings>) => {
+export const getSupplierStats = async (c: Context<AppBindings>): Promise<Response> => {
   const { id } = getValidatedParams<SupplierIdParam>(c);
   const tenantId = getRequiredTenantId(c);
+  const languageId = getRequiredLanguageId(c);
 
   const supplier = await prisma.supplier.findFirst({
     where: withTenantScope(tenantId, { id }),
-    include: {
-      _count: {
-        select: {
-          documentsIn: true,
-          products: true,
-        },
-      },
-    },
   });
 
   if (!supplier) {
-    return sendNotFound(c, "Supplier non trovato");
+    throw new NotFoundError("Supplier non trovato");
   }
 
-  const [recentOrders, topProducts] = await Promise.all([
-    // Ultimi ordini
-    prisma.document.findMany({
-      where: withTenantScope(tenantId, {
+  const orderWhere = {
+    ...withTenantScope(tenantId),
+    supplierId: supplier.id,
+    documentType: "SUPPLIER_ORDER",
+  } satisfies Prisma.DocumentWhereInput;
+
+  const suppliedVariantWhere = {
+    ...withTenantScope(tenantId),
+    supplierItems: {
+      some: {
+        tenantId,
         supplierId: supplier.id,
-        documentType: { in: ["SUPPLIER_ORDER", "INVOICE"] },
-      }),
-      orderBy: { documentDate: "desc" },
+      },
+    },
+  } satisfies Prisma.ProductVariantWhereInput;
+
+  const suppliedProductWhere = {
+    ...withTenantScope(tenantId),
+    variants: {
+      some: suppliedVariantWhere,
+    },
+  } satisfies Prisma.ProductWhereInput;
+
+  const [totalOrders, totalProducts, recentOrders, rankedProducts] = await Promise.all([
+    prisma.document.count({
+      where: orderWhere,
+    }),
+
+    prisma.product.count({
+      where: suppliedProductWhere,
+    }),
+
+    prisma.document.findMany({
+      where: orderWhere,
+      orderBy: [{ documentDate: "desc" }, { id: "desc" }],
       take: 10,
       select: {
         id: true,
@@ -377,54 +404,103 @@ export const getSupplierStats = async (c: Context<AppBindings>) => {
         documentType: true,
         documentDate: true,
         totalAmount: true,
+        currencyCode: true,
         status: true,
       },
     }),
 
-    // Prodotti forniti più ordinati
-    prisma.product.findMany({
-      where: withTenantScope(tenantId, {
-        supplierId: supplier.id,
-      }),
-      select: {
-        id: true,
-        reference: true,
-        translations: {
-          take: 1,
-          select: { name: true },
+    prisma.documentLine.groupBy({
+      by: ["productId"],
+      where: {
+        tenantId,
+        productId: { not: null },
+        lineType: "PRODUCT",
+        isComponent: false,
+        document: {
+          is: orderWhere,
         },
-        _count: {
-          select: {
-            documentLines: true,
+        productVariant: {
+          is: {
+            ...suppliedVariantWhere,
+            product: {
+              is: withTenantScope(tenantId),
+            },
           },
         },
       },
-      orderBy: {
-        documentLines: {
-          _count: "desc",
-        },
+      _count: {
+        id: true,
       },
+      orderBy: [{ _count: { id: "desc" } }, { productId: "asc" }],
       take: 10,
     }),
   ]);
 
-  const stats = calculateSupplierStats(supplier);
+  const productIds = rankedProducts.flatMap(({ productId }) =>
+    productId === null ? [] : [productId],
+  );
 
-  const result = {
-    summary: stats,
-    recentOrders,
-    topProducts: topProducts.map((p) => ({
-      productId: p.id,
-      productName: p.translations[0]?.name || p.reference,
-      orderCount: p._count.documentLines,
-    })),
-    totals: {
-      orders: supplier._count.documentsIn,
-      products: supplier._count.products,
-    },
+  const products =
+    productIds.length === 0
+      ? []
+      : await prisma.product.findMany({
+          where: {
+            ...suppliedProductWhere,
+            id: { in: productIds },
+          },
+          select: {
+            id: true,
+            reference: true,
+            translations: {
+              where: {
+                tenantId,
+                languageId,
+              },
+              select: {
+                name: true,
+              },
+              take: 1,
+            },
+          },
+        });
+
+  const productsById = new Map(products.map((product) => [product.id, product]));
+
+  const topProducts = rankedProducts.flatMap((row) => {
+    if (row.productId === null) {
+      return [];
+    }
+
+    const product = productsById.get(row.productId);
+
+    if (!product) {
+      return [];
+    }
+
+    return [
+      {
+        productId: product.id,
+        productName: product.translations[0]?.name ?? product.reference,
+        orderCount: row._count.id,
+      },
+    ];
+  });
+
+  const summary = {
+    ...calculateSupplierStats(supplier),
+    totalOrders,
+    productsSupplied: totalProducts,
   };
 
-  return sendSuccess(c, result);
+  return sendSuccess(c, {
+    summary,
+    recentOrders,
+    topProducts,
+    totals: {
+      orders: totalOrders,
+      products: totalProducts,
+    },
+  });
 };
 
 /**
@@ -443,7 +519,7 @@ export const deleteSupplier = async (c: Context<AppBindings>) => {
       _count: {
         select: {
           documentsIn: true,
-          products: true,
+          productVariants: true,
         },
       },
     },
@@ -453,7 +529,7 @@ export const deleteSupplier = async (c: Context<AppBindings>) => {
     return sendNotFound(c, "Supplier non trovato");
   }
 
-  const totalRelations = supplier._count.documentsIn + supplier._count.products;
+  const totalRelations = supplier._count.documentsIn + supplier._count.productVariants;
 
   if (totalRelations > 0) {
     throw new ConflictError(

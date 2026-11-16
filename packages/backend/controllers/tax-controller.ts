@@ -464,7 +464,7 @@ export const getAllVatNatures = async (c: Context<AppBindings>) => {
     include: {
       translations: {
         include: {
-          language: { select: { id: true, name: true, iso_code: true } },
+          language: { select: { id: true, name: true, isoCode: true } },
         },
       },
     },

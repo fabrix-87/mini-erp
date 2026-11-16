@@ -1,12 +1,11 @@
 import { z } from "zod";
 import { percentageSchema } from "./business/currency";
-import { createIdSchema } from "./primitives/id";
-import Decimal from "decimal.js";
 import { isValidPercentageTotal } from "./primitives/decimal";
 import { dateStringSchema } from "./primitives/date";
 import { queryBooleanSchema } from "./query/params";
 import { sortOrderSchema } from "./query/pagination";
 import { PAYMENT_TERM_TYPE } from "../constants";
+import { languageIdBaseSchema, paymentMethodIdBaseSchema } from "./base";
 
 // ============================================================================
 // ENUMS
@@ -24,7 +23,7 @@ export const termTypeSchema = z.enum(PAYMENT_TERM_TYPE);
 export const paymentTermDetailSchema = z
   .object({
     percentage: percentageSchema,
-    termType: termTypeSchema.default("days_from_invoice"),
+    termType: termTypeSchema.default("DAYS_FROM_INVOICE"),
     dueDays: z.number().int().nonnegative("dueDays deve essere >= 0").default(0),
     isEndOfMonth: z.boolean().default(false),
     isFixedDate: z.boolean().default(false),
@@ -45,7 +44,7 @@ export const paymentTermDetailSchema = z
  */
 export const paymentMethodTranslationSchema = z
   .object({
-    languageId: createIdSchema("Language ID è obbligatorio"),
+    languageId: languageIdBaseSchema,
 
     name: z
       .string()
@@ -135,7 +134,7 @@ export const calculateDueDatesSchema = z
  * Schema per ID parametri
  */
 export const paymentMethodIdSchema = z.object({
-  id: createIdSchema("ID Payment Method non valido"),
+  id: paymentMethodIdBaseSchema,
 });
 
 /**

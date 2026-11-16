@@ -54,7 +54,6 @@ export const getActivityParticipants = async (c: Context<AppBindings>) => {
           lastName: true,
           email: true,
           phone: true,
-          position: true,
         },
       },
     },
@@ -121,7 +120,10 @@ export const addActivityParticipant = async (c: Context<AppBindings>) => {
   }
 
   const participant = await prisma.activityParticipant.create({
-    data,
+    data: {
+      ...data,
+      tenantId,
+    },
     include: {
       user: { select: { id: true, username: true, email: true } },
       contact: {
@@ -214,6 +216,7 @@ export const addBulkParticipants = async (c: Context<AppBindings>) => {
       >
     >;
   }>(c);
+  const tenantId = getRequiredTenantId(c);
 
   if (!Array.isArray(participants) || participants.length === 0) {
     return sendError(c, {
@@ -241,6 +244,7 @@ export const addBulkParticipants = async (c: Context<AppBindings>) => {
           externalName: p.externalName,
           role: p.role ?? "OPTIONAL",
           status: p.status ?? "INVITED",
+          tenantId,
         }),
         include: {
           user: { select: { id: true, username: true, email: true } },
