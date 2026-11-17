@@ -118,12 +118,12 @@ productRoutes.get("/:id/translations", validateProductId, getProductTranslations
 /**
  * @route   POST /api/products
  * @desc    Crea un nuovo prodotto
- * @access  Private (Admin, Product Manager)
+ * @access  Private (product:create, product:manage)
  */
 productRoutes.post(
   "/",
-  requireTenantScope,
   authorize(["product:create", "product:manage"]),
+  requireTenantScope,
   validateCreateProduct,
   createProduct,
 );

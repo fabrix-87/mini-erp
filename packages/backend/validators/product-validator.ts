@@ -25,9 +25,7 @@ import { validateBody, validateParams, validateQuery } from "../middleware/valid
 // VALIDATION MIDDLEWARE
 // ============================================================================
 
-/**
- * Middleware per la creazione di un prodotto
- */
+/** Validates the payload for creating a product with its initial variants. */
 export const validateCreateProduct = validateBody(createProductSchema, "Product creation");
 
 /**

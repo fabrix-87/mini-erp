@@ -162,3 +162,22 @@ export type ProductIdLanguageIdParam = z.infer<typeof productIdLanguageIdSchema>
 
 // Type Query
 export type ProductQueryInput = z.infer<typeof productQuerySchema>;
+
+// Type Response
+export type CreateProductResponse = {
+  id: string;
+  reference: string;
+  type: ProductType;
+  status: ProductStatus;
+  baseUomId: string;
+  ecotax: string;
+  createdAt: string;
+  variants: {
+    id: string;
+    sku: string;
+    position: number;
+    isDefault: boolean;
+    active: boolean;
+    attributeIds: string[];
+  }[];
+};

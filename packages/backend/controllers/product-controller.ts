@@ -35,11 +35,13 @@ import {
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
 import {
+  getRequiredTenantId,
   getValidatedBody,
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
 import { connectById, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
+import { createProductAggregate } from "@/services/product/create-product";
 
 // ============================================================================
 // PRODUCTS - CRUD Operations
@@ -148,65 +150,12 @@ export const getProductById = async (c: Context<AppBindings>) => {
 /**
  * @desc    Crea un nuovo prodotto
  * @route   POST /api/products
- * @access  Private (Admin, Product Manager)
+ * @access  Private (product:create, product:manage)
  */
-export const createProduct = async (c: Context<AppBindings>) => {
-  const { variants, defaultTaxRuleId, ...productData } = getValidatedBody<CreateProductInput>(c);
-  const tenantId = c.get("currentTenantId")!;
-
-  // Verifica unicità reference
-  const existingProduct = await prisma.product.findFirst({
-    where: withTenantId({ reference: productData.reference }, tenantId),
-  });
-  if (existingProduct) throw new ConflictError("Reference prodotto già esistente");
-
-  // Verifica unicità variantCode
-  for (const variant of variants) {
-    if (variant.variantCode) {
-      const existingVariant = await prisma.productVariant.findFirst({
-        where: withTenantId({ variantCode: variant.variantCode }, tenantId),
-      });
-      if (existingVariant) {
-        throw new ConflictError(`Codice variante '${variant.variantCode}' già esistente`);
-      }
-    }
-  }
-
-  // Assicurati che almeno una variante sia impostata come default
-  if (!variants.some((v) => v.isDefault === true)) {
-    variants[0].isDefault = true;
-  }
-
-  // Crea prodotto con varianti in una transazione
-  const product = await prisma.$transaction(async (tx) => {
-    // Crea il prodotto
-    const newProduct = await tx.product.create({
-      data: {
-        ...productData,
-        tenant: connectById(tenantId),
-        defaultTaxRule: connectById(defaultTaxRuleId),
-      } as Prisma.ProductCreateInput,
-    });
-
-    // Crea le varianti
-    await Promise.all(
-      variants.map((variant: any) =>
-        tx.productVariant.create({
-          data: {
-            ...variant,
-            product: connectById(newProduct.id),
-            tenant: connectById(tenantId),
-          } as Prisma.ProductVariantCreateInput,
-        }),
-      ),
-    );
-
-    // Ritorna il prodotto completo
-    return tx.product.findUnique({
-      where: { id: newProduct.id },
-      select: getProductSelection(),
-    });
-  });
+export const createProduct = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
+  const input = getValidatedBody<CreateProductInput>(c);
+  const product = await createProductAggregate(tenantId, input);
 
   return sendCreated(c, product, "Prodotto creato con successo");
 };

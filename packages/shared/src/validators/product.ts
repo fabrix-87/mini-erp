@@ -69,9 +69,19 @@ const minimalQuantityOptions = {
 } as const;
 
 const variantBaseShape = {
-  sku: z.string().min(1, "Lo SKU è obbligatorio").max(64, "Lo SKU non può superare 64 caratteri").trim(),
-  ean13: z.string().regex(/^\d{13}$/, "L'EAN-13 deve contenere 13 cifre").nullish(),
-  upc: z.string().regex(/^\d{12}$/, "L'UPC deve contenere 12 cifre").nullish(),
+  sku: z
+    .string()
+    .trim()
+    .min(1, "Lo SKU è obbligatorio")
+    .max(64, "Lo SKU non può superare 64 caratteri"),
+  ean13: z
+    .string()
+    .regex(/^\d{13}$/, "L'EAN-13 deve contenere 13 cifre")
+    .nullish(),
+  upc: z
+    .string()
+    .regex(/^\d{12}$/, "L'UPC deve contenere 12 cifre")
+    .nullish(),
   isbn: z.string().max(32).nullish(),
   mpn: z.string().max(40).nullish(),
 
@@ -130,7 +140,11 @@ export const productVariantIdSchema = z.object({ id: productVariantIdBaseSchema 
 const productBaseShape = {
   type: productTypeSchema,
   status: productStatusSchema,
-  reference: z.string().min(1, "Il riferimento è obbligatorio").max(64, "Il riferimento non può superare 64 caratteri").trim(),
+  reference: z
+    .string()
+    .trim()
+    .min(1, "Il riferimento è obbligatorio")
+    .max(64, "Il riferimento non può superare 64 caratteri"),
   availableForOrder: z.boolean(),
   ecotax: unitAmountOptionalSchema,
   packStockType: productPackStockTypeSchema,
@@ -141,7 +155,10 @@ const productBaseShape = {
   condition: productConditionSchema,
   manufacturerId: manufacturerIdBaseSchema.nullish(),
   /** NC8 code; existence in IntrastatCommodityCode is checked in controller. */
-  commodityCode: z.string().regex(/^\d{8}$/, "Il codice NC8 deve contenere 8 cifre").nullish(),
+  commodityCode: z
+    .string()
+    .regex(/^\d{8}$/, "Il codice NC8 deve contenere 8 cifre")
+    .nullish(),
   coverThumbnailUrl: z.string().max(500).nullish(),
 };
 
@@ -163,23 +180,53 @@ export const createProductSchema = z
     outOfStockType: productOutOfStockTypeSchema.default("DENY_ORDERS"),
     condition: productConditionSchema.default("NEW"),
     axes: z.array(productVariantAxisInputSchema).max(MAX_PRODUCT_VARIANT_AXES).default([]),
-    variants: z.array(createProductVariantInlineSchema).min(1, "Almeno una variante è obbligatoria"),
+    variants: z
+      .array(createProductVariantInlineSchema)
+      .min(1, "Almeno una variante è obbligatoria"),
   })
   .strict()
   .superRefine((data, ctx) => {
-    const defaults = data.variants.filter((v) => v.isDefault).length;
-    if (defaults > 1 || (data.variants.length > 1 && defaults !== 1)) {
-      ctx.addIssue({ code: "custom", path: ["variants"], message: "Una sola variante deve essere impostata come default" });
+    const defaultIndex =
+      data.variants.length === 1 ? 0 : data.variants.findIndex((variant) => variant.isDefault);
+
+    const defaultCount = data.variants.filter((variant) => variant.isDefault).length;
+
+    if (data.variants.length > 1 && defaultCount !== 1) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["variants"],
+        message: "Una sola variante deve essere impostata come predefinita",
+      });
+    }
+
+    if (defaultIndex >= 0 && data.variants[defaultIndex]?.active === false) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["variants", defaultIndex, "active"],
+        message: "La variante predefinita deve essere attiva",
+      });
     }
     if (new Set(data.axes.map((a) => a.attributeGroupId)).size !== data.axes.length) {
-      ctx.addIssue({ code: "custom", path: ["axes"], message: "Gli assi devono riferirsi a gruppi di attributi distinti" });
+      ctx.addIssue({
+        code: "custom",
+        path: ["axes"],
+        message: "Gli assi devono riferirsi a gruppi di attributi distinti",
+      });
     }
     if (data.axes.length === 0 && data.variants.length > 1) {
-      ctx.addIssue({ code: "custom", path: ["variants"], message: "Senza assi è ammessa una sola variante" });
+      ctx.addIssue({
+        code: "custom",
+        path: ["variants"],
+        message: "Senza assi è ammessa una sola variante",
+      });
     }
     data.variants.forEach((v, i) => {
       if (v.attributeIds.length !== data.axes.length) {
-        ctx.addIssue({ code: "custom", path: ["variants", i, "attributeIds"], message: "Un valore di attributo per ogni asse" });
+        ctx.addIssue({
+          code: "custom",
+          path: ["variants", i, "attributeIds"],
+          message: "Un valore di attributo per ogni asse",
+        });
       }
     });
   });
@@ -195,16 +242,30 @@ export const productIdAsProductIdSchema = z.object({ productId: productIdBaseSch
 // ============================================================================
 
 const productTranslationBaseShape = {
-  name: z.string().min(1, "Il nome è obbligatorio").max(255, "Il nome non può superare 255 caratteri").trim(),
+  name: z
+    .string()
+    .trim()
+    .min(1, "Il nome è obbligatorio")
+    .max(255, "Il nome non può superare 255 caratteri"),
   description: z.string().nullish(),
   shortDescription: z.string().max(500).nullish(),
 };
 
 export const createProductTranslationSchema = z
-  .object({ productId: productIdBaseSchema, languageId: languageIdBaseSchema, ...productTranslationBaseShape })
+  .object({
+    productId: productIdBaseSchema,
+    languageId: languageIdBaseSchema,
+    ...productTranslationBaseShape,
+  })
   .strict();
-export const updateProductTranslationSchema = z.object(productTranslationBaseShape).partial().strict();
-export const productIdLanguageIdSchema = z.object({ id: productIdBaseSchema, languageId: languageIdBaseSchema });
+export const updateProductTranslationSchema = z
+  .object(productTranslationBaseShape)
+  .partial()
+  .strict();
+export const productIdLanguageIdSchema = z.object({
+  id: productIdBaseSchema,
+  languageId: languageIdBaseSchema,
+});
 
 const productImageBaseShape = {
   variantId: productVariantIdBaseSchema.nullish(),
@@ -218,7 +279,9 @@ const productImageBaseShape = {
   mimeType: z.string().max(50).nullish(),
   /** Localized alt text, stored in ProductImageTranslation. */
   translations: z
-    .array(z.object({ languageId: languageIdBaseSchema, description: z.string().nullish() }).strict())
+    .array(
+      z.object({ languageId: languageIdBaseSchema, description: z.string().nullish() }).strict(),
+    )
     .default([]),
 };
 
@@ -231,21 +294,34 @@ export const createProductImageSchema = z
   })
   .strict();
 export const updateProductImageSchema = z.object(productImageBaseShape).partial().strict();
-export const productImageIdSchema = z.object({ id: productImageIdBaseSchema, productId: productIdBaseSchema });
+export const productImageIdSchema = z.object({
+  id: productImageIdBaseSchema,
+  productId: productIdBaseSchema,
+});
 
 export const createProductCategorySchema = z
-  .object({ productId: productIdBaseSchema, categoryId: productCategoryIdBaseSchema, position: z.number().int().min(0).default(0) })
+  .object({
+    productId: productIdBaseSchema,
+    categoryId: productCategoryIdBaseSchema,
+    position: z.number().int().min(0).default(0),
+  })
   .strict();
 export const updateProductCategorySchema = z.object({ position: z.number().int().min(0) }).strict();
-export const productCategoryIdSchema = z.object({ categoryId: productCategoryIdBaseSchema, productId: productIdBaseSchema });
+export const productCategoryIdSchema = z.object({
+  categoryId: productCategoryIdBaseSchema,
+  productId: productIdBaseSchema,
+});
 
 // Manufacturer: unchanged, except customFields
 const manufacturerBaseShape = {
-  name: z.string().min(1, "Il nome è obbligatorio").trim(),
+  name: z.string().trim().min(1, "Il nome è obbligatorio"),
   active: z.boolean(),
   customFields: inputJsonValueSchema.nullish(),
 };
-export const createManufacturerSchema = z.object(manufacturerBaseShape).extend({ active: z.boolean().default(true) }).strict();
+export const createManufacturerSchema = z
+  .object(manufacturerBaseShape)
+  .extend({ active: z.boolean().default(true) })
+  .strict();
 export const updateManufacturerSchema = z.object(manufacturerBaseShape).partial().strict();
 export const manufacturerIdSchema = z.object({ id: manufacturerIdBaseSchema });
 

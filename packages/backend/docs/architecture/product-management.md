@@ -12,21 +12,21 @@ Il catalogo prodotti segue un modello **Master–Variant**:
 - **ProductVariant** (SKU): l'unità transazionale concreta. È ciò che si vende,
   si acquista, si movimenta e si prezza (es. "T-shirt Basic / Rosso / M").
 
-Ogni prodotto, anche il più semplice, ha **almeno una variante di default**
-senza attributi. Stock, listini, righe documento e movimenti puntano sempre
-alla variante, mai direttamente al master.
+Ogni prodotto, anche il più semplice, ha **almeno una variante**. I prodotti semplici possiedono un'unica variante senza attributi, identificata da `combinationKey = "default"`, mentre i prodotti variabili possiedono una o più varianti identificate dalle rispettive combinazioni di attributi.
+
+Stock, listini, righe documento e movimenti puntano sempre alla variante, mai direttamente al master.
 
 ### Perché questa separazione
 
-| Aspetto | Product (master) | ProductVariant (SKU) |
-|---|---|---|
-| Identità commerciale | Sì (nome, descrizione, categoria) | No |
-| Codice interno | `reference` | `sku` |
-| Attributi di variante | No (li definisce come assi) | Sì (un valore per asse) |
-| Prezzo di vendita | No (single source = PriceListItem) | No (eredita dal listino) |
-| Giacenza / movimenti | No | Sì |
-| Fornitori e costi d'acquisto | No | Sì (via ProductSupplier) |
-| Pubblicazione su canali | No | No (gestito da ProductChannelSettings) |
+| Aspetto                      | Product (master)                   | ProductVariant (SKU)                   |
+| ---------------------------- | ---------------------------------- | -------------------------------------- |
+| Identità commerciale         | Sì (nome, descrizione, categoria)  | No                                     |
+| Codice interno               | `reference`                        | `sku`                                  |
+| Attributi di variante        | No (li definisce come assi)        | Sì (un valore per asse)                |
+| Prezzo di vendita            | No (single source = PriceListItem) | No (eredita dal listino)               |
+| Giacenza / movimenti         | No                                 | Sì                                     |
+| Fornitori e costi d'acquisto | No                                 | Sì (via ProductSupplier)               |
+| Pubblicazione su canali      | No                                 | No (gestito da ProductChannelSettings) |
 
 ## 2. Ciclo di vita del prodotto
 
@@ -51,6 +51,7 @@ stateDiagram-v2
 ```
 
 Regole:
+
 - Il passaggio ad `ARCHIVED` non elimina nulla: movimenti, righe documento e
   listini restano intatti (FK con `Restrict`).
 - Il soft-delete (`deletedAt`) è separato dallo status: serve per la rimozione
@@ -61,39 +62,39 @@ Regole:
 
 ### Assi di variante
 
-Un **asse** è un gruppo di attributi lungo cui il prodotto varia
-(es. Colore, Taglia). Un prodotto dichiara i propri assi tramite
-`ProductVariantAxis`; ogni variante deve avere **esattamente un valore per
-ogni asse** dichiarato.
+Un **asse** è un gruppo di attributi lungo cui il prodotto varia (es. Colore, Taglia). Un prodotto dichiara i propri assi tramite `ProductVariantAxis`; ogni variante deve avere **esattamente un valore per ogni asse** dichiarato.
 
-- Prodotto semplice: zero assi, una variante `combinationKey = "default"`.
-- Prodotto variabile: 1–3 assi consigliati (oltre diventa ingestibile).
-- La combinazione è identificata da `combinationKey`, hash deterministico
-  degli ID attributo ordinati. Garantisce l'unicità per prodotto.
+- **Prodotto semplice**: zero assi e una sola variante senza attributi, con `combinationKey = "default"`.
+- **Prodotto variabile**: almeno un asse e una o più varianti, ciascuna con esattamente un valore per ogni asse dichiarato.
+- **Numero di assi**: 1–3 assi consigliati; oltre questo numero la gestione delle combinazioni diventa potenzialmente complessa.
+- **Numero di varianti**: almeno una variante valida per ogni prodotto.
 
 ### Generazione varianti
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[Prodotto] --> B{Assi definiti?}
-    B -- No --> C[1 variante default<br/>combinationKey = default]
+    B -- No --> C[Una variante senza attributi<br/>combinationKey = default]
     B -- Sì --> D[Prodotto cartesiano<br/>dei valori per asse]
-    D --> E{Limite 100 varianti?}
-    E -- Sì --> F[Errore: troppe combinazioni]
-    E -- No --> G[Creazione varianti mancanti<br/>idempotente su combinationKey]
+    D --> E{Combinazioni entro il limite?}
+    E -- No --> F[Errore: troppe combinazioni]
+    E -- Sì --> G[Creazione varianti mancanti<br/>idempotente su combinationKey]
 ```
 
 Regole:
-- La generazione è **idempotente**: rieseguire non crea duplicati
-  (verifica su `combinationKey` esistente).
-- Limite massimo consigliato: 100 varianti per generazione.
+
+- La generazione è **idempotente**: rieseguire il processo non crea duplicati (verifica su `combinationKey` esistente).
+- Ogni prodotto deve avere almeno una variante valida.
+- Il limite massimo consigliato è di 100 varianti per generazione.
 - L'aggiunta di un nuovo valore a un asse esistente genera solo le combinazioni mancanti.
-- La rimozione di un asse o di un valore non cancella le varianti esistenti:
-  le archivia (soft-delete) se non hanno movimenti.
+- La rimozione di un asse o di un valore non cancella le varianti esistenti. Le varianti non ancora utilizzate possono essere archiviate; quelle già referenziate da movimenti o documenti devono essere preservate per garantire l'integrità dello storico.
+- Gli assi e i relativi attributi utilizzati da varianti storicamente referenziate non possono essere eliminati fisicamente.
+- Se una combinazione già esistente e archiviata viene nuovamente generata, la variante viene riattivata anziché crearne una nuova.
+- La variante di un prodotto semplice utilizza sempre `combinationKey = "default"` e non possiede attributi.
 
 ### Attributi vs assi
 
-- **Asse (`ProductVariantAxis`)**: definisce *come* il prodotto varia.
+- **Asse (`ProductVariantAxis`)**: definisce _come_ il prodotto varia.
 - **Attributo (`ProductVariantAttribute`)**: il valore concreto di un asse su una variante.
 - Un attributo non può esistere su una variante se il suo gruppo non è un asse del prodotto.
 
@@ -105,10 +106,10 @@ espresse in questa unità.
 
 ### Tipi di conversione
 
-| Tipo | Dove vive | Esempio |
-|---|---|---|
-| Universale | `UnitOfMeasure.factor` | 1 kg = 1000 g (stessa categoria) |
-| Specifica prodotto | `ProductUom.factor` | 1 cartone = 12 pz |
+| Tipo               | Dove vive              | Esempio                          |
+| ------------------ | ---------------------- | -------------------------------- |
+| Universale         | `UnitOfMeasure.factor` | 1 kg = 1000 g (stessa categoria) |
+| Specifica prodotto | `ProductUom.factor`    | 1 cartone = 12 pz                |
 
 ```mermaid
 flowchart TD
@@ -119,6 +120,7 @@ flowchart TD
 ```
 
 Regole:
+
 - Le conversioni universali valgono solo dentro la stessa `UomCategory`.
 - Le UoM di tipo `PACKAGING` (cartone, pallet) non hanno fattore universale:
   passano sempre da `ProductUom`.
@@ -131,6 +133,7 @@ Il costo d'acquisto non vive sul prodotto né sulla variante: vive su
 `ProductSupplier`, che lega variante e fornitore.
 
 Ogni riga contiene:
+
 - `supplierSku`: codice articolo presso il fornitore.
 - `purchasePrice` + `currencyCode`: prezzo nella valuta del fornitore.
 - `minOrderQty`, `leadTimeDays`: condizioni commerciali.
@@ -151,17 +154,21 @@ Il "fornitore predefinito" non è un campo sul prodotto: si legge da
 - Un listino non converte valuta: documento, listino e listino padre hanno la stessa valuta.
 
 ### Unità di misura dei prezzi
+
 `PriceListItem.price` e `minQuantity` sono espressi nella UoM base del prodotto.
 Sulla riga documento: `unitPrice = price × uomFactor`; lo scaglione si confronta con
 `quantity × uomFactor`.
 
 ### Scelta del listino
+
 Un solo listino effettivo per documento, in quest'ordine:
+
 1. listino impostato sul documento;
 2. listino assegnato al cliente;
 3. listino predefinito del tenant per la valuta del documento (`isDefault`).
 
 ### Risoluzione del prezzo
+
 1. Voci della variante valide alla data (`validFrom`/`validTo`, estremi inclusi) con
    `minQuantity` ≤ quantità in UoM base.
 2. Vince lo scaglione più alto; a parità, la voce con validità datata su quella senza data.
@@ -169,20 +176,22 @@ Un solo listino effettivo per documento, in quest'ordine:
    (profondità massima 5). Una voce propria del listino derivato ha sempre la precedenza
    e non subisce la strategia.
 4. L'arrotondamento (`roundingMethod`) si applica una sola volta, sul risultato finale.
-   `NEAREST_05`/`NEAREST_10` arrotondano al multiplo più vicino; `ROUND_UP`/`ROUND_DOWN`
-   all'unità intera di valuta.
+   `NEAREST_05`/`NEAREST_10` arrotondano al multiplo più vicino, con criterio HALF_UP; `ROUND_UP`/`ROUND_DOWN`
+   alla precisione monetaria.
 5. Nessun prezzo → la riga non può essere confermata.
 
 Le finestre di validità delle voci con la stessa variante e lo stesso scaglione non
 possono sovrapporsi. `validTo` richiede `validFrom`.
 
 ### Sconto e override
+
 - `PriceListItem.discountPercent` non cambia `unitPrice`: viene proposto come sconto della riga.
 - Il prezzo applicato su una riga documento è uno snapshot (`unitPrice`, `originalUnitPrice`,
   `priceOverrideReason`). Se `unitPrice` è diverso dal prezzo risolto, `originalUnitPrice`
   conserva il prezzo di listino e `priceOverrideReason` è obbligatorio.
 
 ### Precisione e arrotondamento
+
 - `PriceListItem.price` e `DocumentLine.unitPrice` sono a 6 decimali: preservano
   prezzi millesimali e conversioni di UoM.
 - `DocumentLine.lineTotal`, `taxAmount` e tutti i totali documento sono a 2 decimali.
@@ -191,8 +200,8 @@ possono sovrapporsi. `validTo` richiede `validFrom`.
 - L'arrotondamento del listino (`roundingMethod`) si applica al prezzo base, una sola
   volta, al prezzo finale di un listino derivato. Le voci `EXPLICIT` non vengono mai
   arrotondate.
-- `NEAREST_05`: multiplo più vicino di 0,05. `NEAREST_10`: multiplo più vicino di 0,10.
-- `ROUND_UP` / `ROUND_DOWN`: per eccesso / per difetto alla sesta cifra decimale.
+- `NEAREST_05`: multiplo più vicino di 0,05. `NEAREST_10`: multiplo più vicino di 0,10
+- `ROUND_UP` / `ROUND_DOWN`: per eccesso / per difetto alla precisione monetaria.
 
 ## 7. Canali di vendita
 
@@ -240,13 +249,13 @@ stateDiagram-v2
 
 ### Tipi di giacenza
 
-| Modello | Scopo | Natura |
-|---|---|---|
-| `StockMovement` | Ledger delle movimentazioni | Append-only |
-| `StockBatch` | Saldo per lotto (scadenza, tracciabilità) | Cache ricalcolabile |
-| `StockReservation` | Quantità bloccata per un documento | Effimera |
-| `VirtualStock` | Disponibilità fornita da fornitore esterno | Snapshot sincronizzato |
-| `StockSerial` | Tracciamento unità serializzata (IMEI, SN) | Anagrafica di ciclo di vita |
+| Modello            | Scopo                                      | Natura                      |
+| ------------------ | ------------------------------------------ | --------------------------- |
+| `StockMovement`    | Ledger delle movimentazioni                | Append-only                 |
+| `StockBatch`       | Saldo per lotto (scadenza, tracciabilità)  | Cache ricalcolabile         |
+| `StockReservation` | Quantità bloccata per un documento         | Effimera                    |
+| `VirtualStock`     | Disponibilità fornita da fornitore esterno | Snapshot sincronizzato      |
+| `StockSerial`      | Tracciamento unità serializzata (IMEI, SN) | Anagrafica di ciclo di vita |
 
 ### Pack
 
@@ -264,6 +273,7 @@ Un `Product` di tipo `PACK` aggrega più varianti componente tramite
 muovere solo il pack, solo i componenti, o entrambi.
 
 Regole:
+
 - I componenti sono **varianti**, non prodotti (lo stock è per SKU).
 - I cicli (pack dentro pack) sono vietati o gestiti con limite di profondità.
 - La vendita di un pack genera righe documento figlie per i componenti
@@ -290,9 +300,12 @@ Un `StockSerial` traccia una singola unità fisica attraverso il suo ciclo di vi
 
 ## 9. Invarianti e regole trasversali
 
-- Ogni prodotto ha almeno una variante di default.
-- Ogni variante ha esattamente un valore per ogni asse del prodotto.
-- `combinationKey` è unico per `(tenantId, productId)`.
+- Ogni prodotto deve avere almeno una variante non archiviata.
+- Un prodotto semplice possiede esattamente una variante senza attributi, con combinationKey = "default".
+- Un prodotto variabile dichiara almeno un asse e ogni variante non archiviata deve avere esattamente un valore per ogni asse dichiarato.
+- Un prodotto semplice non dichiara assi e possiede una sola variante senza attributi, con `combinationKey = "default"`.
+- Un prodotto variabile dichiara almeno un asse e ogni variante deve avere esattamente un valore per ogni asse dichiarato.
+- `combinationKey` è unico per `(tenantId, productId)` e identifica in modo deterministico la combinazione degli attributi.
 - `baseUomId` è immutabile se esistono movimenti.
 - Le quantità di stock sono sempre nella UoM base.
 - Il prezzo di vendita vive solo nei listini; il prezzo d'acquisto solo in `ProductSupplier`.
@@ -302,17 +315,19 @@ Un `StockSerial` traccia una singola unità fisica attraverso il suo ciclo di vi
   il catalogo può cambiare, lo storico no.
 - I prezzi unitari sono a 6 decimali; i totali di riga e documento a 2 decimali.
 - L'arrotondamento del listino non si applica alle voci esplicite
+- Un prodotto non può essere convertito liberamente da semplice a variabile o viceversa dopo la creazione di movimenti sulle sue varianti.
+- Una variante già utilizzata in transazioni non può modificare la propria combinazione di attributi. Per rappresentare una nuova combinazione deve essere creata una nuova variante.
 
 ## 10. Glossario
 
-| Termine | Definizione |
-|---|---|
-| Master / Template | `Product`: entità commerciale ombrello |
-| SKU / Variant | `ProductVariant`: unità transazionale concreta |
-| Asse | Gruppo di attributi lungo cui il prodotto varia |
-| Combinazione | Insieme di valori (uno per asse) che identifica una variante |
-| UoM base | Unità di misura di riferimento per stock e listini |
-| Pack | Prodotto composto da più varianti componente |
-| Ledger | Registro append-only delle movimentazioni (`StockMovement`) |
-| Canale | Punto di vendita (webshop, marketplace, POS) |
-| Snapshot | Copia immutabile di un dato al momento della transazione |
+| Termine           | Definizione                                                  |
+| ----------------- | ------------------------------------------------------------ |
+| Master / Template | `Product`: entità commerciale ombrello                       |
+| SKU / Variant     | `ProductVariant`: unità transazionale concreta               |
+| Asse              | Gruppo di attributi lungo cui il prodotto varia              |
+| Combinazione      | Insieme di valori (uno per asse) che identifica una variante |
+| UoM base          | Unità di misura di riferimento per stock e listini           |
+| Pack              | Prodotto composto da più varianti componente                 |
+| Ledger            | Registro append-only delle movimentazioni (`StockMovement`)  |
+| Canale            | Punto di vendita (webshop, marketplace, POS)                 |
+| Snapshot          | Copia immutabile di un dato al momento della transazione     |

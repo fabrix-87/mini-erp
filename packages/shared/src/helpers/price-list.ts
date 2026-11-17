@@ -3,10 +3,6 @@ import Decimal from "decimal.js";
 import { MONEY_PRECISION, PRICE_LIST_ROUNDING_METHOD, PRICE_LIST_STRATEGY } from "../constants";
 import type { PriceListStrategy, RoundingMethod } from "../constants";
 
-const CENTS = new Decimal("0.01");
-const FIVE_CENTS = new Decimal("0.05");
-const TEN_CENTS = new Decimal("0.10");
-
 /**
  * Applies a price list strategy to the parent price. The result is not rounded.
  * @param base - Parent list unit price (base UoM)
