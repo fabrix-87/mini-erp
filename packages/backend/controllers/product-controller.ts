@@ -47,8 +47,10 @@ import {
   createProductTranslation as createProductTranslationService,
   updateProductTranslation as updateProductTranslationService,
   deleteProductTranslation as deleteProductTranslationService,
+  updateProduct as updateProductService,
   getProductDetail,
   listProducts,
+  changeProductStatus,
 } from "@/services/product";
 
 // ============================================================================
@@ -105,31 +107,7 @@ export const updateProduct = async (c: Context<AppBindings>) => {
   const updateData = getValidatedBody<UpdateProductInput>(c);
   const tenantId = c.get("currentTenantId")!;
 
-  // Verifica esistenza
-  const existing = await prisma.product.findFirst({
-    where: withSoftDelete(withTenantId({ id }, tenantId)),
-  });
-  if (!existing) throw new NotFoundError("Prodotto non trovato");
-
-  // Verifica unicità reference se modificato
-  if (updateData.reference && updateData.reference !== existing.reference) {
-    const duplicate = await prisma.product.findFirst({
-      where: withTenantId({ reference: updateData.reference }, tenantId),
-    });
-    if (duplicate) throw new ConflictError("Reference prodotto già esistente");
-  }
-
-  // Strip variants if accidentally passed (updateProductSchema is partial of createProductSchema)
-  const { variants: _variants, ...safeData } = updateData as UpdateProductInput & {
-    variants?: unknown;
-  };
-
-  // Aggiorna prodotto
-  const product = await prisma.product.update({
-    where: { id },
-    data: safeData as Prisma.ProductUpdateInput,
-    select: getProductSelection(),
-  });
+  const product = updateProductService(tenantId, id, updateData);
 
   sendSuccess(c, product, { message: "Prodotto aggiornato con successo" });
 };
@@ -728,4 +706,28 @@ export const bulkDeleteProducts = async (c: Context<AppBindings>) => {
       message: `${result.count} prodotti eliminati con successo`,
     },
   );
+};
+
+/**
+ * @desc    Activates a draft product or reactivates an archived product
+ * @route   POST /:id/activate
+ * @access  Private (product:update, product:manage)
+ */
+export const activateProduct = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
+  const { id } = getValidatedParams<ProductIdParam>(c);
+
+  return sendSuccess(c, await changeProductStatus(tenantId, id, "activate"));
+};
+
+/**
+ * @desc    Archives an active product without removing its historical references.
+ * @route   POST /:id/archive
+ * @access  Private (product:update, product:manage)
+ */
+export const archiveProduct = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
+  const { id } = getValidatedParams<ProductIdParam>(c);
+
+  return sendSuccess(c, await changeProductStatus(tenantId, id, "archive"));
 };

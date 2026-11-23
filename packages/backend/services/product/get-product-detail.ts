@@ -4,10 +4,11 @@ import { withSoftDelete } from "@/helpers/prisma-helper";
 import { NotFoundError } from "@/utils/app-error-utils";
 import { ProductDetailResponse } from "@mini-erp/shared";
 
-/** Returns a tenant-scoped product detail without soft-deleted catalog records. */
+/** Returns a tenant-scoped product detail using the supplied database client. */
 export async function getProductDetail(
   tenantId: string,
   productId: string,
+  db: Pick<Prisma.TransactionClient, "product"> = prisma,
 ): Promise<ProductDetailResponse> {
   const select = {
     id: true,
@@ -69,10 +70,7 @@ export async function getProductDetail(
     images: {
       where: {
         tenantId,
-        OR: [
-          { variantId: null },
-          { variant: { is: withSoftDelete({ tenantId }) } },
-        ],
+        OR: [{ variantId: null }, { variant: { is: withSoftDelete({ tenantId }) } }],
       },
       orderBy: [{ position: "asc" }, { id: "asc" }],
       select: {
@@ -94,7 +92,7 @@ export async function getProductDetail(
     },
   } satisfies Prisma.ProductSelect;
 
-  const product = await prisma.product.findFirst({
+  const product = await db.product.findFirst({
     where: withSoftDelete({ id: productId, tenantId }),
     select,
   });

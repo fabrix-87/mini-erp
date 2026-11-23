@@ -58,6 +58,8 @@ import {
   // Bulk operations
   bulkUpdateProducts,
   bulkDeleteProducts,
+  activateProduct,
+  archiveProduct,
 } from "../controllers/product-controller";
 import { createHonoApp } from "@/lib/hono-app";
 import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
@@ -363,9 +365,35 @@ productRoutes.delete(
 // ============================================================================
 
 /**
+ * @desc    Activates a draft product or reactivates an archived product
+ * @route   POST /:id/activate
+ * @access  Private (product:update, product:manage)
+ */
+productRoutes.post(
+  "/:id/activate",
+  authorize(["product:update", "product:manage"]),
+  requireTenantScope,
+  validateProductId,
+  activateProduct,
+);
+
+/**
+ * @route   POST /api/products/:id/archive
+ * @desc    Archives an active product without removing its historical references.
+ * @access  Private (product:update, product:manage)
+ */
+productRoutes.post(
+  "/:id/archive",
+  authorize(["product:update", "product:manage"]),
+  requireTenantScope,
+  validateProductId,
+  archiveProduct,
+);
+
+/**
  * @route   GET /api/products
  * @desc    Lista tutti i prodotti con filtri e paginazione
- * @access  Public
+ * @access  Private (product:read, product:manage)
  * @query   page, limit, search, active, categoryId, manufacturerId, minPrice, maxPrice, sortBy, sortOrder
  */
 productRoutes.get(
@@ -379,7 +407,7 @@ productRoutes.get(
 /**
  * @route   GET /api/products/:id
  * @desc    Ottieni dettagli prodotto con varianti, traduzioni e immagini
- * @access  Public
+ * @access  Private (product:read, product:manage)
  */
 productRoutes.get(
   "/:id",
@@ -405,12 +433,12 @@ productRoutes.post(
 /**
  * @route   PUT /api/products/:id
  * @desc    Aggiorna un prodotto
- * @access  Private (Admin, Product Manager)
+ * @access  Private (product:update, product:manage)
  */
 productRoutes.put(
   "/:id",
-  requireTenantScope,
   authorize(["product:update", "product:manage"]),
+  requireTenantScope,
   validateProductId,
   validateUpdateProduct,
   updateProduct,
@@ -419,7 +447,7 @@ productRoutes.put(
 /**
  * @route   DELETE /api/products/:id
  * @desc    Elimina un prodotto
- * @access  Private (Admin)
+ * @access  Private (product:delete, product:manage)
  */
 productRoutes.delete(
   "/:id",

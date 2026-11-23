@@ -232,7 +232,26 @@ export const createProductSchema = z
   });
 
 /** Variants and axes are managed through dedicated endpoints, not through product update. */
-export const updateProductSchema = z.object(productBaseShape).partial().strict();
+/** Validates a partial update of editable product master fields. */
+export const updateProductSchema = z
+  .object(productBaseShape)
+  .pick({
+    reference: true,
+    availableForOrder: true,
+    ecotax: true,
+    packStockType: true,
+    outOfStockType: true,
+    defaultTaxRuleId: true,
+    condition: true,
+    manufacturerId: true,
+    commodityCode: true,
+    coverThumbnailUrl: true,
+  })
+  .partial()
+  .strict()
+  .refine((data) => Object.values(data).some((value) => value !== undefined), {
+    message: "Indica almeno un campo da aggiornare",
+  });
 
 export const productIdSchema = z.object({ id: productIdBaseSchema });
 export const productIdAsProductIdSchema = z.object({ productId: productIdBaseSchema });

@@ -1,6 +1,8 @@
 export { createProductAggregate } from "./create-product";
 export { getProductDetail } from "./get-product-detail";
 export { listProducts } from "./list-products";
+export { updateProduct } from "./update-product";
+export { changeProductStatus } from "./change-product-status";
 export {
   createProductTranslation,
   deleteProductTranslation,
