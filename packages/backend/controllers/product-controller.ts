@@ -42,6 +42,12 @@ import {
 } from "@/helpers/validated-context";
 import { connectById, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 import { createProductAggregate } from "@/services/product/create-product";
+import {
+  listProductTranslations as listProductTranslationsService,
+  createProductTranslation as createProductTranslationService,
+  updateProductTranslation as updateProductTranslationService,
+  deleteProductTranslation as deleteProductTranslationService,
+} from "@/services/product";
 
 // ============================================================================
 // PRODUCTS - CRUD Operations
@@ -95,7 +101,8 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
   if (type) where.type = type;
   if (condition) where.condition = condition;
   if (manufacturerId) where.manufacturerId = manufacturerId;
-  if (supplierId) where.variants = { some: { supplierItems: { some: { supplierId: supplierId } } } };
+  if (supplierId)
+    where.variants = { some: { supplierItems: { some: { supplierId: supplierId } } } };
 
   // Filtro categoria
   if (categoryId) {
@@ -420,16 +427,9 @@ export const deleteVariant = async (c: Context<AppBindings>) => {
  */
 export const getProductTranslations = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const product = await prisma.product.findUnique({ where: { id } });
-  if (!product) throw new NotFoundError("Prodotto non trovato");
-
-  const translations = await prisma.productTranslation.findMany({
-    where: { productId: id },
-    include: {
-      language: { select: { id: true, name: true, iso_code: true } },
-    },
-  });
+  const translations = await listProductTranslationsService(tenantId, id);
 
   return sendSuccess(c, translations, { results: translations.length });
 };
@@ -442,23 +442,9 @@ export const getProductTranslations = async (c: Context<AppBindings>) => {
 export const createProductTranslation = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductIdParam>(c);
   const translationData = getValidatedBody<CreateProductTranslationInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const product = await prisma.product.findUnique({ where: { id } });
-  if (!product) throw new NotFoundError("Prodotto non trovato");
-
-  const existing = await prisma.productTranslation.findUnique({
-    where: {
-      productId_languageId: {
-        productId: id,
-        languageId: translationData.languageId,
-      },
-    },
-  });
-  if (existing) throw new ConflictError("Traduzione già esistente per questa lingua");
-
-  const translation = await prisma.productTranslation.create({
-    data: { ...translationData, productId: id },
-  });
+  const translation = await createProductTranslationService(tenantId, id, translationData);
 
   return sendCreated(c, translation, "Traduzione creata con successo");
 };
@@ -471,11 +457,9 @@ export const createProductTranslation = async (c: Context<AppBindings>) => {
 export const updateProductTranslation = async (c: Context<AppBindings>) => {
   const { id, languageId } = getValidatedParams<ProductIdLanguageIdParam>(c);
   const updateData = getValidatedBody<UpdateProductTranslationInput>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const translation = await prisma.productTranslation.update({
-    where: { productId_languageId: { productId: id, languageId } },
-    data: updateData,
-  });
+  const translation = await updateProductTranslationService(tenantId, id, languageId, updateData);
 
   return sendSuccess(c, translation, {
     message: "Traduzione aggiornata con successo",
@@ -489,10 +473,9 @@ export const updateProductTranslation = async (c: Context<AppBindings>) => {
  */
 export const deleteProductTranslation = async (c: Context<AppBindings>) => {
   const { id, languageId } = getValidatedParams<ProductIdLanguageIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  await prisma.productTranslation.delete({
-    where: { productId_languageId: { productId: id, languageId } },
-  });
+  await deleteProductTranslationService(tenantId, id, languageId);
 
   return sendDeleted(c);
 };

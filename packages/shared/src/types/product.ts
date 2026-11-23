@@ -181,3 +181,19 @@ export type CreateProductResponse = {
     attributeIds: string[];
   }[];
 };
+
+/** JSON representation of a product translation returned by the catalog API. */
+export type ProductTranslationResponse = {
+  productId: string;
+  languageId: number;
+  name: string;
+  description: string | null;
+  shortDescription: string | null;
+  createdAt: string;
+  updatedAt: string;
+  language: {
+    id: number;
+    name: string;
+    isoCode: string;
+  };
+};

@@ -298,25 +298,59 @@ Un `StockSerial` traccia una singola unità fisica attraverso il suo ciclo di vi
 - Collegato all'ultimo movimento che lo ha toccato (`lastMovementId`).
 - Se riservato, punta alla `StockReservation` attiva.
 
-## 9. Invarianti e regole trasversali
+## 9. Invarianti
+
+### Prodotti, varianti e attributi
 
 - Ogni prodotto deve avere almeno una variante non archiviata.
-- Un prodotto semplice possiede esattamente una variante senza attributi, con combinationKey = "default".
-- Un prodotto variabile dichiara almeno un asse e ogni variante non archiviata deve avere esattamente un valore per ogni asse dichiarato.
-- Un prodotto semplice non dichiara assi e possiede una sola variante senza attributi, con `combinationKey = "default"`.
-- Un prodotto variabile dichiara almeno un asse e ogni variante deve avere esattamente un valore per ogni asse dichiarato.
-- `combinationKey` è unico per `(tenantId, productId)` e identifica in modo deterministico la combinazione degli attributi.
-- `baseUomId` è immutabile se esistono movimenti.
-- Le quantità di stock sono sempre nella UoM base.
-- Il prezzo di vendita vive solo nei listini; il prezzo d'acquisto solo in `ProductSupplier`.
-- La pubblicazione su canale è esplicita (assenza di riga = non pubblicato).
-- I movimenti confermati sono immutabili; le correzioni passano da reversal.
-- Ogni documento conserva snapshot di prezzi, tasse, UoM e descrizioni:
-  il catalogo può cambiare, lo storico no.
-- I prezzi unitari sono a 6 decimali; i totali di riga e documento a 2 decimali.
-- L'arrotondamento del listino non si applica alle voci esplicite
+- Un prodotto semplice non dichiara assi e possiede una sola variante senza attributi, identificata da `combinationKey = "default"`.
+- Un prodotto variabile dichiara almeno un asse. Ogni variante non archiviata deve avere esattamente un valore per ciascun asse dichiarato e nessun valore appartenente ad assi non dichiarati.
+- Le varianti archiviate possono conservare combinazioni di attributi non più coerenti con la configurazione corrente del prodotto, esclusivamente per preservare lo storico.
+- La `combinationKey` deve essere deterministica e univoca nell'ambito della coppia `(tenantId, productId)`.
+- Una variante utilizzata in transazioni non può essere eliminata fisicamente né modificata nella propria combinazione di attributi.
+- Gli assi e i valori utilizzati da varianti referenziate nello storico non possono essere eliminati fisicamente.
 - Un prodotto non può essere convertito liberamente da semplice a variabile o viceversa dopo la creazione di movimenti sulle sue varianti.
-- Una variante già utilizzata in transazioni non può modificare la propria combinazione di attributi. Per rappresentare una nuova combinazione deve essere creata una nuova variante.
+
+### Unità di misura
+
+- Ogni prodotto deve avere un'unità di misura base.
+- L'unità di misura base non può essere modificata dopo la creazione di movimenti di magazzino.
+- Le conversioni specifiche del prodotto devono essere definite attraverso i relativi fattori di conversione.
+- Il fattore di conversione utilizzato in una riga documento deve essere salvato come snapshot (`uomFactor`), in modo da preservare il significato della quantità anche in caso di successive modifiche alle conversioni.
+
+### Fornitori e approvvigionamento
+
+- L'associazione tra prodotto e fornitore deve essere definita a livello di variante (`ProductSupplier`).
+- Per ogni variante può esistere al massimo un fornitore preferito.
+- I prezzi e le condizioni di acquisto utilizzati nei documenti devono essere preservati nello storico e non devono dipendere dai successivi aggiornamenti dell'anagrafica del fornitore.
+
+### Prezzi e listini
+
+- `PriceListItem` rappresenta l'unica fonte di configurazione dei prezzi dei listini.
+- La risoluzione del prezzo deve rispettare l'ordine di priorità e le regole di ereditarietà definite nella sezione 6.
+- Gli arrotondamenti devono essere applicati secondo il metodo configurato nel listino:
+  - `NEAREST_05` e `NEAREST_10`: arrotondamento al multiplo più vicino, con metodo `HALF_UP`.
+  - `ROUND_UP` e `ROUND_DOWN`: arrotondamento rispettivamente per eccesso e per difetto alla precisione monetaria configurata.
+- L'arrotondamento del listino deve essere applicato una sola volta al prezzo risultante dalla risoluzione, non cumulativamente durante i passaggi di ereditarietà.
+- L'arrotondamento del listino non si applica alle voci esplicite.
+
+### Magazzino e movimenti
+
+- Il registro dei movimenti di magazzino (`StockMovement`) è append-only: i movimenti registrati non possono essere modificati o eliminati fisicamente.
+- Le correzioni di movimenti già registrati devono avvenire attraverso movimenti inversi o rettificativi, mantenendo il riferimento al movimento originale.
+- Un movimento non può essere stornato più di una volta, salvo il caso di storni parziali esplicitamente supportati.
+- La registrazione di un movimento e l'eventuale aggiornamento delle relative proiezioni di stock devono avvenire in modo atomico.
+- I saldi e le disponibilità derivate dai movimenti devono poter essere ricostruiti a partire dal registro delle operazioni.
+
+### Documenti e storico
+
+- Le righe dei documenti devono conservare gli snapshot dei dati necessari a ricostruire le condizioni applicate al momento della registrazione, indipendentemente dalle successive modifiche alle anagrafiche, ai listini e alle configurazioni.
+- Le operazioni storiche devono mantenere i riferimenti alle varianti e alle informazioni necessarie a interpretarne correttamente il significato nel tempo.
+
+### Canali di vendita
+
+- Le impostazioni di pubblicazione e disponibilità sui canali (`ProductChannelSettings`) sono associate al prodotto master.
+- Le configurazioni specifiche di un canale non devono modificare i dati anagrafici o le condizioni commerciali degli altri canali.
 
 ## 10. Glossario
 

@@ -171,9 +171,9 @@ export const productVariantAxisInputSchema = z
 
 export const createProductSchema = z
   .object(productBaseShape)
+  .omit({ status: true })
   .extend({
     type: productTypeSchema.default("STANDARD"),
-    status: productStatusSchema.default("DRAFT"),
     availableForOrder: z.boolean().default(true),
     ecotax: unitAmountSchema,
     packStockType: productPackStockTypeSchema.default("USE_PACK_STOCK_ONLY"),
@@ -253,7 +253,6 @@ const productTranslationBaseShape = {
 
 export const createProductTranslationSchema = z
   .object({
-    productId: productIdBaseSchema,
     languageId: languageIdBaseSchema,
     ...productTranslationBaseShape,
   })

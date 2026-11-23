@@ -156,7 +156,7 @@ export async function createProductAggregate(
         tenantId,
         reference: input.reference,
         type: input.type,
-        status: input.status,
+        status: "DRAFT",
         availableForOrder: input.availableForOrder,
         ecotax: toDecimal(input.ecotax),
         packStockType: input.packStockType,

@@ -109,7 +109,13 @@ productRoutes.get("/:id/categories", validateProductId, getProductCategories);
  * @desc    Lista traduzioni di un prodotto
  * @access  Public
  */
-productRoutes.get("/:id/translations", validateProductId, getProductTranslations);
+productRoutes.get(
+  "/:id/translations",
+  validateProductId,
+  authorize(["product:read", "product:manage"]),
+  requireTenantScope,
+  getProductTranslations,
+);
 
 // ============================================================================
 // ADMIN ROUTES - Product Management
