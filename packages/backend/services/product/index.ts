@@ -3,6 +3,7 @@ export { getProductDetail } from "./get-product-detail";
 export { listProducts } from "./list-products";
 export { updateProduct } from "./update-product";
 export { changeProductStatus } from "./change-product-status";
+export { deleteProduct } from "./delete-product";
 export {
   createProductTranslation,
   deleteProductTranslation,

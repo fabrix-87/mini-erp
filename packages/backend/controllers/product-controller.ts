@@ -1,7 +1,6 @@
-import { NotFoundError, BadRequestError, ConflictError } from "../utils/app-error-utils";
+import { NotFoundError, BadRequestError, ConflictError, UnauthorizedError } from "../utils/app-error-utils";
 import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
-import { getProductSelection } from "../helpers/product-helper";
 
 import {
   sendCreated,
@@ -48,6 +47,7 @@ import {
   updateProductTranslation as updateProductTranslationService,
   deleteProductTranslation as deleteProductTranslationService,
   updateProduct as updateProductService,
+  deleteProduct as deleteProductService,
   getProductDetail,
   listProducts,
   changeProductStatus,
@@ -113,24 +113,19 @@ export const updateProduct = async (c: Context<AppBindings>) => {
 };
 
 /**
- * @desc    Elimina un prodotto
+ * @desc    Soft-deletes an eligible product and records the authenticated actor.
  * @route   DELETE /api/products/:id
  * @access  Private (Admin)
  */
-export const deleteProduct = async (c: Context<AppBindings>) => {
+export const deleteProduct = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
   const { id } = getValidatedParams<ProductIdParam>(c);
-  const deletedBy = c.get("user")!.userId;
-  const tenantId = c.get("currentTenantId")!;
+  const user = c.get("user");
 
-  const existing = await prisma.product.findFirst({
-    where: withSoftDelete(withTenantId({ id }, tenantId)),
-  });
-  if (!existing) throw new NotFoundError("Prodotto non trovato");
+  if (!user) throw new UnauthorizedError("Autenticazione richiesta");
 
-  await prisma.product.update({
-    where: { id },
-    data: { deletedAt: new Date(), deletedBy },
-  });
+  await deleteProductService(tenantId, id, user.userId);
+
   return sendDeleted(c);
 };
 
