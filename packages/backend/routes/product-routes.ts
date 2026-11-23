@@ -65,23 +65,65 @@ import { requireTenantScope } from "@/middleware/tenant-scope-middleware";
 const productRoutes = createHonoApp();
 
 // ============================================================================
-// PUBLIC ROUTES - Products
+// PRODUCT TRANSLATIONS
 // ============================================================================
 
 /**
- * @route   GET /api/products
- * @desc    Lista tutti i prodotti con filtri e paginazione
+ * @route   GET /api/products/:id/translations
+ * @desc    Lista traduzioni di un prodotto
  * @access  Public
- * @query   page, limit, search, active, categoryId, manufacturerId, minPrice, maxPrice, sortBy, sortOrder
  */
-productRoutes.get("/", requireTenantScope, validateProductQuery, getAllProducts);
+productRoutes.get(
+  "/:id/translations",
+  authorize(["product:read", "product:manage"]),
+  requireTenantScope,
+  validateProductId,
+  getProductTranslations,
+);
+/**
+ * @route   POST /api/products/:id/translations
+ * @desc    Crea una traduzione per un prodotto
+ * @access  Private (Admin, Product Manager)
+ */
+productRoutes.post(
+  "/:id/translations",
+  authorize(["product:create", "product:manage"]),
+  requireTenantScope,
+  validateProductId,
+  validateCreateTranslation,
+  createProductTranslation,
+);
 
 /**
- * @route   GET /api/products/:id
- * @desc    Ottieni dettagli prodotto con varianti, traduzioni e immagini
- * @access  Public
+ * @route   PUT /api/products/:id/translations/:languageId
+ * @desc    Aggiorna una traduzione
+ * @access  Private (Admin, Product Manager)
  */
-productRoutes.get("/:id", validateProductId, getProductById);
+productRoutes.put(
+  "/:id/translations/:languageId",
+  authorize(["product:update", "product:manage"]),
+  requireTenantScope,
+  validateProductIdLanguageId,
+  validateUpdateTranslation,
+  updateProductTranslation,
+);
+
+/**
+ * @route   DELETE /api/products/:id/translations/:languageId
+ * @desc    Elimina una traduzione
+ * @access  Private (Admin, Product Manager)
+ */
+productRoutes.delete(
+  "/:id/translations/:languageId",
+  authorize(["product:delete", "product:manage"]),
+  requireTenantScope,
+  validateProductIdLanguageId,
+  deleteProductTranslation,
+);
+
+// ============================================================================
+// PUBLIC ROUTES - Products
+// ============================================================================
 
 /**
  * @route   GET /api/products/:id/variants
@@ -103,87 +145,6 @@ productRoutes.get("/:id/images", validateProductId, getProductImages);
  * @access  Public
  */
 productRoutes.get("/:id/categories", validateProductId, getProductCategories);
-
-/**
- * @route   GET /api/products/:id/translations
- * @desc    Lista traduzioni di un prodotto
- * @access  Public
- */
-productRoutes.get(
-  "/:id/translations",
-  validateProductId,
-  authorize(["product:read", "product:manage"]),
-  requireTenantScope,
-  getProductTranslations,
-);
-
-// ============================================================================
-// ADMIN ROUTES - Product Management
-// ============================================================================
-
-/**
- * @route   POST /api/products
- * @desc    Crea un nuovo prodotto
- * @access  Private (product:create, product:manage)
- */
-productRoutes.post(
-  "/",
-  authorize(["product:create", "product:manage"]),
-  requireTenantScope,
-  validateCreateProduct,
-  createProduct,
-);
-
-/**
- * @route   PUT /api/products/:id
- * @desc    Aggiorna un prodotto
- * @access  Private (Admin, Product Manager)
- */
-productRoutes.put(
-  "/:id",
-  requireTenantScope,
-  authorize(["product:update", "product:manage"]),
-  validateProductId,
-  validateUpdateProduct,
-  updateProduct,
-);
-
-/**
- * @route   DELETE /api/products/:id
- * @desc    Elimina un prodotto
- * @access  Private (Admin)
- */
-productRoutes.delete(
-  "/:id",
-  requireTenantScope,
-  authorize(["product:delete", "product:manage"]),
-  validateProductId,
-  deleteProduct,
-);
-
-/**
- * @route   POST /api/products/bulk-update
- * @desc    Aggiorna multipli prodotti
- * @access  Private (Admin, Product Manager)
- */
-productRoutes.post(
-  "/bulk-update",
-  requireTenantScope,
-  authorize(["product:update", "product:manage"]),
-  bulkUpdateProducts,
-);
-
-/**
- * @route   POST /api/products/bulk-delete
- * @desc    Elimina multipli prodotti
- * @access  Private (Admin)
- */
-productRoutes.post(
-  "/bulk-delete",
-  requireTenantScope,
-  authorize(["product:delete", "product:manage"]),
-  bulkDeleteProducts,
-);
 
 // ============================================================================
 // PRODUCT VARIANTS
@@ -216,8 +177,8 @@ productRoutes.post(
  */
 productRoutes.put(
   "/:productId/variants/:id",
-  requireTenantScope,
   authorize(["product:update", "product:manage"]),
+  requireTenantScope,
   validateVariantId,
   validateUpdateVariant,
   updateVariant,
@@ -230,55 +191,11 @@ productRoutes.put(
  */
 productRoutes.delete(
   "/:productId/variants/:id",
-  requireTenantScope,
   authorize(["product:delete", "product:manage"]),
+  requireTenantScope,
   validateProductIdAsProductId,
   validateVariantId,
   deleteVariant,
-);
-
-// ============================================================================
-// PRODUCT TRANSLATIONS
-// ============================================================================
-
-/**
- * @route   POST /api/products/:id/translations
- * @desc    Crea una traduzione per un prodotto
- * @access  Private (Admin, Product Manager)
- */
-productRoutes.post(
-  "/:id/translations",
-  requireTenantScope,
-  authorize(["product:create", "product:manage"]),
-  validateCreateTranslation,
-  createProductTranslation,
-);
-
-/**
- * @route   PUT /api/products/:id/translations/:languageId
- * @desc    Aggiorna una traduzione
- * @access  Private (Admin, Product Manager)
- */
-productRoutes.put(
-  "/:id/translations/:languageId",
-  requireTenantScope,
-  authorize(["product:update", "product:manage"]),
-  validateProductIdLanguageId,
-  validateUpdateTranslation,
-  updateProductTranslation,
-);
-
-/**
- * @route   DELETE /api/products/:id/translations/:languageId
- * @desc    Elimina una traduzione
- * @access  Private (Admin, Product Manager)
- */
-productRoutes.delete(
-  "/:id/translations/:languageId",
-  requireTenantScope,
-  authorize(["product:delete", "product:manage"]),
-  validateProductIdLanguageId,
-  deleteProductTranslation,
 );
 
 // ============================================================================
@@ -439,6 +356,101 @@ productRoutes.delete(
   authorize(["product:delete", "product:manage"]),
   validateManufacturerId,
   deleteManufacturer,
+);
+
+// ============================================================================
+// PRODUCT ROUTES
+// ============================================================================
+
+/**
+ * @route   GET /api/products
+ * @desc    Lista tutti i prodotti con filtri e paginazione
+ * @access  Public
+ * @query   page, limit, search, active, categoryId, manufacturerId, minPrice, maxPrice, sortBy, sortOrder
+ */
+productRoutes.get(
+  "/",
+  authorize(["product:read", "product:manage"]),
+  requireTenantScope,
+  validateProductQuery,
+  getAllProducts,
+);
+
+/**
+ * @route   GET /api/products/:id
+ * @desc    Ottieni dettagli prodotto con varianti, traduzioni e immagini
+ * @access  Public
+ */
+productRoutes.get(
+  "/:id",
+  authorize(["product:read", "product:manage"]),
+  requireTenantScope,
+  validateProductId,
+  getProductById,
+);
+
+/**
+ * @route   POST /api/products
+ * @desc    Crea un nuovo prodotto
+ * @access  Private (product:create, product:manage)
+ */
+productRoutes.post(
+  "/",
+  authorize(["product:create", "product:manage"]),
+  requireTenantScope,
+  validateCreateProduct,
+  createProduct,
+);
+
+/**
+ * @route   PUT /api/products/:id
+ * @desc    Aggiorna un prodotto
+ * @access  Private (Admin, Product Manager)
+ */
+productRoutes.put(
+  "/:id",
+  requireTenantScope,
+  authorize(["product:update", "product:manage"]),
+  validateProductId,
+  validateUpdateProduct,
+  updateProduct,
+);
+
+/**
+ * @route   DELETE /api/products/:id
+ * @desc    Elimina un prodotto
+ * @access  Private (Admin)
+ */
+productRoutes.delete(
+  "/:id",
+  requireTenantScope,
+  authorize(["product:delete", "product:manage"]),
+  validateProductId,
+  deleteProduct,
+);
+
+/**
+ * @route   POST /api/products/bulk-update
+ * @desc    Aggiorna multipli prodotti
+ * @access  Private (Admin, Product Manager)
+ */
+productRoutes.post(
+  "/bulk-update",
+  requireTenantScope,
+  authorize(["product:update", "product:manage"]),
+  bulkUpdateProducts,
+);
+
+/**
+ * @route   POST /api/products/bulk-delete
+ * @desc    Elimina multipli prodotti
+ * @access  Private (Admin)
+ */
+productRoutes.post(
+  "/bulk-delete",
+  requireTenantScope,
+  authorize(["product:delete", "product:manage"]),
+  bulkDeleteProducts,
 );
 
 // ============================================================================

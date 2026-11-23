@@ -47,6 +47,8 @@ import {
   createProductTranslation as createProductTranslationService,
   updateProductTranslation as updateProductTranslationService,
   deleteProductTranslation as deleteProductTranslationService,
+  getProductDetail,
+  listProducts,
 } from "@/services/product";
 
 // ============================================================================
@@ -58,79 +60,13 @@ import {
  * @route   GET /api/products
  * @access  Public
  */
-export const getAllProducts = async (c: Context<AppBindings>) => {
-  const {
-    page = 1,
-    limit = 20,
-    search,
-    categoryId,
-    manufacturerId,
-    supplierId,
-    type,
-    condition,
-    //minPrice,
-    //maxPrice,
-    sortBy = "createdAt",
-    sortOrder = "desc",
-  } = getValidatedQuery<ProductQueryInput>(c);
-  const tenantId = c.get("currentTenantId")!;
+/** Returns a paginated list of products in the current tenant. */
+export const getAllProducts = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
+  const query = getValidatedQuery<ProductQueryInput>(c);
+  const { items, total, page, limit } = await listProducts(tenantId, query);
 
-  const skip = (page - 1) * limit;
-
-  // Costruisci filtri dinamici
-  const where: Prisma.ProductWhereInput = withTenantId({}, tenantId);
-
-  // Filtro ricerca testuale
-  if (search) {
-    where.OR = [
-      { reference: { contains: search, mode: "insensitive" } },
-      {
-        translations: {
-          some: {
-            OR: [
-              { name: { contains: search, mode: "insensitive" } },
-              { description: { contains: search, mode: "insensitive" } },
-            ],
-          },
-        },
-      },
-    ];
-  }
-
-  // Filtri semplici
-  if (type) where.type = type;
-  if (condition) where.condition = condition;
-  if (manufacturerId) where.manufacturerId = manufacturerId;
-  if (supplierId)
-    where.variants = { some: { supplierItems: { some: { supplierId: supplierId } } } };
-
-  // Filtro categoria
-  if (categoryId) {
-    where.categories = { some: { categoryId } };
-  }
-
-  // Filtro range prezzo
-  /*
-  if (minPrice || maxPrice) {
-    where.price = {};
-    if (minPrice) where.price.gte = minPrice;
-    if (maxPrice) where.price.lte = maxPrice;
-  }
-    */
-
-  // Query con paginazione
-  const [products, total] = await Promise.all([
-    prisma.product.findMany({
-      where,
-      select: getProductSelection(),
-      skip,
-      take: limit,
-      orderBy: { [sortBy]: sortOrder },
-    }),
-    prisma.product.count({ where }),
-  ]);
-
-  return sendPaginatedResponse(c, products, total, page, limit);
+  return sendPaginatedResponse(c, items, total, page, limit);
 };
 
 /**
@@ -138,20 +74,12 @@ export const getAllProducts = async (c: Context<AppBindings>) => {
  * @route   GET /api/products/:id
  * @access  Public
  */
-export const getProductById = async (c: Context<AppBindings>) => {
+/** Returns the catalog detail for a product in the current tenant. */
+export const getProductById = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
   const { id } = getValidatedParams<ProductIdParam>(c);
-  const tenantId = c.get("currentTenantId")!;
 
-  const product = await prisma.product.findFirst({
-    where: withSoftDelete(withTenantId({ id }, tenantId)),
-    select: getProductSelection(),
-  });
-
-  if (!product) {
-    throw new NotFoundError("Prodotto non trovato");
-  }
-
-  return sendSuccess(c, product);
+  return sendSuccess(c, await getProductDetail(tenantId, id));
 };
 
 /**

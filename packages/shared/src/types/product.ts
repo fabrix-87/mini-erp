@@ -197,3 +197,80 @@ export type ProductTranslationResponse = {
     isoCode: string;
   };
 };
+
+/** JSON representation of a product in the catalog detail view. */
+export type ProductDetailResponse = {
+  id: string;
+  reference: string;
+  type: ProductType;
+  status: ProductStatus;
+  condition: ProductCondition;
+  availableForOrder: boolean;
+  baseUomId: string;
+  ecotax: string;
+  coverThumbnailUrl: string | null;
+  defaultTaxRuleId: number | null;
+  manufacturerId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  manufacturer: { id: string; name: string } | null;
+  translations: {
+    languageId: number;
+    name: string;
+    description: string | null;
+    shortDescription: string | null;
+  }[];
+  variants: {
+    id: string;
+    sku: string;
+    ean13: string | null;
+    weight: string | null;
+    width: string | null;
+    height: string | null;
+    depth: string | null;
+    isDefault: boolean;
+    active: boolean;
+    attributes: {
+      attributeGroupId: string;
+      attributeId: string;
+      attribute: {
+        id: string;
+        code: string;
+        attributeGroup: { id: string; code: string };
+        translations: { languageId: number; name: string }[];
+      };
+    }[];
+  }[];
+  images: {
+    id: string;
+    imageUrl: string;
+    imageType: string;
+    position: number;
+    isCover: boolean;
+  }[];
+  categories: {
+    categoryId: string;
+    position: number;
+    category: { id: string };
+  }[];
+};
+
+/** JSON representation of one row in the product catalog list. */
+export type ProductListItemResponse = {
+  id: string;
+  reference: string;
+  type: ProductType;
+  status: ProductStatus;
+  condition: ProductCondition;
+  availableForOrder: boolean;
+  coverThumbnailUrl: string | null;
+  manufacturerId: string | null;
+  manufacturer: { id: string; name: string } | null;
+  translations: {
+    languageId: number;
+    name: string;
+    shortDescription: string | null;
+  }[];
+  createdAt: string;
+  updatedAt: string;
+};
