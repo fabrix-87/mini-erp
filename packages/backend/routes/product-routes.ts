@@ -187,30 +187,29 @@ productRoutes.post(
 );
 
 /**
+ * @desc    Updates a variant of the product identified by the route.
  * @route   PUT /api/products/:productId/variants/:id
- * @desc    Aggiorna una variante
- * @access  Private (Admin, Product Manager)
+ * @access  Private (product:update, product:manage)
  */
 productRoutes.put(
   "/:productId/variants/:id",
   authorize(["product:update", "product:manage"]),
   requireTenantScope,
-  validateVariantId,
+  validateProductVariantDetailParams,
   validateUpdateVariant,
   updateVariant,
 );
 
 /**
+ * @desc    Soft-deletes a variant belonging to the product identified by the route.
  * @route   DELETE /api/products/:productId/variants/:id
- * @desc    Elimina una variante
- * @access  Private (Admin)
+ * @access  Private (product:delete, product:manage)
  */
 productRoutes.delete(
   "/:productId/variants/:id",
   authorize(["product:delete", "product:manage"]),
   requireTenantScope,
-  validateProductIdAsProductId,
-  validateVariantId,
+  validateProductVariantDetailParams,
   deleteVariant,
 );
 

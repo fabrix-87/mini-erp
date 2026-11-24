@@ -312,3 +312,20 @@ export type ProductVariantResponse = {
     };
   }[];
 };
+
+export type ProductImageResponse = {
+  id: string;
+  productId: string;
+  variantId: string | null;
+  imageUrl: string;
+  imageType: string;
+  position: number;
+  isCover: boolean;
+  width: string | null;
+  height: string | null;
+  fileSize: string | null;
+  mimeType: string | null;
+  translations: { languageId: number; description: string | null }[];
+  createdAt: string;
+  updatedAt: string;
+};

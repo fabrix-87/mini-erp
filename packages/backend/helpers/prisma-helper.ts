@@ -27,6 +27,19 @@ export const toDecimal = (value: number | string | undefined) =>
   value !== undefined ? new Prisma.Decimal(value.toString()) : undefined;
 
 /**
+ * Converts a decimal input while preserving omission and explicit null.
+ *
+ * @param value - A validated decimal value, null, or undefined.
+ * @returns A Decimal for a supplied value, null for an explicit reset, or
+ * undefined when the caller should omit the field from the update.
+ */
+export const toNullableDecimal = (
+  value: string | number | null | undefined,
+): Prisma.Decimal | null | undefined => {
+  return value === null ? null : toDecimal(value);
+};
+
+/**
  * Converts a string to a Date for Prisma optional DateTime? fields.
  *
  * Behaviour:

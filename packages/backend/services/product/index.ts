@@ -17,3 +17,8 @@ export {
 // variants
 export { getProductVariant, listProductVariants } from "./product-variant-read-service";
 export { createProductVariant } from "./create-product-variant";
+export { updateProductVariant } from "./update-product-variant";
+export { deleteProductVariant } from "./delete-product-variant";
+
+// images
+export { listProductImages } from "./get-product-images";

@@ -130,7 +130,34 @@ export const createProductVariantSchema = z
   .omit({ isDefault: true })
   .strict();
 
-export const updateProductVariantSchema = z.object(variantBaseShape).partial().strict();
+/** Validates a partial update of editable variant fields. */
+export const updateProductVariantSchema = z
+  .object(variantBaseShape)
+  .pick({
+    sku: true,
+    ean13: true,
+    upc: true,
+    isbn: true,
+    mpn: true,
+    minimalQuantity: true,
+    lowStockThreshold: true,
+    lowStockAlertEnabled: true,
+    location: true,
+    availableDate: true,
+    weight: true,
+    width: true,
+    height: true,
+    depth: true,
+    position: true,
+    active: true,
+    availableForOrder: true,
+    metadata: true,
+  })
+  .partial()
+  .strict()
+  .refine((data) => Object.values(data).some((value) => value !== undefined), {
+    message: "Indica almeno un campo da aggiornare",
+  });
 
 export const productVariantIdSchema = z.object({ id: productVariantIdBaseSchema });
 

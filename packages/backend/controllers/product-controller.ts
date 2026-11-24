@@ -1,4 +1,9 @@
-import { NotFoundError, BadRequestError, ConflictError, UnauthorizedError } from "../utils/app-error-utils";
+import {
+  NotFoundError,
+  BadRequestError,
+  ConflictError,
+  UnauthorizedError,
+} from "../utils/app-error-utils";
 import { prisma } from "../config/prisma-config";
 import { Prisma } from "../generated/prisma/client";
 
@@ -18,11 +23,9 @@ import {
   CreateProductTranslationInput,
   ManufacturerIdParam,
   ProductCategoryIdParam,
-  ProductIdAsProductIdParam,
   ProductIdParam,
   ProductImageIdParam,
   ProductQueryInput,
-  ProductVariantIdParam,
   UpdateManufacturerInput,
   UpdateProductCategoryInput,
   UpdateProductImageInput,
@@ -40,7 +43,7 @@ import {
   getValidatedParams,
   getValidatedQuery,
 } from "@/helpers/validated-context";
-import { connectById, withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
+import { withSoftDelete, withTenantId } from "@/helpers/prisma-helper";
 import { createProductAggregate } from "@/services/product/create-product";
 import {
   listProductTranslations as listProductTranslationsService,
@@ -55,6 +58,9 @@ import {
   listProductVariants,
   getProductVariant,
   createProductVariant,
+  updateProductVariant,
+  deleteProductVariant,
+  listProductImages,
 } from "@/services/product";
 
 // ============================================================================
@@ -178,97 +184,33 @@ export const createVariant = async (c: Context<AppBindings>): Promise<Response> 
 };
 
 /**
- * @desc    Aggiorna una variante
+ * @desc    Updates editable fields of a variant belonging to the route product.
  * @route   PUT /api/products/:productId/variants/:id
- * @access  Private (Admin, Product Manager)
+ * @access  Private (product:update, product:manage)
  */
 export const updateVariant = async (c: Context<AppBindings>) => {
-  const { id } = getValidatedParams<ProductVariantIdParam>(c);
+  const { productId, id } = getValidatedParams<ProductVariantDetailParams>(c);
   const updateData = getValidatedBody<UpdateProductVariantInput>(c);
-  const tenantId = c.get("currentTenantId")!;
+  const tenantId = getRequiredTenantId(c);
 
-  const existing = await prisma.productVariant.findFirst({
-    where: withSoftDelete(withTenantId({ id }, tenantId)),
-  });
-  if (!existing) throw new NotFoundError("Variante non trovata");
-
-  // Verifica unicità variantCode se modificato
-  if (updateData.variantCode && updateData.variantCode !== existing.variantCode) {
-    const duplicate = await prisma.productVariant.findFirst({
-      where: withSoftDelete(withTenantId({ variantCode: updateData.variantCode }, tenantId)),
-    });
-    if (duplicate) throw new ConflictError("Codice variante già esistente");
-  }
-
-  const variant = await prisma.productVariant.update({
-    where: { id },
-    data: updateData as Prisma.ProductVariantUpdateInput,
-  });
+  const variant = await updateProductVariant(tenantId, productId, id, updateData);
 
   return sendSuccess(c, variant, { message: "Variante aggiornata con successo" });
 };
 
 /**
- * Soft-deletes a product variant by ID.
- *
- * Business rules enforced:
- * - The variant must belong to the specified product and tenant.
- * - The last variant of a product cannot be deleted.
- * - If the deleted variant is the default, the next variant by position
- *   is promoted to default atomically in the same transaction.
- *
+ * @desc    Soft-deletes an unused variant and promotes an active default when needed.
  * @route   DELETE /api/products/:productId/variants/:id
- * @access  Private — requires Admin permission
+ * @access  Private (product:delete, product:manage)
  */
-export const deleteVariant = async (c: Context<AppBindings>) => {
-  const { id } = getValidatedParams<ProductVariantIdParam>(c);
-  const { productId } = getValidatedParams<ProductIdAsProductIdParam>(c);
-  const deletedBy = c.get("user")!.userId;
-  const tenantId = c.get("currentTenantId")!;
+export const deleteVariant = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
+  const { productId, id } = getValidatedParams<ProductVariantDetailParams>(c);
+  const user = c.get("user");
 
-  // Verify the variant exists, belongs to this tenant, and is not soft-deleted
-  const variant = await prisma.productVariant.findFirst({
-    where: withSoftDelete(withTenantId({ id }, tenantId)),
-  });
-  if (!variant) throw new NotFoundError("Variant not found");
+  if (!user) throw new UnauthorizedError("Autenticazione richiesta");
 
-  // Verify the variant belongs to the requested product
-  if (variant.productId !== productId) throw new NotFoundError("Variant not found");
-
-  // A product must always have at least one active variant
-  const variantCount = await prisma.productVariant.count({
-    where: withSoftDelete(withTenantId({ productId }, tenantId)),
-  });
-  if (variantCount <= 1) {
-    throw new BadRequestError(
-      "Cannot delete the last variant. A product must have at least one variant.",
-    );
-  }
-
-  // If deleting the default variant, resolve the new default before the transaction
-  let newDefaultId: string | undefined;
-  if (variant.isDefault) {
-    const newDefault = await prisma.productVariant.findFirst({
-      where: withSoftDelete(withTenantId({ productId, id: { not: id } }, tenantId)),
-      orderBy: { position: "asc" },
-    });
-    if (newDefault) newDefaultId = newDefault.id;
-  }
-
-  // Promote new default and soft-delete atomically
-  await prisma.$transaction(async (tx) => {
-    if (newDefaultId) {
-      await tx.productVariant.update({
-        where: { id: newDefaultId },
-        data: { isDefault: true, updatedByUserId: deletedBy },
-      });
-    }
-
-    await tx.productVariant.update({
-      where: { id },
-      data: { deletedAt: new Date(), deletedBy },
-    });
-  });
+  await deleteProductVariant(tenantId, productId, id, user.userId);
 
   return sendDeleted(c);
 };
@@ -342,17 +284,15 @@ export const deleteProductTranslation = async (c: Context<AppBindings>) => {
 // ============================================================================
 
 /**
- * @desc    Lista immagini di un prodotto
+ * @desc    List all images for a product
  * @route   GET /api/products/:id/images
- * @access  Public
+ * @access  Private (product:read, product:manage)
  */
 export const getProductImages = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductIdParam>(c);
+  const tenantId = getRequiredTenantId(c);
 
-  const images = await prisma.productImage.findMany({
-    where: { productId: id },
-    orderBy: { position: "asc" },
-  });
+  const images = await listProductImages(tenantId, id);
 
   return sendSuccess(c, images, { results: images.length });
 };
