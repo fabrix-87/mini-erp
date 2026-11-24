@@ -53,6 +53,10 @@ services:
       MINIO_ENDPOINT: minio
       MINIO_ACCESS_KEY: ${MINIO_USER}
       MINIO_SECRET_KEY: ${MINIO_PASSWORD}
+      MINIO_PORT: "9000"
+      MINIO_USE_SSL: "false"
+      MINIO_BUCKET: "erp-product-images"
+      MINIO_PUBLIC_BASE_URL: "http://localhost:9000/erp-product-images"
     depends_on:
       - postgres
       - redis

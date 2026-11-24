@@ -200,8 +200,48 @@ bun run prisma:migrate
 bun run prisma:seed   # optional
 ```
 
+### 5. Setup MinIO
 
-### 5. Start Development Servers
+Product images are uploaded through the backend and stored in MinIO.
+The configured bucket is publicly readable, while uploads require the
+backend's private MinIO credentials.
+
+Create the product-image bucket:
+
+```bash
+cd packages/backend
+bun run minio:create-bucket
+```
+
+The script creates the bucket defined by `MINIO_BUCKET` when it does not
+exist and applies a public-read policy. It does not make uploads public:
+the backend still authenticates with `MINIO_ACCESS_KEY` and
+`MINIO_SECRET_KEY`.
+
+Required backend environment variables (`packages/backend/.env`):
+
+```env
+MINIO_ENDPOINT=localhost
+MINIO_PORT=9000
+MINIO_USE_SSL=false
+MINIO_ACCESS_KEY=changeme
+MINIO_SECRET_KEY=changeme
+MINIO_BUCKET=erp-product-images
+MINIO_PUBLIC_BASE_URL=http://localhost:9000/erp-product-images
+```
+
+In Docker Compose, the backend uses the internal service name:
+
+```env
+MINIO_ENDPOINT=minio
+MINIO_PORT=9000
+```
+
+`MINIO_PUBLIC_BASE_URL` must use the browser-reachable host URL, normally
+`http://localhost:9000/<bucket>` in local development.
+
+
+### 6. Start Development Servers
 
 ```bash
 # Terminal 1 — shared (watch mode)
@@ -222,6 +262,7 @@ cd packages/frontend && bun run dev
 | Frontend | http://localhost:3000 |
 | Backend API | http://localhost:3001 |
 | Adminer (DB) | http://localhost:8080 |
+| MinIO S3 API | http://localhost:9000 |
 | MinIO Console | http://localhost:9001 |
 
 
@@ -239,6 +280,7 @@ bun run clean         # Clean build artifacts
 # Backend
 bun run dev           # Dev server with hot reload
 bun run prisma:migrate
+bun run minio:create-bucket  # Create the MinIO product-image bucket
 bun test
 
 # Frontend
@@ -285,9 +327,11 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 MINIO_ENDPOINT=localhost
 MINIO_PORT=9000
-MINIO_ACCESS_KEY=minioadmin
-MINIO_SECRET_KEY=minioadmin
-MINIO_BUCKET=mini-erp
+MINIO_USE_SSL=false
+MINIO_ACCESS_KEY=changeme
+MINIO_SECRET_KEY=changeme
+MINIO_BUCKET=erp-product-images
+MINIO_PUBLIC_BASE_URL=http://localhost:9000/erp-product-images
 ```
 
 **Frontend** (`packages/frontend/.env`):
