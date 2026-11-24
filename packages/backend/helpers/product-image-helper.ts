@@ -18,6 +18,7 @@ export function buildImageSelect() {
     createdAt: true,
     updatedAt: true,
     translations: {
+      orderBy: { languageId: "asc" },
       select: {
         description: true,
         languageId: true,
@@ -30,7 +31,7 @@ type ProductImageRow = Prisma.ProductImageGetPayload<{
   select: ReturnType<typeof buildImageSelect>;
 }>;
 
-/** Serializes a selected product variant as the public JSON response. */
+/** Serializes a selected product image as the public JSON response. */
 export function toProductImageResponse(row: ProductImageRow): ProductImageResponse {
   return {
     ...row,

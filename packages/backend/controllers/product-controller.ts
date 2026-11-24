@@ -284,13 +284,13 @@ export const deleteProductTranslation = async (c: Context<AppBindings>) => {
 // ============================================================================
 
 /**
- * @desc    List all images for a product
+ * @desc    Lists images of a product, excluding images bound to deleted variants.
  * @route   GET /api/products/:id/images
  * @access  Private (product:read, product:manage)
  */
-export const getProductImages = async (c: Context<AppBindings>) => {
-  const { id } = getValidatedParams<ProductIdParam>(c);
+export const getProductImages = async (c: Context<AppBindings>): Promise<Response> => {
   const tenantId = getRequiredTenantId(c);
+  const { id } = getValidatedParams<ProductIdParam>(c);
 
   const images = await listProductImages(tenantId, id);
 

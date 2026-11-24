@@ -12,7 +12,13 @@ export async function listProductImages(
     where: withSoftDelete({ id: productId, tenantId }),
     select: {
       images: {
-        where: { tenantId },
+        where: {
+          tenantId,
+          OR: [
+            { variantId: null },
+            { variant: { is: withSoftDelete({ tenantId }) } },
+          ],
+        },
         orderBy: [{ position: "asc" }, { id: "asc" }],
         select: buildImageSelect(),
       },

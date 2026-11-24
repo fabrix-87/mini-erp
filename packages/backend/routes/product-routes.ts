@@ -129,13 +129,6 @@ productRoutes.delete(
 // ============================================================================
 
 /**
- * @route   GET /api/products/:id/images
- * @desc    Lista immagini di un prodotto
- * @access  Public
- */
-productRoutes.get("/:id/images", validateProductId, getProductImages);
-
-/**
  * @route   GET /api/products/:id/categories
  * @desc    Lista categorie di un prodotto
  * @access  Public
@@ -216,6 +209,19 @@ productRoutes.delete(
 // ============================================================================
 // PRODUCT IMAGES
 // ============================================================================
+
+/**
+ * @desc    Lists images of a product, excluding images bound to deleted variants.
+ * @route   GET /api/products/:id/images
+ * @access  Private (product:read, product:manage)
+ */
+productRoutes.get(
+  "/:id/images",
+  authorize(["product:read", "product:manage"]),
+  requireTenantScope,
+  validateProductId,
+  getProductImages,
+);
 
 /**
  * @route   POST /api/products/:id/images
