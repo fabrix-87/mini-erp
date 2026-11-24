@@ -20,7 +20,6 @@ export const getProductSelection = () =>
     coverThumbnailUrl: true,
     defaultTaxRuleId: true,
     manufacturerId: true,
-    supplierId: true,
     createdAt: true,
     updatedAt: true,
     manufacturer: {

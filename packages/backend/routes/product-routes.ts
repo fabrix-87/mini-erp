@@ -19,6 +19,7 @@ import {
   validateProductIdLanguageId,
   validatProductCategoryId,
   validateProductIdAsProductId,
+  validateProductVariantDetailParams,
 } from "../validators/product-validator";
 import {
   // Products
@@ -128,13 +129,6 @@ productRoutes.delete(
 // ============================================================================
 
 /**
- * @route   GET /api/products/:id/variants
- * @desc    Lista varianti di un prodotto
- * @access  Public
- */
-productRoutes.get("/:id/variants", validateProductId, getProductVariants);
-
-/**
  * @route   GET /api/products/:id/images
  * @desc    Lista immagini di un prodotto
  * @access  Public
@@ -153,21 +147,41 @@ productRoutes.get("/:id/categories", validateProductId, getProductCategories);
 // ============================================================================
 
 /**
- * @route   GET /api/products/:productId/variants/:id
- * @desc    Ottieni dettagli variante
- * @access  Public
+ * @route   GET /api/products/:id/variants
+ * @desc    Lists the visible variants of a product in the current tenant.
+ * @access  Private (product:read, product:manage)
  */
-productRoutes.get("/:productId/variants/:id", validateVariantId, getVariantById);
+productRoutes.get(
+  "/:id/variants",
+  authorize(["product:read", "product:manage"]),
+  requireTenantScope,
+  validateProductId,
+  getProductVariants,
+);
 
 /**
+ * @route   GET /api/products/:productId/variants/:id
+ * @desc    Returns a variant belonging to the product identified by the route
+ * @access  Private (product:read, product:manage)
+ */
+productRoutes.get(
+  "/:productId/variants/:id",
+  authorize(["product:read", "product:manage"]),
+  requireTenantScope,
+  validateProductVariantDetailParams,
+  getVariantById,
+);
+
+/**
+ * @desc    Creates a variant for the product identified by the route.
  * @route   POST /api/products/:id/variants
- * @desc    Crea una nuova variante
- * @access  Private (Admin, Product Manager)
+ * @access  Private (product:create, product:manage)
  */
 productRoutes.post(
   "/:id/variants",
-  requireTenantScope,
   authorize(["product:create", "product:manage"]),
+  requireTenantScope,
+  validateProductId,
   validateCreateVariant,
   createVariant,
 );

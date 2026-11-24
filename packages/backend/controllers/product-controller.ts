@@ -30,6 +30,7 @@ import {
   UpdateProductVariantInput,
   ProductIdLanguageIdParam,
   UpdateProductTranslationInput,
+  ProductVariantDetailParams,
 } from "@mini-erp/shared";
 import { Context } from "hono";
 import { AppBindings } from "@/lib/hono-app";
@@ -51,6 +52,9 @@ import {
   getProductDetail,
   listProducts,
   changeProductStatus,
+  listProductVariants,
+  getProductVariant,
+  createProductVariant,
 } from "@/services/product";
 
 // ============================================================================
@@ -134,89 +138,41 @@ export const deleteProduct = async (c: Context<AppBindings>): Promise<Response> 
 // ============================================================================
 
 /**
- * @desc    Lista varianti di un prodotto
+ * @desc    Lists the visible variants of a product in the current tenant.
  * @route   GET /api/products/:id/variants
- * @access  Public
+ * @access  Private (product:read, product:manage)
  */
-export const getProductVariants = async (c: Context<AppBindings>) => {
+export const getProductVariants = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
   const { id } = getValidatedParams<ProductIdParam>(c);
-  const tenantId = c.get("currentTenantId")!;
-
-  const variants = await prisma.productVariant.findMany({
-    where: withSoftDelete(withTenantId({ productId: id }, tenantId)),
-    include: {
-      attributes: {
-        include: {
-          attribute: {
-            include: { attributeGroup: true, translations: true },
-          },
-        },
-      },
-    },
-    orderBy: { position: "asc" },
-  });
+  const variants = await listProductVariants(tenantId, id);
 
   return sendSuccess(c, variants, { results: variants.length });
 };
 
 /**
- * @desc    Ottieni dettagli variante
+ * @desc    Returns a variant belonging to the product identified by the route.
  * @route   GET /api/products/:productId/variants/:id
- * @access  Public
+ * @access  Private (product:read, product:manage)
  */
-export const getVariantById = async (c: Context<AppBindings>) => {
-  const { id } = getValidatedParams<ProductVariantIdParam>(c);
-  const tenantId = c.get("currentTenantId")!;
+export const getVariantById = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
+  const { productId, id } = getValidatedParams<ProductVariantDetailParams>(c);
 
-  const variant = await prisma.productVariant.findFirst({
-    where: withSoftDelete(withTenantId({ id }, tenantId)),
-    include: {
-      product: { select: { id: true, reference: true } },
-      attributes: {
-        include: {
-          attribute: {
-            include: { attributeGroup: true, translations: true },
-          },
-        },
-      },
-    },
-  });
-
-  if (!variant) throw new NotFoundError("Variante non trovata");
-
-  return sendSuccess(c, variant);
+  return sendSuccess(c, await getProductVariant(tenantId, productId, id));
 };
 
 /**
- * @desc    Crea una nuova variante
+ * @desc    Creates a variant for an existing product in the current tenant.
  * @route   POST /api/products/:id/variants
- * @access  Private (Admin, Product Manager)
+ * @access  Private (product:create, product:manage)
  */
-export const createVariant = async (c: Context<AppBindings>) => {
+export const createVariant = async (c: Context<AppBindings>): Promise<Response> => {
+  const tenantId = getRequiredTenantId(c);
   const { id } = getValidatedParams<ProductIdParam>(c);
-  const variantData = getValidatedBody<CreateProductVariantInput>(c);
-  const tenantId = c.get("currentTenantId")!;
+  const input = getValidatedBody<CreateProductVariantInput>(c);
 
-  // Verifica esistenza prodotto
-  const product = await prisma.product.findFirst({
-    where: withSoftDelete(withTenantId({ id }, tenantId)),
-  });
-  if (!product) throw new NotFoundError("Prodotto non trovato");
-
-  // Verifica unicità variantCode
-  const existingVariant = await prisma.productVariant.findUnique({
-    where: { variantCode: variantData.variantCode, tenantId, productId: id },
-  });
-  if (existingVariant) throw new ConflictError("Codice variante già esistente");
-
-  // Crea variante
-  const variant = await prisma.productVariant.create({
-    data: {
-      ...variantData,
-      product: connectById(id),
-      tenant: connectById(tenantId),
-    } as Prisma.ProductVariantCreateInput,
-  });
+  const variant = await createProductVariant(tenantId, id, input);
 
   return sendCreated(c, variant, "Variante creata con successo");
 };

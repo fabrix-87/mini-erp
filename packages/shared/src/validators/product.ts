@@ -123,15 +123,22 @@ export const createProductVariantInlineSchema = z
   .extend(variantCreateDefaults)
   .strict();
 
-/** Standalone variant creation (POST /products/:id/variants). */
+/** Validates a new non-default variant for an existing product. */
 export const createProductVariantSchema = z
-  .object({ productId: productIdBaseSchema, ...variantBaseShape })
+  .object(variantBaseShape)
   .extend(variantCreateDefaults)
+  .omit({ isDefault: true })
   .strict();
 
 export const updateProductVariantSchema = z.object(variantBaseShape).partial().strict();
 
 export const productVariantIdSchema = z.object({ id: productVariantIdBaseSchema });
+
+/** Validates both path IDs for a variant nested under a product. */
+export const productVariantDetailParamsSchema = z.object({
+  productId: productIdBaseSchema,
+  id: productVariantIdBaseSchema,
+});
 
 // ============================================================================
 // PRODUCT

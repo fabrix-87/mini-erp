@@ -20,6 +20,7 @@ import {
   updateProductVariantSchema,
   updateProductTranslationSchema,
   productIdLanguageIdSchema,
+  productVariantDetailParamsSchema,
 } from "../validators/product";
 import {
   ProductCondition,
@@ -159,6 +160,7 @@ export type ManufacturerIdParam = z.infer<typeof manufacturerIdSchema>;
 export type ProductCategoryIdParam = z.infer<typeof productCategoryIdSchema>;
 export type ProductIdAsProductIdParam = z.infer<typeof productIdAsProductIdSchema>;
 export type ProductIdLanguageIdParam = z.infer<typeof productIdLanguageIdSchema>;
+export type ProductVariantDetailParams = z.infer<typeof productVariantDetailParamsSchema>;
 
 // Type Query
 export type ProductQueryInput = z.infer<typeof productQuerySchema>;
@@ -273,4 +275,40 @@ export type ProductListItemResponse = {
   }[];
   createdAt: string;
   updatedAt: string;
+};
+
+/** JSON representation returned by the product variant read endpoints. */
+export type ProductVariantResponse = {
+  id: string;
+  productId: string;
+  sku: string;
+  ean13: string | null;
+  upc: string | null;
+  isbn: string | null;
+  mpn: string | null;
+  minimalQuantity: string;
+  lowStockThreshold: string;
+  lowStockAlertEnabled: boolean;
+  location: string | null;
+  availableDate: string | null;
+  weight: string | null;
+  width: string | null;
+  height: string | null;
+  depth: string | null;
+  position: number;
+  isDefault: boolean;
+  active: boolean;
+  availableForOrder: boolean;
+  createdAt: string;
+  updatedAt: string;
+  attributes: {
+    attributeId: string;
+    attributeGroupId: string;
+    attribute: {
+      id: string;
+      code: string;
+      attributeGroup: { id: string; code: string };
+      translations: { languageId: number; name: string }[];
+    };
+  }[];
 };

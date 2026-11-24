@@ -18,6 +18,7 @@ import {
   updateProductVariantSchema,
   updateProductTranslationSchema,
   productIdLanguageIdSchema,
+  productVariantDetailParamsSchema,
 } from "@mini-erp/shared";
 import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
 
@@ -33,9 +34,7 @@ export const validateCreateProduct = validateBody(createProductSchema, "Product 
  */
 export const validateUpdateProduct = validateBody(updateProductSchema, "Product update");
 
-/**
- * Middleware per la creazione di una variante
- */
+/** Validates the body for adding a variant to an existing product. */
 export const validateCreateVariant = validateBody(
   createProductVariantSchema,
   "Product variant creation",
@@ -153,3 +152,9 @@ export const validateManufacturerId = validateParams(manufacturerIdSchema, "Prod
  * Middleware per i filtri e paginazione ricerca prodotti
  */
 export const validateProductQuery = validateQuery(productQuerySchema, "Product Query");
+
+/** Validates the product and variant IDs from a nested variant route. */
+export const validateProductVariantDetailParams = validateParams(
+  productVariantDetailParamsSchema,
+  "Product variant detail parameters",
+);

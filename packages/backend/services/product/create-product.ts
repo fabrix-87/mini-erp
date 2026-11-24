@@ -1,10 +1,10 @@
-import { createHash } from "node:crypto";
 import type { CreateProductInput, CreateProductResponse } from "@mini-erp/shared";
 
 import { prisma } from "../../config/prisma-config";
 import { Prisma } from "../../generated/prisma/client";
 import { parseOptionalDate, toDecimal, toJsonField } from "../../helpers/prisma-helper";
 import { BadRequestError, ConflictError } from "../../utils/app-error-utils";
+import { buildVariantCombinationKey } from "@/helpers/product-variant-helper";
 
 /**
  * Creates a product, its axes, and its initial variants atomically.
@@ -132,17 +132,7 @@ export async function createProductAggregate(
           );
         }
 
-        const combinationKey =
-          values.length === 0
-            ? "default"
-            : createHash("sha1")
-                .update(
-                  values
-                    .map(({ id }) => id)
-                    .sort()
-                    .join("|"),
-                )
-                .digest("hex");
+        const combinationKey = buildVariantCombinationKey(values.map(({ id }) => id));
 
         if (seenCombinations.has(combinationKey)) {
           throw new BadRequestError("Più varianti hanno la stessa combinazione di attributi");
