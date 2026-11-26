@@ -1,4 +1,4 @@
-import { Client } from "minio";
+import { S3Client } from "bun";
 
 /** Configuration required to access the MinIO object storage. */
 export type MinioConfig = {
@@ -37,13 +37,15 @@ export function getMinioConfig(): MinioConfig {
   };
 }
 
-/** Creates the MinIO client used by image upload services. */
-export function createMinioClient(config: MinioConfig): Client {
-  return new Client({
-    endPoint: config.endPoint,
-    port: config.port,
-    useSSL: config.useSsl,
-    accessKey: config.accessKey,
-    secretKey: config.secretKey,
+/** Creates the Bun S3 client for authenticated MinIO object operations. */
+export function createMinioS3Client(config: MinioConfig): S3Client {
+  const protocol = config.useSsl ? "https" : "http";
+
+  return new S3Client({
+    endpoint: `${protocol}://${config.endPoint}:${config.port}`,
+    bucket: config.bucketName,
+    accessKeyId: config.accessKey,
+    secretAccessKey: config.secretKey,
+    virtualHostedStyle: false,
   });
 }

@@ -124,24 +124,20 @@ The API runs locally on **http://localhost:3001**.
 
 ### MinIO object storage
 
-Product images are uploaded through the backend and stored in MinIO.
-The configured bucket is publicly readable, while uploads require the
-backend's private MinIO credentials.
-
-Start the infrastructure and create the product-image bucket:
+Run the following commands from the repository root using a local MinIO
+image that includes the `mc` CLI:
 
 ```bash
-# from the repository root
-docker-compose up -d minio
-
-# from packages/backend
-bun run minio:create-bucket
+docker compose up -d --pull never minio
+sh packages/backend/scripts/provision-minio.sh
 ```
 
-The script creates the bucket defined by `MINIO_BUCKET` when it does not
-exist and applies a public-read policy. It does not make uploads public:
-the backend still authenticates with `MINIO_ACCESS_KEY` and
-`MINIO_SECRET_KEY`.
+If MinIO is already running, run only the second command. The provisioning
+script runs `mc` inside the existing container; it does not pull a separate
+CLI image. It creates `erp-product-images` if needed and reapplies the
+anonymous object-read policy. Listing and writes are not granted to
+anonymous clients. [See the root README](../../README.md#5-setup-minio) for
+the full setup.
 
 Required environment variables:
 
@@ -168,8 +164,13 @@ bun run start
 bun run prisma:generate
 bun run prisma:migrate
 bun run prisma:seed
-bun run minio:create-bucket
 bun test
+```
+
+Provision the MinIO bucket from the repository root:
+
+```bash
+sh packages/backend/scripts/provision-minio.sh
 ```
 
 ***

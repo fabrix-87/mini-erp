@@ -31,21 +31,21 @@ engineer makes when designing systems intended to scale.
 
 ## 🧠 Key Engineering Highlights
 
-| Area | Implementation |
-|---|---|
-| **Monorepo** | Bun workspaces with shared types/validators across packages |
-| **Type Safety** | End-to-end TypeScript + Zod schemas shared between frontend & backend |
-| **API Design** | RESTful Express API with layered middleware, controllers, services |
-| **API Framework** | Hono — lightweight, Zod-native, edge-compatible REST API |
-| **Database** | PostgreSQL + Prisma ORM with migrations and seed scripts |
-| **Auth** | JWT-based authentication with access & refresh tokens |
-| **Async Processing** | BullMQ job queues backed by Redis |
-| **Real-Time** | Socket.io WebSocket integration |
-| **File Storage** | MinIO (S3-compatible) for object/document management |
-| **Caching** | Redis for session/data caching |
-| **Logging** | Structured logging via Winston |
-| **i18n** | next-intl with user-preference-based locale (no URL segment) |
-| **Containerization** | Docker Compose for all infrastructure services |
+| Area                 | Implementation                                                        |
+| -------------------- | --------------------------------------------------------------------- |
+| **Monorepo**         | Bun workspaces with shared types/validators across packages           |
+| **Type Safety**      | End-to-end TypeScript + Zod schemas shared between frontend & backend |
+| **API Design**       | RESTful Express API with layered middleware, controllers, services    |
+| **API Framework**    | Hono — lightweight, Zod-native, edge-compatible REST API              |
+| **Database**         | PostgreSQL + Prisma ORM with migrations and seed scripts              |
+| **Auth**             | JWT-based authentication with access & refresh tokens                 |
+| **Async Processing** | BullMQ job queues backed by Redis                                     |
+| **Real-Time**        | Socket.io WebSocket integration                                       |
+| **File Storage**     | MinIO (S3-compatible) for object/document management                  |
+| **Caching**          | Redis for session/data caching                                        |
+| **Logging**          | Structured logging via Winston                                        |
+| **i18n**             | next-intl with user-preference-based locale (no URL segment)          |
+| **Containerization** | Docker Compose for all infrastructure services                        |
 
 ---
 
@@ -74,6 +74,7 @@ consumed by both the API and the UI, ensuring contract consistency without dupli
 ## 🛠️ Tech Stack
 
 ### Backend (`packages/backend`)
+
 - **Runtime**: [Bun](https://bun.sh) — fast JS/TS runtime with native bundling
 - **Framework**: [Hono](https://hono.dev) — ultrafast, edge-ready web framework
 - **Validation**: Zod + `@hono/zod-validator` (shared schemas from `@mini-erp/shared`)
@@ -84,6 +85,7 @@ consumed by both the API and the UI, ensuring contract consistency without dupli
 - **Logging**: Winston + `winston-daily-rotate-file`
 
 ### Frontend (`packages/frontend`)
+
 - **Framework**: Next.js 16 with App Router
 - **React**: v19 (latest stable)
 - **Styling**: Tailwind CSS v4
@@ -95,6 +97,7 @@ consumed by both the API and the UI, ensuring contract consistency without dupli
 - **i18n**: next-intl
 
 ### Infrastructure
+
 - **PostgreSQL 16** — primary data store
 - **Redis** — cache + BullMQ backend
 - **MinIO** — S3-compatible object storage
@@ -162,6 +165,7 @@ packages/
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - [Bun](https://bun.sh) >= 1.0
 - [Docker](https://docker.com) & Docker Compose
 
@@ -173,7 +177,6 @@ cd mini-erp
 bun install
 ```
 
-
 ### 2. Configure Environment
 
 ```bash
@@ -182,14 +185,12 @@ cp packages/backend/.env.example packages/backend/.env
 cp packages/frontend/.env.example packages/frontend/.env
 ```
 
-
 ### 3. Start Infrastructure
 
 ```bash
 docker-compose up -d
 # PostgreSQL :5432 · Redis :6379 · MinIO :9000 · Adminer :8080
 ```
-
 
 ### 4. Setup Database
 
@@ -202,21 +203,17 @@ bun run prisma:seed   # optional
 
 ### 5. Setup MinIO
 
-Product images are uploaded through the backend and stored in MinIO.
-The configured bucket is publicly readable, while uploads require the
-backend's private MinIO credentials.
-
-Create the product-image bucket:
+From the repository root, with the `minio` service running:
 
 ```bash
-cd packages/backend
-bun run minio:create-bucket
+sh packages/backend/scripts/provision-minio.sh
 ```
 
-The script creates the bucket defined by `MINIO_BUCKET` when it does not
-exist and applies a public-read policy. It does not make uploads public:
-the backend still authenticates with `MINIO_ACCESS_KEY` and
-`MINIO_SECRET_KEY`.
+The script uses the `mc` CLI bundled with the running MinIO container. It
+creates the `erp-product-images` bucket if needed and applies a policy that
+allows anonymous reads of individual objects, but not anonymous listing or
+uploads. Rerunning the script leaves stored objects intact and reapplies
+the policy, replacing any manual changes to it.
 
 Required backend environment variables (`packages/backend/.env`):
 
@@ -240,7 +237,6 @@ MINIO_PORT=9000
 `MINIO_PUBLIC_BASE_URL` must use the browser-reachable host URL, normally
 `http://localhost:9000/<bucket>` in local development.
 
-
 ### 6. Start Development Servers
 
 ```bash
@@ -254,17 +250,15 @@ cd packages/backend && bun run dev
 cd packages/frontend && bun run dev
 ```
 
-
 ### Access
 
-| Service | URL |
-| :-- | :-- |
-| Frontend | http://localhost:3000 |
-| Backend API | http://localhost:3001 |
-| Adminer (DB) | http://localhost:8080 |
-| MinIO S3 API | http://localhost:9000 |
+| Service       | URL                   |
+| :------------ | :-------------------- |
+| Frontend      | http://localhost:3000 |
+| Backend API   | http://localhost:3001 |
+| Adminer (DB)  | http://localhost:8080 |
+| MinIO S3 API  | http://localhost:9000 |
 | MinIO Console | http://localhost:9001 |
-
 
 ---
 
@@ -276,11 +270,11 @@ bun install           # Install all workspace deps
 bun run build         # Build all packages
 bun run check         # Type-check all packages
 bun run clean         # Clean build artifacts
+sh packages/backend/scripts/provision-minio.sh  # Provision the MinIO product-image bucket
 
 # Backend
 bun run dev           # Dev server with hot reload
 bun run prisma:migrate
-bun run minio:create-bucket  # Create the MinIO product-image bucket
 bun test
 
 # Frontend
@@ -288,7 +282,6 @@ bun run dev
 bun run build
 bun run lint
 ```
-
 
 ---
 
@@ -299,7 +292,6 @@ cd packages/backend && bun test
 cd packages/frontend && bun test
 ```
 
-
 ---
 
 ## 🐳 Production Build
@@ -308,7 +300,6 @@ cd packages/frontend && bun test
 bun run build
 docker-compose -f docker-compose.prod.yml up -d
 ```
-
 
 ---
 
@@ -341,7 +332,6 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-
 ---
 
 ## 👤 Author
@@ -356,5 +346,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ## 📄 License
 
 Released under the [GNU AGPLv3](LICENSE) license.
+
+```
 
 ```
