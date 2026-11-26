@@ -50,6 +50,12 @@ export const MAX_PRODUCT_VARIANT_AXES = 3;
 /** Smallest strictly positive value for Decimal(15,6) quantities. */
 export const MIN_POSITIVE_QUANTITY = "0.000001";
 
+/** Maximum number of files accepted in a single product image upload. */
+export const MAX_PRODUCT_IMAGE_UPLOAD_FILES = 5;
+
+/** Maximum size in bytes of an individual product image file. */
+export const MAX_PRODUCT_IMAGE_UPLOAD_FILE_BYTES = 5 * 1024 * 1024;
+
 export type ProductType = (typeof PRODUCT_TYPE)[keyof typeof PRODUCT_TYPE];
 export type ProductCondition = (typeof PRODUCT_CONDITION)[keyof typeof PRODUCT_CONDITION];
 export type ProductStatus = (typeof PRODUCT_STATUS)[keyof typeof PRODUCT_STATUS];

@@ -21,6 +21,7 @@ import {
   updateProductTranslationSchema,
   productIdLanguageIdSchema,
   productVariantDetailParamsSchema,
+  uploadProductImagesSchema,
 } from "../validators/product";
 import {
   ProductCondition,
@@ -147,6 +148,7 @@ export type CreateProductTranslationInput = z.infer<typeof createProductTranslat
 export type UpdateProductTranslationInput = z.infer<typeof updateProductTranslationSchema>;
 export type CreateProductImageInput = z.infer<typeof createProductImageSchema>;
 export type UpdateProductImageInput = z.infer<typeof updateProductImageSchema>;
+export type UploadProductImagesInput = z.output<typeof uploadProductImagesSchema>;
 export type CreateProductCategoryInput = z.infer<typeof createProductCategorySchema>;
 export type UpdateProductCategoryInput = z.infer<typeof updateProductCategorySchema>;
 export type CreateManufacturerInput = z.infer<typeof createManufacturerSchema>;

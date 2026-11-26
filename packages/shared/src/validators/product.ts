@@ -27,6 +27,8 @@ import {
 import { limitSchema, pageSchema, sortOrderSchema } from "./query/pagination";
 import {
   MAX_LINE_QUANTITY,
+  MAX_PRODUCT_IMAGE_UPLOAD_FILE_BYTES,
+  MAX_PRODUCT_IMAGE_UPLOAD_FILES,
   MAX_PRODUCT_VARIANT_AXES,
   MIN_POSITIVE_QUANTITY,
   PRODUCT_CONDITION,
@@ -39,6 +41,8 @@ import {
   PRODUCT_VISIBILITY,
 } from "../constants";
 import { queryBooleanOrAllSchema } from "./query";
+
+const allowedProductImageMimeTypes = ["image/jpeg", "image/png", "image/webp"] as const;
 
 // ============================================================================
 // ENUMS
@@ -350,6 +354,26 @@ export const productImageIdSchema = z.object({
   id: productImageIdBaseSchema,
   productId: productIdBaseSchema,
 });
+
+const productImageUploadFileSchema = z
+  .file()
+  .min(1, "Il file non può essere vuoto")
+  .max(MAX_PRODUCT_IMAGE_UPLOAD_FILE_BYTES, "Il file non può superare 5 MiB")
+  .mime([...allowedProductImageMimeTypes], "Sono ammessi solo file JPEG, PNG e WebP");
+
+/** Validates normalized multipart fields for a batch of product images. */
+export const uploadProductImagesSchema = z
+  .object({
+    files: z
+      .array(productImageUploadFileSchema)
+      .min(1, "Carica almeno un'immagine")
+      .max(
+        MAX_PRODUCT_IMAGE_UPLOAD_FILES,
+        `Puoi caricare al massimo ${MAX_PRODUCT_IMAGE_UPLOAD_FILES} immagini per richiesta`,
+      ),
+    variantId: productVariantIdBaseSchema.optional(),
+  })
+  .strict();
 
 export const createProductCategorySchema = z
   .object({

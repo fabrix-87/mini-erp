@@ -4,6 +4,7 @@ import { ZodError, ZodObject, ZodType } from "zod";
 import { applySchemaOptions, handleZodError } from "../helpers/validate-helper";
 import type { RequestValidationSchema, ValidateOptions } from "../types/validate-types";
 import type { AppBindings } from "../lib/hono-app";
+import { BadRequestError } from "@/utils/app-error-utils";
 
 // Chiavi riservate per i dati validati nel context Hono
 const VALIDATED_BODY_KEY = "validatedBody" as const;
@@ -151,3 +152,67 @@ export const validateParams = (
   context: string,
   options?: Omit<ValidateOptions, "source">,
 ) => validate(schema, context, { ...options, source: ["params"] });
+
+/**
+ * Validates a multipart form and stores the parsed output in the request context.
+ * Repeated fields remain arrays so the schema can reject duplicate scalar values.
+ *
+ * @param schema - Shared schema for the normalized multipart fields.
+ * @param context - Human-readable label used in validation error logs.
+ * @param arrayFields - Field names normalized to arrays even with a single entry.
+ */
+export const validateMultipartBody = (
+  schema: ZodType,
+  context: string,
+  arrayFields: readonly string[] = [],
+) => {
+  const alwaysArray = new Set(arrayFields);
+
+  return createMiddleware<AppBindings>(async (c, next) => {
+    const mediaType = c.req.header("Content-Type")?.split(";", 1)[0]?.trim().toLowerCase();
+
+    if (mediaType !== "multipart/form-data") {
+      throw new BadRequestError("Il body deve essere multipart/form-data");
+    }
+
+    let form: FormData;
+
+    try {
+      form = await c.req.formData();
+    } catch {
+      throw new BadRequestError("Body multipart non valido");
+    }
+
+    const grouped = new Map<string, FormDataEntryValue[]>();
+
+    for (const [name, value] of form.entries()) {
+      const entries = grouped.get(name);
+
+      if (entries) {
+        entries.push(value);
+      } else {
+        grouped.set(name, [value]);
+      }
+    }
+
+    const normalized = Object.fromEntries(
+      Array.from(
+        grouped,
+        ([name, entries]) =>
+          [name, alwaysArray.has(name) || entries.length > 1 ? entries : entries[0]] as const,
+      ),
+    );
+
+    try {
+      c.set(VALIDATED_BODY_KEY, await schema.parseAsync(normalized));
+    } catch (error) {
+      if (error instanceof ZodError) {
+        handleZodError(error, context);
+      }
+
+      throw error;
+    }
+
+    await next();
+  });
+};

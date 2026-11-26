@@ -19,8 +19,17 @@ import {
   updateProductTranslationSchema,
   productIdLanguageIdSchema,
   productVariantDetailParamsSchema,
+  MAX_PRODUCT_IMAGE_UPLOAD_FILES,
+  MAX_PRODUCT_IMAGE_UPLOAD_FILE_BYTES,
+  uploadProductImagesSchema,
 } from "@mini-erp/shared";
-import { validateBody, validateParams, validateQuery } from "../middleware/validation-middleware";
+import {
+  validateBody,
+  validateMultipartBody,
+  validateParams,
+  validateQuery,
+} from "../middleware/validation-middleware";
+import { bodyLimit } from "hono/body-limit";
 
 // ============================================================================
 // VALIDATION MIDDLEWARE
@@ -97,6 +106,25 @@ export const validateProductIdLanguageId = validateParams(
  * Middleware per la creazione di un'immagine
  */
 export const validateCreateImage = validateBody(createProductImageSchema, "Product image creation");
+
+const PRODUCT_IMAGE_MULTIPART_OVERHEAD_BYTES = 1024 * 1024;
+
+const maxProductImageUploadBodyBytes =
+  MAX_PRODUCT_IMAGE_UPLOAD_FILES * MAX_PRODUCT_IMAGE_UPLOAD_FILE_BYTES +
+  PRODUCT_IMAGE_MULTIPART_OVERHEAD_BYTES;
+
+/** Rejects oversized product image requests before multipart parsing. */
+export const limitProductImageUploadBody = bodyLimit({
+  maxSize: maxProductImageUploadBodyBytes,
+  onError: (c) => c.json({ message: "La richiesta di upload non può superare 26 MiB" }, 413),
+});
+
+/** Validates multipart files and the optional variant ID for a product image upload. */
+export const validateUploadProductImages = validateMultipartBody(
+  uploadProductImagesSchema,
+  "Product image upload",
+  ["files"],
+);
 
 /**
  * Middleware per la validazione dell'ID immagine (params)

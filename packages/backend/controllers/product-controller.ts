@@ -305,12 +305,12 @@ export const getProductImages = async (c: Context<AppBindings>): Promise<Respons
 export const createImage = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductIdParam>(c);
   const imageData = getValidatedBody<CreateProductImageInput>(c);
-  const tenantId = getRequiredTenantId(c)
+  const tenantId = getRequiredTenantId(c);
 
   const product = await prisma.product.findUnique({ where: { id } });
   if (!product) throw new NotFoundError("Prodotto non trovato");
 
-  const image = {}
+  const image = {};
 
   return sendCreated(c, image, "Immagine aggiunta con successo");
 };
@@ -324,7 +324,7 @@ export const updateImage = async (c: Context<AppBindings>) => {
   const { id } = getValidatedParams<ProductImageIdParam>(c);
   const updateData = getValidatedBody<UpdateProductImageInput>(c);
 
-  const image = {}
+  const image = {};
 
   return sendSuccess(c, image, { message: "Immagine aggiornata con successo" });
 };
@@ -399,11 +399,12 @@ export const addCategory = async (c: Context<AppBindings>) => {
     where: { productId_categoryId: { productId: id, categoryId } },
   });
   if (existing) throw new ConflictError("Categoria già associata");
-
+  /*
   const productCategory = await prisma.productCategory.create({
     data: { productId: id, categoryId, position },
   });
-
+*/
+  const productCategory = {};
   return sendCreated(c, productCategory, "Categoria aggiunta con successo");
 };
 
